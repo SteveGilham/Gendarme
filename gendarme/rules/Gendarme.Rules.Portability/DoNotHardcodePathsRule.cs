@@ -126,8 +126,10 @@ namespace Gendarme.Rules.Portability
         return null;
 
       // files paths don't usually have more than one dot (in extension)
-      if (CountOccurences(str, '.') > 2)
-        return null;
+      // but see e.g. Gendarme.Rules.Portability.dll
+      int dots = CountOccurences (str, '.');
+      if (dots > 2)
+        AddPoints (2 - dots);
 
       // handle different cases
       if (CanBeWindowsAbsolutePath(str))
