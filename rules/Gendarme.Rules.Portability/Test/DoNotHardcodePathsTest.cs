@@ -206,6 +206,16 @@ namespace Test.Rules.Portability {
 					System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 		}
 
+		void DontReportTimeFormats()
+		{
+			Console.WriteLine($@"{TimeSpan.Zero:h\:mm\:ss}");
+			TimeSpan.ParseExact("0:00:00", @"h\:mm\:ss", null);
+			string format = @"h\:mm\:ss";
+			TimeSpan time;
+			TimeSpan.TryParseExact("0:00:00", format, null, out time);
+			Console.WriteLine(time.ToString(format));
+		}
+
 		[Test]
 		public void DoesNotApply ()
 		{
@@ -255,6 +265,7 @@ namespace Test.Rules.Portability {
 			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportStringsWithManyDots");
 			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportXPath");
 			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportRegexes");
+			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportTimeFormats");
 		}
 
 		// test case provided by Richard Birkby
