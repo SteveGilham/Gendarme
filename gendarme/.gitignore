@@ -6,3 +6,6 @@ AssemblyInfo.cs
 *.pidb
 *.suo
 *.user
+UpgradeLog*.htm
+UpgradeLog*.html
+Backup/

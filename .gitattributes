@@ -66,3 +66,14 @@ ChangeLog	crlf
 #    code files, and Unix-flavoured files, like shell-scripts, makefiles, etc.
 #
 # [1] GIT use LFs as the normalized internal representation.
+
+
+# ensure LF endings on all checkouts on Linux specific files
+*.sh eol=lf
+
+# LF Handling
+# -------------
+#
+# It seems like Windows tools, also Linux shell (at least in Ubuntu)
+# can not correctly handle CRLF line endings in *.sh scripts.
+# 
