@@ -125,6 +125,8 @@ namespace Gendarme.Rules.Portability
       if (str.Contains("</", StringComparison.Ordinal) || str.Contains("/>", StringComparison.Ordinal))
         return null;
 
+      bool relativePathFix = FixRelativePath(ref str);
+
       // files paths don't usually have more than one dot (in extension)
       // but see e.g. Gendarme.Rules.Portability.dll
       int dots = CountOccurences (str, '.');
@@ -132,7 +134,7 @@ namespace Gendarme.Rules.Portability
         AddPoints (2 - dots);
 
       // handle different cases
-      if (CanFormattingString(str)) {
+      if ((relativePathFix == false) && CanFormattingString(str)) {
         AddPoints(-5); // remove points (5 because '\:' is less common in paths, but common in formatting string)
         ProcessFormatString(str);
       }
@@ -208,6 +210,9 @@ namespace Gendarme.Rules.Portability
 
     private static bool CanBeWindowsAbsolutePath(string s)
     {
+      if (string.IsNullOrEmpty(s) || (s.Length < 3))
+        return false;
+
       // true for strings like ?:\*
       // e.g. 'C:\some\path' or 'D:\something.else"
       return s[1] == ':' && s[2] == '\\';
@@ -215,6 +220,9 @@ namespace Gendarme.Rules.Portability
 
     private static bool CanBeWindowsUNCPath(string s)
     {
+      if (string.IsNullOrEmpty(s) || (s.Length < 2))
+        return false;
+
       // true for Windows UNC paths
       // e.g. \\Server\Directory\File
       return s[0] == '\\' && s[1] == '\\';
@@ -222,8 +230,44 @@ namespace Gendarme.Rules.Portability
 
     private static bool CanBeUnixAbsolutePath(string s)
     {
+      if (string.IsNullOrEmpty(s))
+        return false;
+
       // true for strings like /*
       return s[0] == '/';
+    }
+
+    private bool FixRelativePath(ref string path)
+    {
+      bool relativePathFix = false;
+      if (path.StartsWith(".\\")) {
+        AddPoints(1);
+        path = path.Remove(0, 2);
+        backslashes--;
+        relativePathFix = true;
+      } else if (path.StartsWith("./")) {
+        AddPoints(2);
+        path = path.Remove(0, 2);
+        slashes--;
+        relativePathFix = true;
+      } else {
+        do {
+           bool slashParrent = (path.StartsWith("../"));
+           bool backSlashParrent = (path.StartsWith("..\\"));
+           if (slashParrent || backSlashParrent) {
+             AddPoints(3);
+             path = path.Remove(0, 3);
+             relativePathFix = true;
+             if (slashParrent)
+               slashes--;
+             else
+               backslashes--;
+          }
+          else
+              break;
+         } while (true);
+      }
+      return (relativePathFix);
     }
 
     private void ProcessFormatString(string format)
