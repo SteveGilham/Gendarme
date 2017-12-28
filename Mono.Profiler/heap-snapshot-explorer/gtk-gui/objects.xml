@@ -1,6 +1,0 @@
-<objects attr-sync="on">
-  <object type="Mono.Profiler.HeapSnapshotExplorer" palette-category="General" allow-children="false" base-type="Gtk.Bin">
-    <itemgroups />
-    <signals />
-  </object>
-</objects>

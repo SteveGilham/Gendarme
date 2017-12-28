@@ -1,34 +1,29 @@
-Mono Tools:
-----------
+Gendarme README
 
-Mono Tools is a collection of development and testing programs and 
-utilities for use with Mono.
+User-level documentation is available from the Mono:: project wiki
+http://www.mono-project.com/Gendarme
+
+ROADMAP
+http://www.mono-project.com/Gendarme.Roadmap
+
+Mailing list
+http://groups.google.com/group/gendarme
+
+Newsgroup gateway to the mailing list
+nntp://news.gmane.org/gmane.comp.gnome.mono.gendarme
+
+Developer documentation
+http://groups.google.com/group/gendarme
 
 
-Building:
---------
+IMPORTANT NOTES
 
-Building from a source tarball should be as simple as:
+* Gendarme "official" build system is based on the auto*/Makefile files
+and tested on MonkeyWrench. See mono-tools-trunk on 
+http://build.mono-project.com/index.aspx?lane=mono-trunk
+(checking out gendarme without its parent dir 'mono-tools' is not supported)
 
-    ./configure [typical configure flags, such as --prefix=PREFIX]
-    make
-    make install
-
-Building from git is almost identical, except that you need to
-execute autogen.sh to create the configure script (which will be
-automatically executed):
-
-    git clone https://github.com/mono/mono-tools.git
-    ./autogen.sh [typical configure flags, such as --prefix=PREFIX]
-    make
-    make install
-
-Building on OSX with homebrew:
-------------------------------
-
-Have the following packages installed:
-autoconf pkg-config	readline automake gettext glib intltool libtool
-
-Run autogen like this:
-PKG_CONFIG_PATH=/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig/ ./autogen.sh 
-
+* Visual Studio solutions and projects files (usable by both MonoDevelop
+and Visual Studio .NET 2008) are NOT always up to date with Makefiles. 
+This depends on the developer making changes and his personal access to 
+the developing environments. (Please see the README.vsnet file.)

@@ -1,3 +1,4 @@
+# mono-tools .gitignore
 Makefile
 Makefile.in
 Makefile.in.in
@@ -15,3 +16,17 @@ autom4te.cache
 missing
 mkinstalldirs
 install-sh
+
+
+# gendarme .gitignore
+gendarme
+gendarme-wizard
+bin
+obj
+AssemblyInfo.cs
+*.pidb
+*.suo
+*.user
+UpgradeLog*.htm
+UpgradeLog*.html
+Backup/

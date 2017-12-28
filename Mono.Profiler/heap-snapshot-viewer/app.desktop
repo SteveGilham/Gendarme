@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Mono Heap Snapshot Viewer
-Exec=heap-snapshot-viewer
-Terminal=false
-Icon=monodoc
-Categories=Profiling;Development;
