@@ -439,6 +439,13 @@ namespace Gendarme.Rules.Portability {
 					&& methodName.StartsWith ("Select", StringComparison.Ordinal))) {
 					AddPoints (-42);
 					return true; // handled
+				} else if ((methodName == "ParseExact") || (methodName == "TryParseExact")) { // format string for parse
+					AddPoints (-12);
+					return true; // handled
+				} else if ((methodName == "ToString") // format string? for ToString()
+				           || ((nameSpace == "System") && (typeName == "String") && (methodName == "Format"))) { // format string? for String.Format
+					AddPoints (-6);
+					return true; // handled
 				}
 
 				// see what we can learn
