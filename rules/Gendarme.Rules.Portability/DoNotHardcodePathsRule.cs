@@ -120,8 +120,9 @@ namespace Gendarme.Rules.Portability {
 				return null;
 
 			// files paths don't usually have more than one dot (in extension)
-			if (CountOccurences (str, '.') > 2)
-				return null;
+			int dots = CountOccurences (str, '.');
+			if (dots > 2)
+				AddPoints (2 - dots);
 
 
 			// handle different cases
