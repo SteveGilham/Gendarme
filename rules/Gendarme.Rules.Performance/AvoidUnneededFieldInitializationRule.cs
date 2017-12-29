@@ -111,7 +111,7 @@ namespace Gendarme.Rules.Performance {
 				if (fr.DeclaringType != type)
 					continue;
 
-				bool unneeded = false;
+				bool unneeded;
 				if (fr.FieldType.IsValueType) {
 					unneeded = ins.Previous.IsOperandZero ();
 				} else {
