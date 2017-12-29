@@ -122,7 +122,14 @@ namespace Gendarme.Rules.Performance {
 					// we're more confident about the unneeded initialization
 					// on static ctor, since another (previous) ctor, can't set
 					// the values differently
-					Confidence c = method.IsStatic ? Confidence.High : Confidence.Normal;
+					Confidence c;
+					if (method.IsStatic) {
+						c = Confidence.High;
+					} else {
+						if (IsGuiGeneratedCode(method, fr))
+							return RuleResult.DoesNotApply;
+						c = Confidence.Normal;
+					}
 					Runner.Report (method, ins, Severity.Medium, c, fr.Name);
 				}
 			}
@@ -136,6 +143,12 @@ namespace Gendarme.Rules.Performance {
 			{
 				return true;
 			}
+		}
+
+		private bool IsGuiGeneratedCode(MethodDefinition method, FieldReference fr)
+		{
+			return (string.Equals(fr.Name, "components", StringComparison.Ordinal)
+				&& method.DeclaringType.IsGuiFormOrUserControl());
 		}
 	}
 }
