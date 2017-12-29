@@ -119,12 +119,19 @@ namespace Gendarme.Rules.Portability {
 			if (str.Contains ("</") || str.Contains ("/>"))
 				return null;
 
+			bool relativePathFix = FixReleativePath(ref str);
+
 			// files paths don't usually have more than one dot (in extension)
-			if (CountOccurences (str, '.') > 2)
-				return null;
+			int dots = CountOccurences (str, '.');
+			if (dots > 2)
+				AddPoints (2 - dots);
 
 
 			// handle different cases
+			if ((relativePathFix == false) && CanFormattingString(str)) {
+				AddPoints(-5); // remove points (5 because '\:' is less common in paths, but common in formatting string)
+				ProcessFormatString(str);
+			}
 			if (CanBeWindowsAbsolutePath (str)) {
 				// whoooaaa! most probably we have a windows absolute path here
 				AddPoints (5); // add points (5 because '*:\*' is less common)
@@ -187,8 +194,15 @@ namespace Gendarme.Rules.Portability {
 				return null;
 		}
 
+		private static bool CanFormattingString(string s)
+		{
+			return (s.Contains(@"\:"));
+		}
+
 		static bool CanBeWindowsAbsolutePath (string s)
 		{
+			if (string.IsNullOrEmpty(s) || (s.Length < 3))
+				return false;
 			// true for strings like ?:\*
 			// e.g. 'C:\some\path' or 'D:\something.else"
 			return s [1] == ':' && s [2] == '\\';
@@ -196,6 +210,8 @@ namespace Gendarme.Rules.Portability {
 
 		static bool CanBeWindowsUNCPath (string s)
 		{
+			if (string.IsNullOrEmpty(s) || (s.Length < 2))
+				return false;
 			// true for Windows UNC paths
 			// e.g. \\Server\Directory\File
 			return s [0] == '\\' && s [1] == '\\';
@@ -203,8 +219,57 @@ namespace Gendarme.Rules.Portability {
 
 		static bool CanBeUnixAbsolutePath (string s)
 		{
+			if (string.IsNullOrEmpty(s))
+				return false;
 			// true for strings like /*
 			return s [0] == '/';
+		}
+
+		private bool FixReleativePath(ref string path)
+		{
+			bool relativePathFix = false;
+			if (path.StartsWith(".\\")) {
+				AddPoints(1);
+				path = path.Remove(0, 2);
+				backslashes--;
+				relativePathFix = true;
+			} else if (path.StartsWith("./")) {
+				AddPoints(2);
+				path = path.Remove(0, 2);
+				slashes--;
+				relativePathFix = true;
+			} else {
+				do {
+					bool slashParrent = (path.StartsWith("../"));
+					bool backSlashParrent = (path.StartsWith("..\\"));
+					if (slashParrent || backSlashParrent) {
+						AddPoints(3);
+						path = path.Remove(0, 3);
+						relativePathFix = true;
+						if (slashParrent)
+							slashes--;
+						else
+							backslashes--;
+					}
+					else
+						break;
+				} while (true);
+			}
+			return (relativePathFix);
+		}
+
+		private void ProcessFormatString(string format)
+		{
+			if (format.Contains(@"h\:mm\:s") || format.Contains(@"h\:m\:s")) {
+				AddPoints(-4);
+				this.backslashes -= 2;
+			} else if (format.Contains(@"h\:m")) {
+				AddPoints(-2);
+				this.backslashes--;
+			} if (format.Contains(@"m\:s")) {
+				AddPoints(-2);
+				this.backslashes--;
+			}
 		}
 
 		void ProcessWindowsPath ()
@@ -373,6 +438,13 @@ namespace Gendarme.Rules.Portability {
 				    || (nameSpace.StartsWith ("System.Xml", StringComparison.Ordinal) // xpath expressions
 					&& methodName.StartsWith ("Select", StringComparison.Ordinal))) {
 					AddPoints (-42);
+					return true; // handled
+				} else if ((methodName == "ParseExact") || (methodName == "TryParseExact")) { // format string for parse
+					AddPoints (-12);
+					return true; // handled
+				} else if ((methodName == "ToString") // format string? for ToString()
+				           || ((nameSpace == "System") && (typeName == "String") && (methodName == "Format"))) { // format string? for String.Format
+					AddPoints (-6);
 					return true; // handled
 				}
 
