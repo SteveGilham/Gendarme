@@ -89,6 +89,14 @@ namespace Gendarme.Rules.Globalization {
 			return RuleResult.Failure;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		#region FIXME (following code is a copy of AvoidUncalledPrivateCodeRule)
 
 		public override void TearDown ()

@@ -104,5 +104,13 @@ namespace Gendarme.Rules.Performance {
 			Runner.Report (method, Severity.Medium, Confidence.Total);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

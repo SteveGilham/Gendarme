@@ -470,6 +470,14 @@ namespace Gendarme.Rules.Maintainability {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		private void CheckParametersSpecializationDelta (MethodReference method)
 		{
 			foreach (ParameterDefinition parameter in method.Parameters){

@@ -468,6 +468,14 @@ namespace Gendarme.Rules.Exceptions {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 #if false
 		// Note that none of these instructions throw an exception that is 
 		// ever allowed.

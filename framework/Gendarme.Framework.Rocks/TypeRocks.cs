@@ -539,5 +539,23 @@ namespace Gendarme.Framework.Rocks {
 			}
 			return type.IsPublic;
 		}
+
+		/// <summary>
+		/// Check if the type is derived from System.Windows.Forms.Form, or UserControl.
+		/// </summary>
+		/// <param name="self">The TypeReference on which the extension method can be called.</param>
+		/// <returns>True if the type is derived from Form or UserControl, false otherwise.</returns>
+		public static bool IsGuiFormOrUserControl(this TypeReference self)
+		{
+			TypeDefinition typeDefinition = self?.Resolve();
+			while (!ReferenceEquals(typeDefinition, null)) {
+				if (string.Equals(typeDefinition.Namespace, "System.Windows.Forms", StringComparison.Ordinal)
+					&& (string.Equals(typeDefinition.Name, "Form", StringComparison.Ordinal)
+					|| string.Equals(typeDefinition.Name, "UserControl", StringComparison.Ordinal)))
+					return true;
+				typeDefinition = typeDefinition.BaseType?.Resolve();
+			}
+			return (false);
+		}
 	}
 }

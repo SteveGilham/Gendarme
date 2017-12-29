@@ -109,5 +109,13 @@ namespace Gendarme.Rules.Design.Linq {
 			Runner.Report (method, Severity.High, Confidence.High);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

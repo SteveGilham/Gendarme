@@ -351,5 +351,13 @@ namespace Gendarme.Rules.Smells {
 
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

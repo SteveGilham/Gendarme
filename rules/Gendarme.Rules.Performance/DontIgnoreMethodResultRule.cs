@@ -151,5 +151,13 @@ namespace Gendarme.Rules.Performance {
 				}
 			}
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

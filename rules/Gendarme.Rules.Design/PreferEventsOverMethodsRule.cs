@@ -124,5 +124,13 @@ namespace Gendarme.Rules.Design {
 
 			return RuleResult.Success;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

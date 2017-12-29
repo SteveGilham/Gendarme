@@ -179,5 +179,13 @@ namespace Gendarme.Rules.Naming {
 			// we're not checking parameters
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

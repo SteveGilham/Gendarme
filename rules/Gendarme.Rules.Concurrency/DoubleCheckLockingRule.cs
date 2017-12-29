@@ -211,6 +211,14 @@ namespace Gendarme.Rules.Concurrency {
 			return RuleResult.Success;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		private static bool IsMonitorMethod (MethodReference method, string methodName)
 		{
 			if (method.Name != methodName)

@@ -118,6 +118,14 @@ namespace Gendarme.Rules.NUnit {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		// reports only if it was called more than one time
 		private void DelayedReport (Defect defect)
 		{

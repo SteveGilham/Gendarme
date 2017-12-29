@@ -191,6 +191,14 @@ namespace Gendarme.Rules.Naming {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		private bool IsBooAssemblyUsingMacro { get; set; }
 
 		private static bool IsBooMacroParameter (ParameterReference p)

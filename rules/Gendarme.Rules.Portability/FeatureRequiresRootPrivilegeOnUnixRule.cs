@@ -164,5 +164,13 @@ namespace Gendarme.Rules.Portability {
 
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

@@ -80,5 +80,13 @@ namespace Gendarme.Rules.Design {
 			Runner.Report (method, Severity.Medium, Confidence.Total);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

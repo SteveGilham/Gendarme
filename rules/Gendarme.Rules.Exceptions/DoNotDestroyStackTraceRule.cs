@@ -102,6 +102,14 @@ namespace Gendarme.Rules.Exceptions {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		private void Branchless (MethodDefinition method)
 		{
 			// Current stack position: 0 = top of stack

@@ -307,6 +307,14 @@ namespace Gendarme.Rules.Correctness {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 		void ReportNonDisposedLocals (MethodDefinition method)
 		{
 			for (ulong i = 0; i < 64; i++) {

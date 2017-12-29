@@ -59,12 +59,28 @@ namespace Test.Rules.Gendarme {
 			{
 				return RuleResult.Success;
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		class GoodRule2 : Rule, IMethodRule {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				return RuleResult.Success;
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 
 			private int property_value;
@@ -88,6 +104,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new ArgumentException ("method");
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 
@@ -95,6 +119,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				return RuleResult.Success;
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 
 			private int property_value;

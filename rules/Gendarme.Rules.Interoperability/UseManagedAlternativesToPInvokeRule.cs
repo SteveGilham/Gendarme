@@ -136,5 +136,13 @@ namespace Gendarme.Rules.Interoperability {
 			Runner.Report (method, Severity.Low, Confidence.High, message);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

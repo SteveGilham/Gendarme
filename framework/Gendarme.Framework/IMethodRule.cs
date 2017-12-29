@@ -32,5 +32,6 @@ namespace Gendarme.Framework {
 
 	public interface IMethodRule : IRule {
 		RuleResult CheckMethod (MethodDefinition method);
+		bool SkipGeneratedGuiMethods { get; }
 	}
 }

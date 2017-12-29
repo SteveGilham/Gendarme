@@ -50,6 +50,14 @@ namespace Test.Rules.Gendarme {
 				Console.WriteLine (a.ToString ());
 				return RuleResult.Success;
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[EngineDependency (typeof (OpCodeEngine))]
@@ -59,6 +67,14 @@ namespace Test.Rules.Gendarme {
 				var a = OpCodeEngine.GetBitmask (SimpleMethods.EmptyMethod);
 				return RuleResult.Success;
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[EngineDependency ("Gendarme.Framework.Engines.OpCodeEngine")]
@@ -67,6 +83,14 @@ namespace Test.Rules.Gendarme {
 			{
 				var a = OpCodeEngine.GetBitmask (SimpleMethods.EmptyMethod);
 				return RuleResult.Success;
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -78,6 +102,14 @@ namespace Test.Rules.Gendarme {
 				var a = OpCodeEngine.GetBitmask (SimpleMethods.EmptyMethod);
 				var b = NamespaceEngine.Exists ("TestNamespace");
 				return RuleResult.Success;
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 

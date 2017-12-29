@@ -149,5 +149,13 @@ namespace Gendarme.Rules.Serialization {
 			Runner.Report (method, Severity.Critical, Confidence.Total, WrongSignatureText);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

@@ -224,5 +224,13 @@ namespace Gendarme.Rules.Design {
 			}
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

@@ -131,6 +131,14 @@ namespace Gendarme.Rules.Design {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		static bool IsSpecificXmlType (TypeReference type)
 		{
 			if (type.Namespace == "System.Xml") {

@@ -74,5 +74,13 @@ namespace Gendarme.Rules.NUnit {
 
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

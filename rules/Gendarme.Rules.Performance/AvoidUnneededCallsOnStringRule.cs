@@ -122,6 +122,14 @@ namespace Gendarme.Rules.Performance {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		private static string CheckClone (MethodReference call, Instruction ins, MethodDefinition method)
 		{
 			if (call.HasParameters)

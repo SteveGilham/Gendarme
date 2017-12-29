@@ -95,6 +95,14 @@ namespace Gendarme.Rules.Portability {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 		// Format the string to looks like in the C# source code
 		// For example the character \x01 is converted to the "\x01" string
 		// This operation avoid crash with special characters when applying the XSL

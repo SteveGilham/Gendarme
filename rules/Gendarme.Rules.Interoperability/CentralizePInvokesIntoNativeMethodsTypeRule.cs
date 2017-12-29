@@ -172,6 +172,14 @@ namespace Gendarme.Rules.Interoperability {
 				return RuleResult.Failure;
 			}
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }
 

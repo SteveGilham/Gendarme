@@ -48,6 +48,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -55,6 +63,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -64,6 +80,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Solution ("")]
@@ -71,6 +95,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -81,6 +113,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -89,6 +129,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -104,12 +152,28 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		abstract class Case9 : Rule, IMethodRule {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -119,6 +183,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -151,6 +223,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -160,6 +240,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -172,6 +260,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -181,6 +277,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -195,6 +299,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -225,6 +337,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -234,6 +354,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -245,6 +373,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -254,6 +390,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 
@@ -280,6 +424,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Test]
@@ -300,6 +452,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		class Case26 {
@@ -319,6 +479,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -332,6 +500,14 @@ namespace Test.Rules.Gendarme {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Problem ("Problem description")]
@@ -344,6 +520,14 @@ namespace Test.Rules.Gendarme {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				throw new NotImplementedException ();
+			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
 			}
 		}
 

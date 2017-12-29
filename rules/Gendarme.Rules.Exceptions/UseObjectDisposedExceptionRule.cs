@@ -147,6 +147,14 @@ namespace Gendarme.Rules.Exceptions {
 			
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 		
 		private void CheckBody (MethodDefinition method)
 		{

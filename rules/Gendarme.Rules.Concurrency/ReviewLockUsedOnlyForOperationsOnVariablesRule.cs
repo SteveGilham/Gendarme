@@ -147,6 +147,14 @@ namespace Gendarme.Rules.Concurrency {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		static bool IsMonitorEnter (Instruction ins, int parametersCount)
 		{
 			// VS2008 like to includes a few NOP

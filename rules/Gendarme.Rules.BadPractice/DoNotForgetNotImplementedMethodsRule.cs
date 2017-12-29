@@ -106,6 +106,15 @@ namespace Gendarme.Rules.BadPractice {
 
 			return RuleResult.Success;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
+
 #if false
 		public void GenerateBitmask ()
 		{

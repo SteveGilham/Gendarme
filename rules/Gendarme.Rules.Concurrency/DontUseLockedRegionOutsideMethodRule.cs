@@ -173,5 +173,13 @@ namespace Gendarme.Rules.Concurrency {
 			Runner.Report (method, Severity.High, Confidence.Normal);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

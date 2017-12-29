@@ -90,6 +90,14 @@ namespace Gendarme.Rules.BadPractice {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		static bool IsLoadEnumToken (Instruction instruction)
 		{
 			if (instruction.OpCode.Code != Code.Ldtoken)

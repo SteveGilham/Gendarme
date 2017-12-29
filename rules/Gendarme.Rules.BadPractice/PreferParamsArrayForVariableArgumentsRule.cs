@@ -105,6 +105,14 @@ namespace Gendarme.Rules.BadPractice {
 			Runner.Report (method, severity, Confidence.High);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }
 

@@ -141,6 +141,14 @@ namespace Gendarme.Rules.Smells {
 			return Runner.CurrentRuleResult;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		static private bool ValidLink (Instruction ins)
 		{
 			bool valid = false;

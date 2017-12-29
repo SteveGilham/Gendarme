@@ -239,6 +239,14 @@ namespace Gendarme.Rules.Interoperability {
 		}
 #endif
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// Rule does not apply if the method has no IL

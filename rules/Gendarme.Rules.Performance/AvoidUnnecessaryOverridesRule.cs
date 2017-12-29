@@ -191,6 +191,14 @@ namespace Gendarme.Rules.Performance {
 			Runner.Report (method, Severity.Medium, Confidence.High);
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }
 

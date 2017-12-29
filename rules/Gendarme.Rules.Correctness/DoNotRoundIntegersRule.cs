@@ -184,5 +184,13 @@ namespace Gendarme.Rules.Correctness {
 			}
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

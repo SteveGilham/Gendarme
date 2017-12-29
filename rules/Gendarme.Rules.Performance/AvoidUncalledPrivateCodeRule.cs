@@ -329,6 +329,14 @@ namespace Gendarme.Rules.Performance {
 				methods.Add (GetToken (mr));
 			}
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }
 

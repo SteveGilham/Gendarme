@@ -204,5 +204,13 @@ namespace Gendarme.Rules.Correctness {
 			// should never be reached (since there's always a RET instruction)
 			return RuleResult.Success;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

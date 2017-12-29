@@ -316,6 +316,14 @@ namespace Test.Framework {
 			}
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 
 	[TestFixture]

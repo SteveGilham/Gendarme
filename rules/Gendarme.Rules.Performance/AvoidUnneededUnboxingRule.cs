@@ -197,6 +197,15 @@ namespace Gendarme.Rules.Performance {
 			unboxed.Clear ();
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 #if false
 		public void Bitmask ()
 		{

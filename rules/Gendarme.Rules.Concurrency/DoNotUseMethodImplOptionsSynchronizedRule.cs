@@ -89,5 +89,13 @@ namespace Gendarme.Rules.Concurrency {
 			Runner.Report (method, severity, Confidence.Total);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

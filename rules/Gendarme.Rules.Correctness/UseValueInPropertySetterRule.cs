@@ -139,5 +139,13 @@ namespace Gendarme.Rules.Correctness {
 			Runner.Report (method, Severity.High, Confidence.Total);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

@@ -93,5 +93,13 @@ namespace Gendarme.Rules.Security.Cas {
 			Runner.Report (method, Severity.Audit, Confidence.Total);
 			return RuleResult.Failure;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

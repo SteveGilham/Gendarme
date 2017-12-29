@@ -133,6 +133,14 @@ namespace Gendarme.Rules.Maintainability {
 			return RuleResult.Failure;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		public Severity GetCyclomaticComplexitySeverity(int cc)
 		{
 			// 25 <= CC < 50 is not good but not catastrophic either

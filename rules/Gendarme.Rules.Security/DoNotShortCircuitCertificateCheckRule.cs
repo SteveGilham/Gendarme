@@ -211,5 +211,13 @@ namespace Gendarme.Rules.Security {
 				return CheckCallback (method);
 			return RuleResult.Success;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

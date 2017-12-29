@@ -148,5 +148,13 @@ namespace Gendarme.Rules.BadPractice {
 
 			return Runner.CurrentRuleResult;
 		}
+
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
 	}
 }

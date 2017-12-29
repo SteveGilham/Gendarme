@@ -600,6 +600,14 @@ namespace Test.Rules.Maintainability {
 			{
 				throw new NotImplementedException ();
 			}
+
+			public bool SkipGeneratedGuiMethods
+			{
+				get
+				{
+					return false;
+				}
+			}
 		}
 
 		[Test]

@@ -171,6 +171,14 @@ namespace Gendarme.Rules.Naming {
 			return RuleResult.Failure;
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		private static string GetSuggestionMethodName (MemberReference method, string name, int posFound)
 		{
 			string method_name = method.Name;

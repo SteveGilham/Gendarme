@@ -157,6 +157,14 @@ namespace Gendarme.Rules.BadPractice {
 			return base.CheckMethod (method);
 		}
 
+		public bool SkipGeneratedGuiMethods
+		{
+			get
+			{
+				return true;
+			}
+		}
+
 		protected override void Report (MethodDefinition method, Instruction ins)
 		{
 			string msg = String.Format (CultureInfo.InvariantCulture, "Replace null with {0}.", SuggestReturnType ());
