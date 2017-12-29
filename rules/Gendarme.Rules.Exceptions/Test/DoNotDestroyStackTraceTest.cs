@@ -1,5 +1,5 @@
 //
-// Unit Test for DontDestroyStackTraceTest Rule
+// Unit Test for DoNotDestroyStackTraceTest Rule
 //
 // Copyright (C) 2008 Novell, Inc (http://www.novell.com)
 //
@@ -49,7 +49,7 @@ namespace Test.Rules.Exceptions {
 			}
 			catch (Exception ex) {
 				// Throw exception immediately.
-				// This should trip the DontDestroyStackTrace rule.
+				// This should trip the DoNotDestroyStackTrace rule.
 				throw ex;
 			}
 		}
@@ -73,7 +73,7 @@ namespace Test.Rules.Exceptions {
 					Console.WriteLine (j);
 				}
 
-				// This should trip the DontDestroyStackTrace rule, because we're
+				// This should trip the DoNotDestroyStackTrace rule, because we're
 				// throwing the original exception.
 				throw ex;
 			}
@@ -93,7 +93,7 @@ namespace Test.Rules.Exceptions {
 			catch (Exception ex) {
 				// avoid compiler warning
 				Assert.IsNotNull (ex);
-				// This should NOT trip the DontDestroyStackTrace rule, because we're
+				// This should NOT trip the DoNotDestroyStackTrace rule, because we're
 				// rethrowing the original exception.
 				throw;
 			}
@@ -119,7 +119,7 @@ namespace Test.Rules.Exceptions {
 					j += 10;
 					Console.WriteLine (j);
 					if ((i % 1234) > 56) {
-						// This should trip DontDestroyStackTraceRule, because we're
+						// This should trip DoNotDestroyStackTraceRule, because we're
 						// throwing the original exception.
 						throw ex;
 					}
@@ -156,7 +156,7 @@ namespace Test.Rules.Exceptions {
 					}
 				}
 
-				// This should trip the DontDestroyStackTrace rule, because we're
+				// This should trip the DoNotDestroyStackTrace rule, because we're
 				// throwing the original exception.
 				throw ex;
 			}

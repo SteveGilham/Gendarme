@@ -1,5 +1,5 @@
 // 
-// Unit tests for AvoidUnsealedUninheritedInternalClassesRule
+// Unit tests for AvoidUnsealedUninheritedInternalTypeRule
 //
 // Authors:
 //	Scott Peterson <lunchtimemama@gmail.com>

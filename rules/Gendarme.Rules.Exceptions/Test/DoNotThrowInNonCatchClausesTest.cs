@@ -65,7 +65,7 @@ namespace Test.Rules.Exceptions {
 			}
 		}
 
-		// copied from DontDestroyStackTraceTest since CSC compiles the HandlerEnd as past the method offset
+		// copied from DoNotDestroyStackTraceTest since CSC compiles the HandlerEnd as past the method offset
 		void ThrowCatchThrowNew ()
 		{
 			try {

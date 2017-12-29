@@ -69,8 +69,8 @@
     <Compile Include="AvoidThrowingBasicExceptionsTest.cs" />
     <Compile Include="DoNotThrowInUnexpectedLocationTest.cs" />
     <Compile Include="DoNotThrowReservedExceptionTest.cs" />
-    <Compile Include="DontSwallowErrorsCatchingNonspecificExceptionsTest.cs" />
-    <Compile Include="DontDestroyStackTraceTest.cs" />
+    <Compile Include="DoNotSwallowErrorsCatchingNonSpecificExceptionsRule.cs" />
+    <Compile Include="DoNotDestroyStackTraceTest.cs" />
     <Compile Include="ExceptionShouldBeVisibleTest.cs" />
     <Compile Include="InstantiateArgumentExceptionCorrectlyTest.cs" />
     <Compile Include="MissingExceptionConstructorsTest.cs" />

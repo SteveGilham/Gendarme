@@ -75,7 +75,7 @@
     <Compile Include="DoNotDestroyStackTraceRule.cs" />
     <Compile Include="DoNotThrowInUnexpectedLocationRule.cs" />
     <Compile Include="DoNotThrowReservedExceptionRule.cs" />
-    <Compile Include="DontSwallowErrorsCatchingNonspecificExceptionsRule.cs" />
+    <Compile Include="DoNotSwallowErrorsCatchingNonSpecificExceptionsRule.cs" />
     <Compile Include="ExceptionShouldBeVisibleRule.cs" />
     <Compile Include="Impl\ExecutionBlock.cs" />
     <Compile Include="Impl\ExecutionPath.cs" />

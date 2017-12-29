@@ -52,7 +52,7 @@
 		<rules include="*" exclude="AvoidConstructorsInStaticTypesRule | MethodCanBeMadeStaticRule | NullDerefRule" 
 			from="Gendarme.Rules.Correctness.dll"/>
 		<!-- no rule from Design is included in this set -->
-		<rules include="DontDestroyStackTraceRule" from="Gendarme.Rules.Exceptions.dll"/>
+		<rules include="DoNotDestroyStackTraceRule" from="Gendarme.Rules.Exceptions.dll"/>
 		<rules include="*" from="Gendarme.Rules.Interoperability.dll"/>
 		<!-- no rule from Naming is included in this set -->
 		<rules include="IDisposableWithDesctuctorWithoutSupressFinalizeRule | DontIgnoreMethodResultRule |

@@ -85,7 +85,7 @@
     <Compile Include="AvoidUninstantiatedInternalClassesRule.cs" />
     <Compile Include="AvoidUnneededCallsOnStringRule.cs" />
     <Compile Include="AvoidUnsealedConcreteAttributesRule.cs" />
-    <Compile Include="AvoidUnsealedUninheritedInternalClassesRule.cs" />
+    <Compile Include="AvoidUnsealedUninheritedInternalTypeRule.cs" />
     <Compile Include="AvoidUnusedParametersRule.cs" />
     <Compile Include="AvoidUnusedPrivateFieldsRule.cs" />
     <Compile Include="ConsiderCustomAccessorsForNonVisibleEventsRule.cs" />

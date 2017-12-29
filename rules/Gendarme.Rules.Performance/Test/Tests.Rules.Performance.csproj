@@ -84,7 +84,7 @@
     <Compile Include="AvoidUninstantiatedInternalClassesTest.cs" />
     <Compile Include="AvoidUnneededCallsOnStringTest.cs" />
     <Compile Include="AvoidUnsealedConcreteAttributesTest.cs" />
-    <Compile Include="AvoidUnsealedUninheritedInternalClassesTest.cs" />
+    <Compile Include="AvoidUnsealedUninheritedInternalTypeTest.cs" />
     <Compile Include="AvoidUnusedParametersTest.cs" />
     <Compile Include="AvoidUnusedPrivateFieldsTest.cs" />
     <Compile Include="CompareWithStringEmptyEfficientlyTest.cs" />

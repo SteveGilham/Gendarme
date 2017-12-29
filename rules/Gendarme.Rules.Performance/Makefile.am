@@ -17,7 +17,7 @@ rules_sources =  \
 	AvoidUnneededFieldInitializationRule.cs \
 	AvoidUnneededUnboxingRule.cs \
 	AvoidUnsealedConcreteAttributesRule.cs \
-	AvoidUnsealedUninheritedInternalClassesRule.cs \
+	AvoidUnsealedUninheritedInternalTypeRule.cs \
 	AvoidUnusedParametersRule.cs \
 	AvoidUnusedPrivateFieldsRule.cs \
 	CompareWithStringEmptyEfficientlyRule.cs \
@@ -62,7 +62,7 @@ tests_sources = \
 	AvoidReturningArraysOnPropertiesTest.cs \
 	AvoidUnsealedConcreteAttributesTest.cs \
 	UseIsOperatorTest.cs \
-	AvoidUnsealedUninheritedInternalClassesTest.cs \
+	AvoidUnsealedUninheritedInternalTypeTest.cs \
 	OverrideValueTypeDefaultsTest.cs \
 	ImplementEqualsTypeTest.cs \
 	MathMinMaxCandidateTest.cs \

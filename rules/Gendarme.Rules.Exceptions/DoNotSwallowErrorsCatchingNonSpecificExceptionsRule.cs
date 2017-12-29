@@ -1,5 +1,5 @@
 //
-// DontSwallowErrorsCatchingNonspecificExceptions class
+// DoNotSwallowErrorsCatchingNonSpecificExceptionsRule class
 //
 // Authors:
 //	Néstor Salceda <nestor.salceda@gmail.com>

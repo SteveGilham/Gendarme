@@ -7,7 +7,7 @@ rules_sources =  \
 	DoNotThrowInNonCatchClausesRule.cs \
 	DoNotThrowInUnexpectedLocationRule.cs \
 	DoNotThrowReservedExceptionRule.cs \
-	DontSwallowErrorsCatchingNonspecificExceptionsRule.cs \
+	DoNotSwallowErrorsCatchingNonSpecificExceptionsRule.cs \
 	ExceptionShouldBeVisibleRule.cs \
 	Impl/ExecutionBlock.cs \
 	Impl/ExecutionPath.cs \
@@ -22,8 +22,8 @@ tests_sources = \
 	AvoidThrowingBasicExceptionsTest.cs \
 	DoNotThrowInNonCatchClausesTest.cs \
 	DoNotThrowInUnexpectedLocationTest.cs \
-	DontDestroyStackTraceTest.cs \
-	DontSwallowErrorsCatchingNonspecificExceptionsTest.cs \
+	DoNotDestroyStackTraceTest.cs \
+	DoNotSwallowErrorsCatchingNonSpecificExceptionsTest.cs \
 	DoNotThrowReservedExceptionTest.cs \
 	ExceptionShouldBeVisibleTest.cs \
 	MissingExceptionConstructorsTest.cs \

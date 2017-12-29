@@ -1,5 +1,5 @@
 //
-// Unit Test for DontSwallowErrorsCatchingNonspecificExceptions Rule
+// Unit Test for DoNotSwallowErrorsCatchingNonSpecificExceptionsRule Rule
 //
 // Authors:
 //	Néstor Salceda <nestor.salceda@gmail.com>

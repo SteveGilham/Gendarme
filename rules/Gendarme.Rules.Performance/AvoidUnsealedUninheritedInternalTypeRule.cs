@@ -1,5 +1,5 @@
 // 
-// Gendarme.Rules.Performance.AvoidUnsealedUninheritedInternalClassesRule
+// Gendarme.Rules.Performance.AvoidUnsealedUninheritedInternalTypeRule
 //
 // Authors:
 //	Scott Peterson <lunchtimemama@gmail.com>
