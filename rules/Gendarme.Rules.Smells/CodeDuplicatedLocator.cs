@@ -74,11 +74,14 @@ namespace Gendarme.Rules.Smells {
 
 		internal void CompareMethodAgainstTypeMethods (MethodDefinition current, TypeDefinition targetType)
 		{
-			if (CheckedTypes.Contains (targetType.Name)) 
+			if (CheckedTypes.Contains (targetType.Name) || current.IsGeneratedCode ())
 				return;
-			
+			bool isContructor = current.IsConstructor;
+
 			foreach (MethodDefinition target in targetType.Methods) {
-				if (target.IsConstructor || target.IsGeneratedCode ())
+				if (target.IsGeneratedCode ())
+					continue;
+				if (target.IsConstructor != isContructor)
 					continue;
 
 				Pattern duplicated = GetDuplicatedCode (current, target);
