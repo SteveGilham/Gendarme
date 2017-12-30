@@ -77,6 +77,34 @@ namespace Gendarme.Rules.Maintainability {
 	/// }
 	/// </code>
 	/// </example>
+	/// <example>
+	/// False positive:
+	/// <code>
+	/// public class JsonSimpleValue {
+	/// 	object value;
+	/// 	public void SetValue (int number)
+	/// 	{
+	/// 		value = number;
+	/// 	}
+	/// 	public void SetValue (bool boolean)
+	/// 	{
+	/// 		value = boolean;
+	/// 	}
+	/// 	public void SetValue (string text)
+	/// 	{
+	/// 		value = text;
+	/// 	}
+	/// }
+	/// </code>
+	/// This code example is only the smallest (and most logical) example, when this rule is/should be fired.
+	/// But there is also a reason, why the rule should not be fired. It fires only for the 'string' with
+	/// degradation to System.Object. The first reason why this rule should not be fired is the degradation
+	/// to the "all parent" class 'object'. When this would be true, the rule should fire also for integer,
+	/// boolean and structure types, not it does not. The second reason is, that this code (including with
+	/// function with identical names but different arguments) limit the possible values to specific types
+	/// that are allowed and therefore a 'parent type' seems like an unfounded request to use less specific
+	/// type as function parameter.
+	/// </example>
 	/// <remarks>This rule is available since Gendarme 2.0</remarks>
 
 	[Problem ("This method has a parameter whose type is more specialized than necessary. This can make it difficult to reuse the method in other contexts.")]
@@ -497,10 +525,62 @@ namespace Gendarme.Rules.Maintainability {
 				int delta = GetActualTypeDepth (parameter.ParameterType) - depths_least [i];
 				if (delta > 0) {
 					string message = GetSuggestionMessage (parameter);
-					Severity sev = (delta < 3) ? Severity.Medium : Severity.High;
-					Runner.Report (method, sev, Confidence.High, message);
+					Severity sev;
+					Confidence confidence;
+					if (InheritsOnlyFromObject (delta,parameter))
+						delta -= 1;
+					if (HasSiblings (method))
+						delta -= 1;
+					switch (delta)
+					{
+					case -1:
+						confidence = Confidence.Low;
+						sev = Severity.Audit;
+						break;
+
+					case 0:
+						confidence = Confidence.Normal;
+						sev = Severity.Low;
+						break;
+
+					case 1:
+					case 2:
+					case 3:
+						confidence = Confidence.High;
+						sev = Severity.Medium;
+						break;
+
+					default:
+						if (delta < 0){
+							confidence = Confidence.Low;
+							sev = Severity.Audit;
+						} else {
+							confidence = Confidence.High;
+							sev = Severity.High;
+						}
+						break;
+					}
+					Runner.Report (method, sev, confidence, message);
 				}
 			}
+		}
+
+		private static bool HasSiblings(MethodReference method)
+		{
+			int siblingsCount = 0;
+			bool? isStatic = method.Resolve()?.IsStatic;
+			TypeDefinition type = method.DeclaringType?.Resolve();
+			foreach (MethodDefinition sibling in type.Methods) {
+				if ((sibling.IsStatic == isStatic) && string.Equals(method.Name, sibling.Name, StringComparison.Ordinal))
+					siblingsCount++;
+			}
+			return (siblingsCount > 0);
+		}
+
+		private bool InheritsOnlyFromObject (int delta, ParameterDefinition parameter)
+		{
+			return ((delta == 1) && string.Equals(types_least[parameter.Index].FullName, "System.Object", StringComparison.Ordinal));
+			//return !type.HasInterfaces && type.BaseType.IsNamed ("System", "Object");
 		}
 
 		private string GetSuggestionMessage (ParameterReference parameter)
