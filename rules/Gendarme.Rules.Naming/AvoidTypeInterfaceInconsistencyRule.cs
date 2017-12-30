@@ -92,15 +92,20 @@ namespace Gendarme.Rules.Naming {
 			if (name [0] != 'I')
 				return RuleResult.DoesNotApply;
 
-			string nspace = type.Namespace;
-			TypeDefinition candidate = type.Module.GetType (nspace, name.Substring (1));
-			if (candidate != null) {
-				// does Foo implement IFoo ?
-				if (!candidate.Implements (nspace, name)) {
-					Runner.Report (candidate, Severity.High, Confidence.High);
-				}
+			TypeDefinition candidate = type.Module.GetType (RemoveInterfacePrefix (type));
+
+			// does Foo implement IFoo ?
+			if ((candidate != null) && !candidate.Implements (type.FullName)) {
+				Runner.Report (candidate, Severity.High, Confidence.High);
 			}
 			return RuleResult.Success;
+		}
+
+		private string RemoveInterfacePrefix(TypeDefinition type)
+		{
+			string name = type.FullName;
+			name = name.Remove(name.Length - type.Name.Length, 1);
+			return (name);
 		}
 	}
 }

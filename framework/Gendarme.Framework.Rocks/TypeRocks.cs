@@ -283,6 +283,53 @@ namespace Gendarme.Framework.Rocks {
 		}
 
 		/// <summary>
+		/// Recursively check if the type implemented a specified interface. Note that it is possible
+		/// that we might now be able to know everything that a type implements since the assembly 
+		/// where the information resides could be unavailable. False is returned in this case.
+		/// </summary>
+		/// <param name="self">The TypeDefinition on which the extension method can be called.</param>
+		/// <param name="iface">Full name (including declaring type and namespace) of the interface.</param>
+		/// <param name="name">The name of the interface to be matched</param>
+		/// <returns>True if we found that the type implements the interface, False otherwise (either it
+		/// does not implement it, or we could not find where it does).</returns>
+		public static bool Implements (this TypeReference self, string interfaceFullName)
+		{
+			if (string.IsNullOrEmpty(interfaceFullName))
+				throw new ArgumentNullException (nameof(interfaceFullName));
+			if (self == null)
+				return false;
+
+			TypeDefinition type = self.Resolve ();
+			if (type == null)
+				return false;	// not enough information available
+
+			// special case, check if we implement ourselves
+			if (type.IsInterface && type.IsNamed (interfaceFullName))
+				return true;
+
+			return Implements (type, interfaceFullName);
+		}
+
+		private static bool Implements (TypeDefinition type, string interfaceFullName)
+		{
+			while (type != null) {
+				// does the type implements it itself
+				if (type.HasInterfaces) {
+					foreach (TypeReference iface in type.Interfaces) {
+						if (iface.IsNamed (interfaceFullName))
+							return true;
+						//if not, then maybe one of its parent interfaces does
+						if (Implements (iface.Resolve (), interfaceFullName))
+							return true;
+					}
+				}
+
+				type = type.BaseType != null ? type.BaseType.Resolve () : null;
+			}
+			return false;
+		}
+
+		/// <summary>
 		/// Check if the type inherits from the specified type. Note that it is possible that
 		/// we might not be able to know the complete inheritance chain since the assembly 
 		/// where the information resides could be unavailable.
