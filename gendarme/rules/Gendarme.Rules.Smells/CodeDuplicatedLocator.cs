@@ -95,12 +95,13 @@ namespace Gendarme.Rules.Smells
       Justification = "TODO: Defect constructor message not localized")]
     internal void CompareMethodAgainstTypeMethods(MethodDefinition current, TypeDefinition targetType)
     {
-      if (CheckedTypes.Contains(targetType.Name))
-        return;
+      if (CheckedTypes.Contains(targetType.Name) || current.IsGeneratedCode()) return;
+
+      bool isContructor = current.IsConstructor;
 
       foreach (MethodDefinition target in targetType.Methods)
       {
-        if (target.IsConstructor || target.IsGeneratedCode())
+        if (target.IsGeneratedCode() || (target.IsConstructor != isContructor))
           continue;
 
         Pattern duplicated = GetDuplicatedCode(current, target);
