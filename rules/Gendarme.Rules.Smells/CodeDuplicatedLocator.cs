@@ -86,10 +86,23 @@ namespace Gendarme.Rules.Smells {
 
 				Pattern duplicated = GetDuplicatedCode (current, target);
 				if (duplicated != null && duplicated.Count > 0) {
-					parent_rule.Runner.Report (current, duplicated[0], Severity.High, Confidence.Normal, 
+					Severity severity = GetSeverityFromPaternCount(duplicated.Count);
+					parent_rule.Runner.Report (current, duplicated[0], severity, ((duplicated.Count < 4) ? Confidence.Low : Confidence.Normal),
 						String.Format (CultureInfo.InvariantCulture, "Duplicated code with {0}", target.GetFullName ()));
 				}
 			}
+		}
+
+		private Severity GetSeverityFromPaternCount(int count)
+		{
+			if (count < 2)
+				return Severity.Audit;
+			else if (count < 5)
+				return Severity.Low;
+			else if (count < 7)
+				return Severity.Medium;
+			else
+				return Severity.High;
 		}
 
 		bool CanCompareMethods (MethodDefinition current, MethodDefinition target)
@@ -122,17 +135,20 @@ namespace Gendarme.Rules.Smells {
 			InstructionMatcher.Current = current;
 			InstructionMatcher.Target = target;
 
+			Pattern maxPattern = null;
+
 			foreach (Pattern pattern in patterns) {
 				if (pattern.IsCompilerGeneratedBlock || !pattern.IsExtractableToMethodBlock)
 					continue;
 
 				if (InstructionMatcher.Match (pattern, target.Body.Instructions)) {
 					WriteToOutput (current, target, pattern);
-					return pattern;
+					if ((maxPattern == null) || (maxPattern.Count < pattern.Count))
+						maxPattern = pattern;
 				}
 			}
 
-			return null;
+			return maxPattern;
 		}
 		
 
