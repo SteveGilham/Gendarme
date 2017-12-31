@@ -21,6 +21,4 @@ using System.Security.Permissions;
 [assembly: CLSCompliant (false)]
 [assembly: ComVisible (false)]
 
-#if RELEASE
-[assembly: AssemblyVersion ("2.11.0.0")]
-#endif
+[assembly: AssemblyVersion ("2.11.1.0")]
