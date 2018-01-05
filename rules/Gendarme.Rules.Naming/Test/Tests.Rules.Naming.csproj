@@ -64,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvoidDeepNamespaceHierarchyTest.cs" />
+    <Compile Include="AvoidRedundancyInMethodNameTest.cs" />
+    <Compile Include="AvoidRedundancyInTypeNameTest.cs" />
     <Compile Include="AvoidTypeInterfaceInconsistencyTest.cs" />
     <Compile Include="DetectNonAlphaNumericsInTypeNamesTest.cs" />
     <Compile Include="DoNotPrefixEventsWithAfterOrBeforeTest.cs" />

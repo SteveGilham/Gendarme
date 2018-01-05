@@ -73,6 +73,7 @@
     <Compile Include="AvoidArgumentExceptionDefaultConstructorRule.cs" />
     <Compile Include="AvoidThrowingBasicExceptionsRule.cs" />
     <Compile Include="DoNotDestroyStackTraceRule.cs" />
+    <Compile Include="DoNotThrowInNonCatchClausesRule.cs" />
     <Compile Include="DoNotThrowInUnexpectedLocationRule.cs" />
     <Compile Include="DoNotThrowReservedExceptionRule.cs" />
     <Compile Include="DoNotSwallowErrorsCatchingNonSpecificExceptionsRule.cs" />

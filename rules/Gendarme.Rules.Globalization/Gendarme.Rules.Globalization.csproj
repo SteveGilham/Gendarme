@@ -65,6 +65,9 @@
       <Link>AssemblyStaticInfo.cs</Link>
     </Compile>
     <Compile Include="AvoidUnusedInternalResourceRule.cs" />
+    <Compile Include="PreferIFormatProviderOverrideRule.cs" />
+    <Compile Include="PreferOverrideBaseRule.cs" />
+    <Compile Include="PreferStringComparisonOverrideRule.cs" />
     <Compile Include="SatelliteResourceMismatchRule.cs" />
   </ItemGroup>
   <ItemGroup>

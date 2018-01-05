@@ -81,6 +81,7 @@
     <None Include="dataflow\CFGEdge.cs" />
     <None Include="dataflow\Dataflow.cs" />
     <None Include="dataflow\IDataflowAnalysis.cs" />
+    <Compile Include="DeclareEventsExplicitlyRule.cs" />
     <Compile Include="DoNotRecurseInEqualityRule.cs" />
     <Compile Include="DoNotRoundIntegersRule.cs" />
     <Compile Include="DontCompareWithNaNRule.cs" />

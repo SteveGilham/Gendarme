@@ -103,6 +103,8 @@
       <DependentUpon>PublicResource.resx</DependentUpon>
     </Compile>
     <Compile Include="SatelliteResourceMismatchTest.cs" />
+    <Compile Include="PreferIFormatProviderOverrideTest.cs" />
+    <Compile Include="PreferStringComparisonOverrideTest.cs" />
     <Compile Include="Resource.Designer.cs">
       <DependentUpon>Resource.resx</DependentUpon>
       <AutoGen>True</AutoGen>

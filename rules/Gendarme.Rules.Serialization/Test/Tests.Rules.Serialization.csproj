@@ -68,6 +68,7 @@
     <Compile Include="ImplementISerializableCorrectlyTest.cs" />
     <Compile Include="MarkAllNonSerializableFieldsTest.cs" />
     <Compile Include="UseCorrectSignatureForSerializationMethodsTest.cs" />
+    <Compile Include="MarkEnumerationsAsSerializableTest.cs" />
     <Compile Include="MissingSerializableAttributeOnISerializableTypeTest.cs" />
     <Compile Include="MissingSerializationConstructorTest.cs" />
   </ItemGroup>

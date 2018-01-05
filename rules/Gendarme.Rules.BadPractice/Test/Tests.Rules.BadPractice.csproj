@@ -65,12 +65,14 @@
   <ItemGroup>
     <Compile Include="AvoidAssemblyVersionMismatchTest.cs" />
     <Compile Include="AvoidCallingProblematicMethodsTest.cs" />
+    <Compile Include="AvoidNullCheckWithAsOperatorTest.cs" />
     <Compile Include="AvoidVisibleConstantFieldTest.cs" />
     <Compile Include="CheckNewExceptionWithoutThrowingTest.cs" />
     <Compile Include="CheckNewThreadWithoutStartTest.cs" />
     <Compile Include="CloneMethodShouldNotReturnNullTest.cs" />
     <Compile Include="ConstructorShouldNotCallVirtualMethodsTest.cs" />
     <Compile Include="DisableDebuggingCodeTest.cs" />
+    <Compile Include="DoNotDecreaseVisibilityTest.cs" />
     <Compile Include="DoNotForgetNotImplementedMethodsTest.cs" />
     <Compile Include="DoNotUseEnumIsAssignableFromTest.cs" />
     <Compile Include="DoNotUseGetInterfaceToCheckAssignabilityTest.cs" />

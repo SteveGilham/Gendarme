@@ -116,6 +116,7 @@
     <Compile Include="UseFlagsAttributeRule.cs" />
     <Compile Include="UsingCloneWithoutImplementingICloneableRule.cs" />
     <Compile Include="ConsiderAddingInterfaceRule.cs" />
+    <Compile Include="DoNotDeclareSettersOnCollectionPropertiesRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\cecil\Mono.Cecil.csproj">

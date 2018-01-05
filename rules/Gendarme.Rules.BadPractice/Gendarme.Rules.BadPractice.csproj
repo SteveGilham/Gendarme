@@ -70,10 +70,12 @@
     </Compile>
     <Compile Include="AvoidAssemblyVersionMismatchRule.cs" />
     <Compile Include="AvoidCallingProblematicMethodsRule.cs" />
+    <Compile Include="AvoidNullCheckWithAsOperatorRule.cs" />
     <Compile Include="AvoidVisibleConstantFieldRule.cs" />
     <Compile Include="CheckNewExceptionWithoutThrowingRule.cs" />
     <Compile Include="CheckNewThreadWithoutStartRule.cs" />
     <Compile Include="CloneMethodShouldNotReturnNullRule.cs" />
+    <Compile Include="DoNotDecreaseVisibilityRule.cs" />
     <Compile Include="DoNotForgetNotImplementedMethodsRule.cs" />
     <Compile Include="ConstructorShouldNotCallVirtualMethodsRule.cs" />
     <Compile Include="DisableDebuggingCodeRule.cs" />

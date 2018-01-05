@@ -70,6 +70,7 @@
     <Compile Include="DoNotThrowInUnexpectedLocationTest.cs" />
     <Compile Include="DoNotThrowReservedExceptionTest.cs" />
     <Compile Include="DoNotSwallowErrorsCatchingNonSpecificExceptionsRule.cs" />
+    <Compile Include="DoNotThrowInNonCatchClausesTest.cs" />
     <Compile Include="DoNotDestroyStackTraceTest.cs" />
     <Compile Include="ExceptionShouldBeVisibleTest.cs" />
     <Compile Include="InstantiateArgumentExceptionCorrectlyTest.cs" />
