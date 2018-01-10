@@ -6,7 +6,7 @@ rules_sources =  \
 	AvoidEmptyInterfaceRule.cs \
 	AvoidMultidimensionalIndexerRule.cs \
 	AvoidPropertiesWithoutGetAccessorRule.cs \
-	AvoidPublicInstanceFieldsRule.cs \
+	AvoidVisibleFieldsRule.cs \
 	AvoidRefAndOutParametersRule.cs \
 	AvoidSmallNamespaceRule.cs \
 	AvoidVisibleNestedTypesRule.cs \
@@ -19,7 +19,7 @@ rules_sources =  \
 	DisposableTypesShouldHaveFinalizerRule.cs \
 	DoNotDeclareSettersOnCollectionPropertiesRule.cs \
 	DoNotDeclareVirtualMethodsInSealedTypeRule.cs \
-	DontDeclareProtectedFieldsInSealedClassRule.cs \
+	DoNotDeclareProtectedMembersInSealedTypeRule.cs \
 	EnsureSymmetryForOverloadedOperatorsRule.cs \
 	EnumeratorsShouldBeStronglyTypedRule.cs \
 	EnumsShouldDefineAZeroValueRule.cs \
@@ -27,7 +27,7 @@ rules_sources =  \
 	FinalizersShouldBeProtectedRule.cs \
 	FlagsShouldNotDefineAZeroValueRule.cs \
 	ImplementEqualsAndGetHashCodeInPairRule.cs \
-	ImplementIComparableCorreclyRule.cs \
+	ImplementIComparableCorrectlyRule.cs \
 	InternalNamespacesShouldNotExposeTypesRule.cs \
 	ListsAreStronglyTypedRule.cs \
 	MainShouldNotBePublicRule.cs \
@@ -49,7 +49,7 @@ rules_sources =  \
 	TypesShouldBeInsideNamespacesRule.cs \
 	UseFlagsAttributeRule.cs \
 	UseCorrectDisposeSignaturesRule.cs \
-	UsingCloneWithoutImplementingICloneableRule.cs
+	ImplementICloneableCorrectlyRule.cs
 
 EXTRA_TESTS_OPTIONS += -d:CODE_ANALYSIS
 
@@ -59,7 +59,7 @@ tests_sources = \
 	AvoidEmptyInterfaceTest.cs \
 	AvoidMultidimensionalIndexerTest.cs \
 	AvoidPropertiesWithoutGetAccessorTest.cs \
-	AvoidPublicInstanceFieldsTest.cs \
+	AvoidVisibleFieldsTest.cs \
 	AvoidRefAndOutParametersTest.cs \
 	AvoidSmallNamespaceTest.cs \
 	AvoidVisibleNestedTypesTest.cs \
@@ -71,7 +71,7 @@ tests_sources = \
 	DisposableTypesShouldHaveFinalizerTest.cs \
 	DoNotDeclareSettersOnCollectionPropertiesTest.cs \
 	DoNotDeclareVirtualMethodsInSealedTypeTest.cs \
-	DontDeclareProtectedFieldsInSealedClassTest.cs \
+	DoNotDeclareProtectedMembersInSealedTypeTest.cs \
 	EnsureSymmetryForOverloadedOperatorsTest.cs \
 	EnumeratorsShouldBeStronglyTypedTest.cs \
 	EnumsShouldDefineAZeroValueTest.cs \
@@ -80,7 +80,7 @@ tests_sources = \
 	FlagsShouldNotDefineAZeroValueTest.cs \
 	GlobalSuppressions.cs \
 	ImplementEqualsAndGetHashCodeInPairTest.cs \
-	ImplementIComparableCorreclyTest.cs \
+	ImplementIComparableCorrectlyTest.cs \
 	InternalNamespacesShouldNotExposeTypesTest.cs \
 	ListsAreStronglyTypedTest.cs \
 	MainShouldNotBePublicTest.cs \
@@ -100,4 +100,4 @@ tests_sources = \
 	TypesShouldBeInsideNamespacesTest.cs \
 	UseFlagsAttributeTest.cs \
 	UseCorrectDisposeSignaturesTest.cs \
-	UsingCloneWithoutImplementingICloneableTest.cs
+	ImplementICloneableCorrectlyTest.cs

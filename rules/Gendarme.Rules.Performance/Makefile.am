@@ -20,11 +20,11 @@ rules_sources =  \
 	AvoidUnsealedUninheritedInternalTypeRule.cs \
 	AvoidUnusedParametersRule.cs \
 	AvoidUnusedPrivateFieldsRule.cs \
-	CompareWithStringEmptyEfficientlyRule.cs \
+	CompareWithEmptyStringEfficientlyRule.cs \
 	ConsiderCustomAccessorsForNonVisibleEventsRule.cs \
-	DontIgnoreMethodResultRule.cs \
-	EmptyDestructorRule.cs \
-	IDisposableWithDestructorWithoutSuppressFinalizeRule.cs \
+	DoNotIgnoreMethodResultRule.cs \
+	RemoveUnneededFinalizerRule.cs \
+	UseSuppressFinalizeOnIDisposableTypeWithFinalizerRule.cs \
 	ImplementEqualsTypeRule.cs \
 	MathMinMaxCandidateRule.cs \
 	OverrideValueTypeDefaultsRule.cs \
@@ -47,18 +47,18 @@ tests_sources = \
 	AvoidRepetitiveCallsToPropertiesTest.cs \
 	AvoidUnnecessaryOverridesTest.cs \
 	AvoidUnneededFieldInitializationTest.cs \
-	EmptyDestructorTest.cs \
+	RemoveUnneededFinalizerTest.cs \
 	GlobalSuppressions.cs \
-	IDisposableWithDestructorWithoutSuppressFinalizeTest.cs \
+	UseSuppressFinalizeOnIDisposableTypeWithFinalizerTest.cs \
 	UseStringEmptyTest.cs \
 	UseTypeEmptyTypesTest.cs \
 	AvoidUnusedParametersTest.cs \
-	CompareWithStringEmptyEfficientlyTest.cs \
+	CompareWithEmptyStringEfficientlyTest.cs \
 	AvoidMethodWithLargeMaximumStackSizeTest.cs \
 	AvoidUncalledPrivateCodeTest.cs \
 	AvoidUnneededCallsOnStringTest.cs \
 	AvoidUninstantiatedInternalClassesTest.cs \
-	DontIgnoreMethodResultTest.cs \
+	DoNotIgnoreMethodResultTest.cs \
 	AvoidReturningArraysOnPropertiesTest.cs \
 	AvoidUnsealedConcreteAttributesTest.cs \
 	UseIsOperatorTest.cs \

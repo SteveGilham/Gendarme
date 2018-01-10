@@ -76,7 +76,7 @@
     <Compile Include="DoNotForgetNotImplementedMethodsTest.cs" />
     <Compile Include="DoNotUseEnumIsAssignableFromTest.cs" />
     <Compile Include="DoNotUseGetInterfaceToCheckAssignabilityTest.cs" />
-    <Compile Include="EqualShouldHandleNullArgTest.cs" />
+    <Compile Include="EqualsShouldHandleNullArgTest.cs" />
     <Compile Include="GetEntryAssemblyMayReturnNullTest.cs" />
     <Compile Include="ObsoleteMessagesShouldNotBeEmptyTest.cs" />
     <Compile Include="OnlyUseDisposeForIDisposableTypesTest.cs" />
@@ -85,7 +85,7 @@
     <Compile Include="PreferSafeHandleTest.cs" />
     <Compile Include="PreferTryParseTest.cs" />
     <Compile Include="ReplaceIncompleteOddnessCheckTest.cs" />
-    <Compile Include="ToStringReturnsNullTest.cs" />
+    <Compile Include="ToStringShouldNotReturnNullTest.cs" />
     <Compile Include="UseFileOpenOnlyWithFileAccessTest.cs" />
   </ItemGroup>
   <ItemGroup>

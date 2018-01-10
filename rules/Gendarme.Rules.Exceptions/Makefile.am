@@ -14,7 +14,7 @@ rules_sources =  \
 	Impl/ExecutionPathFactory.cs \
 	InstantiateArgumentExceptionCorrectlyRule.cs \
 	MissingExceptionConstructorsRule.cs \
-	NewExceptionRule.cs \
+	NewExceptionsRule.cs \
 	UseObjectDisposedExceptionRule.cs
 
 tests_sources = \

@@ -14,7 +14,7 @@ rules_sources =  \
 	DoNotForgetNotImplementedMethodsRule.cs \
 	DoNotUseEnumIsAssignableFromRule.cs \
 	DoNotUseGetInterfaceToCheckAssignabilityRule.cs \
-	EqualShouldHandleNullArgRule.cs \
+	EqualsShouldHandleNullArgRule.cs \
 	GetEntryAssemblyMayReturnNullRule.cs \
 	ObsoleteMessagesShouldNotBeEmptyRule.cs \
 	OnlyUseDisposeForIDisposableTypesRule.cs \
@@ -24,7 +24,7 @@ rules_sources =  \
 	PreferSafeHandleRule.cs \
 	ReplaceIncompleteOddnessCheckRule.cs \
 	ReturnNullRule.cs \
-	ToStringReturnsNullRule.cs \
+	ToStringShouldNotReturnNullRule.cs \
 	UseFileOpenOnlyWithFileAccessRule.cs
 
 tests_sources = \
@@ -41,7 +41,7 @@ tests_sources = \
 	DoNotUseEnumIsAssignableFromTest.cs \
 	DoNotUseGetInterfaceToCheckAssignabilityTest.cs \
 	DisableDebuggingCodeTest.cs \
-	EqualShouldHandleNullArgTest.cs \
+	EqualsShouldHandleNullArgTest.cs \
 	GetEntryAssemblyMayReturnNullTest.cs \
 	ObsoleteMessagesShouldNotBeEmptyTest.cs \
 	OnlyUseDisposeForIDisposableTypesTest.cs \
@@ -50,5 +50,5 @@ tests_sources = \
 	PreferTryParseTest.cs \
 	PreferSafeHandleTest.cs \
 	ReplaceIncompleteOddnessCheckTest.cs \
-	ToStringReturnsNullTest.cs \
+	ToStringShouldNotReturnNullTest.cs \
 	UseFileOpenOnlyWithFileAccessTest.cs

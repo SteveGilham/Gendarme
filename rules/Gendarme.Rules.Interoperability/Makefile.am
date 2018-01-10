@@ -3,7 +3,7 @@ include ../common.make
 rules_sources =  \
 	CentralizePInvokesIntoNativeMethodsTypeRule.cs \
 	DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule.cs \
-	DoNotCastIntPtrToInt32Rule.cs \
+	DoNotAssumeIntPtrSizeRuleRule.cs \
 	GetLastErrorMustBeCalledRightAfterPInvokeRule.cs \
 	MarshalBooleansInPInvokeDeclarationsRule.cs \
 	MarshalStringsInPInvokeDeclarationsRule.cs \
@@ -14,7 +14,7 @@ EXTRA_TESTS_OPTIONS += -unsafe
 
 tests_sources = \
 	CentralizePInvokesIntoNativeMethodsTypeTest.cs \
-	DoNotCastIntPtrToInt32Test.cs \
+	DoNotAssumeIntPtrSizeRuleTest.cs \
 	GetLastErrorMustBeCalledRightAfterPInvokeTest.cs \
 	MarshalBooleansInPInvokeDeclarationsTest.cs \
 	MarshalStringsInPInvokeDeclarationsTest.cs \

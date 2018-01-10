@@ -1,5 +1,5 @@
 //
-// Gendarme.Rules.Performance.DontIgnoreMethodResultRule
+// Gendarme.Rules.Performance.DoNotIgnoreMethodResultRule
 //
 // Authors:
 //	Lukasz Knop <lukasz.knop@gmail.com>

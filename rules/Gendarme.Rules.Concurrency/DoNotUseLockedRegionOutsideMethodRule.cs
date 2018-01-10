@@ -1,5 +1,5 @@
 //
-// Gendarme.Rules.Concurrency.DontUseLockedRegionOutsideMethod.cs: 
+// Gendarme.Rules.Concurrency.DoNotUseLockedRegionOutsideMethodRule.cs: 
 //	looks for methods that enter an exclusive region but do not exit
 //	(this can imply deadlocks, or just a bad practice).
 //

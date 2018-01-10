@@ -83,7 +83,7 @@
     <Compile Include="Impl\ExecutionPathFactory.cs" />
     <Compile Include="InstantiateArgumentExceptionCorrectlyRule.cs" />
     <Compile Include="MissingExceptionConstructorsRule.cs" />
-    <Compile Include="NewExceptionRule.cs" />
+    <Compile Include="NewExceptionsRule.cs" />
     <Compile Include="UseObjectDisposedExceptionRule.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 //
-// Gendarme.Rules.Design.DoNotDeclareProtectedFieldsInSealedTypeRule
+// Gendarme.Rules.Design.DoNotDeclareProtectedMembersInSealedTypeRule
 //
 // Authors:
 //	Nidhi Rawal <sonu2404@gmail.com>

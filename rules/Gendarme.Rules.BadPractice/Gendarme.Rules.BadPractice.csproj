@@ -81,7 +81,7 @@
     <Compile Include="DisableDebuggingCodeRule.cs" />
     <Compile Include="DoNotUseEnumIsAssignableFromRule.cs" />
     <Compile Include="DoNotUseGetInterfaceToCheckAssignabilityRule.cs" />
-    <Compile Include="EqualShouldHandleNullArgRule.cs" />
+    <Compile Include="EqualsShouldHandleNullArgRule.cs" />
     <Compile Include="GetEntryAssemblyMayReturnNullRule.cs" />
     <Compile Include="ObsoleteMessagesShouldNotBeEmptyRule.cs" />
     <Compile Include="OnlyUseDisposeForIDisposableTypesRule.cs" />
@@ -91,7 +91,7 @@
     <Compile Include="PreferTryParseRule.cs" />
     <Compile Include="ReplaceIncompleteOddnessCheckRule.cs" />
     <Compile Include="ReturnNullRule.cs" />
-    <Compile Include="ToStringReturnsNullRule.cs" />
+    <Compile Include="ToStringShouldNotReturnNullRule.cs" />
     <Compile Include="UseFileOpenOnlyWithFileAccessRule.cs" />
   </ItemGroup>
   <ItemGroup>

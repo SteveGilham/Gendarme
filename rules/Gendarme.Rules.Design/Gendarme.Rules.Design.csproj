@@ -72,7 +72,7 @@
     <Compile Include="AttributeArgumentsShouldHaveAccessorsRule.cs" />
     <Compile Include="AvoidMultidimensionalIndexerRule.cs" />
     <Compile Include="AvoidPropertiesWithoutGetAccessorRule.cs" />
-    <Compile Include="AvoidPublicInstanceFieldsRule.cs" />
+    <Compile Include="AvoidVisibleFieldsRule.cs" />
     <Compile Include="AvoidRefAndOutParametersRule.cs" />
     <Compile Include="AvoidSmallNamespaceRule.cs" />
     <Compile Include="AvoidVisibleNestedTypesRule.cs" />
@@ -83,7 +83,7 @@
     <Compile Include="DefineAZeroValueRule.cs" />
     <Compile Include="DisposableTypesShouldHaveFinalizerRule.cs" />
     <Compile Include="DoNotDeclareVirtualMethodsInSealedTypeRule.cs" />
-    <Compile Include="DontDeclareProtectedFieldsInSealedClassRule.cs" />
+    <Compile Include="DoNotDeclareProtectedMembersInSealedTypeRule.cs" />
     <Compile Include="AvoidEmptyInterfaceRule.cs" />
     <Compile Include="EnsureSymmetryForOverloadedOperatorsRule.cs" />
     <Compile Include="EnumeratorsShouldBeStronglyTypedRule.cs" />
@@ -94,7 +94,7 @@
     <Compile Include="PreferUriOverStringRule.cs" />
     <Compile Include="StronglyTypeICollectionMembersRule.cs" />
     <Compile Include="ImplementEqualsAndGetHashCodeInPairRule.cs" />
-    <Compile Include="ImplementIComparableCorreclyRule.cs" />
+    <Compile Include="ImplementIComparableCorrectlyRule.cs" />
     <Compile Include="InternalNamespacesShouldNotExposeTypesRule.cs" />
     <Compile Include="ListsAreStronglyTypedRule.cs" />
     <Compile Include="MainShouldNotBePublicRule.cs" />
@@ -114,7 +114,7 @@
     <Compile Include="TypesShouldBeInsideNamespacesRule.cs" />
     <Compile Include="UseCorrectDisposeSignaturesRule.cs" />
     <Compile Include="UseFlagsAttributeRule.cs" />
-    <Compile Include="UsingCloneWithoutImplementingICloneableRule.cs" />
+    <Compile Include="ImplementICloneableCorrectlyRule.cs" />
     <Compile Include="ConsiderAddingInterfaceRule.cs" />
     <Compile Include="DoNotDeclareSettersOnCollectionPropertiesRule.cs" />
   </ItemGroup>

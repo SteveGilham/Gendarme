@@ -1,5 +1,5 @@
 //
-// Unit tests for ParameterNamesShouldMatchOverridenMethodTest
+// Unit tests for ParameterNamesShouldMatchOverriddenMethodRule
 //
 // Authors:
 //	Andreas Noever <andreas.noever@gmail.com>
@@ -74,7 +74,7 @@ namespace Test.Rules.Naming {
 	}
 
 	[TestFixture]
-	public class ParameterNamesShouldMatchOverridenMethodTest : MethodRuleTestFixture<ParameterNamesShouldMatchOverriddenMethodRule> {
+	public class ParameterNamesShouldMatchOverriddenMethodTest : MethodRuleTestFixture<ParameterNamesShouldMatchOverriddenMethodRule> {
 
 		class TestCase : BaseClass, ISomeInterface, ISomeInterface2, IEquatable<string> {
 			protected override void VirtualCorrect (int vc1, int vc2)

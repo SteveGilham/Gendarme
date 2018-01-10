@@ -87,12 +87,12 @@
     <Compile Include="AvoidUnsealedUninheritedInternalTypeTest.cs" />
     <Compile Include="AvoidUnusedParametersTest.cs" />
     <Compile Include="AvoidUnusedPrivateFieldsTest.cs" />
-    <Compile Include="CompareWithStringEmptyEfficientlyTest.cs" />
+    <Compile Include="CompareWithEmptyStringEfficientlyTest.cs" />
     <Compile Include="ConsiderCustomAccessorsForNonVisibleEventsTest.cs" />
-    <Compile Include="DontIgnoreMethodResultTest.cs" />
-    <Compile Include="EmptyDestructorTest.cs" />
+    <Compile Include="DoNotIgnoreMethodResultTest.cs" />
+    <Compile Include="RemoveUnneededFinalizerTest.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IDisposableWithDestructorWithoutSuppressFinalizeTest.cs" />
+    <Compile Include="UseSuppressFinalizeOnIDisposableTypeWithFinalizerTest.cs" />
     <Compile Include="ImplementEqualsTypeTest.cs" />
     <Compile Include="MathMinMaxCandidateTest.cs" />
     <Compile Include="OverrideValueTypeDefaultsTest.cs" />

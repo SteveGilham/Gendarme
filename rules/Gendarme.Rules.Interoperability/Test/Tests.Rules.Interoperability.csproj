@@ -67,7 +67,7 @@
   <ItemGroup>
     <Compile Include="CentralizePInvokesIntoNativeMethodsTypeTest.cs" />
     <Compile Include="DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs" />
-    <Compile Include="DoNotCastIntPtrToInt32Test.cs" />
+    <Compile Include="DoNotAssumeIntPtrSizeTest.cs" />
     <Compile Include="GetLastErrorMustBeCalledRightAfterPInvokeTest.cs" />
     <Compile Include="MarshalBooleansInPInvokeDeclarationsTest.cs" />
     <Compile Include="MarshalStringsInPInvokeDeclarationsTest.cs" />

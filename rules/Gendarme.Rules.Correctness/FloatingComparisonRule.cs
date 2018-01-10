@@ -1,5 +1,5 @@
 //
-// Gendarme.Rules.Correctness.FloatComparisonRule
+// Gendarme.Rules.Correctness.FloatingComparisonRule
 //
 // Authors:
 //	Lukasz Knop <lukasz.knop@gmail.com>

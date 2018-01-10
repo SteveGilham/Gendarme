@@ -1,5 +1,5 @@
 //
-// Gendarme.Rules.Design.AvoidPublicInstanceFieldsRule
+// Gendarme.Rules.Design.AvoidVisibleFieldsRule
 //
 // Authors:
 //	Adrian Tsai <adrian_tsai@hotmail.com>

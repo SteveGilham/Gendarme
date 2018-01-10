@@ -69,7 +69,7 @@
     <Compile Include="AttributeArgumentsShouldHaveAccessorsTest.cs" />
     <Compile Include="AvoidMultidimensionalIndexerTest.cs" />
     <Compile Include="AvoidPropertiesWithoutGetAccessorTest.cs" />
-    <Compile Include="AvoidPublicInstanceFieldsTest.cs" />
+    <Compile Include="AvoidVisibleFieldsTest.cs" />
     <Compile Include="AvoidRefAndOutParametersTest.cs" />
     <Compile Include="AvoidSmallNamespaceTest.cs" />
     <Compile Include="AvoidVisibleNestedTypesTest.cs" />
@@ -81,7 +81,7 @@
     <Compile Include="DoNotDeclareSettersOnCollectionPropertiesTest.cs" />
     <Compile Include="DisposableTypesShouldHaveFinalizerTest.cs" />
     <Compile Include="DoNotDeclareVirtualMethodsInSealedTypeTest.cs" />
-    <Compile Include="DontDeclareProtectedFieldsInSealedClassTest.cs" />
+    <Compile Include="DoNotDeclareProtectedMembersInSealedTypeTest.cs" />
     <Compile Include="AvoidEmptyInterfaceTest.cs" />
     <Compile Include="EnsureSymmetryForOverloadedOperatorsTest.cs" />
     <Compile Include="EnumeratorsShouldBeStronglyTypedTest.cs" />
@@ -93,7 +93,7 @@
     <Compile Include="PreferUriOverStringTest.cs" />
     <Compile Include="StronglyTypeICollectionMembersTest.cs" />
     <Compile Include="ImplementEqualsAndGetHashCodeInPairTest.cs" />
-    <Compile Include="ImplementIComparableCorreclyTest.cs" />
+    <Compile Include="ImplementIComparableCorrectlyTest.cs" />
     <Compile Include="InternalNamespacesShouldNotExposeTypesTest.cs" />
     <Compile Include="ListsAreStronglyTypedTest.cs" />
     <Compile Include="MainShouldNotBePublicTest.cs" />
@@ -111,7 +111,7 @@
     <Compile Include="TypesShouldBeInsideNamespacesTest.cs" />
     <Compile Include="UseCorrectDisposeSignaturesTest.cs" />
     <Compile Include="UseFlagsAttributeTest.cs" />
-    <Compile Include="UsingCloneWithoutImplementingICloneableTest.cs" />
+    <Compile Include="ImplementICloneableCorrectlyTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">

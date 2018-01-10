@@ -5,11 +5,11 @@ rules_sources =  \
 	AvoidRedundancyInMethodNameRule.cs \
 	AvoidRedundancyInTypeNameRule.cs \
 	AvoidTypeInterfaceInconsistencyRule.cs \
-	DetectNonAlphaNumericsInTypeNamesRule.cs \
+	AvoidNonAlphanumericIdentifierRule.cs \
 	DoNotPrefixEventsWithAfterOrBeforeRule.cs \
 	DoNotPrefixValuesWithEnumNameRule.cs \
 	DoNotUseReservedInEnumValueNamesRule.cs \
-	ParameterNamesShouldMatchOverridenMethodRule.cs \
+	ParameterNamesShouldMatchOverriddenMethodRule.cs \
 	UseCorrectCasingRule.cs \
 	UseCorrectPrefixRule.cs \
 	UseCorrectSuffixRule.cs \
@@ -22,11 +22,11 @@ tests_sources = \
 	AvoidRedundancyInMethodNameTest.cs \
 	AvoidRedundancyInTypeNameTest.cs \
 	AvoidTypeInterfaceInconsistencyTest.cs \
-	DetectNonAlphaNumericsInTypeNamesTest.cs \
+	AvoidNonAlphanumericIdentifierTest.cs \
 	DoNotPrefixEventsWithAfterOrBeforeTest.cs \
 	DoNotPrefixValuesWithEnumNameTest.cs \
 	DoNotUseReservedInEnumValueNamesTest.cs \
-	ParameterNamesShouldMatchOverridenMethodTest.cs \
+	ParameterNamesShouldMatchOverriddenMethodTest.cs \
 	UsePluralNameInEnumFlagsTest.cs \
 	UseSingularNameInEnumsUnlessAreFlagsTest.cs \
 	UseCorrectCasingTest.cs \

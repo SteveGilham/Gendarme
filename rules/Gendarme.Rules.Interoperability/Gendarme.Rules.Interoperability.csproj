@@ -70,7 +70,7 @@
     </Compile>
     <Compile Include="CentralizePInvokesIntoNativeMethodsTypeRule.cs" />
     <Compile Include="DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule.cs" />
-    <Compile Include="DoNotCastIntPtrToInt32Rule.cs" />
+    <Compile Include="DoNotAssumeIntPtrSizeRule.cs" />
     <Compile Include="GetLastErrorMustBeCalledRightAfterPInvokeRule.cs" />
     <Compile Include="MarshalStringsInPInvokeDeclarationsRule.cs" />
     <Compile Include="PInvokeShouldNotBeVisibleRule.cs" />

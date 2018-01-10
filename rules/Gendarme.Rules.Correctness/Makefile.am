@@ -13,10 +13,10 @@ rules_sources =  \
 	CheckParametersNullityInVisibleMethodsRule.cs \
 	DisposableFieldsShouldBeDisposedRule.cs \
 	DoNotRoundIntegersRule.cs \
-	DontCompareWithNaNRule.cs \
+	DoNotCompareWithNaNRule.cs \
 	EnsureLocalDisposalRule.cs \
 	FinalizersShouldCallBaseClassFinalizerRule.cs \
-	FloatComparisonRule.cs \
+	FloatingComparisonRule.cs \
 	ReviewInconsistentIdentityRule.cs \
 	MethodCanBeMadeStaticRule.cs \
 	ProvideCorrectArgumentsToFormattingMethodsRule.cs \
@@ -60,7 +60,7 @@ tests_sources = \
 	CallingEqualsWithNullArgTest.cs \
 	CheckParametersNullityInVisibleMethodsTest.cs \
 	DisposableFieldsShouldBeDisposedTest.cs \
-	DontCompareWithNaNTest.cs \
+	DoNotCompareWithNaNTest.cs \
 	DoNotRoundIntegersTest.cs \
 	EnsureLocalDisposalTest.cs \
 	FinalizersShouldCallBaseClassFinalizerTest.cs \

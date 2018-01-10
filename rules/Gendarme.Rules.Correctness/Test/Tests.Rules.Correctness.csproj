@@ -79,7 +79,7 @@
     <Compile Include="DoNotRecurseInEqualityTest.cs" />
     <Compile Include="DeclareEventsExplicitlyTest.cs" />
     <Compile Include="DoNotRoundIntegersTest.cs" />
-    <Compile Include="DontCompareWithNaNTest.cs" />
+    <Compile Include="DoNotCompareWithNaNTest.cs" />
     <Compile Include="EnsureLocalDisposalTest.cs" />
     <Compile Include="FinalizersShouldCallBaseClassFinalizerTest.cs" />
     <Compile Include="MethodCanBeMadeStaticTest.cs" />

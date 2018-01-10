@@ -1,5 +1,5 @@
 //
-// Gendarme.Rules.Performance.CompareWithStringEmptyEfficientlyRule
+// Gendarme.Rules.Performance.CompareWithEmptyStringEfficientlyRule
 //
 // Authors:
 //	Nidhi Rawal <sonu2404@gmail.com>

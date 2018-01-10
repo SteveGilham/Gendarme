@@ -84,9 +84,9 @@
     <Compile Include="DeclareEventsExplicitlyRule.cs" />
     <Compile Include="DoNotRecurseInEqualityRule.cs" />
     <Compile Include="DoNotRoundIntegersRule.cs" />
-    <Compile Include="DontCompareWithNaNRule.cs" />
+    <Compile Include="DoNotCompareWithNaNRule.cs" />
     <Compile Include="EnsureLocalDisposalRule.cs" />
-    <Compile Include="FloatComparisonRule.cs" />
+    <Compile Include="FloatingComparisonRule.cs" />
     <None Include="graph\DFS.cs" />
     <None Include="graph\Edge.cs" />
     <None Include="graph\Graph.cs" />

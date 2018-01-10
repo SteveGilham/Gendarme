@@ -6,7 +6,7 @@ rules_sources =  \
 	DoNotLockOnWeakIdentityObjectsRule.cs \
 	DoNotUseMethodImplOptionsSynchronizedRule.cs \
 	DoNotUseThreadStaticWithInstanceFieldsRule.cs \
-	DontUseLockedRegionOutsideMethodRule.cs \
+	DoNotUseLockedRegionOutsideMethodRule.cs \
 	DoubleCheckLockingRule.cs \
 	LockAnalyzerRule.cs \
 	NonConstantStaticFieldsShouldNotBeVisibleRule.cs \
@@ -21,7 +21,7 @@ tests_sources = \
 	DoNotLockOnWeakIdentityObjectsTest.cs \
 	DoNotUseMethodImplOptionsSynchronizedTest.cs \
 	DoNotUseThreadStaticWithInstanceFieldsTest.cs \
-	DontUseLockedRegionOutsideMethodTest.cs \
+	DoNotUseLockedRegionOutsideMethodTest.cs \
 	DoubleCheckLockingTest.cs \
 	NonConstantStaticFieldsShouldNotBeVisibleTest.cs \
 	ProtectCallToEventDelegatesTest.cs \

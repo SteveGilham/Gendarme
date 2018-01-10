@@ -65,10 +65,10 @@
     <Compile Include="AvoidDeepNamespaceHierarchyRule.cs" />
     <Compile Include="AvoidTypeInterfaceInconsistencyRule.cs" />
     <Compile Include="DoNotPrefixEventsWithAfterOrBeforeRule.cs" />
-    <Compile Include="DetectNonAlphaNumericsInTypeNamesRule.cs" />
+    <Compile Include="AvoidNonAlphanumericIdentifierRule.cs" />
     <Compile Include="DoNotPrefixValuesWithEnumNameRule.cs" />
     <Compile Include="DoNotUseReservedInEnumValueNamesRule.cs" />
-    <Compile Include="ParameterNamesShouldMatchOverridenMethodRule.cs" />
+    <Compile Include="ParameterNamesShouldMatchOverriddenMethodRule.cs" />
     <Compile Include="UseCorrectCasingRule.cs" />
     <Compile Include="UseCorrectPrefixRule.cs" />
     <Compile Include="UseCorrectSuffixRule.cs" />

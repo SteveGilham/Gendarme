@@ -1,5 +1,5 @@
 //
-// Unit tests for DontUseLockedRegionOutsideMethodTest
+// Unit tests for DoNotUseLockedRegionOutsideMethodRule
 //
 // Authors:
 //	Andres G. Aragoneses <aaragoneses@novell.com>

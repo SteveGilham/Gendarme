@@ -70,7 +70,7 @@
     <Compile Include="DoNotLockOnWeakIdentityObjectsTest.cs" />
     <Compile Include="DoNotUseMethodImplOptionsSynchronizedTest.cs" />
     <Compile Include="DoNotUseThreadStaticWithInstanceFieldsTest.cs" />
-    <Compile Include="DontUseLockedRegionOutsideMethodTest.cs" />
+    <Compile Include="DoNotUseLockedRegionOutsideMethodTest.cs" />
     <Compile Include="DoubleCheckLockingTest.cs" />
     <Compile Include="NonConstantStaticFieldsShouldNotBeVisibleTest.cs" />
     <Compile Include="ProtectCallToEventDelegatesTest.cs" />

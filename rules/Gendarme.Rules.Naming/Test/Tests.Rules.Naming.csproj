@@ -67,11 +67,11 @@
     <Compile Include="AvoidRedundancyInMethodNameTest.cs" />
     <Compile Include="AvoidRedundancyInTypeNameTest.cs" />
     <Compile Include="AvoidTypeInterfaceInconsistencyTest.cs" />
-    <Compile Include="DetectNonAlphaNumericsInTypeNamesTest.cs" />
+    <Compile Include="AvoidNonAlphanumericIdentifierTest.cs" />
     <Compile Include="DoNotPrefixEventsWithAfterOrBeforeTest.cs" />
     <Compile Include="DoNotPrefixValuesWithEnumNameTest.cs" />
     <Compile Include="DoNotUseReservedInEnumValueNamesTest.cs" />
-    <Compile Include="ParameterNamesShouldMatchOverridenMethodTest.cs" />
+    <Compile Include="ParameterNamesShouldMatchOverriddenMethodTest.cs" />
     <Compile Include="UseCorrectCasingTest.cs" />
     <Compile Include="UseCorrectPrefixTest.cs" />
     <Compile Include="UseCorrectSuffixTest.cs" />

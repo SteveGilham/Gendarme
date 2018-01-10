@@ -78,7 +78,7 @@
     <Compile Include="ThreadRocks.cs" />
     <Compile Include="WriteStaticFieldFromInstanceMethodRule.cs" />
     <Compile Include="DoNotUseMethodImplOptionsSynchronizedRule.cs" />
-    <Compile Include="DontUseLockedRegionOutsideMethodRule.cs" />
+    <Compile Include="DoNotUseLockedRegionOutsideMethodRule.cs" />
     <Compile Include="ReviewLockUsedOnlyForOperationsOnVariablesRule.cs" />
     <Compile Include="ProtectCallToEventDelegatesRule.cs" />
   </ItemGroup>

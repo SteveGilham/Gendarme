@@ -89,9 +89,9 @@
     <Compile Include="AvoidUnusedParametersRule.cs" />
     <Compile Include="AvoidUnusedPrivateFieldsRule.cs" />
     <Compile Include="ConsiderCustomAccessorsForNonVisibleEventsRule.cs" />
-    <Compile Include="DontIgnoreMethodResultRule.cs" />
-    <Compile Include="EmptyDestructorRule.cs" />
-    <Compile Include="IDisposableWithDestructorWithoutSuppressFinalizeRule.cs" />
+    <Compile Include="DoNotIgnoreMethodResultRule.cs" />
+    <Compile Include="RemoveUnneededFinalizerRule.cs" />
+    <Compile Include="UseSuppressFinalizeOnIDisposableTypeWithFinalizerRule.cs" />
     <Compile Include="ImplementEqualsTypeRule.cs" />
     <Compile Include="MathMinMaxCandidateRule.cs" />
     <Compile Include="OverrideValueTypeDefaultsRule.cs" />
@@ -101,7 +101,7 @@
     <Compile Include="ReviewLinqMethodRule.cs" />
     <Compile Include="UseIsOperatorRule.cs" />
     <Compile Include="UseStringEmptyRule.cs" />
-    <Compile Include="CompareWithStringEmptyEfficientlyRule.cs" />
+    <Compile Include="CompareWithEmptyStringEfficientlyRule.cs" />
     <Compile Include="UseTypeEmptyTypesRule.cs" />
     <Compile Include="AvoidUnneededFieldInitializationRule.cs" />
     <Compile Include="PreferLiteralOverInitOnlyFieldsRule.cs" />
