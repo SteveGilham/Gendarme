@@ -1,4 +1,4 @@
-EXTRA_DIST = $(addprefix $(srcdir)/, *.cs) Tests.Rules.Ui.csproj
+EXTRA_DIST = $(addprefix $(srcdir)/, *.cs) Test.Rules.Ui.csproj
 DISTCLEANFILES = Makefile.in 
 
 all:

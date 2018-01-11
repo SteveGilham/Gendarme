@@ -8,8 +8,8 @@
     <ProjectGuid>{C329FF89-4C07-4D72-AF5B-70B10670CB36}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Gendarme</RootNamespace>
-    <AssemblyName>Tests.Rules.Gendarme</AssemblyName>
+    <RootNamespace>Test.Rules.Gendarme</RootNamespace>
+    <AssemblyName>Test.Rules.Gendarme</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>

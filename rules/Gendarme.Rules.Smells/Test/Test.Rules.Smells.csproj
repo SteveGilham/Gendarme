@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A2F3E904-8D4E-4C18-A0B9-B2BCBD3A0537}</ProjectGuid>
+    <ProjectGuid>{986B9EFB-7494-4410-8B01-56AB42388643}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Maintainability</RootNamespace>
-    <AssemblyName>Tests.Rules.Maintainability</AssemblyName>
+    <RootNamespace>Test.Rules.Smells</RootNamespace>
+    <AssemblyName>Test.Rules.Smells</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -36,7 +36,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>..\..\..\console\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -61,21 +61,18 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Runtime.Serialization">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AvoidAlwaysNullFieldTest.cs" />
-    <Compile Include="AvoidComplexMethodsTest.cs" />
-    <Compile Include="AvoidDeepInheritanceTreeTest.cs" />
-    <Compile Include="AvoidLackOfCohesionOfMethodsTest.cs" />
-    <Compile Include="AvoidUnnecessarySpecializationTest.cs" />
-    <Compile Include="ConsiderUsingStopwatchTest.cs" />
-    <Compile Include="PreferStringIsNullOrEmptyTest.cs" />
-    <Compile Include="RemoveDependenceOnObsoleteCodeTest.cs" />
-    <Compile Include="ReviewMisleadingFieldNamesTest.cs" />
-    <Compile Include="VariableNamesShouldNotMatchFieldNamesTest.cs" />
+    <Compile Include="AvoidCodeDuplicatedInSameClassTest.cs" />
+    <Compile Include="AvoidCodeDuplicatedInSiblingClassesTest.cs" />
+    <Compile Include="AvoidLargeClassesTest.cs" />
+    <Compile Include="AvoidLongMethodsTest.cs" />
+    <Compile Include="AvoidLongParameterListsTest.cs" />
+    <Compile Include="AvoidMessageChainsTest.cs" />
+    <Compile Include="AvoidSpeculativeGeneralityTest.cs" />
+    <Compile Include="AvoidSwitchStatementsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -90,9 +87,9 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Maintainability.csproj">
-      <Project>{8DB890C9-F9B7-4BEA-9ADE-EF32391363C2}</Project>
-      <Name>Gendarme.Rules.Maintainability</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Smells.csproj">
+      <Project>{CC7BB0B5-094F-42F9-9CE7-1C33EF2B8A20}</Project>
+      <Name>Gendarme.Rules.Smells</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +123,7 @@
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
+        <GtkDesignInfo />
         <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am" ExecuteTargetName="run-test" IsAutotoolsProject="true" RelativeConfigureInPath="../../../..">
           <BuildFilesVar />
           <DeployFilesVar />

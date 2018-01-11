@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0D974FFB-C19F-40D0-AD87-708D35E9BD3E}</ProjectGuid>
+    <ProjectGuid>{393FCDDA-6AAF-4DBA-BB75-6BD85DAC84EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Globalization</RootNamespace>
-    <AssemblyName>Tests.Rules.Globalization</AssemblyName>
+    <RootNamespace>Test.Rules.Interoperability.Com</RootNamespace>
+    <AssemblyName>Test.Rules.Interoperability.Com</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -61,7 +61,6 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -76,78 +75,23 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Globalization.csproj">
-      <Project>{5D883285-903D-4FDB-9ED9-AB37AE9648F7}</Project>
-      <Name>Gendarme.Rules.Globalization</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Interoperability.Com.csproj">
+      <Project>{468F7043-C0D5-480F-88A1-A262EC324E5E}</Project>
+      <Name>Gendarme.Rules.Interoperability.Com</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MainResourceMissing.fr.resx" />
-    <EmbeddedResource Include="Resource.fr.resx" />
-    <EmbeddedResource Include="Resource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="InternalResource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>InternalResource.resx</DependentUpon>
-    </Compile>
-    <Compile Include="AvoidUnusedInternalResourceTest.cs" />
-    <Compile Include="PublicResource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PublicResource.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SatelliteResourceMismatchTest.cs" />
-    <Compile Include="PreferIFormatProviderOverrideTest.cs" />
-    <Compile Include="PreferStringComparisonOverrideTest.cs" />
-    <Compile Include="Resource.Designer.cs">
-      <DependentUpon>Resource.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ImageInBothCultures.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ImageInBothCultures.fr.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ImageOnlyInEnglish.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ImageOnlyInFrench.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\StringInEnglishImageInFrench.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\XMLFileNotInResX.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\XMLFileNotInResX.fr.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="InternalResource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>InternalResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PublicResource.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>PublicResource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\XMLFileNotInResXOnlyInFrench.fr.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ImageUnused.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ImageUsed.bmp" />
+    <Compile Include="AutoLayoutTypesShouldNotBeComVisibleTest.cs" />
+    <Compile Include="AvoidInt64ArgumentsInComVisibleMethodsTest.cs" />
+    <Compile Include="AvoidNonPublicFieldsInComVisibleValueTypesTest.cs" />
+    <Compile Include="AvoidOverloadsInComVisibleInterfacesTest.cs" />
+    <Compile Include="AvoidStaticMembersInComVisibleTypesTest.cs" />
+    <Compile Include="ComRocksTest.cs" />
+    <Compile Include="ComVisibleShouldInheritFromComVisibleTest.cs" />
+    <Compile Include="ComVisibleTypesShouldBeCreatableTest.cs" />
+    <Compile Include="DoNotUseAutoDualClassInterfaceTypeTest.cs" />
+    <Compile Include="MarkComSourceInterfacesAsIDispatchTest.cs" />
+    <Compile Include="ReviewComRegistrationMethodsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

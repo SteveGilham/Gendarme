@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C95DBCDA-ED1D-4B77-93CD-E27B37B84577}</ProjectGuid>
+    <ProjectGuid>{BC57A292-B4FC-415F-BF9A-714A5E62E0E1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.BadPractice</RootNamespace>
-    <AssemblyName>Tests.Rules.BadPractice</AssemblyName>
+    <RootNamespace>Test</RootNamespace>
+    <AssemblyName>Test.Rules.Design</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -38,10 +38,11 @@
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -61,32 +62,56 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AvoidAssemblyVersionMismatchTest.cs" />
-    <Compile Include="AvoidCallingProblematicMethodsTest.cs" />
-    <Compile Include="AvoidNullCheckWithAsOperatorTest.cs" />
-    <Compile Include="AvoidVisibleConstantFieldTest.cs" />
-    <Compile Include="CheckNewExceptionWithoutThrowingTest.cs" />
-    <Compile Include="CheckNewThreadWithoutStartTest.cs" />
-    <Compile Include="CloneMethodShouldNotReturnNullTest.cs" />
-    <Compile Include="ConstructorShouldNotCallVirtualMethodsTest.cs" />
-    <Compile Include="DisableDebuggingCodeTest.cs" />
-    <Compile Include="DoNotDecreaseVisibilityTest.cs" />
-    <Compile Include="DoNotForgetNotImplementedMethodsTest.cs" />
-    <Compile Include="DoNotUseEnumIsAssignableFromTest.cs" />
-    <Compile Include="DoNotUseGetInterfaceToCheckAssignabilityTest.cs" />
-    <Compile Include="EqualsShouldHandleNullArgTest.cs" />
-    <Compile Include="GetEntryAssemblyMayReturnNullTest.cs" />
-    <Compile Include="ObsoleteMessagesShouldNotBeEmptyTest.cs" />
-    <Compile Include="OnlyUseDisposeForIDisposableTypesTest.cs" />
-    <Compile Include="PreferEmptyInstanceOverNullTest.cs" />
-    <Compile Include="PreferParamsArrayForVariableArgumentsTest.cs" />
-    <Compile Include="PreferSafeHandleTest.cs" />
-    <Compile Include="PreferTryParseTest.cs" />
-    <Compile Include="ReplaceIncompleteOddnessCheckTest.cs" />
-    <Compile Include="ToStringShouldNotReturnNullTest.cs" />
-    <Compile Include="UseFileOpenOnlyWithFileAccessTest.cs" />
+    <Compile Include="AbstractTypesShouldNotHavePublicConstructorsTest.cs" />
+    <Compile Include="AttributeArgumentsShouldHaveAccessorsTest.cs" />
+    <Compile Include="AvoidMultidimensionalIndexerTest.cs" />
+    <Compile Include="AvoidPropertiesWithoutGetAccessorTest.cs" />
+    <Compile Include="AvoidVisibleFieldsTest.cs" />
+    <Compile Include="AvoidRefAndOutParametersTest.cs" />
+    <Compile Include="AvoidSmallNamespaceTest.cs" />
+    <Compile Include="AvoidVisibleNestedTypesTest.cs" />
+    <Compile Include="ConsiderAddingInterfaceTest.cs" />
+    <Compile Include="ConsiderConvertingFieldToNullableTest.cs" />
+    <Compile Include="ConsiderConvertingMethodToPropertyTest.cs" />
+    <Compile Include="ConsiderUsingStaticTypeTest.cs" />
+    <Compile Include="DeclareEventHandlersCorrectlyTest.cs" />
+    <Compile Include="DoNotDeclareSettersOnCollectionPropertiesTest.cs" />
+    <Compile Include="DisposableTypesShouldHaveFinalizerTest.cs" />
+    <Compile Include="DoNotDeclareVirtualMethodsInSealedTypeTest.cs" />
+    <Compile Include="DoNotDeclareProtectedMembersInSealedTypeTest.cs" />
+    <Compile Include="AvoidEmptyInterfaceTest.cs" />
+    <Compile Include="EnsureSymmetryForOverloadedOperatorsTest.cs" />
+    <Compile Include="EnumeratorsShouldBeStronglyTypedTest.cs" />
+    <Compile Include="EnumsShouldDefineAZeroValueTest.cs" />
+    <Compile Include="EnumsShouldUseInt32Test.cs" />
+    <Compile Include="FinalizersShouldBeProtectedTest.cs" />
+    <Compile Include="FlagsShouldNotDefineAZeroValueTest.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="PreferUriOverStringTest.cs" />
+    <Compile Include="StronglyTypeICollectionMembersTest.cs" />
+    <Compile Include="ImplementEqualsAndGetHashCodeInPairTest.cs" />
+    <Compile Include="ImplementIComparableCorrectlyTest.cs" />
+    <Compile Include="InternalNamespacesShouldNotExposeTypesTest.cs" />
+    <Compile Include="ListsAreStronglyTypedTest.cs" />
+    <Compile Include="MainShouldNotBePublicTest.cs" />
+    <Compile Include="MarkAssemblyWithAssemblyVersionTest.cs" />
+    <Compile Include="MarkAssemblyWithCLSCompliantTest.cs" />
+    <Compile Include="MarkAssemblyWithComVisibleTest.cs" />
+    <Compile Include="MissingAttributeUsageOnCustomAttributeTest.cs" />
+    <Compile Include="OperatorEqualsShouldBeOverloadedTest.cs" />
+    <Compile Include="OverrideEqualsMethodTest.cs" />
+    <Compile Include="PreferEventsOverMethodsTest.cs" />
+    <Compile Include="PreferIntegerOrStringForIndexersTest.cs" />
+    <Compile Include="PreferXmlAbstractionsTest.cs" />
+    <Compile Include="ProvideAlternativeNamesForOperatorOverloadsTest.cs" />
+    <Compile Include="ProvideTryParseAlternativeTest.cs" />
+    <Compile Include="TypesShouldBeInsideNamespacesTest.cs" />
+    <Compile Include="UseCorrectDisposeSignaturesTest.cs" />
+    <Compile Include="UseFlagsAttributeTest.cs" />
+    <Compile Include="ImplementICloneableCorrectlyTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -101,9 +126,9 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.BadPractice.csproj">
-      <Project>{7FF6D373-551E-4C6B-98FA-D1D883FD2502}</Project>
-      <Name>Gendarme.Rules.BadPractice</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Design.csproj">
+      <Project>{FC889577-F51A-469C-9F30-E967504E9E24}</Project>
+      <Name>Gendarme.Rules.Design</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ rules_sources =  \
 	UseNoInliningWithGetCallingAssemblyRule.cs \
 	UseValueInPropertySetterRule.cs
 
-EXTRA_TESTS_OPTIONS += -r:System.Configuration -d:DEBUG -resource:Test/Resources.resources,Tests.Rules.Correctness.Resource.resources
+EXTRA_TESTS_OPTIONS += -r:System.Configuration -d:DEBUG -resource:Test/Resources.resources,Test.Rules.Correctness.Resource.resources
 
 EXTRA_DIST += Test/Resource.resx
 

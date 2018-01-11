@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{393FCDDA-6AAF-4DBA-BB75-6BD85DAC84EE}</ProjectGuid>
+    <ProjectGuid>{A2F3E904-8D4E-4C18-A0B9-B2BCBD3A0537}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Interoperability.Com</RootNamespace>
-    <AssemblyName>Tests.Rules.Interoperability.Com</AssemblyName>
+    <RootNamespace>Test.Rules.Maintainability</RootNamespace>
+    <AssemblyName>Test.Rules.Maintainability</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -37,7 +37,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\console\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -61,6 +61,21 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AvoidAlwaysNullFieldTest.cs" />
+    <Compile Include="AvoidComplexMethodsTest.cs" />
+    <Compile Include="AvoidDeepInheritanceTreeTest.cs" />
+    <Compile Include="AvoidLackOfCohesionOfMethodsTest.cs" />
+    <Compile Include="AvoidUnnecessarySpecializationTest.cs" />
+    <Compile Include="ConsiderUsingStopwatchTest.cs" />
+    <Compile Include="PreferStringIsNullOrEmptyTest.cs" />
+    <Compile Include="RemoveDependenceOnObsoleteCodeTest.cs" />
+    <Compile Include="ReviewMisleadingFieldNamesTest.cs" />
+    <Compile Include="VariableNamesShouldNotMatchFieldNamesTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -75,23 +90,10 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Interoperability.Com.csproj">
-      <Project>{468F7043-C0D5-480F-88A1-A262EC324E5E}</Project>
-      <Name>Gendarme.Rules.Interoperability.Com</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Maintainability.csproj">
+      <Project>{8DB890C9-F9B7-4BEA-9ADE-EF32391363C2}</Project>
+      <Name>Gendarme.Rules.Maintainability</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AutoLayoutTypesShouldNotBeComVisibleTest.cs" />
-    <Compile Include="AvoidInt64ArgumentsInComVisibleMethodsTest.cs" />
-    <Compile Include="AvoidNonPublicFieldsInComVisibleValueTypesTest.cs" />
-    <Compile Include="AvoidOverloadsInComVisibleInterfacesTest.cs" />
-    <Compile Include="AvoidStaticMembersInComVisibleTypesTest.cs" />
-    <Compile Include="ComRocksTest.cs" />
-    <Compile Include="ComVisibleShouldInheritFromComVisibleTest.cs" />
-    <Compile Include="ComVisibleTypesShouldBeCreatableTest.cs" />
-    <Compile Include="DoNotUseAutoDualClassInterfaceTypeTest.cs" />
-    <Compile Include="MarkComSourceInterfacesAsIDispatchTest.cs" />
-    <Compile Include="ReviewComRegistrationMethodsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -121,4 +123,20 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am" ExecuteTargetName="run-test" IsAutotoolsProject="true" RelativeConfigureInPath="../../../..">
+          <BuildFilesVar />
+          <DeployFilesVar />
+          <ResourcesVar />
+          <OthersVar />
+          <GacRefVar />
+          <AsmRefVar />
+          <ProjectRefVar />
+        </MonoDevelop.Autotools.MakefileInfo>
+      </Properties>
+    </MonoDevelop>
+    <VisualStudio />
+  </ProjectExtensions>
 </Project>

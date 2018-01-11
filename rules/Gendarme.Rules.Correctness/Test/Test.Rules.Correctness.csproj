@@ -1,25 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{558A9250-105A-4C6A-999D-1C1F85F4CB05}</ProjectGuid>
+    <ProjectGuid>{FFB3FC5E-8CC4-4360-87DB-EADC266F82A5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Serialization</RootNamespace>
-    <AssemblyName>Tests.Rules.Serialization</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <RootNamespace>Test.Rules.Correctness</RootNamespace>
+    <AssemblyName>Test.Rules.Correctness</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <PublishUrl>http://localhost/Test.Rules.Correctness/</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
@@ -58,19 +58,53 @@
       <HintPath>..\..\..\Libraries\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CallBaseMethodsOnISerializableTypesTest.cs" />
-    <Compile Include="DeserializeOptionalFieldTest.cs" />
-    <Compile Include="ImplementISerializableCorrectlyTest.cs" />
-    <Compile Include="MarkAllNonSerializableFieldsTest.cs" />
-    <Compile Include="UseCorrectSignatureForSerializationMethodsTest.cs" />
-    <Compile Include="MarkEnumerationsAsSerializableTest.cs" />
-    <Compile Include="MissingSerializableAttributeOnISerializableTypeTest.cs" />
-    <Compile Include="MissingSerializationConstructorTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AttributeStringLiteralsShouldParseCorrectlyTest.cs" />
+    <Compile Include="AvoidCodeWithSideEffectsInConditionalCodeTest.cs" />
+    <Compile Include="AvoidConstructorsInStaticTypesTest.cs" />
+    <Compile Include="AvoidFloatingPointEqualityTest.cs" />
+    <Compile Include="AvoidMethodsWithSideEffectsInConditionalCodeTest.cs" />
+    <Compile Include="BadRecursiveInvocationTest.cs" />
+    <Compile Include="CallingEqualsWithNullArgTest.cs" />
+    <Compile Include="CheckParametersNullityInVisibleMethodsTest.cs" />
+    <Compile Include="DisposableFieldsShouldBeDisposedTest.cs" />
+    <Compile Include="DoNotRecurseInEqualityTest.cs" />
+    <Compile Include="DeclareEventsExplicitlyTest.cs" />
+    <Compile Include="DoNotRoundIntegersTest.cs" />
+    <Compile Include="DoNotCompareWithNaNTest.cs" />
+    <Compile Include="EnsureLocalDisposalTest.cs" />
+    <Compile Include="FinalizersShouldCallBaseClassFinalizerTest.cs" />
+    <Compile Include="MethodCanBeMadeStaticTest.cs" />
+    <None Include="NullDerefTest.cs" />
+    <Compile Include="ProvideCorrectArgumentsToFormattingMethodsTest.cs" />
+    <Compile Include="ProvideCorrectRegexPatternTest.cs" />
+    <Compile Include="ProvideValidXmlStringTest.cs" />
+    <Compile Include="ProvideValidXPathExpressionTest.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ReviewCastOnIntegerDivisionTest.cs" />
+    <Compile Include="ReviewCastOnIntegerMultiplicationTest.cs" />
+    <Compile Include="ReviewDoubleAssignmentTest.cs" />
+    <Compile Include="ReviewInconsistentIdentityTest.cs" />
+    <Compile Include="ReviewSelfAssignmentTest.cs" />
+    <Compile Include="ReviewUselessControlFlowTest.cs" />
+    <Compile Include="ReviewUseOfInt64BitsToDoubleTest.cs" />
+    <Compile Include="ReviewUseOfModuloOneOnIntegersTest.cs" />
+    <Compile Include="TypesWithDisposableFieldsShouldBeDisposableTest.cs" />
+    <Compile Include="TypesWithNativeFieldsShouldBeDisposableTest.cs" />
+    <Compile Include="UseNoInliningWithGetCallingAssemblyTest.cs" />
+    <Compile Include="UseValueInPropertySetterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -85,13 +119,10 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Serialization.csproj">
-      <Project>{44885D5E-B99D-4C56-BC85-F652F11DABDC}</Project>
-      <Name>Gendarme.Rules.Serialization</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Correctness.csproj">
+      <Project>{732905E1-1FD4-403A-93DD-EC4CF120091E}</Project>
+      <Name>Gendarme.Rules.Correctness</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -99,18 +130,38 @@
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>
+      </ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>
+      </ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>
+      </ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
+      <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -121,7 +172,6 @@
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
-        <GtkDesignInfo />
         <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am" ExecuteTargetName="run-test" IsAutotoolsProject="true" RelativeConfigureInPath="../../../..">
           <BuildFilesVar />
           <DeployFilesVar />

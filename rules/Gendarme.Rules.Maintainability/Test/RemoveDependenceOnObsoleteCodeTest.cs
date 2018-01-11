@@ -33,7 +33,7 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Maintainability {
+namespace Test.Rules.Maintainability {
 
 	[Obsolete]
 	class ObsoleteType {

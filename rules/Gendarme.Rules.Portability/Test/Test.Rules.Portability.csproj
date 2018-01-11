@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FFB3FC5E-8CC4-4360-87DB-EADC266F82A5}</ProjectGuid>
+    <ProjectGuid>{ED4AC7B7-BF77-495E-91F4-720082EDC8E1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Correctness</RootNamespace>
-    <AssemblyName>Tests.Rules.Correctness</AssemblyName>
+    <RootNamespace>Test.Rules.Portability</RootNamespace>
+    <AssemblyName>Test.Rules.Portability</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -17,7 +17,7 @@
     </UpgradeBackupLocation>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <PublishUrl>http://localhost/Tests.Rules.Correctness/</PublishUrl>
+    <PublishUrl>http://localhost/Test.Rules.Portability/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -36,7 +36,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -58,53 +58,21 @@
       <HintPath>..\..\..\Libraries\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.XML" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeStringLiteralsShouldParseCorrectlyTest.cs" />
-    <Compile Include="AvoidCodeWithSideEffectsInConditionalCodeTest.cs" />
-    <Compile Include="AvoidConstructorsInStaticTypesTest.cs" />
-    <Compile Include="AvoidFloatingPointEqualityTest.cs" />
-    <Compile Include="AvoidMethodsWithSideEffectsInConditionalCodeTest.cs" />
-    <Compile Include="BadRecursiveInvocationTest.cs" />
-    <Compile Include="CallingEqualsWithNullArgTest.cs" />
-    <Compile Include="CheckParametersNullityInVisibleMethodsTest.cs" />
-    <Compile Include="DisposableFieldsShouldBeDisposedTest.cs" />
-    <Compile Include="DoNotRecurseInEqualityTest.cs" />
-    <Compile Include="DeclareEventsExplicitlyTest.cs" />
-    <Compile Include="DoNotRoundIntegersTest.cs" />
-    <Compile Include="DoNotCompareWithNaNTest.cs" />
-    <Compile Include="EnsureLocalDisposalTest.cs" />
-    <Compile Include="FinalizersShouldCallBaseClassFinalizerTest.cs" />
-    <Compile Include="MethodCanBeMadeStaticTest.cs" />
-    <None Include="NullDerefTest.cs" />
-    <Compile Include="ProvideCorrectArgumentsToFormattingMethodsTest.cs" />
-    <Compile Include="ProvideCorrectRegexPatternTest.cs" />
-    <Compile Include="ProvideValidXmlStringTest.cs" />
-    <Compile Include="ProvideValidXPathExpressionTest.cs" />
-    <Compile Include="Resource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
+    <Compile Include="ExitCodeIsLimitedOnUnixTest.cs" />
+    <Compile Include="FeatureRequiresRootPrivilegeOnUnixTest.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ReviewCastOnIntegerDivisionTest.cs" />
-    <Compile Include="ReviewCastOnIntegerMultiplicationTest.cs" />
-    <Compile Include="ReviewDoubleAssignmentTest.cs" />
-    <Compile Include="ReviewInconsistentIdentityTest.cs" />
-    <Compile Include="ReviewSelfAssignmentTest.cs" />
-    <Compile Include="ReviewUselessControlFlowTest.cs" />
-    <Compile Include="ReviewUseOfInt64BitsToDoubleTest.cs" />
-    <Compile Include="ReviewUseOfModuloOneOnIntegersTest.cs" />
-    <Compile Include="TypesWithDisposableFieldsShouldBeDisposableTest.cs" />
-    <Compile Include="TypesWithNativeFieldsShouldBeDisposableTest.cs" />
-    <Compile Include="UseNoInliningWithGetCallingAssemblyTest.cs" />
-    <Compile Include="UseValueInPropertySetterTest.cs" />
+    <Compile Include="MonoCompatibilityReviewTest.cs" />
+    <Compile Include="NewLineLiteralTest.cs" />
+    <Compile Include="DoNotHardcodePathsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -119,9 +87,9 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Correctness.csproj">
-      <Project>{732905E1-1FD4-403A-93DD-EC4CF120091E}</Project>
-      <Name>Gendarme.Rules.Correctness</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Portability.csproj">
+      <Project>{3A220513-3E53-4E13-B25D-2202F79B4C47}</Project>
+      <Name>Gendarme.Rules.Portability</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -153,13 +121,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

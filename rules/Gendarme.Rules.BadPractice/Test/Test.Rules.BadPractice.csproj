@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5F87F782-0D2B-48B0-9B44-373DB67D9321}</ProjectGuid>
+    <ProjectGuid>{C95DBCDA-ED1D-4B77-93CD-E27B37B84577}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Interoperability</RootNamespace>
-    <AssemblyName>Tests.Rules.Interoperability</AssemblyName>
+    <RootNamespace>Test.Rules.BadPractice</RootNamespace>
+    <AssemblyName>Test.Rules.BadPractice</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -41,7 +41,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -51,7 +50,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
@@ -65,14 +63,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CentralizePInvokesIntoNativeMethodsTypeTest.cs" />
-    <Compile Include="DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs" />
-    <Compile Include="DoNotAssumeIntPtrSizeTest.cs" />
-    <Compile Include="GetLastErrorMustBeCalledRightAfterPInvokeTest.cs" />
-    <Compile Include="MarshalBooleansInPInvokeDeclarationsTest.cs" />
-    <Compile Include="MarshalStringsInPInvokeDeclarationsTest.cs" />
-    <Compile Include="PInvokeShouldNotBeVisibleTest.cs" />
-    <Compile Include="UseManagedAlternativesToPInvokeTest.cs" />
+    <Compile Include="AvoidAssemblyVersionMismatchTest.cs" />
+    <Compile Include="AvoidCallingProblematicMethodsTest.cs" />
+    <Compile Include="AvoidNullCheckWithAsOperatorTest.cs" />
+    <Compile Include="AvoidVisibleConstantFieldTest.cs" />
+    <Compile Include="CheckNewExceptionWithoutThrowingTest.cs" />
+    <Compile Include="CheckNewThreadWithoutStartTest.cs" />
+    <Compile Include="CloneMethodShouldNotReturnNullTest.cs" />
+    <Compile Include="ConstructorShouldNotCallVirtualMethodsTest.cs" />
+    <Compile Include="DisableDebuggingCodeTest.cs" />
+    <Compile Include="DoNotDecreaseVisibilityTest.cs" />
+    <Compile Include="DoNotForgetNotImplementedMethodsTest.cs" />
+    <Compile Include="DoNotUseEnumIsAssignableFromTest.cs" />
+    <Compile Include="DoNotUseGetInterfaceToCheckAssignabilityTest.cs" />
+    <Compile Include="EqualsShouldHandleNullArgTest.cs" />
+    <Compile Include="GetEntryAssemblyMayReturnNullTest.cs" />
+    <Compile Include="ObsoleteMessagesShouldNotBeEmptyTest.cs" />
+    <Compile Include="OnlyUseDisposeForIDisposableTypesTest.cs" />
+    <Compile Include="PreferEmptyInstanceOverNullTest.cs" />
+    <Compile Include="PreferParamsArrayForVariableArgumentsTest.cs" />
+    <Compile Include="PreferSafeHandleTest.cs" />
+    <Compile Include="PreferTryParseTest.cs" />
+    <Compile Include="ReplaceIncompleteOddnessCheckTest.cs" />
+    <Compile Include="ToStringShouldNotReturnNullTest.cs" />
+    <Compile Include="UseFileOpenOnlyWithFileAccessTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -87,9 +101,9 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Interoperability.csproj">
-      <Project>{C0E9997F-EA91-4C7A-9702-5F8215574BCA}</Project>
-      <Name>Gendarme.Rules.Interoperability</Name>
+    <ProjectReference Include="..\Gendarme.Rules.BadPractice.csproj">
+      <Project>{7FF6D373-551E-4C6B-98FA-D1D883FD2502}</Project>
+      <Name>Gendarme.Rules.BadPractice</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +137,7 @@
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
+        <GtkDesignInfo />
         <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am" ExecuteTargetName="run-test" IsAutotoolsProject="true" RelativeConfigureInPath="../../../..">
           <BuildFilesVar />
           <DeployFilesVar />

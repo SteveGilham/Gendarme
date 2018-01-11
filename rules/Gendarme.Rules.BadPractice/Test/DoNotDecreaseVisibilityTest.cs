@@ -1,5 +1,5 @@
 // 
-// Tests.Rules.BadPractice.DoNotDecreaseVisibilityTest
+// Test.Rules.BadPractice.DoNotDecreaseVisibilityTest
 //
 // Authors:
 //	Sebastien Pouliot <sebastien@ximian.com>

@@ -34,7 +34,7 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Correctness {
+namespace Test.Rules.Correctness {
 
 	[TestFixture]
 	public class DeclareEventsExplicitlyTest : TypeRuleTestFixture<DeclareEventsExplicitlyRule> {

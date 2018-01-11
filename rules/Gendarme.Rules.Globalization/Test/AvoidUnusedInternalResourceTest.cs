@@ -35,7 +35,7 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Mono.Cecil;
 
-namespace Tests.Rules.Globalization {
+namespace Test.Rules.Globalization {
 
 	[TestFixture]
 	public sealed class AvoidUnusedInternalResourceTest : MethodRuleTestFixture<AvoidUnusedInternalResourceRule> {

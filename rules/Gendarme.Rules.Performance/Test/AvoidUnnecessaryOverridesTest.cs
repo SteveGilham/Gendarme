@@ -37,7 +37,7 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Tests.Rules.Performance {
+namespace Test.Rules.Performance {
 
 	[TestFixture]
 	public class AvoidUnnecessaryOverridesTest : MethodRuleTestFixture<AvoidUnnecessaryOverridesRule> {

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{986B9EFB-7494-4410-8B01-56AB42388643}</ProjectGuid>
+    <ProjectGuid>{19837D0F-A8ED-4733-97D0-F5EC9991658F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Smells</RootNamespace>
-    <AssemblyName>Tests.Rules.Smells</AssemblyName>
+    <RootNamespace>Test.Rules.Design.Linq</RootNamespace>
+    <AssemblyName>Test.Rules.Design.Linq</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -36,8 +36,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\console\bin\Debug\</OutputPath>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -61,18 +61,9 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AvoidCodeDuplicatedInSameClassTest.cs" />
-    <Compile Include="AvoidCodeDuplicatedInSiblingClassesTest.cs" />
-    <Compile Include="AvoidLargeClassesTest.cs" />
-    <Compile Include="AvoidLongMethodsTest.cs" />
-    <Compile Include="AvoidLongParameterListsTest.cs" />
-    <Compile Include="AvoidMessageChainsTest.cs" />
-    <Compile Include="AvoidSpeculativeGeneralityTest.cs" />
-    <Compile Include="AvoidSwitchStatementsTest.cs" />
+    <Compile Include="AvoidExtensionMethodOnSystemObjectTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -83,13 +74,17 @@
       <Project>{CD6818D5-B398-486C-B180-92A07B143AFD}</Project>
       <Name>Gendarme.Framework</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\framework\Test\Test.Framework.csproj">
+      <Project>{D47F1ACA-8AA6-4797-9644-57A8AFE2A86B}</Project>
+      <Name>Test.Framework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj">
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Smells.csproj">
-      <Project>{CC7BB0B5-094F-42F9-9CE7-1C33EF2B8A20}</Project>
-      <Name>Gendarme.Rules.Smells</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Design.Linq.csproj">
+      <Project>{EEC7B836-DB9D-4CB3-9829-53C223C9411F}</Project>
+      <Name>Gendarme.Rules.Design.Linq</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -120,21 +115,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <GtkDesignInfo />
-        <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am" ExecuteTargetName="run-test" IsAutotoolsProject="true" RelativeConfigureInPath="../../../..">
-          <BuildFilesVar />
-          <DeployFilesVar />
-          <ResourcesVar />
-          <OthersVar />
-          <GacRefVar />
-          <AsmRefVar />
-          <ProjectRefVar />
-        </MonoDevelop.Autotools.MakefileInfo>
-      </Properties>
-    </MonoDevelop>
-    <VisualStudio />
-  </ProjectExtensions>
 </Project>

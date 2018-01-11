@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D6BDE725-945A-4A16-91E2-F1B16C67D93D}</ProjectGuid>
+    <ProjectGuid>{0C697291-D955-43C8-994E-A03B6A77A21A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Ui</RootNamespace>
-    <AssemblyName>Tests.Rules.Ui</AssemblyName>
+    <RootNamespace>Test.Rules.Performance</RootNamespace>
+    <AssemblyName>Test.Rules.Performance</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -17,7 +17,7 @@
     </UpgradeBackupLocation>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <PublishUrl>http://localhost/Tests.Rules.Ui/</PublishUrl>
+    <PublishUrl>http://localhost/Test.Rules.Performance/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -36,11 +36,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -50,6 +51,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
@@ -57,27 +59,51 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationCore">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core">
+    <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddMatchingArrangeMeasureOverrideTest.cs" />
-    <Compile Include="ExecutableTargetTest.cs" />
-    <Compile Include="GtkSharpExecutableTargetTest.cs" />
-    <Compile Include="SystemWindowsFormsExecutableTargetTest.cs" />
-    <Compile Include="UseSTAThreadAttributeOnSWFEntryPointsTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AvoidConcatenatingCharsTest.cs" />
+    <Compile Include="AvoidLargeNumberOfLocalVariablesTest.cs" />
+    <Compile Include="AvoidLocalDataStoreSlotTest.cs" />
+    <Compile Include="AvoidMethodWithLargeMaximumStackSizeTest.cs" />
+    <Compile Include="AvoidRepetitiveCallsToPropertiesTest.cs" />
+    <Compile Include="AvoidRepetitiveCastsTest.cs" />
+    <Compile Include="AvoidTypeGetTypeForConstantStringsTest.cs" />
+    <Compile Include="AvoidUnnecessaryOverridesTest.cs" />
+    <Compile Include="AvoidUnneededFieldInitializationTest.cs" />
+    <Compile Include="AvoidUnneededUnboxingTest.cs" />
+    <Compile Include="AvoidLargeStructureTest.cs" />
+    <Compile Include="AvoidReturningArraysOnPropertiesTest.cs" />
+    <Compile Include="AvoidUncalledPrivateCodeTest.cs" />
+    <Compile Include="AvoidUninstantiatedInternalClassesTest.cs" />
+    <Compile Include="AvoidUnneededCallsOnStringTest.cs" />
+    <Compile Include="AvoidUnsealedConcreteAttributesTest.cs" />
+    <Compile Include="AvoidUnsealedUninheritedInternalTypeTest.cs" />
+    <Compile Include="AvoidUnusedParametersTest.cs" />
+    <Compile Include="AvoidUnusedPrivateFieldsTest.cs" />
+    <Compile Include="CompareWithEmptyStringEfficientlyTest.cs" />
+    <Compile Include="ConsiderCustomAccessorsForNonVisibleEventsTest.cs" />
+    <Compile Include="DoNotIgnoreMethodResultTest.cs" />
+    <Compile Include="RemoveUnneededFinalizerTest.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="UseSuppressFinalizeOnIDisposableTypeWithFinalizerTest.cs" />
+    <Compile Include="ImplementEqualsTypeTest.cs" />
+    <Compile Include="MathMinMaxCandidateTest.cs" />
+    <Compile Include="OverrideValueTypeDefaultsTest.cs" />
+    <Compile Include="PreferCharOverloadTest.cs" />
+    <Compile Include="PreferInterfaceConstraintOnGenericParameterForPrimitiveInterfaceTest.cs" />
+    <Compile Include="PreferLiteralOverInitOnlyFieldsTest.cs" />
+    <Compile Include="RemoveUnusedLocalVariablesTest.cs" />
+    <Compile Include="ReviewLinqMethodTest.cs" />
+    <Compile Include="UseIsOperatorTest.cs" />
+    <Compile Include="UseStringEmptyTest.cs" />
+    <Compile Include="UseTypeEmptyTypesTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\cecil\Mono.Cecil.csproj">
@@ -92,9 +118,9 @@
       <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
       <Name>Test.Rules</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Ui.csproj">
-      <Project>{949C4D51-4581-402A-AC18-B1B41F395FDA}</Project>
-      <Name>Gendarme.Rules.Ui</Name>
+    <ProjectReference Include="..\Gendarme.Rules.Performance.csproj">
+      <Project>{7A8D4AE7-66FA-42E0-BDCB-400D8E0ECFA6}</Project>
+      <Name>Gendarme.Rules.Performance</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
