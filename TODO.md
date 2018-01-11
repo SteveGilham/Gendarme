@@ -23,11 +23,6 @@ To do list
 
 * Test Linux/Mono support of changes
 
-* Remove dependency on .NET 2.0 libraries:
-
-  * ICSharpCode.SharpZipLib.dll
-  * nunit.framework.dll
-
 * Update from obsolete *Cecil* functions
 
 * Update to latest *Cecil*

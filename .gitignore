@@ -3,7 +3,6 @@ Makefile
 Makefile.in
 Makefile.in.in
 *.exe
-*.dll
 *.mdb
 config.guess
 config.log
