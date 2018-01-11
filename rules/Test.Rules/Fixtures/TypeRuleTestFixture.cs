@@ -39,9 +39,19 @@ namespace Test.Rules.Fixtures {
 	
 	/// <summary>
 	/// This class should be inherited by type rule testing fixtures.
-	/// </summary>	/// <typeparam name="TTypeRule">Type of rule to be tested.</typeparam>	public abstract class TypeRuleTestFixture<TTypeRule> : RuleTestFixture<TTypeRule, TypeDefinition>		where TTypeRule : ITypeRule, new () {
+	/// </summary>
+	/// <typeparam name="TTypeRule">Type of rule to be tested.</typeparam>
+	public abstract class TypeRuleTestFixture<TTypeRule> : RuleTestFixture<TTypeRule, TypeDefinition>
+		where TTypeRule : ITypeRule, new () {
 		
-		/// <summary>		/// Asserts that the rule does not apply to the type.		/// </summary>		/// <typeparam name="T">Type to check.</typeparam>		protected void AssertRuleDoesNotApply<T> ()		{			base.AssertRuleDoesNotApply (DefinitionLoader.GetTypeDefinition<T> ());		}
+		/// <summary>
+		/// Asserts that the rule does not apply to the type.
+		/// </summary>
+		/// <typeparam name="T">Type to check.</typeparam>
+		protected void AssertRuleDoesNotApply<T> ()
+		{
+			base.AssertRuleDoesNotApply (DefinitionLoader.GetTypeDefinition<T> ());
+		}
 	
 		/// <summary>
 		/// Asserts that the rule has been executed successfully. 
