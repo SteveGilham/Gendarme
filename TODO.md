@@ -19,8 +19,6 @@ To do list
 
 * Fix unit test to be usable in Visual Studio
 
-* Verify project files, whether they include all rules and other source code files
-
 * Test Linux/Mono support of changes
 
 * Remove dependency on .NET 2.0 libraries:
