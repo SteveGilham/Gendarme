@@ -264,6 +264,7 @@ namespace Test.Framework.Rocks {
 		{
 			TypeDefinition type = GetType (String.Empty);
 			Assert.IsTrue (type.Inherits (type.Namespace, type.Name), "itself");
+			Assert.IsTrue (type.Inherits (type.FullName), "itself");
 		}
 
 		[Test]
@@ -366,7 +367,9 @@ namespace Test.Framework.Rocks {
 			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "PublicType/NestedPublicTypeExtraText"));
 
 			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "NestedPublicType"));
+			// the test bellow is probably irrelevant test because of the way the empty name space is processed in 'IsNamed'
 			Assert.IsFalse (type.IsNamed ("", "NestedPublicType"));
+			Assert.IsTrue (type.IsNamed (name));
 		}
 
 		[Test]

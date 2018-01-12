@@ -274,7 +274,18 @@ namespace Gendarme.Framework.Rocks {
 
 		private static bool AreSameElementTypes (TypeReference a, TypeReference b)
 		{
-			return a.IsGenericParameter || b.IsGenericParameter || b.IsNamed (a.Namespace, a.Name);
+			if (a.IsGenericParameter || b.IsGenericParameter)
+				return true;
+			if (a.IsNested && b.IsNested) {
+				string nameA = a.FullName;
+				string nameB = b.FullName;
+				if (a.IsByReference)
+					nameA = nameA.Substring(0, nameA.Length - 1);
+				if (b.IsByReference)
+					nameB = nameB.Substring(0, nameB.Length - 1);
+				return string.Equals(nameA, nameB, StringComparison.Ordinal);
+			}
+			return b.IsNamed (a.Namespace, a.Name);
 		}
 
 		/// <summary>

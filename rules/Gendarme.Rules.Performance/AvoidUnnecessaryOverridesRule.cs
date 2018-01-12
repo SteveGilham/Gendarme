@@ -82,7 +82,7 @@ namespace Gendarme.Rules.Performance {
 
 			TypeReference type = mr.DeclaringType;
 			foreach (TypeDefinition baseType in method.DeclaringType.AllSuperTypes ()) {
-				if (baseType.IsNamed (type.Namespace, type.Name))
+				if (baseType.IsNamed (type.FullName))
 					return true;
 			}
 			return false;

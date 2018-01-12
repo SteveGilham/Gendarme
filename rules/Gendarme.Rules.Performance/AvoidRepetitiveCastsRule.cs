@@ -246,7 +246,7 @@ namespace Gendarme.Rules.Performance {
 			// don't check 0 since it's the one we compare with
 			for (int i = 1; i < casts.Count; i++) {
 				Instruction ins = casts [i];
-				if (!(ins.Operand as TypeReference).IsNamed (type.Namespace, type.Name))
+				if (!(ins.Operand as TypeReference).IsNamed (type.FullName))
 					continue;
 				if (!OriginsMatch(method, origin, GetOrigin (ins)))
 					continue;

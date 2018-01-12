@@ -363,6 +363,36 @@ namespace Gendarme.Framework.Rocks {
 		}
 
 		/// <summary>
+		/// Check if the type inherits from the specified type. Note that it is possible that
+		/// we might not be able to know the complete inheritance chain since the assembly 
+		/// where the information resides could be unavailable.
+		/// </summary>
+		/// <param name="self">The TypeReference on which the extension method can be called.</param>
+		/// <param name="fullName">The full name of the base class to be matched</param>
+		/// <returns>True if the type inherits from specified class, False otherwise</returns>
+		public static bool Inherits (this TypeReference self, string fullName)
+		{
+			if (fullName == null)
+				throw new ArgumentNullException ("fullName");
+			if (self == null)
+				return false;
+
+			TypeReference current = self.Resolve ();
+			while (current != null) {
+				if (current.IsNamed (fullName))
+					return true;
+				if (current.IsNamed ("System", "Object"))
+					return false;
+
+				TypeDefinition td = current.Resolve ();
+				if (td == null)
+					return false;		// could not resolve type
+				current = td.BaseType;
+			}
+			return false;
+		}
+
+		/// <summary>
 		/// Check if the type and its namespace are named like the provided parameters.
 		/// This is preferred to checking the FullName property since the later can allocate (string) memory.
 		/// </summary>
@@ -404,26 +434,16 @@ namespace Gendarme.Framework.Rocks {
 			if (self == null)
 				return false;
 
-			if (self.IsNested) {
-				int spos = fullName.LastIndexOf ('/');
-				if (spos == -1)
-					return false;
-				// FIXME: GetFullName could be optimized away but it's a fairly uncommon case
-				return (fullName == self.GetFullName ());
+			string myFullName = self.FullName;
+			int length = myFullName.Length;
+			if (self.IsByReference) {
+				length--;
 			}
 
-			int dpos = fullName.LastIndexOf ('.');
-			string nspace = self.Namespace;
-			if (dpos != nspace.Length)
+			if (length != fullName.Length)
 				return false;
 
-			if (String.CompareOrdinal (nspace, 0, fullName, 0, dpos) != 0)
-				return false;
-
-			string name = self.Name;
-			if (fullName.Length - dpos - 1 != name.Length)
-				return false;
-			return (String.CompareOrdinal (name, 0, fullName, dpos + 1, fullName.Length - dpos - 1) == 0);
+			return (string.CompareOrdinal (myFullName, 0, fullName, 0, length) == 0);
 		}
 
 		/// <summary>

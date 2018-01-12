@@ -125,7 +125,7 @@ namespace Gendarme.Rules.Serialization {
 
 					MethodReference operand = (MethodReference) instruction.Operand;
 					TypeReference tr = operand.DeclaringType;
-					if (methodSignature.Matches (operand) && type.Inherits (tr.Namespace, tr.Name))
+					if (methodSignature.Matches (operand) && type.Inherits (tr.FullName))
 						return;
 				}
 			}

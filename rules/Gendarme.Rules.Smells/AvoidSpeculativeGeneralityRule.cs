@@ -124,7 +124,7 @@ namespace Gendarme.Rules.Smells {
 				foreach (ModuleDefinition module in assembly.Modules) {
 					foreach (TypeDefinition type in module.GetAllTypes ()) {
 						if ((baseType == type.BaseType) || (type.BaseType != null &&
-							type.BaseType.IsNamed (baseType.Namespace, baseType.Name))) {
+							type.BaseType.IsNamed (baseType.FullName))) {
 							if (++count > expected)
 								return false;
 						}

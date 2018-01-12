@@ -127,7 +127,7 @@ namespace Gendarme.Rules.Serialization {
 				if (ins.OpCode.OperandType != OperandType.InlineField)
 					continue;
 				FieldDefinition field = (ins.Operand as FieldDefinition);
-				if ((field != null) && field.FieldType.IsNamed (return_type.Namespace, return_type.Name))
+				if ((field != null) && field.FieldType.IsNamed (return_type.FullName))
 					return field;
 			}
 			return null;
