@@ -396,7 +396,7 @@ namespace Gendarme.Rules.Concurrency {
 								MethodDefinition target = ((MethodReference) ins.Previous.Operand).Resolve ();
 								if (target != null) {
 									ThreadModel callerModel = type.ThreadingModel ();
-									if (!target.IsGeneratedCode () || target.IsProperty ()) {
+									if (!target.IsGeneratedMethodOrType () || target.IsProperty ()) {
 										ThreadModel targetModel = target.ThreadingModel ();
 										if (!IsValidCall (callerModel, targetModel)) {
 											string mesg = String.Format (CultureInfo.InvariantCulture,
@@ -419,7 +419,7 @@ namespace Gendarme.Rules.Concurrency {
 				
 				case Code.Call:
 				case Code.Callvirt:
-					if (!method.IsGeneratedCode () || method.IsProperty ())
+					if (!method.IsGeneratedMethodOrType () || method.IsProperty ())
 						CheckForLegalCall (method, ins);
 					
 					// ldftn entry-point
@@ -535,7 +535,7 @@ namespace Gendarme.Rules.Concurrency {
 				if (method != null) {
 					ThreadModel model = method.ThreadingModel ();
 					
-					if (method.IsGeneratedCode () && !method.IsProperty ()) {
+					if (method.IsGeneratedMethodOrType () && !method.IsProperty ()) {
 						anonymous_entry_points.Add (method);
 					
 					} else if (model == ThreadModel.MainThread) {

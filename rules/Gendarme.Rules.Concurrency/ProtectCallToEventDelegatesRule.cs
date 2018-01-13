@@ -140,7 +140,7 @@ namespace Gendarme.Rules.Concurrency {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// rule does not apply to method without IL (e.g. p/invoke) or generated code (e.g. compiler or tools)
-			if (!method.HasBody || method.IsGeneratedCode ())
+			if (!method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			// avoid looping if we're sure there's no call in the method

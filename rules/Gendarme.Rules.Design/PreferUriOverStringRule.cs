@@ -211,7 +211,7 @@ namespace Gendarme.Rules.Design {
 					Runner.Report (property, Severity.Medium, Confidence.Normal);
 			} else {
 				// exclude generated code like webservices
-				if (method.IsGeneratedCode ())
+				if (method.IsGeneratedMethodBody ())
 					return RuleResult.DoesNotApply;
 
 				// Check the method's parameters.

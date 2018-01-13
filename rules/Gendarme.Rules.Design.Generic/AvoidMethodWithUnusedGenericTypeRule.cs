@@ -120,7 +120,7 @@ namespace Gendarme.Rules.Design.Generic {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// rule applies only if the method has generic type parameters
-			if (!method.HasGenericParameters || method.IsGeneratedCode ())
+			if (!method.HasGenericParameters || method.IsGeneratedMethodOrType ())
 				return RuleResult.DoesNotApply;
 
 			// look if every generic type parameter...

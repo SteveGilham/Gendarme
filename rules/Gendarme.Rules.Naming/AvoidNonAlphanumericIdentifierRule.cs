@@ -164,7 +164,7 @@ namespace Gendarme.Rules.Naming {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// exclude constrcutors, non-visible methods and generated code
-			if (method.IsConstructor || !method.IsVisible () || method.IsGeneratedCode ())
+			if (method.IsConstructor || !method.IsVisible () || method.IsGeneratedMethodOrType ())
 				return RuleResult.DoesNotApply;
 
 			// the rule does not apply if the code is an interface to COM objects

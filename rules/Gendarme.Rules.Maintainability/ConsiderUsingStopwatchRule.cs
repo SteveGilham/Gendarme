@@ -152,7 +152,7 @@ namespace Gendarme.Rules.Maintainability {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.HasBody || method.IsGeneratedCode ())
+			if (!method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			// is there any Call or Callvirt instructions in the method

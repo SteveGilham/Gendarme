@@ -65,7 +65,7 @@ namespace Gendarme.Rules.Performance {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// ingore methods without body and generated code
-			if (!method.HasBody || method.IsGeneratedCode ())
+			if (!method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			// special case for System.Windows.Forms since it's designer does not

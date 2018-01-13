@@ -83,7 +83,7 @@ namespace Gendarme.Rules.Performance {
 		{
 			// rule only applies if the method has a body
 			// rule doesn't not apply to generated code (out of developer's control)
-			if (!method.HasBody || method.IsGeneratedCode ())
+			if (!method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			// check if the method contains a Pop instruction

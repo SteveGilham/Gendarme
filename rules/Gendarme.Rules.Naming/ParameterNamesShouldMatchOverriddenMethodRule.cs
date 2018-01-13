@@ -163,7 +163,7 @@ namespace Gendarme.Rules.Naming {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedCode ())
+			if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedMethodOrType ())
 				return RuleResult.DoesNotApply;
 
 			MethodDefinition baseMethod = null;

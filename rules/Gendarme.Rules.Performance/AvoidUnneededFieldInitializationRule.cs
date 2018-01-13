@@ -89,7 +89,7 @@ namespace Gendarme.Rules.Performance {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.IsConstructor || !method.HasBody || method.IsGeneratedCode ())
+			if (!method.IsConstructor || !method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			TypeReference type = method.DeclaringType;

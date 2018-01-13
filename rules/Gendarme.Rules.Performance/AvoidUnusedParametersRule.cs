@@ -123,7 +123,7 @@ namespace Gendarme.Rules.Performance {
 
 			// rule doesn't apply to virtual, overrides or generated code
 			// doesn't apply to code referenced by delegates (note: more complex check moved last)
-			if (method.IsVirtual || method.HasOverrides || method.IsGeneratedCode ())
+			if (method.IsVirtual || method.HasOverrides || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 		
 			// Also EventArgs parameters are often required in method signatures,
