@@ -317,6 +317,12 @@ namespace Test.Rules.Maintainability {
 	[TestFixture]
 	public class AvoidUnnecessarySpecializationTest : MethodRuleTestFixture<AvoidUnnecessarySpecializationRule> {
 
+		[OneTimeSetUp]
+		public void Init()
+		{
+			AssemblyResolver.Resolver.CacheAssembly (typeof (RunnerEventArgs).Assembly);
+		}
+
 		[Test]
 		public void NotApplicable ()
 		{

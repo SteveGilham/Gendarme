@@ -41,6 +41,12 @@ namespace Test.Rules.NUnit {
 	[TestFixture]
 	public class ProvideMessageOnAssertCallsTest : MethodRuleTestFixture<ProvideMessageOnAssertCallsRule> {
 
+		[OneTimeSetUp]
+		public void Init()
+		{
+			Gendarme.Framework.AssemblyResolver.Resolver.CacheAssembly (typeof(TestFixtureAttribute).Assembly);
+		}
+
 		private void DoesNotApplyNoAttributes ()
 		{
 			Assert.AreEqual (10, 20);
