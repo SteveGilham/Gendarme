@@ -41,6 +41,7 @@ namespace Gendarme.Rules.Gendarme {
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
+			AssemblyResolver.Resolver.CacheAssembly ( typeof (Rule).Assembly );
 
 			// If the assembly doesn't reference Gendarme.Framework then it 
 			// obviously is not a Gendarme Rules assembly
