@@ -177,6 +177,11 @@ namespace Test.Rules.Maintainability {
 			Console.WriteLine (x.Message);
 		}
 
+		public void GenericMethodStandardParameter (Exception x)
+		{
+			Console.WriteLine (x.Message);
+		}
+
 		public int GenericMethodArgument (Type type)
 		{
 			Type [] types = new Type [0];
@@ -272,6 +277,11 @@ namespace Test.Rules.Maintainability {
 		}
 
 		public void GenericMethod<T> (T x) where T : System.ArgumentException
+		{
+			Console.WriteLine (x.Message);
+		}
+
+		public void GenericMethodStandardParameter (ArgumentException x)
 		{
 			Console.WriteLine (x.Message);
 		}
@@ -423,7 +433,9 @@ namespace Test.Rules.Maintainability {
 		[Test]
 		public void GenericMethod ()
 		{
+			AssertRuleSuccess<GeneralizedClass> ("GenericMethodStandardParameter");
 			AssertRuleSuccess<GeneralizedClass> ("GenericMethod");
+			AssertRuleFailure<SpecializedClass> ("GenericMethodStandardParameter");
 			AssertRuleFailure<SpecializedClass> ("GenericMethod");
 		}
 
