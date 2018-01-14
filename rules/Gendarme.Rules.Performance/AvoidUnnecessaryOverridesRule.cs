@@ -27,11 +27,13 @@
 //
 
 
+using System;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Collections.Generic;
 
 namespace Gendarme.Rules.Performance {
 
@@ -88,25 +90,43 @@ namespace Gendarme.Rules.Performance {
 			return false;
 		}
 
-		static bool CompareCustomAttributes (ICustomAttributeProvider a, ICustomAttributeProvider b)
+		static bool CustomAttributesEquals (MethodDefinition a, MethodDefinition b)
 		{
-			bool ha = a.HasCustomAttributes;
-			bool hb = b.HasCustomAttributes;
-			// if only one of them has custom attributes
-			if (ha != hb)
+			Collection<CustomAttribute> aAttributes = GetAttributes(a);
+			Collection<CustomAttribute> bAttributes = GetAttributes(b);
+			// if the count is different, then the attributes must be different
+			if (aAttributes.Count != bAttributes.Count)
 				return false;
 			// if both do not have custom attributes
-			if (!ha && !hb)
+			if (bAttributes.Count == 0)
 				return true;
 			// compare attributes
-			foreach (CustomAttribute attr in a.CustomAttributes) {
-				if (!b.CustomAttributes.Contains (attr))
+			foreach (CustomAttribute attr in aAttributes) {
+				if (!bAttributes.Contains (attr))
 					return false;
 			}
 			return true;
 		}
 
-		static bool CompareSecurityDeclarations (ISecurityDeclarationProvider a, ISecurityDeclarationProvider b)
+		private static Collection<CustomAttribute> GetAttributes(MethodDefinition metod)
+		{
+			if (ReferenceEquals(metod, null))
+				return (new Collection<CustomAttribute>());
+			Collection<CustomAttribute> attributes = new Collection<CustomAttribute>(metod.CustomAttributes);
+			// there is a unknown reason, why the "Mono.Cecil.CustomAttribute" is defined on "System.Object", "System.Exception" and other types
+			/*if (string.Equals(metod.DeclaringType.FullName, "System.Object", StringComparison.Ordinal))*/ {
+				for (int i = 0, j = 0; i < attributes.Count; i++) {
+          TypeReference attributeType = attributes[i].AttributeType;
+          if (string.Equals(attributeType.FullName, "__DynamicallyInvokableAttribute", StringComparison.Ordinal))
+						attributes.RemoveAt(j);
+					else
+						j++;
+				}
+			}
+			return attributes;
+		}
+
+		static bool SecurityDeclarationsEquals (ISecurityDeclarationProvider a, ISecurityDeclarationProvider b)
 		{
 			bool ha = a.HasSecurityDeclarations;
 			bool hb = b.HasSecurityDeclarations;
@@ -185,7 +205,7 @@ namespace Gendarme.Rules.Performance {
 				return RuleResult.Success;
 			}
 
-			if (!CompareCustomAttributes (method, md) || !CompareSecurityDeclarations (method, md))
+			if (!CustomAttributesEquals (method, md) || !SecurityDeclarationsEquals (method, md))
 				return RuleResult.Success;
 			
 			Runner.Report (method, Severity.Medium, Confidence.High);
