@@ -55,5 +55,5 @@ Project updates
 
 Unfortunately I do not have much time, so do not expect any big activity on this project. I will try to fix all problems I find *(whilst working on my own projects)*, but do not expect me to fix any problematic parts found by other developers _(at least not in short time)_.
 
-See [TODO.md](TODO.md) to see what is on the plan *(for now)*.
+See [TODO.md](TODO.md) to see what is on the plan *(for now)* and [KnownIssues.md](KnownIssues.md) for list of known issues.
 

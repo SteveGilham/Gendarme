@@ -17,9 +17,9 @@ To do list
 
     Wrong assumptions, too many false positives; rule is fired on two members with the same *prefix*, e. g. GUI form with label `userNameLabel` and text box `userNameTextBox`, that simply can not be extracted to two different classes and to create custom user control for all these *little things* is not the best idea either.
 
-* Fix unit test to be usable in Visual Studio
+  - Mono compatibility rule
 
-* Verify project files, whether they include all rules and other source code files
+    Remove downloading; the source of current state in no longer updated
 
 * Test Linux/Mono support of changes
 
