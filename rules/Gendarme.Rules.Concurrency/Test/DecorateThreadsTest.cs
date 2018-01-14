@@ -808,6 +808,12 @@ namespace Test.Rules.Concurrency {
 			runner = new TestRunner (rule);
 		}
 		
+		[OneTimeSetUp]
+		public void Init ()
+		{
+			AssemblyResolver.Resolver.CacheAssembly ( typeof (Rule).Assembly );
+		}
+		
 		[Test]
 		public void Cases ()
 		{
