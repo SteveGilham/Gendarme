@@ -145,7 +145,7 @@ namespace Gendarme.Rules.Correctness {
 
 		private static bool IsResource (MethodDefinition method)
 		{
-			return method.IsStatic && method.IsGetter && method.IsGeneratedCode ();
+			return method.IsStatic && method.IsGetter && method.IsGeneratedMethodBody ();
 		}
 
 		// Get the store instruction associated with the load instruction

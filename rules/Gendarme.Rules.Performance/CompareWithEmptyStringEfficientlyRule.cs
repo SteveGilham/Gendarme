@@ -74,7 +74,7 @@ namespace Gendarme.Rules.Performance {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// rule apply only if the method has a body (e.g. p/invokes, icalls don't)
-			if (!method.HasBody || method.IsGeneratedCode ())
+			if (!method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			// is there any Call or Callvirt instructions in the method

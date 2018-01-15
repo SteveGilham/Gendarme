@@ -132,7 +132,7 @@ namespace Gendarme.Rules.Correctness {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.HasBody || method.IsGeneratedCode ())
+			if (!method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			// exclude methods that don't store fields or arguments

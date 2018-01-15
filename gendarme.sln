@@ -55,37 +55,37 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gendarme.Rules.Design.Linq"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gendarme.Rules.Security.Cas", "rules\Gendarme.Rules.Security.Cas\Gendarme.Rules.Security.Cas.csproj", "{237A273E-BCAF-42DB-9DE5-1697B016C648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Performance", "rules\Gendarme.Rules.Performance\Test\Tests.Rules.Performance.csproj", "{0C697291-D955-43C8-994E-A03B6A77A21A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Performance", "rules\Gendarme.Rules.Performance\Test\Test.Rules.Performance.csproj", "{0C697291-D955-43C8-994E-A03B6A77A21A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Security", "rules\Gendarme.Rules.Security\Test\Tests.Rules.Security.csproj", "{9E180535-E8B7-48B8-80C0-3BBFDAA67403}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Security", "rules\Gendarme.Rules.Security\Test\Test.Rules.Security.csproj", "{9E180535-E8B7-48B8-80C0-3BBFDAA67403}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Portability", "rules\Gendarme.Rules.Portability\Test\Tests.Rules.Portability.csproj", "{ED4AC7B7-BF77-495E-91F4-720082EDC8E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Portability", "rules\Gendarme.Rules.Portability\Test\Test.Rules.Portability.csproj", "{ED4AC7B7-BF77-495E-91F4-720082EDC8E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Exceptions", "rules\Gendarme.Rules.Exceptions\Test\Tests.Rules.Exceptions.csproj", "{AB493443-CE45-426F-8DE9-0F1D8EBC63AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Exceptions", "rules\Gendarme.Rules.Exceptions\Test\Test.Rules.Exceptions.csproj", "{AB493443-CE45-426F-8DE9-0F1D8EBC63AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Correctness", "rules\Gendarme.Rules.Correctness\Test\Tests.Rules.Correctness.csproj", "{FFB3FC5E-8CC4-4360-87DB-EADC266F82A5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Correctness", "rules\Gendarme.Rules.Correctness\Test\Test.Rules.Correctness.csproj", "{FFB3FC5E-8CC4-4360-87DB-EADC266F82A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Concurrency", "rules\Gendarme.Rules.Concurrency\Test\Tests.Rules.Concurrency.csproj", "{77ACB4C1-95E3-42DC-980C-9A6FD506F17D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Concurrency", "rules\Gendarme.Rules.Concurrency\Test\Test.Rules.Concurrency.csproj", "{77ACB4C1-95E3-42DC-980C-9A6FD506F17D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Ui", "rules\Gendarme.Rules.Ui\Test\Tests.Rules.Ui.csproj", "{D6BDE725-945A-4A16-91E2-F1B16C67D93D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Ui", "rules\Gendarme.Rules.Ui\Test\Test.Rules.Ui.csproj", "{D6BDE725-945A-4A16-91E2-F1B16C67D93D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.BadPractice", "rules\Gendarme.Rules.BadPractice\Test\Tests.Rules.BadPractice.csproj", "{C95DBCDA-ED1D-4B77-93CD-E27B37B84577}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.BadPractice", "rules\Gendarme.Rules.BadPractice\Test\Test.Rules.BadPractice.csproj", "{C95DBCDA-ED1D-4B77-93CD-E27B37B84577}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Interoperability", "rules\Gendarme.Rules.Interoperability\Test\Tests.Rules.Interoperability.csproj", "{5F87F782-0D2B-48B0-9B44-373DB67D9321}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Interoperability", "rules\Gendarme.Rules.Interoperability\Test\Test.Rules.Interoperability.csproj", "{5F87F782-0D2B-48B0-9B44-373DB67D9321}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Naming", "rules\Gendarme.Rules.Naming\Test\Tests.Rules.Naming.csproj", "{B4E97DE7-FF30-485E-A2D8-7A0C596E6851}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Naming", "rules\Gendarme.Rules.Naming\Test\Test.Rules.Naming.csproj", "{B4E97DE7-FF30-485E-A2D8-7A0C596E6851}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Smells", "rules\Gendarme.Rules.Smells\Test\Tests.Rules.Smells.csproj", "{986B9EFB-7494-4410-8B01-56AB42388643}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Smells", "rules\Gendarme.Rules.Smells\Test\Test.Rules.Smells.csproj", "{986B9EFB-7494-4410-8B01-56AB42388643}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Serialization", "rules\Gendarme.Rules.Serialization\Test\Tests.Rules.Serialization.csproj", "{558A9250-105A-4C6A-999D-1C1F85F4CB05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Serialization", "rules\Gendarme.Rules.Serialization\Test\Test.Rules.Serialization.csproj", "{558A9250-105A-4C6A-999D-1C1F85F4CB05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Framework", "framework\Test\Tests.Framework.csproj", "{D47F1ACA-8AA6-4797-9644-57A8AFE2A86B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Framework", "framework\Test\Test.Framework.csproj", "{D47F1ACA-8AA6-4797-9644-57A8AFE2A86B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Design", "rules\Gendarme.Rules.Design\Test\Tests.Rules.Design.csproj", "{BC57A292-B4FC-415F-BF9A-714A5E62E0E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Design", "rules\Gendarme.Rules.Design\Test\Test.Rules.Design.csproj", "{BC57A292-B4FC-415F-BF9A-714A5E62E0E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules", "rules\Test.Rules\Test.Rules.csproj", "{069148AF-86AB-4EE3-BFB9-429AE722461F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Maintainability", "rules\Gendarme.Rules.Maintainability\Test\Tests.Rules.Maintainability.csproj", "{A2F3E904-8D4E-4C18-A0B9-B2BCBD3A0537}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Maintainability", "rules\Gendarme.Rules.Maintainability\Test\Test.Rules.Maintainability.csproj", "{A2F3E904-8D4E-4C18-A0B9-B2BCBD3A0537}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gendarme", "console\gendarme.csproj", "{E95A3AB9-A303-4859-8BCA-458C79496548}"
 EndProject
@@ -95,7 +95,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "..\..\mcs\cla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "swf-wizard-runner", "swf-wizard-runner\swf-wizard-runner.csproj", "{3C44DF79-3FEA-4F1D-8568-8744AD92E3F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Design.Generic", "rules\Gendarme.Rules.Design.Generic\Test\Tests.Rules.Design.Generic.csproj", "{C3BDA065-4C29-48CA-907A-E35CE92F5F87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Rules.Design.Generic", "rules\Gendarme.Rules.Design.Generic\Test\Test.Rules.Design.Generic.csproj", "{C3BDA065-4C29-48CA-907A-E35CE92F5F87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

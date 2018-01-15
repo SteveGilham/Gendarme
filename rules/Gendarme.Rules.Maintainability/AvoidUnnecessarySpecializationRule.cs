@@ -472,7 +472,7 @@ namespace Gendarme.Rules.Maintainability {
 		{
 			if (!method.HasBody || !method.HasParameters || method.IsCompilerControlled)
 				return RuleResult.DoesNotApply;
-			if (method.IsProperty () || method.IsGeneratedCode () || method.IsEventCallback ())
+			if (method.IsProperty () || method.IsGeneratedMethodOrType () || method.IsEventCallback ())
 				return RuleResult.DoesNotApply;
 
 			// we cannot change parameter types if:

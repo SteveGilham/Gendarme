@@ -124,7 +124,7 @@ namespace Test.Framework.Rocks {
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
@@ -178,17 +178,15 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Namespace_Null ()
 		{
-			GetType (String.Empty).HasAttribute (null, "a");
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).HasAttribute (null, "a"); });
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Name_Null ()
 		{
-			GetType (String.Empty).HasAttribute ("a", null);
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).HasAttribute ("a", null); });
 		}
 
 		[Test]
@@ -210,17 +208,15 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Implements_Namespace_Null ()
 		{
-			GetType (String.Empty).Implements (null, "a");
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Implements (null, "a"); });
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Implements_Name_Null ()
 		{
-			GetType (String.Empty).Implements ("a", null);
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Implements ("a", null); });
 		}
 
 		[Test]
@@ -235,17 +231,15 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Inherits_Namespace_Null ()
 		{
-			GetType (String.Empty).Inherits (null, "a");
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Inherits (null, "a"); });
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Inherits_Name_Null ()
 		{
-			GetType (String.Empty).Inherits ("a", null);
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Inherits ("a", null); });
 		}
 
 		[Test]
@@ -270,6 +264,7 @@ namespace Test.Framework.Rocks {
 		{
 			TypeDefinition type = GetType (String.Empty);
 			Assert.IsTrue (type.Inherits (type.Namespace, type.Name), "itself");
+			Assert.IsTrue (type.Inherits (type.FullName), "itself");
 		}
 
 		[Test]
@@ -372,7 +367,9 @@ namespace Test.Framework.Rocks {
 			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "PublicType/NestedPublicTypeExtraText"));
 
 			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "NestedPublicType"));
+			// the test bellow is probably irrelevant test because of the way the empty name space is processed in 'IsNamed'
 			Assert.IsFalse (type.IsNamed ("", "NestedPublicType"));
+			Assert.IsTrue (type.IsNamed (name));
 		}
 
 		[Test]

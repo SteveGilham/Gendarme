@@ -111,7 +111,7 @@ namespace Gendarme.Rules.Maintainability {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			//does rule apply?
-			if (!method.HasBody || method.IsGeneratedCode () || method.IsCompilerControlled)
+			if (!method.HasBody || method.IsGeneratedMethodBody () || method.IsCompilerControlled)
 				return RuleResult.DoesNotApply;
 
 			//yay! rule do apply!

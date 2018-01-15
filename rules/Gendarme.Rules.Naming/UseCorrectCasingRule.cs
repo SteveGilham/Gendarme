@@ -206,7 +206,7 @@ namespace Gendarme.Rules.Naming {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// ignore constructors (.ctor or .cctor) and compiler/tool-generated code
-			if (method.IsConstructor || method.IsGeneratedCode ())
+			if (method.IsConstructor || method.IsGeneratedMethodOrType ())
 				return RuleResult.DoesNotApply;
 
 			// don't consider private add / remove on events

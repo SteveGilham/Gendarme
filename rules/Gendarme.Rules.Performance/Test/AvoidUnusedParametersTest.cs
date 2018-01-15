@@ -66,7 +66,7 @@ namespace Test.Rules.Performance {
 	[TestFixture]
 	public class AvoidUnusedParametersTest : MethodRuleTestFixture<AvoidUnusedParametersRule> {
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
@@ -204,23 +204,19 @@ namespace Test.Rules.Performance {
 		[Test]
 		public void AnonymousMethodTest ()
 		{
-			MethodDefinition method = null;
-			// compiler generated code is compiler dependant, check for [g]mcs (inner type)
-			TypeDefinition type = DefinitionLoader.GetTypeDefinition (typeof (AvoidUnusedParametersTest).Assembly, "AvoidUnusedParametersTest/<>c__CompilerGenerated0");
-			if (type != null)
-				method = DefinitionLoader .GetMethodDefinition (type, "<AnonymousMethodWithUnusedParameters>c__2", null);
-			// otherwise try for csc (inside same class)
-			if (method == null) {
-				type = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest> ();
-				foreach (MethodDefinition md in type.Methods) {
+			TypeDefinition type = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest> ();
+			Assert.IsNotNull (type, "type not found!");
+			foreach (TypeDefinition nestedType in type.NestedTypes) {
+				if (!nestedType.Name.StartsWith("<>c", StringComparison.Ordinal))
+					continue;
+				foreach (MethodDefinition md in nestedType.Methods) {
 					if (md.Name.StartsWith ("<AnonymousMethodWithUnusedParameters>")) {
-						method = md;
-						break;
+						AssertRuleDoesNotApply (md);
+						Assert.Pass();
 					}
 				}
 			}
-			Assert.IsNotNull (method, "method not found!");
-			AssertRuleDoesNotApply (method);
+			Assert.Fail("method not found");
 		}
 
 		public delegate void SimpleEventHandler (int x);

@@ -31,7 +31,7 @@ using Gendarme.Rules.Performance;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Performance {
+namespace Test.Rules.Performance {
 	[TestFixture]
 	public class PreferInterfaceConstraintOnGenericParameterForPrimitiveInterfaceTest :
 		MethodRuleTestFixture<PreferInterfaceConstraintOnGenericParameterForPrimitiveInterfaceRule> {

@@ -59,6 +59,20 @@ namespace Gendarme.Framework.Rocks {
 			return false;
 		}
 
+		internal static bool HasGeneratedCodeAttribute (this ICustomAttributeProvider self)
+		{
+			if ((self == null) || !self.HasCustomAttributes)
+				return false;
+
+			foreach (CustomAttribute ca in self.CustomAttributes) {
+				TypeReference cat = ca.AttributeType;
+				if (cat.IsNamed ("System.CodeDom.Compiler", "GeneratedCodeAttribute")) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// Check if the type contains an attribute of a specified type.
 		/// </summary>

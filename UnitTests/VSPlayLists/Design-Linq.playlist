@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="Test.Rules.Design.Linq.AvoidExtensionMethodOnSystemObjectTest.DoesNotApply" /><Add Test="Test.Rules.Design.Linq.AvoidExtensionMethodOnSystemObjectTest.ExtendingSystemObject" /><Add Test="Test.Rules.Design.Linq.AvoidExtensionMethodOnSystemObjectTest.Extending" /></Playlist>

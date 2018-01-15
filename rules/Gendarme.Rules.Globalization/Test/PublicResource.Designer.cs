@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Tests.Rules.Globalization {
+namespace Test.Rules.Globalization {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Tests.Rules.Globalization {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Tests.Rules.Globalization.PublicResource", typeof(PublicResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Test.Rules.Globalization.PublicResource", typeof(PublicResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

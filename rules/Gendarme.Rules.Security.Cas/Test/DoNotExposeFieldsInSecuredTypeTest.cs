@@ -34,7 +34,7 @@ using Gendarme.Rules.Security.Cas;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Security {
+namespace Test.Rules.Security.Cas {
 
 	[TestFixture]
 	public class DoNotExposeFieldsInSecuredTypeTest : TypeRuleTestFixture<DoNotExposeFieldsInSecuredTypeRule> {

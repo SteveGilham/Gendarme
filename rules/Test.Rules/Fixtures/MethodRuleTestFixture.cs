@@ -34,6 +34,7 @@ using Gendarme.Framework.Rocks;
 using Test.Rules.Helpers;
 
 using Mono.Cecil;
+using NUnit.Framework;
 
 namespace Test.Rules.Fixtures {
 	
@@ -87,8 +88,15 @@ namespace Test.Rules.Fixtures {
 		/// <typeparam name="T">Type containing the methods.</typeparam>
 		protected void AssertRuleSuccess<T> ()
 		{
-			foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T> ().Methods)
-				base.AssertRuleSuccess (method);
+			bool success = false;
+			foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T> ().Methods) {
+				if (base.RunRuleAndCheckSuccessOrDoesNotApply (method))
+					success = true;
+			}
+			if (!success) {
+				Assert.AreEqual (RuleResult.Success, RuleResult.DoesNotApply, "{0} failed on {1}: result should be {2} but got {3}.", 
+					typeof (TMethodRule).Name, typeof (T).Name, RuleResult.Success, RuleResult.DoesNotApply);
+			}
 		}
 		
 		/// <summary>

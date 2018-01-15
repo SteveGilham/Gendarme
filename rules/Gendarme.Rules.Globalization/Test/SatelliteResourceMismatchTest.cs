@@ -35,20 +35,19 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Mono.Cecil;
 
-namespace Tests.Rules.Globalization {
+namespace Test.Rules.Globalization {
 
 	[TestFixture]
 	public sealed class SatelliteResourceMismatchTest : AssemblyRuleTestFixture<SatelliteResourceMismatchRule> {
 
 		AssemblyDefinition assembly;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			// We use CodeBase insteed of Location to find the satellites assemblies
-			string asmUri = Assembly.GetExecutingAssembly ().CodeBase;
-			Uri uri = new Uri (asmUri);
-			assembly = AssemblyDefinition.ReadAssembly (uri.AbsolutePath);
+			string location = Assembly.GetExecutingAssembly ().Location;
+			assembly = AssemblyDefinition.ReadAssembly (location);
 		}
 
 		[Test]

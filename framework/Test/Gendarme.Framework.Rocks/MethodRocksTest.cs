@@ -87,7 +87,7 @@ namespace Test.Framework.Rocks {
 
 		private AssemblyDefinition assembly;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;
@@ -111,27 +111,25 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Namespace_Null ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-			method.HasAttribute (null, "a");
+			Assert.Throws<ArgumentNullException>(delegate { method.HasAttribute (null, "a"); });
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Name_Null ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-			method.HasAttribute ("a", null);
+			Assert.Throws<ArgumentNullException>(delegate { method.HasAttribute ("a", null); });
 		}
 
 		[Test]
 		public void HasAttribute ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-			Assert.IsTrue (method.HasAttribute ("NUnit.Framework", "TestFixtureSetUpAttribute"), "NUnit.Framework.TestFixtureSetUpAttribute");
-			Assert.IsFalse (method.HasAttribute ("NUnit.Framework", "TestFixtureSetUp"), "NUnit.Framework.TestFixtureSetUp");
+			Assert.IsTrue (method.HasAttribute ("NUnit.Framework", "OneTimeSetUpAttribute"), "NUnit.Framework.OneTimeSetUpAttribute");
+			Assert.IsFalse (method.HasAttribute ("NUnit.Framework", "OneTimeSetUp"), "NUnit.Framework.OneTimeSetUp");
 		}
 
 		[Test]
@@ -151,16 +149,18 @@ namespace Test.Framework.Rocks {
 		[System.Runtime.CompilerServices.CompilerGeneratedAttribute]
 		public void IsGeneratedCode_CompilerGenerated ()
 		{
-			Assert.IsTrue (GetMethod ("IsGeneratedCode_CompilerGenerated").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsGeneratedCode (), "FixtureSetUp");
+			Assert.IsTrue (GetMethod ("IsGeneratedCode_CompilerGenerated").IsGeneratedMethodBody (), "IsCompilerGeneratedMethodBody");
+			Assert.IsFalse (GetMethod ("IsGeneratedCode_CompilerGenerated").IsGeneratedMethodOrType (), "IsCompilerGeneratedMethodOrType");
+			Assert.IsFalse (GetMethod ("FixtureSetUp").IsGeneratedMethodOrType (), "FixtureSetUp");
 		}
 
 		[Test]
 		[System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
 		public void IsGeneratedCode_GeneratedCode ()
 		{
-			Assert.IsTrue (GetMethod ("IsGeneratedCode_GeneratedCode").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsGeneratedCode (), "FixtureSetUp");
+			Assert.IsTrue (GetMethod ("IsGeneratedCode_GeneratedCode").IsGeneratedMethodOrType(), "IsCompilerGeneratedMethodOrType");
+			Assert.IsTrue (GetMethod ("IsGeneratedCode_GeneratedCode").IsGeneratedMethodBody(), "IsCompilerGeneratedMethodBody");
+			Assert.IsFalse (GetMethod ("FixtureSetUp").IsGeneratedMethodBody (), "FixtureSetUp");
 		}
 
 		[Test]

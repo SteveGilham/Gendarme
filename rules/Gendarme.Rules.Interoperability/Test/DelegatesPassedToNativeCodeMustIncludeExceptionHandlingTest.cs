@@ -186,7 +186,7 @@ namespace Test.Rules.Interoperability {
 		}
 		#endregion
 		
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;
@@ -719,8 +719,8 @@ namespace Test.Rules.Interoperability {
 			method = DefinitionLoader.GetMethodDefinition <DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest> (name);
 			result = runner.CheckMethod (method);
 			
-			Assert.AreEqual (expected, result);
-			Assert.AreEqual (expectedCount, runner.Defects.Count, "DefectCount");
+			Assert.AreEqual (expected, result, "For test method: " + name);
+			Assert.AreEqual (expectedCount, runner.Defects.Count, "Defect count for test method: " + name);
 		}
 		
 		private void AssertClass<T> ()

@@ -140,7 +140,7 @@ namespace Gendarme.Rules.Maintainability {
 					case OperandType.InlineMethod:
 						// special case for automatic properties since the 'backing' fields won't be used
 						MethodDefinition md = inst.Operand as MethodDefinition;
-						if (md == null || md.IsPrivate || md.IsStatic || !md.IsProperty () || !md.IsGeneratedCode ())
+						if (md == null || md.IsPrivate || md.IsStatic || !md.IsProperty () || !md.IsGeneratedMethodBody ())
 							continue;
 						mr = md.GetPropertyByAccessor ();
 						break;

@@ -33,7 +33,6 @@ using Gendarme.Rules.Correctness;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
-using Tests.Rules.Correctness;
 
 namespace Test.Rules.Correctness {
 	[TestFixture]

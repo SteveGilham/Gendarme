@@ -133,11 +133,12 @@ namespace Gendarme.Framework.Helpers {
 					return false;
 
 				TypeReference mtype = method.DeclaringType;
-				if (last.Namespace != mtype.Namespace)
+				string argumentTypeName = last.FullName;
+				string declaringTypeName = mtype.FullName;
+				if (argumentTypeName.Length - 1 != declaringTypeName.Length)
 					return false;
 
-				string pt_name = last.Name;
-				return (String.Compare (pt_name, 0, mtype.Name, 0, pt_name.Length - 1, StringComparison.Ordinal) == 0);
+				return (String.Compare (argumentTypeName, 0, declaringTypeName, 0, declaringTypeName.Length, StringComparison.Ordinal) == 0);
 			}
 		);
 
@@ -146,7 +147,7 @@ namespace Gendarme.Framework.Helpers {
 			delegate (MethodReference method) {
 				if (!method.HasParameters)
 					return false;
-				if (!method.ReturnType.IsNamed (method.DeclaringType.Namespace, method.DeclaringType.Name))
+				if (!method.ReturnType.IsNamed (method.DeclaringType.FullName))
 					return false;
 				return method.Parameters [0].ParameterType.IsNamed ("System", "String");
 			}

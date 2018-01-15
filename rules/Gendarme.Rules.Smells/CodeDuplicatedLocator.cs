@@ -74,12 +74,12 @@ namespace Gendarme.Rules.Smells {
 
 		internal void CompareMethodAgainstTypeMethods (MethodDefinition current, TypeDefinition targetType)
 		{
-			if (CheckedTypes.Contains (targetType.Name) || current.IsGeneratedCode ())
+			if (CheckedTypes.Contains (targetType.Name) || current.IsGeneratedMethodBody ())
 				return;
 			bool isContructor = current.IsConstructor;
 
 			foreach (MethodDefinition target in targetType.Methods) {
-				if (target.IsGeneratedCode ())
+				if (target.IsGeneratedMethodBody ())
 					continue;
 				if (target.IsConstructor != isContructor)
 					continue;

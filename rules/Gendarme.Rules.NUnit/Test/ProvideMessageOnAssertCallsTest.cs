@@ -41,6 +41,12 @@ namespace Test.Rules.NUnit {
 	[TestFixture]
 	public class ProvideMessageOnAssertCallsTest : MethodRuleTestFixture<ProvideMessageOnAssertCallsRule> {
 
+		[OneTimeSetUp]
+		public void Init()
+		{
+			Gendarme.Framework.AssemblyResolver.Resolver.CacheAssembly (typeof(TestFixtureAttribute).Assembly);
+		}
+
 		private void DoesNotApplyNoAttributes ()
 		{
 			Assert.AreEqual (10, 20);
@@ -64,7 +70,7 @@ namespace Test.Rules.NUnit {
 			System.Collections.Generic.List<string> ls = new System.Collections.Generic.List<string> { "a", "b" };
 			ls.Clear ();
 
-			Assert.IsInstanceOfType (typeof (System.Reflection.Assembly), new object ());
+			Assert.That (new object (), Is.InstanceOf<Assembly>());
 			Assert.IsNull (null);
 			Assert.IsNotNull (null, "message string");
 			Assert.ReferenceEquals (new object (), new object ()); // should be ignored

@@ -39,7 +39,7 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Tests.Rules.Security.Cas {
+namespace Test.Rules.Security.Cas {
 
 	[TestFixture]
 	public class ReviewSuppressUnmanagedCodeSecurityUsageTypeTest : TypeRuleTestFixture<ReviewSuppressUnmanagedCodeSecurityUsageRule> {

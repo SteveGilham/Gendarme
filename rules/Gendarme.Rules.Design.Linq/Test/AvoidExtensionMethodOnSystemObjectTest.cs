@@ -35,7 +35,7 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Design.Linq {
+namespace Test.Rules.Design.Linq {
 
 	public static class Extensions {
 

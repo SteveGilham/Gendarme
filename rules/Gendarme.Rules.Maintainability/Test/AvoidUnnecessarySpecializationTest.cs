@@ -177,6 +177,11 @@ namespace Test.Rules.Maintainability {
 			Console.WriteLine (x.Message);
 		}
 
+		public void GenericMethodStandardParameter (Exception x)
+		{
+			Console.WriteLine (x.Message);
+		}
+
 		public int GenericMethodArgument (Type type)
 		{
 			Type [] types = new Type [0];
@@ -276,6 +281,11 @@ namespace Test.Rules.Maintainability {
 			Console.WriteLine (x.Message);
 		}
 
+		public void GenericMethodStandardParameter (ArgumentException x)
+		{
+			Console.WriteLine (x.Message);
+		}
+
 		//`type` could be MemberInfo
 		public int GenericMethodArgument (Type type)
 		{
@@ -316,6 +326,12 @@ namespace Test.Rules.Maintainability {
 
 	[TestFixture]
 	public class AvoidUnnecessarySpecializationTest : MethodRuleTestFixture<AvoidUnnecessarySpecializationRule> {
+
+		[OneTimeSetUp]
+		public void Init()
+		{
+			AssemblyResolver.Resolver.CacheAssembly (typeof (RunnerEventArgs).Assembly);
+		}
 
 		[Test]
 		public void NotApplicable ()
@@ -417,7 +433,9 @@ namespace Test.Rules.Maintainability {
 		[Test]
 		public void GenericMethod ()
 		{
+			AssertRuleSuccess<GeneralizedClass> ("GenericMethodStandardParameter");
 			AssertRuleSuccess<GeneralizedClass> ("GenericMethod");
+			AssertRuleFailure<SpecializedClass> ("GenericMethodStandardParameter");
 			AssertRuleFailure<SpecializedClass> ("GenericMethod");
 		}
 

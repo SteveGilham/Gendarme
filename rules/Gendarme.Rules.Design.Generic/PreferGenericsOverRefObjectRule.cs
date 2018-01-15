@@ -70,7 +70,7 @@ namespace Gendarme.Rules.Design.Generic {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// rule does not apply to properties, events, without parameters or for generated code
-			if (method.IsSpecialName || !method.HasParameters || method.IsGeneratedCode ())
+			if (method.IsSpecialName || !method.HasParameters || method.IsGeneratedMethodOrType ())
 				return RuleResult.DoesNotApply;
 
 			// exclude the "bool Try* (ref)" pattern from the rule

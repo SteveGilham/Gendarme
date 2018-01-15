@@ -100,7 +100,7 @@ namespace Gendarme.Rules.Performance {
 		{
 			// rule does not apply to external methods (e.g. p/invokes)
 			// and generated code (by compilers or tools)
-			if (!method.HasBody || method.IsGeneratedCode ())
+			if (!method.HasBody || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
 
 			MethodBody body = method.Body;
