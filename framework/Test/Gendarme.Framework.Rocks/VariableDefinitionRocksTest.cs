@@ -33,6 +33,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Test.Framework.Rocks {
 
@@ -121,23 +122,50 @@ namespace Test.Framework.Rocks {
 		
 		private void DoTest (MethodDefinition method, params string [] userNames)
 		{
-			int count = 0;
+			int generatedCount = 0;
+			int userCount = 0;
+			bool[] usedVariables = new bool[userNames.Length];
+			IList<string> definedNames = userNames;
 			
 			foreach (Instruction ins in method.Body.Instructions) {
 				VariableDefinition v = ins.GetVariable (method);
 				if (v != null) {
-					bool userName = userNames.Any (n => n == v.Name);
-					if (userName) {
+					Assert.NotNull(v.Name, "Variable name is null");
+					int index = definedNames.IndexOf(v.Name);
+					if (index >= 0) {
+						if (!usedVariables[index]) {
+							usedVariables[index] = true;
+							userCount++;
+						}
 						Assert.IsFalse (v.IsGeneratedName (), "{0} was reported as a generated name", v.Name);
 					} else {
-						++count;
+						++generatedCount;
 						Assert.IsTrue (v.IsGeneratedName (), "{0} was not reported as a generated name", v.Name);
 					}
 				}
 			}
 			
-			if (count == 0)
+			if (generatedCount == 0)
 				Assert.Fail ("Didn't find any generated locals for VariableDefinitionRocksTest::{0}", method.Name);
+			if (userCount == 0)
+				Assert.Fail ("No user defined local was found for VariableDefinitionRocksTest::{0}", method.Name);
+			if (userCount < userNames.Length) {
+				StringBuilder sb = new StringBuilder();
+				int missing = 0;
+				for (int i = 0; i < userNames.Length; i++) {
+					if (!usedVariables[i]) {
+						sb.Append('\'').Append(userNames[i]).Append("', ");
+						missing++;
+					}
+				}
+				if (missing > 0) {
+					sb.Length -= 2;
+				}
+				if (missing == 1)
+					Assert.Fail ("Didn't find user defined local {1} for VariableDefinitionRocksTest::{0}", method.Name, sb);
+				else
+					Assert.Fail ("Didn't find all user defined locals {1} for VariableDefinitionRocksTest::{0}", method.Name, sb);
+			}
 		}
 	}
 }
