@@ -120,39 +120,32 @@ namespace Test.Framework.Rocks {
 			DoTest (method, "name");
 		}
 		
-		private void DoTest (MethodDefinition method, params string [] userNames)
+		private void DoTestByInstructions (MethodDefinition method, IList<string> userNames)
 		{
+			const string textName = "body instruction";
 			int generatedCount = 0;
 			int userCount = 0;
-			bool[] usedVariables = new bool[userNames.Length];
-			IList<string> definedNames = userNames;
+			bool[] usedVariables = new bool[userNames.Count];
 			
 			foreach (Instruction ins in method.Body.Instructions) {
 				VariableDefinition v = ins.GetVariable (method);
-				if (v != null) {
-					Assert.NotNull(v.Name, "Variable name is null");
-					int index = definedNames.IndexOf(v.Name);
-					if (index >= 0) {
-						if (!usedVariables[index]) {
-							usedVariables[index] = true;
-							userCount++;
-						}
-						Assert.IsFalse (v.IsGeneratedName (), "{0} was reported as a generated name", v.Name);
-					} else {
-						++generatedCount;
-						Assert.IsTrue (v.IsGeneratedName (), "{0} was not reported as a generated name", v.Name);
-					}
-				}
+				TestVariable(textName, v, userNames, usedVariables, ref userCount, ref generatedCount);
 			}
 			
+			ValidateResult(textName, userNames, usedVariables, generatedCount, userCount);
+		}
+		
+		private void ValidateResult(string testMethodName, IList<string> userNames, IList<bool> usedVariables,
+			int generatedCount, int userCount)
+		{
 			if (generatedCount == 0)
-				Assert.Fail ("Didn't find any generated locals for VariableDefinitionRocksTest::{0}", method.Name);
+				Assert.Fail ("Didn't find any generated locals (for test by {0})", testMethodName);
 			if (userCount == 0)
-				Assert.Fail ("No user defined local was found for VariableDefinitionRocksTest::{0}", method.Name);
-			if (userCount < userNames.Length) {
+				Assert.Fail ("No user defined local was found (for test by {0})", testMethodName);
+			if (userCount < userNames.Count) {
 				StringBuilder sb = new StringBuilder();
 				int missing = 0;
-				for (int i = 0; i < userNames.Length; i++) {
+				for (int i = 0; i < userNames.Count; i++) {
 					if (!usedVariables[i]) {
 						sb.Append('\'').Append(userNames[i]).Append("', ");
 						missing++;
@@ -162,10 +155,49 @@ namespace Test.Framework.Rocks {
 					sb.Length -= 2;
 				}
 				if (missing == 1)
-					Assert.Fail ("Didn't find user defined local {1} for VariableDefinitionRocksTest::{0}", method.Name, sb);
+					Assert.Fail ("Didn't find user defined local {1} (for test by {0})", testMethodName, sb);
 				else
-					Assert.Fail ("Didn't find all user defined locals {1} for VariableDefinitionRocksTest::{0}", method.Name, sb);
+					Assert.Fail ("Didn't find all user defined locals {1} (for test by {0})", testMethodName, sb);
 			}
+		}
+
+		private void DoTestByVariablesList (MethodDefinition method, IList<string> userNames)
+		{
+			const string textName = "defined locals";
+			int generatedCount = 0;
+			int userCount = 0;
+			bool[] usedVariables = new bool[userNames.Count];
+			
+			foreach (VariableDefinition v in method.Body.Variables) {
+				TestVariable(textName, v, userNames, usedVariables, ref userCount, ref generatedCount);
+			}
+			
+			ValidateResult(textName, userNames, usedVariables, generatedCount, userCount);
+		}
+
+		private void TestVariable(string testMethodName, VariableDefinition v, IList<string> userNames,
+			bool[] usedVariables, ref int userCount, ref int generatedCount)
+		{
+			if (v != null) {
+				Assert.NotNull(v.Name, "Variable name is null");
+				int index = userNames.IndexOf(v.Name);
+				if (index >= 0) {
+					if (!usedVariables[index]) {
+						usedVariables[index] = true;
+						userCount++;
+					}
+					Assert.IsFalse (v.IsGeneratedName (), "{0} was reported as a generated name (for test by {0})", testMethodName, v.Name);
+				} else {
+					generatedCount++;
+					Assert.IsTrue (v.IsGeneratedName (), "{0} was not reported as a generated name (for test by {0})", testMethodName, v.Name);
+				}
+			}
+		}
+
+		private void DoTest (MethodDefinition method, params string [] userNames)
+		{
+			DoTestByVariablesList (method, userNames);
+			DoTestByInstructions (method, userNames);
 		}
 	}
 }
