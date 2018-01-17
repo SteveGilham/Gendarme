@@ -69,7 +69,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// <code>
 	/// class BadExample {
 	/// 	int producer = 0;
-	/// 	object lock = new object();
+	/// 	object mutex = new object();
 	///
 	/// 	// This class is meant to be thread safe, but in the interests of
 	/// 	// performance it requires clients to manage its lock. This allows
@@ -79,19 +79,19 @@ namespace Gendarme.Rules.Concurrency {
 	/// 	// if this object is shared across threads.
 	/// 	public void BeginEdits ()
 	/// 	{
-	///		Monitor.Enter (lock);
-	///	}
+	/// 		Monitor.Enter (mutex);
+	/// 	}
 	///
 	/// 	public void AddProducer ()
 	/// 	{
 	/// 		// Real code would either assert or throw if the lock is not held. 
-	///		producer++;
-	///	}
+	/// 		producer++;
+	/// 	}
 	///
 	/// 	public void EndEdits ()
 	/// 	{
-	///		Monitor.Exit (lock);
-	///	}
+	/// 		Monitor.Exit (mutex);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -101,27 +101,27 @@ namespace Gendarme.Rules.Concurrency {
 	/// class GoodExample {
 	/// 	int producer = 0;
 	/// 	object mutex = new object();
-	///	
-	///	public void AddProducer ()
-	///	{
+	/// 	
+	/// 	public void AddProducer ()
+	/// 	{
 	/// 		// We need a try block in case the assembly is compiled with
 	/// 		// checked arithmetic.
-	///		Monitor.Enter (mutex);
+	/// 		Monitor.Enter (mutex);
 	/// 		try {
-	///			producer++;
+	/// 			producer++;
 	/// 		}
-	///		finally {
-	///			Monitor.Exit (mutex);
+	/// 		finally {
+	/// 			Monitor.Exit (mutex);
 	/// 		}
-	///	}
-	///	
-	///	public void AddProducer2 ()
-	///	{
+	/// 	}
+	/// 	
+	/// 	public void AddProducer2 ()
+	/// 	{
 	/// 		// Same as the above, but with C# sugar.
-	///		lock (mutex) {
-	///			producer++;
+	/// 		lock (mutex) {
+	/// 			producer++;
 	/// 		}
-	///	}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
