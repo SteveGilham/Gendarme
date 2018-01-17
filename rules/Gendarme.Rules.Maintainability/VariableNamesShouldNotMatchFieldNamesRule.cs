@@ -98,7 +98,7 @@ namespace Gendarme.Rules.Maintainability {
 				if (method.HasParameters) {
 					foreach (ParameterDefinition param in method.Parameters) {
 						if (fields.Contains (param.Name))
-							Runner.Report (param, Severity.Medium, Confidence.Total);
+							Runner.Report (method, Severity.Medium, Confidence.Total, "Parameter name: '" + param.Name + "'");
 					}
 				}
 
@@ -114,7 +114,7 @@ namespace Gendarme.Rules.Maintainability {
 						if (var.IsGeneratedName ())
 							continue;
 						if (fields.Contains (var.Name))
-							Runner.Report (method, Severity.Medium, Confidence.Normal, var.Name);
+							Runner.Report (method, Severity.Medium, Confidence.Normal, "Local variable name: '" + var.Name + "'");
 					}
 				}
 			}
