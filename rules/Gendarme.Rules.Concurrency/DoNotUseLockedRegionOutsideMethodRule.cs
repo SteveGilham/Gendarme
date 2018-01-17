@@ -60,7 +60,8 @@ namespace Gendarme.Rules.Concurrency {
 	///
 	/// <para>
 	/// However this type of lock should be avoided even for private methods.
-	/// Prefer to use 'lock' keyword.
+	/// Prefer to use 'lock' keyword and use only <c>System.Threading.Monitor.TryEnter</c>
+	/// and <c>System.Threading.Monitor.Exit</c> combination in necessary cases.
 	/// </para>
 	/// </summary>
 	/// <example>
@@ -158,6 +159,7 @@ namespace Gendarme.Rules.Concurrency {
 				return RuleResult.DoesNotApply;
 
 			int enter = 0;
+			int tryEnter = 0;
 			int exit = 0;
 			
 			foreach (Instruction ins in method.Body.Instructions) {
@@ -170,12 +172,14 @@ namespace Gendarme.Rules.Concurrency {
 
 				if (m.IsNamed ("System.Threading", "Monitor", "Enter")) {
 					enter++;
+				} else if (m.IsNamed ("System.Threading", "Monitor", "TryEnter")) {
+					tryEnter++;
 				} else if (m.IsNamed ("System.Threading", "Monitor", "Exit")) {
 					exit++;
 				}
 			}
 			
-			if (enter == exit)
+			if ((enter + tryEnter == exit) && (exit <= 1))
 				return RuleResult.Success;
 
 			Runner.Report (method, Severity.High, Confidence.Normal);
