@@ -41,19 +41,27 @@ using Mono.Cecil.Cil;
 namespace Gendarme.Rules.Concurrency {
 
 	/// <summary>
+	/// <para>
 	/// This rule will fire if a method calls <c>System.Threading.Monitor.Enter</c>, 
-	/// but not <c>System.Threading.Monitor.Exit</c>. This is a bad idea for public
+	/// but not <c>System.Threading.Monitor.Exit</c>, or vice versa. This is a bad idea for public
 	/// methods because the callers must (indirectly) manage a lock which they do not
 	/// own. This increases the potential for problems such as dead locks because 
 	/// locking/unlocking may not be done together, the callers must do the unlocking
 	/// even in the presence of exceptions, and it may not be completely clear that
 	/// the public method is acquiring a lock without releasing it.
+	/// </para>
 	///
+	/// <para>
 	/// This is less of a problem for private methods because the lock is managed by
 	/// code that owns the lock. So, it's relatively easy to analyze the class to ensure
 	/// that the lock is locked and unlocked correctly and that any invariants are 
 	/// preserved when the lock is acquired and after it is released. However it is
-	/// usually simpler and more maintainable if methods unlock whatever they lock.
+	/// usually simpler and more maintainable if methods unlock whatever they lock.</para>
+	///
+	/// <para>
+	/// However this type of lock should be avoided even for private methods.
+	/// Prefer to use 'lock' keyword.
+	/// </para>
 	/// </summary>
 	/// <example>
 	/// Bad example:
@@ -119,8 +127,8 @@ namespace Gendarme.Rules.Concurrency {
 
 	// TODO: do a rule that checks if Monitor.Enter is used *before* Exit (dumb code, I know)
 	// TODO: do a more complex rule that checks that you have used Thread.Monitor.Exit in a finally block
-	[Problem ("This method uses Thread.Monitor.Enter() but doesn't use Thread.Monitor.Exit().")]
-	[Solution ("Prefer the lock{} statement when using C# or redesign the code so that Monitor.Enter and Exit are called together.")]
+	[Problem ("(Potentially) Incorrect use of Thread.Monitor.Enter() and Thread.Monitor.Exit().")]
+	[Solution ("Use 'lock' keyword or only a single Thread.Monitor.Enter() on start of function and Thread.Monitor.Exit() in a finally block.")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DoNotUseLockedRegionOutsideMethodRule : Rule, IMethodRule {
 
