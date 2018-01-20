@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Threading;
 using Gendarme.Rules.Concurrency;
 
 using NUnit.Framework;
@@ -82,6 +84,82 @@ namespace Test.Rules.Concurrency {
 				}
 			}
 		}
+
+		public sealed class LockClass
+		{
+			readonly object @lock = new object();
+			readonly object mutex = new object();
+
+			public void Lock()
+			{
+				Monitor.Enter(@lock);
+			}
+
+			public void TryLock()
+			{
+				Monitor.TryEnter(mutex);
+			}
+
+			public void MultiLock()
+			{
+				Monitor.Enter(@lock);
+				Monitor.TryEnter(mutex);
+			}
+
+			public void Exit()
+			{
+				Monitor.Exit(@lock);
+			}
+
+			public void ExitLock()
+			{
+				Monitor.Exit(@lock);
+				Monitor.TryEnter(mutex);
+			}
+
+			public void LockExitDifferent()
+			{
+				Monitor.TryEnter(mutex);
+				Monitor.Exit(@lock);
+			}
+
+			public void LockExitOK1()
+			{
+				Monitor.TryEnter(mutex);
+				Monitor.Exit(mutex);
+			}
+
+			public void LockExitOK2()
+			{
+				Monitor.TryEnter(@lock);
+				Monitor.Exit(@lock);
+			}
+
+			public void MultipleLockExit()
+			{
+				Monitor.TryEnter(mutex);
+				Monitor.Exit(mutex);
+				Monitor.TryEnter(@lock);
+				Monitor.Exit(@lock);
+			}
+
+			public void LockExitExitLock()
+			{
+				Monitor.TryEnter(mutex);
+				Monitor.Exit(mutex);
+				Monitor.Exit(@lock);
+				Monitor.TryEnter(@lock);
+			}
+
+			public void NestedLock()
+			{
+				lock (@lock)
+				{
+					lock (mutex)
+						Console.WriteLine();
+				}
+			}
+		}
 	
 		[Test]
 		public void Check ()
@@ -90,6 +168,32 @@ namespace Test.Rules.Concurrency {
 			AssertRuleSuccess<Monitors> ("WithoutConcurrency");
 			AssertRuleFailure<Monitors> ("WithoutThreadExit");
 			AssertRuleFailure<Monitors> ("TwoEnterOneExit");
+		}
+
+		[Test]
+		public void UseLockCorrectly ()
+		{
+			AssertRuleSuccess<LockClass> ("LockExitOK1");
+			AssertRuleSuccess<LockClass> ("LockExitOK2");
+		}
+
+		[Test]
+		public void IncorrectUseOfLock ()
+		{
+			AssertRuleFailure<LockClass> ("Lock");
+			AssertRuleFailure<LockClass> ("TryLock");
+			AssertRuleFailure<LockClass> ("MultiLock");
+			AssertRuleFailure<LockClass> ("Exit");
+			AssertRuleFailure<LockClass> ("ExitLock");
+			AssertRuleFailure<LockClass> ("MultipleLockExit");
+			AssertRuleFailure<LockClass> ("LockExit" + "ExitLock"); // spellcheck bypass
+			AssertRuleFailure<LockClass> ("NestedLock");
+		}
+
+		[Test, Ignore ("Not yet supported to test lock on different objects.")]
+		public void LockExitDifferent ()
+		{
+			AssertRuleFailure<LockClass> ("LockExitDifferent");
 		}
 	}
 }
