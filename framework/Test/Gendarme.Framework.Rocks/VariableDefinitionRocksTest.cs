@@ -49,7 +49,7 @@ namespace Test.Framework.Rocks {
 			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (unit);
 			assembly.MainModule.LoadDebuggingSymbols ();
 			
-			type_def = assembly.MainModule.GetType ("Test.Framework.Rocks.VariableDefinitionRocksTest");
+			type_def = assembly.MainModule.GetType ( typeof (VariableDefinitionRocksTest).FullName);
 		}
 		
 		public string path;
