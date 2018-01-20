@@ -37,7 +37,7 @@ There are three ways how gendarme can be used:
 
    Basic use: `%path_to_gendarme%/gendarme.exe --config rules.xml %path_to_binary%/%binary_name%`
 
-   The sample `rules.xml` file is in project directory `rules/rules.xml`. To import only selected rules from a certain rule set library, remove the include with `"*"` and use specific rule name.
+   The sample `rules.xml` file is in project directory `rules/rules.xml`. To import only selected rules from a certain rule set library, remove the include with `"*"` and use specific rule name. To exclude a single rule from pack use the standard include with `"*"` and add `exclude="RuleName"`  to the XML element. Example: `<rules include="*" exclude="MonoCompatibilityReviewRule" from="Gendarme.Rules.Portability.dll" />`
 
 3. Creating a own application using all the libraries.
 

@@ -71,6 +71,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\AssemblyStaticInfo.cs">
@@ -79,9 +83,13 @@
     <Compile Include="ExitCodeIsLimitedOnUnixRule.cs" />
     <Compile Include="DoNotHardcodePathsRule.cs" />
     <Compile Include="FeatureRequiresRootPrivilegeOnUnixRule.cs" />
-    <Compile Include="MoMAWebService.cs" />
     <Compile Include="MonoCompatibilityReviewRule.cs" />
     <Compile Include="NewLineLiteralRule.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\cecil\Mono.Cecil.csproj">
@@ -95,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />
+    <None Include="Resources\definitions-2.8.zip" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
