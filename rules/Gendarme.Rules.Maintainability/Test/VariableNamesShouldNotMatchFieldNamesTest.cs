@@ -70,6 +70,62 @@ namespace Test.Rules.Maintainability {
 			}
 		}
 
+		private class GoodConstructorClass {
+			readonly int number;
+			readonly string text;
+			public GoodConstructorClass (int number, string text)
+			{
+				this.number = number;
+				this.text = text;
+			}
+			public override string ToString ()
+			{
+				return (number.ToString () + text);
+			}
+		}
+
+		private class BadConstructorClass1 {
+			readonly int number;
+			readonly string text;
+			public BadConstructorClass1 (int text, string number)
+			{
+				this.number = text;
+				this.text = number;
+			}
+			public override string ToString ()
+			{
+				return (number.ToString () + text);
+			}
+		}
+
+		private class BadConstructorClass2 {
+			readonly int number;
+			readonly string text;
+			public BadConstructorClass2 (int number, string text)
+			{
+				number++;
+				text += "+";
+				this.number = number;
+				this.text = text;
+			}
+			public override string ToString ()
+			{
+				return (number.ToString () + text);
+			}
+		}
+
+		private class NotSupportedConstructorClass {
+			readonly string text;
+			public NotSupportedConstructorClass (string text)
+			{
+				this.text = (string)text.Clone ();
+			}
+			public override string ToString ()
+			{
+				return (text);
+			}
+		}
+
 		private class DoesNotApplyClass1 {
 			int Value;
 		}
@@ -117,6 +173,25 @@ namespace Test.Rules.Maintainability {
 			AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition<BadIgnore> ();
 			int expected = assembly.MainModule.HasSymbols ? 2 : 1;
 			AssertRuleFailure<BadIgnore> (expected);
+		}
+
+		[Test]
+		public void ConstructorGood ()
+		{
+			AssertRuleSuccess<GoodConstructorClass> ();
+		}
+
+		[Test]
+		public void ConstructorBad ()
+		{
+			AssertRuleFailure<BadConstructorClass1> (2);
+			AssertRuleFailure<BadConstructorClass2> (2);
+		}
+
+		[Test, Ignore ("Processing constructor parameters is not yet supported.")]
+		public void ConstructorCloneValue ()
+		{
+			AssertRuleSuccess<NotSupportedConstructorClass> ();
 		}
 	}
 }

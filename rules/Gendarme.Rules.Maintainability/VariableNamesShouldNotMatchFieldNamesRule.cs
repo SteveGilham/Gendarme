@@ -97,7 +97,7 @@ namespace Gendarme.Rules.Maintainability {
 			foreach (MethodDefinition method in type.Methods) {
 				if (method.HasParameters) {
 					foreach (ParameterDefinition param in method.Parameters) {
-						if (fields.Contains (param.Name))
+						if (fields.Contains (param.Name) && !IsAssigned (type, method, param))
 							Runner.Report (method, Severity.Medium, Confidence.Total, "Parameter name: '" + param.Name + "'");
 					}
 				}
@@ -122,5 +122,56 @@ namespace Gendarme.Rules.Maintainability {
 			return Runner.CurrentRuleResult;
 		}
 
+		private bool IsAssigned (TypeDefinition type, MethodDefinition method, ParameterDefinition param)
+		{
+			if (!method.HasBody)
+				return false;
+			FieldDefinition member = null;
+			foreach (FieldDefinition field in type.Fields) {
+				if (string.Equals (field.Name, param.Name, StringComparison.Ordinal)) {
+					member = field;
+					break;
+				}
+			}
+			if ((member == null) || member.IsStatic)
+				return false;
+
+			foreach (Instruction ins in method.Body.Instructions) {
+				FieldDefinition usedField = null;
+				switch (ins.OpCode.Code) {
+				case Code.Stfld:
+					usedField = ins.GetField ();
+          if ((member == usedField) && IsParam (method, param, ins.Previous))
+						return true;
+					break;
+				case Code.Starg:
+				case Code.Starg_S:
+					if (FindAndEqualsPrevious (method, param, ins))
+						return false;
+					break;
+				}
+			}
+			return false;
+		}
+
+		private bool FindAndEqualsPrevious (MethodDefinition method, ParameterDefinition param, Instruction ins)
+		{
+			while (ins != null)
+			{
+				ParameterDefinition argument = ins.GetParameter (method);
+				if (argument != null)
+					return (argument == param);
+				ins = ins.Previous;
+			}
+			return false;
+		}
+
+		private bool IsParam (MethodDefinition method, ParameterDefinition param, Instruction previous)
+		{
+			if (previous == null)
+				return false;
+			ParameterDefinition argument = previous.GetParameter (method);
+			return (argument == param);
+		}
 	}
 }
