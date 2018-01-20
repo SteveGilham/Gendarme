@@ -192,9 +192,24 @@ namespace Test.Rules.Maintainability {
 		{
 			return type.GetFields ();
 		}
+
+		public static void UpdateList(ICollection<string> list, IEnumerable<string> categories)
+		{
+			list.Clear();
+			foreach (string category in categories) {
+				list.Add(category);
+			}
+		}
 	}
 
 	public class SpecializedClass {
+
+		public interface ISubCategory : IEnumerable<string>
+		{
+			ISubCategory this[string name] { get; }
+
+			void SetChildValue(string name);
+		}
 
 		public void FooCouldBeBase (Derived foo)
 		{
@@ -297,6 +312,14 @@ namespace Test.Rules.Maintainability {
 		{
 			//IReflect support this GetFields overload
 			return type.GetFields (BindingFlags.Public);
+		}
+
+		public static void UpdateList(IList<string> list, ISubCategory categories)
+		{
+			list.Clear();
+			foreach (string category in categories) {
+				list.Add(category);
+			}
 		}
 	}
 
@@ -437,6 +460,13 @@ namespace Test.Rules.Maintainability {
 			AssertRuleSuccess<GeneralizedClass> ("GenericMethod");
 			AssertRuleFailure<SpecializedClass> ("GenericMethodStandardParameter");
 			AssertRuleFailure<SpecializedClass> ("GenericMethod");
+		}
+
+		[Test]
+		public void InterfaceOfInterface ()
+		{
+			AssertRuleSuccess<GeneralizedClass> ("UpdateList");
+			AssertRuleFailure<SpecializedClass> ("UpdateList", 2);
 		}
 
 		[Test]
