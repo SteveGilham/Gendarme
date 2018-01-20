@@ -150,8 +150,8 @@ namespace Gendarme.Rules.Concurrency {
 		
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			// rule doesn't apply if the method has no IL
-			if (!method.HasBody)
+			// rule doesn't apply if the method has no IL and it has no meaning to test generated methods
+			if (method.IsGeneratedMethodBody () || !method.HasBody)
 				return RuleResult.DoesNotApply;
 
 			// avoid looping if we're sure there's no call in the method
