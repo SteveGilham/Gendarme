@@ -126,7 +126,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// </code>
 	/// </example>
 
-	// TODO: do a rule that checks if Monitor.Enter is used *before* Exit (dumb code, I know)
+	// TODO: test whether the Enter and Exit function use the same lock value
 	// TODO: do a more complex rule that checks that you have used Thread.Monitor.Exit in a finally block
 	[Problem ("(Potentially) Incorrect use of Thread.Monitor.Enter() and Thread.Monitor.Exit().")]
 	[Solution ("Use 'lock' keyword or only a single Thread.Monitor.Enter() on start of function and Thread.Monitor.Exit() in a finally block.")]
@@ -161,6 +161,9 @@ namespace Gendarme.Rules.Concurrency {
 			int enter = 0;
 			int tryEnter = 0;
 			int exit = 0;
+			int currentSatate = 0;
+			bool underflow = false;
+			bool overflow = false;
 			
 			foreach (Instruction ins in method.Body.Instructions) {
 				if (ins.OpCode.FlowControl != FlowControl.Call)
@@ -172,17 +175,72 @@ namespace Gendarme.Rules.Concurrency {
 
 				if (m.IsNamed ("System.Threading", "Monitor", "Enter")) {
 					enter++;
+					currentSatate++;
+					overflow = (overflow || (currentSatate > 1));
 				} else if (m.IsNamed ("System.Threading", "Monitor", "TryEnter")) {
 					tryEnter++;
+					currentSatate++;
+					overflow = (overflow || (currentSatate > 1));
 				} else if (m.IsNamed ("System.Threading", "Monitor", "Exit")) {
 					exit++;
+					currentSatate--;
+					underflow = (underflow || (currentSatate < 0));
 				}
 			}
-			
+
+			Severity severity;
+
+			if (underflow) {
+				if (((enter + tryEnter) < 1) && (exit > 0))
+					Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.Exit used, but no Monitor.Enter or Monitor.TryEnter was found.");
+				else
+					Runner.Report (method, Severity.High, Confidence.High, "Monitor.Exit used before Monitor.Enter or Monitor.TryEnter");
+				return RuleResult.Failure;
+			}
+
+			if (overflow) {
+				if ((enter + tryEnter) != exit)
+					severity = Severity.High;
+				else
+					severity = Severity.Medium;
+				Runner.Report (method, severity, Confidence.High, "Seems like multiple nested lock's (Monitor.Enter) were used.");
+				return RuleResult.Failure;
+			}
+
 			if ((enter + tryEnter == exit) && (exit <= 1))
 				return RuleResult.Success;
 
-			Runner.Report (method, Severity.High, Confidence.Normal);
+			if ((enter > 0) && (exit < 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.Enter used, but no Monitor.Exit was found.");
+				return RuleResult.Failure;
+			}
+
+			if ((tryEnter > 0) && (exit < 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.TryEnter used, but no Monitor.Exit was found.");
+				return RuleResult.Failure;
+			}
+
+			if (((enter + tryEnter) > 0) && (exit < 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.Enter or Monitor.TryEnter used, but no Monitor.Exit was found.");
+				return RuleResult.Failure;
+			}
+
+			if (((enter + tryEnter) == 1) && (exit > 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Multiple Monitor.Exit were found. Prefer to use one Monitor.Exit in finally block.");
+				return RuleResult.Failure;
+			}
+
+			if ((enter + tryEnter) > exit) {
+				Runner.Report (method, Severity.High, Confidence.High, "More Monitor.Enter or Monitor.TryEnter than Monitor.Exit calls were found.");
+				return RuleResult.Failure;
+			}
+
+			if ((enter == exit) && (tryEnter == 0))
+				severity = Severity.Medium;
+			else
+				severity = Severity.High;
+
+			Runner.Report (method, severity, Confidence.Normal, "Prefer use of only one lock (Monitor.Enter, Monitor.Exit) block in a single function.");
 			return RuleResult.Failure;
 		}
 
