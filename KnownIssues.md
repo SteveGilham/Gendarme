@@ -45,6 +45,8 @@ Failed tests
   * AvoidUnnecessarySpecializationTest
     * Failed test: GenericMethod
     * Reason: Problem in detecting typed parameter `<T>` specialization
+    * Failed test: InterfaceOfInterface
+    * State: do not detect unnecessary specialization
   * AvoidComplexMethodsTest
     * Failed test: CyclomaticComplexityMeasurementTest
     * Reason: probably different compiler than planed, rule works probably without problem

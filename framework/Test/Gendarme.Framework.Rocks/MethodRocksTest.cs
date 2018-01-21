@@ -70,6 +70,64 @@ namespace Test.Framework.Rocks {
 			}
 		}
 
+		public class OverrideBase {
+			public virtual void MethodIn (int value)
+			{
+				Console.WriteLine(value);
+			}
+
+			public virtual void MethodOut (out int value)
+			{
+				value = 10;
+			}
+
+			public virtual void MethodRef (ref int value)
+			{
+				Console.WriteLine(value);
+				value = 10;
+			}
+		}
+
+		public class Overridden : OverrideBase {
+			public override void MethodIn (int value)
+			{
+				Console.WriteLine(value);
+				Console.WriteLine(value);
+			}
+
+			public override void MethodOut (out int value)
+			{
+				value = 20;
+			}
+
+			public override void MethodRef (ref int value)
+			{
+				Console.WriteLine(value);
+				Console.WriteLine(value);
+				value = 20;
+			}
+		}
+
+		public class NotOverridden : OverrideBase {
+			new public virtual void MethodIn (int value)
+			{
+				Console.WriteLine(value + 1);
+				Console.WriteLine(value + 2);
+			}
+
+			public virtual void MethodRef (out int value)
+			{
+				value = 20;
+			}
+
+			public virtual void MethodOut (ref int value)
+			{
+				Console.WriteLine(value);
+				Console.WriteLine(value);
+				value = 20;
+			}
+		}
+
 		public int Value {
 			get { return 42; }
 			set { throw new NotSupportedException (); }
@@ -179,6 +237,17 @@ namespace Test.Framework.Rocks {
 			Assert.IsTrue (GetMethod ("get_Value").IsProperty (), "get_Value");
 			Assert.IsTrue (GetMethod ("set_Value").IsProperty (), "set_Value");
 			Assert.IsFalse (GetMethod ("FixtureSetUp").IsProperty (), "FixtureSetUp");
+		}
+
+		[Test]
+		public void IsOverride()
+		{
+			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodIn").IsOverride (), "Overridden.MethodIn");
+			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodOut").IsOverride (), "Overridden.MethodOut");
+			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodRef").IsOverride (), "Overridden.MethodRef");
+			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodIn").IsOverride (), "NotOverridden.MethodIn");
+			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodOut").IsOverride (), "NotOverridden.MethodOut");
+			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodRef").IsOverride (), "NotOverridden.MethodRef");
 		}
 
 		[Test]

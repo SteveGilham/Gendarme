@@ -61,7 +61,7 @@ namespace Test.Rules.Maintainability {
 		}
 
 		// We ignore this, as we need .pdb access to resolve local variable names.
-		private class BadIgnore {
+		private class BadMethodBody {
 			int Value = 0, Value1 = 1;
 			void DoSomething(int Value)
 			{
@@ -168,11 +168,13 @@ namespace Test.Rules.Maintainability {
 		}
 
 		[Test]
-		public void Ignores ()
+		public void MethodBody ()
 		{
-			AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition<BadIgnore> ();
+			AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition<BadMethodBody> ();
 			int expected = assembly.MainModule.HasSymbols ? 2 : 1;
-			AssertRuleFailure<BadIgnore> (expected);
+			AssertRuleFailure<BadMethodBody> (expected);
+			if (expected < 2)
+				Assert.Ignore ("Debug information not present; can not test body variables!");
 		}
 
 		[Test]

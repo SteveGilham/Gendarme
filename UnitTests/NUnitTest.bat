@@ -26,4 +26,6 @@ echo.
 
 
 :End
+if _%no_pause%_ == _yes_ goto SkipPause
 pause
+:SkipPause
