@@ -122,17 +122,17 @@ namespace Test.Framework.Rocks {
 		
 		private void DoTestByInstructions (MethodDefinition method, IList<string> userNames)
 		{
-			const string textName = "body instruction";
+			const string testName = "body instruction";
 			int generatedCount = 0;
 			int userCount = 0;
 			bool[] usedVariables = new bool[userNames.Count];
 			
 			foreach (Instruction ins in method.Body.Instructions) {
 				VariableDefinition v = ins.GetVariable (method);
-				TestVariable(textName, v, userNames, usedVariables, ref userCount, ref generatedCount);
+				TestVariable(testName, v, userNames, usedVariables, ref userCount, ref generatedCount);
 			}
 			
-			ValidateResult(textName, userNames, usedVariables, generatedCount, userCount);
+			ValidateResult(testName, userNames, usedVariables, generatedCount, userCount);
 		}
 		
 		private void ValidateResult(string testMethodName, IList<string> userNames, IList<bool> usedVariables,
@@ -163,16 +163,16 @@ namespace Test.Framework.Rocks {
 
 		private void DoTestByVariablesList (MethodDefinition method, IList<string> userNames)
 		{
-			const string textName = "defined locals";
+			const string testName = "defined locals";
 			int generatedCount = 0;
 			int userCount = 0;
 			bool[] usedVariables = new bool[userNames.Count];
 			
 			foreach (VariableDefinition v in method.Body.Variables) {
-				TestVariable(textName, v, userNames, usedVariables, ref userCount, ref generatedCount);
+				TestVariable(testName, v, userNames, usedVariables, ref userCount, ref generatedCount);
 			}
 			
-			ValidateResult(textName, userNames, usedVariables, generatedCount, userCount);
+			ValidateResult(testName, userNames, usedVariables, generatedCount, userCount);
 		}
 
 		private void TestVariable(string testMethodName, VariableDefinition v, IList<string> userNames,
