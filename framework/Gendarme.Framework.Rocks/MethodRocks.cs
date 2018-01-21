@@ -208,7 +208,7 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			MethodDefinition method = self.Resolve ();
-			if ((method == null) || !method.IsVirtual)
+			if ((method == null) || method.IsNewSlot || !method.IsVirtual)
 				return false;
 
 			TypeDefinition declaring = method.DeclaringType;
@@ -320,18 +320,14 @@ namespace Gendarme.Framework.Rocks {
 
 		private static bool AreSameElementTypes (TypeReference a, TypeReference b)
 		{
-			if (a.IsGenericParameter || b.IsGenericParameter)
+			if (b.IsGenericParameter)
 				return true;
-			if (a.IsNested && b.IsNested) {
-				string nameA = a.FullName;
-				string nameB = b.FullName;
-				if (a.IsByReference)
-					nameA = nameA.Substring(0, nameA.Length - 1);
-				if (b.IsByReference)
-					nameB = nameB.Substring(0, nameB.Length - 1);
-				return string.Equals(nameA, nameB, StringComparison.Ordinal);
-			}
-			return b.IsNamed (a.Namespace, a.Name);
+			return (a.FullName == b.FullName);
+		}
+
+		private static bool AreSameParameterTypes (ParameterDefinition a, ParameterDefinition b)
+		{
+			return ((a.IsIn == b.IsIn) && (a.IsOut == b.IsOut) && AreSameElementTypes (a.ParameterType, b.ParameterType));
 		}
 
 		/// <summary>
@@ -369,7 +365,7 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			for (int i = 0; i < count; ++i) {
-				if (!AreSameElementTypes (pdc1 [i].ParameterType, pdc2 [i].ParameterType))
+				if (!AreSameParameterTypes (pdc1 [i], pdc2 [i]))
 					return false;
 			}
 			return true;
