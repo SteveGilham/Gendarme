@@ -122,24 +122,24 @@ namespace Test.Framework.Rocks {
 
 
 		private AssemblyDefinition assembly;
-		private TypeDefinition type;
+		private TypeDefinition myType;
 
 		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
 			assembly = AssemblyDefinition.ReadAssembly (unit);
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.TypeRocksTest");
+			myType = assembly.MainModule.GetType (typeof (TypeRocksTest).FullName);
 		}
 
 		private TypeDefinition GetType (string name)
 		{
-			return assembly.MainModule.GetType ("Test.Framework.Rocks.TypeRocksTest" + name);
+			return assembly.MainModule.GetType (typeof (TypeRocksTest).FullName + name);
 		}
 
 		private TypeReference GetFieldType (string name)
 		{
-			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.TypeRocksTest");
+			TypeDefinition type = assembly.MainModule.GetType (typeof (TypeRocksTest).FullName);
 			foreach (FieldDefinition field in type.Fields) {
 				if (name == field.Name)
 					return field.FieldType;
@@ -150,7 +150,7 @@ namespace Test.Framework.Rocks {
 
 		private MethodDefinition GetMethod (string name)
 		{
-			foreach (MethodDefinition method in type.Methods)
+			foreach (MethodDefinition method in myType.Methods)
 				if (method.Name == name)
 					return method;
 			Assert.Fail (name);
@@ -160,33 +160,28 @@ namespace Test.Framework.Rocks {
 		[Test]
 		public void GetMethod ()
 		{
-			Assert.AreSame (GetMethod ("MethodA"), type.GetMethod (new MethodSignature ("MethodA")), "a1");
+			Assert.AreSame (GetMethod ("MethodA"), myType.GetMethod (new MethodSignature ("MethodA")), "a1");
 
-			Assert.AreSame (GetMethod ("MethodA"), type.GetMethod ("MethodA"), "a2");
-			Assert.AreSame (GetMethod ("MethodA"), type.GetMethod (x => x.Name == "MethodA"), "a3");
-			Assert.AreSame (GetMethod ("MethodA"), type.GetMethod (MethodAttributes.Public, "MethodA"), "a4");
-			Assert.AreSame (GetMethod ("MethodA"), type.GetMethod ("MethodA", "System.Void", new string [1]), "a5");
-			Assert.AreSame (GetMethod ("MethodA"), type.GetMethod (MethodAttributes.Public, "MethodA", "System.Void", new string [1]), "a6");
-			Assert.AreSame (GetMethod ("MethodA"), type.GetMethod (MethodAttributes.Public, "MethodA", "System.Void", new string [1] { "System.Boolean" }, x => x.HasBody), "a7");
+			Assert.AreSame (GetMethod ("MethodA"), myType.GetMethod ("MethodA"), "a2");
+			Assert.AreSame (GetMethod ("MethodA"), myType.GetMethod (x => x.Name == "MethodA"), "a3");
+			Assert.AreSame (GetMethod ("MethodA"), myType.GetMethod (MethodAttributes.Public, "MethodA"), "a4");
+			Assert.AreSame (GetMethod ("MethodA"), myType.GetMethod ("MethodA", "System.Void", new string [1]), "a5");
+			Assert.AreSame (GetMethod ("MethodA"), myType.GetMethod (MethodAttributes.Public, "MethodA", "System.Void", new string [1]), "a6");
+			Assert.AreSame (GetMethod ("MethodA"), myType.GetMethod (MethodAttributes.Public, "MethodA", "System.Void", new string [1] { "System.Boolean" }, x => x.HasBody), "a7");
 
-			Assert.IsNull (type.GetMethod ("MethodB"), "b1");
-			Assert.IsNull (type.GetMethod (new MethodSignature ("MethodB")), "b2");
-			Assert.IsNull (type.GetMethod (MethodAttributes.Static, "MethodA"), "b3");
-			Assert.IsNull (type.GetMethod ("MethodA", null, new string [0]), "b4");
-			Assert.IsNull (type.GetMethod ("MethodA", "System.Int32", null), "b5");
-			Assert.IsNull (type.GetMethod ("MethodA", null, new string [1] { "System.Int32" }), "b6");
+			Assert.IsNull (myType.GetMethod ("MethodB"), "b1");
+			Assert.IsNull (myType.GetMethod (new MethodSignature ("MethodB")), "b2");
+			Assert.IsNull (myType.GetMethod (MethodAttributes.Static, "MethodA"), "b3");
+			Assert.IsNull (myType.GetMethod ("MethodA", null, new string [0]), "b4");
+			Assert.IsNull (myType.GetMethod ("MethodA", "System.Int32", null), "b5");
+			Assert.IsNull (myType.GetMethod ("MethodA", null, new string [1] { "System.Int32" }), "b6");
 		}
 
 		[Test]
-		public void HasAttribute_Namespace_Null ()
+		public void HasAttribute__NullParam ()
 		{
-			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).HasAttribute (null, "a"); });
-		}
-
-		[Test]
-		public void HasAttribute_Name_Null ()
-		{
-			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).HasAttribute ("a", null); });
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).HasAttribute (null, "a"); }, "namespace");
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).HasAttribute ("a", null); }, "name");
 		}
 
 		[Test]
@@ -203,43 +198,33 @@ namespace Test.Framework.Rocks {
 		[Test]
 		public void HasMethod ()
 		{
-			Assert.IsTrue (type.HasMethod (new MethodSignature ("MethodA")), "A");
-			Assert.IsFalse (type.HasMethod (new MethodSignature ("MethodB")), "B");
+			Assert.IsTrue (myType.HasMethod (new MethodSignature ("MethodA")), "A");
+			Assert.IsFalse (myType.HasMethod (new MethodSignature ("MethodB")), "B");
 		}
 
 		[Test]
-		public void Implements_Namespace_Null ()
+		public void Implements_NullParam ()
 		{
-			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Implements (null, "a"); });
-		}
-
-		[Test]
-		public void Implements_Name_Null ()
-		{
-			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Implements ("a", null); });
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Implements (null, "a"); }, "namespace");
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Implements ("a", null); }, "name");
 		}
 
 		[Test]
 		public void Implements ()
 		{
 			Assert.IsFalse (GetType (String.Empty).Implements ("System", "ICloneable"), "ICloneable");
-			Assert.IsTrue (GetType ("/IDeepCloneable").Implements ("Test.Framework.Rocks", "TypeRocksTest/IDeepCloneable"), "itself");
+			Assert.IsTrue (GetType ("/IDeepCloneable").Implements (TestTypeNames.Namespace, "TypeRocksTest/IDeepCloneable"), "itself");
 			Assert.IsTrue (GetType ("/IDeepCloneable").Implements ("System", "ICloneable"), "interface inheritance");
-			Assert.IsTrue (GetType ("/Deep").Implements ("Test.Framework.Rocks", "TypeRocksTest/IDeepCloneable"), "IDeepCloneable");
+			Assert.IsTrue (GetType ("/Deep").Implements (TestTypeNames.Namespace, "TypeRocksTest/IDeepCloneable"), "IDeepCloneable");
 			Assert.IsTrue (GetType ("/Deep").Implements ("System", "ICloneable"), "second-level ICloneable");
-			Assert.IsTrue (GetType ("/Mixin").Implements ("Test.Framework.Rocks", "TypeRocksTest/IDeepCloneable"), "parent interface inheritance");
+			Assert.IsTrue (GetType ("/Mixin").Implements (TestTypeNames.Namespace, "TypeRocksTest/IDeepCloneable"), "parent interface inheritance");
 		}
 
 		[Test]
-		public void Inherits_Namespace_Null ()
+		public void Inherits_NullParam ()
 		{
-			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Inherits (null, "a"); });
-		}
-
-		[Test]
-		public void Inherits_Name_Null ()
-		{
-			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Inherits ("a", null); });
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Inherits (null, "a"); }, "namespace");
+			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Inherits ("a", null); }, "name");
 		}
 
 		[Test]
@@ -252,7 +237,7 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void Inherits_FromAnotherAssembly ()
+		public void Inherits_FromSystemAssembly ()
 		{
 			// we can't be sure here so to avoid false positives return false
 			Assert.IsTrue (GetType ("/AttributeInheritsOuterAttribute").Inherits ("System", "Attribute"), "AttributeInheritsOuterAttribute");
@@ -263,8 +248,8 @@ namespace Test.Framework.Rocks {
 		public void Inherits_Itself ()
 		{
 			TypeDefinition type = GetType (String.Empty);
-			Assert.IsTrue (type.Inherits (type.Namespace, type.Name), "itself");
-			Assert.IsTrue (type.Inherits (type.FullName), "itself");
+			Assert.IsTrue (type.Inherits (type.Namespace, type.Name), "itself(namespace, name)");
+			Assert.IsTrue (type.Inherits (type.FullName), "itself(full_name)");
 		}
 
 		[Test]
@@ -277,7 +262,7 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsAttribute_InheritsFromAnotherAssembly ()
+		public void IsAttribute_InheritsFromSystemAssembly ()
 		{
 			// we can't be sure here so to avoid false positives return false
 			Assert.IsTrue (GetType ("/AttributeInheritsOuterAttribute").IsAttribute (), "AttributeInheritsOuterAttribute");
@@ -340,70 +325,60 @@ namespace Test.Framework.Rocks {
 		[Test]
 		public void IsNamed ()
 		{
-			string name = "Test.Framework.Rocks.PublicType";
-			TypeDefinition type = assembly.MainModule.GetType (name);
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.PublicType);
 
-			Assert.IsTrue (type.IsNamed ( "Test.Framework.Rocks.PublicType"));
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks.P"));//Missing Text
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks.PublicTypeExtraText"));
+			Assert.IsTrue (type.IsNamed (TestTypeNames.PublicType), "full name: PublicType");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace + ".P"), "full name: P");//Missing Text
+			Assert.IsFalse (type.IsNamed (TestTypeNames.PublicType + "ExtraText"), "full name: PublicTypeExtraText");
 
-			Assert.IsTrue (type.IsNamed ("Test.Framework.Rocks", "PublicType"));
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "P"));//Missing Text
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "PublicTypeExtraText"));
+			Assert.IsTrue (type.IsNamed (TestTypeNames.Namespace, "PublicType"), "name: PublicType");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace, "P"), "name: P");//Missing Text
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace, "PublicTypeExtraText"), "name: PublicTypeExtraText");
 		}
 
 		[Test]
 		public void IsNamedNestedType ()
 		{
-			string name = "Test.Framework.Rocks.PublicType/NestedPublicType";
-			TypeDefinition type = assembly.MainModule.GetType (name);
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.NestedPublicType);
 
-			Assert.IsTrue (type.IsNamed ("Test.Framework.Rocks.PublicType/NestedPublicType"));
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks.PublicType/N"));//Missing Text
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks.PublicType/NestedPublicTypeExtaStuff"));
+			Assert.IsTrue (type.IsNamed (TestTypeNames.NestedPublicType), "full name: NestedPublicType");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.PublicType + "/N"), "full name: N");//Missing Text
+			Assert.IsFalse (type.IsNamed (TestTypeNames.NestedPublicType + "TypeExtaStuff"), "full name: NestedPublicTypeExtaStuff");
 
-			Assert.IsTrue (type.IsNamed ("Test.Framework.Rocks", "PublicType/NestedPublicType"));
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "PublicType/N"));//Missing Text
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "PublicType/NestedPublicTypeExtraText"));
+			Assert.IsTrue (type.IsNamed (TestTypeNames.Namespace, "PublicType/NestedPublicType"), "name: NestedPublicType");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace, "PublicType/N"), "name: N");//Missing Text
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace, "PublicType/NestedPublicTypeExtraText"), "name: NestedPublicTypeExtraText");
 
-			Assert.IsFalse (type.IsNamed ("Test.Framework.Rocks", "NestedPublicType"));
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace, "NestedPublicType"), "not nested test for 'NestedPublicType'");
 			// the test bellow is probably irrelevant test because of the way the empty name space is processed in 'IsNamed'
-			Assert.IsFalse (type.IsNamed ("", "NestedPublicType"));
-			Assert.IsTrue (type.IsNamed (name));
+			Assert.IsFalse (type.IsNamed ("", "NestedPublicType"), "empty namespace and parent class for NestedPublicType");
 		}
 
 		[Test]
 		public void IsNamedDoubleNestedType ()
 		{
-			string name = "Test.Framework.Rocks.PublicType/NestedPublicType/NestedNestedPublicType";
-			TypeDefinition type = assembly.MainModule.GetType (name);
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.NestedNestedPublicType);
 
-			Assert.IsTrue (type.IsNamed ("Test.Framework.Rocks.PublicType/NestedPublicType/NestedNestedPublicType"));
+			Assert.IsTrue (type.IsNamed (TestTypeNames.NestedNestedPublicType));
 			
-			Assert.IsTrue (type.IsNamed ("Test.Framework.Rocks", "PublicType/NestedPublicType/NestedNestedPublicType"));
+			Assert.IsTrue (type.IsNamed (TestTypeNames.Namespace, "PublicType/NestedPublicType/NestedNestedPublicType"));
 		}
 
 		[Test]
 		public void IsVisible ()
 		{
-			string name = "Test.Framework.Rocks.PublicType";
-			TypeDefinition type = assembly.MainModule.GetType (name);
-			Assert.IsTrue (type.IsVisible (), name);
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.PublicType);
+			Assert.IsTrue (type.IsVisible (), TestTypeNames.PublicType);
 
-			name = "Test.Framework.Rocks.PublicType/NestedPublicType";
-			Assert.IsTrue (assembly.MainModule.GetType (name).IsVisible (), name);
+			Assert.IsTrue (assembly.MainModule.GetType (TestTypeNames.NestedPublicType).IsVisible (), TestTypeNames.NestedPublicType);
 
-			name = "Test.Framework.Rocks.PublicType/NestedProtectedType";
-			Assert.IsTrue (assembly.MainModule.GetType (name).IsVisible (), name);
+			Assert.IsTrue (assembly.MainModule.GetType (TestTypeNames.NestedProtectedType).IsVisible (), TestTypeNames.NestedProtectedType);
 
-			name = "Test.Framework.Rocks.PublicType/NestedPrivateType";
-			Assert.IsFalse (assembly.MainModule.GetType (name).IsVisible (), name);
+			Assert.IsFalse (assembly.MainModule.GetType (TestTypeNames.NestedPrivateType).IsVisible (), TestTypeNames.NestedPrivateType);
 
-			name = "Test.Framework.Rocks.PublicType/NestedInternalType";
-			Assert.IsFalse (assembly.MainModule.GetType (name).IsVisible (), name);
+			Assert.IsFalse (assembly.MainModule.GetType (TestTypeNames.NestedInternalType).IsVisible (), TestTypeNames.NestedInternalType);
 
-			name = "Test.Framework.Rocks.InternalType";
-			Assert.IsFalse (assembly.MainModule.GetType (name).IsVisible (), name);
+			Assert.IsFalse (assembly.MainModule.GetType (TestTypeNames.InternalType).IsVisible (), TestTypeNames.InternalType);
 		}
 	}
 }

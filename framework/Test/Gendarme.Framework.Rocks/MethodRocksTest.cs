@@ -152,8 +152,9 @@ namespace Test.Framework.Rocks {
 			assembly = AssemblyDefinition.ReadAssembly (unit);
 		}
 
-		private MethodDefinition GetMethod (string typeName, string methodName)
+		private MethodDefinition GetMethod<T> (string methodName)
 		{
+			string typeName = typeof (T).FullName.Replace ('+', '/');
 			TypeDefinition type = assembly.MainModule.GetType (typeName);
 			foreach (MethodDefinition method in type.Methods) {
 				if (method.Name == methodName)
@@ -165,7 +166,7 @@ namespace Test.Framework.Rocks {
 
 		private MethodDefinition GetMethod (string name)
 		{
-			return GetMethod ("Test.Framework.Rocks.MethodRocksTest", name);
+			return GetMethod<MethodRocksTest> (name);
 		}
 
 		[Test]
@@ -200,7 +201,7 @@ namespace Test.Framework.Rocks {
 		public void IsFinalizer ()
 		{
 			Assert.IsFalse (GetMethod ("FixtureSetUp").IsFinalizer (), "FixtureSetUp");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Finalize").IsFinalizer (), "~MainClassIntStrings");
+			Assert.IsTrue (GetMethod<MainClassIntStrings> ("Finalize").IsFinalizer (), "~MainClassIntStrings");
 		}
 
 		[Test]
@@ -224,10 +225,10 @@ namespace Test.Framework.Rocks {
 		[Test]
 		public void IsMain ()
 		{
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassVoidVoid", "Main").IsMain (), "MainClassVoidVoid");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntVoid", "Main").IsMain (), "MainClassIntVoid");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassVoidStrings", "Main").IsMain (), "MainClassVoidStrings");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Main").IsMain (), "MainClassIntStrings");
+			Assert.IsTrue (GetMethod<MainClassVoidVoid> ("Main").IsMain (), "MainClassVoidVoid");
+			Assert.IsTrue (GetMethod<MainClassIntVoid> ("Main").IsMain (), "MainClassIntVoid");
+			Assert.IsTrue (GetMethod<MainClassVoidStrings> ("Main").IsMain (), "MainClassVoidStrings");
+			Assert.IsTrue (GetMethod<MainClassIntStrings> ("Main").IsMain (), "MainClassIntStrings");
 			Assert.IsFalse (GetMethod ("FixtureSetUp").IsMain (), "FixtureSetUp");
 		}
 
@@ -242,35 +243,35 @@ namespace Test.Framework.Rocks {
 		[Test]
 		public void IsOverride()
 		{
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodIn").IsOverride (), "Overridden.MethodIn");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodOut").IsOverride (), "Overridden.MethodOut");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodRef").IsOverride (), "Overridden.MethodRef");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodIn").IsOverride (), "NotOverridden.MethodIn");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodOut").IsOverride (), "NotOverridden.MethodOut");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodRef").IsOverride (), "NotOverridden.MethodRef");
+			Assert.IsTrue (GetMethod<Overridden> ("MethodIn").IsOverride (), "Overridden.MethodIn");
+			Assert.IsTrue (GetMethod<Overridden> ("MethodOut").IsOverride (), "Overridden.MethodOut");
+			Assert.IsTrue (GetMethod<Overridden> ("MethodRef").IsOverride (), "Overridden.MethodRef");
+			Assert.IsFalse (GetMethod<NotOverridden> ("MethodIn").IsOverride (), "NotOverridden.MethodIn");
+			Assert.IsFalse (GetMethod<NotOverridden> ("MethodOut").IsOverride (), "NotOverridden.MethodOut");
+			Assert.IsFalse (GetMethod<NotOverridden> ("MethodRef").IsOverride (), "NotOverridden.MethodRef");
 		}
 
 		[Test]
 		public void IsVisible ()
 		{
-			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType");
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.PublicType);
 			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "PublicType.PublicMethod");
 			Assert.IsTrue (type.GetMethod ("ProtectedMethod").IsVisible (), "PublicType.ProtectedMethod");
 			Assert.IsFalse (type.GetMethod ("InternalMethod").IsVisible (), "PublicType.InternalMethod");
 			Assert.IsFalse (type.GetMethod ("PrivateMethod").IsVisible (), "PublicType.PrivateMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPublicType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedPublicType);
 			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "NestedPublicType.PublicMethod");
 			Assert.IsTrue (type.GetMethod ("ProtectedMethod").IsVisible (), "NestedPublicType.ProtectedMethod");
 			Assert.IsFalse (type.GetMethod ("PrivateMethod").IsVisible (), "NestedPublicType.PrivateMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedProtectedType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedProtectedType);
 			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "NestedProtectedType.PublicMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPrivateType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedPrivateType);
 			Assert.IsFalse (type.GetMethod ("PublicMethod").IsVisible (), "NestedPrivateType.PublicMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.InternalType");
+			type = assembly.MainModule.GetType (TestTypeNames.InternalType);
 			Assert.IsFalse (type.GetMethod ("PublicMethod").IsVisible (), "InternalType.PublicMethod");
 		}
 

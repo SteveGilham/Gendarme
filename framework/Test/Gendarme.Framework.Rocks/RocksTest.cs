@@ -26,9 +26,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-
 namespace Test.Framework.Rocks {
+
+	internal static class TestTypeNames {
+		internal static readonly string Namespace = typeof (PublicType).Namespace;
+		internal static readonly string PublicType = typeof (PublicType).FullName;
+		internal static readonly string InternalType = typeof (InternalType).FullName;
+		internal static readonly string NestedPublicType = typeof (PublicType.NestedPublicType).FullName.Replace ('+', '/');
+		internal static readonly string NestedNestedPublicType =
+			typeof (PublicType.NestedPublicType.NestedNestedPublicType).FullName.Replace ('+', '/');
+		internal static readonly string NestedProtectedType = (typeof (PublicType).FullName + "/NestedProtectedType");
+		internal static readonly string NestedPrivateType = (typeof (PublicType).FullName + "/NestedPrivateType");
+		internal static readonly string NestedInternalType = typeof (PublicType.NestedInternalType).FullName.Replace ('+', '/');
+		internal static readonly string InternalNestedPublicType = typeof (InternalType.NestedPublicType).FullName.Replace ('+', '/');
+	}
 
 	public abstract class PublicType {
 		public int PublicField;
@@ -74,5 +85,9 @@ namespace Test.Framework.Rocks {
 		public int PublicField;
 
 		public abstract void PublicMethod ();
+
+		public abstract class NestedPublicType {
+			public int PublicField;
+		}
 	}
 }
