@@ -65,16 +65,6 @@ namespace Gendarme.Framework.Rocks {
 		}
 
 		/// <summary>
-		/// Check if the MethodReference is defined as the entry point of it's assembly.
-		/// </summary>
-		/// <param name="self">The MethodReference on which the extension method can be called.</param>
-		/// <returns>True if the method is defined as the entry point of it's assembly, False otherwise</returns>
-		public static bool IsEntryPoint (this MethodReference self)
-		{
-			return ((self != null) && (self == self.Module.Assembly.EntryPoint));
-		}
-
-		/// <summary>
 		/// Check if the MethodReference is a finalizer.
 		/// </summary>
 		/// <param name="self">The MethodReference on which the extension method can be called.</param>
@@ -159,10 +149,10 @@ namespace Gendarme.Framework.Rocks {
 		/// static [void|int] Main ()
 		/// static [void|int] Main (string[] args)
 		/// </code>
-		/// </summary>gre
+		/// </summary>
 		/// <param name="self">The MethodReference on which the extension method can be called.</param>
 		/// <returns>True if the method is a valid Main, False otherwise.</returns>
-		public static bool IsMain (this MethodReference self)
+		public static bool IsMainSignature (this MethodReference self)
 		{
 			if (self == null)
 				return false;
@@ -176,9 +166,9 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			// Main must return void or int
-			switch (method.ReturnType.Name) {
-			case "Void":
-			case "Int32":
+			switch (method.ReturnType.FullName) {
+			case "System.Void":
+			case "System.Int32":
 				// ok, continue checks
 				break;
 			default:
@@ -194,7 +184,7 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			// Main (string[] args)
-			return (pdc [0].ParameterType.Name == "String[]");
+			return (pdc [0].ParameterType.FullName == "System.String[]");
 		}
 
 		/// <summary>

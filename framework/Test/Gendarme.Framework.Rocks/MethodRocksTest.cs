@@ -192,12 +192,6 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsEntryPoint ()
-		{
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsEntryPoint (), "FixtureSetUp");
-		}
-
-		[Test]
 		public void IsFinalizer ()
 		{
 			Assert.IsFalse (GetMethod ("FixtureSetUp").IsFinalizer (), "FixtureSetUp");
@@ -223,13 +217,13 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsMain ()
+		public void IsMainSignature ()
 		{
-			Assert.IsTrue (GetMethod<MainClassVoidVoid> ("Main").IsMain (), "MainClassVoidVoid");
-			Assert.IsTrue (GetMethod<MainClassIntVoid> ("Main").IsMain (), "MainClassIntVoid");
-			Assert.IsTrue (GetMethod<MainClassVoidStrings> ("Main").IsMain (), "MainClassVoidStrings");
-			Assert.IsTrue (GetMethod<MainClassIntStrings> ("Main").IsMain (), "MainClassIntStrings");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsMain (), "FixtureSetUp");
+			Assert.IsTrue (GetMethod<MainClassVoidVoid> ("Main").IsMainSignature (), "MainClassVoidVoid");
+			Assert.IsTrue (GetMethod<MainClassIntVoid> ("Main").IsMainSignature (), "MainClassIntVoid");
+			Assert.IsTrue (GetMethod<MainClassVoidStrings> ("Main").IsMainSignature (), "MainClassVoidStrings");
+			Assert.IsTrue (GetMethod<MainClassIntStrings> ("Main").IsMainSignature (), "MainClassIntStrings");
+			Assert.IsFalse (GetMethod ("FixtureSetUp").IsMainSignature (), "FixtureSetUp");
 		}
 
 		[Test]
