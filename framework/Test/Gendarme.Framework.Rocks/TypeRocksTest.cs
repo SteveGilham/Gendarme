@@ -288,6 +288,9 @@ namespace Test.Framework.Rocks {
 				case "DoubleValue":
 					Assert.IsTrue (field.FieldType.IsFloatingPoint (), field.Name);
 					break;
+				default:
+					Assert.IsFalse (field.FieldType.IsFloatingPoint (), field.Name);
+					break;
 				}
 			}
 		}
@@ -317,6 +320,9 @@ namespace Test.Framework.Rocks {
 				case "UIntPtrValue":
 				case "HandleRefValue":
 					Assert.IsTrue (field.FieldType.IsNative (), field.Name);
+					break;
+				default:
+					Assert.IsFalse (field.FieldType.IsNative (), field.Name);
 					break;
 				}
 			}
