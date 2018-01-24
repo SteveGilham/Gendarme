@@ -243,6 +243,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the interface to be matched</param>
 		/// <returns>True if we found that the type implements the interface, False otherwise (either it
 		/// does not implement it, or we could not find where it does).</returns>
+		/// <remarks>Use this extension to get included interface in current interface type.</remarks>
 		public static bool Implements (this TypeReference self, string nameSpace, string name)
 		{
 			if (nameSpace == null)
@@ -292,6 +293,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the interface to be matched</param>
 		/// <returns>True if we found that the type implements the interface, False otherwise (either it
 		/// does not implement it, or we could not find where it does).</returns>
+		/// <remarks>Use this extension to get included interface in current interface type.</remarks>
 		public static bool Implements (this TypeReference self, string interfaceFullName)
 		{
 			if (string.IsNullOrEmpty(interfaceFullName))
@@ -323,10 +325,27 @@ namespace Gendarme.Framework.Rocks {
 							return true;
 					}
 				}
+				if (type.HasGenericParameters) {
+					foreach (TypeReference generic in type.GenericParameters) {
+						if (ImplementsGeneric (type, generic, interfaceFullName))
+							return true;
+					}
+				}
 
 				type = type.BaseType != null ? type.BaseType.Resolve () : null;
 			}
 			return false;
+		}
+
+		private static bool ImplementsGeneric(TypeDefinition type, TypeReference generic, string interfaceFullName)
+		{
+			string typeName = generic.DeclaringType.FullName;
+			int length = typeName.Length;
+			if ((interfaceFullName.Length < length + 3) || (interfaceFullName[length] != '<'))
+				return false;
+			if (interfaceFullName[interfaceFullName.Length - 1] != '>')
+				return false;
+			return (string.CompareOrdinal (interfaceFullName, 0, typeName, 0, length) == 0);
 		}
 
 		/// <summary>
@@ -338,6 +357,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="nameSpace">The namespace of the base class to be matched</param>
 		/// <param name="name">The name of the base class to be matched</param>
 		/// <returns>True if the type inherits from specified class, False otherwise</returns>
+		/// <remarks>This type only check class hierarchy. To get interface hierarchy use Inmplements extension.</remarks>
 		public static bool Inherits (this TypeReference self, string nameSpace, string name)
 		{
 			if (nameSpace == null)
@@ -370,6 +390,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="self">The TypeReference on which the extension method can be called.</param>
 		/// <param name="fullName">The full name of the base class to be matched</param>
 		/// <returns>True if the type inherits from specified class, False otherwise</returns>
+		/// <remarks>This type only check class hierarchy. To get interface hierarchy use Inmplements extension.</remarks>
 		public static bool Inherits (this TypeReference self, string fullName)
 		{
 			if (fullName == null)
@@ -413,11 +434,33 @@ namespace Gendarme.Framework.Rocks {
 				int spos = name.LastIndexOf ('/');
 				if (spos == -1)
 					return false;
-				// GetFullName could be optimized away but it's a fairly uncommon case
-				return (nameSpace + "." + name == self.GetFullName ());
+				return IsNamed (self, nameSpace + "." + name);
 			}
 
-			return ((self.Namespace == nameSpace) && (self.Name == name));
+			if (self.Namespace != nameSpace)
+				return false;
+
+			string myName = self.Name;
+			int myNameLength = myName.Length;
+			int otherNameLength = name.Length;
+			if (self.IsByReference) {
+				myNameLength--;
+				if ((otherNameLength > 1) && (name [otherNameLength - 1] == '&'))
+					otherNameLength--;
+			}
+			if ((self.HasGenericParameters || self.IsGenericInstance) && (otherNameLength != myNameLength))
+			{
+				int pos = myName.IndexOf ('<', 1);
+				if (pos > 0)
+					myNameLength = pos;
+				else if ((otherNameLength > myNameLength) && (name[myNameLength] == '<'))
+					otherNameLength = myNameLength;
+			}
+
+			if ((myNameLength != otherNameLength) || (otherNameLength == 0))
+				return false;
+
+			return (string.CompareOrdinal (myName, 0, name, 0, myNameLength) == 0);
 		}
 
 		/// <summary>
@@ -435,15 +478,28 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			string myFullName = self.FullName;
-			int length = myFullName.Length;
+			int myNameLength = myFullName.Length;
+			int otherNameLength = fullName.Length;
 			if (self.IsByReference) {
-				length--;
+				myNameLength--;
+				if ((otherNameLength > 1) && (fullName [otherNameLength - 1] == '&'))
+					otherNameLength--;
+			}
+			if ((self.HasGenericParameters || self.IsGenericInstance) && (otherNameLength != myNameLength))
+			{
+				int pos = myFullName.IndexOf ('<', 1);
+				if (pos > 0) {
+					myNameLength = pos;
+					if (self.HasGenericParameters && !self.Name.Contains ("<"))
+						otherNameLength = pos;
+				} else if ((otherNameLength > myNameLength) && (fullName[myNameLength] == '<'))
+					otherNameLength = myNameLength;
 			}
 
-			if (length != fullName.Length)
+			if ((myNameLength != otherNameLength) || (otherNameLength == 0))
 				return false;
 
-			return (string.CompareOrdinal (myFullName, 0, fullName, 0, length) == 0);
+			return (string.CompareOrdinal (myFullName, 0, fullName, 0, myNameLength) == 0);
 		}
 
 		/// <summary>

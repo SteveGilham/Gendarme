@@ -120,6 +120,7 @@ namespace Test.Framework.Rocks {
 
 		public void MethodA (bool parameter) { }
 
+		public System.Collections.Generic.IEnumerable<string> NoEnumerator () { yield break; }
 
 		private AssemblyDefinition assembly;
 		private TypeDefinition myType;
@@ -221,6 +222,132 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
+		public void Implements_GenericSimple ()
+		{
+			FixtureSetUp();
+			TypeDefinition type = assembly.MainModule.GetType(TestTypeNames.NoStringEnumerator);
+			Assert.IsTrue (type.Implements ("System.Collections", "IEnumerator"), "IEnumerator");
+			Assert.IsTrue (type.Implements ("System.Collections.IEnumerator"), "IEnumerator (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerator`1"), "IEnumerator`1");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerator`1"), "IEnumerator`1 (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerator`1<System.String>"), "IEnumerator`1<string>");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerator`1<System.String>"), "IEnumerator`1<string> (full)");
+
+			// unknown behaviour, whether this should be recognized or not; for now it is recognized as valid
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic", "IEnumerator`1<T>"), "IEnumerator`1<T>")
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic.IEnumerator`1<T>"), "IEnumerator`1<T> (full)")
+
+			Assert.IsTrue (type.Implements ("System", "IDisposable"), "IDisposable");
+
+			Assert.IsFalse (type.Implements ("System.Collections.Generic", "ICollection`1"), "ICollection`1");
+			Assert.IsFalse (type.Implements ("System.Collections.Generic.ICollection`1"), "ICollection`1 (full)");
+			Assert.IsFalse (type.Implements ("System.Collections", "ICollection"), "ICollection");
+			Assert.IsFalse (type.Implements ("System.Collections.ICollection"), "ICollection (full)");
+		}
+
+		[Test]
+		public void Implements_TwoGenericStringImplementations ()
+		{
+			FixtureSetUp();
+			TypeDefinition type = assembly.MainModule.GetType(TestTypeNames.TwoGenericStringImplementations);
+
+			Assert.IsTrue (type.Implements ("System.Collections", "IEnumerator"), "IEnumerator");
+			Assert.IsTrue (type.Implements ("System.Collections.IEnumerator"), "IEnumerator (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerator`1"), "IEnumerator`1");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerator`1"), "IEnumerator`1 (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerator`1<System.String>"), "IEnumerator`1<string>");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerator`1<System.String>"), "IEnumerator`1<string> (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections", "IEnumerable"), "IEnumerable");
+			Assert.IsTrue (type.Implements ("System.Collections.IEnumerable"), "IEnumerable (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerable`1"), "IEnumerable`1");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerable`1"), "IEnumerable`1 (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerable`1<System.String>"), "IEnumerable`1<string>");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerable`1<System.String>"), "IEnumerable`1<string> (full)");
+
+#if false
+			// unknown behaviour, whether this should be recognized or not; for now it is recognized as valid
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic", "IEnumerable`1<T>"), "IEnumerable`1<T>");
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic.IEnumerable`1<T>"), "IEnumerable`1<T> (full)");
+#endif // false
+
+			Assert.IsTrue (type.Implements ("System", "IDisposable"), "IDisposable");
+
+			Assert.IsFalse (type.Implements ("System.Collections.Generic", "ICollection`1"), "ICollection`1");
+			Assert.IsFalse (type.Implements ("System.Collections.Generic.ICollection`1"), "ICollection`1 (full)");
+			Assert.IsFalse (type.Implements ("System.Collections", "ICollection"), "ICollection");
+			Assert.IsFalse (type.Implements ("System.Collections.ICollection"), "ICollection (full)");
+		}
+
+		[Test]
+		public void Implements_TwoGenericStringIntImplementations ()
+		{
+			FixtureSetUp();
+			TypeDefinition type = assembly.MainModule.GetType(TestTypeNames.TwoGenericStringIntImplementations);
+
+			Assert.IsTrue (type.Implements ("System.Collections", "IEnumerator"), "IEnumerator");
+			Assert.IsTrue (type.Implements ("System.Collections.IEnumerator"), "IEnumerator (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerator`1"), "IEnumerator`1");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerator`1"), "IEnumerator`1 (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerator`1<System.Int32>"), "IEnumerator`1<string>");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerator`1<System.Int32>"), "IEnumerator`1<string> (full)");
+#if false
+			// TODO: implement recognition
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerator`1<System.String>"), "IEnumerator`1<string>");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerator`1<System.String>"), "IEnumerator`1<string> (full)");
+
+			// unknown behaviour, whether this should be recognized or not; for now it is recognized as valid
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic", "IEnumerator`1<T>"), "IEnumerator`1<T>");
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic.IEnumerator`1<T>"), "IEnumerator`1<T> (full)");
+#endif // false
+
+			Assert.IsTrue (type.Implements ("System.Collections", "IEnumerable"), "IEnumerable");
+			Assert.IsTrue (type.Implements ("System.Collections.IEnumerable"), "IEnumerable (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerable`1"), "IEnumerable`1");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerable`1"), "IEnumerable`1 (full)");
+
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerable`1<System.String>"), "IEnumerable`1<string>");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerable`1<System.String>"), "IEnumerable`1<string> (full)");
+
+#if false
+			// unknown behaviour, whether this should be recognized or not; for now it is recognized as valid
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic", "IEnumerable`1<T>"), "IEnumerable`1<T>");
+			//Assert.IsFalse (type.Implements ("System.Collections.Generic.IEnumerable`1<T>"), "IEnumerable`1<T> (full)");
+#endif // false
+
+			Assert.IsTrue (type.Implements ("System", "IDisposable"), "IDisposable");
+
+			Assert.IsFalse (type.Implements ("System.Collections.Generic", "ICollection`1"), "ICollection`1");
+			Assert.IsFalse (type.Implements ("System.Collections.Generic.ICollection`1"), "ICollection`1 (full)");
+			Assert.IsFalse (type.Implements ("System.Collections", "ICollection"), "ICollection");
+			Assert.IsFalse (type.Implements ("System.Collections.ICollection"), "ICollection (full)");
+		}
+
+		[Test]
+		public void Implements_GenericInterface()
+		{
+			FixtureSetUp();
+			MethodDefinition method = GetMethod ("NoEnumerator");
+			TypeReference type = method.ReturnType;
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerable`1"), "IEnumerable`1(namespace, name)");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerable`1"), "IEnumerable`1(full_name)");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic", "IEnumerable`1<System.String>"),
+						"IEnumerable`1<string>(namespace, name)");
+			Assert.IsTrue (type.Implements ("System.Collections.Generic.IEnumerable`1<System.String>"), "IEnumerable`1<string>(full_name)");
+			Assert.IsTrue (type.Implements ("System.Collections", "IEnumerable"), "IEnumerable(namespace, name)");
+			Assert.IsTrue (type.Implements ("System.Collections.IEnumerable"), "IEnumerable(full_name)");
+		}
+
+		[Test]
 		public void Inherits_NullParam ()
 		{
 			Assert.Throws<ArgumentNullException>(delegate { GetType (String.Empty).Inherits (null, "a"); }, "namespace");
@@ -250,6 +377,31 @@ namespace Test.Framework.Rocks {
 			TypeDefinition type = GetType (String.Empty);
 			Assert.IsTrue (type.Inherits (type.Namespace, type.Name), "itself(namespace, name)");
 			Assert.IsTrue (type.Inherits (type.FullName), "itself(full_name)");
+		}
+
+		[Test]
+		public void Inherits_Generic ()
+		{
+			FixtureSetUp();
+			TypeDefinition child = assembly.MainModule.GetType (TestTypeNames.NoStringEnumerator);
+			TypeDefinition parent = assembly.MainModule.GetType (TestTypeNames.NoEnumerator);
+			Assert.IsTrue (child.Inherits (child.Namespace, child.Name), "NoStringEnumerator(namespace, name)");
+			Assert.IsTrue (child.Inherits (child.FullName), "NoStringEnumerator(full_name)");
+			Assert.IsTrue (child.Inherits (TestTypeNames.NoStringEnumerator), "NoStringEnumerator(NoStringEnumerator)");
+
+			Assert.IsTrue (child.Inherits (parent.Namespace, parent.Name), "parent(namespace, name)");
+			Assert.IsTrue (child.Inherits (parent.FullName), "parent(full_name)");
+			Assert.IsTrue (child.Inherits (TestTypeNames.NoEnumerator), "parent(NoEnumerator)");
+			Assert.IsTrue (child.Inherits (TestTypeNames.NoEnumerator + "<System.String>"), "parent(NoEnumerator<string>)");
+			Assert.IsFalse (child.Inherits (TestTypeNames.NoEnumerator + "<System.Int32>"), "parent(NoEnumerator<int>)");
+
+			Assert.IsTrue (parent.Inherits (parent.Namespace, parent.Name), "NoEnumerator(namespace, name)");
+			Assert.IsTrue (parent.Inherits (parent.FullName), "NoEnumerator(full_name)");
+			Assert.IsTrue (parent.Inherits (TestTypeNames.NoEnumerator), "NoEnumerator(NoEnumerator)");
+
+			// there is a big question, whether this should return true, or false
+			Assert.IsTrue (parent.Inherits (TestTypeNames.NoEnumerator + "<System.String>"), "NoEnumerator(NoEnumerator<string>)");
+			Assert.IsTrue (parent.Inherits (TestTypeNames.NoEnumerator + "<System.Int32>"), "NoEnumerator(NoEnumerator<int>)");
 		}
 
 		[Test]
@@ -296,17 +448,25 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsGeneratedCode_CompilerGenerated ()
-		{
-			Assert.IsTrue (GetType ("/TypeCompilerGenerated").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetType (String.Empty).IsGeneratedCode (), "TypeRocksTest");
-		}
-
-		[Test]
 		public void IsGeneratedCode_GeneratedCode ()
 		{
-			Assert.IsTrue (GetType ("/TypeGeneratedCode").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetType (String.Empty).IsGeneratedCode (), "TypeRocksTest");
+			bool generatedCoudeFound = false;
+			int flaggedCount = 0;
+			TypeDefinition type = GetType (string.Empty);
+			Assert.IsFalse (type.IsGeneratedCode (), "TypeRocksTest");
+			foreach (TypeDefinition td in type.NestedTypes) {
+				string name = td.Name;
+				if (name.StartsWith ("<") || name.Contains ("$")) {
+					generatedCoudeFound = true;
+					Assert.IsTrue (td.IsGeneratedCode (), td.Name);
+				} else if ((name == "TypeGeneratedCode") || (name == "TypeCompilerGenerated")) {
+					flaggedCount++;
+					Assert.IsTrue (td.IsGeneratedCode (), td.Name);
+				} else
+					Assert.IsFalse (td.IsGeneratedCode (), td.Name);
+			}
+			Assert.IsTrue (generatedCoudeFound, "No compiler generated type found");
+			Assert.AreEqual (2, flaggedCount, "Flagged types count incorrect");
 		}
 
 		[Test]
@@ -329,7 +489,7 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsNamed ()
+		public void IsNamed_Standard ()
 		{
 			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.PublicType);
 
@@ -343,7 +503,36 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsNamedNestedType ()
+		public void IsNamed_GenericClass ()
+		{
+			FixtureSetUp();
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.NoEnumerator);
+
+			Assert.IsTrue (type.IsNamed (TestTypeNames.NoEnumerator), "full name: NoEnumerator`1");
+			Assert.IsTrue (type.IsNamed (TestTypeNames.NoEnumerator + "<System.Long>"), "full name: NoEnumerator<long>");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace + "NoEnumerator"), "full name: NoEnumerator");//Missing Text
+
+			Assert.IsTrue (type.IsNamed (TestTypeNames.Namespace, "NoEnumerator`1"), "name: NoEnumerator`1");
+			Assert.IsTrue (type.IsNamed (TestTypeNames.Namespace, "NoEnumerator`1<System.Long>"), "name: NoEnumerator`1<long>");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace, "NoEnumerator"), "name: NoEnumerator");
+		}
+
+		[Test]
+		public void IsNamed_DerivedGenericClass ()
+		{
+			FixtureSetUp();
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.NoStringEnumerator);
+
+			Assert.IsTrue (type.IsNamed (TestTypeNames.NoStringEnumerator), "full name: NoStringEnumerator");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.NoEnumerator + "<System.String>"), "full name: NoEnumerator<String>");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace + "NoEnumerator"), "full name: NoEnumerator");//Missing Text
+
+			Assert.IsTrue (type.IsNamed (TestTypeNames.Namespace, "NoStringEnumerator"), "name: NoStringEnumerator");
+			Assert.IsFalse (type.IsNamed (TestTypeNames.Namespace, "NoStringEnumerator`1"), "name: NoStringEnumerator`1");
+		}
+
+		[Test]
+		public void IsNamed_NestedType ()
 		{
 			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.NestedPublicType);
 
@@ -361,7 +550,7 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsNamedDoubleNestedType ()
+		public void IsNamed_DoubleNestedType ()
 		{
 			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.NestedNestedPublicType);
 

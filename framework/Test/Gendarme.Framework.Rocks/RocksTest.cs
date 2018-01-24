@@ -26,19 +26,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Test.Framework.Rocks {
 
 	internal static class TestTypeNames {
 		internal static readonly string Namespace = typeof (PublicType).Namespace;
-		internal static readonly string PublicType = typeof (PublicType).FullName;
-		internal static readonly string InternalType = typeof (InternalType).FullName;
-		internal static readonly string NestedPublicType = typeof (PublicType.NestedPublicType).FullName.Replace ('+', '/');
-		internal static readonly string NestedNestedPublicType =
-			typeof (PublicType.NestedPublicType.NestedNestedPublicType).FullName.Replace ('+', '/');
-		internal static readonly string NestedProtectedType = (typeof (PublicType).FullName + "/NestedProtectedType");
-		internal static readonly string NestedPrivateType = (typeof (PublicType).FullName + "/NestedPrivateType");
-		internal static readonly string NestedInternalType = typeof (PublicType.NestedInternalType).FullName.Replace ('+', '/');
-		internal static readonly string InternalNestedPublicType = typeof (InternalType.NestedPublicType).FullName.Replace ('+', '/');
+		internal static readonly string PublicType = GetType<PublicType>();
+		internal static readonly string InternalType = GetType<InternalType>();
+		internal static readonly string NestedPublicType = GetType<PublicType.NestedPublicType>();
+		internal static readonly string NestedNestedPublicType = GetType<PublicType.NestedPublicType.NestedNestedPublicType>();
+		internal static readonly string NestedProtectedType = (PublicType + "/NestedProtectedType");
+		internal static readonly string NestedPrivateType = (PublicType + "/NestedPrivateType");
+		internal static readonly string NestedInternalType = GetType<PublicType.NestedInternalType>();
+		internal static readonly string InternalNestedPublicType = GetType<InternalType.NestedPublicType>();
+
+		internal static readonly string NoEnumerator = GetType<NoEnumerator<int>>();
+		internal static readonly string NoStringEnumerator = GetType<NoStringEnumerator>();
+		internal static readonly string TwoGenericStringImplementations = GetType<TwoGenericStringImplementations>();
+		internal static readonly string TwoGenericStringIntImplementations = GetType<TwoGenericStringIntImplementations>();
+
+		private static string GetType<T>()
+		{
+			string name = typeof (T).FullName.Replace ('+', '/');
+			int pos = name.IndexOf ('[');
+			if (pos > 0)
+				name = name.Remove (pos);
+			return name;
+		}
 	}
 
 	public abstract class PublicType {
@@ -88,6 +105,154 @@ namespace Test.Framework.Rocks {
 
 		public abstract class NestedPublicType {
 			public int PublicField;
+		}
+	}
+
+	internal class MyList : List<string> {
+		IEnumerator<string> GetNoEnumerator ()
+		{
+			return new NoStringEnumerator ();
+		}
+	}
+
+	internal class NoEnumerator<T> : IEnumerator<T> {
+		virtual public T Current
+		{
+			get {
+				return (default (T));
+			}
+		}
+
+		object IEnumerator.Current
+		{
+			get {
+				return (default (T));
+			}
+		}
+
+		public void Dispose ()
+		{
+			// nothing
+		}
+
+		public bool MoveNext ()
+		{
+			return (false);
+		}
+
+		public void Reset ()
+		{
+			// nothing
+		}
+	}
+
+	internal sealed class NoStringEnumerator : NoEnumerator<string>
+	{
+		public override string Current
+		{
+			get
+			{
+				return string.Empty;
+			}
+		}
+	}
+
+	internal class TwoGenericImplementationsBase<T> : IEnumerable<T>, IEnumerator<T>
+	{
+		virtual public T Current
+		{
+			get
+			{
+				return (default (T));
+			}
+		}
+
+		object IEnumerator.Current
+		{
+			get
+			{
+				return (default (T));
+			}
+		}
+
+		public void Dispose ()
+		{
+			// nothing
+		}
+
+		public IEnumerator<T> GetEnumerator ()
+		{
+			return this;
+		}
+
+		public bool MoveNext ()
+		{
+			return (false);
+		}
+
+		public void Reset ()
+		{
+			// nothing
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return this;
+		}
+	}
+
+	internal sealed class TwoGenericStringImplementations : TwoGenericImplementationsBase<string>
+	{
+		public override string Current
+		{
+			get
+			{
+				return string.Empty;
+			}
+		}
+	}
+
+	internal sealed class TwoGenericStringIntImplementations : IEnumerable<string>, IEnumerator<int>
+	{
+		public int Current
+		{
+			get
+			{
+				return 0;
+			}
+		}
+
+		object IEnumerator.Current
+		{
+			get
+			{
+				return (0);
+			}
+		}
+
+		public void Dispose ()
+		{
+			// nothing
+		}
+
+		public IEnumerator<string> GetEnumerator ()
+		{
+			return null;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return this;
+		}
+
+		public bool MoveNext ()
+		{
+			return (false);
+		}
+
+		public void Reset ()
+		{
+			// nothing
 		}
 	}
 }
