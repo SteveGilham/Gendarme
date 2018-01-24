@@ -73,16 +73,10 @@ namespace Gendarme.Rules.Design.Generic {
 			if (method.IsSpecialName || !method.HasParameters || method.IsGeneratedMethodOrType ())
 				return RuleResult.DoesNotApply;
 
-			// exclude the "bool Try* (ref)" pattern from the rule
-			if (method.Name.StartsWith ("Try", StringComparison.Ordinal) && method.ReturnType.IsNamed ("System", "Boolean"))
-				return RuleResult.DoesNotApply;
-
 			foreach (ParameterDefinition parameter in method.Parameters) {
-				if (!parameter.ParameterType.IsNamed ("System", "Object&"))
-					continue;
-
-				// suggest using generics
-				Runner.Report (parameter, Severity.Medium, Confidence.High);
+				TypeReference tr = parameter.ParameterType;
+				if (tr.IsByReference && tr.IsNamed ("System", "Object&"))
+					Runner.Report (parameter, Severity.Medium, Confidence.High);
 			}
 			return Runner.CurrentRuleResult;
 		}
