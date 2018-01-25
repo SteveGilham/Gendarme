@@ -116,8 +116,8 @@ namespace Gendarme.Rules.Performance {
 			// there is a unknown reason, why the "Mono.Cecil.CustomAttribute" is defined on "System.Object", "System.Exception" and other types
 			/*if (string.Equals(metod.DeclaringType.FullName, "System.Object", StringComparison.Ordinal))*/ {
 				for (int i = 0, j = 0; i < attributes.Count; i++) {
-          TypeReference attributeType = attributes[i].AttributeType;
-          if (string.Equals(attributeType.FullName, "__DynamicallyInvokableAttribute", StringComparison.Ordinal))
+					TypeReference attributeType = attributes[i].AttributeType;
+					if (string.Equals(attributeType.FullName, "__DynamicallyInvokableAttribute", StringComparison.Ordinal))
 						attributes.RemoveAt(j);
 					else
 						j++;
