@@ -387,6 +387,11 @@ namespace Gendarme.Rules.Maintainability {
 		private void CheckParameters (MethodDefinition method)
 		{
 			Dictionary<ParameterDefinition, List<StackEntryUsageResult>> usages = new Dictionary<ParameterDefinition, List<StackEntryUsageResult>> ();
+			HashSet<ParameterDefinition> ignored = new HashSet<ParameterDefinition>();
+			foreach (ParameterDefinition parameter in method.Parameters) {
+				if (parameter.IsOut || parameter.IsOptional || IgnoredPatameterType(parameter.ParameterType))
+					ignored.Add (parameter);
+			}
 
 			foreach (Instruction ins in method.Body.Instructions) {
 				if (!ins.IsLoadArgument ())
@@ -394,16 +399,11 @@ namespace Gendarme.Rules.Maintainability {
 
 				ParameterDefinition parameter = ins.GetParameter (method);
 				// this is `this`, we do not care
-				if ((parameter == null) || (parameter.Index == -1))
+				if ((parameter == null) || (parameter.Index == -1) || ignored.Contains (parameter))
 					continue;
 
 				// is parameter already known ?
 				if (!usages.ContainsKey (parameter)) {
-					if (parameter.IsOut || parameter.IsOptional || parameter.ParameterType.IsValueType)
-						continue;
-					if (parameter.ParameterType.IsArray || parameter.ParameterType.IsDelegate ())
-						continue; //TODO: these are more complex to handle, not supported for now
-
 					if (null == sea || sea.Method != method)
 						sea = new StackEntryAnalysis (method);
 
@@ -415,6 +415,12 @@ namespace Gendarme.Rules.Maintainability {
 
 			foreach (var usage in usages)
 				UpdateParameterLeastType (usage.Key, usage.Value);
+		}
+
+		private bool IgnoredPatameterType(TypeReference type)
+		{
+			return (type.IsValueType || type.IsArray || type.IsDelegate ());
+			//TODO: "IsArray" and "IsDelegate": these are more complex to handle, not supported for now
 		}
 
 		static bool IsSignatureDictated (MethodDefinition method)
