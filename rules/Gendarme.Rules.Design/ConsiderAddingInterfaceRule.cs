@@ -182,7 +182,7 @@ namespace Gendarme.Rules.Design {
 					return false;
 
 				//ok interesting candidate! let's check if it matches the signature
-				if (!m.CompareSignature (candidate))
+				if (!m.SignatureEquals (candidate))
 					return false;
 				// FIXME: ignore methods with generic constraints
 				if (HasConstraints (candidate))

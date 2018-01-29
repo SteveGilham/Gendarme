@@ -202,6 +202,7 @@ namespace Test.Framework.Rocks {
 		}
 
 		private AssemblyDefinition assembly;
+		private static readonly char[] endNameCharacters = new char[] { '.', '/' };
 
 		[OneTimeSetUp]
 		public void FixtureSetUp ()
@@ -212,8 +213,11 @@ namespace Test.Framework.Rocks {
 
 		private MethodDefinition GetMethod<T> (string methodName)
 		{
-			string typeName = typeof (T).FullName.Replace ('+', '/');
-			TypeDefinition type = assembly.MainModule.GetType (typeName);
+			string name = typeof (T).FullName.Replace ('+', '/');
+			int pos = name.IndexOf ('[');
+			if (pos > 0)
+				name = name.Remove(pos);
+			TypeDefinition type = assembly.MainModule.GetType (name);
 			foreach (MethodDefinition method in type.Methods) {
 				if (method.Name == methodName)
 					return method;
@@ -348,6 +352,92 @@ namespace Test.Framework.Rocks {
 			Assert.AreEqual (GetMethod ("get_Value").GetPropertyByAccessor ().Name, "Value", "get_Value");
 			Assert.AreEqual (GetMethod ("set_Value").GetPropertyByAccessor ().Name, "Value", "set_Value");
 			Assert.IsNull (GetMethod ("EventCallback").GetPropertyByAccessor (), "EventCallback");
+		}
+
+		[Test]
+		public void SignatureEquals ()
+		{
+			MethodDefinition StandardIn1 = GetMethod<Overridden> ("MethodIn"); // int
+			MethodDefinition StandardIn2 = GetMethod<NotOverridden> ("MethodIn"); // int
+			MethodDefinition GenericIn1 = GetMethod<OverriddenGeneric> ("MethodIn"); // string
+			MethodDefinition GenericIn2 = GetMethod<NotOverriddenGeneric> ("MethodIn"); // int
+			MethodDefinition GenericIn3 = GetMethod<OverrideBaseGeneric<object>>("MethodIn"); // generic
+
+			MethodDefinition StandardOut1 = GetMethod<Overridden> ("MethodOut"); // int
+			MethodDefinition StandardOut2 = GetMethod<NotOverridden> ("MethodRef"); // method has a different name than parameters; see test IsOverride
+			MethodDefinition GenericOut1 = GetMethod<OverriddenGeneric> ("MethodOut"); // string
+			MethodDefinition GenericOut2 = GetMethod<NotOverriddenGeneric> ("MethodOut"); // int
+			MethodDefinition GenericOut3 = GetMethod<OverrideBaseGeneric<object>> ("MethodOut"); // generic
+
+			MethodDefinition StandardRef1 = GetMethod<Overridden> ("MethodRef"); // int
+			MethodDefinition StandardRef2 = GetMethod<NotOverridden> ("MethodOut"); // method has a different name than parameters; see test IsOverride
+			MethodDefinition GenericRef1 = GetMethod<OverriddenGeneric> ("MethodRef"); // string
+			MethodDefinition GenericRef2 = GetMethod<NotOverriddenGeneric> ("MethodRef"); // int
+			MethodDefinition GenericRef3 = GetMethod<OverrideBaseGeneric<object>>("MethodRef"); // generic
+
+			SignaturesEquals (StandardIn1, StandardIn2, bothOrders: true);    // int <==> int
+			SignaturesEquals (StandardIn1, GenericIn2, bothOrders: true);     // int <==> int
+			SignaturesEquals (StandardIn1, GenericIn3, bothOrders: false);    // int <== T
+			SignaturesEquals (GenericIn2, GenericIn3, bothOrders: false);     // int <== T
+			SignaturesDiffers (GenericIn3, StandardIn1, bothOrders: false);   // T <== int
+			SignaturesDiffers (GenericIn3, StandardIn2, bothOrders: false);   // T <== int
+			SignaturesDiffers (GenericIn3, GenericIn1, bothOrders: false);    // T <== string
+			SignaturesDiffers (StandardIn1, GenericIn1, bothOrders: true);    // int <==> string
+			SignaturesDiffers (GenericIn2, GenericIn1, bothOrders: true);     // int <==> string
+
+			SignaturesEquals (StandardOut1, StandardOut2, bothOrders: true);  // int <==> int
+			SignaturesEquals (StandardOut1, GenericOut2, bothOrders: true);   // int <==> int
+			SignaturesEquals (StandardOut1, GenericOut3, bothOrders: false);  // int <== T
+			SignaturesEquals (GenericOut2, GenericOut3, bothOrders: false);   // int <== T
+			SignaturesDiffers (GenericOut3, StandardOut1, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericOut3, StandardOut2, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericOut3, GenericOut1, bothOrders: false);  // T <== string
+			SignaturesDiffers (StandardOut1, GenericOut1, bothOrders: true);  // int <==> string
+			SignaturesDiffers (GenericOut2, GenericOut1, bothOrders: true);   // int <==> string
+
+			SignaturesEquals (StandardRef1, StandardRef2, bothOrders: true);  // int <==> int
+			SignaturesEquals (StandardRef1, GenericRef2, bothOrders: true);   // int <==> int
+			SignaturesEquals (StandardRef1, GenericRef3, bothOrders: false);  // int <== T
+			SignaturesEquals (GenericRef2, GenericRef3, bothOrders: false);   // int <== T
+			SignaturesDiffers (GenericRef3, StandardRef1, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericRef3, StandardRef2, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericRef3, GenericRef1, bothOrders: false);  // T <== string
+			SignaturesDiffers (StandardRef1, GenericRef1, bothOrders: true);  // int <==> string
+			SignaturesDiffers (GenericRef2, GenericRef1, bothOrders: true);   // int <==> string
+		}
+
+		private void SignaturesEquals (MethodDefinition a, MethodDefinition b, bool bothOrders)
+		{
+			string nameA = GetShortName (a);
+			string nameB = GetShortName (b);
+			Assert.IsTrue (a.SignatureEquals(b), nameA + " == " + nameB);
+			if (bothOrders)
+			{
+				Assert.IsTrue (b.SignatureEquals(a), nameB + " == " + nameA);
+			}
+		}
+
+		private void SignaturesDiffers (MethodDefinition a, MethodDefinition b, bool bothOrders)
+		{
+			string nameA = GetShortName (a);
+			string nameB = GetShortName (b);
+			Assert.IsFalse (a.SignatureEquals(b), nameA + " != " + nameB);
+			if (bothOrders)
+			{
+				Assert.IsFalse (b.SignatureEquals(a), nameB + " != " + nameA);
+			}
+		}
+
+		private string GetShortName(MethodDefinition method)
+		{
+			string name = method.FullName;
+			int pos = name.LastIndexOf (':');
+			if (pos < 0)
+				return name;
+			pos = name.LastIndexOfAny(endNameCharacters, pos);
+			if (pos < 0)
+				return name;
+			return name.Substring (pos + 1);
 		}
 	}
 }

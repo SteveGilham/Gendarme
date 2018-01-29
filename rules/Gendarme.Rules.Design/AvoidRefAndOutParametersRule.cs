@@ -103,7 +103,7 @@ namespace Gendarme.Rules.Design {
 
 				if (intr.HasMethods) {
 					foreach (MethodDefinition md in intr.Methods) {
-						if (method.CompareSignature (md))
+						if (method.SignatureEquals (md))
 							return true;
 					}
 				}

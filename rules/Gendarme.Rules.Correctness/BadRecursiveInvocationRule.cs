@@ -91,7 +91,7 @@ namespace Gendarme.Rules.Correctness {
 				return false;
 
 			// compare parameters
-			if (!method1.CompareSignature (method2))
+			if (!method1.SignatureEquals (method2))
 				return false;
 
 			TypeReference t2 = method2.DeclaringType;

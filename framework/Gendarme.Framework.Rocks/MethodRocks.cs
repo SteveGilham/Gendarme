@@ -208,7 +208,7 @@ namespace Gendarme.Framework.Rocks {
 				foreach (MethodDefinition md in parent.Methods) {
 					if (name != md.Name)
 						continue;
-					if (!method.CompareSignature (md))
+					if (!method.SignatureEquals (md))
 						continue;
 
 					return md.IsVirtual;
@@ -325,8 +325,10 @@ namespace Gendarme.Framework.Rocks {
 		/// </summary>
 		/// <param name="self">>The IMethodSignature on which the extension method can be called.</param>
 		/// <param name="signature">The IMethodSignature which is being compared.</param>
+		/// <remarks>When the argument/return value in signature is generic and in self is not, it will be
+		/// considered as identical (equal), but not vice versa. (self generic, signature correct means false).</remarks>
 		/// <returns>True if the IMethodSignature members are identical, false otherwise</returns>
-		public static bool CompareSignature (this IMethodSignature self, IMethodSignature signature)
+		public static bool SignatureEquals (this IMethodSignature self, IMethodSignature signature)
 		{
 			if (self == null)
 				return (signature == null);

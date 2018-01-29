@@ -79,7 +79,7 @@ namespace Gendarme.Rules.Performance {
 			if (mr.Name != method.Name)
 				return false;
 
-			if (!mr.CompareSignature (method))
+			if (!method.SignatureEquals (mr))
 				return false;
 
 			TypeReference type = mr.DeclaringType;
