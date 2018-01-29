@@ -36,10 +36,22 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.NUnit {
 
+	/// <summary>
+	/// Base class for NUnit rules
+	/// </summary>
 	abstract public class NUnitRule : Rule {
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public Version NUnitVersion { get; set; }
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);

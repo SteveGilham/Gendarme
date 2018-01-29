@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.ImplementEqualsTypeRule
 //
 // Authors:
@@ -91,6 +91,11 @@ namespace Gendarme.Rules.Performance {
 
 		private string [] parameters = new string [1];
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enums, delegates and to generated code

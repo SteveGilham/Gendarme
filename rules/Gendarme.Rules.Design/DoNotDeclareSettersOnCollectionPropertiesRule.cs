@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.DoNotDeclareSettersOnCollectionPropertiesRule
 //
 // Authors:
@@ -103,6 +103,11 @@ namespace Gendarme.Rules.Design {
 			return type.Inherits ("System.Security", "PermissionSet");
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasProperties || !type.IsVisible ())

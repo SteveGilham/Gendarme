@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.Generic.ImplementGenericCollectionInterfacesRule
 //
 // Authors:
@@ -70,6 +70,11 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1010:CollectionsShouldImplementGenericInterface")]
 	public class ImplementGenericCollectionInterfacesRule : GenericsBaseRule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enums, interfaces and generated code

@@ -186,6 +186,11 @@ namespace Gendarme.Rules.Smells {
 			return Runner.CurrentRuleResult;
 		}
 		
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// we don't control, nor report, p/invoke declarations - sometimes the poor C 

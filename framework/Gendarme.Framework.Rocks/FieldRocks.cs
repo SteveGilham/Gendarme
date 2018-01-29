@@ -32,6 +32,9 @@ using Mono.Cecil;
 
 namespace Gendarme.Framework.Rocks {
 
+	/// <summary>
+	/// Extension class for fields
+	/// </summary>
 	public static class FieldRocks {
 
 		/// <summary>

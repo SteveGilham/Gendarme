@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.ReviewInconsistentIdentityRule
 //
 // Authors:
@@ -342,6 +342,11 @@ namespace Gendarme.Rules.Correctness {
 			Runner.Report (method, Severity.High, Confidence.Normal, mesg);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasMethods || !type.HasFields || type.IsEnum)

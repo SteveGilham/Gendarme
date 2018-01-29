@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.AttributeArgumentsShouldHaveAccessorsRule
 //
 // Authors:
@@ -99,6 +99,11 @@ namespace Gendarme.Rules.Design {
 
 		private List<string> allProperties = new List<string> ();
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to attributes

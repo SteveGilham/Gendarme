@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.SealedTypeWithInheritanceDemandRule
 //
 // Authors:
@@ -70,6 +70,11 @@ namespace Gendarme.Rules.Security.Cas {
 	[Solution ("Review the InheritanceDemand on this type and either remove it or change its SecurityAction to, probably, a LinkDemand.")]
 	public class ReviewSealedTypeWithInheritanceDemandRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// 1 - this applies only to sealed types

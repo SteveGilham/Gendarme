@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.AvoidSmallNamespaceRule
 //
 // Authors:
@@ -102,6 +102,11 @@ namespace Gendarme.Rules.Design {
 
 		HashSet<string> ignore = new HashSet<string> ();
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			MethodDefinition entry_point = assembly.EntryPoint;
@@ -142,6 +147,9 @@ namespace Gendarme.Rules.Design {
 			return RuleResult.Success;
 		}
 
+		/// <summary>
+		/// Release all resources, free memory, e.t.c.
+		/// </summary>
 		public override void TearDown ()
 		{
 			// check every namespaces inside the assembly set being analyzed

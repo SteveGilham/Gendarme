@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.AvoidUnusedPrivateFieldsRule
 //
 // Authors:
@@ -94,6 +94,11 @@ namespace Gendarme.Rules.Performance {
 		// all instruction that load and store fields (instance or static)
 		static OpCodeBitmask LoadStoreFields = new OpCodeBitmask (0x0, 0x3F00000000000000, 0x0, 0x0);
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enums, interfaces and delegates

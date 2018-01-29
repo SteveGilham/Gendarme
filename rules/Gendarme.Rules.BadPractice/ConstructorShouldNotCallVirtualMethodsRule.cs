@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.BadPractice.ConstructorShouldNotCallVirtualMethodsRule
 //
 // Authors:
@@ -120,6 +120,11 @@ namespace Gendarme.Rules.BadPractice {
 
 		private Stack<string> stack = new Stack<string> ();
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// sealed classes are ok

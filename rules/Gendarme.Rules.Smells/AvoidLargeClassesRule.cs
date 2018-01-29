@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.AvoidLargeClassesRule class
 //
 // Authors:
@@ -177,6 +177,11 @@ namespace Gendarme.Rules.Smells {
 			return false;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || !type.HasFields || type.IsGeneratedCode ())

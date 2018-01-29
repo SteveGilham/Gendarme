@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.UsePluralNameInEnumFlagsRule class
 //
 // Authors:
@@ -73,6 +73,11 @@ namespace Gendarme.Rules.Naming {
 			return String.Compare (typeName, typeName.Length - 1, "s", 0, 1, true, CultureInfo.CurrentCulture) == 0;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to enums with [Flags] attribute

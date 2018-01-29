@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Interoperability.Com.AvoidNonPublicFieldsInComVisibleValueTypesRule
 //
 // Authors:
@@ -70,6 +70,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 		private const string ComVisible = "System.Runtime.InteropServices.ComVisibleAttribute";
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// Only check for value types and types with fields.

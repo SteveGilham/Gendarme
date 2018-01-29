@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.UseSuppressFinalizeOnIDisposableTypeWithFinalizerRule
 //
 // Authors:
@@ -147,6 +147,11 @@ namespace Gendarme.Rules.Performance {
 			}
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enums, interfaces and delegates

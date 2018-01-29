@@ -99,6 +99,11 @@ namespace Gendarme.Rules.Design {
 			get { return "System.Collections"; }
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		override public RuleResult CheckType (TypeDefinition type)
 		{
 			TypeReference baseType = type;

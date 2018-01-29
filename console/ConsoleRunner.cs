@@ -473,6 +473,9 @@ namespace Gendarme {
 				local.Stop ();
 		}
 
+		/// <summary>
+		/// Release all resources, free memory, e.t.c.
+		/// </summary>
 		public override void TearDown ()
 		{
 			if (!quiet) {

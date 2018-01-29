@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.ArrayFieldsShouldNotBeReadOnlyRule
 //
 // Authors:
@@ -71,6 +71,11 @@ namespace Gendarme.Rules.Security {
 	[FxCopCompatibility ("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
 	public class ArrayFieldsShouldNotBeReadOnlyRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface, enumerations and delegates or to types without fields

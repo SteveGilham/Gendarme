@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.ConsiderCustomAccessorsForNonVisibleEventsRule
 //
 // Authors:
@@ -71,6 +71,11 @@ namespace Gendarme.Rules.Performance {
 	[Solution ("For non-visible events see if your code could work without being synchronized by supplying your own accessor implementations.")]
 	public class ConsiderCustomAccessorsForNonVisibleEventsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to classes that defines events

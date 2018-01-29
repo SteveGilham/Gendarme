@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.DeclareEventsExplicitlyRule
 //
 // Authors:
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Correctness {
 			return false;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasFields || type.IsEnum)

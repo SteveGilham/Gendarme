@@ -1,4 +1,4 @@
-//
+﻿//
 // AutoLayoutTypesShouldNotBeComVisibleRule.cs
 //
 // Authors:
@@ -80,6 +80,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1403:AutoLayoutTypesShouldNotBeComVisible")]
 	public class AutoLayoutTypesShouldNotBeComVisibleRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || !type.IsValueType || !type.HasCustomAttributes || 

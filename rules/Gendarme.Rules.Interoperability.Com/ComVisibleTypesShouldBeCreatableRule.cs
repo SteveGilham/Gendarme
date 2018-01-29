@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Interoperability.Com.ComVisibleTypesShouldBeCreatableRule
 //
 // Authors:
@@ -69,6 +69,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[Solution ("Either add a default public constructor, or remove the ComVisibleAttribute from the type.")]
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1409:ComVisibleTypesShouldBeCreatable")]
 	public class ComVisibleTypesShouldBeCreatableRule : Rule, ITypeRule {
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// Check only for reference types with attributes.

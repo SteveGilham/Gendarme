@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Serialization.MarkEnumerationsAsSerializableRule
 //
 // Authors:
@@ -62,6 +62,11 @@ namespace Gendarme.Rules.Serialization {
 	[Solution ("For better source code readability always decorate enumerations with [Serializable].")]
 	public class MarkEnumerationsAsSerializableRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsEnum)

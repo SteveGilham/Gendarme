@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.AvoidDeepNamespaceHierarchyRule class
 //
 // Authors:
@@ -120,6 +120,11 @@ namespace Gendarme.Rules.Naming {
 			return levels;
 		}
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// check every namespaces inside the assembly using the NamespaceEngine

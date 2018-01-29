@@ -82,6 +82,11 @@ namespace Gendarme.Rules.Gendarme {
 
 		private HashSet<string> declaredEngines = new HashSet<string> ();
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasMethods)

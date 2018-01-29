@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.Generic.AvoidExcessiveParametersOnGenericTypesRule
 //
 // Authors:
@@ -60,6 +60,11 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
 	public class AvoidExcessiveParametersOnGenericTypesRule : GenericsBaseRule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || !type.HasGenericParameters || !type.IsVisible ())

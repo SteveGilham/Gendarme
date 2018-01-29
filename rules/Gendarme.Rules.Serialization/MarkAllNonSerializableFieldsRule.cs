@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Serialization.MarkAllNonSerializableFieldsRule
 //
 // Authors:
@@ -73,6 +73,11 @@ namespace Gendarme.Rules.Serialization {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2235:MarkAllNonSerializableFields")]
 	public class MarkAllNonSerializableFieldsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// if type is not serializable or has not any fields or does not implements a custom serialization

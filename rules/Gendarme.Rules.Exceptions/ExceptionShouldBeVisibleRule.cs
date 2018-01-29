@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Exceptions.ExceptionShouldBeVisibleRule
 //
 // Authors:
@@ -72,6 +72,11 @@ namespace Gendarme.Rules.Exceptions {
 	[FxCopCompatibility ("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
 	public class ExceptionShouldBeVisibleRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			TypeReference btype = type.BaseType;

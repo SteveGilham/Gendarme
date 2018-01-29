@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.DoNotDeclareVirtualMethodsInSealedTypeRule
 //
 // Authors:
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes")]
 	public class DoNotDeclareVirtualMethodsInSealedTypeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to sealed types, but not to enum, value types and delegate (sealed)

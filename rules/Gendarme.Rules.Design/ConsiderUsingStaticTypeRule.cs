@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ConsiderUsingStaticTypeRule
 //
 // Authors:
@@ -99,6 +99,11 @@ namespace Gendarme.Rules.Design {
 			return true;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only if the type isn't: an enum, an interface, a struct, a delegate or compiler generated

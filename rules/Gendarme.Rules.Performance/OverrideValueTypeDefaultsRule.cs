@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.OverrideValueTypeDefaultsRule
 //
 // Authors:
@@ -98,6 +98,11 @@ namespace Gendarme.Rules.Performance {
 		private const string MissingImplementationMessage = "Missing type-specific implementation for '{0}'. {1}";
 		private const string MissingOperatorsMessage = "If your langage supports overloading operators then you should implement the equality (==) and inequality (!=) operators.";
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to ValueType, except enums and generated code

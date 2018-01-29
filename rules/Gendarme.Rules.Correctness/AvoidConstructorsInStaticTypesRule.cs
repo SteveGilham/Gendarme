@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.AvoidConstructorsInStaticTypesRule
 //
 // Authors:
@@ -112,6 +112,11 @@ namespace Gendarme.Rules.Correctness {
 			return IsAllStatic (type.BaseType.Resolve ());
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only if the type isn't: an enum, an interface, a struct, a delegate or compiler generated

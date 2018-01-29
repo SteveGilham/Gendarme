@@ -73,6 +73,11 @@ namespace Gendarme.Rules.Gendarme {
 	[Solution ("Add Runner.Report call")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DefectsMustBeReportedRule : GendarmeRule, ITypeRule {
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsAbstract || !type.HasMethods || !type.Implements ("Gendarme.Framework", "IRule"))

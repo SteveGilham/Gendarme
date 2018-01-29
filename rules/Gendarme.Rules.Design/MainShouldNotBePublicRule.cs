@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.MainShouldNotBePublicRule
 //
 // Authors:
@@ -75,6 +75,11 @@ namespace Gendarme.Rules.Design {
 
 		private const string VisualBasic = "Microsoft.VisualBasic";
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// assembly must have an entry point to be examined

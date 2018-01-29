@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.EnsureSymmetryForOverloadedOperatorsRule
 //
 // Authors:
@@ -98,6 +98,11 @@ namespace Gendarme.Rules.Design {
 			new KeyValuePair<MethodSignature, MethodSignature> (MethodSignatures.op_True, MethodSignatures.op_False),
 		};
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsInterface || type.IsEnum || type.IsDelegate ())

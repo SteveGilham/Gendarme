@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.UseFlagsAttributeRule
 //
 // Authors:
@@ -145,6 +145,11 @@ namespace Gendarme.Rules.Design {
 			return Math.Max (currentCount, count);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsEnum)

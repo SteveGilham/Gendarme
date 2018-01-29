@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ImplementICloneableCorrectlyRule
 //
 // Authors:
@@ -92,6 +92,11 @@ namespace Gendarme.Rules.Design {
 	[Solution ("Use a better return type or implement the ICloneable interface.")]
 	public class ImplementICloneableCorrectlyRule: Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies to type that doesn't implement System.IClonable

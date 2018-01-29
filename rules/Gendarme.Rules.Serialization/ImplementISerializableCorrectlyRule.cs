@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Serialization.ImplementISerializableCorrectlyRule
 //
 // Authors:
@@ -187,6 +187,11 @@ namespace Gendarme.Rules.Serialization {
 			fields.Clear ();
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsSerializable || !type.Implements ("System.Runtime.Serialization", "ISerializable"))

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Globalization.PreferStringComparisonOverrideRule
 //
 // Authors:
@@ -67,11 +67,22 @@ namespace Gendarme.Rules.Globalization {
 	[FxCopCompatibility ("Microsoft.Globalization", "CA1307:SpecifyStringComparison")]
 	public class PreferStringComparisonOverrideRule : PreferOverrideBaseRule {
 
+		/// <summary>
+		/// Is prefered type?
+		/// </summary>
+		/// <param name="type">Type to check</param>
+		/// <returns>true for prefered type; otherwise, false</returns>
 		protected override bool IsPrefered (TypeReference type)
 		{
 			return type.IsNamed ("System", "StringComparison");
 		}
 
+		/// <summary>
+		/// Repot defect
+		/// </summary>
+		/// <param name="method">Source method</param>
+		/// <param name="instruction">Target instruction</param>
+		/// <param name="prefered">Prefered method to use</param>
 		protected override void Report (MethodDefinition method, Instruction instruction, MethodReference prefered)
 		{
 			string msg = String.Format (CultureInfo.InvariantCulture, 

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Interoperability.Com.MarkComSourceInterfacesAsIDispatchRule
 //
 // Authors:
@@ -119,6 +119,12 @@ namespace Gendarme.Rules.Interoperability.Com {
 				CheckInterface (td);
 		}
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -127,6 +133,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 			FindInterfaces ();
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || !type.HasCustomAttributes)

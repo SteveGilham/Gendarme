@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.AvoidCodeDuplicatedInSiblingClassesRule class
 //
 // Authors:
@@ -118,6 +118,11 @@ namespace Gendarme.Rules.Smells {
 					codeDuplicatedLocator.CompareMethodAgainstTypeMethods (method, sibling);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// don't analyze cases where no methods (or body) are available

@@ -30,7 +30,15 @@ using Mono.Cecil;
 
 namespace Gendarme.Framework {
 
+	/// <summary>
+	/// Rule interface to check types
+	/// </summary>
 	public interface ITypeRule : IRule {
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		RuleResult CheckType (TypeDefinition type);
 	}
 }

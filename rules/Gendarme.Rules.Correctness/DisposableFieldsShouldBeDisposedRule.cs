@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.DisposableFieldsShouldBeDisposedRule
 //
 // Authors:
@@ -105,6 +105,11 @@ namespace Gendarme.Rules.Correctness {
 			return method;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to types and structures (value types)

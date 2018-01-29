@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ImplementEqualsAndGetHashCodeInPairRule
 //
 // Authors:
@@ -89,6 +89,11 @@ namespace Gendarme.Rules.Design {
 
 		private const string Message = "Type implements '{0}' but is missing '{1}'.";
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule doesn't apply to interfaces and enums

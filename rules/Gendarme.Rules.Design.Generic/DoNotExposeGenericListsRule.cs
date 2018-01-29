@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.Generic.DoNotExposeGenericListsRule
 //
 // Authors:
@@ -99,6 +99,11 @@ namespace Gendarme.Rules.Design.Generic {
 			}
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || type.IsEnum || type.IsInterface || type.IsDelegate ())

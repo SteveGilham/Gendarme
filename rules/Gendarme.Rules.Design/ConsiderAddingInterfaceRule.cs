@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ConsiderAddingInterfaceRule
 //
 // Authors:
@@ -86,6 +86,11 @@ namespace Gendarme.Rules.Design {
 			set { reference_only = value; }
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			//type does not apply if not an interface or is an empty interface

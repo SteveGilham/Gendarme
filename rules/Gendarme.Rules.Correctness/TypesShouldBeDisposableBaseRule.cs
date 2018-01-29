@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.TypesShouldBeDisposableBaseRule
 //
 // Authors:
@@ -60,6 +60,11 @@ namespace Gendarme.Rules.Correctness {
 
 		protected abstract bool FieldTypeIsCandidate (TypeDefinition type);
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// that will cover interfaces, delegates too

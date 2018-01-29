@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.AvoidVisibleFieldsRule
 //
 // Authors:
@@ -73,6 +73,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
 	public class AvoidVisibleFieldsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule doesn't apply on enums, interfaces, delegates or to compiler/tools-generated code

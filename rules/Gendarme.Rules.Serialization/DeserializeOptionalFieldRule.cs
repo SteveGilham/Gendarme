@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Serialization.DeserializeOptionalFieldRule
 //
 // Authors:
@@ -86,6 +86,12 @@ namespace Gendarme.Rules.Serialization {
 		private const string MessageOptional = "Optional fields '{0}' is not deserialized.";
 		private const string MessageSerializable = "Optional fields '{0}' in non-serializable type.";
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -107,6 +113,11 @@ namespace Gendarme.Rules.Serialization {
 			};
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// [OptionalField] is usable only if the type has fields

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Interoperability.Com.AvoidOverloadsInComVisibleInterfacesRule
 //
 // Authors:
@@ -66,11 +66,19 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 		private HashSet<string> methods;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public AvoidOverloadsInComVisibleInterfacesRule()
 		{
 			methods = new HashSet<string> ();
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType(TypeDefinition type)
 		{
 			// This rule only applies to public interfaces with methods and explicit ComVisible.

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.PreferConstantOverStaticFieldsRule
 //
 // Authors:
@@ -77,6 +77,11 @@ namespace Gendarme.Rules.Performance {
 		static OpCodeBitmask Constant = new OpCodeBitmask (0xFFFE00000, 0x2000000000000, 0x0, 0x0);
 		static OpCodeBitmask Convert = new OpCodeBitmask (0x0, 0x80203FC000000000, 0x400F87F8000001FF, 0x0);
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsInterface || type.IsDelegate ())

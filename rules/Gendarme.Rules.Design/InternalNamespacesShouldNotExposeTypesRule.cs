@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.InternalNamespacesShouldNotExposeTypesRule
 //
 // Authors:
@@ -74,6 +74,11 @@ namespace Gendarme.Rules.Design {
 	[EngineDependency (typeof (NamespaceEngine))]
 	public class InternalNamespacesShouldNotExposeTypesRule : Rule, IAssemblyRule {
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// check every namespaces inside the assembly using the NamespaceEngine

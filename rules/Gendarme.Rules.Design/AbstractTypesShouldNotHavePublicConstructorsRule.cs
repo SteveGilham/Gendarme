@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.AbstractTypesShouldNotHavePublicConstructorsRule
 //
 // Authors:
@@ -65,6 +65,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1012:AbstractTypesShouldNotHaveConstructors")]
 	public class AbstractTypesShouldNotHavePublicConstructorsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only on abstract types

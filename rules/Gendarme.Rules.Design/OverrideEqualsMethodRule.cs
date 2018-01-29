@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.OverrideEqualsMethodRule
 //
 // Authors:
@@ -75,6 +75,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2224:OverrideEqualsOnOverloadingOperatorEquals")]
 	public class OverrideEqualsMethodRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsInterface || type.IsDelegate ())

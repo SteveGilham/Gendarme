@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.UseCorrectPrefixRule class
 //
 // Authors:
@@ -110,6 +110,11 @@ namespace Gendarme.Rules.Naming {
 			return (((name.Length > 1) && (name [0] != 'T')) || Char.IsLower (name [0]));
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsGeneratedCode ())

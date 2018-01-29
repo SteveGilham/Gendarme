@@ -177,6 +177,9 @@ namespace Gendarme.Framework {
 			}
 		}
 
+		/// <summary>
+		/// Release all resources, free memory, e.t.c.
+		/// </summary>
 		public virtual void TearDown ()
 		{
 			if ((engine_dependencies == null) || (engine_dependencies.Length == 0))

@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Security.StaticConstructorsShouldBePrivateRule
 //
 // Authors:
@@ -43,6 +43,11 @@ namespace Gendarme.Rules.Security {
 	[FxCopCompatibility ("Microsoft.Security", "CA2121:StaticConstructorsShouldBePrivate")]
 	public class StaticConstructorsShouldBePrivateRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface, enumerations or delegates

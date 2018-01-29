@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.Cas.DoNotExposeFieldsInSecuredTypeRule
 //
 // Authors:
@@ -72,6 +72,11 @@ namespace Gendarme.Rules.Security.Cas {
 	[FxCopCompatibility ("Microsoft.Security", "CA2112:SecuredTypesShouldNotExposeFields")]
 	public class DoNotExposeFieldsInSecuredTypeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only to types protected by either a Demand or a LinkDemand (i.e. SecurityDeclaration)

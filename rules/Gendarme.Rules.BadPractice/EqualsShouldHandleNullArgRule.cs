@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.BadPractice.EqualsShouldHandleNullArgRule
 //
 // Authors:
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("Modify the method implementation to return false if a null argument is found.")]
 	public class EqualsShouldHandleNullArgRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rules applies to types that overrides System.Object.Equals(object)

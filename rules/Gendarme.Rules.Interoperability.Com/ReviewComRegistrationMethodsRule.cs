@@ -94,6 +94,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1411:ComRegistrationMethodsShouldNotBeVisible")]
 	public class ReviewComRegistrationMethodsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.HasGenericParameters || !type.IsVisible () || !type.IsTypeComVisible ())

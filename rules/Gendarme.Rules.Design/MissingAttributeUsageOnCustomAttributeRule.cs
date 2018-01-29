@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.MissingAttributeUsageOnCustomAttributeRule
 //
 // Authors:
@@ -66,6 +66,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1018:MarkAttributesWithAttributeUsage")]
 	public class MissingAttributeUsageOnCustomAttributeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to attributes

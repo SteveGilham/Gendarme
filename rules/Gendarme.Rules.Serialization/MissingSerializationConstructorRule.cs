@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Serialization.MissingSerializationConstructorRule
 //
 // Authors:
@@ -94,6 +94,11 @@ namespace Gendarme.Rules.Serialization {
 		private const string CtorSealedTypeText = "The serialization constructor should be private since this type is sealed.";
 		private const string CtorUnsealedTypeText = "The serialization constructor should be protected (family) since this type is not sealed.";
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interfaces, delegates or types that does not implement ISerializable

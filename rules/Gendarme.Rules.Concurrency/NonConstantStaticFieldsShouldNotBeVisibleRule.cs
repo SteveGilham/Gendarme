@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.NonConstantStaticFieldsShouldNotBeVisibleRule
 //
 // Authors:
@@ -73,6 +73,11 @@ namespace Gendarme.Rules.Concurrency {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2211:NonConstantFieldsShouldNotBeVisible")]
 	public class NonConstantStaticFieldsShouldNotBeVisibleRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface and enumerations

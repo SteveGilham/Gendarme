@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.Cas.AddMissingTypeInheritanceDemandRule
 //
 // Authors:
@@ -73,6 +73,11 @@ namespace Gendarme.Rules.Security.Cas {
 	[FxCopCompatibility ("Microsoft.Security", "CA2126:TypeLinkDemandsRequireInheritanceDemands")]
 	public class AddMissingTypeInheritanceDemandRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only to types that

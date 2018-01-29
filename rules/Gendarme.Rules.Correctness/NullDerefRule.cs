@@ -1,4 +1,4 @@
-/*
+﻿/*
  * NullDerefRule.cs: looks for potential instances of null-pointer
  * dereferencing.
  *
@@ -25,6 +25,11 @@ namespace Gendarme.Rules.Correctness {
 	[Solution ("Examine the detailed listing of problem locations, and ensure that the variables in question cannot be null.")]
 	public class NullDerefRule : Rule, IMethodRule {
 
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (method.Body == null)

@@ -48,6 +48,11 @@ namespace Gendarme.Rules.Design {
 		string [] propertyNames;
 		int methodsLeft, propertiesLeft;
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		virtual public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsAbstract || type.IsGeneratedCode () || !type.Implements (InterfaceNamespace, InterfaceName))

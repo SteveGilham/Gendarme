@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.TypesShouldBeInsideNamespacesRule
 //
 // Authors:
@@ -65,6 +65,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1050:DeclareTypesInNamespaces")]
 	public class TypesShouldBeInsideNamespacesRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule doesn't apply to nested types, since the declaring type will already be reported

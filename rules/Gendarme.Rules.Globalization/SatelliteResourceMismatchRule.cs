@@ -59,6 +59,11 @@ namespace Gendarme.Rules.Globalization {
 		private const string resXResourcesExtension = ".resources";
 		private AssemblyResourceCache mainAssemblyResourceCache;
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// If the analyzed assembly is a satellite assembly, does not apply

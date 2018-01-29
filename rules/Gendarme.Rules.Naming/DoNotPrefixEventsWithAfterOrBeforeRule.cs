@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.DoNotPrefixEventsWithAfterOrBeforeRule
 //
 // Authors:
@@ -63,6 +63,11 @@ namespace Gendarme.Rules.Naming {
 	[FxCopCompatibility ("Microsoft.Naming", "CA1713:EventsShouldNotHaveBeforeOrAfterPrefix")]
 	public class DoNotPrefixEventsWithAfterOrBeforeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enumerations and delegates

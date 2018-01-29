@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.UI.UseSTAThreadAttributeOnSWFEntryPointsRule
 //
 // Authors:
@@ -92,6 +92,11 @@ namespace Gendarme.Rules.UI {
 
 		private const string SystemWindowsForms = "System.Windows.Forms";
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			MethodDefinition entry_point = assembly.EntryPoint;

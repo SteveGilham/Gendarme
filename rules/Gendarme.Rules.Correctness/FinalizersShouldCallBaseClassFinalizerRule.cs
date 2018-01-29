@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Correctness.FinalizersShouldCallBaseClassFinalizerRule
 //
 // Authors:
@@ -77,6 +77,11 @@ namespace Gendarme.Rules.Correctness {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2220:FinalizersShouldCallBaseClassFinalizer")]
 	public class FinalizersShouldCallBaseClassFinalizerRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// handle System.Object (which can't call base class)

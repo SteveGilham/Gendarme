@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.Generic.DoNotDeclareStaticMembersOnGenericTypesRule
 //
 // Authors:
@@ -59,6 +59,11 @@ namespace Gendarme.Rules.Design.Generic {
 	[Solution ("Remove the static member or change it to an instance member.")]
 	[FxCopCompatibility ("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
 	public class DoNotDeclareStaticMembersOnGenericTypesRule : GenericsBaseRule, ITypeRule {
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || !type.HasGenericParameters || !type.IsVisible ())

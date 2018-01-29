@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.BadPractice.ObsoleteMessagesShouldNotBeEmptyRule
 //
 // Authors:
@@ -70,6 +70,12 @@ namespace Gendarme.Rules.BadPractice {
 	[FxCopCompatibility ("Microsoft.Design", "CA1041:ProvideObsoleteAttributeMessage")]
 	public class ObsoleteMessagesShouldNotBeEmptyRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -106,6 +112,11 @@ namespace Gendarme.Rules.BadPractice {
 			// no System.ObsoleteAttribute found inside the collection
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// handles AttributeTargets.[Class | Struct | Enum | Interface | Delegate]

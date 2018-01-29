@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.AvoidRedundancyInTypeNameRule
 //
 // Authors:
@@ -98,6 +98,11 @@ namespace Gendarme.Rules.Naming {
 	[FxCopCompatibility ("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
 	public class AvoidRedundancyInTypeNameRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			string ns = type.Namespace;

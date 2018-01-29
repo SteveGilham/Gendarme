@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Performance.AvoidUnsealedConcreteAttributesRule
 //
 // Authors:
@@ -74,6 +74,11 @@ namespace Gendarme.Rules.Performance {
 	[FxCopCompatibility ("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
 	public class AvoidUnsealedConcreteAttributesRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to attributes

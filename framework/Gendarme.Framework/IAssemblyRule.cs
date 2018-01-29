@@ -30,7 +30,15 @@ using Mono.Cecil;
 
 namespace Gendarme.Framework {
 
+	/// <summary>
+	/// Rule interface to check assemblies
+	/// </summary>
 	public interface IAssemblyRule : IRule {
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		RuleResult CheckAssembly (AssemblyDefinition assembly);
 	}
 }

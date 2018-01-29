@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Maintainability.AvoidDeepInheritanceTreeRule
 //
 // Authors:
@@ -79,6 +79,11 @@ namespace Gendarme.Rules.Maintainability {
 			return (depth < 4 * MaximumDepth) ? Severity.High : Severity.Critical;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsInterface || type.IsValueType || type.IsDelegate ())

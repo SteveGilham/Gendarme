@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.BadPractice.ToStringShouldNotReturnNullRule
 //
 // Authors:
@@ -64,6 +64,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("Return an appropriately descriptive string or an empty string instead of returning null.")]
 	public class ToStringShouldNotReturnNullRule: ReturnNullRule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rules applies to types that overrides System.Object.Equals(object)

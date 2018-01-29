@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.RemoveUnneededFinalizerRule
 //
 // Authors:
@@ -87,6 +87,11 @@ namespace Gendarme.Rules.Performance {
 	[FxCopCompatibility ("Microsoft.Performance", "CA1821:RemoveEmptyFinalizers")]
 	public class RemoveUnneededFinalizerRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to type with a finalizer

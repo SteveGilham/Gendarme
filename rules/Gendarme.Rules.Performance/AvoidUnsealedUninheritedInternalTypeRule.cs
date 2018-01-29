@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Performance.AvoidUnsealedUninheritedInternalTypeRule
 //
 // Authors:
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Performance {
 	[Solution ("You should seal this type, unless you plan to inherit from this type in the near-future.")]
 	public class AvoidUnsealedUninheritedInternalTypeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsAbstract || type.IsSealed || type.IsVisible () || type.IsGeneratedCode ())

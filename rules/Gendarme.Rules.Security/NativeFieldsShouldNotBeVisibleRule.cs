@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.NativeFieldsShouldNotBeVisibleRule
 //
 // Authors:
@@ -69,6 +69,11 @@ namespace Gendarme.Rules.Security {
 	[FxCopCompatibility ("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
 	public class NativeFieldsShouldNotBeVisibleRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface, enumerations and delegates or to types without fields

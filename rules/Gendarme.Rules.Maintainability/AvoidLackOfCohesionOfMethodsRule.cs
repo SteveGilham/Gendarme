@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Maintainability.AvoidLackOfCohesionOfMethodsRule class
 //
 // Authors:
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Maintainability {
 		private Dictionary<MemberReference, int> F = new Dictionary<MemberReference, int> ();
 		private List<MemberReference> Fset = new List<MemberReference> ();
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			//does rule apply?

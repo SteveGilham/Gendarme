@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ConsiderConvertingFieldToNullableRule
 //
 // Authors:
@@ -64,6 +64,12 @@ namespace Gendarme.Rules.Design {
 	[Solution ("Change the field's type to a nullable type or ignore the defect.")]
 	public class ConsiderConvertingFieldToNullableRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -108,6 +114,11 @@ namespace Gendarme.Rules.Design {
 			return false;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || !type.HasFields || type.IsGeneratedCode ())

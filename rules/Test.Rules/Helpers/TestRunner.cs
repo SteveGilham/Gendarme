@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Framework.TestRunner
 //
 // Authors:
@@ -95,6 +95,11 @@ namespace Test.Rules.Helpers {
 			return beforeTearingDown;	
 		}
 	
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			RuleResult result = PreCheck (assembly);
@@ -103,6 +108,11 @@ namespace Test.Rules.Helpers {
 			return PostCheck (result);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			RuleResult result = PreCheck (type);
@@ -111,6 +121,11 @@ namespace Test.Rules.Helpers {
 			return PostCheck (result);
 		}
 
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			RuleResult result = PreCheck (method);

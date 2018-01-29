@@ -36,8 +36,9 @@ using Gendarme.Framework.Helpers;
 
 namespace Gendarme.Framework.Rocks {
 
-	// Here we keep general, Cecil related, rocks
-
+	/// <summary>
+	/// Here we keep general, Cecil related, rocks
+	/// </summary>
 	public static class MetadataTokenProviderRock {
 
 		/// <summary>

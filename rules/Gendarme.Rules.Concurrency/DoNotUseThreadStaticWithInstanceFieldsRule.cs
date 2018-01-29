@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.DoNotUseThreadStaticWithInstanceFieldsRule
 //
 // Authors:
@@ -84,6 +84,11 @@ namespace Gendarme.Rules.Concurrency {
 	[Solution ("ThreadStaticAttribute will only make static fields thread safe. To make an instance field thread safe you need to use techniques like locking or System.Threading.Thread.Thread::AllocateNamedDataSlot.")]
 	public sealed class DoNotUseThreadStaticWithInstanceFieldsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasFields || type.IsEnum)

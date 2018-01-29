@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Gendarme.Rules.Design.EnumsShouldUseInt32Rule
 //
 // Authors:
@@ -82,6 +82,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32")]
 	public class EnumsShouldUseInt32Rule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only on enums
