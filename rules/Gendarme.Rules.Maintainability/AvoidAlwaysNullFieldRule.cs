@@ -211,7 +211,7 @@ namespace Gendarme.Rules.Maintainability {
 			setFields.IntersectWith (nullFields);	
 			setFields.ExceptWith (usedFields);	
 			if (setFields.Count > 0) {
-				foreach (FieldDefinition field in setFields) {
+				foreach (FieldReference field in setFields) {
 					cause = field.GetGeneratedCodeSource ();
 					message = GenerateMessage (field, cause, used: true);
 					if (ReferenceEquals (cause, null))
@@ -224,7 +224,7 @@ namespace Gendarme.Rules.Maintainability {
 			// 2) The field is always null and used somewhere.
 			nullFields.IntersectWith (usedFields);
 			if (nullFields.Count > 0) {
-				foreach (FieldDefinition field in nullFields) {
+				foreach (FieldReference field in nullFields) {
 					cause = field.GetGeneratedCodeSource ();
 					message = GenerateMessage (field, cause, used: false);
 					if (ReferenceEquals (cause, null))
