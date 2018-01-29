@@ -302,12 +302,12 @@ namespace Test.Framework.Rocks {
 			Assert.IsFalse (GetMethod<NotOverridden> ("MethodOut").IsOverride (), "NotOverridden.MethodOut");
 			Assert.IsFalse (GetMethod<NotOverridden> ("MethodRef").IsOverride (), "NotOverridden.MethodRef");
 
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/OverriddenGeneric", "MethodIn").IsOverride (), "OverriddenGeneric.MethodIn");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/OverriddenGeneric", "MethodOut").IsOverride (), "OverriddenGeneric.MethodOut");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/OverriddenGeneric", "MethodRef").IsOverride (), "OverriddenGeneric.MethodRef");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverriddenGeneric", "MethodIn").IsOverride (), "NotOverriddenGeneric.MethodIn");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverriddenGeneric", "MethodOut").IsOverride (), "NotOverriddenGeneric.MethodOut");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverriddenGeneric", "MethodRef").IsOverride (), "NotOverriddenGeneric.MethodRef");
+			Assert.IsTrue (GetMethod<OverriddenGeneric> ("MethodIn").IsOverride (), "OverriddenGeneric.MethodIn");
+			Assert.IsTrue (GetMethod<OverriddenGeneric> ("MethodOut").IsOverride (), "OverriddenGeneric.MethodOut");
+			Assert.IsTrue (GetMethod<OverriddenGeneric> ("MethodRef").IsOverride (), "OverriddenGeneric.MethodRef");
+			Assert.IsFalse (GetMethod<NotOverriddenGeneric> ("MethodIn").IsOverride (), "NotOverriddenGeneric.MethodIn");
+			Assert.IsFalse (GetMethod<NotOverriddenGeneric> ("MethodOut").IsOverride (), "NotOverriddenGeneric.MethodOut");
+			Assert.IsFalse (GetMethod<NotOverriddenGeneric> ("MethodRef").IsOverride (), "NotOverriddenGeneric.MethodRef");
 		}
 
 		[Test]
