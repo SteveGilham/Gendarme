@@ -203,8 +203,8 @@ namespace Gendarme.Framework.Rocks {
 
 			TypeDefinition declaring = method.DeclaringType;
 			TypeDefinition parent = declaring.BaseType != null ? declaring.BaseType.Resolve () : null;
+			string name = method.Name;
 			while (parent != null) {
-				string name = method.Name;
 				foreach (MethodDefinition md in parent.Methods) {
 					if (name != md.Name)
 						continue;
@@ -310,7 +310,7 @@ namespace Gendarme.Framework.Rocks {
 
 		private static bool AreSameElementTypes (TypeReference a, TypeReference b)
 		{
-			if (b.IsGenericParameter)
+			if (b.IsGenericParameter || b.ContainsGenericParameter)
 				return true;
 			return (a.FullName == b.FullName);
 		}
