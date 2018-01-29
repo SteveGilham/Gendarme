@@ -624,5 +624,63 @@ namespace Gendarme.Framework.Rocks {
 			}
 			return (false);
 		}
+
+		/// <summary>
+		/// Try get the field, method or type, that 'generated' the code.
+		/// </summary>
+		/// <param name="self">Compiler generated code field.</param>
+		/// <returns>Source item that caused the generation of the field.</returns>
+		public static IMetadataTokenProvider GetGeneratedCodeSource (this TypeReference self)
+		{
+			if (!IsGeneratedCode (self))
+				return null;
+
+			string name = self.Name;
+			int pos = name.IndexOf ('>', 2);
+			if ((pos < 2) || (name[0] != '<'))
+				return self.DeclaringType.GetGeneratedCodeSource ();
+			return (GetElementByGeneratedName (self, self.Name));
+		}
+
+		/// <summary>
+		/// Get element (method or property) by generated name.
+		/// </summary>
+		/// <param name="self">Current type</param>
+		/// <param name="generatedName">Name of generated code</param>
+		/// <returns>Retrieved element from generated name.</returns>
+		public static IMetadataTokenProvider GetElementByGeneratedName (this TypeReference self, string generatedName)
+		{
+			if ((self == null) || string.IsNullOrEmpty (generatedName) || (generatedName.Length < 3))
+				return null;
+
+			int pos = generatedName.LastIndexOf ('>');
+			if (pos < 3 || pos > generatedName.Length - 3)
+				return null;
+			string name = generatedName.Substring (1, pos -1).Replace ('-', '.');
+			char type = generatedName [pos + 1];
+			if (type == 'd')
+				return GetMethod (self.DeclaringType, name);
+			if (type == 'k')
+				return GetProperty(self, name);
+			return null;
+		}
+
+		/// <summary>
+		/// Get property by name.
+		/// </summary>
+		/// <param name="self">Current type</param>
+		/// <param name="name">Name of property</param>
+		/// <returns>Property (or null when not found).</returns>
+		private static IMetadataTokenProvider GetProperty(TypeReference self, string name)
+		{
+			TypeDefinition type = self?.Resolve ();
+			if ((type == null) || !type.HasProperties)
+				return null;
+			foreach (PropertyDefinition property in type.Properties) {
+				if (property.Name == name)
+					return property;
+			}
+			return null;
+		}
 	}
 }

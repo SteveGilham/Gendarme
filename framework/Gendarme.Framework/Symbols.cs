@@ -92,6 +92,28 @@ namespace Gendarme.Framework {
 			if (return_type != null)
 				return (return_type.Method as MethodDefinition);
 
+			PropertyDefinition property = (location as PropertyDefinition);
+			if (property != null) {
+				if (property.GetMethod != null)
+					return property.GetMethod;
+				if (property.SetMethod != null)
+					return property.SetMethod;
+				if (property.HasOtherMethods)
+					return property.OtherMethods [0];
+			}
+
+			EventDefinition @event = (location as EventDefinition);
+			if (@event != null) {
+				if (@event.AddMethod != null)
+					return @event.AddMethod;
+				if (@event.RemoveMethod != null)
+					return @event.RemoveMethod;
+				if (@event.HasOtherMethods)
+					return @event.OtherMethods [0];
+				if (@event.InvokeMethod != null)
+					return @event.InvokeMethod;
+			}
+
 			return (location as MethodDefinition);
 		}
 

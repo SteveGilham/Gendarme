@@ -45,6 +45,9 @@ namespace Gendarme.Framework.Rocks {
 			if (self == null)
 				return false;
 
+			if ((!string.IsNullOrEmpty (self.Name)) && (self.Name.Length > 1) && (self.Name [0] == '<'))
+				return true;
+
 			FieldDefinition field = self.Resolve ();
 			if (field == null)
 				return false;
@@ -70,6 +73,23 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			return field.DeclaringType.Resolve ().IsVisible ();
+		}
+
+		/// <summary>
+		/// Try get the field, method or type, that 'generated' the code.
+		/// </summary>
+		/// <param name="field">Compiler generated code field.</param>
+		/// <returns>Source item that caused the generation of the field.</returns>
+		public static IMetadataTokenProvider GetGeneratedCodeSource (this FieldReference field)
+		{
+			if ((!IsGeneratedCode (field)) || (field.DeclaringType == null))
+				return null;
+
+			string name = field.Name;
+			int pos = name.IndexOf ('>', 2);
+			if ((pos < 2) || (name[0] != '<'))
+				return field.DeclaringType.GetGeneratedCodeSource ();
+			return (field.DeclaringType.GetElementByGeneratedName (field.Name));
 		}
 	}
 }

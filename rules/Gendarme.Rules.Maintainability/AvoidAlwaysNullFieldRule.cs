@@ -38,6 +38,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Globalization;
 
 namespace Gendarme.Rules.Maintainability {
 
@@ -200,6 +201,9 @@ namespace Gendarme.Rules.Maintainability {
 					CheckMethods (nested);
 			}
 				
+			string message;
+			IMetadataTokenProvider cause;
+
 			// Report a defect if:
 			// 1) The field is explicitly set to null and not used (if 
 			// if is implicitly set to null and not used AvoidUnusedPrivateFieldsRule 
@@ -208,8 +212,12 @@ namespace Gendarme.Rules.Maintainability {
 			setFields.ExceptWith (usedFields);	
 			if (setFields.Count > 0) {
 				foreach (FieldDefinition field in setFields) {
+					cause = field.GetGeneratedCodeSource ();
+					message = GenerateMessage (field, cause, used: true);
+					if (ReferenceEquals (cause, null))
+						cause = field;
 					Log.WriteLine (this, "{0} is always null", field.Name);
-					Runner.Report (field, Severity.Medium, Confidence.High);
+					Runner.Report (cause, Severity.Medium, Confidence.High, message);
 				}
 			}
 
@@ -217,8 +225,12 @@ namespace Gendarme.Rules.Maintainability {
 			nullFields.IntersectWith (usedFields);
 			if (nullFields.Count > 0) {
 				foreach (FieldDefinition field in nullFields) {
+					cause = field.GetGeneratedCodeSource ();
+					message = GenerateMessage (field, cause, used: false);
+					if (ReferenceEquals (cause, null))
+						cause = field;
 					Log.WriteLine (this, "{0} is always null", field.Name);
-					Runner.Report (field, Severity.Medium, Confidence.High);
+					Runner.Report (cause, Severity.Medium, Confidence.High, message);
 				}
 			}
 			
@@ -228,6 +240,26 @@ namespace Gendarme.Rules.Maintainability {
 			
 			return Runner.CurrentRuleResult;
 		}
+
+    private static string GenerateMessage(FieldReference field, IMetadataTokenProvider cause, bool used)
+    {
+      if (ReferenceEquals (cause, null))
+        return string.Empty;
+
+      MethodReference reference = cause as MethodReference;
+      if ((!ReferenceEquals(reference, null)) && IsEnumerator (reference.ReturnType)) {
+        return string.Format(CultureInfo.InvariantCulture,
+          "The '{0}' method probably incorrectly implement the yield return / yield break sequence. To implement empty enumeration, prefer 'IEnumerable<T> empty = new T[0]'", reference);
+      }
+      return string.Format (CultureInfo.InvariantCulture, 
+        "The compiler generated field '{0}' is always null{2}. See implementation of '{1}' to analyze the problem or to suppress the warning.",
+        field.Name, cause, ((used) ? (string.Empty) : (" and is never used")));
+    }
+
+    private static bool IsEnumerator(TypeReference returnType)
+    {
+      return (returnType.IsNamed ("System.Collections.IEnumerator") || returnType.IsNamed ("System.Collections.Generic", "IEnumerator`1"));
+    }
 
 #if false
 		public void Bitmask ()

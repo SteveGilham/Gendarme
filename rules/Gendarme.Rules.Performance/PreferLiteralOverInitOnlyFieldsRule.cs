@@ -36,6 +36,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Globalization;
 
 namespace Gendarme.Rules.Performance {
 
@@ -115,12 +116,28 @@ namespace Gendarme.Rules.Performance {
 					// adjust severity based on the field visibility and it's type
 					Severity s = (field.FieldType.IsNamed ("System", "String") || !field.IsVisible ()) ?
 						Severity.High : Severity.Medium;
-					Runner.Report (field, s, Confidence.Normal);
+					IMetadataTokenProvider cause = field.GetGeneratedCodeSource ();
+					string message = GenerateMessage (field, cause);
+					if (ReferenceEquals (cause, null))
+						cause = field;
+					Runner.Report (cause, s, Confidence.Normal, message);
 				}
 			}
 
 			return Runner.CurrentRuleResult;
 		}
+
+		private static string GenerateMessage (FieldDefinition field, IMetadataTokenProvider cause)
+		{
+			if (ReferenceEquals (field, cause) || ReferenceEquals (cause, null))
+				return (string.Empty);
+			PropertyDefinition property = (cause as PropertyDefinition);
+			if (property != null)
+				return (string.Format (CultureInfo.InvariantCulture, "The read-only property '{0}' can be converted to literal (const).",
+					property.Name));
+			return (string.Empty);
+		}
+
 #if false
 		public void Bitmask ()
 		{
