@@ -88,7 +88,7 @@ namespace Gendarme.Rules.BadPractice {
 						continue;
 					if (name != md.Name)
 						continue;
-					if (method.CompareSignature (md))
+					if (method.SignatureEquals (md))
 						return true;
 				}
 			}

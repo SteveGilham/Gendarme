@@ -128,6 +128,64 @@ namespace Test.Framework.Rocks {
 			}
 		}
 
+		public class OverrideBaseGeneric<T> {
+			public virtual void MethodIn (T value)
+			{
+				Console.WriteLine(value);
+			}
+
+			public virtual void MethodOut (out T value)
+			{
+				value = default(T);
+			}
+
+			public virtual void MethodRef (ref T value)
+			{
+				Console.WriteLine(value);
+				value = default(T);
+			}
+		}
+
+		public class NotOverriddenGeneric : OverrideBaseGeneric<string> {
+			public virtual void MethodIn (int value)
+			{
+				Console.WriteLine(value);
+				Console.WriteLine(value);
+			}
+
+			public virtual void MethodOut (out int value)
+			{
+				value = 20;
+			}
+
+			public virtual void MethodRef (ref int value)
+			{
+				Console.WriteLine(value);
+				Console.WriteLine(value);
+				value = 20;
+			}
+		}
+
+		public class OverriddenGeneric : NotOverriddenGeneric {
+			public override void MethodIn (string value)
+			{
+				Console.WriteLine(value + "a");
+				Console.WriteLine(value + "b");
+			}
+
+			public override void MethodOut (out string value)
+			{
+				value = "text";
+			}
+
+			public override void MethodRef (ref string value)
+			{
+				Console.WriteLine("a" + value);
+				Console.WriteLine("b" + value);
+				value = "value";
+			}
+		}
+
 		public int Value {
 			get { return 42; }
 			set { throw new NotSupportedException (); }
@@ -144,6 +202,7 @@ namespace Test.Framework.Rocks {
 		}
 
 		private AssemblyDefinition assembly;
+		private static readonly char[] endNameCharacters = new char[] { '.', '/' };
 
 		[OneTimeSetUp]
 		public void FixtureSetUp ()
@@ -152,9 +211,13 @@ namespace Test.Framework.Rocks {
 			assembly = AssemblyDefinition.ReadAssembly (unit);
 		}
 
-		private MethodDefinition GetMethod (string typeName, string methodName)
+		private MethodDefinition GetMethod<T> (string methodName)
 		{
-			TypeDefinition type = assembly.MainModule.GetType (typeName);
+			string name = typeof (T).FullName.Replace ('+', '/');
+			int pos = name.IndexOf ('[');
+			if (pos > 0)
+				name = name.Remove(pos);
+			TypeDefinition type = assembly.MainModule.GetType (name);
 			foreach (MethodDefinition method in type.Methods) {
 				if (method.Name == methodName)
 					return method;
@@ -165,7 +228,7 @@ namespace Test.Framework.Rocks {
 
 		private MethodDefinition GetMethod (string name)
 		{
-			return GetMethod ("Test.Framework.Rocks.MethodRocksTest", name);
+			return GetMethod<MethodRocksTest> (name);
 		}
 
 		[Test]
@@ -191,16 +254,10 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsEntryPoint ()
-		{
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsEntryPoint (), "FixtureSetUp");
-		}
-
-		[Test]
 		public void IsFinalizer ()
 		{
 			Assert.IsFalse (GetMethod ("FixtureSetUp").IsFinalizer (), "FixtureSetUp");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Finalize").IsFinalizer (), "~MainClassIntStrings");
+			Assert.IsTrue (GetMethod<MainClassIntStrings> ("Finalize").IsFinalizer (), "~MainClassIntStrings");
 		}
 
 		[Test]
@@ -222,13 +279,13 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsMain ()
+		public void IsMainSignature ()
 		{
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassVoidVoid", "Main").IsMain (), "MainClassVoidVoid");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntVoid", "Main").IsMain (), "MainClassIntVoid");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassVoidStrings", "Main").IsMain (), "MainClassVoidStrings");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Main").IsMain (), "MainClassIntStrings");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsMain (), "FixtureSetUp");
+			Assert.IsTrue (GetMethod<MainClassVoidVoid> ("Main").IsMainSignature (), "MainClassVoidVoid");
+			Assert.IsTrue (GetMethod<MainClassIntVoid> ("Main").IsMainSignature (), "MainClassIntVoid");
+			Assert.IsTrue (GetMethod<MainClassVoidStrings> ("Main").IsMainSignature (), "MainClassVoidStrings");
+			Assert.IsTrue (GetMethod<MainClassIntStrings> ("Main").IsMainSignature (), "MainClassIntStrings");
+			Assert.IsFalse (GetMethod ("FixtureSetUp").IsMainSignature (), "FixtureSetUp");
 		}
 
 		[Test]
@@ -240,37 +297,44 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		public void IsOverride()
+		public void IsOverride ()
 		{
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodIn").IsOverride (), "Overridden.MethodIn");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodOut").IsOverride (), "Overridden.MethodOut");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/Overridden", "MethodRef").IsOverride (), "Overridden.MethodRef");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodIn").IsOverride (), "NotOverridden.MethodIn");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodOut").IsOverride (), "NotOverridden.MethodOut");
-			Assert.IsFalse (GetMethod ("Test.Framework.Rocks.MethodRocksTest/NotOverridden", "MethodRef").IsOverride (), "NotOverridden.MethodRef");
+			Assert.IsTrue (GetMethod<Overridden> ("MethodIn").IsOverride (), "Overridden.MethodIn");
+			Assert.IsTrue (GetMethod<Overridden> ("MethodOut").IsOverride (), "Overridden.MethodOut");
+			Assert.IsTrue (GetMethod<Overridden> ("MethodRef").IsOverride (), "Overridden.MethodRef");
+			Assert.IsFalse (GetMethod<NotOverridden> ("MethodIn").IsOverride (), "NotOverridden.MethodIn");
+			Assert.IsFalse (GetMethod<NotOverridden> ("MethodOut").IsOverride (), "NotOverridden.MethodOut");
+			Assert.IsFalse (GetMethod<NotOverridden> ("MethodRef").IsOverride (), "NotOverridden.MethodRef");
+
+			Assert.IsTrue (GetMethod<OverriddenGeneric> ("MethodIn").IsOverride (), "OverriddenGeneric.MethodIn");
+			Assert.IsTrue (GetMethod<OverriddenGeneric> ("MethodOut").IsOverride (), "OverriddenGeneric.MethodOut");
+			Assert.IsTrue (GetMethod<OverriddenGeneric> ("MethodRef").IsOverride (), "OverriddenGeneric.MethodRef");
+			Assert.IsFalse (GetMethod<NotOverriddenGeneric> ("MethodIn").IsOverride (), "NotOverriddenGeneric.MethodIn");
+			Assert.IsFalse (GetMethod<NotOverriddenGeneric> ("MethodOut").IsOverride (), "NotOverriddenGeneric.MethodOut");
+			Assert.IsFalse (GetMethod<NotOverriddenGeneric> ("MethodRef").IsOverride (), "NotOverriddenGeneric.MethodRef");
 		}
 
 		[Test]
 		public void IsVisible ()
 		{
-			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType");
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.PublicType);
 			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "PublicType.PublicMethod");
 			Assert.IsTrue (type.GetMethod ("ProtectedMethod").IsVisible (), "PublicType.ProtectedMethod");
 			Assert.IsFalse (type.GetMethod ("InternalMethod").IsVisible (), "PublicType.InternalMethod");
 			Assert.IsFalse (type.GetMethod ("PrivateMethod").IsVisible (), "PublicType.PrivateMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPublicType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedPublicType);
 			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "NestedPublicType.PublicMethod");
 			Assert.IsTrue (type.GetMethod ("ProtectedMethod").IsVisible (), "NestedPublicType.ProtectedMethod");
 			Assert.IsFalse (type.GetMethod ("PrivateMethod").IsVisible (), "NestedPublicType.PrivateMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedProtectedType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedProtectedType);
 			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "NestedProtectedType.PublicMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPrivateType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedPrivateType);
 			Assert.IsFalse (type.GetMethod ("PublicMethod").IsVisible (), "NestedPrivateType.PublicMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.InternalType");
+			type = assembly.MainModule.GetType (TestTypeNames.InternalType);
 			Assert.IsFalse (type.GetMethod ("PublicMethod").IsVisible (), "InternalType.PublicMethod");
 		}
 
@@ -288,6 +352,92 @@ namespace Test.Framework.Rocks {
 			Assert.AreEqual (GetMethod ("get_Value").GetPropertyByAccessor ().Name, "Value", "get_Value");
 			Assert.AreEqual (GetMethod ("set_Value").GetPropertyByAccessor ().Name, "Value", "set_Value");
 			Assert.IsNull (GetMethod ("EventCallback").GetPropertyByAccessor (), "EventCallback");
+		}
+
+		[Test]
+		public void SignatureEquals ()
+		{
+			MethodDefinition StandardIn1 = GetMethod<Overridden> ("MethodIn"); // int
+			MethodDefinition StandardIn2 = GetMethod<NotOverridden> ("MethodIn"); // int
+			MethodDefinition GenericIn1 = GetMethod<OverriddenGeneric> ("MethodIn"); // string
+			MethodDefinition GenericIn2 = GetMethod<NotOverriddenGeneric> ("MethodIn"); // int
+			MethodDefinition GenericIn3 = GetMethod<OverrideBaseGeneric<object>>("MethodIn"); // generic
+
+			MethodDefinition StandardOut1 = GetMethod<Overridden> ("MethodOut"); // int
+			MethodDefinition StandardOut2 = GetMethod<NotOverridden> ("MethodRef"); // method has a different name than parameters; see test IsOverride
+			MethodDefinition GenericOut1 = GetMethod<OverriddenGeneric> ("MethodOut"); // string
+			MethodDefinition GenericOut2 = GetMethod<NotOverriddenGeneric> ("MethodOut"); // int
+			MethodDefinition GenericOut3 = GetMethod<OverrideBaseGeneric<object>> ("MethodOut"); // generic
+
+			MethodDefinition StandardRef1 = GetMethod<Overridden> ("MethodRef"); // int
+			MethodDefinition StandardRef2 = GetMethod<NotOverridden> ("MethodOut"); // method has a different name than parameters; see test IsOverride
+			MethodDefinition GenericRef1 = GetMethod<OverriddenGeneric> ("MethodRef"); // string
+			MethodDefinition GenericRef2 = GetMethod<NotOverriddenGeneric> ("MethodRef"); // int
+			MethodDefinition GenericRef3 = GetMethod<OverrideBaseGeneric<object>>("MethodRef"); // generic
+
+			SignaturesEquals (StandardIn1, StandardIn2, bothOrders: true);    // int <==> int
+			SignaturesEquals (StandardIn1, GenericIn2, bothOrders: true);     // int <==> int
+			SignaturesEquals (StandardIn1, GenericIn3, bothOrders: false);    // int <== T
+			SignaturesEquals (GenericIn2, GenericIn3, bothOrders: false);     // int <== T
+			SignaturesDiffers (GenericIn3, StandardIn1, bothOrders: false);   // T <== int
+			SignaturesDiffers (GenericIn3, StandardIn2, bothOrders: false);   // T <== int
+			SignaturesDiffers (GenericIn3, GenericIn1, bothOrders: false);    // T <== string
+			SignaturesDiffers (StandardIn1, GenericIn1, bothOrders: true);    // int <==> string
+			SignaturesDiffers (GenericIn2, GenericIn1, bothOrders: true);     // int <==> string
+
+			SignaturesEquals (StandardOut1, StandardOut2, bothOrders: true);  // int <==> int
+			SignaturesEquals (StandardOut1, GenericOut2, bothOrders: true);   // int <==> int
+			SignaturesEquals (StandardOut1, GenericOut3, bothOrders: false);  // int <== T
+			SignaturesEquals (GenericOut2, GenericOut3, bothOrders: false);   // int <== T
+			SignaturesDiffers (GenericOut3, StandardOut1, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericOut3, StandardOut2, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericOut3, GenericOut1, bothOrders: false);  // T <== string
+			SignaturesDiffers (StandardOut1, GenericOut1, bothOrders: true);  // int <==> string
+			SignaturesDiffers (GenericOut2, GenericOut1, bothOrders: true);   // int <==> string
+
+			SignaturesEquals (StandardRef1, StandardRef2, bothOrders: true);  // int <==> int
+			SignaturesEquals (StandardRef1, GenericRef2, bothOrders: true);   // int <==> int
+			SignaturesEquals (StandardRef1, GenericRef3, bothOrders: false);  // int <== T
+			SignaturesEquals (GenericRef2, GenericRef3, bothOrders: false);   // int <== T
+			SignaturesDiffers (GenericRef3, StandardRef1, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericRef3, StandardRef2, bothOrders: false); // T <== int
+			SignaturesDiffers (GenericRef3, GenericRef1, bothOrders: false);  // T <== string
+			SignaturesDiffers (StandardRef1, GenericRef1, bothOrders: true);  // int <==> string
+			SignaturesDiffers (GenericRef2, GenericRef1, bothOrders: true);   // int <==> string
+		}
+
+		private void SignaturesEquals (MethodDefinition a, MethodDefinition b, bool bothOrders)
+		{
+			string nameA = GetShortName (a);
+			string nameB = GetShortName (b);
+			Assert.IsTrue (a.SignatureEquals(b), nameA + " == " + nameB);
+			if (bothOrders)
+			{
+				Assert.IsTrue (b.SignatureEquals(a), nameB + " == " + nameA);
+			}
+		}
+
+		private void SignaturesDiffers (MethodDefinition a, MethodDefinition b, bool bothOrders)
+		{
+			string nameA = GetShortName (a);
+			string nameB = GetShortName (b);
+			Assert.IsFalse (a.SignatureEquals(b), nameA + " != " + nameB);
+			if (bothOrders)
+			{
+				Assert.IsFalse (b.SignatureEquals(a), nameB + " != " + nameA);
+			}
+		}
+
+		private string GetShortName(MethodDefinition method)
+		{
+			string name = method.FullName;
+			int pos = name.LastIndexOf (':');
+			if (pos < 0)
+				return name;
+			pos = name.LastIndexOfAny(endNameCharacters, pos);
+			if (pos < 0)
+				return name;
+			return name.Substring (pos + 1);
 		}
 	}
 }

@@ -182,7 +182,7 @@ namespace Gendarme.Rules.Naming {
 			else if (name != base_name)
 				return false;
 
-			return method.CompareSignature (baseMethod);
+			return method.SignatureEquals (baseMethod);
 		}
 
 		private void GetBaseMethodCandidates (MethodDefinition method)

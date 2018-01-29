@@ -65,16 +65,6 @@ namespace Gendarme.Framework.Rocks {
 		}
 
 		/// <summary>
-		/// Check if the MethodReference is defined as the entry point of it's assembly.
-		/// </summary>
-		/// <param name="self">The MethodReference on which the extension method can be called.</param>
-		/// <returns>True if the method is defined as the entry point of it's assembly, False otherwise</returns>
-		public static bool IsEntryPoint (this MethodReference self)
-		{
-			return ((self != null) && (self == self.Module.Assembly.EntryPoint));
-		}
-
-		/// <summary>
 		/// Check if the MethodReference is a finalizer.
 		/// </summary>
 		/// <param name="self">The MethodReference on which the extension method can be called.</param>
@@ -159,10 +149,10 @@ namespace Gendarme.Framework.Rocks {
 		/// static [void|int] Main ()
 		/// static [void|int] Main (string[] args)
 		/// </code>
-		/// </summary>gre
+		/// </summary>
 		/// <param name="self">The MethodReference on which the extension method can be called.</param>
 		/// <returns>True if the method is a valid Main, False otherwise.</returns>
-		public static bool IsMain (this MethodReference self)
+		public static bool IsMainSignature (this MethodReference self)
 		{
 			if (self == null)
 				return false;
@@ -176,9 +166,9 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			// Main must return void or int
-			switch (method.ReturnType.Name) {
-			case "Void":
-			case "Int32":
+			switch (method.ReturnType.FullName) {
+			case "System.Void":
+			case "System.Int32":
 				// ok, continue checks
 				break;
 			default:
@@ -194,7 +184,7 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			// Main (string[] args)
-			return (pdc [0].ParameterType.Name == "String[]");
+			return (pdc [0].ParameterType.FullName == "System.String[]");
 		}
 
 		/// <summary>
@@ -213,12 +203,12 @@ namespace Gendarme.Framework.Rocks {
 
 			TypeDefinition declaring = method.DeclaringType;
 			TypeDefinition parent = declaring.BaseType != null ? declaring.BaseType.Resolve () : null;
+			string name = method.Name;
 			while (parent != null) {
-				string name = method.Name;
 				foreach (MethodDefinition md in parent.Methods) {
 					if (name != md.Name)
 						continue;
-					if (!method.CompareSignature (md))
+					if (!method.SignatureEquals (md))
 						continue;
 
 					return md.IsVirtual;
@@ -320,7 +310,7 @@ namespace Gendarme.Framework.Rocks {
 
 		private static bool AreSameElementTypes (TypeReference a, TypeReference b)
 		{
-			if (b.IsGenericParameter)
+			if (b.IsGenericParameter || b.ContainsGenericParameter)
 				return true;
 			return (a.FullName == b.FullName);
 		}
@@ -335,8 +325,10 @@ namespace Gendarme.Framework.Rocks {
 		/// </summary>
 		/// <param name="self">>The IMethodSignature on which the extension method can be called.</param>
 		/// <param name="signature">The IMethodSignature which is being compared.</param>
+		/// <remarks>When the argument/return value in signature is generic and in self is not, it will be
+		/// considered as identical (equal), but not vice versa. (self generic, signature correct means false).</remarks>
 		/// <returns>True if the IMethodSignature members are identical, false otherwise</returns>
-		public static bool CompareSignature (this IMethodSignature self, IMethodSignature signature)
+		public static bool SignatureEquals (this IMethodSignature self, IMethodSignature signature)
 		{
 			if (self == null)
 				return (signature == null);
