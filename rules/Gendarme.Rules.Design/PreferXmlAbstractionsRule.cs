@@ -35,9 +35,9 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule fires if an externally visible method or property uses an <c>XmlDocument</c>, 
-	/// <c>XPathDocument</c> or <c>XmlNode</c> argument. The problem with this is that it ties 
-	/// your API to a specific implementation so it is difficult to change later. Instead use 
+	/// This rule fires if an externally visible method or property uses an <c>XmlDocument</c>,
+	/// <c>XPathDocument</c> or <c>XmlNode</c> argument. The problem with this is that it ties
+	/// your API to a specific implementation so it is difficult to change later. Instead use
 	/// abstract types like <c>IXPathNavigable</c>, <c>XmlReader</c>, <c>XmlWriter</c>, or subtypes
 	/// of <c>XmlNode</c>.
 	/// </summary>
@@ -45,11 +45,11 @@ namespace Gendarme.Rules.Design {
 	/// Bad example (property):
 	/// <code>
 	/// public class Application {
-	///	public XmlDocument UserData {
-	///		get {
-	///			return userData;
-	///		}
-	///	}
+	/// 	public XmlDocument UserData {
+	/// 		get {
+	/// 			return userData;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -57,11 +57,11 @@ namespace Gendarme.Rules.Design {
 	/// Good example (property):
 	/// <code>
 	/// public class Application {
-	///	public IXPathNavigable UserData {
-	///		get {
-	///			return userData;
-	///		}
-	///	}
+	/// 	public IXPathNavigable UserData {
+	/// 		get {
+	/// 			return userData;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -69,10 +69,10 @@ namespace Gendarme.Rules.Design {
 	/// Bad example (method parameter):
 	/// <code>
 	/// public class Application {
-	///	public bool IsValidUserData (XmlDocument userData) 
-	///	{
-	///		/* implementation */
-	///	}
+	/// 	public bool IsValidUserData (XmlDocument userData)
+	/// 	{
+	/// 		/* implementation */
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -80,10 +80,10 @@ namespace Gendarme.Rules.Design {
 	/// Good example (method parameter):
 	/// <code>
 	/// public class Application {
-	///	public bool IsValidUserData (XmlReader userData) 
-	///	{
-	///		/* implementation */
-	///	}
+	/// 	public bool IsValidUserData (XmlReader userData)
+	/// 	{
+	/// 		/* implementation */
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

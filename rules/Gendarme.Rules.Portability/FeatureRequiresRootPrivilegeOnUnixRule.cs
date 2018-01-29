@@ -45,12 +45,12 @@ namespace Gendarme.Rules.Portability {
 	/// <list type="bullet">
 	/// <item>
 	/// <description><c>System.Net.NetworkInformation.Ping</c>: This type can only be used
-	/// by root on Unix systems. As an alternative you can execute the ping command and 
+	/// by root on Unix systems. As an alternative you can execute the ping command and
 	/// parse its result.</description>
 	/// </item>
 	/// <item>
 	/// <description><c>System.Diagnostics.Process</c>: The PriorityClass property can only
-	/// be set to <c>Normal</c> by non-root users. To avoid this problem you can do a 
+	/// be set to <c>Normal</c> by non-root users. To avoid this problem you can do a
 	/// platform check before assigning a priority.</description>
 	/// </item>
 	/// </list>
@@ -66,7 +66,7 @@ namespace Gendarme.Rules.Portability {
 	/// Good example:
 	/// <code>
 	/// if (Environment.OSVersion.Platform != PlatformID.Unix) {
-	///	process.PriorityClass = ProcessPriorityClass.AboveNormal;
+	/// 	process.PriorityClass = ProcessPriorityClass.AboveNormal;
 	/// }
 	/// process.Start ();
 	/// </code>

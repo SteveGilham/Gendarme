@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for CallingEqualsWithNullArgRule
 //
 // Authors:
@@ -62,8 +62,8 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleFailure<CallToEqualsWithNullArg> ("Main", 1);
 		}
-		
-		public class CallingEqualsWithNonNullArg 
+
+		public class CallingEqualsWithNonNullArg
 		{
 			public static void Main (string [] args)
 			{
@@ -79,11 +79,11 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleSuccess<CallingEqualsWithNonNullArg> ("Main");
 		}
-		
+
 		public class CallingEqualsOnEnum
 		{
 			enum Days { Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday };
-			
+
 			public bool Equals (Enum e)
 			{
 				if (e == null)
@@ -91,13 +91,13 @@ namespace Test.Rules.Correctness {
 				else
 					return e.GetType () == typeof (Days);
 			}
-			
+
 			public void PassingArgNullInEquals ()
 			{
 				Type e = typeof (Days);
 				e.Equals (null);
 			}
-			
+
 			public void NotPassingNullArgInEquals ()
 			{
 				Type e = typeof (Days);
@@ -121,15 +121,15 @@ namespace Test.Rules.Correctness {
 				return s.GetType () == typeof (structure);
 			}
 		}
-		
+
 		public class CallingEqualsOnStruct
-		{			
+		{
 			public void PassingNullArgument ()
 			{
 				structure s = new structure ();
 				s.Equals (null);
 			}
-			
+
 			public void PassingNonNullArg ()
 			{
 				structure s = new structure ();
@@ -149,7 +149,7 @@ namespace Test.Rules.Correctness {
 		public class CallingEqualsOnArray
 		{
 			int [] a = new int [] {1, 2, 3};
-			
+
 			public bool Equals (int [] b)
 			{
 				if (b == null)
@@ -157,13 +157,13 @@ namespace Test.Rules.Correctness {
 				else
 					return a.Length == b.Length;
 			}
-			
+
 			public void PassingNullArg ()
 			{
 				int [] b = new int [] {1, 2, 3};
 				b.Equals (null);
 			}
-			
+
 			public void PassingNonNullArg ()
 			{
 				int [] b = new int [] {1, 2, 3};

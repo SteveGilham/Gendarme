@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,18 +43,18 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule fires if multiple casts are done on the same value, for the same type.
-	/// Casts are expensive so reducing them, by changing the logic or caching the 
+	/// Casts are expensive so reducing them, by changing the logic or caching the
 	/// result, can help performance.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// foreach (object o in list) {
-	///	// first cast (is)
-	///	if (o is ICollection) {
-	///		// second cast (as) if item implements ICollection
-	///		Process (o as ICollection);
-	///	}
+	/// 	// first cast (is)
+	/// 	if (o is ICollection) {
+	/// 		// second cast (as) if item implements ICollection
+	/// 		Process (o as ICollection);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -62,39 +62,39 @@ namespace Gendarme.Rules.Performance {
 	/// Good example:
 	/// <code>
 	/// foreach (object o in list) {
-	///	// a single cast (as) per item
-	///	ICollection c = (o as ICollection);
-	///	if (c != null) {
-	///		SingleCast (c);
-	///	}
+	/// 	// a single cast (as) per item
+	/// 	ICollection c = (o as ICollection);
+	/// 	if (c != null) {
+	/// 		SingleCast (c);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Bad example:
 	/// <code>
-	///	// first cast (is):
-	///	if (o is IDictionary) {
-	///		// second cast if item implements IDictionary:
-	///		Process ((IDictionary) o);
-	///	// first cast (is):
-	///	} else if (o is ICollection) {
-	///		// second cast if item implements ICollection:
-	///		Process ((ICollection) o);
-	///	}
+	/// 	// first cast (is):
+	/// 	if (o is IDictionary) {
+	/// 		// second cast if item implements IDictionary:
+	/// 		Process ((IDictionary) o);
+	/// 	// first cast (is):
+	/// 	} else if (o is ICollection) {
+	/// 		// second cast if item implements ICollection:
+	/// 		Process ((ICollection) o);
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
-	///	// a single cast (as) per item
-	///	IDictionary dict;
-	///	ICollection col;
-	///	if ((dict = o as IDictionary) != null) {
-	///		SingleCast (dict);
-	///	} else if ((col = o as ICollection) != null) {
-	///		SingleCast (col);
-	///	}
+	/// 	// a single cast (as) per item
+	/// 	IDictionary dict;
+	/// 	ICollection col;
+	/// 	if ((dict = o as IDictionary) != null) {
+	/// 		SingleCast (dict);
+	/// 	} else if ((col = o as ICollection) != null) {
+	/// 		SingleCast (col);
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <remarks>This rule is available since Gendarme 2.0</remarks>
@@ -108,38 +108,38 @@ namespace Gendarme.Rules.Performance {
 		List<Instruction> casts = new List<Instruction> ();
 
 		static Instruction GetOrigin (Instruction ins)
-		{			
+		{
 			Instruction previous = ins.Previous;
 			Instruction origin = previous;
 
 			if (previous.OpCode.FlowControl == FlowControl.Call) {
 				Instruction next = ins.Next;
-				if (next.IsStoreLocal ()) 
+				if (next.IsStoreLocal ())
 					origin = next;	// a duplicate cast which loads this local is an error
 			}
-				
+
 //			Console.WriteLine("origin of instruction at {0:X4} is at {1:X4}", ins.Offset, origin.Offset);
-			
+
 			return origin;
 		}
-		
+
 		static bool LocalsMatch (object operand1, object operand2)
 		{
 			VariableReference v1 = operand1 as VariableReference;
 			VariableReference v2 = operand2 as VariableReference;
-			
+
 			if (v1 != null && v2 != null)
 				return v1.Index == v2.Index;
 			else if (operand1 != null)
-				return operand1.Equals (operand2);			
+				return operand1.Equals (operand2);
 			else
 				return operand2 == null;
 		}
-		
+
 		static bool IndexesMatch (MethodDefinition method, Instruction lhs, Instruction rhs)
 		{
 			bool match = false;
-			
+
 			if (lhs.OpCode.Code == rhs.OpCode.Code) {
 				switch (lhs.OpCode.Code) {
 				case Code.Ldc_I4_M1:
@@ -160,16 +160,16 @@ namespace Gendarme.Rules.Performance {
 					break;
 				}
 			}
-			
+
 			return match;
 		}
-		
+
 		// stack[0]  == index
 		// stack[-1] == array
 		static bool LoadElementMatch (MethodDefinition method, Instruction lhs, Instruction rhs)
 		{
 			bool match = false;
-			
+
 			// We only handle simple cases like:
 			//   ldarg.1
 			//   ldc.i4.7
@@ -186,15 +186,15 @@ namespace Gendarme.Rules.Performance {
 				else if (load1.IsLoadLocal () && load2.IsLoadLocal ())
 					match = LocalsMatch (load1.GetOperand (method), load2.GetOperand (method));
 			}
-			
+
 			return match;
 		}
-		
+
 		// stack[0] == addr
 		static bool LoadIndirectMatch (MethodDefinition method, Instruction lhs, Instruction rhs)
 		{
 			bool match = false;
-			
+
 			// We only handle simple cases like:
 			//    ldarg.1
 			//    ldind.ref
@@ -205,17 +205,17 @@ namespace Gendarme.Rules.Performance {
 
 			else if (load1.IsLoadLocal () && load2.IsLoadLocal ())
 				match = LocalsMatch (load1.GetOperand (method), load2.GetOperand (method));
-			
+
 			return match;
 		}
-		
+
 		static bool OriginsMatch (MethodDefinition method, Instruction lhs, Instruction rhs)
 		{
 			bool match = false;
-			
+
 			object operand1 = lhs.GetOperand (method);
 			object operand2 = rhs.GetOperand (method);
-			
+
 			if (lhs.OpCode.Code == rhs.OpCode.Code) {
 				if (lhs.IsLoadArgument ())
 					match = operand1.Equals (operand2);
@@ -232,9 +232,9 @@ namespace Gendarme.Rules.Performance {
 			} else if (lhs.IsStoreLocal () && rhs.IsLoadLocal ())
 				match = LocalsMatch (operand1, operand2);
 
-			else if (lhs.IsLoadLocal () && rhs.IsStoreLocal ()) 
+			else if (lhs.IsLoadLocal () && rhs.IsStoreLocal ())
 				match = LocalsMatch (operand1, operand2);
-			
+
 			return match;
 		}
 
@@ -276,7 +276,7 @@ namespace Gendarme.Rules.Performance {
 			// is there any IsInst or Castclass instructions in the method ?
 			if (!Casts.Intersect (OpCodeEngine.GetBitmask (method)))
 				return RuleResult.DoesNotApply;
-			
+
 //			Console.WriteLine ();
 //			Console.WriteLine ("-----------------------------------------");
 //			Console.WriteLine (new MethodPrinter(method));
@@ -302,7 +302,7 @@ namespace Gendarme.Rules.Performance {
 
 					// rare, but it's possible to cast a null value (ldnull)
 					object name = origin.GetOperand (method) ?? "Null";
-					string msg = String.Format (CultureInfo.InvariantCulture, 
+					string msg = String.Format (CultureInfo.InvariantCulture,
 						"'{0}' is casted {1} times for type '{2}'.", name, count, type.GetFullName ());
 					Runner.Report (method, ins, Severity.Medium, Confidence.Normal, msg);
 				}

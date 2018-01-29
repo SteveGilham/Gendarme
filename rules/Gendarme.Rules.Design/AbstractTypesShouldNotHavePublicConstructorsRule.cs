@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.AbstractTypesShouldNotHavePublicConstructorsRule
 //
 // Authors:
@@ -43,9 +43,9 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// abstract public class MyClass {
-	///	public MyClass ()
-	///	{
-	///	}
+	/// 	public MyClass ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -53,9 +53,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// abstract public class MyClass {
-	///	protected MyClass ()
-	///	{
-	///	}
+	/// 	protected MyClass ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

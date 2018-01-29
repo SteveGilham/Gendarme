@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.BadPractice.DisableDebuggingCodeRule
 //
 // Authors:
@@ -40,11 +40,11 @@ namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
 	/// This rule checks for non-console applications which contain calls to <c>Console.WriteLine</c>.
-	/// These are often used as debugging aids but such code should be removed or disabled in 
+	/// These are often used as debugging aids but such code should be removed or disabled in
 	/// the released version. If you don't want to remove it altogether you can place it inside a method
 	/// decorated with <c>[Conditional ("DEBUG")]</c>, use <c>Debug.WriteLine</c>, use
 	/// <c>Trace.WriteLine</c>, or use the preprocessor. But note that TRACE is often enabled
-	/// in release builds so if you do use that you'll probably want to use a config file to remove 
+	/// in release builds so if you do use that you'll probably want to use a config file to remove
 	/// the default trace listener.
 	/// </summary>
 	/// <example>
@@ -52,10 +52,10 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// private byte[] GenerateKey ()
 	/// {
-	///	byte[] key = new byte[16];
-	///	rng.GetBytes (key);
-	///	Console.WriteLine ("debug key = {0}", BitConverter.ToString (key));
-	///	return key;
+	/// 	byte[] key = new byte[16];
+	/// 	rng.GetBytes (key);
+	/// 	Console.WriteLine ("debug key = {0}", BitConverter.ToString (key));
+	/// 	return key;
 	/// }
 	/// </code>
 	/// </example>
@@ -64,9 +64,9 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// private byte[] GenerateKey ()
 	/// {
-	///	byte[] key = new byte[16];
-	///	rng.GetBytes (key);
-	///	return key;
+	/// 	byte[] key = new byte[16];
+	/// 	rng.GetBytes (key);
+	/// 	return key;
 	/// }
 	/// </code>
 	/// </example>
@@ -75,10 +75,10 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// private byte[] GenerateKey ()
 	/// {
-	///	byte[] key = new byte[16];
-	///	rng.GetBytes (key);
-	///	Debug.WriteLine ("debug key = {0}", BitConverter.ToString (key));
-	///	return key;
+	/// 	byte[] key = new byte[16];
+	/// 	rng.GetBytes (key);
+	/// 	Debug.WriteLine ("debug key = {0}", BitConverter.ToString (key));
+	/// 	return key;
 	/// }
 	/// </code>
 	/// </example>
@@ -120,11 +120,11 @@ namespace Gendarme.Rules.BadPractice {
 			base.Initialize (runner);
 
 			Runner.AnalyzeModule += (object o, RunnerEventArgs e) => {
-				Active = 
+				Active =
 					// using Console.Write* methods is ok if the application is compiled
 					// with /target:exe - but not if it's compiled with /target:winexe or
 					// /target:library
-					e.CurrentModule.Kind != ModuleKind.Console && 
+					e.CurrentModule.Kind != ModuleKind.Console &&
 
 					// if the module does not reference System.Console then no
 					// method inside it will be calling any Console.write* methods
@@ -163,7 +163,7 @@ namespace Gendarme.Rules.BadPractice {
 
 				// ... to System.Console ...
 				MethodReference mr = ins.Operand as MethodReference;
-                
+
 		                if (mr == null)
                				continue;
 

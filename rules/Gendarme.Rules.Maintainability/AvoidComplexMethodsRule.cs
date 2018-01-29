@@ -57,7 +57,7 @@ namespace Gendarme.Rules.Maintainability {
 	[FxCopCompatibility ("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class AvoidComplexMethodsRule : Rule, IMethodRule {
-	
+
 		// defaults match fxcop rule http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=1575061&SiteID=1
 		// so people using both tools should not see conflicting results
 		private const int DefaultSuccessThreshold = 25;
@@ -113,7 +113,7 @@ namespace Gendarme.Rules.Maintainability {
 		[Description ("Methods with cyclomatic complexity less than this will be reported as high severity.")]
 		public int HighThreshold { get; set; }
 
-	
+
 		/// <summary>
 		/// Check method
 		/// </summary>
@@ -166,7 +166,7 @@ namespace Gendarme.Rules.Maintainability {
 			// 75 <= CC < 100 this SHOULD be refactored asap
 			if (cc < HighThreshold)
 				return Severity.High;
-			// CC > 100, don't touch it since it may become a classic in textbooks 
+			// CC > 100, don't touch it since it may become a classic in textbooks
 			// anyway probably no one can understand it ;-)
 			return Severity.Critical;
 		}

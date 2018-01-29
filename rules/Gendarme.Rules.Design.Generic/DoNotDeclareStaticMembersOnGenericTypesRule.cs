@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Nicholas Rioux
-// 
+//
 // Copyright (C) 2010 Nicholas Rioux
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -40,8 +40,8 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Bad example:
 	/// <code>
 	/// public class BadClass&lt;T&gt; {
-	///	public static string Member () {
-	///	}
+	/// 	public static string Member () {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -49,8 +49,8 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Good example:
 	/// <code>
 	/// public class GoodClass&lt;T&gt; {
-	///	public string Member () {
-	///	}
+	/// 	public string Member () {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

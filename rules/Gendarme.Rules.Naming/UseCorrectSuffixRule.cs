@@ -64,7 +64,7 @@ namespace Gendarme.Rules.Naming {
 	/// Bad example:
 	/// <code>
 	/// public sealed class SpecialCode : Attribute {
-	///	// ...
+	/// 	// ...
 	/// }
 	/// </code>
 	/// </example>
@@ -72,7 +72,7 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// public sealed class SpecialCodeAttribute : Attribute {
-	///	// ...
+	/// 	// ...
 	/// }
 	/// </code>
 	/// </example>
@@ -142,7 +142,7 @@ namespace Gendarme.Rules.Naming {
 				return String.Empty;
 
 			return String.Format (CultureInfo.InvariantCulture,
-				"'{0}' should only be used for types that inherits or implements '{1}.{2}'.", 
+				"'{0}' should only be used for types that inherits or implements '{1}.{2}'.",
 				type.Name, nameSpace, name);
 		}
 
@@ -153,7 +153,7 @@ namespace Gendarme.Rules.Naming {
 				type.Implements ("System.Collections.Generic", "ICollection`1"))
 				return String.Empty;
 
-			if (type.Inherits ("System.Collections", "Queue") || type.Inherits ("System.Collections", "Stack") || 
+			if (type.Inherits ("System.Collections", "Queue") || type.Inherits ("System.Collections", "Stack") ||
 				type.Inherits ("System.Data", "DataSet") || type.Inherits ("System.Data", "DataTable"))
 				return String.Empty;
 
@@ -182,7 +182,7 @@ namespace Gendarme.Rules.Naming {
 				if (pos != -1)
 					name = name.Substring (0, pos);
 			}
-			
+
 			if (definedSuffixes.TryGetValue (name, out candidates)) {
 				string nspace;
 				if (namespaces.TryGetValue (name, out nspace)) {
@@ -237,8 +237,8 @@ namespace Gendarme.Rules.Naming {
 		private static string ComposeMessage (List<string> candidates)
 		{
 			if (candidates.Count == 1) {
-				return String.Format (CultureInfo.InvariantCulture, 
-					"The type name does not end with '{0}' suffix. Append it to the type name.", 
+				return String.Format (CultureInfo.InvariantCulture,
+					"The type name does not end with '{0}' suffix. Append it to the type name.",
 					candidates [0]);
 			}
 

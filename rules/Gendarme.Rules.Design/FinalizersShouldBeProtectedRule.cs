@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.FinalizersShouldBeProtectedRule
 //
 // Authors:
@@ -48,10 +48,10 @@ namespace Gendarme.Rules.Design {
 	/// .class family auto ansi beforefieldinit BadPublicFinalizer extends
 	/// [mscorlib]System.Object
 	/// {
-	///	.method public hidebysig instance void Finalize() cil managed
-	///	{
-	///		// ...
-	///	}
+	/// 	.method public hidebysig instance void Finalize() cil managed
+	/// 	{
+	/// 		// ...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -59,10 +59,10 @@ namespace Gendarme.Rules.Design {
 	/// Good example (C#):
 	/// <code>
 	/// public class GoodProtectedFinalizer {
-	///	// compiler makes it protected
-	///	~GoodProtectedFinalizer ()
-	///	{
-	///	}
+	/// 	// compiler makes it protected
+	/// 	~GoodProtectedFinalizer ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -72,10 +72,10 @@ namespace Gendarme.Rules.Design {
 	/// .class family auto ansi beforefieldinit GoodProtectedFinalizer extends
 	/// [mscorlib]System.Object
 	/// {
-	///	.method family hidebysig instance void Finalize() cil managed
-	///	{
-	///		// ...
-	///	}
+	/// 	.method family hidebysig instance void Finalize() cil managed
+	/// 	{
+	/// 		// ...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

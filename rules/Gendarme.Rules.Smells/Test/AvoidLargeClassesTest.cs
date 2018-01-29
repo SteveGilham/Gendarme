@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidLargeClasses Rule.
 //
 // Authors:
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,13 +43,13 @@ namespace Test.Rules.Smells {
 		X, X1, X2, X3, X4, X5,
 		X6, X7, X8, X9,
 		Y, Y1, Y2, Y3, Y4, Y5,
-		Y6, Y7, Y8, Y9, 
+		Y6, Y7, Y8, Y9,
 		Z, Z1, Z2, Z3, Z4, Z5,
-		Z6, Z7, Z8, Z9, 
+		Z6, Z7, Z8, Z9,
 		W, W1, W2, W3, W4, W5,
 		W6, W7, W8, W9
 	}
-	
+
 	public class LargeClass {
 		int x, x1, x2, x3;
 		string foo, foo1, foo2, foo3;
@@ -121,7 +121,7 @@ namespace Test.Rules.Smells {
 		private TestRunner runner;
 
 		[OneTimeSetUp]
-		public void FixtureSetUp () 
+		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;
 			assembly = AssemblyDefinition.ReadAssembly (unit);
@@ -130,7 +130,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void LargeClassTest () 
+		public void LargeClassTest ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Smells.LargeClass");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "Test.Rules.Smells.LargeClass failure test");
@@ -139,7 +139,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void NotLargeClassTest () 
+		public void NotLargeClassTest ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Smells.NoFieldClass");
 			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckType (type), "Test.Rules.Smells.NoFieldClass does not apply test");
@@ -148,9 +148,9 @@ namespace Test.Rules.Smells {
 			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "Test.Rules.Smells.NotLargeClass success test");
 		}
 
-		
+
 		[Test]
-		public void ConstantClassTest () 
+		public void ConstantClassTest ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Smells.ConstantClass");
 			Assert.AreEqual (RuleResult.Success, runner.CheckType (type));
@@ -163,16 +163,16 @@ namespace Test.Rules.Smells {
 			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "Test.Rules.Smells.ClassWithPrefixedFieldsWithCamelCasing failure test");
 			Assert.AreEqual (1, runner.Defects.Count, "Test.Rules.Smells.ClassWithPrefixedFieldsWithCamelCasing defect count check");
 		}
-			
+
 		[Test]
-		public void ClassWithoutPrefixedFieldsWithMDashCasingTest () 
+		public void ClassWithoutPrefixedFieldsWithMDashCasingTest ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Smells.ClassWithoutPrefixedFieldsWithMDashCasing");
 			Assert.AreEqual (RuleResult.Success, runner.CheckType (type));
 		}
 
 		[Test]
-		public void ClassWithPrefixedFieldsWithDashCasingTest () 
+		public void ClassWithPrefixedFieldsWithDashCasingTest ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Smells.ClassWithPrefixedFieldsWithDashCasing");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "Test.Rules.Smells.ClassWithPrefixedFieldsWithDashCasing failure test");
@@ -180,7 +180,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void ClassWithPrefixedFieldsWithMDashCasingTest () 
+		public void ClassWithPrefixedFieldsWithMDashCasingTest ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Smells.ClassWithPrefixedFieldsWithMDashCasing");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "Test.Rules.Smells.ClassWithPrefixedFieldsWithMDashCasing failure test");

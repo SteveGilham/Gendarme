@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.BadPractice.GetEntryAssemblyMayReturnNullRule
 //
 // Authors:
@@ -40,9 +40,9 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// This rule warns when an assembly without an entry point (i.e. a dll or library) calls 
-	/// <c>Assembly.GetEntryAssembly ()</c>. This call is problematic since it will always 
-	/// return <c>null</c> when called from outside the root (main) application domain. This may 
+	/// This rule warns when an assembly without an entry point (i.e. a dll or library) calls
+	/// <c>Assembly.GetEntryAssembly ()</c>. This call is problematic since it will always
+	/// return <c>null</c> when called from outside the root (main) application domain. This may
 	/// become a problem inside libraries that can be used, for example, inside ASP.NET
 	/// applications.
 	/// </summary>
@@ -57,10 +57,10 @@ namespace Gendarme.Rules.BadPractice {
 	/// Good example:
 	/// <code>
 	/// public class MainClass {
-	///	static void Main ()
-	///	{
-	///		Console.WriteLine (Assembly.GetEntryAssembly ().CodeBase);
-	///	}
+	/// 	static void Main ()
+	/// 	{
+	/// 		Console.WriteLine (Assembly.GetEntryAssembly ().CodeBase);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -81,10 +81,10 @@ namespace Gendarme.Rules.BadPractice {
 			base.Initialize (runner);
 
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				Active &= 
+				Active &=
 					// GetEntryAssembly will work inside executables
 					e.CurrentAssembly.EntryPoint == null &&
-					
+
 					// if the module does not reference System.Reflection.Assembly.GetEntryAssembly
 					// then there's no point in enabling the rule
 					(e.CurrentAssembly.Name.Name == "mscorlib" ||

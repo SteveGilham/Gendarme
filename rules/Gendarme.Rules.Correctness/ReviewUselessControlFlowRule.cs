@@ -43,14 +43,14 @@ namespace Gendarme.Rules.Correctness {
 	// UCF: Useless control flow (UCF_USELESS_CONTROL_FLOW)
 
 	/// <summary>
-	/// This rule checks for empty blocks that produce useless control flow inside IL. 
+	/// This rule checks for empty blocks that produce useless control flow inside IL.
 	/// This usually occurs when a block is left incomplete or when a typo is made.
 	/// </summary>
 	/// <example>
 	/// Bad example (empty):
 	/// <code>
 	/// if (x == 0) {
-	///	// TODO - ever seen such a thing ? ;-)
+	/// 	// TODO - ever seen such a thing ? ;-)
 	/// }
 	/// </code>
 	/// </example>
@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad example (typo):
 	/// <code>
 	/// if (x == 0); {
-	///	Console.WriteLine ("always printed");
+	/// 	Console.WriteLine ("always printed");
 	/// }
 	/// </code>
 	/// </example>
@@ -66,7 +66,7 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// if (x == 0) {
-	///	Console.WriteLine ("printed only if x == 0");
+	/// 	Console.WriteLine ("printed only if x == 0");
 	/// }
 	/// </code>
 	/// </example>

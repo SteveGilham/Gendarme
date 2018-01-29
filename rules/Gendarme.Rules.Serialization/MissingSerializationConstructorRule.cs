@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Serialization.MissingSerializationConstructorRule
 //
 // Authors:
@@ -37,7 +37,7 @@ namespace Gendarme.Rules.Serialization {
 	/// <summary>
 	/// This rule checks for types that implement <c>System.ISerializable</c> but don't provide a
 	/// serialization constructor. The constructor is required in order to make the type
-	/// serializeable but cannot be enforced by the interface. 
+	/// serializeable but cannot be enforced by the interface.
 	/// The serialization constructor should be <c>private</c> for <c>sealed</c> types and
 	/// <c>protected</c> for unsealed types.
 	/// </summary>
@@ -60,7 +60,7 @@ namespace Gendarme.Rules.Serialization {
 	/// 	private ClassWithConstructor (SerializationInfo info, StreamingContext context)
 	/// 	{
 	/// 	}
-	/// 	
+	///
 	/// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
 	/// 	{
 	/// 	}
@@ -75,7 +75,7 @@ namespace Gendarme.Rules.Serialization {
 	/// 	protected ClassWithConstructor (SerializationInfo info, StreamingContext context)
 	/// 	{
 	/// 	}
-	/// 	
+	///
 	/// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
 	/// 	{
 	/// 	}

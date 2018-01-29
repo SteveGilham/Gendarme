@@ -37,15 +37,15 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Naming {
 
 	/// <summary>
-	/// The rule is used for ensure that the name of enumerations are in singular form unless 
+	/// The rule is used for ensure that the name of enumerations are in singular form unless
 	/// the enumeration is used as flags, i.e. decorated with the <c>[Flags]</c> attribute.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar
+	/// 	Foo,
+	/// 	Bar
 	/// }
 	/// </code>
 	/// </example>
@@ -53,8 +53,8 @@ namespace Gendarme.Rules.Naming {
 	/// Good example (singular):
 	/// <code>
 	/// public enum MyCustomValue {
-	///	Foo,
-	///	Bar 
+	/// 	Foo,
+	/// 	Bar
 	/// }
 	/// </code>
 	/// </example>
@@ -63,9 +63,9 @@ namespace Gendarme.Rules.Naming {
 	/// <code>
 	/// [Flags]
 	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar,
-	///	AllValues = Foo | Bar
+	/// 	Foo,
+	/// 	Bar,
+	/// 	AllValues = Foo | Bar
 	/// }
 	/// </code>
 	/// </example>

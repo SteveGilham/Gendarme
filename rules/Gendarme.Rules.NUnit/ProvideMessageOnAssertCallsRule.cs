@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.ProvideMessageOnAssertCallsRule
 //
 // Authors:
@@ -47,8 +47,8 @@ namespace Gendarme.Rules.NUnit {
 	/// [Test]
 	/// public void TestThings ()
 	/// {
-	///	Assert.AreEqual(10, 20);
-	///	Assert.AreEqual(30, 40);
+	/// 	Assert.AreEqual(10, 20);
+	/// 	Assert.AreEqual(30, 40);
 	/// }
 	/// </code>
 	/// </example>
@@ -58,12 +58,12 @@ namespace Gendarme.Rules.NUnit {
 	/// [Test]
 	/// public void TestThings ()
 	/// {
-	///	Assert.AreEqual(10, 20, "10 equal to 20 test");
-	///	Assert.AreEqual(30, 40, "30 equal to 40 test");
+	/// 	Assert.AreEqual(10, 20, "10 equal to 20 test");
+	/// 	Assert.AreEqual(30, 40, "30 equal to 40 test");
 	/// </code>
 	/// </example>
 	/// <remarks>
-	/// This rule will not report any problems if only one Assert.* call was made 
+	/// This rule will not report any problems if only one Assert.* call was made
 	/// inside a method, because it's easy to identify failing test in this case.</remarks>
 
 	[Problem ("Assert.* methods being called without 'message' parameter, which helps to easily identify failing test.")]

@@ -49,10 +49,10 @@ namespace Gendarme.Rules.Interoperability {
 	/// <code>
 	/// [DllImport ("kernel32.dll")]
 	/// static extern void Sleep (uint dwMilliseconds);
-	/// 
+	///
 	/// public void WaitTwoSeconds ()
 	/// {
-	///	Sleep (2000);
+	/// 	Sleep (2000);
 	/// }
 	/// </code>
 	/// </example>
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Interoperability {
 	/// <code>
 	/// public void WaitTwoSeconds ()
 	/// {
-	///	System.Threading.Thread.Sleep (2000);
+	/// 	System.Threading.Thread.Sleep (2000);
 	/// }
 	/// </code>
 	/// </example>
@@ -135,7 +135,7 @@ namespace Gendarme.Rules.Interoperability {
 			if (alternatives == null)
 				return RuleResult.Success;
 
-			string message = String.Format (CultureInfo.InvariantCulture, 
+			string message = String.Format (CultureInfo.InvariantCulture,
 				"Try to replace the platform-dependent call '{0}' by (one of) the following alternative(s): {1}.",
 				method.Name, alternatives.Alternatives);
 			Runner.Report (method, Severity.Low, Confidence.High, message);

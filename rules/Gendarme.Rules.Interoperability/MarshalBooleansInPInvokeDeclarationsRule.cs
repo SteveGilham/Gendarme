@@ -35,11 +35,11 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Interoperability {
 
 	/// <summary>
-	/// This rule warns the developer if a <code>[MarshalAs]</code> attribute has not been 
+	/// This rule warns the developer if a <code>[MarshalAs]</code> attribute has not been
 	/// specified for boolean parameters of a P/Invoke method. The size of boolean types varies
 	/// across language (e.g. the C++ <c>bool</c> type is four bytes on some platforms and
-	/// one byte on others). By default the CLR will marshal <b>System.Boolean</b> as a 32 bit value 
-	/// (<c>UnmanagedType.Bool</c>) like the Win32 API <b>BOOL</b> uses. But, for clarity, 
+	/// one byte on others). By default the CLR will marshal <b>System.Boolean</b> as a 32 bit value
+	/// (<c>UnmanagedType.Bool</c>) like the Win32 API <b>BOOL</b> uses. But, for clarity,
 	/// you should always specify the correct value.
 	/// </summary>
 	/// <example>
@@ -89,7 +89,7 @@ namespace Gendarme.Rules.Interoperability {
 				foreach (ParameterDefinition parameter in method.Parameters) {
 					if (!CheckBooleanMarshalling (parameter, parameter.ParameterType)) {
 						// we can't be sure (confidence) that the MarshalAs is needed
-						// since most of the time the default (4 bytes) is ok - but 
+						// since most of the time the default (4 bytes) is ok - but
 						// the severity is high because this mess up the stack
 						Runner.Report (parameter, Severity.High, Confidence.Normal);
 					}

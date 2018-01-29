@@ -1,5 +1,5 @@
 ﻿//
-// Gendarme.Rules.Concurrency.DoNotUseLockedRegionOutsideMethodRule.cs: 
+// Gendarme.Rules.Concurrency.DoNotUseLockedRegionOutsideMethodRule.cs:
 //	looks for methods that enter an exclusive region but do not exit
 //	(this can imply deadlocks, or just a bad practice).
 //
@@ -42,10 +42,10 @@ namespace Gendarme.Rules.Concurrency {
 
 	/// <summary>
 	/// <para>
-	/// This rule will fire if a method calls <c>System.Threading.Monitor.Enter</c>, 
+	/// This rule will fire if a method calls <c>System.Threading.Monitor.Enter</c>,
 	/// but not <c>System.Threading.Monitor.Exit</c>, or vice versa. This is a bad idea for public
 	/// methods because the callers must (indirectly) manage a lock which they do not
-	/// own. This increases the potential for problems such as dead locks because 
+	/// own. This increases the potential for problems such as dead locks because
 	/// locking/unlocking may not be done together, the callers must do the unlocking
 	/// even in the presence of exceptions, and it may not be completely clear that
 	/// the public method is acquiring a lock without releasing it.
@@ -54,7 +54,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// <para>
 	/// This is less of a problem for private methods because the lock is managed by
 	/// code that owns the lock. So, it's relatively easy to analyze the class to ensure
-	/// that the lock is locked and unlocked correctly and that any invariants are 
+	/// that the lock is locked and unlocked correctly and that any invariants are
 	/// preserved when the lock is acquired and after it is released. However it is
 	/// usually simpler and more maintainable if methods unlock whatever they lock.</para>
 	///
@@ -84,7 +84,7 @@ namespace Gendarme.Rules.Concurrency {
 	///
 	/// 	public void AddProducer ()
 	/// 	{
-	/// 		// Real code would either assert or throw if the lock is not held. 
+	/// 		// Real code would either assert or throw if the lock is not held.
 	/// 		producer++;
 	/// 	}
 	///
@@ -101,7 +101,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// class GoodExample {
 	/// 	int producer = 0;
 	/// 	object mutex = new object();
-	/// 	
+	///
 	/// 	public void AddProducer ()
 	/// 	{
 	/// 		// We need a try block in case the assembly is compiled with
@@ -114,7 +114,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// 			Monitor.Exit (mutex);
 	/// 		}
 	/// 	}
-	/// 	
+	///
 	/// 	public void AddProducer2 ()
 	/// 	{
 	/// 		// Same as the above, but with C# sugar.
@@ -153,7 +153,7 @@ namespace Gendarme.Rules.Concurrency {
 					}));
 			};
 		}
-		
+
 		/// <summary>
 		/// Check method
 		/// </summary>
@@ -175,7 +175,7 @@ namespace Gendarme.Rules.Concurrency {
 			int currentSatate = 0;
 			bool underflow = false;
 			bool overflow = false;
-			
+
 			foreach (Instruction ins in method.Body.Instructions) {
 				if (ins.OpCode.FlowControl != FlowControl.Call)
 					continue;

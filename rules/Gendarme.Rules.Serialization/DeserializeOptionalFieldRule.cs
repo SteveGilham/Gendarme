@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Serialization.DeserializeOptionalFieldRule
 //
 // Authors:
@@ -37,12 +37,12 @@ namespace Gendarme.Rules.Serialization {
 
 	/// <summary>
 	/// This rule will fire if a type has fields marked with <c>[OptionalField]</c>, but does
-	/// not have methods decorated with the <c>[OnDeserialized]</c> or <c>[OnDeserializing]</c> 
+	/// not have methods decorated with the <c>[OnDeserialized]</c> or <c>[OnDeserializing]</c>
 	/// attributes. This is a problem because the binary deserializer does not actually construct
 	/// objects (it uses <c>System.Runtime.Serialization.FormatterServices.GetUninitializedObject</c>
-	/// instead). So, if binary deserialization is used the optional field(s) will be zeroed instead 
+	/// instead). So, if binary deserialization is used the optional field(s) will be zeroed instead
 	/// of properly initialized.
-	/// This rule only applies to assemblies compiled with the .NET framework version 2.0 
+	/// This rule only applies to assemblies compiled with the .NET framework version 2.0
 	/// (or later).
 	/// </summary>
 	/// <example>
@@ -50,8 +50,8 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public class ClassWithOptionalField {
-	///	[OptionalField]
-	///	private int optional;
+	/// 	[OptionalField]
+	/// 	private int optional;
 	/// }
 	/// </code>
 	/// </example>
@@ -65,9 +65,9 @@ namespace Gendarme.Rules.Serialization {
 	/// 	// XML and Soap deserializers, but not the binary serializer.
 	/// 	[OptionalField]
 	/// 	private int optional = 1;
-	/// 	
+	///
 	/// 	// This will be called immediately after the object is
-	/// 	// deserialized. 
+	/// 	// deserialized.
 	/// 	[OnDeserializing]
 	/// 	private void OnDeserializing (StreamingContext context)
 	/// 	{
@@ -97,12 +97,12 @@ namespace Gendarme.Rules.Serialization {
 			base.Initialize (runner);
 
 			Runner.AnalyzeModule += (object o, RunnerEventArgs e) => {
-				Active = 
-					// the [OptionalField] and deserialization attributes are only available 
-					// since fx 2.0 so there's no point to execute it on every methods if the 
+				Active =
+					// the [OptionalField] and deserialization attributes are only available
+					// since fx 2.0 so there's no point to execute it on every methods if the
 					// assembly target runtime is earlier than 2.0
 					e.CurrentModule.Runtime >= TargetRuntime.Net_2_0 &&
-					
+
 					// if the module does not have a reference to System.Runtime.Serialization.OptionalFieldAttribute
 					// then nothing will be reported by this rule
 					(e.CurrentAssembly.Name.Name == "mscorlib" ||

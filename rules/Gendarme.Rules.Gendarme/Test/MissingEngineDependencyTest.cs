@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.Gendarme.MissingEngineDependencyTest
 //
 // Authors:
@@ -61,7 +61,7 @@ namespace Test.Rules.Gendarme {
 		}
 
 		[EngineDependency (typeof (OpCodeEngine))]
-		class GoodEngineType : Rule, IMethodRule { 
+		class GoodEngineType : Rule, IMethodRule {
 			public RuleResult CheckMethod (MethodDefinition method)
 			{
 				var a = OpCodeEngine.GetBitmask (SimpleMethods.EmptyMethod);

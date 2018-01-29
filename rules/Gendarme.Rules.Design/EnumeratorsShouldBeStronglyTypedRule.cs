@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.EnumeratorsShouldBeStronglyTypedRule
 //
 // Authors:
@@ -45,11 +45,11 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// class Bad : IEnumerator {
-	///	object Current
-	///	{
-	///		get { return current; }
-	///	}
-	///	// other IEnumerator members
+	/// 	object Current
+	/// 	{
+	/// 		get { return current; }
+	/// 	}
+	/// 	// other IEnumerator members
 	/// }
 	/// </code>
 	/// </example>
@@ -57,20 +57,20 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// class Good : IEnumerator {
-	///	object IEnumerator.Current
-	///	{
-	///		get { return current; }
-	///	}
-	///	public Exception Current
-	///	{
-	///		get { return (Exception)current; }
-	///	}
-	///	// other IEnumerator members
+	/// 	object IEnumerator.Current
+	/// 	{
+	/// 		get { return current; }
+	/// 	}
+	/// 	public Exception Current
+	/// 	{
+	/// 		get { return (Exception)current; }
+	/// 	}
+	/// 	// other IEnumerator members
 	/// }
 	/// </code>
 	/// </example>
 	/// <remarks>
-	/// Types inheriting from <c>System.Collections.CollectionBase</c>, <c>System.Collections.DictionaryBase</c> 
+	/// Types inheriting from <c>System.Collections.CollectionBase</c>, <c>System.Collections.DictionaryBase</c>
 	/// or <c>System.Collections.ReadOnlyCollectionBase</c> are exceptions to this rule.</remarks>
 
 	[Problem ("Types that implement IEnumerator interface should have strongly typed version of IEnumerator.Current property")]

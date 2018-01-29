@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.SolutionAttribute class
 //
 // Authors:
@@ -31,8 +31,8 @@ using System;
 namespace Gendarme.Framework {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class SolutionAttribute : Attribute {
-		
-		public SolutionAttribute (string solution) 
+
+		public SolutionAttribute (string solution)
 		{
 			Solution = solution;
 		}

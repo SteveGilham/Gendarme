@@ -1,4 +1,4 @@
-/*
+﻿/*
  * CFG.cs: code for control flow graphs -- graphs made up of basic
  * blocks.
  *
@@ -22,7 +22,7 @@ using Mono.Cecil.Cil;
 
 namespace Gendarme.Rules.Correctness {
 
-public class CFG : Graph { 
+public class CFG : Graph {
 
     [NonNull] private InstructionCollection instructions;
     [NonNull] private MethodDefinition method;
@@ -124,7 +124,7 @@ public class CFG : Graph {
 
         foreach(Instruction insn in instructions) {
             if ((printer.EndsTryRegion (insn) != null) ||
-                    (printer.EndsHandlerRegion (insn) != null)) { 
+                    (printer.EndsHandlerRegion (insn) != null)) {
                 BasicBlock finallyBB = GetNearestFinally(insn, insnBB);
                 if(finallyBB != null)
                     AddEdge(new CFGEdge((BasicBlock)insnBB[insn.Offset],

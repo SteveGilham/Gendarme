@@ -41,7 +41,7 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule checks all private fields inside each type to see if some of them are not
-	/// being used. This could be a leftover from debugging or testing code or a more 
+	/// being used. This could be a leftover from debugging or testing code or a more
 	/// serious typo where a wrong field is being used. In any case this makes the type bigger
 	/// than it needs to be which can affect performance when a large number of instances
 	/// exist.
@@ -50,16 +50,16 @@ namespace Gendarme.Rules.Performance {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	int level;
-	///	bool b;
-	///	
-	///	public void Indent ()
-	///	{
-	///		level++;	
+	/// 	int level;
+	/// 	bool b;
+	///
+	/// 	public void Indent ()
+	/// 	{
+	/// 		level++;
 	/// #if DEBUG
-	///		if (b) Console.WriteLine (level);
+	/// 		if (b) Console.WriteLine (level);
 	/// #endif
-	///	}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -67,18 +67,18 @@ namespace Gendarme.Rules.Performance {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	int level;
+	/// 	int level;
 	/// #if DEBUG
-	///	bool b;
+	/// 	bool b;
 	/// #endif
-	///	
-	///	public void Indent ()
-	///	{
-	///		level++;	
+	///
+	/// 	public void Indent ()
+	/// 	{
+	/// 		level++;
 	/// #if DEBUG
-	///		if (b) Console.WriteLine (level);
+	/// 		if (b) Console.WriteLine (level);
 	/// #endif
-	///	}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -151,9 +151,9 @@ namespace Gendarme.Rules.Performance {
 
 					fields.Remove (fd);
 				}
-				
+
 				if (fields.Count == 0)
-					break;				
+					break;
 			}
 		}
 

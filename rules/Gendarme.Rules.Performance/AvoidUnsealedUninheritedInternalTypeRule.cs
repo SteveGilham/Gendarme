@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Performance.AvoidUnsealedUninheritedInternalTypeRule
 //
 // Authors:
@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Performance {
 	/// // this one is correct since MyInheritedStuff inherits from this class
 	/// internal class MyBaseStuff {
 	/// }
-	/// 
+	///
 	/// // this one is bad, since no other class inherit from MyConcreteStuff
 	/// internal class MyInheritedStuff : MyBaseStuff {
 	/// }
@@ -56,7 +56,7 @@ namespace Gendarme.Rules.Performance {
 	/// // this one is correct since the class is abstract
 	/// internal abstract class MyAbstractStuff {
 	/// }
-	/// 
+	///
 	/// // this one is correct since the class is sealed
 	/// internal sealed class MyConcreteStuff : MyAbstractStuff {
 	/// }

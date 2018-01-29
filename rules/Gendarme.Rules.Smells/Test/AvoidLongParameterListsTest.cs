@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidLongParameterLists Rule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -38,7 +38,7 @@ using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
 
 namespace Test.Rules.Smells {
-	
+
 	[TestFixture]
 	public class AvoidLongParameterListsTest : TypeRuleTestFixture<AvoidLongParameterListsRule> {
 
@@ -74,14 +74,14 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleFailure<MethodWithLongParametersWrapper> (1);
 		}
-			
+
 		class OverloadedMethodWrapper {
 			public void MethodWithLongParameterList (int x, char c, object obj, bool j, string f, float z, double u, short s, int v, string[] array) {}
 			public void MethodWithLongParameterList (int x, char c) {}
 		}
-	
+
 		[Test]
-		public void OverloadedMethodWrapperTest () 
+		public void OverloadedMethodWrapperTest ()
 		{
 			AssertRuleSuccess<OverloadedMethodWrapper> ();
 		}
@@ -92,7 +92,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void FailingOverloadedMethodWrapperTest () 
+		public void FailingOverloadedMethodWrapperTest ()
 		{
 			//Only report de smaller fail
 			AssertRuleFailure<FailingOverloadedMethodWrapper> (1);

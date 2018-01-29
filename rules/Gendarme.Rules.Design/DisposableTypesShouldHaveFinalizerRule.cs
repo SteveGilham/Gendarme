@@ -43,7 +43,7 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// class NoFinalizer {
-	///	IntPtr field;
+	/// 	IntPtr field;
 	/// }
 	/// </code>
 	/// </example>
@@ -51,12 +51,12 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// class HasFinalizer {
-	///	IntPtr field;
-	///	
-	///	~HasFinalizer ()
-	///	{
-	///		UnmanagedFree (field);
-	///	}
+	/// 	IntPtr field;
+	///
+	/// 	~HasFinalizer ()
+	/// 	{
+	/// 		UnmanagedFree (field);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

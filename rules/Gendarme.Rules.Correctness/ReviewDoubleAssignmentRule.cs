@@ -44,8 +44,8 @@ namespace Gendarme.Rules.Correctness {
 	// SA: Double assignment of local variable (SA_LOCAL_DOUBLE_ASSIGNMENT)
 
 	/// <summary>
-	/// This rule checks for variables or fields that are assigned multiple times 
-	/// using the same value. This won't change the value of the variable (or fields) 
+	/// This rule checks for variables or fields that are assigned multiple times
+	/// using the same value. This won't change the value of the variable (or fields)
 	/// but should be reviewed since it could be a typo that hides a real issue in
 	/// the code.
 	/// </summary>
@@ -53,13 +53,13 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	private int x, y;
-	///	
-	///	public Bad (int value)
-	///	{
-	///		// x is assigned twice, but y is not assigned
-	///		x = x = value;
-	///	}
+	/// 	private int x, y;
+	///
+	/// 	public Bad (int value)
+	/// 	{
+	/// 		// x is assigned twice, but y is not assigned
+	/// 		x = x = value;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -67,14 +67,14 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	private int x, y;
-	///	
-	///	public Good (int value)
-	///	{
-	///		// x = y = value; was the original meaning but since it's confusing...
-	///		x = value;
-	///		y = value;
-	///	}
+	/// 	private int x, y;
+	///
+	/// 	public Good (int value)
+	/// 	{
+	/// 		// x = y = value; was the original meaning but since it's confusing...
+	/// 		x = value;
+	/// 		y = value;
+	/// 	}
 	///}
 	/// </code>
 	/// </example>

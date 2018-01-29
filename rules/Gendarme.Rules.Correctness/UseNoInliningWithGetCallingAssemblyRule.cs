@@ -39,10 +39,10 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
-	/// This rule warns when a method call <c>Assembly.GetCallingAssembly()</c> from a 
+	/// This rule warns when a method call <c>Assembly.GetCallingAssembly()</c> from a
 	/// method that is not decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
 	/// Without this attribute the method could be inlined by the JIT. In this case the
-	/// calling assembly would be the assembly of the caller (of the inlined method), 
+	/// calling assembly would be the assembly of the caller (of the inlined method),
 	/// which could be different than the assembly of the real, source-wise, caller to
 	/// <c>Assembly.GetCallingAssembly</c>.
 	/// </summary>
@@ -51,7 +51,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public void ShowInfo ()
 	/// {
-	///	Console.WriteLine (Assembly.GetCallingAssembly ().Location);
+	/// 	Console.WriteLine (Assembly.GetCallingAssembly ().Location);
 	/// }
 	/// </code>
 	/// </example>
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Correctness {
 	/// [MethodImpl (MethodImplOptions.NoInlining)]
 	/// public void ShowInfo ()
 	/// {
-	///	Console.WriteLine (Assembly.GetCallingAssembly ().Location);
+	/// 	Console.WriteLine (Assembly.GetCallingAssembly ().Location);
 	/// }
 	/// </code>
 	/// </example>

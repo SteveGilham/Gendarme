@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Exceptions.MissingExceptionConstructorsRule
 //
 // Authors:
@@ -51,7 +51,7 @@ namespace Gendarme.Rules.Exceptions {
 	/// Bad example:
 	/// <code>
 	/// public class GeneralException : Exception {
-	///	// access should be public
+	/// 	// access should be public
 	/// 	private GeneralException ()
 	/// 	{
 	/// 	}
@@ -65,15 +65,15 @@ namespace Gendarme.Rules.Exceptions {
 	/// 	public GeneralException ()
 	/// 	{
 	/// 	}
-	/// 	
+	///
 	/// 	public GeneralException (string message) : base (message)
 	/// 	{
 	/// 	}
-	/// 	
+	///
 	/// 	public GeneralException (string message, Exception inner) : base (message, inner)
 	/// 	{
 	/// 	}
-	/// 	
+	///
 	/// 	protected GeneralException (SerializationInfo info, StreamingContext context) : base (info, context)
 	/// 	{
 	/// 	}
@@ -169,23 +169,23 @@ namespace Gendarme.Rules.Exceptions {
 			}
 
 			if (!empty_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public", 
+				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public",
 					type.Name, "()");
 				Runner.Report (type, Severity.High, Confidence.Total, s);
 			}
 			if (!string_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public", 
+				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public",
 					type.Name, "(string message)");
 				Runner.Report (type, Severity.High, Confidence.Total, s);
 			}
 			if (!inner_exception_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public", 
+				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public",
 					type.Name, "(string message, Exception innerException)");
 				Runner.Report (type, Severity.High, Confidence.Total, s);
 			}
 			if (!serialization_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, 
-					(type.IsSealed) ? "private" : "protected", type.Name, 
+				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor,
+					(type.IsSealed) ? "private" : "protected", type.Name,
 					"(SerializationInfo info, StreamingContext context)");
 				Runner.Report (type, Severity.High, Confidence.Total, s);
 			}

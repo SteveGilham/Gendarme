@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Performance {
 	/// This rule looks for <c>InitOnly</c> fields (<c>readonly</c> in C#) that could be
 	/// turned into <c>Literal</c> (<c>const</c> in C#) because their value is known at
 	/// compile time. <c>Literal</c> fields don't need to be initialized (i.e. they don't
-	/// force the compiler to add a static constructor to the type) resulting in less code and the 
+	/// force the compiler to add a static constructor to the type) resulting in less code and the
 	/// value (not a reference to the field) will be directly used in the IL (which is OK
 	/// if the field has internal visibility, but is often problematic if the field is visible outside
 	/// the assembly).
@@ -53,7 +53,7 @@ namespace Gendarme.Rules.Performance {
 	/// Bad example:
 	/// <code>
 	/// public class ClassWithReadOnly {
-	///	static readonly int One = 1;
+	/// 	static readonly int One = 1;
 	/// }
 	/// </code>
 	/// </example>
@@ -62,7 +62,7 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public class ClassWithConst
 	/// {
-	///	const int One = 1;
+	/// 	const int One = 1;
 	/// }
 	/// </code>
 	/// </example>

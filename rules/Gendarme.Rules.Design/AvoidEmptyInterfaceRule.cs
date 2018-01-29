@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.AvoidEmptyInterfaceRule
 //
 // Authors:
@@ -34,7 +34,7 @@ namespace Gendarme.Rules.Design {
 
 	/// <summary>
 	/// This rule fires if an interface declares no members. Empty interfaces are generally
-	/// not useful except as markers to categorize types and attributes are the preferred 
+	/// not useful except as markers to categorize types and attributes are the preferred
 	/// way to handle that.
 	/// </summary>
 	/// <example>
@@ -42,7 +42,7 @@ namespace Gendarme.Rules.Design {
 	/// <code>
 	/// public interface IMarker {
 	/// }
-	/// 
+	///
 	/// public class MyClass : IMarker {
 	/// }
 	/// </code>

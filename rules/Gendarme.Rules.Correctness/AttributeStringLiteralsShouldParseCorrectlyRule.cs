@@ -39,12 +39,15 @@ using Mono.Cecil;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
+	/// <para>
 	/// As attributes are used at compile time, only constants can
 	/// be passed to constructors. This can lead to runtime errors for
 	/// things like malformed URI strings.
-	///
+	/// </para>
+	/// <para>
 	/// This rule checks attributes with the following types, represented as
 	/// a string, and validates the string value:
+	/// </para>
 	/// <list type="bullet">
 	/// <item>
 	/// <description>Version</description>
@@ -80,7 +83,7 @@ namespace Gendarme.Rules.Correctness {
 		{
 			return original.IndexOf (value, 0, StringComparison.OrdinalIgnoreCase) != -1;
 		}
-		
+
 		void CheckParametersAndValues (IMetadataTokenProvider provider, IMethodSignature constructor, IList<CustomAttributeArgument> arguments)
 		{
 			for (int index = 0; index < arguments.Count; index++) {
@@ -116,7 +119,7 @@ namespace Gendarme.Rules.Correctness {
 				}
 			}
 		}
-		
+
 		void CheckAttributesIn (ICustomAttributeProvider provider)
 		{
 			if (!provider.HasCustomAttributes)
@@ -126,7 +129,7 @@ namespace Gendarme.Rules.Correctness {
 			//IMetadataTokenProvider and ICustomAttributeProvider,
 			//altough a method, or type, implements both interfaces.
 			IMetadataTokenProvider metadataProvider = provider as IMetadataTokenProvider;
-	
+
 			foreach (CustomAttribute attribute in provider.CustomAttributes) {
 				// if the attribute has no argument then there will be nothing to check later, skip it
 				if (!attribute.HasConstructorArguments)
@@ -169,7 +172,7 @@ namespace Gendarme.Rules.Correctness {
 		{
 			CheckAttributesIn (type);
 			if (type.HasFields)
-				CheckAttributesIn (type.Fields); 
+				CheckAttributesIn (type.Fields);
 			if (type.HasProperties)
 				CheckAttributesIn (type.Properties);
 			if (type.HasEvents)
@@ -200,8 +203,8 @@ namespace Gendarme.Rules.Correctness {
 		{
 			CheckAttributesIn (assembly);
 			CheckAttributesIn (assembly.Modules);
-			
-			return Runner.CurrentRuleResult;			
+
+			return Runner.CurrentRuleResult;
 		}
 	}
 }

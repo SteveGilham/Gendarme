@@ -33,8 +33,8 @@ using Gendarme.Framework;
 namespace Gendarme.Rules.UI {
 
 	/// <summary>
-	/// An executable assembly, i.e. an .exe, refers to the gtk-sharp assembly but isn't 
-	/// compiled using <c>-target:winexe</c>. A console window will be created and shown 
+	/// An executable assembly, i.e. an .exe, refers to the gtk-sharp assembly but isn't
+	/// compiled using <c>-target:winexe</c>. A console window will be created and shown
 	/// under Windows (MS runtime) when the application is executed.
 	/// </summary>
 	/// <example>

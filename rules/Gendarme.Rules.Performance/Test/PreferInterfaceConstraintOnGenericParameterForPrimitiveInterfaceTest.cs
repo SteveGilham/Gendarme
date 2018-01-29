@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for PreferInterfaceConstraintOnGenericParameterForPrimitiveInterfaceRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,7 +39,7 @@ namespace Test.Rules.Performance {
 		private class TestCase {
 			private void MethodWithoutParameters ()
 			{
-				
+
 			}
 
 			private void MethodWithInterfaceOfBaseTypeParameter (IComparable comparable)
@@ -69,23 +69,23 @@ namespace Test.Rules.Performance {
 
 			private void MethodWithInterfaceParameter (IDisposable disposable)
 			{
-				
+
 			}
 
 			private void MethodWithMultipleParameters (IDisposable disposable, IConvertible convertible)
 			{
-				
+
 			}
 
-			private void GenericMethodWithMultipleParameters<T> (IDisposable disposable, T convertible) 
+			private void GenericMethodWithMultipleParameters<T> (IDisposable disposable, T convertible)
 				where T : IConvertible
 			{
-				
+
 			}
 
 			private void MethodWithInterfaceConstraintOnGeneric<T> (T comparable) where T : IComparable
 			{
-				
+
 			}
 
 			private void MethodWithInterfaceConstraintOnGeneric2<TComparable, TType> (TComparable comparable)

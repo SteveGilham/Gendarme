@@ -49,10 +49,10 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// void MissingThrow (object arg)
 	/// {
-	///	if (arg == null) {
-	///		new ArgumentNullException ("arg");
-	///	}
-	///	DoWork (arg);
+	/// 	if (arg == null) {
+	/// 		new ArgumentNullException ("arg");
+	/// 	}
+	/// 	DoWork (arg);
 	/// }
 	/// </code>
 	/// </example>
@@ -66,10 +66,10 @@ namespace Gendarme.Rules.BadPractice {
 	/// 	}
 	/// 	DoWork (arg);
 	/// }
-	/// 
+	///
 	/// Exception CreateException ()
 	/// {
-	///	return new Exception ();
+	/// 	return new Exception ();
 	/// }
 	/// </code>
 	/// </example>

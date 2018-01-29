@@ -1,4 +1,4 @@
-﻿//
+//
 // Gendarme.Rules.Correctness.ReviewCastOnIntegerMultiplicationRule
 //
 // Authors:
@@ -51,8 +51,8 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public long Bad (int a, int b)
 	/// {
-	///	// e.g. Bad (Int32.MaxInt, Int32.MaxInt) == 1
-	///	return a * b;
+	/// 	// e.g. Bad (Int32.MaxInt, Int32.MaxInt) == 1
+	/// 	return a * b;
 	/// }
 	/// </code>
 	/// </example>
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public long Good (int a, int b)
 	/// {
-	///	// e.g. Good (Int32.MaxInt, Int32.MaxInt) == 4611686014132420609
+	/// 	// e.g. Good (Int32.MaxInt, Int32.MaxInt) == 4611686014132420609
 	/// 	return (long) a * b;
 	/// }
 	/// </code>

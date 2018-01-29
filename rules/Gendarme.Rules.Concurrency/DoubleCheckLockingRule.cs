@@ -1,5 +1,5 @@
 ﻿//
-// Gendarme.Rules.Concurrency.DoubleCheckLockingRule.cs: 
+// Gendarme.Rules.Concurrency.DoubleCheckLockingRule.cs:
 //	looks for instances of double-check locking.
 //
 // Authors:
@@ -45,13 +45,13 @@ namespace Gendarme.Rules.Concurrency {
 	// note: the rule only reports a single double-lock per method
 
 	/// <summary>
-	/// This rule is used to check for the double-check pattern, often used when implementing 
-	/// the singleton pattern (1), and warns of potential incorrect usage. 
-	/// 
-	/// The original CLR (1.x) could not guarantee that a double-check would work correctly 
-	/// in multithreaded applications. However the technique does work on the x86 architecture, 
+	/// This rule is used to check for the double-check pattern, often used when implementing
+	/// the singleton pattern (1), and warns of potential incorrect usage.
+	///
+	/// The original CLR (1.x) could not guarantee that a double-check would work correctly
+	/// in multithreaded applications. However the technique does work on the x86 architecture,
 	/// the most common architecture, so the problem is seldom seen (e.g. IA64).
-	/// 
+	///
 	/// The CLR 2 and later introduce a strong memory model (2) where a double check for a
 	/// <c>lock</c> is correct (as long as you assign to a <c>volatile</c> variable). This
 	/// rule won't report a defect for assemblies targetting the 2.0 (and later) runtime.
@@ -66,21 +66,21 @@ namespace Gendarme.Rules.Concurrency {
 	/// Bad example:
 	/// <code>
 	/// public class Singleton {
-	///	private static Singleton instance;
-	///	private static object syncRoot = new object ();
-	/// 
-	///	public static Singleton Instance {
+	/// 	private static Singleton instance;
+	/// 	private static object syncRoot = new object ();
+	///
+	/// 	public static Singleton Instance {
     	/// 		get {
-	///			if (instance == null) {
-	///				lock (syncRoot) {
-	///					if (instance == null) {
-	///						instance = new Singleton ();
-	///					}
-	///				}
-	///			}
-	///			return instance;
-	///		}
-	///	}
+	/// 			if (instance == null) {
+	/// 				lock (syncRoot) {
+	/// 					if (instance == null) {
+	/// 						instance = new Singleton ();
+	/// 					}
+	/// 				}
+	/// 			}
+	/// 			return instance;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -88,22 +88,22 @@ namespace Gendarme.Rules.Concurrency {
 	/// Good example (for 1.x code avoid using double check):
 	/// <code>
 	/// public class Singleton {
-	///	private static Singleton instance;
-	///	private static object syncRoot = new object ();
-	/// 
-	///	public static Singleton Instance {
+	/// 	private static Singleton instance;
+	/// 	private static object syncRoot = new object ();
+	///
+	/// 	public static Singleton Instance {
 	/// 		get {
 	/// 			// do not check instance before the lock
-	/// 			// this will work on all CLRs but will affect 
+	/// 			// this will work on all CLRs but will affect
 	/// 			// performance since the lock is always acquired
-	///			lock (syncRoot) {
-	///				if (instance == null) {
-	///					instance = new Singleton ();
-	///				}
-	///			}
-	///			return instance;
-	///		}
-	///	}
+	/// 			lock (syncRoot) {
+	/// 				if (instance == null) {
+	/// 					instance = new Singleton ();
+	/// 				}
+	/// 			}
+	/// 			return instance;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -111,22 +111,22 @@ namespace Gendarme.Rules.Concurrency {
 	/// Good example (for 2.x and later):
 	/// <code>
 	/// public class Singleton {
-	///	// by using 'volatile' the double check will work under CLR 2.x
-	///	private static volatile Singleton instance;
-	///	private static object syncRoot = new object ();
-	/// 
-	///	public static Singleton Instance {
+	/// 	// by using 'volatile' the double check will work under CLR 2.x
+	/// 	private static volatile Singleton instance;
+	/// 	private static object syncRoot = new object ();
+	///
+	/// 	public static Singleton Instance {
 	/// 		get {
-	///			if (instance == null) {
-	///				lock (syncRoot) {
-	///					if (instance == null) {
-	///						instance = new Singleton ();
-	///					}
-	///				}
-	///			}
-	///			return instance;
-	///		}
-	///	}
+	/// 			if (instance == null) {
+	/// 				lock (syncRoot) {
+	/// 					if (instance == null) {
+	/// 						instance = new Singleton ();
+	/// 					}
+	/// 				}
+	/// 			}
+	/// 			return instance;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -150,12 +150,12 @@ namespace Gendarme.Rules.Concurrency {
 			base.Initialize (runner);
 
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				Active = 
+				Active =
 					// we only want to run this on assemblies that use either the
 					// 1.0 or 1.1 runtime - since the memory model, at that time,
 					// was not entirely safe for double check locks
 					e.CurrentModule.Runtime < TargetRuntime.Net_2_0 &&
-					
+
 					// is this module using Monitor.Enter ? (lock in c#)
 					// if not then this rule does not need to be executed for the module
 					// note: mscorlib.dll is an exception since it defines, not refer, System.Threading.Monitor

@@ -41,7 +41,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Exceptions {
 
 	/// <summary>
-	/// This rule will fire if the arguments to the <c>System.ArgumentException</c>, 
+	/// This rule will fire if the arguments to the <c>System.ArgumentException</c>,
 	/// <c>System.ArgumentNullException</c>, <c>System.ArgumentOutOfRangeException</c>,
 	/// and <c>System.DuplicateWaitObjectException</c> constructors are used incorrectly.
 	/// This is a common mistake because the position of the <c>parameterName</c> argument
@@ -52,15 +52,15 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Show (string s)
 	/// {
-	///	if (s == null) {
-	///		// the first argument should be the parameter name
-	///		throw new ArgumentNullException ("string is null", "s");
-	///	}
-	///	if (s.Length == 0) {
-	///		// the second argument should be the parameter name
-	///		return new ArgumentException ("s", "string is empty");
-	///	}
-	///	Console.WriteLine (s);
+	/// 	if (s == null) {
+	/// 		// the first argument should be the parameter name
+	/// 		throw new ArgumentNullException ("string is null", "s");
+	/// 	}
+	/// 	if (s.Length == 0) {
+	/// 		// the second argument should be the parameter name
+	/// 		return new ArgumentException ("s", "string is empty");
+	/// 	}
+	/// 	Console.WriteLine (s);
 	/// }
 	/// </code>
 	/// </example>
@@ -69,13 +69,13 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Show (string s)
 	/// {
-	///	if (s == null) {
-	///		throw new ArgumentNullException ("s", "string is null");
-	///	}
-	///	if (s.Length == 0) {
-	///		return new ArgumentException ("string is empty", "s");
-	///	}
-	///	Console.WriteLine (s);
+	/// 	if (s == null) {
+	/// 		throw new ArgumentNullException ("s", "string is null");
+	/// 	}
+	/// 	if (s.Length == 0) {
+	/// 		return new ArgumentException ("string is empty", "s");
+	/// 	}
+	/// 	Console.WriteLine (s);
 	/// }
 	/// </code>
 	/// </example>
@@ -159,7 +159,7 @@ namespace Gendarme.Rules.Exceptions {
 			// CHECK	public ArgumentNullException (string paramName)
 			// CHECK	public ArgumentNullException (string paramName, string message)
 			Instruction call = ins.TraceBack (method, 0);
-			
+
 			// call will be null if there is branching logic in the selection of a message - just fon't check in this case
 			if (call == null)
 				return;

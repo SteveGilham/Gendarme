@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,11 +45,11 @@ namespace Gendarme.Rules.Design.Linq {
 	/// Bad example:
 	/// <code>
 	/// public static class Extensions {
-	///	public static string ToDebugString (this object self)
-	///	{
-	///		return String.Format ("'{0}', type '{1}', hashcode: {2}", 
-	///			self.ToString (), self.GetType (), self.GetHashCode ());
-	///	}
+	/// 	public static string ToDebugString (this object self)
+	/// 	{
+	/// 		return String.Format ("'{0}', type '{1}', hashcode: {2}",
+	/// 			self.ToString (), self.GetType (), self.GetHashCode ());
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -57,11 +57,11 @@ namespace Gendarme.Rules.Design.Linq {
 	/// Good example:
 	/// <code>
 	/// public static class Extensions {
-	///	public static string ToDebugString (this DateTime self)
-	///	{
-	///		return String.Format ("'{0}', type '{1}', hashcode: {2}", 
-	///			self.ToString (), self.GetType (), self.GetHashCode ());
-	///	}
+	/// 	public static string ToDebugString (this DateTime self)
+	/// 	{
+	/// 		return String.Format ("'{0}', type '{1}', hashcode: {2}",
+	/// 			self.ToString (), self.GetType (), self.GetHashCode ());
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

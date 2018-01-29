@@ -52,14 +52,14 @@ namespace Gendarme.Rules.Performance {
 	/// 	{
 	/// 		Dispose (false);
 	/// 	}
-	/// 	
+	///
 	/// 	public void Dispose ()
 	/// 	{
 	/// 		// GC.SuppressFinalize is missing so the finalizer will be called
 	/// 		// which puts needless extra pressure on the garbage collector.
 	/// 		Dispose (true);
 	/// 	}
-	/// 	
+	///
 	/// 	private void Dispose (bool disposing)
 	/// 	{
 	/// 		if (ptr != IntPtr.Zero) {
@@ -67,10 +67,10 @@ namespace Gendarme.Rules.Performance {
 	/// 			ptr = IntPtr.Zero;
 	/// 		}
 	/// 	}
-	/// 	
+	///
 	/// 	[DllImport ("somelib")]
 	/// 	private static extern void Free (IntPtr ptr);
-	/// 	
+	///
 	/// 	private IntPtr ptr;
 	/// }
 	/// </code>
@@ -83,13 +83,13 @@ namespace Gendarme.Rules.Performance {
 	/// 	{
 	/// 		Dispose (false);
 	/// 	}
-	/// 	
+	///
 	/// 	public void Dispose ()
 	/// 	{
 	/// 		Dispose (true);
 	/// 		GC.SuppressFinalize (this);
 	/// 	}
-	/// 	
+	///
 	/// 	private void Dispose (bool disposing)
 	/// 	{
 	/// 		if (ptr != IntPtr.Zero) {
@@ -97,10 +97,10 @@ namespace Gendarme.Rules.Performance {
 	/// 			ptr = IntPtr.Zero;
 	/// 		}
 	/// 	}
-	/// 	
+	///
 	/// 	[DllImport ("somelib")]
 	/// 	private static extern void Free (IntPtr ptr);
-	/// 	
+	///
 	/// 	private IntPtr ptr;
 	/// }
 	/// </code>

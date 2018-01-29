@@ -40,25 +40,25 @@ namespace Gendarme.Rules.Design {
 	// not be used because it is so poorly specified. See <http://blogs.msdn.com/brada/archive/2003/04/09/49935.aspx>
 	// for example. This rule should probably be replaced with a new rule which fires for
 	// types that implement ICloneable.
-	
+
 	/// <summary>
-	/// This rule fires if you implement a <c>object Clone()</c> method without 
+	/// This rule fires if you implement a <c>object Clone()</c> method without
 	/// implementing the <c>System.ICloneable</c> interface. Either change the
 	/// method so that it returns a better type than System.Object or implement
 	/// ICloneable.
 	/// <list type="bullet"><description>Note: Be sure to document the behavior of your
-	/// Clone method since the framework itself is not very clear, or consistent, between 
+	/// Clone method since the framework itself is not very clear, or consistent, between
 	/// shallow and deep cloning.</description></list>
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public class MyClass {
-	///	public object Clone ()
-	///	{
-	///		MyClass myClass = new MyClass ();
-	///		return myClass;
-	///	}
+	/// 	public object Clone ()
+	/// 	{
+	/// 		MyClass myClass = new MyClass ();
+	/// 		return myClass;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -66,11 +66,11 @@ namespace Gendarme.Rules.Design {
 	/// Good example (ICloneable):
 	/// <code>
 	/// public class MyClass : ICloneable {
-	///	public object Clone ()
-	///	{
-	///		MyClass myClass = new MyClass ();
-	///		return myClass;
-	///	}
+	/// 	public object Clone ()
+	/// 	{
+	/// 		MyClass myClass = new MyClass ();
+	/// 		return myClass;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -78,11 +78,11 @@ namespace Gendarme.Rules.Design {
 	/// Good example (not returning System.Object):
 	/// <code>
 	/// public class MyClass {
-	///	public MyClass Clone ()
-	///	{
-	///		MyClass myClass = new MyClass ();
-	///		return myClass;
-	///	}
+	/// 	public MyClass Clone ()
+	/// 	{
+	/// 		MyClass myClass = new MyClass ();
+	/// 		return myClass;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

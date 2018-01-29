@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// This rule ensures that <c>Equals(object)</c> methods return <c>false</c> when the 
+	/// This rule ensures that <c>Equals(object)</c> methods return <c>false</c> when the
 	/// object parameter is <c>null</c>.
 	/// </summary>
 	/// <example>
@@ -46,8 +46,8 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public bool Equals (object obj)
 	/// {
-	///	// this would throw a NullReferenceException instead of returning false
-	///	return ToString ().Equals (obj.ToString ());
+	/// 	// this would throw a NullReferenceException instead of returning false
+	/// 	return ToString ().Equals (obj.ToString ());
 	/// }
 	/// </code>
 	/// </example>
@@ -56,10 +56,10 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public override bool Equals (object obj)
 	/// {
-	///	if (obj == null) {
-	///		return false;
-	///	}
-	///	return ToString ().Equals (obj.ToString ());
+	/// 	if (obj == null) {
+	/// 		return false;
+	/// 	}
+	/// 	return ToString ().Equals (obj.ToString ());
 	/// }
 	/// </code>
 	/// </example>

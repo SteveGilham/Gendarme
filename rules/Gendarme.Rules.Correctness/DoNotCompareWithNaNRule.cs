@@ -40,10 +40,10 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
-	/// As defined in IEEE 754 it's impossible to compare any floating-point value, even 
+	/// As defined in IEEE 754 it's impossible to compare any floating-point value, even
 	/// another <c>NaN</c>, with <c>NaN</c>. Such comparison will always return <c>false</c>
-	/// (more information on [http://en.wikipedia.org/wiki/NaN wikipedia]). The framework 
-	/// provides methods, <c>Single.IsNaN</c> and <c>Double.IsNaN</c>, to check for 
+	/// (more information on [http://en.wikipedia.org/wiki/NaN wikipedia]). The framework
+	/// provides methods, <c>Single.IsNaN</c> and <c>Double.IsNaN</c>, to check for
 	/// <c>NaN</c> values.
 	/// </summary>
 	/// <example>
@@ -51,8 +51,8 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// double d = ComplexCalculation ();
 	/// if (d == Double.NaN) {
-	///	// this will never be reached, even if d is NaN
-	///	Console.WriteLine ("No solution exists!");
+	/// 	// this will never be reached, even if d is NaN
+	/// 	Console.WriteLine ("No solution exists!");
 	/// }
 	/// </code>
 	/// </example>
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// double d = ComplexCalculation ();
 	/// if (Double.IsNaN (d)) {
-	///	Console.WriteLine ("No solution exists!");
+	/// 	Console.WriteLine ("No solution exists!");
 	/// }
 	/// </code>
 	/// </example>

@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <summary>
 	/// This rule checks for invalid integer to double conversion using the, confusingly named,
 	/// <c>BitConverter.Int64BitsToDouble</c> method. This method converts the actual bits,
-	/// i.e. not the value, into a <c>Double</c>. The rule will warn when anything other than an 
+	/// i.e. not the value, into a <c>Double</c>. The rule will warn when anything other than an
 	/// <c>Int64</c> is being used as a parameter to this method.
 	/// </summary>
 	/// <example>
@@ -52,7 +52,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public double GetRadians (int degrees)
 	/// {
-	///	return BitConverter.Int64BitsToDouble (degrees) * Math.PI / 180.0d;
+	/// 	return BitConverter.Int64BitsToDouble (degrees) * Math.PI / 180.0d;
 	/// }
 	/// </code>
 	/// </example>
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public double GetRadians (int degree)
 	/// {
-	///	return degrees * Math.PI / 180.0d;
+	/// 	return degrees * Math.PI / 180.0d;
 	/// }
 	/// </code>
 	/// </example>
@@ -74,7 +74,7 @@ namespace Gendarme.Rules.Correctness {
 
 		// Conv_I8, Conv_U8, Conv_Ovf_I8, Conv_Ovf_I8_Un, Conv_Ovf_U8, Conv_Ovf_U8_Un
 		private static OpCodeBitmask Convert8 = new OpCodeBitmask (0x0, 0x220000000000, 0x60000000044, 0x0);
-		
+
 		/// <summary>
 		/// Initialize the rule. This is where rule can do it's heavy initialization
 		/// since the assemblies to be analyzed are already known (and accessible thru
@@ -110,7 +110,7 @@ namespace Gendarme.Rules.Correctness {
 		{
 			if (!method.HasBody)
 				return RuleResult.DoesNotApply;
-		
+
 			// exclude methods that don't have calls
 			OpCodeBitmask mask = OpCodeEngine.GetBitmask (method);
 			if (!OpCodeBitmask.Calls.Intersect (mask))

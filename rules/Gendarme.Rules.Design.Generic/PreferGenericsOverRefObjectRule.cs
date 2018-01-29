@@ -1,4 +1,4 @@
-﻿//
+//
 // Gendarme.Rules.Design.Generic.PreferGenericsOverRefObjectRule
 //
 // Authors:
@@ -48,7 +48,7 @@ namespace Gendarme.Rules.Design.Generic {
 	/// // common before 2.0 but we can do better now
 	/// public bool TryGetValue (string key, ref object value)
 	/// {
-	///	// ...
+	/// 	// ...
 	/// }
 	/// </code>
 	/// </example>
@@ -57,7 +57,7 @@ namespace Gendarme.Rules.Design.Generic {
 	/// <code>
 	/// public bool TryGetValue&lt;T&gt; (string key, ref T value)
 	/// {
-	///	// ...
+	/// 	// ...
 	/// }
 	/// </code>
 	/// </example>

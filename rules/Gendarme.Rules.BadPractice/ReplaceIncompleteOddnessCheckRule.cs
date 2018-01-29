@@ -44,7 +44,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <summary>
 	/// This rule checks for problematic oddness checks. Often this is done by comparing
 	/// a value modulo two (% 2) with one (1). However this will not work if the value is
-	/// negative because negative one will be returned. A better (and faster) approach is 
+	/// negative because negative one will be returned. A better (and faster) approach is
 	/// to check the least significant bit of the integer.
 	/// </summary>
 	/// <example>
@@ -62,7 +62,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public bool IsOdd (int x)
 	/// {
-	///	return ((x % 2) != 0);
+	/// 	return ((x % 2) != 0);
 	/// }
 	/// </code>
 	/// </example>
@@ -71,7 +71,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public bool IsOdd (int x)
 	/// {
-	///	return ((x &amp; 1) == 1);
+	/// 	return ((x &amp; 1) == 1);
 	/// }
 	/// </code>
 	/// </example>
@@ -88,7 +88,7 @@ namespace Gendarme.Rules.BadPractice {
 		// Rem[_Un]
 		private static OpCodeBitmask Remainder = new OpCodeBitmask (0x0, 0x30000000, 0x0, 0x0);
 
-		// if/when needed this could be refactored (e.g. missing Ldc_I4__#) 
+		// if/when needed this could be refactored (e.g. missing Ldc_I4__#)
 		// and turned into an InstructionRock
 		static bool IsLoadConstant (Instruction ins, int constant)
 		{

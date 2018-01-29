@@ -1,8 +1,8 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Interoperability.Com.MarkComSourceInterfacesAsIDispatchRule
 //
 // Authors:
-//	Nicholas Rioux	
+//	Nicholas Rioux
 //
 // Copyright (C) 2010 Nicholas Rioux
 //
@@ -89,7 +89,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 			return null;
 		}
 
-		// Ensures the interface has a InterfaceTypeAttribute with 
+		// Ensures the interface has a InterfaceTypeAttribute with
 		// ComInterfaceType.InterfaceIsIDispatch passed to it.
 		private void CheckInterface (TypeDefinition def)
 		{

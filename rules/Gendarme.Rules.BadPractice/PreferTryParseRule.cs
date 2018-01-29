@@ -41,9 +41,9 @@ namespace Gendarme.Rules.BadPractice {
 	/// <summary>
 	/// This rule will warn you if a method use a <c>Parse</c> method when an
 	/// alternative <c>TryParse</c> method is available. A <c>Parser</c> method,
-	/// when using correctly, requires you to deal with multiple exceptions (a 
+	/// when using correctly, requires you to deal with multiple exceptions (a
 	/// complete list likely not easily available) or catching all exceptions (bad).
-	/// Also the throwing/catching of exceptions can kill performance. 
+	/// Also the throwing/catching of exceptions can kill performance.
 	/// The <c>TryParse</c> method allow simpler code without the performance penality.
 	/// </summary>
 	/// <example>
@@ -51,15 +51,15 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// bool ParseLine (string line)
 	/// {
-	///	string values = line.Split (',');
-	///	if (values.Length == 3) {
-	///		id = Int32.Parse (values [0]);
-	///		timestamp = DateTime.Parse (values [1]);
-	///		msg = values [2];
-	///		return true;
-	///	} else {
-	///		return false;
-	///	}
+	/// 	string values = line.Split (',');
+	/// 	if (values.Length == 3) {
+	/// 		id = Int32.Parse (values [0]);
+	/// 		timestamp = DateTime.Parse (values [1]);
+	/// 		msg = values [2];
+	/// 		return true;
+	/// 	} else {
+	/// 		return false;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -68,21 +68,21 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// bool ParseLine (string line)
 	/// {
-	///	string values = line.Split (',');
-	///	if (values.Length == 3) {
-	///		try {
-	///			id = Int32.Parse (values [0]);
-	///			timestamp = DateTime.Parse (values [1]);
-	///			msg = values [2];
-	///			return true;
-	///		}
-	///		catch {
-	///			// catching all exception is bad
-	///			return false;
-	///		}
-	///	} else {
-	///		return false;
-	///	}
+	/// 	string values = line.Split (',');
+	/// 	if (values.Length == 3) {
+	/// 		try {
+	/// 			id = Int32.Parse (values [0]);
+	/// 			timestamp = DateTime.Parse (values [1]);
+	/// 			msg = values [2];
+	/// 			return true;
+	/// 		}
+	/// 		catch {
+	/// 			// catching all exception is bad
+	/// 			return false;
+	/// 		}
+	/// 	} else {
+	/// 		return false;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -91,17 +91,17 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// bool ParseLine (string line)
 	/// {
-	///	string values = line.Split (',');
-	///	if (values.Length == 3) {
-	///		if (!Int32.TryParse (values [0], out id))
-	///			return false;
-	///		if (!DateTime.TryParse (values [1], out timestamp))
-	///			return false;
-	///		msg = values [2];
-	///		return true;
-	///	} else {
-	///		return false;
-	///	}
+	/// 	string values = line.Split (',');
+	/// 	if (values.Length == 3) {
+	/// 		if (!Int32.TryParse (values [0], out id))
+	/// 			return false;
+	/// 		if (!DateTime.TryParse (values [1], out timestamp))
+	/// 			return false;
+	/// 		msg = values [2];
+	/// 		return true;
+	/// 	} else {
+	/// 		return false;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -135,7 +135,7 @@ namespace Gendarme.Rules.BadPractice {
 			MethodBody body = method.Body;
 			if (!body.HasExceptionHandlers)
 				return false; // no handlers
-			
+
 			int offset = ins.Offset;
 			foreach (ExceptionHandler eh in body.ExceptionHandlers) {
 				// is the call between a "try/catch" or "try/finally"
@@ -171,12 +171,12 @@ namespace Gendarme.Rules.BadPractice {
 				TypeDefinition declaringType = mr.DeclaringType.Resolve();
 				if (declaringType != null && !HasTryParseMethod(declaringType))
 					continue;
-				
+
 				// if inside a try (catch/finally) block then...
 				bool inside_try_block = InsideTryBlock (method, ins);
 				// we lower severity (i.e. other cases are more urgent to fix)
 				Severity severity = inside_try_block ? Severity.Medium : Severity.High;
-				// but since we're do not check all exceptions (and they could differ 
+				// but since we're do not check all exceptions (and they could differ
 				// between Parse implementations) we also reduce our confidence level
 				Confidence confidence = inside_try_block ? Confidence.Normal : Confidence.High;
 				Runner.Report (method, ins, severity, confidence);

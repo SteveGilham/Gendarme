@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.DoNotDeclareSettersOnCollectionPropertiesRule
 //
 // Authors:
@@ -32,7 +32,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// The rule detect <c>System.Collections.ICollection</c> and 
+	/// The rule detect <c>System.Collections.ICollection</c> and
 	/// <c>System.Collections.Generic.ICollection&lt;T&gt;</c> properties that declare a visible setter.
 	/// There is rarely a need to be able to replace the collection (e.g. most collections provide a <c>Clear</c>
 	/// method) and having a getter only does not prevent the consumer from adding and removing items in the collection.
@@ -43,18 +43,18 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public class Holder {
-	///	public string Name { get; set; }
-	///	public ICollection&lt;string&gt; List { get; set; }
+	/// 	public string Name { get; set; }
+	/// 	public ICollection&lt;string&gt; List { get; set; }
 	/// }
-	/// 
+	///
 	/// public static Holder Copy (Holder h)
 	/// {
-	///	Holder copy = new Holder ();
-	///	copy.Name = h.Name;
-	///	// bad, same list would be shared between instances
-	///	copy.List = h.List;
-	///	copy.List.AddRange (h.List);
-	///	return copy;
+	/// 	Holder copy = new Holder ();
+	/// 	copy.Name = h.Name;
+	/// 	// bad, same list would be shared between instances
+	/// 	copy.List = h.List;
+	/// 	copy.List.AddRange (h.List);
+	/// 	return copy;
 	/// }
 	/// </code>
 	/// </example>
@@ -62,26 +62,26 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public class Holder {
-	///	List&lt;string&gt; list;
-	///	
-	///	public Holder ()
-	///	{
-	///		list = new List&lt;string&gt; ();
-	///	}
-	///	
-	///	public string Name { get; set; }
-	///	
-	///	public ICollection&lt;string&gt; List { 
-	///		get { return list; }
-	///	}
+	/// 	List&lt;string&gt; list;
+	///
+	/// 	public Holder ()
+	/// 	{
+	/// 		list = new List&lt;string&gt; ();
+	/// 	}
+	///
+	/// 	public string Name { get; set; }
+	///
+	/// 	public ICollection&lt;string&gt; List {
+	/// 		get { return list; }
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public static Holder Copy (Holder h)
 	/// {
-	///	Holder copy = new Holder ();
-	///	copy.Name = h.Name;
-	///	copy.List.AddRange (h.List);
-	///	return copy;
+	/// 	Holder copy = new Holder ();
+	/// 	copy.Name = h.Name;
+	/// 	copy.List.AddRange (h.List);
+	/// 	return copy;
 	/// }
 	/// </code>
 	/// </example>

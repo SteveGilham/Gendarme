@@ -39,7 +39,7 @@ namespace Gendarme.Rules.Maintainability {
 
 	/// <summary>
 	/// This rule will fire if a type has (by default) more than four base classes defined
-	/// within the assembly set being analyzed. Optionally it will also count base 
+	/// within the assembly set being analyzed. Optionally it will also count base
 	/// classes defined outside the assembly set being analyzed.
 	/// </summary>
 	/// <remarks>This rule is available since Gendarme 2.0</remarks>

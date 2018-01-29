@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.BadPractice.DoNotDecreaseVisibilityRule
 //
 // Authors:
@@ -32,20 +32,20 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// The rule detect when a method visibility is decreased in an inherited type. 
-	/// Decreasing visibility does not prevent calling the base class method unless 
-	/// the type is <c>sealed</c>. Note that some language (but not C#) will allow 
+	/// The rule detect when a method visibility is decreased in an inherited type.
+	/// Decreasing visibility does not prevent calling the base class method unless
+	/// the type is <c>sealed</c>. Note that some language (but not C#) will allow
 	/// you to seal, e.g. <c>final</c>, the method without an <c>override</c>.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public class Base {
-	///	public void Public ()
-	///	{
-	///	}
+	/// 	public void Public ()
+	/// 	{
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public class BadInheritor : Base {
 	/// 	private new void Public ()
 	/// 	{

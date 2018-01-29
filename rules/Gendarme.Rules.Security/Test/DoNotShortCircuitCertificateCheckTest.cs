@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for DoNotShortCircuitCertificateCheckRule
 //
 // Authors:
@@ -98,7 +98,7 @@ namespace Test.Rules.Security {
 			{
 				return true;
 			}
-		
+
 			bool ICertificatePolicy.CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
 			{
 				return (request != null);
@@ -193,7 +193,7 @@ namespace Test.Rules.Security {
 
 		public bool AllowExpiredRemoteCertificateValidation (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			return (chain.ChainStatus [0].Status == X509ChainStatusFlags.NotTimeValid); 
+			return (chain.ChainStatus [0].Status == X509ChainStatusFlags.NotTimeValid);
 		}
 
 		public bool AllowSpecificCertificateValidation (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)

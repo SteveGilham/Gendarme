@@ -38,7 +38,7 @@ namespace Gendarme.Rules.Performance {
 	/// <summary>
 	/// This rule looks for non-visible events to see if their add/remove accessors are
 	/// the default ones. The default, compiler generated, accessor is marked as synchronized
-	/// which means that the runtime will bracket them between <c>Monitor.Enter</c> and 
+	/// which means that the runtime will bracket them between <c>Monitor.Enter</c> and
 	/// <c>Monitor.Exit</c> calls. This is the safest approach unless, for non-visible events,
 	/// you have a performance bottleneck around the events. In this case you should review
 	/// if your code needs the locks or if you can provide an alternative to them.
@@ -56,12 +56,12 @@ namespace Gendarme.Rules.Performance {
 	/// EventHandlerList events = new EventHandlerList ();
 	///
 	/// private event EventHandler&lt;TestEventArgs&gt; TimeCritical {
-	///	add {
-	///		events.AddHandler (TimeCriticalEvent, value);
-	///	}
-	///	remove {
-	///		events.AddHandler (TimeCriticalEvent, value);
-	///	}
+	/// 	add {
+	/// 		events.AddHandler (TimeCriticalEvent, value);
+	/// 	}
+	/// 	remove {
+	/// 		events.AddHandler (TimeCriticalEvent, value);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

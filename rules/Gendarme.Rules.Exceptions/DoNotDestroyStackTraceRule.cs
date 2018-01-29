@@ -10,10 +10,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -46,11 +46,11 @@ namespace Gendarme.Rules.Exceptions {
 	/// Bad example:
 	/// <code>
 	/// try {
-	///	Int32.Parse ("Broken!");
+	/// 	Int32.Parse ("Broken!");
 	/// }
 	/// catch (Exception ex) {
-	///	Assert.IsNotNull (ex);
-	///	throw ex;
+	/// 	Assert.IsNotNull (ex);
+	/// 	throw ex;
 	/// }
 	/// </code>
 	/// </example>
@@ -58,11 +58,11 @@ namespace Gendarme.Rules.Exceptions {
 	/// Good example:
 	/// <code>
 	/// try {
-	///	Int32.Parse ("Broken!");
+	/// 	Int32.Parse ("Broken!");
 	/// }
 	/// catch (Exception ex) {
-	///	Assert.IsNotNull (ex);
-	///	throw;
+	/// 	Assert.IsNotNull (ex);
+	/// 	throw;
 	/// }
 	/// </code>
 	/// </example>
@@ -136,7 +136,7 @@ namespace Gendarme.Rules.Exceptions {
 		private void ProcessCatchBlock (Instruction first, Instruction last, MethodDefinition method, ref int exStackPos, ref int localVarPos)
 		{
 			Instruction cur = null;
-			
+
 			while (cur != last) {
 				if (cur == null)
 					cur = first;

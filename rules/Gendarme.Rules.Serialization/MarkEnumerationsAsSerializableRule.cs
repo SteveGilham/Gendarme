@@ -41,8 +41,8 @@ namespace Gendarme.Rules.Serialization {
 	/// Bad example:
 	/// <code>
 	/// public enum Colors {
-	///	Black,
-	///	White
+	/// 	Black,
+	/// 	White
 	/// }
 	/// </code>
 	/// </example>
@@ -51,8 +51,8 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public enum Colors {
-	///	Black,
-	///	White
+	/// 	Black,
+	/// 	White
 	/// }
 	/// </code>
 	/// </example>

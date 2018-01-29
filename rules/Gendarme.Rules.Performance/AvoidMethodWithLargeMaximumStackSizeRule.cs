@@ -39,7 +39,7 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule fires if a method has a large maximum stack size (default is
-	/// 100). Having a large maximum stack size makes it hard to generate code that 
+	/// 100). Having a large maximum stack size makes it hard to generate code that
 	/// performs well and, likely, makes the code harder to understand.
 	/// </summary>
 	/// <remarks>This rule is available since Gendarme 2.6</remarks>
@@ -70,7 +70,7 @@ namespace Gendarme.Rules.Performance {
 			if (num <= MaximumStackSize)
 				return RuleResult.Success;
 
-			string msg = String.Format (CultureInfo.InvariantCulture, 
+			string msg = String.Format (CultureInfo.InvariantCulture,
 				"Found {0} maximum stack size (maximum {1}).", num, MaximumStackSize);
 			Runner.Report (method, Severity.High, Confidence.High, msg);
 			return RuleResult.Failure;

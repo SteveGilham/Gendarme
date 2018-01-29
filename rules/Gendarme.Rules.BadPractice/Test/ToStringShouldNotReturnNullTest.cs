@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for ToStringShouldNotReturnNullRule
 //
 // Authors:
@@ -54,15 +54,15 @@ namespace Test.Rules.BadPractice {
 				return null;
 			}
 		}
-		
+
 		public class ToStringReturningEmptyString {
 			public override string ToString ()
 			{
 				// this is Ok
 				return String.Empty;
 			}
-		} 
-		
+		}
+
 		public class ToStringReturningField {
 			string s = "ab";
 			public override string ToString ()
@@ -97,7 +97,7 @@ namespace Test.Rules.BadPractice {
 				return new string ('!', 2);
 			}
 		}
-		
+
 		public class ToStringReturningStringFormat {
 			public override string ToString ()
 			{
@@ -114,7 +114,7 @@ namespace Test.Rules.BadPractice {
 
 		public class ToStringReturningConvertToStringString {
 			public override string ToString ()
-			{ 
+			{
 				return Convert.ToString ((string)null);
 			}
 		}
@@ -125,26 +125,26 @@ namespace Test.Rules.BadPractice {
 				return GetType ().FullName;
 			}
 		}
-		
+
 		public class ToStringInlineIf {
 			public override string ToString ()
 			{
 				return GetType () != typeof (ToStringInlineIf) ? null : "ToStringInlineIf";
 			}
 		}
-		
+
 		[Test]
 		public void ReturningNullTest ()
 		{
 			AssertRuleFailure<ToStringReturningNull> (1);
 		}
-		
+
 		[Test]
 		public void ReturningEmptyStringTest ()
 		{
 			AssertRuleDoesNotApply<ToStringReturningEmptyString> ();
 		}
-		
+
 		[Test]
 		public void ReturningField ()
 		{
@@ -175,20 +175,20 @@ namespace Test.Rules.BadPractice {
 		{
 			AssertRuleDoesNotApply<ToStringReturningStringFormat> ();
 		}
-		
+
 		[Test]
 		public void ReturningConvertToStringObject ()
 		{
 			Assert.AreEqual (String.Empty, Convert.ToString ((object) null), "Convert.ToString(object)");
 			AssertRuleSuccess<ToStringReturningConvertToStringObject> ();
 		}
-		
+
 		[Test]
 		[Ignore ("requires to analyze what called methods returns")]
 		public void ReturningConvertToStringString ()
 		{
 			// converting a null string to a string return null
-			// however this is a special case since, most times, we won't know 
+			// however this is a special case since, most times, we won't know
 			// if the value passed to Convert.ToString is null or not
 			Assert.IsNull (Convert.ToString ((string) null), "Convert.ToString((string)null)");
 			AssertRuleFailure<ToStringReturningConvertToStringString> (1);

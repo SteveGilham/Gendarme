@@ -41,7 +41,7 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule warns when a method use <c>Type.GetType(string)</c> with a constant string.
-	/// Such calls requires reflection in order to return a <c>Type</c> instance and, for 
+	/// Such calls requires reflection in order to return a <c>Type</c> instance and, for
 	/// known types, can be replaced with a much faster <c>typeof(x)</c>.
 	/// </summary>
 	/// <example>
@@ -107,7 +107,7 @@ namespace Gendarme.Rules.Performance {
 				if (type_name == "Mono.Runtime")
 					continue;
 
-				string msg = String.Format (CultureInfo.InvariantCulture, 
+				string msg = String.Format (CultureInfo.InvariantCulture,
 					"Replace call to Type.GetType(\"{0}\") into typeof({0}).", type_name);
 				Runner.Report (method, ins, Severity.Medium, Confidence.Normal, msg);
 			}

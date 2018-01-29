@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.EnumsShouldDefineAZeroValueRule
 //
 // Authors:
@@ -34,7 +34,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule ensures that every non-flags enumeration contains a <c>0</c> 
+	/// This rule ensures that every non-flags enumeration contains a <c>0</c>
 	/// value. This is important because if a field is not explicitly initialized .NET
 	/// will zero-initialize it and, if the enum has no zero value, then it will be
 	/// initialized to an invalid value.
@@ -43,8 +43,8 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// enum Position {
-	///	First = 1,
-	///	Second
+	/// 	First = 1,
+	/// 	Second
 	/// }
 	/// </code>
 	/// </example>
@@ -52,8 +52,8 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// enum Position {
-	///	First,
-	///	Second
+	/// 	First,
+	/// 	Second
 	/// }
 	/// </code>
 	/// </example>

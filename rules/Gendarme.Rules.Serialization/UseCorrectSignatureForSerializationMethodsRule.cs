@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Serialization.MissingSerializationConstructorRule
 //
 // Authors:
@@ -37,8 +37,8 @@ namespace Gendarme.Rules.Serialization {
 	/// <summary>
 	/// This rule checks for methods which use the serialization attributes:
 	/// <c>[OnSerializing, OnDeserializing, OnSerialized, OnDeserialized]</c>. You must
-	/// ensure that these methods have the correct signature. They should be <c>private</c>, 
-	/// return <c>void</c> and have a single parameter of type <c>StreamingContext</c>. 
+	/// ensure that these methods have the correct signature. They should be <c>private</c>,
+	/// return <c>void</c> and have a single parameter of type <c>StreamingContext</c>.
 	/// Failure to have the right signature can, in some circumstances, make your assembly
 	/// unusable at runtime.
 	/// </summary>
@@ -87,12 +87,12 @@ namespace Gendarme.Rules.Serialization {
 			base.Initialize (runner);
 
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				Active = 
+				Active =
 					// the attributes are only available since fx 2.0 so there's no point
 					// to execute it on every methods if the assembly target runtime is
 					// earlier than 2.0
-					e.CurrentModule.Runtime >= TargetRuntime.Net_2_0 && 
-		
+					e.CurrentModule.Runtime >= TargetRuntime.Net_2_0 &&
+
 					// if the module does not have a reference to any of the attributes
 					// then nothing will be reported by this rule
 					(e.CurrentAssembly.Name.Name == "mscorlib" ||

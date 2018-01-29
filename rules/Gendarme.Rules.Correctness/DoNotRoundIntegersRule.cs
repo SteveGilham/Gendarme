@@ -53,7 +53,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public decimal Compute (int x)
 	/// {
-	///	return Math.Truncate ((decimal) x);
+	/// 	return Math.Truncate ((decimal) x);
 	/// }
 	/// </code>
 	/// </example>
@@ -62,7 +62,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public decimal Compute (int x)
 	/// {
-	///	return (decimal) x;
+	/// 	return (decimal) x;
 	/// }
 	/// </code>
 	/// </example>
@@ -120,7 +120,7 @@ namespace Gendarme.Rules.Correctness {
 							return null;
 						break;
 					default:
-						// this it's not likely to be an integral type or 
+						// this it's not likely to be an integral type or
 						// cannot be detected at analysis time (e.g. Parse)
 						return null;
 					}
@@ -178,12 +178,12 @@ namespace Gendarme.Rules.Correctness {
 
 				if (value == null)
 					continue;
-				
+
 				TypeReference type = GetArgumentType (value, method);
 				if (type == null)
 					continue;
 
-				string msg = String.Format (CultureInfo.InvariantCulture, "Math.{0} called on a {1}.", 
+				string msg = String.Format (CultureInfo.InvariantCulture, "Math.{0} called on a {1}.",
 					name, type.GetFullName ());
 				Runner.Report (method, ins, Severity.Medium, Confidence.Normal, msg);
 			}

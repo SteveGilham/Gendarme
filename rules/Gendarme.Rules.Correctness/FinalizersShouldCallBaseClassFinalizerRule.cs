@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Correctness.FinalizersShouldCallBaseClassFinalizerRule
 //
 // Authors:
@@ -37,7 +37,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
-	/// This rule is used to warn the developer that a finalizer does not call the base class 
+	/// This rule is used to warn the developer that a finalizer does not call the base class
 	/// finalizer. In C#, this is enforced by compiler but some .NET languages (like IL)
 	/// may allow such behavior.
 	/// </summary>
@@ -46,15 +46,15 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// .assembly extern mscorlib
 	/// {
-	///	.ver 1:0:5000:0
-	///	.publickeytoken = (B7 7A 5C 56 19 34 E0 89 )
+	/// 	.ver 1:0:5000:0
+	/// 	.publickeytoken = (B7 7A 5C 56 19 34 E0 89 )
 	/// }
 	/// .class public auto ansi beforefieldinit BadFinalizer extends [mscorlib]System.Object
 	/// {
-	///	.method family virtual hidebysig instance void Finalize() cil managed
-	///	{
-	///		// no base call so rule will fire here
-	///	}
+	/// 	.method family virtual hidebysig instance void Finalize() cil managed
+	/// 	{
+	/// 		// no base call so rule will fire here
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -62,11 +62,11 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example (C#):
 	/// <code>
 	/// public class GoodFinalizer {
-	///	~GoodFinalizer ()
-	///	{
-	///		// C# compiler will insert base.Finalize () call here
-	///		// so any compiler-generated code will be valid
-	///	}
+	/// 	~GoodFinalizer ()
+	/// 	{
+	/// 		// C# compiler will insert base.Finalize () call here
+	/// 		// so any compiler-generated code will be valid
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

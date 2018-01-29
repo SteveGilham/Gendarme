@@ -58,9 +58,9 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public void MethodWithUnusedParameters (IEnumerable enumerable, int x)
 	/// {
-	///	foreach (object item in enumerable) {
-	///		Console.WriteLine (item);
-	///	}
+	/// 	foreach (object item in enumerable) {
+	/// 		Console.WriteLine (item);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -69,9 +69,9 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public void MethodWithUsedParameters (IEnumerable enumerable)
 	/// {
-	///	foreach (object item in enumerable) {
-	///		Console.WriteLine (item);
-	///	}
+	/// 	foreach (object item in enumerable) {
+	/// 		Console.WriteLine (item);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -130,7 +130,7 @@ namespace Gendarme.Rules.Performance {
 			// doesn't apply to code referenced by delegates (note: more complex check moved last)
 			if (method.IsVirtual || method.HasOverrides || method.IsGeneratedMethodBody ())
 				return RuleResult.DoesNotApply;
-		
+
 			// Also EventArgs parameters are often required in method signatures,
 			// but often not required. Reduce "false positives"(*) for GUI apps
 			// (*) it's more a "don't report things outside developer's control"

@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Interoperability.Com.DoNotUseAutoDualClassInterfaceTypeRule
 //
 // Authors:
@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Interoperability.Com {
 
 	/// <summary>
-	/// Classes should not use ClassInterfaceAttribute with the value of 
+	/// Classes should not use ClassInterfaceAttribute with the value of
 	/// ClassInterfaceType.AutoDual because this may break COM clients
 	/// if the class layout changes.
 	/// </summary>
@@ -48,7 +48,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// [ComVisible (true)]
 	/// [ClassInterface (ClassInterfaceType.AutoDual)]
 	/// class Bad {
-	///	// do something
+	/// 	// do something
 	/// }
 	/// </code>
 	/// </example>
@@ -58,10 +58,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// [ComVisible (true)]
 	/// [ClassInterface (ClassInterfaceType.None)]
 	/// class Good : ICloneable {
-	///	public object Clone ()
-	///	{
-	///		return new object ();
-	///	}
+	/// 	public object Clone ()
+	/// 	{
+	/// 		return new object ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -70,7 +70,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [ComVisible (true)]
 	/// class Good {
-	///	// do something
+	/// 	// do something
 	/// }
 	/// </code>
 	/// </example>

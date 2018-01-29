@@ -40,7 +40,7 @@ namespace Gendarme.Rules.Design {
 
 	/// <summary>
 	/// This rule checks for methods whose definition looks similar to a property.
-	/// For example, methods beginning with <c>Is</c>, <c>Get</c> or <c>Set</c> may 
+	/// For example, methods beginning with <c>Is</c>, <c>Get</c> or <c>Set</c> may
 	/// be better off as properties. But note that this should not be done if the method
 	/// takes a non-trivial amount of time to execute.
 	/// </summary>
@@ -48,12 +48,12 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	int foo;
-	///	
-	///	public int GetFoo ()
-	///	{
-	///		return foo;
-	///	}
+	/// 	int foo;
+	///
+	/// 	public int GetFoo ()
+	/// 	{
+	/// 		return foo;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -61,13 +61,13 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	int foo;
-	///	
-	///	public int Foo {
-	///		get {
-	///			return foo;
-	///		}
-	///	}
+	/// 	int foo;
+	///
+	/// 	public int Foo {
+	/// 		get {
+	/// 			return foo;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

@@ -37,9 +37,9 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Interoperability.Com {
 
 	/// <summary>
-	/// This rule checks for <c>[System.Runtime.InteropServices.ComVisible]</c> decorated value 
-	/// types which have <c>[System.Runtime.InteropServices.StructLayout]</c> attribute set to 
-	/// <c>System.Runtime.InteropServices.LayoutKind</c>.<c>Auto</c> because auto layout can 
+	/// This rule checks for <c>[System.Runtime.InteropServices.ComVisible]</c> decorated value
+	/// types which have <c>[System.Runtime.InteropServices.StructLayout]</c> attribute set to
+	/// <c>System.Runtime.InteropServices.LayoutKind</c>.<c>Auto</c> because auto layout can
 	/// change between Mono and .NET or even between releases of the .NET/Mono frameworks.
 	/// Note that this does not affect <c>System.Enum</c>-based types.
 	/// </summary>
@@ -48,12 +48,12 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	[StructLayout (LayoutKind.Auto)]
-	///	public struct Good {
-	///		ushort a;
-	///		ushort b;
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	[StructLayout (LayoutKind.Auto)]
+	/// 	public struct Good {
+	/// 		ushort a;
+	/// 		ushort b;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -62,17 +62,17 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	[StructLayout (LayoutKind.Sequential)]
-	///	public struct Good {
-	///		ushort a;
-	///		ushort b;
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	[StructLayout (LayoutKind.Sequential)]
+	/// 	public struct Good {
+	/// 		ushort a;
+	/// 		ushort b;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
 	/// <remarks>
-	/// Rule applies only when the containing assembly has ComVisible attribute explicitly set to false 
+	/// Rule applies only when the containing assembly has ComVisible attribute explicitly set to false
 	/// and the type has ComVisible attribute explicitly set to true.
 	/// </remarks>
 	[Problem ("Value types with StructLayout attribute set to LayoutKind.Auto should not be COM visible")]
@@ -87,17 +87,17 @@ namespace Gendarme.Rules.Interoperability.Com {
 		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			if (type.IsEnum || !type.IsValueType || !type.HasCustomAttributes || 
+			if (type.IsEnum || !type.IsValueType || !type.HasCustomAttributes ||
 				(!type.IsPublic && !type.IsNestedPublic) || type.HasGenericParameters)
 				return RuleResult.DoesNotApply;
 
 			if (!type.IsTypeComVisible ())
 				return RuleResult.DoesNotApply;
-				
-			if (type.IsAutoLayout) 
+
+			if (type.IsAutoLayout)
 				Runner.Report (type, Severity.High, Confidence.High);
 
-			return Runner.CurrentRuleResult;	
+			return Runner.CurrentRuleResult;
 		}
 	}
 }

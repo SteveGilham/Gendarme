@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -48,8 +48,8 @@ namespace Gendarme.Rules.Globalization {
 	/// <code>
 	/// public bool Check (string name)
 	/// {
-	///	// it's not clear if the string comparison should be culture sensitive or not
-	///	return (String.Compare (name, "Software") == 0);
+	/// 	// it's not clear if the string comparison should be culture sensitive or not
+	/// 	return (String.Compare (name, "Software") == 0);
 	/// }
 	/// </code>
 	/// </example>
@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Globalization {
 	/// <code>
 	/// public bool Check (string name)
 	/// {
-	///	return (String.Compare (name, "Software", StringComparison.CurrentCulture) == 0);
+	/// 	return (String.Compare (name, "Software", StringComparison.CurrentCulture) == 0);
 	/// }
 	/// </code>
 	/// </example>
@@ -85,7 +85,7 @@ namespace Gendarme.Rules.Globalization {
 		/// <param name="prefered">Prefered method to use</param>
 		protected override void Report (MethodDefinition method, Instruction instruction, MethodReference prefered)
 		{
-			string msg = String.Format (CultureInfo.InvariantCulture, 
+			string msg = String.Format (CultureInfo.InvariantCulture,
 				"Consider using the perfered '{0}' override.", prefered.GetFullName ());
 			Runner.Report (method, instruction, Severity.Medium, Confidence.High, msg);
 		}

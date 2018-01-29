@@ -40,23 +40,23 @@ namespace Gendarme.Rules.Design.Generic {
 	/// This method will fire if a generic method does not use all of its generic type parameters
 	/// in the formal parameter list. This usually means that either the type parameter is not used at
 	/// all in which case it should be removed or that it's used only for the return type which
-	/// is problematic because that prevents the compiler from inferring the generic type 
+	/// is problematic because that prevents the compiler from inferring the generic type
 	/// when the method is called which is confusing to many developers.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	public string ToString&lt;T&gt; ()
-	///	{
-	///		return typeof (T).ToString ();
-	///	}
-	///	
-	///	static void Main ()
-	///	{
-	///		// the compiler can't infer int so we need to supply it ourselves
-	///		Console.WriteLine (ToString&lt;int&gt; ());
-	///	}
+	/// 	public string ToString&lt;T&gt; ()
+	/// 	{
+	/// 		return typeof (T).ToString ();
+	/// 	}
+	///
+	/// 	static void Main ()
+	/// 	{
+	/// 		// the compiler can't infer int so we need to supply it ourselves
+	/// 		Console.WriteLine (ToString&lt;int&gt; ());
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -64,15 +64,15 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	public string ToString&lt;T&gt; (T obj)
-	///	{
-	///		return obj.GetType ().ToString ();
-	///	}
-	///	
-	///	static void Main ()
-	///	{
-	///		Console.WriteLine (ToString (2));
-	///	}
+	/// 	public string ToString&lt;T&gt; (T obj)
+	/// 	{
+	/// 		return obj.GetType ().ToString ();
+	/// 	}
+	///
+	/// 	static void Main ()
+	/// 	{
+	/// 		Console.WriteLine (ToString (2));
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

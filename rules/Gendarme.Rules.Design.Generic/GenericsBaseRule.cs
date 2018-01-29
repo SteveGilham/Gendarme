@@ -45,7 +45,7 @@ namespace Gendarme.Rules.Design.Generic {
 		{
 			base.Initialize (runner);
 
-			// we only want to run Design.Generic.* rules on assemblies that 
+			// we only want to run Design.Generic.* rules on assemblies that
 			// use 2.0 or later since generics were not available before
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentModule.Runtime >= TargetRuntime.Net_2_0);

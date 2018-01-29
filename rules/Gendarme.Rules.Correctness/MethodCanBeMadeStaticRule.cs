@@ -47,27 +47,27 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	private int x, y, z;
-	///	
-	///	bool Valid (int value)
-	///	{
-	///		// no instance members are used
-	///		return (value > 0);
-	///	}
-	///	
-	///	public int X {
-	///		get {
-	///			return x;
-	///		}
-	///		set {
-	///			if (!Valid (value)) {
-	///				throw ArgumentException ("X");
-	///			}
-	///			x = value;
-	///		}
-	///	}
-	///	
-	///	// same for Y and Z
+	/// 	private int x, y, z;
+	///
+	/// 	bool Valid (int value)
+	/// 	{
+	/// 		// no instance members are used
+	/// 		return (value > 0);
+	/// 	}
+	///
+	/// 	public int X {
+	/// 		get {
+	/// 			return x;
+	/// 		}
+	/// 		set {
+	/// 			if (!Valid (value)) {
+	/// 				throw ArgumentException ("X");
+	/// 			}
+	/// 			x = value;
+	/// 		}
+	/// 	}
+	///
+	/// 	// same for Y and Z
 	///}
 	/// </code>
 	/// </example>
@@ -75,14 +75,14 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	private int x, y, z;
-	///	
-	///	static bool Valid (int value)
-	///	{
-	///		return (value > 0);
-	///	}
-	///	
-	///	// same X (and Y and Z) as before
+	/// 	private int x, y, z;
+	///
+	/// 	static bool Valid (int value)
+	/// 	{
+	/// 		return (value > 0);
+	/// 	}
+	///
+	/// 	// same X (and Y and Z) as before
 	///}
 	/// </code>
 	/// </example>

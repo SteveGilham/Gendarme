@@ -37,19 +37,19 @@ namespace Gendarme.Rules.Design.Generic {
 
 	/// <summary>
 	/// This rule will fire if an externally visible method has a parameter or return type
-	/// whose type is a generic type which contains a generic type. For example, 
+	/// whose type is a generic type which contains a generic type. For example,
 	/// <c>List&lt;List&lt;int&gt;&gt;</c>. Such types are hard to construct and should
 	/// be avoided because simpler alternatives generally exist.
-	/// Since some language, like C#, have direct support for nullable types, i.e. 
+	/// Since some language, like C#, have direct support for nullable types, i.e.
 	/// <c>System.Nullable&lt;T&gt;</c> this specific case is ignored by the rule.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public class Generic&lt;T&gt; {
-	///	public void Process (KeyValuePair&lt;T, ICollection&lt;int&gt;&gt; value)
-	///	{
-	///	}
+	/// 	public void Process (KeyValuePair&lt;T, ICollection&lt;int&gt;&gt; value)
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -57,9 +57,9 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Good example:
 	/// <code>
 	/// public class Generic&lt;T&gt; {
-	///	public void Process (KeyValuePair&lt;T, int[]&gt; value)
-	///	{
-	///	}
+	/// 	public void Process (KeyValuePair&lt;T, int[]&gt; value)
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -76,7 +76,7 @@ namespace Gendarme.Rules.Design.Generic {
 				foreach (TypeReference tr in git.GenericArguments) {
 					git = (tr as GenericInstanceType);
 					if (git != null) {
-						// nullable are an exception because there is syntaxic sugar (at 
+						// nullable are an exception because there is syntaxic sugar (at
 						// least in some language like C#) to make them easier to use
 						// note: FxCop does not ignore them
 						if (git.ElementType.IsNamed ("System", "Nullable`1"))

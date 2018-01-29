@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.BadPractice.AvoidAssemblyVersionMismatchRule
 //
 // Authors:
@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// This rule checks that the <c>[AssemblyVersion]</c> matches the <c>[AssemblyFileVersion]</c> 
+	/// This rule checks that the <c>[AssemblyVersion]</c> matches the <c>[AssemblyFileVersion]</c>
 	/// when both are present inside an assembly. Having different version numbers in both
 	/// attributes can be confusing once the application is deployed.
 	/// </summary>

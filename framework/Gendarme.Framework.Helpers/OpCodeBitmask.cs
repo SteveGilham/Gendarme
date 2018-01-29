@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Helpers.OpCodeBitmask
 //
 // Authors:
@@ -34,7 +34,7 @@ using Mono.Cecil.Cil;
 namespace Gendarme.Framework.Helpers {
 
 	/// <summary>
-	/// This is a specialized Bitmask class for the Code enumeration. 
+	/// This is a specialized Bitmask class for the Code enumeration.
 	/// Bitmask`1 can't be used since there are more than 64 opcodes defined.
 	/// </summary>
 	public sealed class OpCodeBitmask : IEquatable<OpCodeBitmask> {
@@ -160,7 +160,7 @@ namespace Gendarme.Framework.Helpers {
 
 		public override string ToString ()
 		{
-			return String.Format (CultureInfo.InvariantCulture, "0x{0:X}:0x{1:X}:0x{2:X}:0x{3:X}", 
+			return String.Format (CultureInfo.InvariantCulture, "0x{0:X}:0x{1:X}:0x{2:X}:0x{3:X}",
 				mask [0], mask [1], mask [2], mask [3]);
 		}
 

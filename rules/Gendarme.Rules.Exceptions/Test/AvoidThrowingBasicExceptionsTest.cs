@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for AvoidThrowingBasicExceptionsRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -38,23 +38,23 @@ using Test.Rules.Fixtures;
 namespace Test.Rules.Exceptions {
 	[TestFixture]
 	public class AvoidThrowingBasicExceptionsTest : MethodRuleTestFixture<AvoidThrowingBasicExceptionsRule> {
-	
+
 		class ExceptionThrower {
 			public void CreateException ()
 			{
 				Exception ex = new Exception ("upyachka");
 			}
-			
+
 			public void CreateApplicationException ()
 			{
 				ApplicationException ex = new ApplicationException ("krevedko");
 			}
-			
+
 			public void CreateSystemException ()
 			{
 				SystemException ex = new SystemException ("^_^");
 			}
-						
+
 			public void ThrowException ()
 			{
 				throw new Exception ("yarrr!");
@@ -69,7 +69,7 @@ namespace Test.Rules.Exceptions {
 			{
 				throw new SystemException ("zhazha");
 			}
-			
+
 			public void ThrowSpecificExceptions ()
 			{
 				Random r = new Random ();
@@ -78,7 +78,7 @@ namespace Test.Rules.Exceptions {
 				if (r.NextDouble () > 0.5) throw new OverflowException ("too much upyachka!");
 				if (r.NextDouble () > 0.5) throw new ExecutionEngineException ();
 			}
-			
+
 			public void ThrowTwoBasicExceptions ()
 			{
 				Random r = new Random ();
@@ -92,8 +92,8 @@ namespace Test.Rules.Exceptions {
 				if (r.NextDouble () > 0.5) throw new ExecutionEngineException ();
 			}
 		}
-		
-		
+
+
 		[Test]
 		public void DoesNotApply ()
 		{
@@ -110,7 +110,7 @@ namespace Test.Rules.Exceptions {
 			AssertRuleFailure<ExceptionThrower> ("CreateApplicationException");
 			AssertRuleFailure<ExceptionThrower> ("CreateSystemException");
 		}
-		
+
 		[Test]
 		public void ThrowBasicExceptionsFails ()
 		{
@@ -118,13 +118,13 @@ namespace Test.Rules.Exceptions {
 			AssertRuleFailure<ExceptionThrower> ("ThrowApplicationException");
 			AssertRuleFailure<ExceptionThrower> ("ThrowSystemException");
 		}
-		
+
 		[Test]
 		public void ThrowSpecificExceptionsSucceeds ()
 		{
 			AssertRuleSuccess<ExceptionThrower> ("ThrowSpecificExceptions");
 		}
-		
+
 		[Test]
 		public void GotCountRight ()
 		{

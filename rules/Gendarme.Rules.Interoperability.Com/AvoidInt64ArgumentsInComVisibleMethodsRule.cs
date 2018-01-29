@@ -45,13 +45,13 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public class Bad {
-	///		public void DoBadThings (long a)
-	///		{
-	///			// doing bad things
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class Bad {
+	/// 		public void DoBadThings (long a)
+	/// 		{
+	/// 			// doing bad things
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -60,13 +60,13 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public class Good {
-	///		public void DoGoodThings (int a)
-	///		{
-	///			// doing good things
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class Good {
+	/// 		public void DoGoodThings (int a)
+	/// 		{
+	/// 			// doing good things
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -75,19 +75,19 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public class Good {
-	///		[ComVisible (false)]
-	///		public void DoGoodThings (long a)
-	///		{
-	///			// doing good things
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class Good {
+	/// 		[ComVisible (false)]
+	/// 		public void DoGoodThings (long a)
+	/// 		{
+	/// 			// doing good things
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
 	/// <remarks>
-	/// Rule applies only when the containing assembly has ComVisible attribute explicitly set to false 
+	/// Rule applies only when the containing assembly has ComVisible attribute explicitly set to false
 	/// and the type has ComVisible attribute explicitly set to true.
 	/// </remarks>
 	[Problem ("ComVisible method takes Int64 argument which is not usable from VB6 clients")]
@@ -104,7 +104,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 		{
 			if (!method.HasParameters)
 				return RuleResult.DoesNotApply;
-			
+
 			// check that class is explicitly ComVisible, assembly is explicitly not ComVisible
 			// and method does not have [ComVisible (false)]
 			if (!method.DeclaringType.IsTypeComVisible () || !(method.IsComVisible () ?? true))

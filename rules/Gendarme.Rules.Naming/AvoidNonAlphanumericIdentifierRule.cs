@@ -39,7 +39,7 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Naming {
 
-	// TODO: This is a confusing rule. It's called "AvoidNonAlphanumericIdentifierRule" and 
+	// TODO: This is a confusing rule. It's called "AvoidNonAlphanumericIdentifierRule" and
 	// the summary suggests that it will fire for non-alphanumeric characters, but the
 	// problem/solution text and the code only check for underscores. The code suggests
 	// that it's only neccesary to check for underscores because the compiler will catch the
@@ -50,27 +50,27 @@ namespace Gendarme.Rules.Naming {
 	//
 	// It seems to me that this rule should explain why underscores and unusual letters are
 	// a problem and fire if a character not in [a-zA-Z0-9] is used. And of course the summary
-	// and problem texts should be synced up. 
+	// and problem texts should be synced up.
 
 	/// <summary>
-	/// This rule ensures that identifiers like assembly names, namespaces, types and 
-	/// members names don't have any non-alphanumerical characters inside them. The rule 
-	/// will ignore interfaces used for COM interoperability - i.e. decorated with both 
+	/// This rule ensures that identifiers like assembly names, namespaces, types and
+	/// members names don't have any non-alphanumerical characters inside them. The rule
+	/// will ignore interfaces used for COM interoperability - i.e. decorated with both
 	/// <c>[InterfaceType]</c> and <c>[Guid]</c> attributes.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// namespace New_Namespace {
-	/// 
-	///	public class My_Custom_Class {
-	///	
-	///		public int My_Field;
-	/// 
-	///		public void My_Method (string my_string)
-	///		{
-	///		}
-	///	}
+	///
+	/// 	public class My_Custom_Class {
+	///
+	/// 		public int My_Field;
+	///
+	/// 		public void My_Method (string my_string)
+	/// 		{
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -78,15 +78,15 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// namespace NewNamespace {
-	/// 
-	///	public class MyCustomClass {
-	/// 
-	///		public int MyField;
-	///		
-	///		public void MyMethod (string myString)
-	///		{
-	///		}
-	///	}
+	///
+	/// 	public class MyCustomClass {
+	///
+	/// 		public int MyField;
+	///
+	/// 		public void MyMethod (string myString)
+	/// 		{
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -98,7 +98,7 @@ namespace Gendarme.Rules.Naming {
 	[FxCopCompatibility ("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
 	public class AvoidNonAlphanumericIdentifierRule : Rule, IAssemblyRule, IMethodRule, ITypeRule {
 
-		// Compiler generates an error for any other non alpha-numerics than underscore ('_'), 
+		// Compiler generates an error for any other non alpha-numerics than underscore ('_'),
 		// so we just need to check the presence of underscore in method names
 		private static bool CheckName (string name, bool special)
 		{

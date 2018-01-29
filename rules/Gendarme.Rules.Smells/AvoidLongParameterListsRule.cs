@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.AvoidLongParameterListsRule class
 //
 // Authors:
@@ -42,18 +42,22 @@ namespace Gendarme.Rules.Smells {
 	// default arguments. The solution is really confusing. What is "preserve whole object"?
 	// The introduction of a helper class to bundle state together? What is "parameter object"?
 	// The params keyword?
-	
+
 	/// <summary>
+	/// <para>
 	/// This rule allows developers to measure the parameter list size in a method.
 	/// If you have methods with a lot of parameters, perhaps you have a Long
 	/// Parameter List smell.
-	/// 
-	/// This rule counts the method's parameters, and compares it against a maximum value. 
-	/// If you have an overloaded method, then the rule will get the shortest overload 
+	/// </para>
+	/// <para>
+	/// This rule counts the method's parameters, and compares it against a maximum value.
+	/// If you have an overloaded method, then the rule will get the shortest overload
 	/// and compare the shortest overload against the maximum value.
-	///
-	/// Other time, it's quite hard determine a long parameter list. By default, 
-	/// a method with 6 or more arguments will be flagged as a defect. 
+	/// </para>
+	/// <para>
+	/// Other time, it's quite hard determine a long parameter list. By default,
+	/// a method with 6 or more arguments will be flagged as a defect.
+	/// </para>
 	/// </summary>
 	/// <example>
 	/// Bad example:
@@ -61,7 +65,7 @@ namespace Gendarme.Rules.Smells {
 	/// public void MethodWithLongParameterList (int x, char c, object obj, bool j, string f,
 	///                                         float z, double u, short s, int v, string[] array)
 	/// {
-   	/// 	// Method body ... 
+	/// 	// Method body ...
 	/// }
 	/// </code>
 	/// </example>
@@ -70,15 +74,13 @@ namespace Gendarme.Rules.Smells {
 	/// <code>
 	/// public void MethodWithoutLongParameterList (int x, object obj)
 	/// {
-	/// 	// Method body.... 
+	/// 	// Method body....
 	/// }
 	/// </code>
 	/// </example>
 
-	//SUGGESTION: Setting all required properties in a constructor isn't
-	//uncommon.
-	//SUGGESTION: Different value for public / private / protected methods *may*
-	//be useful.
+	//SUGGESTION: Setting all required properties in a constructor isn't uncommon.
+	//SUGGESTION: Different value for public / private / protected methods *may* be useful.
 	[Problem ("Generally, long parameter lists are hard to understand because they become hard to use and inconsistent.  And you will be forever changing them if you need more data.")]
 	[Solution ("You should apply the Replace parameter with method refactoring, or preserve whole object or introduce parameter object")]
 	public class AvoidLongParameterListsRule : Rule, ITypeRule {
@@ -128,9 +130,9 @@ namespace Gendarme.Rules.Smells {
 		{
 			//Skip enums, interfaces, <Module>, static classes ...
 			//All stuff that doesn't contain a constructor
-			if (constructor == null) 
+			if (constructor == null)
 				return;
-			if (HasMoreParametersThanAllowed (constructor)) 
+			if (HasMoreParametersThanAllowed (constructor))
 				Runner.Report (constructor, Severity.Medium, Confidence.High, "This constructor contains a long parameter list.");
 		}
 
@@ -185,7 +187,7 @@ namespace Gendarme.Rules.Smells {
 				Runner.Report (type, Severity.Medium, Confidence.High, "This delegate contains a long parameter list.");
 			return Runner.CurrentRuleResult;
 		}
-		
+
 		/// <summary>
 		/// Check type
 		/// </summary>
@@ -193,18 +195,18 @@ namespace Gendarme.Rules.Smells {
 		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			// we don't control, nor report, p/invoke declarations - sometimes the poor C 
+			// we don't control, nor report, p/invoke declarations - sometimes the poor C
 			// guys don't have a choice to make long parameter lists ;-)
 			if (OnlyContainsExternalMethods (type))
 				return RuleResult.DoesNotApply;
-			
+
 			if (type.IsDelegate ())
 				return CheckDelegate (type);
 
 			if (type.HasMethods) {
 				CheckConstructor (GetSmallestConstructorFrom (type));
 
-				foreach (MethodDefinition method in GetSmallestOverloaded (type)) 
+				foreach (MethodDefinition method in GetSmallestOverloaded (type))
 					CheckMethod (method);
 			}
 

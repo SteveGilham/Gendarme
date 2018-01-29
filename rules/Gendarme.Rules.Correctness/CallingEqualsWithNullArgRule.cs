@@ -47,9 +47,9 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public void MakeStuff ()
 	/// {
-	///	MyClass myClassInstance = new MyClass ();
-	///	MyClass otherClassInstance = null;
-	///	Console.WriteLine (myClassInstance.Equals (otherClassInstance));
+	/// 	MyClass myClassInstance = new MyClass ();
+	/// 	MyClass otherClassInstance = null;
+	/// 	Console.WriteLine (myClassInstance.Equals (otherClassInstance));
 	/// }
 	/// </code>
 	/// </example>
@@ -58,9 +58,9 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public void MakeStuff ()
 	/// {
-	///	MyClass myClassInstance = new MyClass ();
-	///	MyClass otherClassInstance = new MyClass ();
-	///	Console.WriteLine (myClassInstance.Equals (otherClassInstance));
+	/// 	MyClass myClassInstance = new MyClass ();
+	/// 	MyClass otherClassInstance = new MyClass ();
+	/// 	Console.WriteLine (myClassInstance.Equals (otherClassInstance));
 	/// }
 	/// </code>
 	/// </example>

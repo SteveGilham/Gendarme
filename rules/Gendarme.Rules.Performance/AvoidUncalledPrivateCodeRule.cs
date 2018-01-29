@@ -38,8 +38,8 @@ using Gendarme.Framework.Helpers;
 namespace Gendarme.Rules.Performance {
 
 	/// <summary>
-	/// This rule will check for internally visible methods which are never called. 
-	/// The rule will warn you if a private method isn't called in its declaring type or 
+	/// This rule will check for internally visible methods which are never called.
+	/// The rule will warn you if a private method isn't called in its declaring type or
 	/// if an internal method doesn't have any callers in the assembly or isn't invoked by
 	/// the runtime or a delegate.
 	/// </summary>
@@ -47,15 +47,15 @@ namespace Gendarme.Rules.Performance {
 	/// Bad example:
 	/// <code>
 	/// public class MyClass {
-	///	private void MakeSuff ()
-	///	{
-	///		// ...
-	///	}
-	///	
-	///	public void Method ()
-	///	{
-	///		Console.WriteLine ("Foo");
-	///	}
+	/// 	private void MakeSuff ()
+	/// 	{
+	/// 		// ...
+	/// 	}
+	///
+	/// 	public void Method ()
+	/// 	{
+	/// 		Console.WriteLine ("Foo");
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,10 +63,10 @@ namespace Gendarme.Rules.Performance {
 	/// Good example (removing unused code):
 	/// <code>
 	/// public class MyClass {
-	///	public void Method ()
-	///	{
-	///		Console.WriteLine ("Foo");
-	///	}
+	/// 	public void Method ()
+	/// 	{
+	/// 		Console.WriteLine ("Foo");
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -74,16 +74,16 @@ namespace Gendarme.Rules.Performance {
 	/// Good example (use the code):
 	/// <code>
 	/// public class MyClass {
-	///	private void MakeSuff ()
-	///	{
-	///		// ...
-	///	}
-	///	
-	///	public void Method ()
-	///	{
-	///		Console.WriteLine ("Foo");
-	///		MakeSuff ();
-	///	}
+	/// 	private void MakeSuff ()
+	/// 	{
+	/// 		// ...
+	/// 	}
+	///
+	/// 	public void Method ()
+	/// 	{
+	/// 		Console.WriteLine ("Foo");
+	/// 		MakeSuff ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -101,7 +101,7 @@ namespace Gendarme.Rules.Performance {
 			foreach (CustomAttribute ca in method.CustomAttributes) {
 				TypeReference cat = ca.AttributeType;
 				string name = cat.Name;
-				if ((cat.IsNamed ("System.Diagnostics", name)) || (cat.Namespace == "System.Runtime.InteropServices" && 
+				if ((cat.IsNamed ("System.Diagnostics", name)) || (cat.Namespace == "System.Runtime.InteropServices" &&
 					(name == "ComRegisterFunctionAttribute" || name == "ComUnregisterFunctionAttribute"))) {
 					return true;
 				}
@@ -120,7 +120,7 @@ namespace Gendarme.Rules.Performance {
 				return false;
 
 			// rule doesn't apply if the method is the assembly entry point or Main
-			if (method.Module.Assembly.EntryPoint != null) { 
+			if (method.Module.Assembly.EntryPoint != null) {
 				if (method.Module.Assembly.EntryPoint == method)
 					return false;
 			}
@@ -158,7 +158,7 @@ namespace Gendarme.Rules.Performance {
 			if (method.IsVisible ())
 				return RuleResult.Success;
 
-			// check if the method is private 
+			// check if the method is private
 			if (method.IsPrivate) {
 				if (!CheckPrivateMethod (method)) {
 					Runner.Report (method, Severity.High, Confidence.Normal, "The private method code is not used in its declaring type.");
@@ -175,7 +175,7 @@ namespace Gendarme.Rules.Performance {
 
 			// internal methods and visible methods (public or protected) inside a non-visible type
 			// needs to be checked if something in the assembly is using this method
-			bool need_to_check_assembly = (method.IsAssembly || 
+			bool need_to_check_assembly = (method.IsAssembly ||
 				((method.IsPublic || method.IsFamily) && !method.DeclaringType.IsVisible ()));
 
 			if (!need_to_check_assembly || CheckAssemblyForMethodUsage (method))
@@ -233,7 +233,7 @@ namespace Gendarme.Rules.Performance {
 			// handle things like operators - but not properties
 			if (method.IsSpecialName && !method.IsProperty ())
 				return true;
-			
+
 			// handle non-virtual Equals, e.g. Equals(type)
 			string name = method.Name;
 			if (method.HasParameters && (name == "Equals")) {

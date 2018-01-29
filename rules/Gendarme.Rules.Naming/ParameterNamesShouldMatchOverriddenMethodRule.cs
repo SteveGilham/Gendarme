@@ -40,7 +40,7 @@ using System.Text;
 namespace Gendarme.Rules.Naming {
 
 	/// <summary>
-	/// This rule warns if an overriden method's parameter names does not match those of the 
+	/// This rule warns if an overriden method's parameter names does not match those of the
 	/// base class or those of the implemented interface. This can be confusing because it may
 	/// not always be clear that it is an override or implementation of an interface method. It
 	/// also makes it more difficult to use the method with languages that support named
@@ -50,14 +50,14 @@ namespace Gendarme.Rules.Naming {
 	/// Bad example:
 	/// <code>
 	/// public class Base {
-	///	public abstract void Write (string text);
+	/// 	public abstract void Write (string text);
 	/// }
-	/// 
+	///
 	/// public class SubType : Base {
-	///	public override void Write (string output)
-	///	{
-	///		//...
-	///	}
+	/// 	public override void Write (string output)
+	/// 	{
+	/// 		//...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -65,14 +65,14 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// public class Base {
-	///	public abstract void Write (string text);
+	/// 	public abstract void Write (string text);
 	/// }
-	/// 
+	///
 	/// class SubType : Base {
-	///	public override void Write (string text)
-	///	{
-	///		//...
-	///	}
+	/// 	public override void Write (string text)
+	/// 	{
+	/// 		//...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

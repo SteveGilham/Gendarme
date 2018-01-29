@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Nicholas Rioux
-// 
+//
 // Copyright (C) 2010 Nicholas Rioux
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,32 +36,32 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Interoperability.Com {
 
 	/// <summary>
-	/// This rule checks for ComVisible reference types which have a public parameterized constructor, 
+	/// This rule checks for ComVisible reference types which have a public parameterized constructor,
 	/// but lack a default public constructor.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
-	///	[ComVisible (true)]
-	///	public class BadClass {
-	///		public BadClass (int param) {
-	///		
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class BadClass {
+	/// 		public BadClass (int param) {
+	///
+	/// 		}
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
-	///	[ComVisible (true)]
-	///	public class GoodClass {
-	///		public GoodClass () {
-	///		
-	///		}
-	///		public GoodClass (int param) {
-	///			
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class GoodClass {
+	/// 		public GoodClass () {
+	///
+	/// 		}
+	/// 		public GoodClass (int param) {
+	///
+	/// 		}
+	/// 	}
 	/// </code>
 	/// </example>
 
@@ -100,7 +100,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 			}
 			if (!hasParameterizedCtor || hasDefaultCtor)
 				return RuleResult.Success;
-				
+
 			Runner.Report (type, Severity.Medium, Confidence.Total);
 
 			return Runner.CurrentRuleResult;

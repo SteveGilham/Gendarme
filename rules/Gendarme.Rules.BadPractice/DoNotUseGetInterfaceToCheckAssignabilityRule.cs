@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.BadPractice.DoNotUseGetInterfaceToCheckAssignabilityRule
 //
 // Authors:
@@ -48,8 +48,8 @@ namespace Gendarme.Rules.BadPractice {
 	/// Bad example:
 	/// <code>
 	/// if (type.GetInterface ("IConvertible") != null)  {
-	///	// then the type can be assigned to IConvertible
-	///	// but what if there is another IConvertible in there ?!?
+	/// 	// then the type can be assigned to IConvertible
+	/// 	// but what if there is another IConvertible in there ?!?
 	/// }
 	/// </code>
 	/// </example>
@@ -57,8 +57,8 @@ namespace Gendarme.Rules.BadPractice {
 	/// Good example:
 	/// <code>
 	/// if (typeof (IConvertible).IsAssignableFrom (type))  {
-	///	// then the type can be assigned to IConvertible
-	///	// without a doubt!
+	/// 	// then the type can be assigned to IConvertible
+	/// 	// without a doubt!
 	/// }
 	/// </code>
 	/// </example>

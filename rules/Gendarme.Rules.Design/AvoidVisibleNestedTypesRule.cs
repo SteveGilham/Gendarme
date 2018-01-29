@@ -45,9 +45,9 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public class Outer {
-	///	public class Inner {
-	///		// ...
-	///	}
+	/// 	public class Inner {
+	/// 		// ...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -55,9 +55,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example (visibility):
 	/// <code>
 	/// public class Outer {
-	///	internal class Inner {
-	///		// ...
-	///	}
+	/// 	internal class Inner {
+	/// 		// ...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -65,11 +65,11 @@ namespace Gendarme.Rules.Design {
 	/// Good example (unnested):
 	/// <code>
 	/// public class Outer {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// public class Inner {
-	///	// ...
+	/// 	// ...
 	/// }
 	/// </code>
 	/// </example>

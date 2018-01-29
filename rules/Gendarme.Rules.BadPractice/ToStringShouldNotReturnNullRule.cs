@@ -45,7 +45,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public override string ToString ()
 	/// {
-	///	return (count == 0) ? null : count.ToString ();
+	/// 	return (count == 0) ? null : count.ToString ();
 	/// }
 	/// </code>
 	/// </example>
@@ -54,7 +54,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public override string ToString ()
 	/// {
-	///	return count.ToString ();
+	/// 	return count.ToString ();
 	/// }
 	/// </code>
 	/// </example>

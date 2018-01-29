@@ -41,27 +41,27 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Security.Cas {
 
 	/// <summary>
-	/// This rule checks for visible methods that are less protected (i.e. lower security 
-	/// requirements) than the method they call. If the called methods are protected by a 
+	/// This rule checks for visible methods that are less protected (i.e. lower security
+	/// requirements) than the method they call. If the called methods are protected by a
 	/// <c>LinkDemand</c> then the caller can be used to bypass security checks.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public class BaseClass {
-	///	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
+	/// 	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
 	/// 	public virtual void VirtualMethod ()
 	/// 	{
 	/// 	}
 	/// }
-	/// 
+	///
 	/// public class Class : BaseClass  {
-	///	// bad since a caller with only ControlAppDomain will be able to call the base method
+	/// 	// bad since a caller with only ControlAppDomain will be able to call the base method
 	/// 	[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
-	///	public override void VirtualMethod ()
-	///	{
-	///		base.VirtualMethod ();
-	///	}
+	/// 	public override void VirtualMethod ()
+	/// 	{
+	/// 		base.VirtualMethod ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -74,14 +74,14 @@ namespace Gendarme.Rules.Security.Cas {
 	/// 	{
 	/// 	}
 	/// }
-	/// 
+	///
 	/// public class Class : BaseClass  {
-	///	// ok since this permission cover the base class permission
-	///	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
-	///	public override void VirtualMethod ()
-	///	{
-	///		base.VirtualMethod ();
-	///	}
+	/// 	// ok since this permission cover the base class permission
+	/// 	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
+	/// 	public override void VirtualMethod ()
+	/// 	{
+	/// 		base.VirtualMethod ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -129,7 +129,7 @@ namespace Gendarme.Rules.Security.Cas {
 			//	otherwise we don't know what it's calling
 			if (!method.HasBody)
 				return RuleResult.DoesNotApply;
-			
+
 			// #2 - rule apply to methods are publicly accessible
 			//	note that the type doesn't have to be public (indirect access)
 			if (!method.IsVisible ())

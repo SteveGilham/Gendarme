@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +7,7 @@ using Mono.Cecil.Cil;
 namespace Gendarme.Rules.Exceptions.Impl {
 
 	internal sealed class ExecutionPathCollection : List<ExecutionBlock> {
-	
+
 		public ExecutionPathCollection ()
 		{
 		}

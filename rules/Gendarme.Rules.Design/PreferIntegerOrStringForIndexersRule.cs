@@ -47,9 +47,9 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public bool this [DateTime date] {
-	///	get {
-	///		return false;
-	///	}
+	/// 	get {
+	/// 		return false;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Design {
 	/// <code>
 	/// public bool IsSomethingPlanned (DateTime date)
 	/// {
-	///	return false;
+	/// 	return false;
 	/// }
 	/// </code>
 	/// </example>

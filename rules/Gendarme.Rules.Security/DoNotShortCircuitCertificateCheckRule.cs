@@ -50,7 +50,7 @@ namespace Gendarme.Rules.Security {
 	/// public class AcceptEverythingCertificatePolicy : ICertificatePolicy {
 	/// 	public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
 	/// 	{
-	/// 		// this accepts everything making it easy for MITM 
+	/// 		// this accepts everything making it easy for MITM
 	/// 		// (Man-in-the-middle) attacks
 	/// 		return true;
 	/// 	}
@@ -74,11 +74,11 @@ namespace Gendarme.Rules.Security {
 	/// <code>
 	/// public bool CertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 	/// {
-	/// 	// this accepts everything making it easy for MITM 
+	/// 	// this accepts everything making it easy for MITM
 	/// 	// (Man-in-the-middle) attacks
-	///	return true;
+	/// 	return true;
 	/// }
-	/// 
+	///
 	/// SslStream ssl = new SslStream (stream, false, new RemoteCertificateValidationCallback (CertificateValidationCallback), null);
 	/// </code>
 	/// </example>
@@ -90,7 +90,7 @@ namespace Gendarme.Rules.Security {
 	/// 	// this accept only a specific certificate, even if others would be ok
 	/// 	return (certificate.GetCertHashString () == "D62F48D013EE7FB58B79074512670D9C5B3A5DA9");
 	/// }
-	/// 
+	///
 	/// SslStream ssl = new SslStream (stream, false, new RemoteCertificateValidationCallback (CertificateValidationCallback), null);
 	/// </code>
 	/// </example>
@@ -125,7 +125,7 @@ namespace Gendarme.Rules.Security {
 		{
 			base.Initialize (runner);
 
-			// if the module does not reference System.Math then 
+			// if the module does not reference System.Math then
 			// none of its method is being called with constants
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
@@ -174,7 +174,7 @@ namespace Gendarme.Rules.Security {
 			} else if (name != "System.Net.ICertificatePolicy.CheckValidationResult")
 				return RuleResult.Success;
 
-			// the policy is suspect if it does not touch 
+			// the policy is suspect if it does not touch
 			// * the certificate parameter (2nd); and
 			// * the certificateProblem parameter (4th)
 			return CheckArguments (method, false);
@@ -182,7 +182,7 @@ namespace Gendarme.Rules.Security {
 
 		private RuleResult CheckCallback (MethodDefinition method)
 		{
-			// the policy is suspect if it does not touch 
+			// the policy is suspect if it does not touch
 			// * the certificate parameter (2nd); and
 			// * the chain parameter (3rd); and
 			// * the certificateProblem parameter (4th)

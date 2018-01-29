@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Extracted from CFG.cs
  *
  * Authors:
@@ -22,7 +22,7 @@ using Mono.Cecil.Cil;
 
 namespace Gendarme.Framework.Helpers {
 
-	public sealed class MethodPrinter { 
+	public sealed class MethodPrinter {
 
 		private IList<Instruction> instructions;
 		private MethodDefinition method;
@@ -32,31 +32,31 @@ namespace Gendarme.Framework.Helpers {
 		{
 			if (m == null)
 				throw new ArgumentNullException ("m");
-			
+
 			method = m;
 			if (method.HasBody)
 				instructions = method.Body.Instructions;
-			
+
 			if (instructions != null)
 				InitBranchTable ();
 		}
 
-		public override string ToString () 
+		public override string ToString ()
 		{
 			Instruction prevInstr = null;
-			
+
 			StringBuilder buffer = new StringBuilder ();
 
 			if (method != null)
 				buffer.AppendLine (method.ToString ());
-				
+
 			if (instructions != null) {
 				foreach (Instruction instr in instructions) {
 					if (StartsTryRegion (instr) != null)
 						buffer.AppendLine ("Try {");
 					if (StartsHandlerRegion (instr) != null)
 						buffer.AppendLine ("Handle {");
-		
+
 					if (IsLeader (instr, prevInstr))
 						buffer.Append ("* ");
 					else

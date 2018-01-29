@@ -55,9 +55,9 @@ namespace Gendarme.Rules.Naming {
 	/// Bad example:
 	/// <code>
 	/// namespace A {
-	///	abstract public class myClass {
-	///		abstract public int thisMethod (int ThatParameter);
-	///	}
+	/// 	abstract public class myClass {
+	/// 		abstract public int thisMethod (int ThatParameter);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -65,9 +65,9 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// namespace Company.Product.Technology {
-	///	abstract public class MyClass {
-	///		abstract public int ThisMethod (int thatParameter);
-	///	}
+	/// 	abstract public class MyClass {
+	/// 		abstract public int ThisMethod (int thatParameter);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -204,7 +204,7 @@ namespace Gendarme.Rules.Naming {
 			string name = type.Name;
 			if (!IsPascalCase (name)) {
 				ReportCasingError (type, String.Format (CultureInfo.InvariantCulture,
-					"Type names should all be pascal-cased. Rename '{0}' type to '{1}'.", 
+					"Type names should all be pascal-cased. Rename '{0}' type to '{1}'.",
 					name, PascalCase (name)));
 			}
 			return Runner.CurrentRuleResult;

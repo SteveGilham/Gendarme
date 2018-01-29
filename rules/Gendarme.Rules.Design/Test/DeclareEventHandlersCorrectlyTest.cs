@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for DeclareEventHandlersCorrectly rule
 //
 // Authors:
@@ -159,7 +159,7 @@ namespace Test.Rules.Design {
 		{
 			AssertRuleDoesNotApply<ClassWithDelegate> ();
 		}
-		
+
 		class ClassWithGenericEventHandler {
 			public event EventHandler<RunnerEventArgs> handler;
 		}

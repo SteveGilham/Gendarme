@@ -40,9 +40,9 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule looks for complex cast operations (e.g. a <c>as</c>
-	/// with a <c>null</c> check) that can be simplified using the <c>is</c> operator 
+	/// with a <c>null</c> check) that can be simplified using the <c>is</c> operator
 	/// (C# syntax). Note: in some case a compiler, like [g]mcs, can optimize the code and
-	/// generate IL identical to a <c>is</c> operator. In this case the rule will not report 
+	/// generate IL identical to a <c>is</c> operator. In this case the rule will not report
 	/// an error even if you could see one while looking the at source code.
 	/// </summary>
 	/// <example>

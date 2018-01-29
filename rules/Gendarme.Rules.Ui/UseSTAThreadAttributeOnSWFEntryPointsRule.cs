@@ -36,19 +36,19 @@ using Mono.Cecil;
 namespace Gendarme.Rules.UI {
 
 	/// <summary>
-	/// This rule checks executable assemblies, i.e. *.exe's, that reference 
-	/// System.Windows.Forms to 
-	/// ensure that their entry point is decorated with <c>[System.STAThread]</c> attribute 
-	/// and is not decorated with <c>[System.MTAThread]</c> attribute to ensure that Windows 
+	/// This rule checks executable assemblies, i.e. *.exe's, that reference
+	/// System.Windows.Forms to
+	/// ensure that their entry point is decorated with <c>[System.STAThread]</c> attribute
+	/// and is not decorated with <c>[System.MTAThread]</c> attribute to ensure that Windows
 	/// Forms work properly.
 	/// </summary>
 	/// <example>
 	/// Bad example #1 (no attributes):
 	/// <code>
 	/// public class WindowsFormsEntryPoint {
-	///	static void Main ()
-	///	{
-	///	}
+	/// 	static void Main ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -56,10 +56,10 @@ namespace Gendarme.Rules.UI {
 	/// Bad example #2 (MTAThread)
 	/// <code>
 	/// public class WindowsFormsEntryPoint {
-	///	[MTAThread]
-	///	static void Main ()
-	///	{
-	///	}
+	/// 	[MTAThread]
+	/// 	static void Main ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -78,9 +78,9 @@ namespace Gendarme.Rules.UI {
 	/// Good example #2 (not Windows Forms):
 	/// <code>
 	/// public class ConsoleAppEntryPoint {
-	///	static void Main ()
-	///	{
-	///	}
+	/// 	static void Main ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -100,7 +100,7 @@ namespace Gendarme.Rules.UI {
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			MethodDefinition entry_point = assembly.EntryPoint;
-			
+
 			// rule applies only if the assembly has an entry point
 			if (entry_point == null)
 				return RuleResult.DoesNotApply;

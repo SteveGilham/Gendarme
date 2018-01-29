@@ -55,10 +55,10 @@ namespace Gendarme.Rules.Security.Cas {
 	/// <code>
 	/// [SecurityPermission (SecurityAction.Assert, ControlThread = true)]
 	/// public class Subset {
-	///	[SecurityPermission (SecurityAction.Assert, Unrestricted = true)]
-	///	public void Method ()
-	///	{
-	///	}
+	/// 	[SecurityPermission (SecurityAction.Assert, Unrestricted = true)]
+	/// 	public void Method ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

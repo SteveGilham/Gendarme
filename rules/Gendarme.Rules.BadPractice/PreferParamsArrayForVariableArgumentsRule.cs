@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.BadPractice.PreferParamsArrayForVariableArgumentsRule
 //
 // Authors:
@@ -32,11 +32,11 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// The rule warns for any method that use the (semi-documented) <c>vararg</c> 
-	/// calling convention (e.g. <c>__arglist</c> in C#) and that is not used for 
+	/// The rule warns for any method that use the (semi-documented) <c>vararg</c>
+	/// calling convention (e.g. <c>__arglist</c> in C#) and that is not used for
 	/// interoperability (i.e. pinvoke to unmanaged code).
-	/// Using <c>params</c> (C#) can to achieve the same objective while <c>vararg</c> 
-	/// is not CLS compliant. The later will limit the usability of the method to CLS 
+	/// Using <c>params</c> (C#) can to achieve the same objective while <c>vararg</c>
+	/// is not CLS compliant. The later will limit the usability of the method to CLS
 	/// compliant language (e.g. Visual Basic does not support <c>vararg</c>.
 	/// </summary>
 	/// <example>
@@ -44,11 +44,11 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public void ShowItems_Bad (string header, __arglist)
 	/// {
-	///	Console.WriteLine (header);
-	///	ArgIterator args = new ArgIterator (__arglist);
-	///	for (int i = 0; i &lt; args.GetRemainingCount (); i++) {
-	///		Console.WriteLine (__refvalue (args.GetNextArg (), string));
-	///	}
+	/// 	Console.WriteLine (header);
+	/// 	ArgIterator args = new ArgIterator (__arglist);
+	/// 	for (int i = 0; i &lt; args.GetRemainingCount (); i++) {
+	/// 		Console.WriteLine (__refvalue (args.GetNextArg (), string));
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -57,10 +57,10 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public void ShowItems (string header, params string [] items)
 	/// {
-	///	Console.WriteLine (header);
-	///	for (int i = 0; i &lt; items.Length; i++) {
-	///		Console.WriteLine (items [i]);
-	///	}
+	/// 	Console.WriteLine (header);
+	/// 	for (int i = 0; i &lt; items.Length; i++) {
+	/// 		Console.WriteLine (items [i]);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

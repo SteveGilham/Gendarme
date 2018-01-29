@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidLongMethods Rule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -86,29 +86,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -119,10 +119,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -158,29 +158,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -191,10 +191,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -204,7 +204,7 @@ namespace Test.Rules.Smells {
 			}
 		}
 	}
-	
+
 	public class LongConstructorWithReadonlyFields {
 		readonly int foo;
 		readonly string bar, bar1, bar2, bar3;
@@ -237,29 +237,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -270,10 +270,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -316,29 +316,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -349,10 +349,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -388,29 +388,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -421,10 +421,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -437,7 +437,7 @@ namespace Test.Rules.Smells {
 
 
 	public class MainWidget : Gtk.Bin {
-		protected virtual void Build () 
+		protected virtual void Build ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -462,29 +462,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -495,10 +495,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -508,7 +508,7 @@ namespace Test.Rules.Smells {
 			}
 		}
 
-		public void InitializeComponent () 
+		public void InitializeComponent ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -533,29 +533,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -566,10 +566,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -581,7 +581,7 @@ namespace Test.Rules.Smells {
 	}
 
 	public class MainDialog : Gtk.Dialog {
-		protected virtual void Build () 
+		protected virtual void Build ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -606,29 +606,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -639,10 +639,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -652,7 +652,7 @@ namespace Test.Rules.Smells {
 			}
 		}
 
-		public void InitializeComponent () 
+		public void InitializeComponent ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -677,29 +677,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -710,10 +710,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -726,7 +726,7 @@ namespace Test.Rules.Smells {
 
 	public class MainWindow : Gtk.Window {
 
-		protected virtual void Build () 
+		protected virtual void Build ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -751,29 +751,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -784,10 +784,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -797,7 +797,7 @@ namespace Test.Rules.Smells {
 			}
 		}
 
-		public void InitializeComponent () 
+		public void InitializeComponent ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -822,29 +822,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -855,10 +855,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -871,7 +871,7 @@ namespace Test.Rules.Smells {
 	}
 
 	public class MainForm : Form {
-		public void InitializeComponent () 
+		public void InitializeComponent ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -896,29 +896,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -929,10 +929,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -941,8 +941,8 @@ namespace Test.Rules.Smells {
 				Console.WriteLine (exception);
 			}
 		}
-		
-		protected virtual void Build () 
+
+		protected virtual void Build ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -967,29 +967,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -1000,10 +1000,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -1017,7 +1017,7 @@ namespace Test.Rules.Smells {
 	[TestFixture]
 	public class AvoidLongMethodsTest : MethodRuleTestFixture<AvoidLongMethodsRule> {
 
-		public void LongMethod () 
+		public void LongMethod ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -1042,29 +1042,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -1075,10 +1075,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -1100,7 +1100,7 @@ namespace Test.Rules.Smells {
 			}
 		}
 
-		public void Build () 
+		public void Build ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -1125,29 +1125,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -1158,10 +1158,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -1171,7 +1171,7 @@ namespace Test.Rules.Smells {
 			}
 		}
 
-		public void InitializeComponent () 
+		public void InitializeComponent ()
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -1196,29 +1196,29 @@ namespace Test.Rules.Smells {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
-			
+
 			int x = 0;
 
 			for (int i = 0; i < 100; i++)
 				x++;
 			Console.WriteLine (x);
-	
+
 			string useless = "Useless String";
 
 			if (useless.Equals ("Other useless")) {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
-			
+
 			useless = String.Concat (useless," 1");
-			
+
 			for (int j = 0; j < useless.Length; j++) {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
-			
+
 			try {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
@@ -1229,10 +1229,10 @@ namespace Test.Rules.Smells {
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
-			
+
 			try {
 				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
+					File.Create ("foo.txt");
 					File.Delete ("foo.txt");
 				}
 			}
@@ -1243,19 +1243,19 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void LongMethodTest () 
+		public void LongMethodTest ()
 		{
 			AssertRuleFailure<AvoidLongMethodsTest> ("LongMethod", 1);
 		}
 
 		[Test]
-		public void EmptyMethodTest () 
+		public void EmptyMethodTest ()
 		{
 			AssertRuleSuccess (SimpleMethods.EmptyMethod);
 		}
 
 		[Test]
-		public void ShortMethodTest () 
+		public void ShortMethodTest ()
 		{
 			AssertRuleSuccess <AvoidLongMethodsTest> ("ShortMethod");
 		}
@@ -1267,67 +1267,67 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void WidgetBuildMethodTest () 
+		public void WidgetBuildMethodTest ()
 		{
 			AssertRuleDoesNotApply<MainWidget> ("Build");
 		}
 
 		[Test]
-		public void WidgetInitializeComponentMethodTest () 
+		public void WidgetInitializeComponentMethodTest ()
 		{
 			AssertRuleFailure<MainWidget> ("InitializeComponent", 1);
 		}
 
 		[Test]
-		public void DialogBuildMethodTest () 
+		public void DialogBuildMethodTest ()
 		{
 			AssertRuleDoesNotApply<MainDialog> ("Build");
 		}
 
 		[Test]
-		public void DialogInitializeComponentMethodTest () 
+		public void DialogInitializeComponentMethodTest ()
 		{
 			AssertRuleFailure<MainDialog> ("InitializeComponent", 1);
 		}
 
 		[Test]
-		public void WindowBuildMethodTest () 
+		public void WindowBuildMethodTest ()
 		{
 			AssertRuleDoesNotApply<MainWindow> ("Build");
 		}
 
 		[Test]
-		public void WindowInitializeComponentMethodTest () 
+		public void WindowInitializeComponentMethodTest ()
 		{
 			AssertRuleFailure<MainWindow> ("InitializeComponent", 1);
 		}
 
 		[Test]
-		public void FalseInitializeComponentTest () 
+		public void FalseInitializeComponentTest ()
 		{
 			AssertRuleFailure<AvoidLongMethodsTest> ("InitializeComponent", 1);
 		}
 
 		[Test]
-		public void FormInitializeComponentTest () 
+		public void FormInitializeComponentTest ()
 		{
 			AssertRuleDoesNotApply<MainForm> ("InitializeComponent");
 		}
 
 		[Test]
-		public void FormBuildMethodTest () 
+		public void FormBuildMethodTest ()
 		{
 			AssertRuleFailure<MainForm> ("Build", 1);
 		}
 
 		[Test]
-		public void LongStaticConstructorWithoutFieldsTest () 
+		public void LongStaticConstructorWithoutFieldsTest ()
 		{
 			AssertRuleFailure<LongStaticConstructorWithoutFields> (".cctor", 1);
 		}
-		
+
 		[Test]
-		public void LongStaticConstructorWithFieldsTest () 
+		public void LongStaticConstructorWithFieldsTest ()
 		{
 			AssertRuleSuccess<LongStaticConstructorWithFields> (".cctor");
 		}

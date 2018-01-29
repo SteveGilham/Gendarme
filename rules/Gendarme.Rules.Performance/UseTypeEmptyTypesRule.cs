@@ -40,7 +40,7 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule fires if a zero length array of <c>System.Type</c> is created.
-	/// This value is so often required by the framework API that the <c>System.Type</c> includes 
+	/// This value is so often required by the framework API that the <c>System.Type</c> includes
 	/// an <c>EmptyTypes</c> field. Using this field avoids the memory allocation (and GC tracking)
 	/// of your own array.
 	/// </summary>

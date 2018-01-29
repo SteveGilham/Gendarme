@@ -1,4 +1,4 @@
-﻿//
+//
 // Gendarme.Rules.Correctness.ReviewCastOnIntegerDivisionRule
 //
 // Authors:
@@ -51,9 +51,9 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public double Bad (int a, int b)
 	/// {
-	///	// integers are divided, then the result is casted into a double
-	///	// i.e. Bad (5, 2) == 2.0d
-	///	return a / b;
+	/// 	// integers are divided, then the result is casted into a double
+	/// 	// i.e. Bad (5, 2) == 2.0d
+	/// 	return a / b;
 	/// }
 	/// </code>
 	/// </example>
@@ -62,9 +62,9 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public double Good (int a, int b)
 	/// {
-	///	// a double is divided by an integer, which result in a double result
-	///	// i.e. Good (5, 2) == 2.5d
-	///	return (double) a / b;
+	/// 	// a double is divided by an integer, which result in a double result
+	/// 	// i.e. Good (5, 2) == 2.5d
+	/// 	return (double) a / b;
 	/// }
 	/// </code>
 	/// </example>

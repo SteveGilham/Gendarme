@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.DoNotThrowExceptionRule
 //
 // Authors:
@@ -43,12 +43,12 @@ namespace Gendarme.Rules.Gendarme {
 	/// Bad example:
 	/// <code>
 	/// public class ExampleRule : Rule, IMethodRule {
-	///	public RuleResult CheckMethod (MethodDefinition method)
-	///	{
-	///		if (method == null)
-	///			throw new ArgumentNullException ("method");
-	///		// other rule logic
-	///	}
+	/// 	public RuleResult CheckMethod (MethodDefinition method)
+	/// 	{
+	/// 		if (method == null)
+	/// 			throw new ArgumentNullException ("method");
+	/// 		// other rule logic
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -56,11 +56,11 @@ namespace Gendarme.Rules.Gendarme {
 	/// Good example:
 	/// <code>
 	/// public class ExampleRule : Rule, IMethodRule {
-	///	public RuleResult CheckMethod (MethodDefinition method)
-	///	{
-	///		// method is not null by contract
-	///		return RuleResult.Success;
-	///	}
+	/// 	public RuleResult CheckMethod (MethodDefinition method)
+	/// 	{
+	/// 		// method is not null by contract
+	/// 		return RuleResult.Success;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

@@ -47,10 +47,10 @@ namespace Gendarme.Rules.Exceptions {
 	/// Bad example:
 	/// <code>
 	/// try {
-	///	File.Open ("foo.txt", FileMode.Open); 
+	/// 	File.Open ("foo.txt", FileMode.Open);
 	/// }
 	/// catch (Exception) {
-	///	//Ooops  what's failed ??? UnauthorizedException, FileNotFoundException ??? 
+	/// 	//Ooops  what's failed ??? UnauthorizedException, FileNotFoundException ???
 	/// }
 	/// </code>
 	/// </example>
@@ -58,22 +58,22 @@ namespace Gendarme.Rules.Exceptions {
 	/// Good example (catch a specific exception):
 	/// <code>
 	/// try {
-	///	File.Open ("foo.txt", FileMode.Open);
+	/// 	File.Open ("foo.txt", FileMode.Open);
 	/// }
 	/// catch (FileNotFoundException exception) {
-	///	//I know that the system can't find the file.
-	/// } 
+	/// 	//I know that the system can't find the file.
+	/// }
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example (catch all and rethrow):
 	/// <code>
 	/// try {
-	///	File.Open ("foo.txt", FileMode.Open);
+	/// 	File.Open ("foo.txt", FileMode.Open);
 	/// }
 	/// catch {
-	///	Console.WriteLine ("An error has happened.");
-	///	throw;  // You don't swallow the error, because you rethrow the original exception.
+	/// 	Console.WriteLine ("An error has happened.");
+	/// 	throw;  // You don't swallow the error, because you rethrow the original exception.
 	/// }
 	/// </code>
 	/// </example>

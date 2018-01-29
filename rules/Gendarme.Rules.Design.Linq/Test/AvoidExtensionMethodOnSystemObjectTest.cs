@@ -46,7 +46,7 @@ namespace Test.Rules.Design.Linq {
 
 		public static string ExtendObject (this object self)
 		{
-			return String.Format ("'{0}', type '{1}', hashcode: {2}", 
+			return String.Format ("'{0}', type '{1}', hashcode: {2}",
 				self.ToString (), self.GetType (), self.GetHashCode ());
 		}
 

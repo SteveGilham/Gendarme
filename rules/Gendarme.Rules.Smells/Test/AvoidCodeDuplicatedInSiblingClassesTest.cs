@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidCodeDuplicatedInSiblingClasses Rule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,7 +43,7 @@ namespace Test.Rules.Smells {
 	}
 
 	public class OverriderClassWithCodeDuplicated : BaseClassWithCodeDuplicated {
-		public void CodeDuplicated () 
+		public void CodeDuplicated ()
 		{
 			foreach (int i in list) {
 				Console.WriteLine (i);
@@ -65,7 +65,7 @@ namespace Test.Rules.Smells {
 	public class BaseClassWithoutCodeDuplicated {
 		protected IList list;
 
-		protected void PrintValuesInList () 
+		protected void PrintValuesInList ()
 		{
 			foreach (int i in list) {
 				Console.WriteLine (i);
@@ -74,7 +74,7 @@ namespace Test.Rules.Smells {
 	}
 
 	public class OverriderClassWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
-		public void SomeCode () 
+		public void SomeCode ()
 		{
 			PrintValuesInList ();
 			list.Add (1);
@@ -106,7 +106,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void BaseClassWithCodeDuplicatedTest () 
+		public void BaseClassWithCodeDuplicatedTest ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Smells.BaseClassWithCodeDuplicated");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "Test.Rules.Smells.BaseClassWithCodeDuplicated failure test");

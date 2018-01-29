@@ -3,7 +3,7 @@
 //
 // Authors:
 //	N Lum <nol888@gmail.com>
-// 
+//
 // Copyright (C) 2010 N Lum
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -43,10 +43,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public struct BadStruct {
-	///		internal int SomeValue;
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public struct BadStruct {
+	/// 		internal int SomeValue;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -55,10 +55,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public struct BadStruct {
-	///		public int SomeValue;
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public struct BadStruct {
+	/// 		public int SomeValue;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

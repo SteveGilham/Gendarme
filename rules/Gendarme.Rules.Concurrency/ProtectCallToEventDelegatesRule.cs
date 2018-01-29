@@ -49,10 +49,10 @@ namespace Gendarme.Rules.Concurrency {
 	/// Bad example (no check):
 	/// <code>
 	/// public event EventHandler Loading;
-	/// 
+	///
 	/// protected void OnLoading (EventArgs e)
 	/// {
-	///	// Loading field could be null, throwing a NullReferenceException
+	/// 	// Loading field could be null, throwing a NullReferenceException
 	/// 	Loading (this, e);
 	/// }
 	/// </code>
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// Bad example (race condition):
 	/// <code>
 	/// public event EventHandler Loading;
-	/// 
+	///
 	/// protected void OnLoading (EventArgs e)
 	/// {
 	/// 	// Loading could be non-null here
@@ -83,9 +83,9 @@ namespace Gendarme.Rules.Concurrency {
 	/// 	if (handler != null) {
 	/// 		// and won't change (i.e. safe from a NullReferenceException)
 	/// 		handler (this, e);
-	///		// however it is still possible, like the original code, that
-	///		// the Loading method will be removed before, or during its
-	///		// execution. Your code should be safe against such occurance.
+	/// 		// however it is still possible, like the original code, that
+	/// 		// the Loading method will be removed before, or during its
+	/// 		// execution. Your code should be safe against such occurance.
 	/// 	}
 	/// }
 	/// </code>
@@ -165,7 +165,7 @@ namespace Gendarme.Rules.Concurrency {
 				if (!mr.IsEventCallback ())
 					continue;
 
-				// first check if we're looking from a variable or directly from 
+				// first check if we're looking from a variable or directly from
 				// the field (bad, it could be null)
 				Instruction caller = ins.TraceBack (method);
 				FieldDefinition field = caller.GetField ();

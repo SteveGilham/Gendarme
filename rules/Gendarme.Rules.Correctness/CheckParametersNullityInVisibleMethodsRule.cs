@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
-	/// This rule checks if all nullable parameters of visible methods are compared 
+	/// This rule checks if all nullable parameters of visible methods are compared
 	/// with '''null''' before they get used. This reduce the likelyhood of the runtime
 	/// throwing a <c>NullReferenceException</c>.
 	/// </summary>
@@ -50,15 +50,15 @@ namespace Gendarme.Rules.Correctness {
 	///
 	/// public bool TryParse (string s, out Message m)
 	/// {
-	///	// is 's' is null then 's.Length' will throw a NullReferenceException
-	///	// which a TryParse method should never do
-	///	byte [] data = Parse (s, s.Length);
-	///	if (data == null) {
-	///		m = null;
-	///		return false;
-	///	}
-	///	m = new Message (data);
-	///	return true;
+	/// 	// is 's' is null then 's.Length' will throw a NullReferenceException
+	/// 	// which a TryParse method should never do
+	/// 	byte [] data = Parse (s, s.Length);
+	/// 	if (data == null) {
+	/// 		m = null;
+	/// 		return false;
+	/// 	}
+	/// 	m = new Message (data);
+	/// 	return true;
 	/// }
 	/// </code>
 	/// </example>
@@ -70,17 +70,17 @@ namespace Gendarme.Rules.Correctness {
 	///
 	/// public bool TryParse (string s, out Message m)
 	/// {
-	///	if (s == null) {
-	///		m = null;
-	///		return false;
-	///	}
-	///	byte [] data = Parse (s, s.Length);
-	///	if (data == null) {
-	///		m = null;
-	///		return false;
-	///	}
-	///	m = new Message (data);
-	///	return true;
+	/// 	if (s == null) {
+	/// 		m = null;
+	/// 		return false;
+	/// 	}
+	/// 	byte [] data = Parse (s, s.Length);
+	/// 	if (data == null) {
+	/// 		m = null;
+	/// 		return false;
+	/// 	}
+	/// 	m = new Message (data);
+	/// 	return true;
 	/// }
 	/// </code>
 	/// </example>
@@ -98,7 +98,7 @@ namespace Gendarme.Rules.Correctness {
 
 		private void CheckParameter (ParameterDefinition parameter)
 		{
-			// nothing to do if it could not be resolved 
+			// nothing to do if it could not be resolved
 			if (parameter == null)
 				return;
 
@@ -111,7 +111,7 @@ namespace Gendarme.Rules.Correctness {
 			if (sequence == -1)
 				return;
 
-			// was there a null check done before ?	
+			// was there a null check done before ?
 			if (has_null_check.Get (sequence))
 				return;
 
@@ -133,7 +133,7 @@ namespace Gendarme.Rules.Correctness {
 				return;
 
 			// nullable with no check
-			
+
 			// we assume a better control of family members so this is less severe
 			Severity s = (parameter.Method as MethodDefinition).IsFamily ? Severity.Medium : Severity.High;
 			Runner.Report (parameter, s, Confidence.Normal);

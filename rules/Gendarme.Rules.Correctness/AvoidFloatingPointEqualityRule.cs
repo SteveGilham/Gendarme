@@ -42,7 +42,7 @@ namespace Gendarme.Rules.Correctness {
 	/// In general floating point numbers cannot be usefully compared using the equality and
 	/// inequality operators. This is because floating point numbers are inexact and most floating
 	/// point operations introduce errors which can accumulate if multiple operations are performed.
-	/// This rule will fire if [in]equality comparisons are used with <c>Single</c> or <c>Double</c> 
+	/// This rule will fire if [in]equality comparisons are used with <c>Single</c> or <c>Double</c>
 	/// types. In general such comparisons should be done with some sort of epsilon test instead
 	/// of a simple compare (see the code below).
 	///
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// // This may or may not work as expected. In particular, if the values are from
 	/// // high precision real world measurements or different algorithmic sources then
-	/// // it's likely that they will have small errors and an exact inequality test will not 
+	/// // it's likely that they will have small errors and an exact inequality test will not
 	/// // work as expected.
 	/// public static bool NearlyEqual (double [] lhs, double [] rhs)
 	/// {
@@ -84,8 +84,8 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// // This will normally work fine. However it will not work with infinity (because
-	/// // infinity - infinity is a NAN). It&apos;s also difficult to use if the values may 
-	/// // have very large or very small magnitudes (because the epsilon value must 
+	/// // infinity - infinity is a NAN). It&apos;s also difficult to use if the values may
+	/// // have very large or very small magnitudes (because the epsilon value must
 	/// // be scaled accordingly).
 	/// public static bool NearlyEqual (double [] lhs, double [] rhs, double epsilon)
 	/// {

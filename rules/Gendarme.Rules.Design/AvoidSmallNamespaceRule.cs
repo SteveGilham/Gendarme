@@ -48,7 +48,7 @@ namespace Gendarme.Rules.Design {
 	/// <list>
 	/// <item><term>specialized namespaces</term><description>e.g. <c>*.Design</c>,
 	/// <c>*.Interop</c> and <c>*.Permissions</c></description></item>
-	/// <item><term>internal namespaces</term><description>namespaces without any visible 
+	/// <item><term>internal namespaces</term><description>namespaces without any visible
 	/// (outside the assemble) types</description></item>
 	/// <item><term>small assemblies</term><description>that contains a single namespace but less than
 	/// the minimal number of types (e.g. addins)</description></item>
@@ -60,9 +60,9 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// namespace MyStuff.Special {
-	///	// single type inside a namespace
-	///	public class Helper {
-	///	}
+	/// 	// single type inside a namespace
+	/// 	public class Helper {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -70,9 +70,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// namespace MyStuff {
-	///	public class Helper {
-	///	}
-	///	// ... many other types ...
+	/// 	public class Helper {
+	/// 	}
+	/// 	// ... many other types ...
 	/// }
 	/// </code>
 	/// </example>
@@ -119,7 +119,7 @@ namespace Gendarme.Rules.Design {
 			int count = 0;
 			string single = null;
 			foreach (string ns in NamespaceEngine.NamespacesInside (assembly)) {
-				// no type inside the assembly 
+				// no type inside the assembly
 				if (ns == null)
 					break;
 
@@ -173,7 +173,7 @@ namespace Gendarme.Rules.Design {
 				// e.g. VS.NET adds a .Properties namespace to SWF apps
 				if ((count > 0) && (count < Minimum)) {
 					NamespaceDefinition n = NamespaceDefinition.GetDefinition (ns);
-					string msg = String.Format (CultureInfo.CurrentCulture, 
+					string msg = String.Format (CultureInfo.CurrentCulture,
 						"Only {0} visible types are defined inside this namespace.", count);
 					// overloads of Report cannot be used here since the 'target' has been lost in the runner
 					Runner.Report (new Defect (this, n, n, Severity.Low, Confidence.Total, msg));

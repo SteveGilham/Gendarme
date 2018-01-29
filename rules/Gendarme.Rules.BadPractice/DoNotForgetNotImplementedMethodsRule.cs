@@ -41,7 +41,7 @@ using Mono.Cecil.Cil;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// This rule checks for short methods that throw a <c>System.NotImplementedException</c> 
+	/// This rule checks for short methods that throw a <c>System.NotImplementedException</c>
 	/// exception. It's likely a method that has not yet been implemented and should not be
 	/// forgotten by the developer before a release.
 	/// </summary>
@@ -50,7 +50,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// private void Save ()
 	/// {
-	///	throw new NotImplementedException ("pending final format");
+	/// 	throw new NotImplementedException ("pending final format");
 	/// }
 	/// </code>
 	/// </example>

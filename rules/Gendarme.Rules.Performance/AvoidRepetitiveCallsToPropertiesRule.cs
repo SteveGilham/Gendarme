@@ -46,7 +46,7 @@ namespace Gendarme.Rules.Performance {
 	/// The rule warn if virtual, or unlikely to be inline-able, property getters
 	/// are called several times by a method. In most cases repetitive calls simply
 	/// requires more time without any gains since the result will always be identical.
-	/// You should ignore the reported defects if a different value is expected 
+	/// You should ignore the reported defects if a different value is expected
 	/// each time the property is called (e.g. calling <c>DateTime.Now</c>).
 	/// </summary>
 	/// <example>
@@ -54,11 +54,11 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// private int Report (IList list)
 	/// {
-	///	if (list.Count > 1) {
-	///		DisplayList (list);
-	///	}
-	///	Console.WriteLine ("# items: {0}", list.Count);
-	///	return list.Count;
+	/// 	if (list.Count > 1) {
+	/// 		DisplayList (list);
+	/// 	}
+	/// 	Console.WriteLine ("# items: {0}", list.Count);
+	/// 	return list.Count;
 	/// }
 	/// </code>
 	/// </example>
@@ -67,12 +67,12 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// private int Report (IList list)
 	/// {
-	///	int count = list.Count;
-	///	if (count > 1) {
-	///		DisplayList (list);
-	///	}
-	///	Console.WriteLine ("# items: {0}", count);
-	///	return count;
+	/// 	int count = list.Count;
+	/// 	if (count > 1) {
+	/// 		DisplayList (list);
+	/// 	}
+	/// 	Console.WriteLine ("# items: {0}", count);
+	/// 	return count;
 	/// }
 	/// </code>
 	/// </example>
@@ -228,7 +228,7 @@ namespace Gendarme.Rules.Performance {
 				MethodDefinition md = kvp.Value.Key;
 				if (md.IsVirtual && !md.IsFinal) {
 					// virtual calls are expensive, so the code better cache the value
-					string msg = String.Format (CultureInfo.InvariantCulture, 
+					string msg = String.Format (CultureInfo.InvariantCulture,
 						"Multiple ({0}) calls to virtual property '{1}'.", count, md.ToString ());
 					Runner.Report (method, GetSeverity (count, true), Confidence.Normal, msg);
 				} else if (!IsInliningCandidate (md)) {

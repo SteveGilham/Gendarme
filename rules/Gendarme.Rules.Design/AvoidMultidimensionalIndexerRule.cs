@@ -39,15 +39,15 @@ namespace Gendarme.Rules.Design {
 	/// This rule checks for externally visible indexer properties which have more
 	/// than one index argument. These can be confusing to some developers and
 	/// IDEs with auto-complete don't always handle them as well as methods so
-	/// it can be hard to know which argument is which. 
+	/// it can be hard to know which argument is which.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public int this [int x, int y] {
-	///	get {
-	///		return 0;
-	///	}
+	/// 	get {
+	/// 		return 0;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -56,7 +56,7 @@ namespace Gendarme.Rules.Design {
 	/// <code>
 	/// public int Get (int x, int y)
 	/// {
-	///	return 0;
+	/// 	return 0;
 	/// }
 	/// </code>
 	/// </example>

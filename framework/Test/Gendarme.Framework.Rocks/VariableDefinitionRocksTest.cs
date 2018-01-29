@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for VariableDefinitionRocks
 //
 // Authors:
@@ -39,29 +39,29 @@ namespace Test.Framework.Rocks {
 
 	[TestFixture]
 	public class VariableDefinitionRocksTest {
-		
+
 		private TypeDefinition type_def;
-		
+
 		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
 			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (unit);
 			assembly.MainModule.LoadDebuggingSymbols ();
-			
+
 			type_def = assembly.MainModule.GetType ( typeof (VariableDefinitionRocksTest).FullName);
 		}
-		
+
 		public string path;
 		public string host;
 		public string cachedLocalPath;
 		public string AbsolutePath;
-		
+
 		private string Unescape (string s)
 		{
 			return s;
 		}
-		
+
 		// This has one compiler generated local with gmcs.
 		private string Big ()
 		{
@@ -97,14 +97,14 @@ namespace Test.Framework.Rocks {
 				cachedLocalPath = Path.DirectorySeparatorChar.ToString ();
 			return cachedLocalPath;
 		}
-		
+
 		[Test]
 		public void BigTest ()
 		{
 			MethodDefinition method = type_def.GetMethod ("Big");
 			DoTest (method, "windows", "p", "replace", "h");
 		}
-		
+
 		// This has two compiler generated locals with gmcs.
 		private void ForEach (string [] names)
 		{
@@ -112,29 +112,29 @@ namespace Test.Framework.Rocks {
 				Console.WriteLine (name);
 			}
 		}
-		
+
 		[Test]
 		public void ForEachTest ()
 		{
 			MethodDefinition method = type_def.GetMethod ("ForEach");
 			DoTest (method, "name");
 		}
-		
+
 		private void DoTestByInstructions (MethodDefinition method, IList<string> userNames)
 		{
 			const string testName = "body instruction";
 			int generatedCount = 0;
 			int userCount = 0;
 			bool[] usedVariables = new bool[userNames.Count];
-			
+
 			foreach (Instruction ins in method.Body.Instructions) {
 				VariableDefinition v = ins.GetVariable (method);
 				TestVariable(testName, v, userNames, usedVariables, ref userCount, ref generatedCount);
 			}
-			
+
 			ValidateResult(testName, userNames, usedVariables, generatedCount, userCount);
 		}
-		
+
 		private void ValidateResult(string testMethodName, IList<string> userNames, IList<bool> usedVariables,
 			int generatedCount, int userCount)
 		{
@@ -167,11 +167,11 @@ namespace Test.Framework.Rocks {
 			int generatedCount = 0;
 			int userCount = 0;
 			bool[] usedVariables = new bool[userNames.Count];
-			
+
 			foreach (VariableDefinition v in method.Body.Variables) {
 				TestVariable(testName, v, userNames, usedVariables, ref userCount, ref generatedCount);
 			}
-			
+
 			ValidateResult(testName, userNames, usedVariables, generatedCount, userCount);
 		}
 

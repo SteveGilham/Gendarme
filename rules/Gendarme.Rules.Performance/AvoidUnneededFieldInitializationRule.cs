@@ -48,14 +48,14 @@ namespace Gendarme.Rules.Performance {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	int i;
-	///	string s;
-	///	
-	///	public Bad ()
-	///	{
-	///		i = 0;
-	///		s = null;
-	///	}
+	/// 	int i;
+	/// 	string s;
+	///
+	/// 	public Bad ()
+	/// 	{
+	/// 		i = 0;
+	/// 		s = null;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,15 +63,15 @@ namespace Gendarme.Rules.Performance {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	int i;
-	///	string s;
-	///	
-	///	public Good ()
-	///	{
-	///		// don't assign 'i' since it's already 0
-	///		// but we might prefer to assign a string to String.Empty
-	///		s = String.Empty;
-	///	}
+	/// 	int i;
+	/// 	string s;
+	///
+	/// 	public Good ()
+	/// 	{
+	/// 		// don't assign 'i' since it's already 0
+	/// 		// but we might prefer to assign a string to String.Empty
+	/// 		s = String.Empty;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

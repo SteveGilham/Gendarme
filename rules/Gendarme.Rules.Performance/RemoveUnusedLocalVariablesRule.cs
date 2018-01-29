@@ -39,9 +39,9 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Performance {
 
 	/// <summary>
-	/// This rule looks for unused local variables inside methods. This can leads to larger 
+	/// This rule looks for unused local variables inside methods. This can leads to larger
 	/// code (IL) size and longer JIT time, but note that some optimizing compilers
-	/// can remove the locals so they won't be reported even if you can still see them in 
+	/// can remove the locals so they won't be reported even if you can still see them in
 	/// the source code. This could also be a typo in the source were a value is assigned
 	/// to the wrong variable.
 	/// </summary>
@@ -50,13 +50,13 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// bool DualCheck ()
 	/// {
-	///	bool b1 = true;
-	///	bool b2 = CheckDetails ();
-	///	if (b2) {
-	///		// typo: a find-replace changed b1 into b2
-	///		b2 = CheckMoreDetails ();
-	///	}
-	///	return b2 &amp;&amp; b2;
+	/// 	bool b1 = true;
+	/// 	bool b2 = CheckDetails ();
+	/// 	if (b2) {
+	/// 		// typo: a find-replace changed b1 into b2
+	/// 		b2 = CheckMoreDetails ();
+	/// 	}
+	/// 	return b2 &amp;&amp; b2;
 	/// }
 	/// </code>
 	/// </example>
@@ -65,12 +65,12 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// bool DualCheck ()
 	/// {
-	///	bool b1 = true;
-	///	bool b2 = CheckDetails ();
-	///	if (b2) {
-	///		b1 = CheckMoreDetails ();
-	///	}
-	///	return b1 &amp;&amp; b2;
+	/// 	bool b1 = true;
+	/// 	bool b2 = CheckDetails ();
+	/// 	if (b2) {
+	/// 		b1 = CheckMoreDetails ();
+	/// 	}
+	/// 	return b1 &amp;&amp; b2;
 	/// }
 	/// </code>
 	/// </example>
@@ -144,7 +144,7 @@ namespace Gendarme.Rules.Performance {
 					if (variable.IsGeneratedName ())
 						continue;
 
-					string s = String.Format (CultureInfo.InvariantCulture, "Variable '{0}' of type '{1}'", 
+					string s = String.Format (CultureInfo.InvariantCulture, "Variable '{0}' of type '{1}'",
 						variable.Name, variable.VariableType.GetFullName ());
 					Runner.Report (method, Severity.Low, Confidence.Normal, s);
 				}

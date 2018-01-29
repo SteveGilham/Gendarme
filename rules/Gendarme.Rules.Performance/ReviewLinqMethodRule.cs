@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Performance {
 	/// Linq extension methods operate on sequences of values so they generally
 	/// have linear time complexity. However you may be able to achieve better
 	/// than linear time performance if you use a less general method or take
-	/// advantage of a method provided by an <c>Sytem.Collections.Generic.IEnumerable&lt;T&gt;</c> 
+	/// advantage of a method provided by an <c>Sytem.Collections.Generic.IEnumerable&lt;T&gt;</c>
 	/// subclass.
 	/// </summary>
 	/// <example>
@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Performance {
 	/// 	}
 	/// 	return missing;
 	/// }
-	/// 
+	///
 	/// public void Append (List&lt;string&gt; lines, string line)
 	/// {
 	/// 	// Last () is O(n)
@@ -79,7 +79,7 @@ namespace Gendarme.Rules.Performance {
 	/// 	}
 	/// 	return missing;
 	/// }
-	/// 
+	///
 	/// public void Append (List&lt;string&gt; lines, string line)
 	/// {
 	/// 	// Lines is a List so we can use the O(1) subscript operator instead of
@@ -109,11 +109,11 @@ namespace Gendarme.Rules.Performance {
 		{
 			if (type.HasMethod (method))
 				return true;
-			
+
 			TypeDefinition td = type.Resolve ();
 			return td != null && td.BaseType != null && HasMethod (td.BaseType, method);
 		}
-		
+
 		private void CheckForCountProperty (TypeReference type, MethodDefinition method, Instruction ins)
 		{
 			if (HasMethod (type, CountProperty)) {
@@ -130,7 +130,7 @@ namespace Gendarme.Rules.Performance {
 		}
 
 		private void CheckForAny (MethodDefinition method, Instruction ins)
-		{			
+		{
 			// call System.Int32 System.Linq.Enumerable::Count<System.String>(System.Collections.Generic.IEnumerable`1<!!0>)
 			// ldc.i4.0
 			// cgt, clt, ceq, ble, ble.s, bge or bge.s
@@ -174,11 +174,11 @@ namespace Gendarme.Rules.Performance {
 				}
 			}
 		}
-		
+
 		private void CheckForSubscript (TypeReference type, MethodDefinition method, Instruction ins, string name)
 		{
 			if (type.IsArray) {
-				string message = String.Format (CultureInfo.InvariantCulture, 
+				string message = String.Format (CultureInfo.InvariantCulture,
 					"Use operator [] instead of the {0} method.", name);
 				Log.WriteLine (this, "{0:X4} {1}", ins.Offset, message);
 				Runner.Report (method, ins, Severity.Medium, Confidence.High, message);
@@ -193,7 +193,7 @@ namespace Gendarme.Rules.Performance {
 				}
 			}
 		}
-		
+
 		private void CheckForSort (TypeReference type, MethodDefinition method, Instruction ins, string name)
 		{
 			if (type.IsArray) {
@@ -212,7 +212,7 @@ namespace Gendarme.Rules.Performance {
 				}
 			}
 		}
-		
+
 		/// <summary>
 		/// Initialize the rule. This is where rule can do it's heavy initialization
 		/// since the assemblies to be analyzed are already known (and accessible thru
@@ -251,16 +251,16 @@ namespace Gendarme.Rules.Performance {
 			OpCodeBitmask calls = OpCodeBitmask.Calls;
 			if (!calls.Intersect (OpCodeEngine.GetBitmask (method)))
 				return RuleResult.DoesNotApply;
-								
+
 			Log.WriteLine (this, "--------------------------------------");
 			Log.WriteLine (this, method);
-			
+
 			// Loop through each instruction,
 			foreach (Instruction ins in method.Body.Instructions) {
 				// if we're calling a method,
 				if (!calls.Get (ins.OpCode.Code))
 					continue;
-				
+
 				// and the method is a System.Linq.Enumerable method then,
 				var target = ins.Operand as MethodReference;
 				if (!target.DeclaringType.IsNamed ("System.Linq", "Enumerable"))
@@ -305,7 +305,7 @@ namespace Gendarme.Rules.Performance {
 				return true;
 			}
 		}
-		
+
 #if false
 		private static OpCodeBitmask ComparisonsBitmask ()
 		{

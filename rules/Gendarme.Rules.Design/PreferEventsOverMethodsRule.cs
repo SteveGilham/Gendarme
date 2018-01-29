@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.PreferEventsOverMethodsRule
 //
 // Authors:
@@ -33,9 +33,9 @@ using Gendarme.Framework;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule checks for method names that suggest they are providing similar 
+	/// This rule checks for method names that suggest they are providing similar
 	/// functionality to .NET events. When possible the method(s) should be replaced
-	/// with a real event. If the methods are not using or providing 
+	/// with a real event. If the methods are not using or providing
 	/// event-like features then they should be renamed since such names can confuse consumers
 	/// about what the method is really doing.
 	/// </summary>
@@ -43,29 +43,29 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public delegate void MouseUpCallback (int x, int y, MouseButtons buttons);
-	/// 
+	///
 	/// public class MouseController {
-	///	private MouseUpCallback mouse_up_callback;
-	/// 
-	///	public void RaiseMouseUp (Message msg)
-	///	{
-	///		if (mouse_up_callback != null) {
-	///			mouse_up_callback (msg.X, msg.Y, msg.Buttons);
-	///		}
-	///	}
-	///	
-	///	public void ProcessMessage (Message msg)
-	///	{
-	///		switch (msg.Id) {
-	///		case MessageId.MouseUp: {
-	///			RaiseMouseUp (msg);
-	///			break;
-	///		}
-	///		// ... more ...
-	///		default:
-	///			break;
-	///		}
-	///	}
+	/// 	private MouseUpCallback mouse_up_callback;
+	///
+	/// 	public void RaiseMouseUp (Message msg)
+	/// 	{
+	/// 		if (mouse_up_callback != null) {
+	/// 			mouse_up_callback (msg.X, msg.Y, msg.Buttons);
+	/// 		}
+	/// 	}
+	///
+	/// 	public void ProcessMessage (Message msg)
+	/// 	{
+	/// 		switch (msg.Id) {
+	/// 		case MessageId.MouseUp: {
+	/// 			RaiseMouseUp (msg);
+	/// 			break;
+	/// 		}
+	/// 		// ... more ...
+	/// 		default:
+	/// 			break;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -73,23 +73,23 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public class MouseController {
-	///	public event EventHandler&lt;MessageEvent&gt; MouseUp;
-	///	
-	///	public void ProcessMessage (Message msg)
-	///	{
-	///		switch (msg.Id) {
-	///		case MessageId.MouseUp: {
-	///			EventHandler&lt;MessageEvent&gt; handler = MouseUp;
-	///			if (handler != null) {
-	///				handler (new MessageEvent (msg));
-	///			}
-	///			break;
-	///		}
-	///		// ... more ...
-	///		default:
-	///			break;
-	///		}
-	///	}
+	/// 	public event EventHandler&lt;MessageEvent&gt; MouseUp;
+	///
+	/// 	public void ProcessMessage (Message msg)
+	/// 	{
+	/// 		switch (msg.Id) {
+	/// 		case MessageId.MouseUp: {
+	/// 			EventHandler&lt;MessageEvent&gt; handler = MouseUp;
+	/// 			if (handler != null) {
+	/// 				handler (new MessageEvent (msg));
+	/// 			}
+	/// 			break;
+	/// 		}
+	/// 		// ... more ...
+	/// 		default:
+	/// 			break;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

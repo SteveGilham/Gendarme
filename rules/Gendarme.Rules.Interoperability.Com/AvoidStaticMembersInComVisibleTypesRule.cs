@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Interoperability.Com.AvoidStaticMembersInComVisibleTypesRule
 //
 // Authors:
@@ -45,13 +45,13 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public class Bad {
-	///		public static void BadMethod ()
-	///		{
-	///			// do something
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class Bad {
+	/// 		public static void BadMethod ()
+	/// 		{
+	/// 			// do something
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -60,20 +60,20 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assembly: ComVisible (false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public class Good {
-	///		[ComVisiblte (false)]
-	///		public static void GoodMethod ()
-	///		{
-	///			// do something
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class Good {
+	/// 		[ComVisiblte (false)]
+	/// 		public static void GoodMethod ()
+	/// 		{
+	/// 			// do something
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
 	/// <remarks>
-	/// This rule ignores methods marked with ComRegisterFunctionAttribute or ComUnregisterFunctionAttribute attributes. 
-	/// Rule applies only when the containing assembly has ComVisible attribute explicitly set to false 
+	/// This rule ignores methods marked with ComRegisterFunctionAttribute or ComUnregisterFunctionAttribute attributes.
+	/// Rule applies only when the containing assembly has ComVisible attribute explicitly set to false
 	/// and the type has ComVisible attribute explicitly set to true.</remarks>
 	[Problem ("Static method is visible to COM, while COM does not support statics.")]
 	[Solution ("Add [ComVisible (false)] attribute to the method, or make static method an instance method.")]
@@ -93,9 +93,9 @@ namespace Gendarme.Rules.Interoperability.Com {
 			// and type has [ComVisible (true)]
 			if (!method.DeclaringType.IsTypeComVisible ())
 				return RuleResult.DoesNotApply;
-			
+
 			bool comVisibleValue = true;
-			
+
 			if (method.HasCustomAttributes) {
 				foreach (CustomAttribute attribute in method.CustomAttributes) {
 					TypeReference type = attribute.AttributeType;
@@ -129,10 +129,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 				return false;
 			}
 		}
-		
+
 		private static bool IsApplicableMethod (MethodDefinition method)
 		{
-			return !(!method.IsStatic || !method.IsPublic || method.HasGenericParameters || 
+			return !(!method.IsStatic || !method.IsPublic || method.HasGenericParameters ||
 				method.IsAddOn || method.IsRemoveOn || method.IsGetter || method.IsSetter ||
 				((method.Attributes & MethodAttributes.SpecialName) != 0 && method.Name.StartsWith ("op_", StringComparison.Ordinal)) ||
 				method.DeclaringType.HasGenericParameters || method.DeclaringType.IsEnum ||

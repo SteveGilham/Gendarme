@@ -42,12 +42,12 @@ namespace Gendarme.Rules.BadPractice {
 	/// Bad example:
 	/// <code>
 	/// public class MyClass : ICloneable {
-	///	public object Clone ()
-	///	{
-	///		MyClass myClass = new MyClass ();
-	///		// set some internals
-	///		return null;
-	///	}
+	/// 	public object Clone ()
+	/// 	{
+	/// 		MyClass myClass = new MyClass ();
+	/// 		// set some internals
+	/// 		return null;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -55,12 +55,12 @@ namespace Gendarme.Rules.BadPractice {
 	/// Good example:
 	/// <code>
 	/// public class MyClass : ICloneable {
-	///	public object Clone ()
-	///	{
-	///		MyClass myClass = new MyClass ();
-	///		// set some internals
-	///		return myClass;
-	///	}
+	/// 	public object Clone ()
+	/// 	{
+	/// 		MyClass myClass = new MyClass ();
+	/// 		// set some internals
+	/// 		return myClass;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

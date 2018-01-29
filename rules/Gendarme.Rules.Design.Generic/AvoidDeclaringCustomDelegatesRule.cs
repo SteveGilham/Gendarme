@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design.Generic {
 
 	/// <summary>
-	/// This rule will fire if custom delegates are defined when either pre-defined <code>System.Action</code>, 
+	/// This rule will fire if custom delegates are defined when either pre-defined <code>System.Action</code>,
 	/// <code>Action&lt;T[,...]&gt;</code> or <code>Func&lt;[Tx,...]TResult&gt;</code> could have been used.
 	/// </summary>
 	/// <example>

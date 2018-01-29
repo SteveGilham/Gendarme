@@ -33,8 +33,8 @@ using Gendarme.Framework;
 namespace Gendarme.Rules.UI {
 
 	/// <summary>
-	/// An executable assembly, i.e. an .exe, refers to the System.Windows.Forms assembly 
-	/// but isn't compiled using <c>-target:winexe</c>. A console window will be created 
+	/// An executable assembly, i.e. an .exe, refers to the System.Windows.Forms assembly
+	/// but isn't compiled using <c>-target:winexe</c>. A console window will be created
 	/// and shown under Windows (MS runtime) when the application is executed which is
 	/// probably not desirable for a winforms application.
 	/// </summary>

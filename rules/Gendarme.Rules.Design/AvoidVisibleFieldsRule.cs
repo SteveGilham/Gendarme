@@ -34,7 +34,7 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Design {
 
-	// TODO: It'd be nice if this rule also fired for fields with public access and internal visibility. 
+	// TODO: It'd be nice if this rule also fired for fields with public access and internal visibility.
 	// This is a common and serious design error so it seems like it should be reported at
 	// least at low severity.
 
@@ -47,7 +47,7 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public class Foo {
-	///	public int Value;
+	/// 	public int Value;
 	/// }
 	/// </code>
 	/// </example>
@@ -55,14 +55,14 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public class Foo {
-	///	private int v;
-	///	public int Value {
-	///	get {
-	///		return v;
-	///	}
-	///	set {
-	///		v = value;
-	///	}
+	/// 	private int v;
+	/// 	public int Value {
+	/// 	get {
+	/// 		return v;
+	/// 	}
+	/// 	set {
+	/// 		v = value;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -84,7 +84,7 @@ namespace Gendarme.Rules.Design {
 			// e.g. CSC compiles anonymous methods as an inner type that expose public fields
 			if (type.IsEnum || type.IsInterface || !type.HasFields || type.IsDelegate () || type.IsGeneratedCode ())
 				return RuleResult.DoesNotApply;
-			
+
 			// rule doesn't apply to type non (externally) visible
 			if (!type.IsVisible ())
 				return RuleResult.DoesNotApply;
@@ -95,12 +95,12 @@ namespace Gendarme.Rules.Design {
 
 				string name = fd.Name;
 				if (fd.FieldType.IsArray) {
-					string s = String.Format (CultureInfo.InvariantCulture, 
+					string s = String.Format (CultureInfo.InvariantCulture,
 						"Consider changing the field '{0}' to a private or internal field and add a 'Set{1}{2}' method.",
 						name, Char.ToUpper (name [0], CultureInfo.InvariantCulture).ToString (CultureInfo.InvariantCulture), name.Substring (1));
 					Runner.Report (fd, Severity.Medium, Confidence.Total, s);
 				} else {
-					string s = String.Format (CultureInfo.InvariantCulture, 
+					string s = String.Format (CultureInfo.InvariantCulture,
 						"Field '{0}' should be private or internal and its value accessed through a property.", name);
 					Runner.Report (fd, Severity.Medium, Confidence.Total, s);
 				}

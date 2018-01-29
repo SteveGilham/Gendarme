@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.DoNotLockOnWeakIdentityObjectsRule
 //
 // Authors:
@@ -44,29 +44,29 @@ namespace Gendarme.Rules.Concurrency {
 	/// by different application domains it is very difficult to ensure that the
 	/// locking is done correctly so problems such as deadlocks are much more likely.
 	/// The following types have a weak identities:
-	/// <list type="bullet"> 
-	/// <item> 
+	/// <list type="bullet">
+	/// <item>
 	/// <description><c>System.MarshalByRefObject</c></description>
 	/// </item>
-	/// <item> 
+	/// <item>
 	/// <description><c>System.OutOfMemoryException</c></description>
 	/// </item>
-	/// <item> 
+	/// <item>
 	/// <description><c>System.Reflection.MemberInfo</c></description>
 	/// </item>
-	/// <item> 
+	/// <item>
 	/// <description><c>System.Reflection.ParameterInfo</c></description>
 	/// </item>
-	/// <item> 
+	/// <item>
 	/// <description><c>System.ExecutionEngineException</c></description>
 	/// </item>
-	/// <item> 
+	/// <item>
 	/// <description><c>System.StackOverflowException</c></description>
 	/// </item>
-	/// <item> 
+	/// <item>
 	/// <description><c>System.String</c></description>
 	/// </item>
-	/// <item> 
+	/// <item>
 	/// <description><c>System.Threading.Thread</c></description>
 	/// </item>
 	/// </list>
@@ -74,10 +74,10 @@ namespace Gendarme.Rules.Concurrency {
 	/// <example>
 	/// Bad example:
 	/// <code>
-	/// public void WeakIdLocked () 
+	/// public void WeakIdLocked ()
 	/// {
 	/// 	lock ("CustomString") {
-	///		// ...
+	/// 		// ...
 	/// 	}
 	/// }
 	/// </code>
@@ -89,7 +89,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// {
 	/// 	Phone phone = new Phone ();
 	///     lock (phone) {
-	///		// ...
+	/// 		// ...
 	///     }
 	/// }
 	/// </code>
@@ -117,7 +117,7 @@ namespace Gendarme.Rules.Concurrency {
 		{
 			if (!type.Inherits (nameSpace, name))
 				return String.Empty;
-			return String.Format (CultureInfo.InvariantCulture, "'{0}' inherits from '{1}.{2}'.", 
+			return String.Format (CultureInfo.InvariantCulture, "'{0}' inherits from '{1}.{2}'.",
 				type.GetFullName (), nameSpace, name);
 		}
 

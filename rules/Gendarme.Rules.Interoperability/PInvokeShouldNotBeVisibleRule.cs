@@ -54,7 +54,7 @@ namespace Gendarme.Rules.Interoperability {
 	/// internal static extern bool MessageBeep (UInt32 beepType);
 	/// </code>
 	/// </example>
-	
+
 	[Problem ("P/Invoke declarations should not be visible outside of their assembly.")]
 	[Solution ("Reduce the visibility of the p/invoke method and make sure it is declared as static.")]
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible")]
@@ -70,11 +70,11 @@ namespace Gendarme.Rules.Interoperability {
 			// rule does not apply to non-p/invoke
 			if (!method.IsPInvokeImpl)
 				return RuleResult.DoesNotApply;
-			
+
 			// rule applies
-			
+
 			// code is very unlikely to work (because of the extra this parameter)
-			// note: existing C# compilers won't compile instance p/invoke, e.g.  
+			// note: existing C# compilers won't compile instance p/invoke, e.g.
 			// error CS0601: The DllImport attribute must be specified on a method marked `static' and `extern'
 			if (!method.IsStatic)
 				Runner.Report (method, Severity.Critical, Confidence.Total);

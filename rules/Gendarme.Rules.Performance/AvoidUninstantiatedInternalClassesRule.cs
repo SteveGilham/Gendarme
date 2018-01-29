@@ -39,9 +39,9 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Performance {
 
 	/// <summary>
-	/// This rule will fire if a type is only visible within its assembly, can be instantiated, but 
+	/// This rule will fire if a type is only visible within its assembly, can be instantiated, but
 	/// is not instantiated. Such types are often leftover (dead code) or are debugging/testing
-	/// code and not required. However in some case the types might by needed, e.g. when 
+	/// code and not required. However in some case the types might by needed, e.g. when
 	/// accessed thru reflection or if the <c>[InternalsVisibleTo]</c> attribute is used on the
 	/// assembly.
 	/// </summary>
@@ -50,14 +50,14 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// // defined, but never instantiated
 	/// internal class MyInternalClass {
-	///	// ...
-	/// } 
-	/// 
+	/// 	// ...
+	/// }
+	///
 	/// public class MyClass {
-	///	static void Main ()
-	///	{
-	///		// ...
-	///	}
+	/// 	static void Main ()
+	/// 	{
+	/// 		// ...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -65,15 +65,15 @@ namespace Gendarme.Rules.Performance {
 	/// Good example:
 	/// <code>
 	/// internal class MyInternalClass {
-	///	// ...
-	/// } 
-	/// 
+	/// 	// ...
+	/// }
+	///
 	/// public class MyClass {
-	///	static void Main ()
-	///	{
-	///		MyInternalClass c = new MyInternalClass ();
-	///		// ...
-	///	}
+	/// 	static void Main ()
+	/// 	{
+	/// 		MyInternalClass c = new MyInternalClass ();
+	/// 		// ...
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -245,7 +245,7 @@ namespace Gendarme.Rules.Performance {
 			// if we can't find the non-public type being used in the assembly then the rule fails
 			if (typeset == null || !typeset.Contains (type)) {
 				// base confidence on whether the internals are visible or not
-				Confidence c = assembly.HasAttribute ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute") ? 
+				Confidence c = assembly.HasAttribute ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute") ?
 					Confidence.Low : Confidence.Normal;
 				Runner.Report (type, Severity.High, c);
 				return RuleResult.Failure;

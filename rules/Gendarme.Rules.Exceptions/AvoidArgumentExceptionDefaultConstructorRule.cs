@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Exceptions.AvoidArgumentExceptionDefaultConstructorRule
 //
 // Authors:
@@ -36,7 +36,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Exceptions {
 
 	/// <summary>
-	/// This rule checks that every <c>System.ArgumentException</c>, 
+	/// This rule checks that every <c>System.ArgumentException</c>,
 	/// <c>System.ArgumentNullException</c>, <c>System.ArgumentOutOfRangeException</c>, or
 	/// <c>System.DuplicateWaitObjectException</c> exception created is provided with some
 	/// useful information about the exception being thrown, minimally the parameter name.
@@ -46,10 +46,10 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Add (object key, object value)
 	/// {
-	///	if ((obj == null) || (key == null)) {
-	///		throw new ArgumentNullException ();
-	///	}
-	///	Inner.Add (key, value);
+	/// 	if ((obj == null) || (key == null)) {
+	/// 		throw new ArgumentNullException ();
+	/// 	}
+	/// 	Inner.Add (key, value);
 	/// }
 	/// </code>
 	/// </example>
@@ -58,13 +58,13 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Add (object key, object value)
 	/// {
-	///	if (key == null) {
-	///		throw new ArgumentNullException ("key");
-	///	}
-	///	if (obj == value) {
-	///		throw new ArgumentNullException ("value");
-	///	}
-	///	Inner.Add (key, value);
+	/// 	if (key == null) {
+	/// 		throw new ArgumentNullException ("key");
+	/// 	}
+	/// 	if (obj == value) {
+	/// 		throw new ArgumentNullException ("value");
+	/// 	}
+	/// 	Inner.Add (key, value);
 	/// }
 	/// </code>
 	/// </example>

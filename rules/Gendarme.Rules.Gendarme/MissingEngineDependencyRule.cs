@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.MissingEngineDependencyRule
 //
 // Authors:
@@ -46,12 +46,12 @@ namespace Gendarme.Rules.Gendarme {
 	/// Bad example:
 	/// <code>
 	/// class BadRule : Rule, IMethodRule {
-	///	public RuleResult CheckMethod (MethodDefinition method) 
-	///	{
-	///		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-	///			return RuleResult.DoesNotApply;
-	///		// rule code
-	///	}
+	/// 	public RuleResult CheckMethod (MethodDefinition method)
+	/// 	{
+	/// 		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
+	/// 			return RuleResult.DoesNotApply;
+	/// 		// rule code
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -60,12 +60,12 @@ namespace Gendarme.Rules.Gendarme {
 	/// <code>
 	/// [EngineDependency (typeof (OpCodeEngine))]
 	/// class BadRule : Rule, IMethodRule {
-	///	public RuleResult CheckMethod (MethodDefinition method) 
-	///	{
-	///		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-	///			return RuleResult.DoesNotApply;
-	///		// rule code
-	///	}
+	/// 	public RuleResult CheckMethod (MethodDefinition method)
+	/// 	{
+	/// 		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
+	/// 			return RuleResult.DoesNotApply;
+	/// 		// rule code
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -111,10 +111,10 @@ namespace Gendarme.Rules.Gendarme {
 					string declaringType = dtype.GetFullName ();
 					if (!engines.Contains (declaringType) || declaredEngines.Contains (declaringType))
 						continue;
-					Runner.Report (method, instruction, Severity.High, Confidence.High, 
+					Runner.Report (method, instruction, Severity.High, Confidence.High,
 						"An engine " + declaringType + " is being used without type being subscribed to it with EngineDependency attribute.");
 				}
-				
+
 			}
 
 			return Runner.CurrentRuleResult;

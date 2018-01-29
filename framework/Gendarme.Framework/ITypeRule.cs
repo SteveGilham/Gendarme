@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.ITypeRule interface
 //
 // Authors:

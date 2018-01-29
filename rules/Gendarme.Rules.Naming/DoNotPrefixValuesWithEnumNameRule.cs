@@ -35,16 +35,16 @@ namespace Gendarme.Rules.Naming {
 
 	/// <summary>
 	/// This rule checks for <c>enum</c> values that are prefixed with the enumeration type
-	/// name. This is typical in C/C++ application but unneeded in .NET since the <c>enum</c> 
+	/// name. This is typical in C/C++ application but unneeded in .NET since the <c>enum</c>
 	/// type name must be specified anyway when used.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public enum Answer {
-	///	AnswerYes,
-	///	AnswerNo,
-	///	AnswerMaybe,
+	/// 	AnswerYes,
+	/// 	AnswerNo,
+	/// 	AnswerMaybe,
 	/// }
 	/// </code>
 	/// </example>
@@ -52,9 +52,9 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// public enum Answer {
-	///	Yes,
-	///	No,
-	///	Maybe
+	/// 	Yes,
+	/// 	No,
+	/// 	Maybe
 	/// }
 	/// </code>
 	/// </example>

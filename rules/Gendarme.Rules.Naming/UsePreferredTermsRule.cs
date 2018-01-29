@@ -42,7 +42,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Naming {
 
 	/// <summary>
-	/// This rule ensures that identifiers such as assemblies, namespaces, types, and members, 
+	/// This rule ensures that identifiers such as assemblies, namespaces, types, and members,
 	/// use the terms suggested by the .NET framework guidelines so that they are consistent
 	/// with other class libraries.
 	/// <list>
@@ -75,8 +75,8 @@ namespace Gendarme.Rules.Naming {
 	/// Bad example:
 	/// <code>
 	/// abstract public class ComPlusSecurity {
-	///	abstract public void LogIn ();
-	///	abstract public void LogOut ();
+	/// 	abstract public void LogIn ();
+	/// 	abstract public void LogOut ();
 	/// }
 	/// </code>
 	/// </example>
@@ -84,8 +84,8 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// abstract public class EnterpriseServicesSecurity {
-	///	abstract public void LogOn ();
-	///	abstract public void LogOff ();
+	/// 	abstract public void LogOn ();
+	/// 	abstract public void LogOff ();
 	/// }
 	/// </code>
 	/// </example>
@@ -127,7 +127,7 @@ namespace Gendarme.Rules.Naming {
 				{ "Wouldnt", "WouldNot" },
 				{ "Writeable", "Writable" }
 			};
-		
+
 		// Reports a defect when 'name' contains a non-recommended term.
 		// * identifier: Metadata token for 'name' or null if it is a namespace.
 		// * name: Name to check.
@@ -157,7 +157,7 @@ namespace Gendarme.Rules.Naming {
 			CheckIdentifier (assembly, assembly.Name.Name, Severity.High);
 
 			// check every namespaces inside the assembly using the NamespaceEngine
-			// note: we don't reuse CheckIdentifier because we want to avoid 
+			// note: we don't reuse CheckIdentifier because we want to avoid
 			// creating Namespace instance unless necessary
 			foreach (string ns in NamespaceEngine.NamespacesInside (assembly))
 				CheckIdentifier (NamespaceDefinition.GetDefinition (ns), ns, Severity.Medium);

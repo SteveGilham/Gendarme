@@ -51,9 +51,9 @@ namespace Gendarme.Rules.Interoperability {
 	/// <code>
 	/// public void DestroyError ()
 	/// {
-	///	MessageBeep (2);
-	///	Console.WriteLine ("Beep");
-	///	int error = Marshal.GetLastWin32Error ();
+	/// 	MessageBeep (2);
+	/// 	Console.WriteLine ("Beep");
+	/// 	int error = Marshal.GetLastWin32Error ();
 	/// }
 	/// </code>
 	/// </example>
@@ -62,15 +62,15 @@ namespace Gendarme.Rules.Interoperability {
 	/// <code>
 	/// public void GetError ()
 	/// {
-	///	MessageBeep (2);
-	///	int error = Marshal.GetLastWin32Error ();
-	///	Console.WriteLine ("Beep");
+	/// 	MessageBeep (2);
+	/// 	int error = Marshal.GetLastWin32Error ();
+	/// 	Console.WriteLine ("Beep");
 	/// }
-	/// 
+	///
 	/// public void DontUseGetLastError ()
 	/// {
-	///	MessageBeep (2);
-	///	Console.WriteLine ("Beep");
+	/// 	MessageBeep (2);
+	/// 	Console.WriteLine ("Beep");
 	/// }
 	/// </code>
 	/// </example>
@@ -145,7 +145,7 @@ namespace Gendarme.Rules.Interoperability {
 						if (mDef != null && mDef.IsPInvokeImpl) { //check if another pinvoke method is called, this counts as "GetLastError not called"
 							break;
 						}
-                        
+
 						string s = (mDef == null) ? String.Empty : mDef.DeclaringType.GetFullName ();
 						switch (s) {
 						case "System.Runtime.InteropServices.Marshal":

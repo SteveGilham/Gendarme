@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.EnumsShouldUseInt32Rule
 //
 // Authors:
@@ -39,7 +39,7 @@ namespace Gendarme.Rules.Design {
 	// It might also be a good idea if it only fired for publicly visible enums.
 
 	/// <summary>
-	/// Enumaration types should avoid specifying a non-default storage type for their values 
+	/// Enumaration types should avoid specifying a non-default storage type for their values
 	/// unless it is required for interoperability (e.g. with native code). If you do use a non-default
 	/// type for the enum, and the enum is externally visible, then prefer the CLS-compliant
 	/// integral types: System.Byte, System.Int16, System.Int32, and System.Int64.
@@ -48,15 +48,15 @@ namespace Gendarme.Rules.Design {
 	/// Bad examples:
 	/// <code>
 	/// public enum SmallEnum : byte {
-	///	Zero,
-	///	One
+	/// 	Zero,
+	/// 	One
 	/// }
-	/// 
+	///
 	/// [Flags]
 	/// public enum SmallFlag : ushort {
-	///	One = 1,
-	///	// ...
-	///	Sixteen = 1 &lt;&lt; 15
+	/// 	One = 1,
+	/// 	// ...
+	/// 	Sixteen = 1 &lt;&lt; 15
 	/// }
 	/// </code>
 	/// </example>
@@ -64,15 +64,15 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public enum SmallEnum {
-	///	Zero,
-	///	One
+	/// 	Zero,
+	/// 	One
 	/// }
-	/// 
+	///
 	/// [Flags]
 	/// public enum SmallFlag {
-	///	One = 1,
-	///	// ...
-	///	Sixteen = 1 &lt;&lt; 15
+	/// 	One = 1,
+	/// 	// ...
+	/// 	Sixteen = 1 &lt;&lt; 15
 	/// }
 	/// </code>
 	/// </example>
@@ -123,7 +123,7 @@ namespace Gendarme.Rules.Design {
 				}
 			}
 
-			string text = String.Format (CultureInfo.InvariantCulture, 
+			string text = String.Format (CultureInfo.InvariantCulture,
 				"Enums should use System.Int32 instead of '{0}'.", ftype.GetFullName ());
 			Runner.Report (type, severity, Confidence.Total, text);
 			return RuleResult.Failure;

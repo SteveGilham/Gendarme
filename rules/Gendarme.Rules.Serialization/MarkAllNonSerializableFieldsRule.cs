@@ -36,7 +36,7 @@ namespace Gendarme.Rules.Serialization {
 
 	/// <summary>
 	/// This rule checks for serializable types, i.e. decorated with the <c>[Serializable]</c>
-	/// attribute, and checks to see if all its fields are serializable as well. If not the rule will 
+	/// attribute, and checks to see if all its fields are serializable as well. If not the rule will
 	/// fire unless the field is decorated with the <c>[NonSerialized]</c> attribute.
 	/// The rule will also warn if the field type is an interface as it is not possible,
 	/// before execution time, to know for certain if the type can be serialized or not.
@@ -46,10 +46,10 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// class NonSerializableClass {
 	/// }
-	/// 
+	///
 	/// [Serializable]
 	/// class SerializableClass {
-	///	NonSerializableClass field;
+	/// 	NonSerializableClass field;
 	/// }
 	/// </code>
 	/// </example>
@@ -58,11 +58,11 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// class NonSerializableClass {
 	/// }
-	/// 
+	///
 	/// [Serializable]
 	/// class SerializableClass {
-	///	[NonSerialized]
-	///	NonSerializableClass field;
+	/// 	[NonSerialized]
+	/// 	NonSerializableClass field;
 	/// }
 	/// </code>
 	/// </example>
@@ -85,14 +85,14 @@ namespace Gendarme.Rules.Serialization {
 				return RuleResult.DoesNotApply;
 
 			foreach (FieldDefinition field in type.Fields) {
-				if (!field.IsNotSerialized && !field.IsStatic) { 
+				if (!field.IsNotSerialized && !field.IsStatic) {
 					TypeDefinition fieldType = field.FieldType.Resolve ();
 					if (fieldType == null)
 						continue;
 
 					if (fieldType.IsInterface) {
 						string msg = String.Format (CultureInfo.InvariantCulture,
-							"Serialization of interface {0} as field {1} unknown until runtime", 
+							"Serialization of interface {0} as field {1} unknown until runtime",
 							fieldType, field.Name);
 						Runner.Report (field, Severity.Critical, Confidence.Low, msg);
 						continue;

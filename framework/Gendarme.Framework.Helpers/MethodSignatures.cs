@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.MethodSignatures
 //
 // Authors:
@@ -90,12 +90,12 @@ namespace Gendarme.Framework.Helpers {
 
 		public static readonly MethodSignature op_Increment = new MethodSignature ("op_Increment", (method) => IsOperator (method, 1));				// 5++
 		public static readonly MethodSignature op_Decrement = new MethodSignature ("op_Decrement", (method) => IsOperator (method, 1));				// 5--
-		public static readonly MethodSignature op_True = new MethodSignature ("op_True", "System.Boolean", (method) => IsOperator (method, 1));			// if (object)		
+		public static readonly MethodSignature op_True = new MethodSignature ("op_True", "System.Boolean", (method) => IsOperator (method, 1));			// if (object)
 		public static readonly MethodSignature op_False = new MethodSignature ("op_False", "System.Boolean", (method) => IsOperator (method, 1));		// if (object)
 
 		// binary
 		public static readonly MethodSignature op_Addition = new MethodSignature ("op_Addition", (method) => IsOperator (method, 2));				// 5 + 5
-		public static readonly MethodSignature op_Subtraction = new MethodSignature ("op_Subtraction", (method) => IsOperator (method, 2));			// 5 - 5 
+		public static readonly MethodSignature op_Subtraction = new MethodSignature ("op_Subtraction", (method) => IsOperator (method, 2));			// 5 - 5
 		public static readonly MethodSignature op_Multiply = new MethodSignature ("op_Multiply", (method) => IsOperator (method, 2));				// 5 * 5
 		public static readonly MethodSignature op_Division = new MethodSignature ("op_Division", (method) => IsOperator (method, 2));				// 5 / 5
 		public static readonly MethodSignature op_Modulus = new MethodSignature ("op_Modulus", (method) => IsOperator (method, 2));				// 5 % 5

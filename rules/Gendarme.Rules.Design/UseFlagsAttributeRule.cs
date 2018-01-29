@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.UseFlagsAttributeRule
 //
 // Authors:
@@ -42,8 +42,8 @@ namespace Gendarme.Rules.Design {
 	/// This rule will fire if an enum's values look like they are intended to
 	/// be composed together with the bitwise OR operator and the enum is not
 	/// decorated with <c>System.FlagsAttribute</c>. Using <c>FlagsAttribute</c> will
-	/// allow <c>System.Enum.ToString()</c> to return a better string when 
-	/// values are ORed together and helps indicate to readers of the code 
+	/// allow <c>System.Enum.ToString()</c> to return a better string when
+	/// values are ORed together and helps indicate to readers of the code
 	/// the intended usage of the enum.
 	/// </summary>
 	/// <example>
@@ -51,10 +51,10 @@ namespace Gendarme.Rules.Design {
 	/// <code>
 	/// [Serializable]
 	/// enum Options {
-	///		First = 1,
-	///		Second = 2,
-	///		Third = 4,
-	///		All = First | Second | Third,
+	/// 		First = 1,
+	/// 		Second = 2,
+	/// 		Third = 4,
+	/// 		All = First | Second | Third,
 	/// }
 	/// </code>
 	/// </example>
@@ -64,26 +64,26 @@ namespace Gendarme.Rules.Design {
 	/// [Flags]
 	/// [Serializable]
 	/// enum Options {
-	///		First = 1,
-	///		Second = 2,
-	///		Third = 4,
-	///		All = First | Second | Third,
+	/// 		First = 1,
+	/// 		Second = 2,
+	/// 		Third = 4,
+	/// 		All = First | Second | Third,
 	/// }
 	/// </code>
 	/// </example>
 	/// <remarks>This rule is available since Gendarme 2.6</remarks>
 
 	[Problem ("The enum seems to be composed of flag values, but is not decorated with [Flags].")]
-	[Solution ("Add [Flags] to the enum,  change the values so that they are not powers of two, or ignore the defect.")]
+	[Solution ("Add [Flags] to the enum, change the values so that they are not powers of two, or ignore the defect.")]
 	[FxCopCompatibility ("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
 	public sealed class UseFlagsAttributeRule : Rule, ITypeRule {
-	
+
 		private List<ulong> values = new List<ulong> ();
 
 		private void GetValues (TypeDefinition type)
 		{
 			values.Clear ();
-			
+
 			foreach (FieldDefinition field in type.Fields) {
 				if (field.IsStatic) {
 					object o = field.Constant;
@@ -109,14 +109,14 @@ namespace Gendarme.Rules.Design {
 				}
 			}
 		}
-		
+
 		static bool IsPowerOfTwo (ulong x)
 		{
 			Debug.Assert (x > 0, "x is not positive");
 
 			return (x & (x - 1)) == 0;
 		}
-		
+
 		private bool IsBitmask (ulong x)
 		{
 			for (int i = 0; i < values.Count && x != 0; ++i) {
@@ -124,15 +124,15 @@ namespace Gendarme.Rules.Design {
 				if (IsPowerOfTwo (bit))
 					x &= ~bit;
 			}
-			
+
 			return x == 0;
 		}
-		
+
 		private int CountSequential ()
 		{
 			int count = 0;
 			int currentCount = 1;
-			
+
 			for (int i = 1; i < values.Count; ++i) {
 				if (values [i] == values [i - 1] + 1) {
 					++currentCount;
@@ -141,7 +141,7 @@ namespace Gendarme.Rules.Design {
 					currentCount = 0;
 				}
 			}
-						
+
 			return Math.Max (currentCount, count);
 		}
 
@@ -177,16 +177,16 @@ namespace Gendarme.Rules.Design {
 				else if (IsBitmask (value))
 					++numMasks;
 			}
-			
+
 			Log.WriteLine (this, "numFlags: {0}", numFlags);
 			Log.WriteLine (this, "numMasks: {0}", numMasks);
 
-			// The enum is bad if all of the values are powers of two or composed 
+			// The enum is bad if all of the values are powers of two or composed
 			// of defined powers of two,
 			if (numFlags + numMasks == values.Count) {
 				values.Sort ();		// sometimes enums are all sequential but not in order
-				
-				int numSequential = CountSequential ();				
+
+				int numSequential = CountSequential ();
 				Log.WriteLine (this, "numSequential: {0}", numSequential);
 
 				// and there are not too many sequential values (so we don't

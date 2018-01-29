@@ -49,7 +49,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// [MethodImpl (MethodImplOptions.Synchronized)]
 	/// public void SychronizedMethod ()
 	/// {
-	///	producer++;
+	/// 	producer++;
 	/// }
 	/// </code>
 	/// </example>
@@ -58,14 +58,14 @@ namespace Gendarme.Rules.Concurrency {
 	/// <code>
 	/// public class ClassWithALocker {
 	/// 	object locker = new object ();
-	///	int producer = 0;
-	/// 
-	///	public void MethodLockingLocker ()
-	///	{
-	///		lock (locker) {
-	///			producer++;
-	///		}
-	///	}
+	/// 	int producer = 0;
+	///
+	/// 	public void MethodLockingLocker ()
+	/// 	{
+	/// 		lock (locker) {
+	/// 			producer++;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

@@ -52,7 +52,7 @@ namespace Gendarme.Rules.Smells {
 	// or maybe a Language method on a person object).
 
 	/// <summary>
-	/// This rule checks for the Message Chain smell.  This can cause problems because it 
+	/// This rule checks for the Message Chain smell.  This can cause problems because it
 	/// means that your code is heavily coupled to the navigation structure.
 	/// </summary>
 	/// <example>
@@ -60,7 +60,7 @@ namespace Gendarme.Rules.Smells {
 	/// <code>
 	/// public void Method (Person person)
 	/// {
-	///	person.GetPhone ().GetAreaCode ().GetCountry ().Language.ToFrench ("Hello world");
+	/// 	person.GetPhone ().GetAreaCode ().GetCountry ().Language.ToFrench ("Hello world");
 	/// }
 	/// </code>
 	/// </example>
@@ -69,7 +69,7 @@ namespace Gendarme.Rules.Smells {
 	/// <code>
 	/// public void Method (Language language)
 	/// {
-	///	language.ToFrench ("Hello world");
+	/// 	language.ToFrench ("Hello world");
 	/// }
 	/// </code>
 	/// </example>
@@ -99,7 +99,7 @@ namespace Gendarme.Rules.Smells {
 		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.HasBody) 
+			if (!method.HasBody)
 				return RuleResult.DoesNotApply;
 
 			// no chain are possible without Call[virt] instructions within the method
@@ -110,7 +110,7 @@ namespace Gendarme.Rules.Smells {
 			Log.WriteLine (this);
 			Log.WriteLine (this, "-------------------------------------");
 			Log.WriteLine (this, method);
-			
+
 			// walk back so we don't process very long chains multiple times
 			// (we don't need to go down to zero since it would not be big enough for a chain to exists)
 			IList<Instruction> ic = method.Body.Instructions;
@@ -137,7 +137,7 @@ namespace Gendarme.Rules.Smells {
 				Log.WriteLine (this, "chain of length {0} at {1:X4}", counter, ins.Offset);
 
 				if (counter > MaxChainLength) {
-					string msg = String.Format (CultureInfo.CurrentCulture, 
+					string msg = String.Format (CultureInfo.CurrentCulture,
 						"Chain length {0} versus maximum of {1}.", counter, MaxChainLength);
 					Runner.Report (method, ins, Severity.Medium, Confidence.Normal, msg);
 				}
@@ -160,7 +160,7 @@ namespace Gendarme.Rules.Smells {
 		static private bool ValidLink (Instruction ins)
 		{
 			bool valid = false;
-			
+
 			if (chain.Get (ins.OpCode.Code)) {
 				// static method calls terminate chains
 				MethodReference mr = ins.Operand as MethodReference;
@@ -171,7 +171,7 @@ namespace Gendarme.Rules.Smells {
 				} else
 					valid = true;	// should be Newobj or Newarr
 			}
-			
+
 			return valid;
 		}
 	}

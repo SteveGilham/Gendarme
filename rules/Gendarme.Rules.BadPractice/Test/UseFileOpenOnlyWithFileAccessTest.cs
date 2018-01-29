@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.BadPractice.UseFileOpenOnlyWithFileAccessTest
 //
 // Authors:
@@ -83,7 +83,7 @@ namespace Test.Rules.BadPractice {
 			var f = File.Open ("HelloWorld.cs", FileMode.Open, FileAccess.Read);
 			var g = new FileStream ("HelloWorld.cs", FileMode.OpenOrCreate, FileAccess.ReadWrite);
 			var h = new IsolatedStorageFileStream ("HelloWorld.cs", FileMode.Create, FileAccess.Write);
-			
+
 			// unrelated code
 			List<string> ls = new List<string> { "a", "b" };
 			ls.Clear ();

@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,8 +36,8 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Exceptions {
 
 	/// <summary>
-	/// This rule detects exceptions that are throw in <c>fault</c>, <c>filter</c> or 
-	/// <c>finally</c> clauses. Such exceptions will make it much harder to debug your 
+	/// This rule detects exceptions that are throw in <c>fault</c>, <c>filter</c> or
+	/// <c>finally</c> clauses. Such exceptions will make it much harder to debug your
 	/// applications since it will hide the original exception.
 	/// </summary>
 	/// <example>
@@ -45,12 +45,12 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// int err = 0;
 	/// try {
-	///	err = Initialize ();
+	/// 	err = Initialize ();
 	/// }
 	/// finally {
-	///	Cleanup ();
-	///	if (err != 0)
-	///		throw new NotSupportedException ();
+	/// 	Cleanup ();
+	/// 	if (err != 0)
+	/// 		throw new NotSupportedException ();
 	/// }
 	/// </code>
 	/// </example>
@@ -58,11 +58,11 @@ namespace Gendarme.Rules.Exceptions {
 	/// Good example:
 	/// <code>
 	/// try {
-	///	if (Initialize () != 0)
-	///		throw new NotSupportedException ();
+	/// 	if (Initialize () != 0)
+	/// 		throw new NotSupportedException ();
 	/// }
 	/// finally {
-	///	Cleanup ();
+	/// 	Cleanup ();
 	/// }
 	/// </code>
 	/// </example>

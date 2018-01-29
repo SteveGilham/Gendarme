@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for UsePluralNameInEnumFlags Rule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,13 +39,13 @@ using NUnit.Framework;
 using Test.Rules.Helpers;
 
 namespace Test.Rules.Naming {
-	
+
 	[Flags]
 	public enum AppDomainManagerInitializationOptions {
 		None,
 		RegisterWithHost
 	}
-	
+
 	[Flags]
 	public enum ConsoleModifier {
 		Alt,
@@ -55,12 +55,12 @@ namespace Test.Rules.Naming {
 
 	[TestFixture]
 	public class UsePluralNameInEnumFlagsTest {
-		
+
 		private ITypeRule rule;
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
 		private TestRunner runner;
-	
+
 		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
@@ -69,21 +69,21 @@ namespace Test.Rules.Naming {
 			rule = new UsePluralNameInEnumFlagsRule ();
 			runner = new TestRunner (rule);
 		}
-		
+
 		[Test]
-		public void TestFlagsHasPluralName () 
+		public void TestFlagsHasPluralName ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Naming.AppDomainManagerInitializationOptions");
 			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
 			Assert.AreEqual (0, runner.Defects.Count, "Count");
 		}
-		
+
 		[Test]
-		public void TestFlagsHasSingularName () 
+		public void TestFlagsHasSingularName ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Naming.ConsoleModifier");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
 			Assert.AreEqual (1, runner.Defects.Count, "Count");
 		}
-	}		
+	}
 }

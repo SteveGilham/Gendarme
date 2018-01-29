@@ -43,8 +43,8 @@ namespace Gendarme.Rules.Performance {
 	/// This rule will warn you if boxing is used to concatenate a string
 	/// since this will slow down your code and can be easily avoided. This
 	/// often happen when concatenating <c>System.String</c> and <c>System.Char</c>
-	/// values together. However the rule is not limited to check boxing on 
-	/// <c>System.Char</c> since compilers often transform a character into its 
+	/// values together. However the rule is not limited to check boxing on
+	/// <c>System.Char</c> since compilers often transform a character into its
 	/// integer value (e.g. 'a' == 61) and the same boxing issue exists on integers.
 	/// </summary>
 	/// <example>
@@ -52,9 +52,9 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public string PrintIndex (string a, char b)
 	/// {
-	///	// This is compiled into String.Concat(params object[])
-	///	// and requires boxing the 4 characters
-	///	Console.WriteLine ('[' + a + ',' + b + ']');
+	/// 	// This is compiled into String.Concat(params object[])
+	/// 	// and requires boxing the 4 characters
+	/// 	Console.WriteLine ('[' + a + ',' + b + ']');
 	/// }
 	/// </code>
 	/// </example>
@@ -63,9 +63,9 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public string PrintIndex (string a, char b)
 	/// {
-	///	// This is compiled into String.Concat(params string[])
-	///	// and no boxing is required
-	///	Console.WriteLine ("[" + a + "," + b.ToString () + "]");
+	/// 	// This is compiled into String.Concat(params string[])
+	/// 	// and no boxing is required
+	/// 	Console.WriteLine ("[" + a + "," + b.ToString () + "]");
 	/// }
 	/// </code>
 	/// </example>

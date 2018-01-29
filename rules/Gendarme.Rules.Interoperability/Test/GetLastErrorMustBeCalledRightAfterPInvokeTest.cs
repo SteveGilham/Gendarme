@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for GetLastErrorMustBeCalledRightAfterPInvokeRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -47,33 +47,33 @@ namespace Test.Rules.Interoperability {
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
 		private TestRunner runner;
-		
+
 		[DllImport ("User32.dll")]
 		static extern Boolean MessageBeep (UInt32 beepType);
-		
+
 		public void CallNothing ()
 		{
 			new object ().ToString ();
 		}
-		
+
 		public void CallNothingNotExternal ()
 		{
 			this.CallPInvoke ();
 			Console.WriteLine ();
 			Marshal.GetLastWin32Error ();
 		}
-		
+
 		public void CallPInvoke ()
 		{
 			MessageBeep (5);
 		}
-		
+
 		public void CallPInvoke_GetError ()
 		{
 			MessageBeep (5);
 			Marshal.GetLastWin32Error ();
 		}
-		
+
 		public void CallPInvoke_GetError_valid ()
 		{
 			SafeHandle handle = new Microsoft.Win32.SafeHandles.SafeFileHandle ((IntPtr)0, true);
@@ -86,35 +86,35 @@ namespace Test.Rules.Interoperability {
 				return;
 			Marshal.GetLastWin32Error ();
 		}
-		
+
 		public void CallPInvoke_GetError_valid_struct ()
 		{
 			MessageBeep (5);
 			new System.DateTime ();  //valid: initobj System.DateTime
 			Marshal.GetLastWin32Error ();
 		}
-		
+
 		public void CallPInvoke_GetError_invalid ()
 		{
 			MessageBeep (5);
 			Console.WriteLine ("FAIL");
 			Marshal.GetLastWin32Error ();
 		}
-		
+
 		public void CallPInvoke_GetError_invalid_newobj ()
 		{
 			MessageBeep (5);
 			new object ();
 			Marshal.GetLastWin32Error ();
 		}
-		
+
 		public void CallPInvoke_GetError_invalid_struct ()
 		{
 			MessageBeep (5);
 			new System.DateTime (10); //invalid: call System.Void System.DateTime::.ctor(System.Int64)
 			Marshal.GetLastWin32Error ();
 		}
-		
+
 		public void CallGetError ()
 		{
 			new object().ToString ();
@@ -146,63 +146,63 @@ namespace Test.Rules.Interoperability {
 			MethodDefinition method = GetTest ("CallNothing");
 			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestNothingNotExternal ()
 		{
 			MethodDefinition method = GetTest ("CallNothingNotExternal");
 			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestPInvoke ()
 		{
 			MethodDefinition method = GetTest ("CallPInvoke");
 			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestPInvoke_GetError ()
 		{
 			MethodDefinition method = GetTest ("CallPInvoke_GetError");
 			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestPInvoke_GetError_valid ()
 		{
 			MethodDefinition method = GetTest ("CallPInvoke_GetError_valid");
 			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestPInvoke_GetError_invalid ()
 		{
 			MethodDefinition method = GetTest ("CallPInvoke_GetError_invalid");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestPInvoke_GetError_invalid_newobj ()
 		{
 			MethodDefinition method = GetTest ("CallPInvoke_GetError_invalid_newobj");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestPInvoke_GetError_invalid_struct ()
 		{
 			MethodDefinition method = GetTest ("CallPInvoke_GetError_invalid_struct");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestPInvoke_GetError_valid_struct ()
 		{
 			MethodDefinition method = GetTest ("CallPInvoke_GetError_valid_struct");
 			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method));
 		}
-		
+
 		[Test]
 		public void TestGetError ()
 		{

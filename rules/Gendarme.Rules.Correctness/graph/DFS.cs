@@ -1,4 +1,4 @@
-/*
+﻿/*
  * DFS.cs: performs a depth-first search on a graph.
  *
  * Authors:
@@ -33,7 +33,7 @@ public class DFS {
         this.colors = new Hashtable(graph.NodeCount);
     }
 
-    public void Traverse() 
+    public void Traverse()
     {
         foreach(object o in graph.Nodes)
             colors[o] = WHITE;

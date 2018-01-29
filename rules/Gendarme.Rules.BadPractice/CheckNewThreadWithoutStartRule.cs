@@ -49,8 +49,8 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// void UnusedThread ()
 	/// {
-	///	Thread thread = new Thread (threadStart);
-	///	thread.Name = "Thread 1";
+	/// 	Thread thread = new Thread (threadStart);
+	/// 	thread.Name = "Thread 1";
 	/// }
 	/// </code>
 	/// </example>
@@ -59,16 +59,16 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// void Start ()
 	/// {
-	///	Thread thread = new Thread (threadStart);
-	///	thread.Name = "Thread 1";
-	///	thread.Start ();
+	/// 	Thread thread = new Thread (threadStart);
+	/// 	thread.Name = "Thread 1";
+	/// 	thread.Start ();
 	/// }
-	/// 
+	///
 	/// Thread InitializeThread ()
 	/// {
-	///	Thread thread = new Thread (threadStart);
-	///	thread.Name = "Thread 1";
-	///	return thread;
+	/// 	Thread thread = new Thread (threadStart);
+	/// 	thread.Name = "Thread 1";
+	/// 	return thread;
 	/// }
 	/// </code>
 	/// </example>
@@ -120,7 +120,7 @@ namespace Gendarme.Rules.BadPractice {
 		{
 			base.Initialize (runner);
 
-			// if the module does not reference (sealed) System.Threading.Thread 
+			// if the module does not reference (sealed) System.Threading.Thread
 			// then no code inside the module will instanciate it
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||

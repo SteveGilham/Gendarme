@@ -40,7 +40,7 @@ namespace Gendarme.Rules.Maintainability {
 
 	/// <summary>
 	/// This rule checks methods for over specialized parameters - i.e. parameter types
-	/// that are unnecessarily specialized with respect to what the method needs to 
+	/// that are unnecessarily specialized with respect to what the method needs to
 	/// perform its job. This often impairs the reusability of the method. If a problem
 	/// is found the rule will suggest the most general type, or interface, required for the
 	/// method to work.
@@ -54,10 +54,10 @@ namespace Gendarme.Rules.Maintainability {
 	/// 		return o.GetHashCode ();
 	/// 	}
 	/// }
-	/// 
+	///
 	/// public int Bad (DefaultEqualityComparer ec, object o)
 	/// {
-	///	return ec.GetHashCode (o);
+	/// 	return ec.GetHashCode (o);
 	/// }
 	/// </code>
 	/// </example>
@@ -70,10 +70,10 @@ namespace Gendarme.Rules.Maintainability {
 	/// 		return o.GetHashCode ();
 	/// 	}
 	/// }
-	/// 
+	///
 	/// public int Good (IEqualityComparer ec, object o)
 	/// {
-	///	return ec.GetHashCode (o);
+	/// 	return ec.GetHashCode (o);
 	/// }
 	/// </code>
 	/// </example>
@@ -194,7 +194,7 @@ namespace Gendarme.Rules.Maintainability {
 
 				TypeDefinition candidate = iface.Resolve ();
 				if ((candidate == null) || !candidate.IsVisible ())
-					continue; 
+					continue;
 
 				if (!DoesAllSignaturesMatchType (candidate, signatures))
 					continue;
@@ -277,7 +277,7 @@ namespace Gendarme.Rules.Maintainability {
 
 			//HACK: BOO:
 			case "EqualityOperator" :
-				return (method.HasParameters && (method.Parameters.Count == 2) && 
+				return (method.HasParameters && (method.Parameters.Count == 2) &&
 					(method.DeclaringType.IsNamed ("Boo.Lang.Runtime", "RuntimeServices")));
 			}
 			return false;

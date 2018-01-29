@@ -1,4 +1,4 @@
-//
+﻿//
 // AutoLayoutTypesShouldNotBeComVisibleTest.cs
 //
 // Authors:
@@ -109,7 +109,7 @@ namespace Test.Rules.Interoperability.Com {
 		{
 			// public explicit layout struct with [ComVisible (true)]
 			AssertRuleSuccess<GoodExplicit> ();
-			// public sequential layout struct with [ComVisible (true)] 
+			// public sequential layout struct with [ComVisible (true)]
 			AssertRuleSuccess<GoodSequential> ();
 		}
 

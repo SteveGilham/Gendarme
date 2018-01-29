@@ -38,12 +38,12 @@ using Gendarme.Framework.Engines;
 
 
 namespace Gendarme.Rules.BadPractice {
-	
+
 	/// <summary>
 	/// This rule checks that when file open method is called with FileMode parameter
-	/// it is also called with FileAccess (or FileSystemRights) parameter. It is needed 
-	/// because default behaviour of file open methods when they are called only with 
-	/// FileMode is to require read-write access while it is commonly expected that they 
+	/// it is also called with FileAccess (or FileSystemRights) parameter. It is needed
+	/// because default behaviour of file open methods when they are called only with
+	/// FileMode is to require read-write access while it is commonly expected that they
 	/// will require only read access.
 	/// </summary>
 	/// <example>
@@ -51,7 +51,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public void OpenFile ()
 	/// {
-	///	FileStream f = File.Open ("Filename.ext", FileMode.Open);
+	/// 	FileStream f = File.Open ("Filename.ext", FileMode.Open);
 	/// }
 	/// </code>
 	/// </example>
@@ -60,7 +60,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public void OpenFile ()
 	/// {
-	///	FileStream f = File.Open ("Filename.ext", FileMode.Open, FileAccess.Read);
+	/// 	FileStream f = File.Open ("Filename.ext", FileMode.Open, FileAccess.Read);
 	/// }
 	/// </code>
 	/// </example>
@@ -144,7 +144,7 @@ namespace Gendarme.Rules.BadPractice {
 						foundFileAccess = true;
 				}
 				if (foundFileMode && !foundFileAccess) {
-					string msg = String.Format (CultureInfo.InvariantCulture, 
+					string msg = String.Format (CultureInfo.InvariantCulture,
 						"{0}::{1} being called with FileMode parameter but without FileAccess.",
 						m.DeclaringType.GetFullName (), m.Name);
 					Runner.Report (method, instruction, Severity.Medium, Confidence.Normal, msg);

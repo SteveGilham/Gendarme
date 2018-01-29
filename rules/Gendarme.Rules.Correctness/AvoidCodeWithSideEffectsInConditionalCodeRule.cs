@@ -39,21 +39,25 @@ using System.Globalization;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
-	/// A number of System methods are conditionally compiled on #defines. 
+	/// <para>
+	/// A number of System methods are conditionally compiled on #defines.
 	/// For example, System.Diagnostics.Trace::Assert is a no-op if TRACE
 	/// is not defined and System.Diagnostics.Debug::Write is a no-op if DEBUG
 	/// is not defined.
-	///
+	/// </para>
+	/// <para>
 	/// When calling a conditionally compiled method care should be taken to
-	/// avoid executing code which has visible side effects. The reason is that 
-	/// the state of the program should generally not depend on the value of 
-	/// a define. If it does it is all too easy to create code which, for example, 
+	/// avoid executing code which has visible side effects. The reason is that
+	/// the state of the program should generally not depend on the value of
+	/// a define. If it does it is all too easy to create code which, for example,
 	/// works in DEBUG but fails or behaves differently in release.
-	///
-	/// This rule flags expressions used to construct the arguments to a 
+	/// </para>
+	/// <para>
+	/// This rule flags expressions used to construct the arguments to a
 	/// conditional call if those expressions write to a local variable, method
 	/// argument, or field. This includes pre/postfix increment and decrement
 	/// expressions and assignment expressions.
+	/// </para>
 	/// </summary>
 	/// <example>
 	/// Bad example:
@@ -62,11 +66,11 @@ namespace Gendarme.Rules.Correctness {
 	/// 	public string StripHex (string text)
 	/// 	{
 	/// 		int i = 0;
-	/// 		
+	///
 	/// 		// This code will work in debug, but not in release.
 	/// 		Debug.Assert (text [i++] == '0');
 	/// 		Debug.Assert (text [i++] == 'x');
-	/// 		
+	///
 	/// 		return text.Substring (i);
 	/// 	}
 	/// }
@@ -80,18 +84,18 @@ namespace Gendarme.Rules.Correctness {
 	/// 	{
 	/// 		Debug.Assert (text [0] == '0');
 	/// 		Debug.Assert (text [1] == 'x');
-	/// 		
+	///
 	/// 		return text.Substring (2);
 	/// 	}
 	/// }
 	/// </code>
 	/// </example>
-	
+
 	[Problem ("A conditionally compiled method is being called, but one of the actual arguments mutates state.")]
 	[Solution ("If the state must be changed then do it outside the method call.")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class AvoidCodeWithSideEffectsInConditionalCodeRule : Rule, IMethodRule {
-		
+
 		/// <summary>
 		/// Check method
 		/// </summary>
@@ -101,14 +105,14 @@ namespace Gendarme.Rules.Correctness {
 		{
 			if (!method.HasBody)
 				return RuleResult.DoesNotApply;
-			
+
 			if (!mask.Intersect (OpCodeEngine.GetBitmask (method)))
 				return RuleResult.DoesNotApply;
-			
+
 			Log.WriteLine (this);
 			Log.WriteLine (this, "---------------------------------------");
 			Log.WriteLine (this, method);
-			
+
 			foreach (Instruction ins in method.Body.Instructions) {
 				switch (ins.OpCode.Code) {
 				case Code.Call:
@@ -117,14 +121,14 @@ namespace Gendarme.Rules.Correctness {
 					string define = AvoidMethodsWithSideEffectsInConditionalCodeRule.ConditionalOn (target);
 					if (define != null) {
 						Log.WriteLine (this, "call to {0} method at {1:X4}", define, ins.Offset);
-						
+
 						string name = Mutates (method, ins);
 						if (name != null) {
-							string mesg = String.Format (CultureInfo.InvariantCulture, 
+							string mesg = String.Format (CultureInfo.InvariantCulture,
 								"{0}::{1} is conditionally compiled on {2} but mutates {3}",
 								target.DeclaringType.Name, target.Name, define, name);
 							Log.WriteLine (this, mesg);
-							
+
 							Confidence confidence = AvoidMethodsWithSideEffectsInConditionalCodeRule.GetConfidence (define);
 							Runner.Report (method, ins, Severity.High, confidence, mesg);
 						}
@@ -132,7 +136,7 @@ namespace Gendarme.Rules.Correctness {
 					break;
 				}
 			}
-			
+
 			return Runner.CurrentRuleResult;
 		}
 
@@ -146,11 +150,11 @@ namespace Gendarme.Rules.Correctness {
 				return false;
 			}
 		}
-		
+
 		private string Mutates (MethodDefinition method, Instruction end)
 		{
 			string name = null;
-			
+
 			Instruction ins = AvoidMethodsWithSideEffectsInConditionalCodeRule.FullTraceBack (method, end);
 			if (ins != null) {
 				Log.WriteLine (this, "checking args for call at {0:X4} starting at {1:X4}", end.Offset, ins.Offset);
@@ -158,30 +162,30 @@ namespace Gendarme.Rules.Correctness {
 					if (ins.IsStoreArgument ()) {
 						ParameterDefinition pd = ins.Operand as ParameterDefinition;
 						name = "argument " + pd.Name;
-					
+
 					} else if (ins.IsStoreLocal ()) {
 						VariableDefinition vd = ins.GetVariable (method);
 						if (!vd.IsGeneratedName ())
 							name = "local " + vd.Name;
-					
+
 					} else if (ins.OpCode.Code == Code.Stfld || ins.OpCode.Code == Code.Stsfld) {
 						FieldReference fr = ins.Operand as FieldReference;
 						if (!fr.IsGeneratedCode ())
 							name = "field " + fr.Name;
 					}
-					
+
 					ins = ins.Next;
 				}
 			}
-			
+
 			return name;
 		}
-		
+
 #if false
 		private void Bitmask ()
 		{
 			OpCodeBitmask mask = new OpCodeBitmask ();
-			
+
 			mask.Set (Code.Starg);
 			mask.Set (Code.Starg_S);
 			mask.Set (Code.Stloc_0);
@@ -192,7 +196,7 @@ namespace Gendarme.Rules.Correctness {
 			mask.Set (Code.Stloc_S);
 			mask.Set (Code.Stfld);
 			mask.Set (Code.Stsfld);
-			
+
 			Console.WriteLine (mask);
 		}
 #endif

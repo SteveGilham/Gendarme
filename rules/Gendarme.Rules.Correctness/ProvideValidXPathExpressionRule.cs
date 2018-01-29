@@ -1,4 +1,4 @@
-﻿//
+//
 // Gendarme.Rules.Correctness.ProvideValidXPathExpressionRule class
 //
 // Authors:
@@ -127,7 +127,7 @@ namespace Gendarme.Rules.Correctness {
 			try {
 				XPathExpression.Compile (expression);
 			} catch (XPathException e) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
+				string msg = String.Format (CultureInfo.InvariantCulture,
 					"Expression '{0}' is invalid. Details: {1}", expression, e.Message);
 				Runner.Report (method, ins, Severity.High, Confidence.High, msg);
 			}

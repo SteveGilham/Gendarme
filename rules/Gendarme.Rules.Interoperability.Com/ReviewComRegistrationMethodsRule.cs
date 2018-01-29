@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Interoperability.Com.ReviewComRegistrationMethodsRule
 //
 // Authors:
@@ -38,7 +38,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 	/// <summary>
 	/// This rule checks the correctness of COM register and unregister methods,
-	/// i.e. they should not be externally visible and they should be matched 
+	/// i.e. they should not be externally visible and they should be matched
 	/// (both or none of them should exist ).
 	/// </summary>
 	/// <example>
@@ -46,15 +46,15 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [ComVisible (true)
 	/// class Bad {
-	///	[ComRegisterFunction]
-	///	public void Register ()
-	///	{
-	///	}
-	///	
-	///	[ComUnregisterFunction]
-	///	public void Unregister ()
-	///	{
-	///	}
+	/// 	[ComRegisterFunction]
+	/// 	public void Register ()
+	/// 	{
+	/// 	}
+	///
+	/// 	[ComUnregisterFunction]
+	/// 	public void Unregister ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,10 +63,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [ComVisible (true)]
 	/// class Bad {
-	///	[ComRegisterFunction]
-	///	public void Register ()
-	///	{
-	///	}
+	/// 	[ComRegisterFunction]
+	/// 	public void Register ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -75,15 +75,15 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [ComVisible (true)]
 	/// class Good {
-	///	[ComRegisterFunction]
-	///	private void Register ()
-	///	{
-	///	}
-	///	
-	///	[ComUnregisterFunction]
-	///	private void Unregister ()
-	///	{
-	///	}
+	/// 	[ComRegisterFunction]
+	/// 	private void Register ()
+	/// 	{
+	/// 	}
+	///
+	/// 	[ComUnregisterFunction]
+	/// 	private void Unregister ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

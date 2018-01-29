@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Maintainability {
 	/// This rule checks methods for cases where a <c>System.Diagnostics.Stopwatch</c> could be
 	/// used instead of using <c>System.DateTime</c> to compute the time required for an action.
 	/// Stopwatch is preferred because it better expresses the intent of the code and because (on
-	/// some platforms at least) StopWatch is accurate to roughly the microsecond whereas 
+	/// some platforms at least) StopWatch is accurate to roughly the microsecond whereas
 	/// DateTime.Now is only accurate to 16 milliseconds or so. This rule only applies to assemblies
 	/// compiled with the .NET framework version 2.0 (or later).
 	/// </summary>
@@ -53,9 +53,9 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// public TimeSpan DoLongOperation ()
 	/// {
-	///	DateTime start = DateTime.Now;
-	///	DownloadNewOpenSuseDvdIso ();
-	///	return DateTime.Now - start;
+	/// 	DateTime start = DateTime.Now;
+	/// 	DownloadNewOpenSuseDvdIso ();
+	/// 	return DateTime.Now - start;
 	/// }
 	/// </code>
 	/// </example>
@@ -64,9 +64,9 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// public TimeSpan DoLongOperation ()
 	/// {
-	///	Stopwatch watch = Stopwatch.StartNew ();
-	///	DownloadNewOpenSuseDvdIso ();
-	///	return watch.Elapsed;
+	/// 	Stopwatch watch = Stopwatch.StartNew ();
+	/// 	DownloadNewOpenSuseDvdIso ();
+	/// 	return watch.Elapsed;
 	/// }
 	/// </code>
 	/// </example>
@@ -114,7 +114,7 @@ namespace Gendarme.Rules.Maintainability {
 			MethodReference calledMethod = (MethodReference) ins.Operand;
 			return calledMethod.IsNamed ("System", "DateTime", "get_Now");
 		}
-		
+
 		private static bool CheckParameters (MethodDefinition method, Instruction ins)
 		{
 			Instruction prev;

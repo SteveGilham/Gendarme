@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for ProvideTryParseAlternativeRule
 //
 // Author:
@@ -38,7 +38,7 @@ namespace Test.Rules.Design {
 
 		class ClassWithoutMethods {
 		}
-		
+
 		[Test]
 		public void DoesNotApply ()
 		{

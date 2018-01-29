@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit test for AvoidCodeWithSideEffectsInConditionalCodeRule
 //
 // Authors:
@@ -41,7 +41,7 @@ using Test.Rules.Helpers;
 namespace Test.Rules.Correctness {
 	[TestFixture]
 	public class AvoidCodeWithSideEffectsInConditionalCodeTest : MethodRuleTestFixture<AvoidCodeWithSideEffectsInConditionalCodeRule> {
-		
+
 		internal sealed class TestCases {
 			// Anything can be used with non-conditionally compiled methods.
 			public void Good1 (int data)
@@ -49,7 +49,7 @@ namespace Test.Rules.Correctness {
 				NonConditionalCall (++data == 1);
 				NonConditionalCall (data = 100);
 			}
-			
+
 			// Most expressions are OK with conditional code.
 			public void Good2 (int data)
 			{
@@ -57,76 +57,76 @@ namespace Test.Rules.Correctness {
 				ConditionalCall (data > 0 ? 100 : 2);
 				ConditionalCall (new string ('x', 32));
 				ConditionalCall ("data " + data);
-				
+
 				data = 100;
 				ConditionalCall (data);
-				
+
 				++data;
 				ConditionalCall (data);
 			}
-			
+
 			// Increment, decrement, and assign can't be used.
 			public void Bad1 (int data)
 			{
 				ConditionalCall (++data);
 				ConditionalCall (data++);
-				
+
 				ConditionalCall (--data);
 				ConditionalCall (data--);
-				
+
 				ConditionalCall (data = 10);
 			}
-			
+
 			// Can't write to locals.
 			public void Bad2 (Dictionary<int, string> d)
 			{
 				string local;
 				if (!d.TryGetValue (1, out local))
 					local = "foo";
-					
+
 				ConditionalCall (local = "bar");
 			}
-			
+
 			// Can't write to instance fields.
 			public void Bad3 ()
 			{
 				ConditionalCall (instance_data = 10);
 			}
-			
+
 			// Can't write to static fields.
 			public void Bad4 ()
 			{
 				ConditionalCall (class_data = 10);
 			}
-			
+
 			[Conditional ("DEBUG")]
 			public void ConditionalCall (object data)
 			{
 			}
-			
+
 			public void NonConditionalCall (object data)
 			{
 			}
-			
+
 			private int instance_data;
 			private static int class_data;
 		}
-		
+
 		[Test]
 		public void DoesNotApply ()
 		{
 			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
 		}
-		
+
 		[Test]
 		public void Cases ()
 		{
 			AssertRuleSuccess<TestCases> ("Good1");
 			AssertRuleSuccess<TestCases> ("Good2");
-			
+
 			AssertRuleFailure<TestCases> ("Bad1", 5);
 
-			// Bad2 can "avoid to fail" if debugging symbols are not found - that includes not being 
+			// Bad2 can "avoid to fail" if debugging symbols are not found - that includes not being
 			// able to load Mono.Cecil.Pdb.dll (on Windows / CSC) or Mono.Cecil.Mdb.dll (xMCS)
 			MethodDefinition md = DefinitionLoader.GetMethodDefinition<TestCases> ("Bad2");
 			if (md.DeclaringType.Module.HasSymbols)

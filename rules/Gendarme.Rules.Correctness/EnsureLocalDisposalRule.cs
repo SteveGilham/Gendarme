@@ -85,7 +85,7 @@ namespace Gendarme.Rules.Correctness {
 	/// 	var stream = new StreamReader (file);
 	/// 	Decode (stream);
 	/// }
-	/// 
+	///
 	/// void Decode (Stream stream)
 	/// {
 	/// 	/*code to decode the stream*/
@@ -102,7 +102,7 @@ namespace Gendarme.Rules.Correctness {
 	/// 		Decode (stream);
 	/// 	}
 	/// }
-	/// 
+	///
 	/// void Decode (Stream stream)
 	/// {
 	/// 	/*code to decode the stream*/

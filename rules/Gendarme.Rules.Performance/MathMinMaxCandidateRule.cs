@@ -41,7 +41,7 @@ namespace Gendarme.Rules.Performance {
 	// suggestion from https://bugzilla.novell.com/show_bug.cgi?id=373269
 
 	/// <summary>
-	/// This rule checks methods for code which seems to duplicate <c>Math.Min</c> or 
+	/// This rule checks methods for code which seems to duplicate <c>Math.Min</c> or
 	/// <c>Math.Max</c>. The JIT can inline these methods and generate
 	/// better code for, at least some types, than it can for a custom inline
 	/// implementation.
@@ -76,10 +76,10 @@ namespace Gendarme.Rules.Performance {
 		static OpCodeBitmask StoreIndirect = new OpCodeBitmask (0x0, 0x7E0000, 0x2000000000000000, 0x0);
 
 
-		// Math.[Min|Max] has overloads for Byte, Double, Int16, 
+		// Math.[Min|Max] has overloads for Byte, Double, Int16,
 		// Int32, Int64, SByte, Single, UInt16, UInt32 and Uint64
 		//
-		// Note: an overload also exists for Decimal but it's 
+		// Note: an overload also exists for Decimal but it's
 		// unlikely than any JIT inlines it
 		private static bool IsSupported (TypeReference type)
 		{

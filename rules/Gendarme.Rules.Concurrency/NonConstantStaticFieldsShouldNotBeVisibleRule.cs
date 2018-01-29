@@ -36,8 +36,8 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Concurrency {
 
 	/// <summary>
-	/// This rule warns if a non-constant public static field is found. 
-	/// In a multi-threaded environment access to those fields must be synchronized. 
+	/// This rule warns if a non-constant public static field is found.
+	/// In a multi-threaded environment access to those fields must be synchronized.
 	/// </summary>
 	/// <example>
 	/// Bad example:
@@ -56,14 +56,14 @@ namespace Gendarme.Rules.Concurrency {
 	/// </code>
 	/// <code>
 	/// class UseThreadStatic {
-	///	[ThreadStatic]
-	///	public static ComplexObject Field;
-	/// 
-	///	public static InitializeThread () 
-	///	{
-	///		if (Field == null)
-	///			Field = new ComplexObject ();
-	///	}
+	/// 	[ThreadStatic]
+	/// 	public static ComplexObject Field;
+	///
+	/// 	public static InitializeThread ()
+	/// 	{
+	/// 		if (Field == null)
+	/// 			Field = new ComplexObject ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.RuleResult enumeration
 //
 // Authors:
@@ -31,8 +31,8 @@ namespace Gendarme.Framework {
 	[Serializable]
 	public enum RuleResult {
 		/// <summary>
-		/// Rules returns this if the required conditions to execute 
-		/// are not matched. This is useful to make rules more 
+		/// Rules returns this if the required conditions to execute
+		/// are not matched. This is useful to make rules more
 		/// readable (it's not a real success) and for statistics.
 		/// </summary>
 		DoesNotApply,
@@ -47,7 +47,7 @@ namespace Gendarme.Framework {
 		/// </summary>
 		Failure,
 		/// <summary>
-		/// Rules should never report this. The framework will use 
+		/// Rules should never report this. The framework will use
 		/// this value to track errors in rule execution.
 		/// </summary>
 		Abort

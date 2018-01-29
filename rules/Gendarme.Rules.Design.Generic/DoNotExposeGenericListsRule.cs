@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.Generic.DoNotExposeGenericListsRule
 //
 // Authors:
@@ -37,14 +37,14 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design.Generic {
 
 	/// <summary>
-	/// A type has an externally visible member that is, returns or has a signature containing a 
+	/// A type has an externally visible member that is, returns or has a signature containing a
 	/// <c>System.Collections.Generic.List&lt;T&gt;</c>.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public class BadClass {
-	///	public List&lt;string&gt; member { get; set; };
+	/// 	public List&lt;string&gt; member { get; set; };
 	/// }
 	/// </code>
 	/// </example>
@@ -52,7 +52,7 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Good example:
 	/// <code>
 	/// public class GoodClass {
-	///	public Collection&lt;string&gt; member { get; set; };
+	/// 	public Collection&lt;string&gt; member { get; set; };
 	/// }
 	/// </code>
 	/// </example>
@@ -64,7 +64,7 @@ namespace Gendarme.Rules.Design.Generic {
 		private const string List = "List`1";
 
 		private static bool IsList (TypeReference type)
-		{			
+		{
 			return type.Namespace == "System.Collections.Generic" &&
 				type.Name.StartsWith (List, StringComparison.Ordinal);
 		}

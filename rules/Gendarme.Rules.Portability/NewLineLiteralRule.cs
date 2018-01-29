@@ -40,9 +40,9 @@ using Gendarme.Framework.Helpers;
 namespace Gendarme.Rules.Portability {
 
 	/// <summary>
-	/// This rule warns if methods, including properties, are using the literal 
+	/// This rule warns if methods, including properties, are using the literal
 	/// <c>\r</c> and/or <c>\n</c> for new lines. This isn't portable across operating systems.
-	/// To ensure correct cross-platform functionality they should be replaced by 
+	/// To ensure correct cross-platform functionality they should be replaced by
 	/// <c>System.Environment.NewLine</c>.
 	/// </summary>
 	/// <example>

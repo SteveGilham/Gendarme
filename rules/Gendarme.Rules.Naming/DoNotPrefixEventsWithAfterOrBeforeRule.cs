@@ -43,8 +43,8 @@ namespace Gendarme.Rules.Naming {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	public event ResolveEventHandler BeforeResolve;
-	///	public event ResolveEventHandler AfterResolve;
+	/// 	public event ResolveEventHandler BeforeResolve;
+	/// 	public event ResolveEventHandler AfterResolve;
 	/// }
 	/// </code>
 	/// </example>
@@ -52,8 +52,8 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	public event ResolveEventHandler Resolving;	// present
-	///	public event ResolveEventHandler Resolved;	// past
+	/// 	public event ResolveEventHandler Resolving;	// present
+	/// 	public event ResolveEventHandler Resolved;	// past
 	/// }
 	/// </code>
 	/// </example>
@@ -80,7 +80,7 @@ namespace Gendarme.Rules.Naming {
 
 			foreach (EventDefinition evnt in type.Events) {
 				string name = evnt.Name;
-				if (name.StartsWith ("After", StringComparison.Ordinal) || 
+				if (name.StartsWith ("After", StringComparison.Ordinal) ||
 					name.StartsWith ("Before", StringComparison.Ordinal)) {
 					Runner.Report (evnt, Severity.Medium, Confidence.Total);
 				}

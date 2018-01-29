@@ -40,7 +40,7 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule warns when the number of local variables exceed a maximum value (default is
-	/// 64). Having a large amount of local variables makes it hard to generate code that 
+	/// 64). Having a large amount of local variables makes it hard to generate code that
 	/// performs well and, likely, makes the code harder to understand.
 	/// </summary>
 	/// <remarks>This rule is available since Gendarme 2.0</remarks>
@@ -84,7 +84,7 @@ namespace Gendarme.Rules.Performance {
 			if (num <= MaximumVariables)
 				return RuleResult.Success;
 
-			string msg = String.Format (CultureInfo.InvariantCulture, 
+			string msg = String.Format (CultureInfo.InvariantCulture,
 				"Found {0} local variables (maximum {1}).", num, MaximumVariables);
 			Runner.Report (method, Severity.High, Confidence.High, msg);
 			return RuleResult.Failure;

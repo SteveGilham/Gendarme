@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.Helpers.AssemblyCache
 //
 // Authors:
@@ -36,13 +36,13 @@ using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
 namespace Test.Rules.Helpers {
-	
+
 	/// <summary>
 	/// Performs caching and mapping of AssemblyDefinitions.
 	/// </summary>
 	internal static class AssemblyCache {
-		
-		private static Dictionary<Assembly, AssemblyDefinition> cachedAssemblies = 
+
+		private static Dictionary<Assembly, AssemblyDefinition> cachedAssemblies =
 			new Dictionary<Assembly, AssemblyDefinition> ();
 
 		/// <summary>

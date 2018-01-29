@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Maintainability.PreferStringIsNullOrEmptyRule
 //
 // Authors:
@@ -47,10 +47,10 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// public bool SendMessage (string message)
 	/// {
-	///	if ((message == null) || (message.Length == 0)) {
-	///		return false;
-	///	}
-	///	return SendMessage (Encode (message));
+	/// 	if ((message == null) || (message.Length == 0)) {
+	/// 		return false;
+	/// 	}
+	/// 	return SendMessage (Encode (message));
 	/// }
 	/// </code>
 	/// </example>
@@ -59,10 +59,10 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// public bool SendMessage (string message)
 	/// {
-	///	if (String.IsNullOrEmpty (message)) {
-	///		return false;
-	///	}
-	///	return SendMessage (Encode (message));
+	/// 	if (String.IsNullOrEmpty (message)) {
+	/// 		return false;
+	/// 	}
+	/// 	return SendMessage (Encode (message));
 	/// }
 	/// </code>
 	/// </example>
@@ -153,7 +153,7 @@ namespace Gendarme.Rules.Maintainability {
 		private static bool PostLengthCheck (Instruction ins, Instruction branch)
 		{
 			switch (ins.OpCode.Code) {
-			// e.g. if 
+			// e.g. if
 			case Code.Brtrue:
 			case Code.Brtrue_S:
 				return ((ins.Operand as Instruction).OpCode.Code != branch.OpCode.Code);
@@ -207,7 +207,7 @@ namespace Gendarme.Rules.Maintainability {
 
 			// go!
 
-			// we look for a call to String.Length property (since it's much easier 
+			// we look for a call to String.Length property (since it's much easier
 			// than checking a string being compared to null)
 			foreach (Instruction current in method.Body.Instructions) {
 				if (!calls.Get (current.OpCode.Code))

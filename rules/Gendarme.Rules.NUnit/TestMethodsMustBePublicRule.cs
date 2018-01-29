@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.TestMethodsMustBePublicRule
 //
 // Authors:
@@ -37,17 +37,17 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.NUnit {
 
 	/// <summary>
-	/// Test method (a method, marked with either TestAttribute, TestCaseAttribute 
-	/// or TestCaseSourceAttribute) is not public. Most NUnit test runners won't 
+	/// Test method (a method, marked with either TestAttribute, TestCaseAttribute
+	/// or TestCaseSourceAttribute) is not public. Most NUnit test runners won't
 	/// execute non-public unit tests.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// [Test]
-	/// private void TestMethod () 
+	/// private void TestMethod ()
 	/// {
-	///	Assert.AreEqual (10, 20);
+	/// 	Assert.AreEqual (10, 20);
 	/// }
 	/// </code>
 	/// </example>
@@ -56,7 +56,7 @@ namespace Gendarme.Rules.NUnit {
 	/// <code>
 	/// public void TestMethod ()
 	/// {
-	///	Assert.AreEqual (10, 20);
+	/// 	Assert.AreEqual (10, 20);
 	/// }
 	/// </code>
 	/// </example>

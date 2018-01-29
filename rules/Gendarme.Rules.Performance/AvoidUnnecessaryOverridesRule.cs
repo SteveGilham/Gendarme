@@ -46,7 +46,7 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public override string ToString ()
 	/// {
-	///	return base.ToString ();
+	/// 	return base.ToString ();
 	/// }
 	/// </code>
 	/// </example>
@@ -56,7 +56,7 @@ namespace Gendarme.Rules.Performance {
 	/// [FileIOPermission (SecurityAction.Demand, @"c:\dir\file")]
 	/// public override string ToString ()
 	/// {
-	///	return base.ToString ();
+	/// 	return base.ToString ();
 	/// }
 	/// </code>
 	/// </example>
@@ -65,7 +65,7 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// /*public override string ToString ()
 	/// {
-	///	return base.ToString ();
+	/// 	return base.ToString ();
 	/// }*/
 	/// </code>
 	/// </example>
@@ -212,7 +212,7 @@ namespace Gendarme.Rules.Performance {
 
 			if (!CustomAttributesEquals (method, md) || !SecurityDeclarationsEquals (method, md))
 				return RuleResult.Success;
-			
+
 			Runner.Report (method, Severity.Medium, Confidence.High);
 			return Runner.CurrentRuleResult;
 		}

@@ -49,15 +49,15 @@ namespace Gendarme.Rules.Naming {
 	/// Bad examples:
 	/// <code>
 	/// public interface Phone {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// public class CPhone : Phone {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// public class Call&lt;Mechanism&gt; {
-	///	// ...
+	/// 	// ...
 	/// }
 	/// </code>
 	/// </example>
@@ -65,15 +65,15 @@ namespace Gendarme.Rules.Naming {
 	/// Good examples:
 	/// <code>
 	/// public interface IPhone {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// public class Phone : IPhone {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// public class Call&lt;TMechanism&gt; {
-	///	// ...
+	/// 	// ...
 	/// }
 	/// </code>
 	/// </example>
@@ -123,17 +123,17 @@ namespace Gendarme.Rules.Naming {
 			string name = type.Name;
 			if (type.IsInterface) {
 				// interfaces should look like 'ISomething'
-				if (!IsCorrectInterfaceName (name)) { 
+				if (!IsCorrectInterfaceName (name)) {
 					string s = String.Format (CultureInfo.InvariantCulture,
-						"The '{0}' interface name doesn't have the required 'I' prefix. Acoording to existing naming conventions, all interface names should begin with the 'I' letter followed by another capital letter.", 
+						"The '{0}' interface name doesn't have the required 'I' prefix. Acoording to existing naming conventions, all interface names should begin with the 'I' letter followed by another capital letter.",
 						name);
 					Runner.Report (type, Severity.Critical, Confidence.High, s);
 				}
 			} else {
 				// class should _not_ look like 'CSomething" or like an interface 'IOops'
-				if (!IsCorrectTypeName (name)) { 
+				if (!IsCorrectTypeName (name)) {
 					string s = String.Format (CultureInfo.InvariantCulture,
-						"The '{0}' type name starts with '{1}' prefix but, according to existing naming conventions, type names should not have any specific prefix.", 
+						"The '{0}' type name starts with '{1}' prefix but, according to existing naming conventions, type names should not have any specific prefix.",
 						name, name [0]);
 					Runner.Report (type, Severity.Medium, Confidence.High, s);
 				}
@@ -147,13 +147,13 @@ namespace Gendarme.Rules.Naming {
 					string param_name = parameter.Name;
 					if (IsCorrectGenericParameterName (param_name)) {
 						string s = String.Format (CultureInfo.InvariantCulture,
-							"The generic parameter '{0}' should be prefixed with 'T' or be a single, uppercased letter.", 
+							"The generic parameter '{0}' should be prefixed with 'T' or be a single, uppercased letter.",
 							param_name);
 						Runner.Report (type, Severity.High, Confidence.High, s);
 					}
 				}
 			}
-			
+
 			return Runner.CurrentRuleResult;
 		}
 	}

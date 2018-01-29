@@ -37,7 +37,7 @@ namespace Gendarme.Rules.Interoperability {
 
 	/// <summary>
 	/// This rule will fire if a P/Invoke method has System.String or System.Text.StringBuilder
-	/// arguments, and the DllImportAttribute does not specify the <code>CharSet</code>, 
+	/// arguments, and the DllImportAttribute does not specify the <code>CharSet</code>,
 	/// and the string arguments are not decorated with <code>[MarshalAs]</code>.
 	///
 	/// This is important because the defaults are different on the various platforms.
@@ -57,10 +57,10 @@ namespace Gendarme.Rules.Interoperability {
 	/// <code>
 	/// [DllImport ("coredll", CharSet = CharSet.Auto)]
 	/// static extern int SHCreateShortcut (StringBuilder szShortcut, StringBuilder szTarget);
-	/// 
+	///
 	/// [DllImport ("coredll")]
-	/// static extern int SHCreateShortcut ([MarshalAs (UnmanagedType.LPTStr)] StringBuilder szShortcut, 
-	///	[MarshalAs (UnmanagedType.LPTStr)] StringBuilder szTarget);
+	/// static extern int SHCreateShortcut ([MarshalAs (UnmanagedType.LPTStr)] StringBuilder szShortcut,
+	/// 	[MarshalAs (UnmanagedType.LPTStr)] StringBuilder szTarget);
 	/// </code>
 	/// </example>
 
@@ -95,7 +95,7 @@ namespace Gendarme.Rules.Interoperability {
 
 			foreach (ParameterDefinition parameter in method.Parameters) {
 				if (IsStringOrSBuilder (parameter.ParameterType) && (parameter.MarshalInfo == null)) {
-					string text = String.Format (CultureInfo.InvariantCulture, 
+					string text = String.Format (CultureInfo.InvariantCulture,
 						"Parameter '{0}', of type '{1}', does not have [MarshalAs] attribute, yet no [DllImport CharSet=] is set for the method '{2}'.",
 						parameter.Name, parameter.ParameterType.Name, method.Name);
 					Runner.Report (parameter, Severity.High, Confidence.Total, text);

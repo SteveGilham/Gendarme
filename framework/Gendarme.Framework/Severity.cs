@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Severity
 //
 // Authors:
@@ -52,7 +52,7 @@ namespace Gendarme.Framework {
 		Low,
 		/// <summary>
 		/// The actual code works but should be reviewed for potential problems.
-		/// Often the code cannot be changed to satisfy the rule logic, 
+		/// Often the code cannot be changed to satisfy the rule logic,
 		/// i.e. the rule will always report it unless the rule or defect is ignored.
 		/// </summary>
 		Audit

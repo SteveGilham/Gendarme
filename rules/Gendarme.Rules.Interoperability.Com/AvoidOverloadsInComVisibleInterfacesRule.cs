@@ -3,7 +3,7 @@
 //
 // Authors:
 //	N Lum <nol888@gmail.com>
-// 
+//
 // Copyright (C) 2010 N Lum
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -41,21 +41,21 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <example>
 	/// Bad example:
 	/// <code>
-	///	[ComVisible(true)]
-	///	public interface Bad {
-	///		void SomeMethod();
-	///		void SomeMethod(int SomeValue);
-	///	}
+	/// 	[ComVisible(true)]
+	/// 	public interface Bad {
+	/// 		void SomeMethod();
+	/// 		void SomeMethod(int SomeValue);
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
 	/// [ComVisible(true)]
-	///	public interface Good {
-	///		void SomeMethod();
-	///		void SomeMethodWithValue(int SomeValue);
-	///	}
+	/// 	public interface Good {
+	/// 		void SomeMethod();
+	/// 		void SomeMethodWithValue(int SomeValue);
+	/// 	}
 	/// </code>
 	/// </example>
 

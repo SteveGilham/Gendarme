@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for MarkAssemblyWithComVisibleRule
 //
 // Authors:
@@ -59,7 +59,7 @@ namespace Test.Rules.Design {
 			assembly.CustomAttributes.Clear ();
 			AssertRuleDoesNotApply (assembly);
 		}
-		
+
 		[Test]
 		public void Good ()
 		{

@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Portability.DoNotHardcodePathsRule
 //
 // Authors:
@@ -41,10 +41,10 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Portability {
 
 	/// <summary>
-	/// This rule checks for strings that contain valid paths, either under Unix or 
-	/// Windows file systems. Path literals are often not portable across 
-	/// operating systems (e.g. different path separators). To ensure correct cross-platform 
-	/// functionality they should be replaced by calls to <c>Path.Combine</c> and/or 
+	/// This rule checks for strings that contain valid paths, either under Unix or
+	/// Windows file systems. Path literals are often not portable across
+	/// operating systems (e.g. different path separators). To ensure correct cross-platform
+	/// functionality they should be replaced by calls to <c>Path.Combine</c> and/or
 	/// <c>Environment.GetFolderPath</c>.
 	/// </summary>
 	/// <example>
@@ -52,9 +52,9 @@ namespace Gendarme.Rules.Portability {
 	/// <code>
 	/// void ReadConfig ()
 	/// {
-	///	using (FileStream fs = File.Open ("~/.local/share/myapp/user.config")) {
-	///		// read configuration
-	///	}
+	/// 	using (FileStream fs = File.Open ("~/.local/share/myapp/user.config")) {
+	/// 		// read configuration
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,11 +63,11 @@ namespace Gendarme.Rules.Portability {
 	/// <code>
 	/// void ReadConfig ()
 	/// {
-	///	string config_file = Environment.GetFolderPath (SpecialFolder.LocalApplicationData);
-	///	config_file = Path.Combine (Path.Combine (config_file, "myapp"), "user.config");
-	///	using (FileStream fs = File.Open (config_file)) {
-	///		// read configuration
-	///	}
+	/// 	string config_file = Environment.GetFolderPath (SpecialFolder.LocalApplicationData);
+	/// 	config_file = Path.Combine (Path.Combine (config_file, "myapp"), "user.config");
+	/// 	using (FileStream fs = File.Open (config_file)) {
+	/// 		// read configuration
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -276,7 +276,7 @@ namespace Gendarme.Rules.Portability {
 		{
 			// Console.WriteLine ("// process win path");
 
-			// normally, windows paths don't contain slashes 
+			// normally, windows paths don't contain slashes
 			if (slashes == 0 && backslashes > 1)
 				AddPoints (2);
 
@@ -450,7 +450,7 @@ namespace Gendarme.Rules.Portability {
 
 				// see what we can learn
 
-				if (target.HasParameters && (target.Parameters.Count == 1) && 
+				if (target.HasParameters && (target.Parameters.Count == 1) &&
 					methodName.StartsWith ("set_", StringComparison.Ordinal)) {
 					// to improve performance, don't Resolve () to call IsSpecialName
 					// this is a setter (in 99% cases)

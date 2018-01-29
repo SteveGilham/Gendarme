@@ -1,4 +1,4 @@
-﻿//
+//
 // Gendarme.Rules.Correctness.ReviewUseOfModuloOneOnIntegersRule
 //
 // Authors:
@@ -51,7 +51,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public bool IsOdd (int i)
 	/// {
-	///	return ((i % 1) == 1);
+	/// 	return ((i % 1) == 1);
 	/// }
 	/// </code>
 	/// </example>
@@ -60,7 +60,7 @@ namespace Gendarme.Rules.Correctness {
 	/// <code>
 	/// public bool IsOdd (int i)
 	/// {
-	///	return ((i % 2) != 0); // or ((x &amp; 1) == 1)
+	/// 	return ((i % 2) != 0); // or ((x &amp; 1) == 1)
 	/// }
 	/// </code>
 	/// </example>

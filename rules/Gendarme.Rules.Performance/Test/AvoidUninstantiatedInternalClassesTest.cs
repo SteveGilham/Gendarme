@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for AvoidUninstantiatedInternalClassesRule
 //
 // Authors:
@@ -277,7 +277,7 @@ namespace Test.Rules.Performance {
 
 	[TestFixture]
 	public class AvoidUninstantiatedInternalClassesTest : TypeRuleTestFixture<AvoidUninstantiatedInternalClassesRule> {
-		
+
 		private AssemblyDefinition assembly;
 
 		[OneTimeSetUp]
@@ -286,37 +286,37 @@ namespace Test.Rules.Performance {
 			string unit = Assembly.GetExecutingAssembly ().Location;
 			assembly = AssemblyDefinition.ReadAssembly (unit);
 		}
-		
+
 		private TypeDefinition GetTest (string name)
 		{
 			string fullname = "Test.Rules.Performance." + name;
 			return assembly.MainModule.GetType (fullname);
 		}
-		
+
 		[Test]
 		public void UninstantiatedInternalClassTest ()
 		{
 			AssertRuleFailure<UninstantiatedInternalClass> (1);
 		}
-		
+
 		[Test]
 		public void InstantiatedInternalClassTest ()
 		{
 			AssertRuleSuccess<InstantiatedInternalClass> ();
 		}
-		
+
 		[Test]
 		public void NestedInternalUninstantiatedClassTest ()
 		{
 			AssertRuleFailure<NestedInternalUninstantiatedClass> (1);
 		}
-		
+
 		[Test]
 		public void NestedInternalInstantiatedClassTest ()
 		{
 			AssertRuleSuccess<NestedInternalInstantiatedClass> ();
 		}
-		
+
 		[Test]
 		public void NonInternalClassNotInstantiatedTest ()
 		{
@@ -352,13 +352,13 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleDoesNotApply (GetTest ("StaticClass"));
 		}
-		
+
 		[Test]
 		public void MethodContainingObjectCallIsNotCalledTest ()
 		{
 			AssertRuleSuccess<MethodContainingObjectCallIsNotCalled> ();
 		}
-		
+
 		[Test]
 		public void IFaceTest ()
 		{
@@ -394,7 +394,7 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleFailure (GetTest ("NestedEnumNotInstantiated/PrivateEnum"), 1);
 		}
-		
+
 		[Test]
 		public void NestedEnumUsedAsParameter ()
 		{

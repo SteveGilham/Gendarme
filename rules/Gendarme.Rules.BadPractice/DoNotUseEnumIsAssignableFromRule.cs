@@ -42,7 +42,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// Bad example:
 	/// <code>
 	/// if (typeof (Enum).IsAssignableFrom (type))  {
-	///	// then the type is an enum
+	/// 	// then the type is an enum
 	/// }
 	/// </code>
 	/// </example>
@@ -50,7 +50,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// Good example:
 	/// <code>
 	/// if (type.IsEnum) {
-	///	// then the type is an enum.
+	/// 	// then the type is an enum.
 	/// }
 	/// </code>
 	/// </example>

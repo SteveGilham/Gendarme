@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.Generic.AvoidExcessiveParametersOnGenericTypesRule
 //
 // Authors:

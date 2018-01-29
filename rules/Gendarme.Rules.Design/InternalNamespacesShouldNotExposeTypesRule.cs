@@ -45,8 +45,8 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// namespace MyStuff.Internal {
-	///	public class Helper {
-	///	}
+	/// 	public class Helper {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -54,8 +54,8 @@ namespace Gendarme.Rules.Design {
 	/// Good example (internal type):
 	/// <code>
 	/// namespace MyStuff.Internal {
-	///	internal class Helper {
-	///	}
+	/// 	internal class Helper {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,8 +63,8 @@ namespace Gendarme.Rules.Design {
 	/// Good example (non-internal namespace):
 	/// <code>
 	/// namespace MyStuff {
-	///	public class Helper {
-	///	}
+	/// 	public class Helper {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -84,7 +84,7 @@ namespace Gendarme.Rules.Design {
 			// check every namespaces inside the assembly using the NamespaceEngine
 			foreach (string ns in NamespaceEngine.NamespacesInside (assembly)) {
 				// rule only apply to "internal" namespaces
-				if (!ns.EndsWith (".Internal", StringComparison.Ordinal) && 
+				if (!ns.EndsWith (".Internal", StringComparison.Ordinal) &&
 					!ns.EndsWith (".Impl", StringComparison.Ordinal)) {
 					continue;
 				}

@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.Fixtures.MethodRuleTestFixture<TRule>
 // Base class for method rule test fixtures that simplifies the process of writing unit tests for Gendarme.
 //
@@ -37,7 +37,7 @@ using Mono.Cecil;
 using NUnit.Framework;
 
 namespace Test.Rules.Fixtures {
-	
+
 	/// <summary>
 	/// Abstract class providing various helper methods that method test fixtures should inherit from.
 	/// </summary>
@@ -46,7 +46,7 @@ namespace Test.Rules.Fixtures {
 		where TMethodRule : IMethodRule, new () {
 
 		/// <summary>
-		/// Asserts that the rule does not apply to all methods of the type. 
+		/// Asserts that the rule does not apply to all methods of the type.
 		/// </summary>
 		/// <typeparam name="T">Type containing the methods.</typeparam>
 		protected void AssertRuleDoesNotApply<T> ()
@@ -54,9 +54,9 @@ namespace Test.Rules.Fixtures {
 			foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T> ().Methods)
 				base.AssertRuleDoesNotApply (method);
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule does not apply to the method. 
+		/// Asserts that the rule does not apply to the method.
 		/// </summary>
 		/// <param name="method">Method to check.</param>
 		/// <typeparam name="T">Type containing the method.</typeparam>
@@ -64,9 +64,9 @@ namespace Test.Rules.Fixtures {
 		{
 			base.AssertRuleDoesNotApply (DefinitionLoader.GetMethodDefinition<T> (method));
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule does not apply to the method. 
+		/// Asserts that the rule does not apply to the method.
 		/// </summary>
 		/// <typeparam name="T">Type containing the method to test.</typeparam>
 		/// <param name="method">Method name.</param>
@@ -81,9 +81,9 @@ namespace Test.Rules.Fixtures {
 			TypeDefinition td = DefinitionLoader.GetTypeDefinition (type);
 			base.AssertRuleDoesNotApply (DefinitionLoader.GetMethodDefinition (td, method, null));
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule has been executed successfully for each method in the type. 
+		/// Asserts that the rule has been executed successfully for each method in the type.
 		/// </summary>
 		/// <typeparam name="T">Type containing the methods.</typeparam>
 		protected void AssertRuleSuccess<T> ()
@@ -94,13 +94,13 @@ namespace Test.Rules.Fixtures {
 					success = true;
 			}
 			if (!success) {
-				Assert.AreEqual (RuleResult.Success, RuleResult.DoesNotApply, "{0} failed on {1}: result should be {2} but got {3}.", 
+				Assert.AreEqual (RuleResult.Success, RuleResult.DoesNotApply, "{0} failed on {1}: result should be {2} but got {3}.",
 					typeof (TMethodRule).Name, typeof (T).Name, RuleResult.Success, RuleResult.DoesNotApply);
 			}
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule has been executed successfully. 
+		/// Asserts that the rule has been executed successfully.
 		/// </summary>
 		/// <typeparam name="T">Type containing the method to test.</typeparam>
 		/// <param name="method">Method name.</param>
@@ -109,8 +109,8 @@ namespace Test.Rules.Fixtures {
 			base.AssertRuleSuccess (DefinitionLoader.GetMethodDefinition<T> (method));
 		}
 
-		/// <summary>		
-		/// Asserts that the rule has been executed successfully. 
+		/// <summary>
+		/// Asserts that the rule has been executed successfully.
 		/// </summary>
 		/// <typeparam name="T">Type containing the method to test.</typeparam>
 		/// <param name="method">Method name.</param>
@@ -127,7 +127,7 @@ namespace Test.Rules.Fixtures {
 		}
 
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully for each method in the type. 
+		/// Asserts that the rule has failed to execute successfully for each method in the type.
 		/// </summary>
 		/// <typeparam name="T">Type containing the methods.</typeparam>
 		protected void AssertRuleFailure<T> ()
@@ -135,9 +135,9 @@ namespace Test.Rules.Fixtures {
 			foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T> ().Methods)
 				base.AssertRuleFailure (method);
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully for each method in the type. 
+		/// Asserts that the rule has failed to execute successfully for each method in the type.
 		/// </summary>
 		/// <typeparam name="T">Type containing the methods.</typeparam>
 		/// <param name="expectedCount">Expected defect count for each method.</param>
@@ -146,9 +146,9 @@ namespace Test.Rules.Fixtures {
 			foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T> ().Methods)
 				base.AssertRuleFailure (method, expectedCount);
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <typeparam name="T">Type containing the method to test.</typeparam>
 		/// <param name="method">Method name.</param>
@@ -156,9 +156,9 @@ namespace Test.Rules.Fixtures {
 		{
 			base.AssertRuleFailure (DefinitionLoader.GetMethodDefinition<T> (method));
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <typeparam name="T">Type containing the method to test.</typeparam>
 		/// <param name="method">Method name.</param>
@@ -169,7 +169,7 @@ namespace Test.Rules.Fixtures {
 		}
 
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <typeparam name="T">Type containing the method to test.</typeparam>
 		/// <param name="method">Method name.</param>
@@ -180,7 +180,7 @@ namespace Test.Rules.Fixtures {
 		}
 
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <typeparam name="T">Type containing the method to test.</typeparam>
 		/// <param name="method">Method name.</param>

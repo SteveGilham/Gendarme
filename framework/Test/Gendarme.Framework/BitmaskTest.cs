@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for Bitmask<T>
 //
 // Authors:
@@ -42,7 +42,7 @@ namespace Test.Framework {
 			Assert.IsFalse (x.Get (Severity.Audit), "Empty/Audit");
 			Assert.AreEqual (0, x.GetHashCode (), "Empty/GetHashCode");
 			Assert.AreEqual ("0", x.ToString (), "Empty/ToString");
-	
+
 			x.Set (Severity.Audit);
 			Assert.IsTrue (x.Get (Severity.Audit), "Set/Audit");
 			Assert.AreEqual (16, x.GetHashCode (), "GetHashCode");

@@ -51,11 +51,11 @@ namespace Gendarme.Rules.Portability {
 	/// This rule will fire if one of the assemblies being checked contains a call to a .NET
 	/// method which is either not implemented on Mono or partially implemented. It does
 	/// this by downloading a MoMA definitions file under <c>~/.local/share/Gendarme/</c> (on UNIX)
-	/// or <c>C:\Documents and Settings\{username}\Local Settings\Application Data\Gendarme</c> 
-	/// (on Windows) and checking for calls to the methods therein. The rule will work without 
+	/// or <c>C:\Documents and Settings\{username}\Local Settings\Application Data\Gendarme</c>
+	/// (on Windows) and checking for calls to the methods therein. The rule will work without
 	/// MoMA but if it does fire it may be useful to download and run MoMA.
 	///
-	/// By default the rule will use the latest local version available. This can be overriden to use a 
+	/// By default the rule will use the latest local version available. This can be overriden to use a
 	/// specific, local, version if you want to review compatibility against a specific Mono version.
 	/// You can also manually remove them, now and then, to ensure you are using the latest version.
 	/// Also upgrading Gendarme will try to download a newer version of the definitions files.
@@ -75,7 +75,7 @@ namespace Gendarme.Rules.Portability {
 		private HashSet<string> NotImplementedInternal; //value is unused
 		private HashSet<string> MissingInternal; //value is unused
 		private Dictionary<string, string> TodoInternal; //value = TODO Description
-		
+
 		private Version version;
 		private string definitions_folder;
 
@@ -166,7 +166,7 @@ namespace Gendarme.Rules.Portability {
 
 		private void LoadDefinitions ()
 		{
-			using (Stream fs = GetDefinitionsFileStream ()) 
+			using (Stream fs = GetDefinitionsFileStream ())
 			using (ZipInputStream zs = new ZipInputStream (fs))
 			using (StreamLineReader sr = new StreamLineReader (zs)) {
 				ZipEntry ze;
@@ -222,8 +222,8 @@ namespace Gendarme.Rules.Portability {
 				// candidate for b03f5f7f11d50a3a which is the 'msfinal' key
 				return ComparePublicKeyToken (msfinal_key, pkt);
 			case 0x31:
-				// candidate for 31bf3856ad364e35 which is 'winfx' key - 
-				// but some Silverlight assemblies, Microsoft.VisualBasic.dll and 
+				// candidate for 31bf3856ad364e35 which is 'winfx' key -
+				// but some Silverlight assemblies, Microsoft.VisualBasic.dll and
 				// System.ServiceModel.dll, use it too
 				return (ComparePublicKeyToken (winfx_key, pkt) && (anr.Version != coreclr_runtime));
 			case 0x7c:
@@ -292,7 +292,7 @@ namespace Gendarme.Rules.Portability {
 
 		// this correspond to Call, Callvirt, Newobj, Initobj, Ldftn, Ldvirtftn
 		private static OpCodeBitmask mask = new OpCodeBitmask (0x8000000000, 0x4400000000000, 0x0, 0x40060);
-		
+
 		/// <summary>
 		/// Check method
 		/// </summary>

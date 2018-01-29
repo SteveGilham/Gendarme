@@ -51,16 +51,16 @@ namespace Gendarme.Rules.Correctness {
 	/// <example>
 	/// Bad examples:
 	/// <code>
-	///	string s1 = String.Format ("There is nothing to format here!");
-	///	// no argument to back {0}
-	///	string s2 = String.Format ("Hello {0}!");
+	/// 	string s1 = String.Format ("There is nothing to format here!");
+	/// 	// no argument to back {0}
+	/// 	string s2 = String.Format ("Hello {0}!");
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good examples:
 	/// <code>
-	///	string s1 = "There is nothing to format here!";
-	///	string s2 = String.Format ("Hello {0}!", name);
+	/// 	string s1 = "There is nothing to format here!";
+	/// 	string s2 = String.Format ("Hello {0}!", name);
 	/// </code>
 	/// </example>
 	/// <remarks>This rule is available since Gendarme 2.2</remarks>
@@ -267,16 +267,16 @@ namespace Gendarme.Rules.Correctness {
 			}
 
 			if (expectedParameters < elementsPushed) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
-					"Extra parameters are provided to String.Format, {0} provided but only {1} expected", 
+				string msg = String.Format (CultureInfo.InvariantCulture,
+					"Extra parameters are provided to String.Format, {0} provided but only {1} expected",
 					elementsPushed, expectedParameters);
 				Runner.Report (method, call, Severity.Medium, Confidence.Normal, msg);
 				return;
 			}
 
 			if (elementsPushed < expectedParameters) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
-					"The String.Format method is expecting {0} parameters, but only {1} are found.", 
+				string msg = String.Format (CultureInfo.InvariantCulture,
+					"The String.Format method is expecting {0} parameters, but only {1} are found.",
 					expectedParameters, elementsPushed);
 				Runner.Report (method, call, Severity.Critical, Confidence.Normal, msg);
 			}

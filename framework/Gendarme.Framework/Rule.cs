@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Rule base class
 //
 // Authors:
@@ -31,7 +31,7 @@ namespace Gendarme.Framework {
 
 	/// <summary>
 	/// Most rules should be able to inherit from Rule and implement one of the
-	/// <c>IAssemblyRule</c>, <c>ITypeRule</c> or <c>IMethodRule</c> and override 
+	/// <c>IAssemblyRule</c>, <c>ITypeRule</c> or <c>IMethodRule</c> and override
 	/// the Check[Assembly|Type|Method] method.
 	/// </summary>
 	abstract public class Rule : IRule {
@@ -103,7 +103,7 @@ namespace Gendarme.Framework {
 			return attributes [0];
 		}
 
-		public virtual string Problem { 
+		public virtual string Problem {
 			get {
 				if (problem == null) {
 					object obj = GetCustomAttribute (typeof (ProblemAttribute));
@@ -116,7 +116,7 @@ namespace Gendarme.Framework {
 			}
 		}
 
-		public virtual string Solution { 
+		public virtual string Solution {
 			get {
 				if (solution == null) {
 					object obj = GetCustomAttribute (typeof (SolutionAttribute));
@@ -139,7 +139,7 @@ namespace Gendarme.Framework {
 				if (uri == null) {
 					object [] attributes = Type.GetCustomAttributes (typeof (DocumentationUriAttribute), true);
 					if (attributes.Length == 0) {
-						string url = String.Format (CultureInfo.InvariantCulture, 
+						string url = String.Format (CultureInfo.InvariantCulture,
 							"https://github.com/spouliot/gendarme/wiki/{0}.{1}({2})",
 							type.Namespace, Name, "2.10");
 						uri = new Uri (url);

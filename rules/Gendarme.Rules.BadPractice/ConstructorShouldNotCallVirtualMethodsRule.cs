@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.BadPractice.ConstructorShouldNotCallVirtualMethodsRule
 //
 // Authors:
@@ -42,7 +42,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// This rule warns the developer if any virtual methods are called in the constructor 
+	/// This rule warns the developer if any virtual methods are called in the constructor
 	/// of a non-sealed type. The problem is that if a derived class overrides the method
 	/// then that method will be called before the derived constructor has had a chance
 	/// to run. This makes the code quite fragile.
@@ -51,63 +51,63 @@ namespace Gendarme.Rules.BadPractice {
 	/// Bad example:
 	/// <code>
 	/// class A {
-	///	public A ()
-	///	{
-	///		this.DoSomething ();
-	///	}
-	///	
-	///	protected virtual void DoSomething ()
-	///	{
-	///	}
+	/// 	public A ()
+	/// 	{
+	/// 		this.DoSomething ();
+	/// 	}
+	///
+	/// 	protected virtual void DoSomething ()
+	/// 	{
+	/// 	}
 	/// }
-	/// 
+	///
 	/// class B : A {
-	///	private int x;
-	///	
-	///	public B ()
-	///	{
-	///		x = 10;
-	///	}
-	///	
-	///	protected override void DoSomething ()
-	///	{
-	///		Console.WriteLine (x);
-	///	}
+	/// 	private int x;
+	///
+	/// 	public B ()
+	/// 	{
+	/// 		x = 10;
+	/// 	}
+	///
+	/// 	protected override void DoSomething ()
+	/// 	{
+	/// 		Console.WriteLine (x);
+	/// 	}
 	/// }
-	/// 
-	/// B b = new B (); // outputs 0 because B's constructor hasn't been called yet 
+	///
+	/// B b = new B (); // outputs 0 because B's constructor hasn't been called yet
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
 	/// class A {
-	///	public void Run ()
-	///	{
-	///		this.DoSomething ();
-	///	}
-	///	
-	///	protected virtual void DoSomething ()
-	///	{
-	///	}
+	/// 	public void Run ()
+	/// 	{
+	/// 		this.DoSomething ();
+	/// 	}
+	///
+	/// 	protected virtual void DoSomething ()
+	/// 	{
+	/// 	}
 	/// }
-	/// 
+	///
 	/// class B : A {
-	///	private int x;
-	///	
-	///	public B ()
-	///	{
-	///		x = 10;
-	///	}
-	///	
-	///	protected override void DoSomething ()
-	///	{
-	///		Console.WriteLine (x);
-	///	}
+	/// 	private int x;
+	///
+	/// 	public B ()
+	/// 	{
+	/// 		x = 10;
+	/// 	}
+	///
+	/// 	protected override void DoSomething ()
+	/// 	{
+	/// 		Console.WriteLine (x);
+	/// 	}
 	/// }
-	/// 
+	///
 	/// B b = new B ();
-	/// b.Run (); // outputs 10 as intended 
+	/// b.Run (); // outputs 10 as intended
 	/// </code>
 	/// </example>
 	/// <remarks>This rule is available since Gendarme 2.0</remarks>
@@ -164,7 +164,7 @@ namespace Gendarme.Rules.BadPractice {
 			while ((ins != null) && (parameters >= 0)) {
 				if ((ins.OpCode.Code == Code.Ldarg_0) && (parameters == 0))
 					return true; // this
-				
+
 				switch (ins.OpCode.StackBehaviourPush) {
 				case StackBehaviour.Push0:
 				case StackBehaviour.Push1:

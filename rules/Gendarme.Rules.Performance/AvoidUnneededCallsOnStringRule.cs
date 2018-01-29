@@ -47,8 +47,8 @@ namespace Gendarme.Rules.Performance {
 	// DMI: Invocation of substring(0), which returns the original value (DMI_USELESS_SUBSTRING)
 
 	/// <summary>
-	/// This rule detects when some methods, like <c>Clone()</c>, <c>Substring(0)</c>, 
-	/// <c>ToString()</c> or <c>ToString(IFormatProvider)</c>, are being called on a 
+	/// This rule detects when some methods, like <c>Clone()</c>, <c>Substring(0)</c>,
+	/// <c>ToString()</c> or <c>ToString(IFormatProvider)</c>, are being called on a
 	/// string instance. Since these calls all return the original string they don't do anything
 	/// useful and should be carefully reviewed to see if they are working as intended and,
 	/// if they are, the method call can be removed.
@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public void PrintName (string name)
 	/// {
-	///	Console.WriteLine ("Name: {0}", name.ToString ());
+	/// 	Console.WriteLine ("Name: {0}", name.ToString ());
 	/// }
 	/// </code>
 	/// </example>
@@ -67,7 +67,7 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public void PrintName (string name)
 	/// {
-	///	Console.WriteLine ("Name: {0}", name);
+	/// 	Console.WriteLine ("Name: {0}", name);
 	/// }
 	/// </code>
 	/// </example>
@@ -167,7 +167,7 @@ namespace Gendarme.Rules.Performance {
 		{
 			if (call.DeclaringType.IsNamed ("System", "String")) {
 				// most probably ToString(IFormatProvider), possibly ToString()
-				return String.Format (CultureInfo.InvariantCulture, MessageString, call.Name, 
+				return String.Format (CultureInfo.InvariantCulture, MessageString, call.Name,
 					(call.HasParameters && (call.Parameters.Count > 1)) ? "IFormatProvider" : String.Empty);
 			} else {
 				// signature for Clone is identical (well close enough) to share code

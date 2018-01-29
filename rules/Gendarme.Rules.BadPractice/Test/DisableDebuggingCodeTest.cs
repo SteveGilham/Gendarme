@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for DisableDebuggingCodeRule
 //
 // Authors:
@@ -113,7 +113,7 @@ namespace Test.Rules.BadPractice {
 		public void NonDebug ()
 		{
 #if DEBUG
- 			AssertRuleSuccess<DisableDebuggingCodeTest> ("UsingDebug"); 
+ 			AssertRuleSuccess<DisableDebuggingCodeTest> ("UsingDebug");
 #else
 			AssertRuleDoesNotApply<DisableDebuggingCodeTest> ("UsingDebug");	// method has no body in release
 #endif

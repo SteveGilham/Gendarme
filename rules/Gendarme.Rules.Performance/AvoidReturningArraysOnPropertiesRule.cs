@@ -48,18 +48,18 @@ namespace Gendarme.Rules.Performance {
 	/// Bad example:
 	/// <code>
 	/// public byte[] Foo {
-	///	get {
-	///		// return the data inside the instance
-	///		return foo;
-	///	}
+	/// 	get {
+	/// 		// return the data inside the instance
+	/// 		return foo;
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public byte[] Bar {
-	///	get {
-	///		// return a copy of the instance's data
-	///		// (this is bad because users expect properties to execute quickly)
-	///		return (byte[]) bar.Clone ();
-	///	}
+	/// 	get {
+	/// 		// return a copy of the instance's data
+	/// 		// (this is bad because users expect properties to execute quickly)
+	/// 		return (byte[]) bar.Clone ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -68,12 +68,12 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public byte[] GetFoo ()
 	/// {
-	///	return (byte[]) foo.Clone ();
+	/// 	return (byte[]) foo.Clone ();
 	/// }
-	/// 
+	///
 	/// public byte[] GetFoo ()
 	/// {
-	///	return (byte[]) bar.Clone ();
+	/// 	return (byte[]) bar.Clone ();
 	/// }
 	/// </code>
 	/// </example>
@@ -82,7 +82,7 @@ namespace Gendarme.Rules.Performance {
 	[Solution ("Return a read-only collection or replace the property by a method and return a copy of the array.")]
 	[FxCopCompatibility ("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
 	public class AvoidReturningArraysOnPropertiesRule : Rule, IMethodRule {
-		
+
 		/// <summary>
 		/// Initialize the rule. This is where rule can do it's heavy initialization
 		/// since the assemblies to be analyzed are already known (and accessible thru

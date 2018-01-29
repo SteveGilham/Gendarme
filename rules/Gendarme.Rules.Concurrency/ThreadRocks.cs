@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.ThreadRocks
 //
 // Authors:
@@ -37,7 +37,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Gendarme.Rules.Concurrency {
-	
+
 	internal static class ThreadRocks {
 
 		public static bool AllowsEveryCaller (this ThreadModel self)
@@ -61,17 +61,17 @@ namespace Gendarme.Rules.Concurrency {
 						return model.Value;
 				}
 
-				// If the type is not decorated then we'll assume that the type is main 
+				// If the type is not decorated then we'll assume that the type is main
 				// thread unless it's a System/Mono type.
 				if (ThreadedNamespace (type.Namespace))
 					return ThreadModel.Concurrent;
-					
+
 				type = type.DeclaringType;
 			}
-			
+
 			return ThreadModel.MainThread;
 		}
-		
+
 		static ThreadModel? Lookup<TDefinition> (MemberReference method, IEnumerable<TDefinition> collection)
 			where TDefinition : IMemberDefinition
 		{
@@ -94,7 +94,7 @@ namespace Gendarme.Rules.Concurrency {
 			ThreadModel? model = TryGetThreadingModel (method);
 			if (model != null)
 				return model.Value;
-			
+
 			// If it's a property we need to check the property as well.
 			if (method.IsProperty ()) {
 				// FIXME: we won't get the property if it is an explicit implementation
@@ -102,31 +102,31 @@ namespace Gendarme.Rules.Concurrency {
 				if (model != null)
 					return model.Value;
 			}
-			
+
 			// If it's a event we need to check the event as well.
 			if (method.IsAddOn || method.IsRemoveOn || method.IsFire) {
 				model = Lookup (method, method.DeclaringType.Events);
 				if (model != null)
 					return model.Value;
 			}
-			
+
 			// Check the type.
 			model = ThreadingModel (method.DeclaringType);
-			
+
 			if (method.IsConstructor && method.IsStatic) {
 				if (model == ThreadModel.Concurrent || model == ThreadModel.Serializable) {
 					return ThreadModel.SingleThread;
 				}
-				
+
 			} else if (method.IsStatic) {
 				if (model == ThreadModel.Serializable && !method.Name.StartsWith ("op_", StringComparison.Ordinal)) {
 					return ThreadModel.MainThread;
 				}
 			}
-			
+
 			return model.Value;
 		}
-		
+
 		// Returns true if the namespace is one for which we consider all the types thread safe.
 		public static bool ThreadedNamespace (string ns)
 		{
@@ -135,10 +135,10 @@ namespace Gendarme.Rules.Concurrency {
 
 			if (ns == "Mono" || ns.StartsWith ("Mono.", StringComparison.Ordinal))
 				return true;
-			
+
 			return false;
 		}
-		
+
 		#region Private Methods
 		private static ThreadModel? TryGetThreadingModel (ICustomAttributeProvider provider)
 		{
@@ -155,10 +155,10 @@ namespace Gendarme.Rules.Concurrency {
 				IList<CustomAttributeArgument> cp = attr.ConstructorArguments;
 				if ((cp.Count == 1) && (cp [0].Value is int))
 					return (ThreadModel) (int) cp [0].Value;
-						
+
 				throw new ArgumentException ("There should be a single ThreadModelAttribute ctor taking an (Int32) ThreadModel enum argument.");
 			}
-			
+
 			return null;
 		}
 

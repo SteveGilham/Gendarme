@@ -42,8 +42,8 @@ namespace Gendarme.Rules.Interoperability {
 	/// <summary>
 	/// This rule checks for code which casts an <code>IntPtr</code> or <code>UIntPtr</code> into a
 	/// 32-bit (or smaller) value. It will also check if memory read with the <c>Marshal.ReadInt32</c>
-	/// and <c>Marshal.ReadInt64</c> methods is being cast into an <code>IntPtr</code> or 
-	/// <code>UIntPtr</code>. <code>IntPtr</code> is generally used to reference a memory 
+	/// and <c>Marshal.ReadInt64</c> methods is being cast into an <code>IntPtr</code> or
+	/// <code>UIntPtr</code>. <code>IntPtr</code> is generally used to reference a memory
 	/// location and downcasting them to 32-bits will make the code fail on 64-bit CPUs.
 	/// </summary>
 	/// <example>
@@ -51,8 +51,8 @@ namespace Gendarme.Rules.Interoperability {
 	/// <code>
 	/// int ptr = dest.ToInt32 ();
 	/// for (int i = 0; i &lt; 16; i++) {
-	///	Marshal.StructureToPtr (this, (IntPtr)ptr, false);
-	///	ptr += 4;
+	/// 	Marshal.StructureToPtr (this, (IntPtr)ptr, false);
+	/// 	ptr += 4;
 	/// }
 	/// </code>
 	/// </example>
@@ -68,8 +68,8 @@ namespace Gendarme.Rules.Interoperability {
 	/// <code>
 	/// long ptr = dest.ToInt64 ();
 	/// for (int i = 0; i &lt; 16; i++) {
-	///	Marshal.StructureToPtr (this, (IntPtr) ptr, false);
-	///	ptr += IntPtr.Size;
+	/// 	Marshal.StructureToPtr (this, (IntPtr) ptr, false);
+	/// 	ptr += IntPtr.Size;
 	/// }
 	/// </code>
 	/// </example>
@@ -123,7 +123,7 @@ namespace Gendarme.Rules.Interoperability {
 
 		private void CheckCastOnIntPtr (MethodDefinition method, Instruction ins, MethodReference mr, bool intptr, bool uintptr)
 		{
-			// check for calls to IntPtr.ToInt32, UIntPtr.ToUInt32 or 
+			// check for calls to IntPtr.ToInt32, UIntPtr.ToUInt32 or
 			// cast to anything other than [U]IntPtr, [U]Int64 or Void*
 			string name = mr.Name;
 			if (intptr && (name == "ToInt32")) {

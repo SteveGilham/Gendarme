@@ -39,8 +39,8 @@ namespace Gendarme.Rules.Design {
 	/// <summary>
 	/// This rule will warn on any type that provide <c>Parse(string...)</c>
 	/// method(s) without supplying <c>TryParse</c> alternative method(s).
-	/// Using a <c>TryParse</c> method is easier since it is less-error prone 
-	/// (no need to handle all possible exceptions) and remove the performance 
+	/// Using a <c>TryParse</c> method is easier since it is less-error prone
+	/// (no need to handle all possible exceptions) and remove the performance
 	/// issue regarding throwing/catching exceptions.
 	/// </summary>
 	/// <example>
@@ -49,14 +49,14 @@ namespace Gendarme.Rules.Design {
 	/// public struct Int32Tuple {
 	/// 	private int first;
 	/// 	private int second;
-	/// 	
+	///
 	/// 	public Int32Tuple (int a, int b)
 	/// 	{
 	/// 		first = a;
 	/// 		second = b;
 	/// 	}
-	/// 	
-	///	// documented to throw only Argument[Null]Exception or FormatException
+	///
+	/// 	// documented to throw only Argument[Null]Exception or FormatException
 	/// 	static Int32Tuple Parse (string s)
 	/// 	{
 	/// 		if (s == null) {
@@ -78,7 +78,7 @@ namespace Gendarme.Rules.Design {
 	/// 			}
 	/// 		}
 	/// 	}
-	/// }	
+	/// }
 	/// </code>
 	/// </example>
 	/// <example>
@@ -87,14 +87,14 @@ namespace Gendarme.Rules.Design {
 	/// public struct Int32Tuple {
 	/// 	private int first;
 	/// 	private int second;
-	/// 	
+	///
 	/// 	public Int32Tuple (int a, int b)
 	/// 	{
 	/// 		first = a;
 	/// 		second = b;
 	/// 	}
-	/// 	
-	///	// documented to throw only Argument[Null]Exception or FormatException
+	///
+	/// 	// documented to throw only Argument[Null]Exception or FormatException
 	/// 	static Int32Tuple Parse (string s)
 	/// 	{
 	/// 		if (s == null) {
@@ -109,7 +109,7 @@ namespace Gendarme.Rules.Design {
 	/// 			return tuple;
 	/// 		}
 	/// 	}
-	/// 	
+	///
 	/// 	static bool TryParse (string s, out Int32Tuple tuple)
 	/// 	{
 	/// 		tuple = new Int32Tuple ();

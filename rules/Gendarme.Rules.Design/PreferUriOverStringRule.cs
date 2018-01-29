@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.PreferUriOverStringRule
 //
 // Authors:
@@ -57,8 +57,8 @@ namespace Gendarme.Rules.Design {
 	/// <example>
 	/// Bad example 3:
 	/// <code>
-	/// void SendRequest (string url) {  
-	///	...
+	/// void SendRequest (string url) {
+	/// 	...
 	/// }
 	/// </code>
 	/// </example>
@@ -77,11 +77,11 @@ namespace Gendarme.Rules.Design {
 	/// <example>
 	/// Good example 3:
 	/// <code>
-	/// void SendRequest (string url) { 
-	///	SendRequest (new Uri(url)); 
+	/// void SendRequest (string url) {
+	/// 	SendRequest (new Uri(url));
 	/// }
 	/// void SendRequest (Uri url) {
-	///	...
+	/// 	...
 	/// }
 	/// </code>
 	/// </example>
@@ -172,7 +172,7 @@ namespace Gendarme.Rules.Design {
 			foreach (var overload in method.DeclaringType.Methods) {
 				var overloadParams = overload.Parameters;
 				var numOverloadParams = overloadParams.Count;
-				if (overload == method || overload.Name != method.Name || 
+				if (overload == method || overload.Name != method.Name ||
 					numOverloadParams != methodParams.Count)
 					continue;
 

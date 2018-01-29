@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.NUnitRule
 //
 // Authors:
@@ -56,9 +56,9 @@ namespace Gendarme.Rules.NUnit {
 		{
 			base.Initialize (runner);
 
-			// If the assembly doesn't references nunit.framework then it 
+			// If the assembly doesn't references nunit.framework then it
 			// obviously doesn't use any of its types
-			Runner.AnalyzeModule += (object o, RunnerEventArgs e) => 
+			Runner.AnalyzeModule += (object o, RunnerEventArgs e) =>
 			{
 				Active = false;
 				foreach (AssemblyNameReference assembly in e.CurrentModule.AssemblyReferences) {

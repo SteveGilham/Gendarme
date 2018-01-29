@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Portability.ExitCodeIsLimitedOnUnixRule
 //
 // Authors:
@@ -37,9 +37,9 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Portability {
 
 	/// <summary>
-	/// This rule applies to all executable (i.e. EXE) assemblies. Something that many Windows 
-	/// developers might not be aware of is that on Unix systems, process exit code must be 
-	/// between zero and 255, unlike in Windows where it can be any valid integer value. 
+	/// This rule applies to all executable (i.e. EXE) assemblies. Something that many Windows
+	/// developers might not be aware of is that on Unix systems, process exit code must be
+	/// between zero and 255, unlike in Windows where it can be any valid integer value.
 	/// This rule warns if the returned value might be out of range either by:
 	/// <list type="bullet">
 	/// <item>
@@ -52,19 +52,19 @@ namespace Gendarme.Rules.Portability {
 	/// <description>calling <c>Environment.Exit(exitCode)</c> method.</description>
 	/// </item>
 	/// </list>
-	/// An error is reported in case a number which is definitely out of range is returned 
-	/// as an exit code. 
+	/// An error is reported in case a number which is definitely out of range is returned
+	/// as an exit code.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// class MainClass {
-	///	static int Main ()
-	///	{
-	///		Environment.ExitCode = 1000;
-	///		Environment.Exit (512);
-	///		return -1;
-	///	}
+	/// 	static int Main ()
+	/// 	{
+	/// 		Environment.ExitCode = 1000;
+	/// 		Environment.Exit (512);
+	/// 		return -1;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -72,12 +72,12 @@ namespace Gendarme.Rules.Portability {
 	/// Good example:
 	/// <code>
 	/// class MainClass {
-	///	static int Main ()
-	///	{
-	///		Environment.ExitCode = 42;
-	///		Environment.Exit (100);
-	///		return 1;
-	///	}
+	/// 	static int Main ()
+	/// 	{
+	/// 		Environment.ExitCode = 42;
+	/// 		Environment.Exit (100);
+	/// 		return 1;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -126,11 +126,11 @@ namespace Gendarme.Rules.Portability {
 				// should never occur
 				break;
 			case InspectionResult.Bad:
-				Runner.Report (method, ins, Severity.Medium, Confidence.High, 
+				Runner.Report (method, ins, Severity.Medium, Confidence.High,
 					"Return value is outside the range of valid values (0-255).");
 				break;
 			case InspectionResult.Unsure:
-				Runner.Report (method, ins, Severity.Medium, Confidence.Low, 
+				Runner.Report (method, ins, Severity.Medium, Confidence.Low,
 					"Make sure not to return values that are out of range (0-255).");
 				break;
 			}
@@ -179,7 +179,7 @@ namespace Gendarme.Rules.Portability {
 
 		private static InspectionResult CheckInstruction (Instruction instruction)
 		{
-			// checks if an instruction loads an inapproriate value onto the stack			
+			// checks if an instruction loads an inapproriate value onto the stack
 			switch (instruction.OpCode.Code) {
 			case Code.Ldc_I4_M1: // -1 is pushed onto stack
 				return InspectionResult.Bad;

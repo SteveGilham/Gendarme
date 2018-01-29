@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for ImplementISerializableCorrectlyRule
 //
 // Authors:
@@ -141,7 +141,7 @@ namespace Test.Rules.Serialization {
 		}
 
 		[Test]
-		public void FailOnTrickyImplementationWithoutNonSerializedTest () 
+		public void FailOnTrickyImplementationWithoutNonSerializedTest ()
 		{
 			AssertRuleFailure<TrickyImplementationWithoutNonSerialized> ();
 		}
@@ -202,7 +202,7 @@ namespace Test.Rules.Serialization {
 		public void SuccessOnSerializableWithOverridenMethodTest ()
 		{
 			AssertRuleSuccess<SerializableWithOverridenMethod> ();
-		}	
+		}
 
 		[Serializable]
 		class SerializableWithConstsAndStatic : ISerializable {
@@ -239,7 +239,7 @@ namespace Test.Rules.Serialization {
 				else
 					foo = 0;
 			}
-			
+
 			int Foo {
 				get {
 					return foo;
@@ -249,7 +249,7 @@ namespace Test.Rules.Serialization {
 			bool Special {
 				get { return true; }
 			}
-			
+
 			public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 			{
 				info.AddValue ("foo", Foo);
@@ -272,13 +272,13 @@ namespace Test.Rules.Serialization {
 			{
 				foo = info.GetInt32 ("foo");
 			}
-			
+
 			int Foo {
 				get {
 					return foo;
 				}
 			}
-			
+
 			public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 			{
 				info.AddValue ("foo", Foo);
@@ -296,7 +296,7 @@ namespace Test.Rules.Serialization {
 			private System.PlatformID _platform;
 			private Version _version;
 			private string _servicePack = String.Empty;
-			
+
 			public void GetObjectData (SerializationInfo info, StreamingContext context)
 			{
 				info.AddValue ("_platform", _platform);
@@ -304,7 +304,7 @@ namespace Test.Rules.Serialization {
 				info.AddValue ("_servicePack", _servicePack);
 			}
 		}
-		
+
 		[Test]
 		public void SuccessOnOperatingSystemTest ()
 		{

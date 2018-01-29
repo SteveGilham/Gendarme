@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.Definitions.SimpleTypes
 //
 // Authors:
@@ -34,12 +34,12 @@ using Test.Rules.Helpers;
 using Mono.Cecil;
 
 namespace Test.Rules.Definitions {
-	
+
 	/// <summary>
 	/// Class that holds references to some widely-used types while testing.
 	/// </summary>
 	public static class SimpleTypes {
-		
+
 		/// <summary>
 		/// A class to be used as the common one.
 		/// </summary>
@@ -47,12 +47,12 @@ namespace Test.Rules.Definitions {
 			public DeepThought ()
 			{
 			}
-			
+
 			public int Answer {
 				get { return 42; }
 			}
 		}
-		
+
 		/// <summary>
 		/// A structure to be used as the common one.
 		/// </summary>
@@ -61,7 +61,7 @@ namespace Test.Rules.Definitions {
 			public int Year;
 			public int TrackCount;
 		}
-	
+
 		/// <summary>
 		/// An enum to be used as the common one.
 		/// </summary>
@@ -70,7 +70,7 @@ namespace Test.Rules.Definitions {
 			AllYouNeedIsLove,
 			AcrossTheUniverse
 		}
-	
+
 		/// <summary>
 		/// An interface to be used as the common one.
 		/// </summary>
@@ -100,21 +100,21 @@ namespace Test.Rules.Definitions {
 		public static TypeDefinition Class {
 			get { return DefinitionLoader.GetTypeDefinition<DeepThought> (); }
 		}
-		
+
 		/// <value>
 		/// A simple interface definition.
 		/// </value>
 		public static TypeDefinition Interface {
 			get { return DefinitionLoader.GetTypeDefinition<ILoveBeatles> (); }
 		}
-		
+
 		/// <value>
 		/// A simple enumeration definition.
 		/// </value>
 		public static TypeDefinition Enum {
 			get { return DefinitionLoader.GetTypeDefinition<Songs> (); }
 		}
-		
+
 		/// <value>
 		/// A simple structure definition.
 		/// </value>

@@ -44,9 +44,9 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public class Class {
-	///	public static void Method ()
-	///	{
-	///	}
+	/// 	public static void Method ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -54,9 +54,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example (targetting CLR 2.0 and later):
 	/// <code>
 	/// public static class Class {
-	///	public static void Method ()
-	///	{
-	///	}
+	/// 	public static void Method ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -64,9 +64,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example (targetting CLR 1.x):
 	/// <code>
 	/// public sealed class Class {
-	///	public static void Method ()
-	///	{
-	///	}
+	/// 	public static void Method ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -107,14 +107,14 @@ namespace Gendarme.Rules.Design {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only if the type isn't: an enum, an interface, a struct, a delegate or compiler generated
-			if (type.IsEnum || type.IsInterface || type.IsValueType || type.IsDelegate () || type.IsGeneratedCode () 
+			if (type.IsEnum || type.IsInterface || type.IsValueType || type.IsDelegate () || type.IsGeneratedCode ()
 				|| type.BaseType != null && !type.BaseType.IsNamed ("System", "Object"))
 				return RuleResult.DoesNotApply;
-			
+
 			// success if the type is already static or, before 2.0, is it's sealed
 			if ((type.Module.Runtime >= TargetRuntime.Net_2_0) ? type.IsStatic () : type.IsSealed)
 				return RuleResult.Success;
-			
+
 			if (IsAllStatic (type)) {
 				// no technical reason not to use a static type exists
 				Runner.Report (type, Severity.Medium, Confidence.High);

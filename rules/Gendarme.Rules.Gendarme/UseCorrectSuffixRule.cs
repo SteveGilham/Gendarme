@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.UseCorrectSuffixRule
 //
 // Authors:
@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Gendarme {
 	/// Bad example (rule type does not have a suffix):
 	/// <code>
 	/// public class ReviewSomething : Rule, IMethodRule {
-	///	// rule code
+	/// 	// rule code
 	/// }
 	/// </code>
 	/// </example>
@@ -52,7 +52,7 @@ namespace Gendarme.Rules.Gendarme {
 	/// Bad example (non-rule type has a suffix):
 	/// <code>
 	/// public class SomeRule {
-	///	// class code
+	/// 	// class code
 	/// }
 	/// </code>
 	/// </example>
@@ -60,7 +60,7 @@ namespace Gendarme.Rules.Gendarme {
 	/// Good example:
 	/// <code>
 	/// public class ReviewSomethingRule : Rule, IMethodRule {
-	///	// rule code
+	/// 	// rule code
 	/// }
 	/// </code>
 	/// </example>
@@ -82,7 +82,7 @@ namespace Gendarme.Rules.Gendarme {
 				Runner.Report (type, Severity.Medium, Confidence.High, "Type implements IRule but does not end with the 'Rule'");
 			else if (!implementsIRule && endsWithRule)
 				Runner.Report (type, Severity.Medium, Confidence.High, "Type does not implement IRule but ends with the 'Rule'");
-			
+
 			return Runner.CurrentRuleResult;
 		}
 	}

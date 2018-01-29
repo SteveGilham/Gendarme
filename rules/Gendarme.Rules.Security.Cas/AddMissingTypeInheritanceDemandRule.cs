@@ -38,7 +38,7 @@ namespace Gendarme.Rules.Security.Cas {
 
 	/// <summary>
 	/// The rule checks for types that are not <c>sealed</c> but have a <c>LinkDemand</c>.
-	/// In this case the type should also have an <c>InheritanceDemand</c> for the same 
+	/// In this case the type should also have an <c>InheritanceDemand</c> for the same
 	/// permissions. An alternative is to seal the type.
 	/// </summary>
 	/// <example>

@@ -47,22 +47,22 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public class Base : ISerializable {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// [Serializable]
 	/// public class Bad : Base {
-	///	int value;
-	///	
-	///	protected BadDerived (SerializationInfo info, StreamingContext context)
-	///	{
-	///		value = info.GetInt32 ("value");
-	///	}
-	///	
-	///	public override void GetObjectData (SerializationInfo info, StreamingContext context)
-	///	{
-	///		info.AddValue ("value", value);
-	///	}
+	/// 	int value;
+	///
+	/// 	protected BadDerived (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		value = info.GetInt32 ("value");
+	/// 	}
+	///
+	/// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		info.AddValue ("value", value);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -71,23 +71,23 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public class Base : ISerializable {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// [Serializable]
 	/// public class Good : Base {
-	///	int value;
-	///	
-	///	protected BadDerived (SerializationInfo info, StreamingContext context) : base (info, context)
-	///	{
-	///		value = info.GetInt32 ("value");
-	///	}
-	///	
-	///	public override void GetObjectData (SerializationInfo info, StreamingContext context)
-	///	{
-	///		info.AddValue ("value", value);
-	///		base.GetObjectData (info, context);
-	///	}
+	/// 	int value;
+	///
+	/// 	protected BadDerived (SerializationInfo info, StreamingContext context) : base (info, context)
+	/// 	{
+	/// 		value = info.GetInt32 ("value");
+	/// 	}
+	///
+	/// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		info.AddValue ("value", value);
+	/// 		base.GetObjectData (info, context);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

@@ -44,9 +44,9 @@ namespace Gendarme.Rules.Globalization {
 	/// <summary>
 	/// A satellite assembly have a resource which does not match with a main assembly resource.
 	/// Either :
-	///	* The resource doesn't exist in the main assembly and should be removed from the satellite assembly.
-	///	* The resource is not of the same type in the main and satellite assembly. The satellite one should be fixed.
-	///	* The satellite string resource does not have the same string.Format parameters than the main assembly. The satellite one should be fixed.
+	/// 	* The resource doesn't exist in the main assembly and should be removed from the satellite assembly.
+	/// 	* The resource is not of the same type in the main and satellite assembly. The satellite one should be fixed.
+	/// 	* The satellite string resource does not have the same string.Format parameters than the main assembly. The satellite one should be fixed.
 	/// </summary>
 	/// <remarks>
 	/// The satellites assemblies are searched in the subdirectories of the main assembly location.
@@ -87,8 +87,8 @@ namespace Gendarme.Rules.Globalization {
 				EmbeddedResource mainResource;
 				string resourceName = GetNameInSatellite (resource, culture);
 				if (!mainAssemblyResourceCache.TryGetMainResourceFile (resourceName, out mainResource)) {
-					string msg = String.Format (CultureInfo.InvariantCulture, 
-						"The resource file {0} exist in the satellite assembly but not in the main assembly", 
+					string msg = String.Format (CultureInfo.InvariantCulture,
+						"The resource file {0} exist in the satellite assembly but not in the main assembly",
 						resource.Name);
 					Runner.Report (satellite, Severity.Low, Confidence.High, msg);
 					continue;
@@ -110,8 +110,8 @@ namespace Gendarme.Rules.Globalization {
 					object satelliteValue = entry.Value;
 					object mainValue;
 					if (!mainAssemblyResourceCache.TryGetMainResource (mainResource, resourceName, out mainValue)) {
-						string msg = String.Format (CultureInfo.InvariantCulture, 
-							"The resource {0} in the file {1} exist in the satellite assembly but not in the main assembly", 
+						string msg = String.Format (CultureInfo.InvariantCulture,
+							"The resource {0} in the file {1} exist in the satellite assembly but not in the main assembly",
 							resourceName, satelliteResource.Name);
 						Runner.Report (satelliteAssembly, Severity.Low, Confidence.High, msg);
 						continue;
@@ -120,8 +120,8 @@ namespace Gendarme.Rules.Globalization {
 					Type satelliteType = satelliteValue.GetType ();
 					Type mainType = mainValue.GetType ();
 					if (!satelliteType.Equals (mainType)) {
-						string msg = String.Format (CultureInfo.InvariantCulture, 
-							"The resource {0} in the file {1} is of type {2} in the satellite assembly but of type {3} in the main assembly", 
+						string msg = String.Format (CultureInfo.InvariantCulture,
+							"The resource {0} in the file {1} is of type {2} in the satellite assembly but of type {3} in the main assembly",
 							resourceName, satelliteResource.Name, satelliteType, mainType);
 						Runner.Report (satelliteAssembly, Severity.High, Confidence.High, msg);
 						continue;
@@ -132,8 +132,8 @@ namespace Gendarme.Rules.Globalization {
 						Bitmask<int> satelliteParameters = GetStringFormatExpectedParameters ((string) satelliteValue);
 
 						if (!mainParameters.Equals (satelliteParameters)) {
-							string msg = String.Format (CultureInfo.InvariantCulture, 
-								"The string resource {0} in the file {1} does not use the same string format parameters in the satellite and main assemblies", 
+							string msg = String.Format (CultureInfo.InvariantCulture,
+								"The string resource {0} in the file {1} does not use the same string format parameters in the satellite and main assemblies",
 								resourceName, satelliteResource.Name);
 							Runner.Report (satelliteAssembly, Severity.High, Confidence.Normal, msg);
 						}
@@ -207,7 +207,7 @@ namespace Gendarme.Rules.Globalization {
 			}
 		}
 
-		// In satellites assemblies, the resource file name sometimes contains the culture 
+		// In satellites assemblies, the resource file name sometimes contains the culture
 		// some times do not
 		// This method always returns the name without the culture to be able to match with the main
 		// assembly resource

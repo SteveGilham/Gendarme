@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,7 +39,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// The rule will detect if a null check is done before using the <c>as</c> operator. 
+	/// The rule will detect if a null check is done before using the <c>as</c> operator.
 	/// This null check is not needed, a <c>null</c> instance will return <c>null</c>,
 	/// and the code will need to deal with <c>as</c> returning a null value anyway.
 	/// </summary>
@@ -48,7 +48,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public string AsString (object obj)
 	/// {
-	///	return (o == null) ? null : o as string;
+	/// 	return (o == null) ? null : o as string;
 	/// }
 	/// </code>
 	/// </example>
@@ -57,7 +57,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public string AsString (object obj)
 	/// {
-	///	return (o as string);
+	/// 	return (o as string);
 	/// }
 	/// </code>
 	/// </example>

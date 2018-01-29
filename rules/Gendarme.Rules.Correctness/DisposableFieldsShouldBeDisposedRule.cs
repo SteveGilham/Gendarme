@@ -51,14 +51,14 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad example:
 	/// <code>
 	/// class DoesNotDisposeMember : IDisposable {
-	///	byte[] buffer;
-	///	IDisposable field;
-	///	
-	///	public void Dispose ()
-	///	{
-	///		buffer = null;
-	///		// field is not disposed
-	///	}
+	/// 	byte[] buffer;
+	/// 	IDisposable field;
+	///
+	/// 	public void Dispose ()
+	/// 	{
+	/// 		buffer = null;
+	/// 		// field is not disposed
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -66,25 +66,25 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// class DisposePattern : IDisposable {
-	///	byte[] buffer;
-	///	IDisposable field;
-	///	bool disposed;
-	///	
-	///	public void Dispose ()
-	///	{
-	///		Dispose (true);
-	///	}
-	///	
-	///	private void Dispose (bool disposing)
-	///	{
-	///		if (!disposed) {
-	///			if (disposing) {
-	///				field.Dispose ();
-	///			}
-	///			buffer = null;
-	///			disposed = true;
-	///		}
-	///	}
+	/// 	byte[] buffer;
+	/// 	IDisposable field;
+	/// 	bool disposed;
+	///
+	/// 	public void Dispose ()
+	/// 	{
+	/// 		Dispose (true);
+	/// 	}
+	///
+	/// 	private void Dispose (bool disposing)
+	/// 	{
+	/// 		if (!disposed) {
+	/// 			if (disposing) {
+	/// 				field.Dispose ();
+	/// 			}
+	/// 			buffer = null;
+	/// 			disposed = true;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -131,7 +131,7 @@ namespace Gendarme.Rules.Correctness {
 			bool has_explicit = (explicitDisposeMethod != null);
 
 			// note: handled by TypesWithDisposableFieldsShouldBeDisposableRule
-			if (!has_implicit && !has_explicit) 
+			if (!has_implicit && !has_explicit)
 				return RuleResult.Success;
 
 			//Check for baseDispose
@@ -262,7 +262,7 @@ namespace Gendarme.Rules.Correctness {
 				return;
 
 			foreach (FieldDefinition field in fields) {
-				string s = String.Format (CultureInfo.InvariantCulture, 
+				string s = String.Format (CultureInfo.InvariantCulture,
 					"Since {0} is Disposable {1}() should call {0}.Dispose()", field.Name, method.Name);
 				Runner.Report (field, Severity.High, Confidence.High, s);
 			}

@@ -42,15 +42,15 @@ namespace Gendarme.Rules.Performance {
 	/// This rule will fire if a value type (struct in C#) is larger than a maximum value
 	/// (16 bytes by default). This is a problem because, unlike reference types, value
 	/// types are bitwise-copied whenever they are assigned to a variable or passed to
-	/// a method. If the type 
-	/// cannot be reduced in size then it should be 
+	/// a method. If the type
+	/// cannot be reduced in size then it should be
 	/// turned into a reference type (class in C#).
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public struct BigArgb {
-	///	long a, r, g, b;
+	/// 	long a, r, g, b;
 	/// }
 	/// </code>
 	/// </example>
@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Performance {
 	/// Good example:
 	/// <code>
 	/// public sealed class BigArgb {
-	///	long a, r, g, b;
+	/// 	long a, r, g, b;
 	/// }
 	/// </code>
 	/// </example>
@@ -106,12 +106,12 @@ namespace Gendarme.Rules.Performance {
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
-			
+
 			medium_severity_limit = max_size * 2;
 			high_severity_limit = max_size * 4;
 			critical_severity_limit = max_size * 16;
 		}
-		
+
 		/// <summary>The maximum size structs may be without a defect.</summary>
 		/// <remarks>Defaults to 16 bytes.</remarks>
 		[DefaultValue (MaximumRecommendedSize)]

@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using Mono.Cecil.Cil;
 
 namespace Gendarme.Rules.Exceptions.Impl {
 
 	internal sealed class ExecutionBlock {
-	
+
 		private Instruction firstInstruction;
 		private Instruction lastInstruction;
 

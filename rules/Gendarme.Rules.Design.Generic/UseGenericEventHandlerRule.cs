@@ -45,7 +45,7 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Bad example:
 	/// <code>
 	/// public delegate void AuthenticityHandler (object sender, AuthenticityEventArgs e);
-	/// 
+	///
 	/// public event AuthenticityHandler CheckingAuthenticity;
 	/// public event AuthenticityHandler CheckedAuthenticity;
 	/// </code>

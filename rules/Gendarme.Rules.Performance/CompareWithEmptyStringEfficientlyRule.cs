@@ -49,8 +49,8 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public void SimpleMethod (string myString)
 	/// {
-	///	if (myString.Equals (String.Empty)) {
-	///	}
+	/// 	if (myString.Equals (String.Empty)) {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -59,8 +59,8 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public void SimpleMethod (string myString)
 	/// {
-	///	if (myString.Length == 0) {
-	///	}
+	/// 	if (myString.Length == 0) {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

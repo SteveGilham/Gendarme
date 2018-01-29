@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Exceptions.NewExceptionsRule
 //
 // Authors:

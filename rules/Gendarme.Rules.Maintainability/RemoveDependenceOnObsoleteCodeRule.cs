@@ -50,13 +50,13 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// [Obsolete ("Limited to In32.MaxValue, use new Int64 ReportAll method")]
 	/// abstract int Report (IList list);
-	/// 
+	///
 	/// abstract long ReportAll (IList list);
-	/// 
+	///
 	/// public int GetCount ()
 	/// {
-	///	// this method is not ok since it use an obsolete method
-	///	return Report (list);
+	/// 	// this method is not ok since it use an obsolete method
+	/// 	return Report (list);
 	/// }
 	/// </code>
 	/// </example>
@@ -65,13 +65,13 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// [Obsolete ("Limited to In32.MaxValue, use new Int64 ReportAll method")]
 	/// abstract int Report (IList list);
-	/// 
+	///
 	/// abstract long ReportAll (IList list);
-	/// 
+	///
 	/// // this method is correct but this changed the public API
 	/// public long GetCount ()
 	/// {
-	///	return ReportAll (list);
+	/// 	return ReportAll (list);
 	/// }
 	/// </code>
 	/// </example>
@@ -80,19 +80,19 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// [Obsolete ("Limited to In32.MaxValue, use new Int64 ReportAll method")]
 	/// abstract int Report (IList list);
-	/// 
+	///
 	/// abstract long ReportAll (IList list);
-	/// 
+	///
 	/// [Obsolete ("Limited to In32.MaxValue, use new Int64 GetLongCount method")]
 	/// public int GetCount ()
 	/// {
-	///	// this method is now correct since it is decorated with [Obsolete]
-	///	return Report (list);
+	/// 	// this method is now correct since it is decorated with [Obsolete]
+	/// 	return Report (list);
 	/// }
 	///
 	/// public long GetLongCount ()
 	/// {
-	///	return ReportAll (list);
+	/// 	return ReportAll (list);
 	/// }
 	/// </code>
 	/// </example>
@@ -194,7 +194,7 @@ namespace Gendarme.Rules.Maintainability {
 			foreach (EventDefinition evnt in type.Events) {
 				if (IsObsolete (evnt.EventType)) {
 					string msg = String.Format (CultureInfo.InvariantCulture, "Event type '{0}' is obsolete.", evnt.EventType);
-					bool visible = (IsVisible (evnt.AddMethod) || IsVisible (evnt.RemoveMethod) || 
+					bool visible = (IsVisible (evnt.AddMethod) || IsVisible (evnt.RemoveMethod) ||
 						IsVisible (evnt.InvokeMethod));
 					Runner.Report (evnt, visible ? Severity.High : Severity.Medium, Confidence.Total, msg);
 				}

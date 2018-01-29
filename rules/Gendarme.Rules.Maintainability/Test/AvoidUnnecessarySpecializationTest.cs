@@ -735,7 +735,7 @@ namespace Test.Rules.Maintainability {
 				}
 			}
 		}
-		
+
 		[Test]
 		public void Bug690057 ()
 		{

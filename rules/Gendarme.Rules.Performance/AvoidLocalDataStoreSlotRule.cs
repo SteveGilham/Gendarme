@@ -42,7 +42,7 @@ namespace Gendarme.Rules.Performance {
 	/// This rule warns if a method use <c>LocalDataStoreSlot</c> to store or
 	/// retrieve data from Thread or Context Local Storage. The faster alternative
 	/// is to use <c>[ThreadStatic]</c> or <c>[ContextStatic]</c> attributes to avoid
-	/// extra calls and typecasts. 
+	/// extra calls and typecasts.
 	/// Also <c>[ThreadStatic]</c> is available on Silverlight while the
 	/// <c>LocalDataStoreSlot</c> API are not.
 	/// </summary>
@@ -51,16 +51,16 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// static void SetSharedKey (byte[] key)
 	/// {
-	///	LocalDataStoreSlot lds = Thread.AllocateNamedDataSlot ("shared-key");
-	///	lds.SetData (key.Clone ());
+	/// 	LocalDataStoreSlot lds = Thread.AllocateNamedDataSlot ("shared-key");
+	/// 	lds.SetData (key.Clone ());
 	/// }
-	/// 
+	///
 	/// public byte[] SignData (byte[] data)
 	/// {
-	///	LocalDataStoreSlot lds = Thread.GetNamedDataSlot ("shared-key");
-	///	using (HMACSHA1 hmac = new HMACSHA1 (Thread.GetData (lds) as byte[])) {
-	///		return hmac.ComputeHash (data);
-	///	}
+	/// 	LocalDataStoreSlot lds = Thread.GetNamedDataSlot ("shared-key");
+	/// 	using (HMACSHA1 hmac = new HMACSHA1 (Thread.GetData (lds) as byte[])) {
+	/// 		return hmac.ComputeHash (data);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -69,17 +69,17 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// [ThreadStatic]
 	/// static byte[] shared_key;
-	/// 
+	///
 	/// static void SetSharedKey (byte[] key)
 	/// {
-	///	shared_key = (byte[]) key.Clone ();
+	/// 	shared_key = (byte[]) key.Clone ();
 	/// }
-	/// 
+	///
 	/// public byte[] SignData (byte[] data)
 	/// {
-	///	using (HMACSHA1 hmac = new HMACSHA1 (shared_key)) {
-	///		return hmac.ComputeHash (data);
-	///	}
+	/// 	using (HMACSHA1 hmac = new HMACSHA1 (shared_key)) {
+	/// 		return hmac.ComputeHash (data);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

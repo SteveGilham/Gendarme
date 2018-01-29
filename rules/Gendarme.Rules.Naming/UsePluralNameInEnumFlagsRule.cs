@@ -45,9 +45,9 @@ namespace Gendarme.Rules.Naming {
 	/// <code>
 	/// [Flags]
 	/// public enum MyCustomValue {
-	///	Foo,
-	///	Bar,
-	///	AllValues = Foo | Bar
+	/// 	Foo,
+	/// 	Bar,
+	/// 	AllValues = Foo | Bar
 	/// }
 	/// </code>
 	/// </example>
@@ -56,9 +56,9 @@ namespace Gendarme.Rules.Naming {
 	/// <code>
 	/// [Flags]
 	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar,
-	///	AllValues = Foo | Bar
+	/// 	Foo,
+	/// 	Bar,
+	/// 	AllValues = Foo | Bar
 	/// }
 	/// </code>
 	/// </example>

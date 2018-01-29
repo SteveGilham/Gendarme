@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Correctness {
 	// SA: Self assignment of local variable (SA_LOCAL_SELF_ASSIGNMENT)
 
 	/// <summary>
-	/// This rule checks for variables or fields that are assigned to themselves. 
+	/// This rule checks for variables or fields that are assigned to themselves.
 	/// This won't change the value of the variable (or fields) but should be reviewed
 	/// since it could be a typo that hides a real issue in the code.
 	/// </summary>
@@ -52,13 +52,13 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	private int value;
-	///	
-	///	public Bad (int value)
-	///	{
-	///		// argument is assigned to itself, this.value is unchanged
-	///		value = value;
-	///	}
+	/// 	private int value;
+	///
+	/// 	public Bad (int value)
+	/// 	{
+	/// 		// argument is assigned to itself, this.value is unchanged
+	/// 		value = value;
+	/// 	}
 	///}
 	/// </code>
 	/// </example>
@@ -66,12 +66,12 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	private int value;
-	///	
-	///	public Good (int value)
-	///	{
-	///		this.value = value;
-	///	}
+	/// 	private int value;
+	///
+	/// 	public Good (int value)
+	/// 	{
+	/// 		this.value = value;
+	/// 	}
 	///}
 	/// </code>
 	/// </example>
@@ -156,7 +156,7 @@ namespace Gendarme.Rules.Correctness {
 				} else if (next.OpCode.Code == Code.Stsfld) {
 					// is it the same (static) field ?
 					CheckFields (ins, next, method, true);
-// too much false positive because compilers add their own variables 
+// too much false positive because compilers add their own variables
 // and don't always "play well" with them
 #if false
 				} else if (ins.IsLoadLocal () && next.IsStoreLocal ()) {
@@ -170,8 +170,8 @@ namespace Gendarme.Rules.Correctness {
 				} else if (ins.IsLoadArgument () && next.IsStoreArgument ()) {
 					ParameterDefinition parameter = next.GetParameter (method);
 					if (parameter == ins.GetParameter (method)) {
-						string msg = String.Format (CultureInfo.InvariantCulture, 
-							"Parameter '{0}' of type '{1}'.", 
+						string msg = String.Format (CultureInfo.InvariantCulture,
+							"Parameter '{0}' of type '{1}'.",
 							parameter.Name, parameter.ParameterType.GetFullName ());
 						Runner.Report (method, ins, Severity.Medium, Confidence.Normal, msg);
 					}
@@ -197,7 +197,7 @@ namespace Gendarme.Rules.Correctness {
 			OpCodeBitmask mask = new OpCodeBitmask ();
 			mask.Set (Code.Stfld);
 			mask.Set (Code.Stsfld);
-			/* if/when the local variables case is fixed 
+			/* if/when the local variables case is fixed
 			mask.Set (Code.Stloc_0);
 			mask.Set (Code.Stloc_1);
 			mask.Set (Code.Stloc_2);

@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.Gendarme.UseCorrectSuffixTest
 //
 // Authors:

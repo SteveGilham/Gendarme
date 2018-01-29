@@ -1,5 +1,5 @@
-//
-// Unit tests for AvoidCallingProblematicMethodsRule 
+﻿//
+// Unit tests for AvoidCallingProblematicMethodsRule
 //
 // Authors:
 //	Néstor Salceda <nestor.salceda@gmail.com>
@@ -44,7 +44,7 @@ namespace Test.Rules.BadPractice {
 	public class AvoidCallingProblematicMethodsTest : MethodRuleTestFixture<AvoidCallingProblematicMethodsRule> {
 
 		[Test]
-		public void DoesNotApply () 
+		public void DoesNotApply ()
 		{
 			// no IL
 			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
@@ -136,13 +136,13 @@ namespace Test.Rules.BadPractice {
 			AssertRuleSuccess<AvoidCallingProblematicMethodsTest> ("MethodWithInvokeMemberWithUnkownFlagsCall");
 			AssertRuleSuccess<AvoidCallingProblematicMethodsTest> ("MethodWithInvokeMemberWithLargeValueCall");
 		}
-		
+
 		private class MySafeHandle : SafeHandleZeroOrMinusOneIsInvalid {
 			public MySafeHandle () : base (true)
 			{
 			}
 
-			protected override bool ReleaseHandle () 
+			protected override bool ReleaseHandle ()
 			{
 				return true;
 			}
@@ -162,7 +162,7 @@ namespace Test.Rules.BadPractice {
 
 		public void MethodWithAssemblyLoadFromCall ()
 		{
-			Assembly.LoadFrom ("myAssembly.dll");	
+			Assembly.LoadFrom ("myAssembly.dll");
 			Assembly.LoadFrom ("myAssembly.dll", new Evidence ());
 			Assembly.LoadFrom ("myAssembly.dll", new Evidence (), null, AssemblyHashAlgorithm.None);
 

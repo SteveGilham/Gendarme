@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.GendarmeRule
 //
 // Authors:
@@ -50,7 +50,7 @@ namespace Gendarme.Rules.Gendarme {
 			base.Initialize (runner);
 			AssemblyResolver.Resolver.CacheAssembly ( typeof (Rule).Assembly );
 
-			// If the assembly doesn't reference Gendarme.Framework then it 
+			// If the assembly doesn't reference Gendarme.Framework then it
 			// obviously is not a Gendarme Rules assembly
 			Runner.AnalyzeModule += (object o, RunnerEventArgs e) =>
 			{

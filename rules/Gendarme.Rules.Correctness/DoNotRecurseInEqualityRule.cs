@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,37 +40,37 @@ namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
 	/// An operator== or operator!= method is calling itself recursively. This is
-	/// usually caused by neglecting to cast an argument to System.Object before 
+	/// usually caused by neglecting to cast an argument to System.Object before
 	/// comparing it to null.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
-	///	public static bool operator== (Customer lhs, Customer rhs)
-	///	{
-	///		if (object.ReferenceEquals (lhs, rhs)) {
-	///			return true;
-	///		}
-	///		if (lhs == null || rhs == null) {
-	///			return false;
-	///		}
-	///		return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
-	///	}
+	/// 	public static bool operator== (Customer lhs, Customer rhs)
+	/// 	{
+	/// 		if (object.ReferenceEquals (lhs, rhs)) {
+	/// 			return true;
+	/// 		}
+	/// 		if (lhs == null || rhs == null) {
+	/// 			return false;
+	/// 		}
+	/// 		return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
-	///	public static bool operator== (Customer lhs, Customer rhs)
-	///	{
-	///		if (object.ReferenceEquals (lhs, rhs)) {
-	///			return true;
-	///		}
-	///		if ((object) lhs == null || (object) rhs == null) {
-	///			return false;
-	///		}
-	///		return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
-	///	}
+	/// 	public static bool operator== (Customer lhs, Customer rhs)
+	/// 	{
+	/// 		if (object.ReferenceEquals (lhs, rhs)) {
+	/// 			return true;
+	/// 		}
+	/// 		if ((object) lhs == null || (object) rhs == null) {
+	/// 			return false;
+	/// 		}
+	/// 		return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <remarks>This rule is available since Gendarme 2.4</remarks>
@@ -90,7 +90,7 @@ namespace Gendarme.Rules.Correctness {
 			// rule applies only if the method has a body
 			if (!method.HasBody)
 				return RuleResult.DoesNotApply;
-				
+
 			// ignore everything but operator== and operator!=
 			string name = method.Name;
 			if (!method.IsSpecialName || (name != "op_Equality" && name != "op_Inequality"))
@@ -99,7 +99,7 @@ namespace Gendarme.Rules.Correctness {
 			// avoid looping if we're sure there's no Call[virt] in the method
 			if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
 				return RuleResult.DoesNotApply;
-				
+
 			Log.WriteLine (this);
 			Log.WriteLine (this, "---------------------------------------");
 			Log.WriteLine (this, method);

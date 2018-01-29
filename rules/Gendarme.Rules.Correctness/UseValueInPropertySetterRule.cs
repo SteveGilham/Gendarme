@@ -1,4 +1,4 @@
-﻿//
+//
 // Gendarme.Rules.Correctness.UseValueInPropertySetterRule
 //
 // Authors:
@@ -45,14 +45,14 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad example:
 	/// <code>
 	/// public bool Active {
-	///	get {
-	///		return active;
-	///	}
-	///	// this can take a long time to figure out if the default value for active
-	///	// is false (since most people will use the property to set it to true)
-	///	set {
-	///		active = true;
-	///	}
+	/// 	get {
+	/// 		return active;
+	/// 	}
+	/// 	// this can take a long time to figure out if the default value for active
+	/// 	// is false (since most people will use the property to set it to true)
+	/// 	set {
+	/// 		active = true;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -60,12 +60,12 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// public bool Active {
-	///	get {
-	///		return active;
-	///	}
-	///	set {
-	///		active = value;
-	///	}
+	/// 	get {
+	/// 		return active;
+	/// 	}
+	/// 	set {
+	/// 		active = value;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

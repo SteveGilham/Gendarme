@@ -165,8 +165,8 @@ namespace Gendarme.Rules.Naming {
 			string msg;
 			if (method.IsStatic) { //we already have a rule that checks if the method should be static
 				string memberKind = GetSuggestionMemberKind (method);
-				msg = String.Format (CultureInfo.InvariantCulture, 
-					"Consider renaming method to '{2}', or extracting method to type '{0}' as {1} '{2}', or making an extension method of that type.", 
+				msg = String.Format (CultureInfo.InvariantCulture,
+					"Consider renaming method to '{2}', or extracting method to type '{0}' as {1} '{2}', or making an extension method of that type.",
 					p0.ParameterType, memberKind, suggestion);
 			} else {
 				msg = String.Format (CultureInfo.InvariantCulture, "Consider renaming method to '{0}'.", suggestion);

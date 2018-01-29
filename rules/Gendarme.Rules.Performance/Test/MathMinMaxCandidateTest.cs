@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for MathMinMaxCandidateTest
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -104,7 +104,7 @@ namespace Test.Rules.Performance {
 		private float f;
 		float MinWithValue {
 			get { return f; }
-			set { 
+			set {
 				if (f < value)
 					f = value;
 			}
@@ -113,7 +113,7 @@ namespace Test.Rules.Performance {
 		private double d;
 		double MaxWithValue {
 			get { return d; }
-			set { 
+			set {
 				if (d >= value)
 					d = value;
 			}
@@ -170,14 +170,14 @@ namespace Test.Rules.Performance {
 		// from mcs/class/System/System.Net/CookieContainer.cs
 		public int Capacity {
 			get { return End; }
-			set { 
+			set {
 				if (value < 0 || (value < End && End != Int32.MaxValue))
 					throw new ArgumentOutOfRangeException ("value");
 
 				if (value < Start)
 					Start = value;
 
-				End = value;							
+				End = value;
 			}
 		}
 

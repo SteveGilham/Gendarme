@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.CodeDuplicatedLocator class
 //
 // Authors:
@@ -49,7 +49,7 @@ namespace Gendarme.Rules.Smells {
 		Dictionary<MethodDefinition, IList<Pattern>> patternsCached = new Dictionary<MethodDefinition, IList<Pattern>> ();
 		IRule parent_rule;
 
-		internal CodeDuplicatedLocator (IRule rule) 
+		internal CodeDuplicatedLocator (IRule rule)
 		{
 			parent_rule = rule;
 		}
@@ -113,11 +113,11 @@ namespace Gendarme.Rules.Smells {
 		}
 
 		[Conditional ("DEBUG")]
-		void WriteToOutput (MethodDefinition current, MethodDefinition target, Pattern found) 
+		void WriteToOutput (MethodDefinition current, MethodDefinition target, Pattern found)
 		{
 			Log.WriteLine (this, "Found pattern in {0} and {1}", current, target);
 			Log.WriteLine (this, "\t Pattern");
-			for (int index = 0; index < found.Count; index++) 
+			for (int index = 0; index < found.Count; index++)
 				Log.WriteLine (this, "\t\t{0} - {1}",
 					found[index].OpCode.Code,
 					found[index].Operand != null? found[index].Operand : "No operator");
@@ -131,7 +131,7 @@ namespace Gendarme.Rules.Smells {
 			IList<Pattern> patterns = GetPatterns (current);
 			if (patterns.Count == 0)
 				return null;
-			
+
 			InstructionMatcher.Current = current;
 			InstructionMatcher.Target = target;
 
@@ -150,9 +150,9 @@ namespace Gendarme.Rules.Smells {
 
 			return maxPattern;
 		}
-		
 
-		IList<Pattern> GetPatterns (MethodDefinition method) 
+
+		IList<Pattern> GetPatterns (MethodDefinition method)
 		{
 			IList<Pattern> patterns = Empty;
 			if (!patternsCached.TryGetValue (method, out patterns)) {
@@ -165,7 +165,7 @@ namespace Gendarme.Rules.Smells {
 		//TODO: Still needs some testing in order to get the best size
 		//for every case:
 		//  The idea is get two overlapped statements in high level language
-		static IList<Pattern> GeneratePatterns (MethodDefinition method) 
+		static IList<Pattern> GeneratePatterns (MethodDefinition method)
 		{
 			Stack<Stack<Instruction>> result = new Stack<Stack<Instruction>> ();
 			Stack<Instruction> current = new Stack<Instruction> ();
@@ -175,14 +175,14 @@ namespace Gendarme.Rules.Smells {
 			for (int index = instructions.Count - 1; index >= 0; index--) {
 				Instruction currentInstruction = instructions [index];
 				stackCounter += currentInstruction.GetPushCount ();
-				stackCounter -= currentInstruction.GetPopCount (method);	
-				
+				stackCounter -= currentInstruction.GetPopCount (method);
+
 				if (result.Count != 0)
 					result.Peek ().Push (currentInstruction);
 
 				current.Push (currentInstruction);
 
-				if (stackCounter == 0 && current.Count > 1) {//&& currentInstruction.OpCode.FlowControl != FlowControl.Branch) {  
+				if (stackCounter == 0 && current.Count > 1) {//&& currentInstruction.OpCode.FlowControl != FlowControl.Branch) {
 					result.Push (current);
 					current = new Stack<Instruction> ();
 				}
@@ -196,7 +196,7 @@ namespace Gendarme.Rules.Smells {
 				return Empty;
 
 			IList<Pattern> res = new List<Pattern> ();
-			foreach (Stack<Instruction> stack in result) 
+			foreach (Stack<Instruction> stack in result)
 				res.Add (new Pattern (stack.ToArray ()));
 
 			return res;
