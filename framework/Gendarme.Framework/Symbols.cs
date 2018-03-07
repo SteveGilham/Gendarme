@@ -58,11 +58,16 @@ namespace Gendarme.Framework {
 			if ((method == null) || !method.HasBody || method.Body.Instructions.Count == 0)
 				return null;
 			Instruction ins = method.Body.Instructions [0];
+            var information = method.DebugInformation;
+            if (information == null || !information.HasSequencePoints)
+            {
+                return null;
+            }
 			// note that the first instruction often does not have a sequence point
-			while (ins != null && ins.SequencePoint == null)
+			while (ins != null && information.GetSequencePoint(ins) == null)
 				ins = ins.Next;
 				
-			return (ins != null && ins.SequencePoint != null) ? ins : null;
+			return (ins != null && information.GetSequencePoint(ins) != null) ? ins : null;
 		}
 
 		private static TypeDefinition FindTypeFromLocation (IMetadataTokenProvider location)
@@ -123,17 +128,18 @@ namespace Gendarme.Framework {
 				exact ? String.Empty : AlmostEqualTo);
 		}
 
-		private static string GetSource (Instruction ins)
+		private static string GetSource (Instruction ins, MethodDebugInformation information)
 		{
 			// try to find the closed sequence point for this instruction
 			Instruction search = ins;
 			bool feefee = false;
 			while (search != null) {
+                var sp = information.GetSequencePoint(search);
 				// find the first entry, going backward, with a SequencePoint
-				if (search.SequencePoint != null) {
+				if (sp != null) {
 					// skip entries that are hidden (0xFEEFEE)
-					if (search.SequencePoint.StartLine != PdbHiddenLine)
-						return FormatSequencePoint (search.SequencePoint, feefee);
+					if (sp.StartLine != PdbHiddenLine)
+						return FormatSequencePoint (sp, feefee);
 					// but from here on we're not 100% sure about line numbers
 					feefee = true;
 				}
@@ -144,14 +150,15 @@ namespace Gendarme.Framework {
 			return String.Format (CultureInfo.InvariantCulture, "debugging symbols unavailable, IL offset 0x{0:x4}", ins.Offset);
 		}
 		
-		static private string FormatSource (Instruction candidate)
+		static private string FormatSource (Instruction candidate, MethodDebugInformation information)
 		{
-			int line = candidate.SequencePoint.StartLine;
+            var sp = information.GetSequencePoint(candidate);
+			int line = sp.StartLine;
 			// we approximate (line - 1, no column) to get (closer) to the definition
 			// unless we have the special 0xFEEFEE value (used in PDB for hidden source code)
 			if (line != PdbHiddenLine)
 				line--;
-			return FormatSequencePoint (candidate.SequencePoint.Document.Url, line, 0, false);
+			return FormatSequencePoint (sp.Document.Url, line, 0, false);
 		}
 
 		static public string GetSource (Defect defect)
@@ -159,8 +166,10 @@ namespace Gendarme.Framework {
 			if (defect == null)
 				return String.Empty;
 
-			if (defect.Instruction != null)
-				return GetSource (defect.Instruction);
+            MethodDefinition method = FindMethodFromLocation(defect.Location);
+
+            if (defect.Instruction != null)
+				return GetSource (defect.Instruction, method.DebugInformation);
 
 			// rule didn't provide an Instruction but we do our best to
 			// find something since this is our only link to the source code
@@ -170,11 +179,10 @@ namespace Gendarme.Framework {
 
 			// MethodDefinition, ParameterDefinition
 			//	return the method source file with (approximate) line number
-			MethodDefinition method = FindMethodFromLocation (defect.Location);
 			if (method != null) {
 				candidate = ExtractFirst (method);
 				if (candidate != null) 
-					return FormatSource (candidate);
+					return FormatSource (candidate, method.DebugInformation);
 
 				// we may still be lucky to find the (a) source file for the type itself
 				type = method.DeclaringType;
@@ -186,7 +194,7 @@ namespace Gendarme.Framework {
 				type = FindTypeFromLocation (defect.Location);
 			candidate = ExtractFirst (type);
 			if (candidate != null)
-				return FormatSource (candidate);
+				return FormatSource (candidate, method.DebugInformation);
 
 			return String.Empty;
 		}
