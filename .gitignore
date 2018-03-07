@@ -30,3 +30,5 @@ AssemblyInfo.cs
 UpgradeLog*.htm
 UpgradeLog*.html
 Backup/
+.vs/
+packages/

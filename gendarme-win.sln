@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rules", "Rules", "{7AECA932-F2A4-4B4B-8946-BAC2E13836ED}"
 	ProjectSection(SolutionItems) = preProject
@@ -8,8 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rules", "Rules", "{7AECA932
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{E83F7555-F98B-48D9-8CD6-1E46895F276D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cecil", "Cecil", "{10772645-2837-44B1-9CFA-51A0A5CAC635}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C8664DD7-3314-4932-ADA1-384C62568B59}"
 	ProjectSection(SolutionItems) = preProject
@@ -95,15 +93,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Maintainability", "rules\Gendarme.Rules.Maintainability\Test\Tests.Rules.Maintainability.csproj", "{A2F3E904-8D4E-4C18-A0B9-B2BCBD3A0537}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gendarme", "console\gendarme.csproj", "{E95A3AB9-A303-4859-8BCA-458C79496548}"
-	ProjectSection(ProjectDependencies) = postProject
-		{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD} = {8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gendarme.Framework", "framework\Gendarme.Framework.csproj", "{CD6818D5-B398-486C-B180-92A07B143AFD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "cecil\Mono.Cecil.csproj", "{D68133BD-1E63-496E-9EDE-4FBDBF77B486}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil.Pdb", "cecil\symbols\pdb\Mono.Cecil.Pdb.csproj", "{63E6915C-7EA4-4D76-AB28-0D7191EEA626}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "swf-wizard-runner", "swf-wizard-runner\swf-wizard-runner.csproj", "{3C44DF79-3FEA-4F1D-8568-8744AD92E3F9}"
 EndProject
@@ -134,8 +125,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gendarme.Rules.Gendarme", "rules\Gendarme.Rules.Gendarme\Gendarme.Rules.Gendarme.csproj", "{619CDBD4-D89E-47E1-9A82-0F194A665D48}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Rules.Gendarme", "rules\Gendarme.Rules.Gendarme\Test\Tests.Rules.Gendarme.csproj", "{C329FF89-4C07-4D72-AF5B-70B10670CB36}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil.Mdb", "cecil\symbols\mdb\Mono.Cecil.Mdb.csproj", "{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -283,14 +272,6 @@ Global
 		{CD6818D5-B398-486C-B180-92A07B143AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD6818D5-B398-486C-B180-92A07B143AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD6818D5-B398-486C-B180-92A07B143AFD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|Any CPU.ActiveCfg = net_4_0_Debug|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|Any CPU.Build.0 = net_4_0_Debug|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.ActiveCfg = net_4_0_Release|Any CPU
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.Build.0 = net_4_0_Release|Any CPU
-		{63E6915C-7EA4-4D76-AB28-0D7191EEA626}.Debug|Any CPU.ActiveCfg = net_4_0_Debug|Any CPU
-		{63E6915C-7EA4-4D76-AB28-0D7191EEA626}.Debug|Any CPU.Build.0 = net_4_0_Debug|Any CPU
-		{63E6915C-7EA4-4D76-AB28-0D7191EEA626}.Release|Any CPU.ActiveCfg = net_4_0_Release|Any CPU
-		{63E6915C-7EA4-4D76-AB28-0D7191EEA626}.Release|Any CPU.Build.0 = net_4_0_Release|Any CPU
 		{3C44DF79-3FEA-4F1D-8568-8744AD92E3F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3C44DF79-3FEA-4F1D-8568-8744AD92E3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C44DF79-3FEA-4F1D-8568-8744AD92E3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -351,10 +332,6 @@ Global
 		{C329FF89-4C07-4D72-AF5B-70B10670CB36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C329FF89-4C07-4D72-AF5B-70B10670CB36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C329FF89-4C07-4D72-AF5B-70B10670CB36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}.Debug|Any CPU.ActiveCfg = net_4_0_Debug|Any CPU
-		{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}.Debug|Any CPU.Build.0 = net_4_0_Debug|Any CPU
-		{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}.Release|Any CPU.ActiveCfg = net_4_0_Release|Any CPU
-		{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD}.Release|Any CPU.Build.0 = net_4_0_Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -395,8 +372,6 @@ Global
 		{BC57A292-B4FC-415F-BF9A-714A5E62E0E1} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
 		{069148AF-86AB-4EE3-BFB9-429AE722461F} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
 		{A2F3E904-8D4E-4C18-A0B9-B2BCBD3A0537} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
-		{D68133BD-1E63-496E-9EDE-4FBDBF77B486} = {10772645-2837-44B1-9CFA-51A0A5CAC635}
-		{63E6915C-7EA4-4D76-AB28-0D7191EEA626} = {10772645-2837-44B1-9CFA-51A0A5CAC635}
 		{C3BDA065-4C29-48CA-907A-E35CE92F5F87} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
 		{19837D0F-A8ED-4733-97D0-F5EC9991658F} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
 		{519B054B-07A5-43B7-9846-DA7C33A09F4A} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
@@ -411,7 +386,9 @@ Global
 		{FE98135B-0CD0-4C0A-942D-2E5FF9E3A20F} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
 		{619CDBD4-D89E-47E1-9A82-0F194A665D48} = {7AECA932-F2A4-4B4B-8946-BAC2E13836ED}
 		{C329FF89-4C07-4D72-AF5B-70B10670CB36} = {E83F7555-F98B-48D9-8CD6-1E46895F276D}
-		{8559DD7F-A16F-46D0-A05A-9139FAEBA8FD} = {10772645-2837-44B1-9CFA-51A0A5CAC635}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E28047D4-E287-4A17-9CBD-9F57AA6B01A8}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		name = gendarme
