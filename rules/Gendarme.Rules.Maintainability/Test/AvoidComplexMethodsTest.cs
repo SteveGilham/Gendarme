@@ -310,7 +310,7 @@ namespace Test.Rules.Maintainability {
 		}
 
 		// adapted from InstructionRocks.GetOperandType
-		[ExpectedCC (8)]
+		[ExpectedCC (24)]
 		public static int GetOperandType (Instruction self, MethodDefinition method)
 		{
 			int i = 0;
