@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -220,6 +221,18 @@ namespace Test.Rules.Performance {
 					}
 				}
 			}
+
+            // Fix for VS 15.6 default C# compilation
+            if (method == null)
+            {
+                method = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest>()
+                    .NestedTypes
+                    .Where(t => t.Name.StartsWith("<"))
+                    .SelectMany(t => t.Methods)
+                    .Where(m => m.Name.StartsWith("<AnonymousMethodWithUnusedParameters>"))
+                    .FirstOrDefault();
+            }
+
 			Assert.IsNotNull (method, "method not found!");
 			AssertRuleDoesNotApply (method);
 		}
