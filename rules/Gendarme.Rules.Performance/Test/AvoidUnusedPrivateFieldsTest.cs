@@ -51,28 +51,32 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess (SimpleTypes.Structure);	// a few public fields
 		}
 
-		class ClassUnusedStaticPrivateField {
+#pragma warning disable 169
+        class ClassUnusedStaticPrivateField {
 			private static int x;
 
 			[DllImport ("libc.so")]
 			private static extern void strncpy (StringBuilder dest, string src, uint n);
 		}
+#pragma warning restore 169
 
-		[Test]
+        [Test]
 		public void Class ()
 		{
 			AssertRuleFailure<ClassUnusedStaticPrivateField> (1);
 		}
 
-		class ClassUnusedPrivateField {
+#pragma warning disable 169
+        class ClassUnusedPrivateField {
 			private int x;
 			public int X {
 				get { return 0; }
 				set { ; }
 			}
 		}
+#pragma warning restore 169
 
-		class ClassPrivateField {
+        class ClassPrivateField {
 			private int x;
 			public int X {
 				get { return x; }
@@ -141,12 +145,13 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<ClassConstSmallInt> ();
 			AssertRuleSuccess<ClassConstSmallerInt> ();
 		}
-
-		class GenericUnused<T> {
+#pragma warning disable 169
+        class GenericUnused<T> {
 			IList<T> list;
 		}
-
-		class GenericUsed<T> {
+#pragma warning restore 169
+#pragma warning disable 649
+        class GenericUsed<T> {
 			IList<T> list;
 
 			public void Show ()
@@ -155,15 +160,16 @@ namespace Test.Rules.Performance {
 					Console.WriteLine (t);
 			}
 		}
-
-		[Test]
+#pragma warning restore 649
+        [Test]
 		public void GenericsFields ()
 		{
 			AssertRuleFailure<GenericUnused<int>> (1);
 			AssertRuleSuccess<GenericUsed<int>> ();
 		}
 
-		class FieldsUsedInNested {
+#pragma warning disable 414
+        class FieldsUsedInNested {
 			private bool field;
 
 			private static string staticField;
@@ -176,8 +182,9 @@ namespace Test.Rules.Performance {
 				}
 			}
 		}
+#pragma warning restore 414
 
-		[Test]
+        [Test]
 		public void FieldsUsedInNestedType ()
 		{
 			AssertRuleSuccess<FieldsUsedInNested> ();
@@ -192,13 +199,15 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleSuccess<CompilerGenerated> ();
 		}
-		
-		class CompilerGeneratedAndUnused {
+
+#pragma warning disable 169
+        class CompilerGeneratedAndUnused {
 			private int number;
 			public string Name { get; set; }
 		}
-		
-		[Test]
+#pragma warning restore 169
+
+        [Test]
 		public void ClassWithCompilerGeneratedFieldsAndUnusedPrivate ()
 		{
 			AssertRuleFailure<CompilerGeneratedAndUnused> (1);

@@ -61,7 +61,8 @@ namespace Test.Rules.Concurrency {
 			AssertRuleSuccess<DoNotUseMethodImplOptionsSynchronizedTest> ("NotSynchronized");
 		}
 
-		public event EventHandler<EventArgs> CompilerGeneratedSynchronized;
+#pragma warning disable 67
+        public event EventHandler<EventArgs> CompilerGeneratedSynchronized;
 
 		[Test]
 		public void DoesNotApply ()

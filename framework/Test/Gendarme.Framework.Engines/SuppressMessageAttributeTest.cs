@@ -54,7 +54,7 @@ namespace Test.Framework {
 	[TestFixture]
 	public class SuppressMessageAttribute_AssemblyTest : AssemblyRuleTestFixture<SuppressAssemblyRule> {
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
@@ -90,7 +90,7 @@ namespace Test.Framework {
 	[TestFixture]
 	public class SuppressMessageAttribute_ModuleTest : AssemblyRuleTestFixture<SuppressModuleRule> {
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
@@ -139,7 +139,7 @@ namespace Test.Framework {
 	[TestFixture]
 	public class SuppressMessageAttribute_TypeTest : TypeRuleTestFixture<SuppressTypeRule> {
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
@@ -196,7 +196,8 @@ namespace Test.Framework {
 			AssertRuleFailure<EnumNotSuppressed> ();
 		}
 
-		class EventDirectlySuppressed {
+#pragma warning disable 67
+        class EventDirectlySuppressed {
 			[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
 			event EventHandler<EventArgs> Event;
 		}
@@ -204,8 +205,9 @@ namespace Test.Framework {
 		class EventNotSuppressed {
 			event EventHandler<EventArgs> Event;
 		}
+#pragma warning restore 67
 
-		[Test]
+        [Test]
 		// cover AttributeTargets.Event
 		public void Events ()
 		{
@@ -213,8 +215,9 @@ namespace Test.Framework {
 			AssertRuleSuccess<EventDirectlySuppressed> ();
 			AssertRuleFailure<EventNotSuppressed> ();
 		}
+#pragma warning disable 649
 
-		class FieldDirectlySuppressed {
+        class FieldDirectlySuppressed {
 			[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
 			public int Field;
 		}
@@ -223,7 +226,9 @@ namespace Test.Framework {
 			public int Field;
 		}
 
-		[Test]
+#pragma warning restore 649
+
+        [Test]
 		// cover AttributeTargets.Field
 		public void Fields ()
 		{
@@ -329,7 +334,7 @@ namespace Test.Framework {
 	[TestFixture]
 	public class SuppressMessageAttribute_MethodTest : MethodRuleTestFixture<SuppressMethodRule> {
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");

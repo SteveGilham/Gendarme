@@ -77,7 +77,8 @@ namespace Test.Rules.BadPractice {
 					return -1;
 				}
 
-				private new float Private (float f)
+#pragma warning disable 109
+                private new float Private (float f)
 				{
 					return -f;
 				}

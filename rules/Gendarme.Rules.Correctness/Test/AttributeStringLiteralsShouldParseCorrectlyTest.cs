@@ -200,7 +200,8 @@ namespace Test.Rules.Correctness {
 			AssertRuleFailure<BadAttributedClass> (3);
 		}
 
-		class WellAttributedClassWithFields {
+#pragma warning disable 169
+        class WellAttributedClassWithFields {
 			[ValidSince ("1.0.0.0")]
 			[Reference ("http://www.mono-project.com/Gendarme")]
 			[Uses ("00000101-0000-0000-c000-000000000046")]
@@ -264,7 +265,8 @@ namespace Test.Rules.Correctness {
 			[ValidSince ("1.0.0.0")]
 			[Reference ("http://www.mono-project.com/Gendarme")]
 			[Uses ("00000101-0000-0000-c000-000000000046")]
-			event EventHandler<EventArgs> customEvent;
+#pragma warning disable 67
+            event EventHandler<EventArgs> customEvent;
 		}
 
 		[Test]
@@ -279,8 +281,9 @@ namespace Test.Rules.Correctness {
 			[Uses ("0")]
 			event EventHandler<EventArgs> customEvent;
 		}
+#pragma warning restore 67
 
-		[Test]
+        [Test]
 		public void FailOnClassWithBadAttributedEventTest ()
 		{
 			AssertRuleFailure<ClassWithBadAttributedEvent> (3);

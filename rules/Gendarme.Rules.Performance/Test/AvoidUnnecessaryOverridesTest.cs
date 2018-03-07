@@ -84,7 +84,8 @@ namespace Tests.Rules.Performance {
 			}
 		}
 
-		private class TestClassGood : TestBaseClass {
+#pragma warning disable 659
+        private class TestClassGood : TestBaseClass {
 			public override string DoSomething (string s)
 			{
 				return base.DoSomething ();

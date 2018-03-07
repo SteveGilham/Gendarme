@@ -204,8 +204,9 @@ namespace Test.Rules.Maintainability {
 		}
 	}
 
-	// CSC 9.x result varies if /o (optimize) is ON or OFF and we want the test to pass in both cases
-	[ExpectedCohesiveness (0.17, 0.2)]
+#pragma warning disable 649
+    // CSC 9.x result varies if /o (optimize) is ON or OFF and we want the test to pass in both cases
+    [ExpectedCohesiveness (0.17, 0.2)]
 	public class VeryBadCohesion
 	{
 		int x;

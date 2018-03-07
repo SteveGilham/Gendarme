@@ -34,7 +34,8 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Serialization {
 
-	[Serializable]
+#pragma warning disable 414
+    [Serializable]
 	public class ClassWithOptionalFieldAndBothDeserializationAttributes {
 		[OptionalField]
 		private int optional = 1;
@@ -75,8 +76,10 @@ namespace Test.Rules.Serialization {
 			optional = 0;
 		}
 	}
+#pragma warning restore 414
 
-	[Serializable]
+#pragma warning disable 169
+    [Serializable]
 	public class ClassWithOptionalField {
 		[OptionalField]
 		private int optional;
@@ -92,8 +95,9 @@ namespace Test.Rules.Serialization {
 		[OptionalField]
 		private int optional;
 	}
+#pragma warning restore 169
 
-	[TestFixture]
+    [TestFixture]
 	public class DeserializeOptionalFieldTest : TypeRuleTestFixture<DeserializeOptionalFieldRule> {
 
 		[Test]

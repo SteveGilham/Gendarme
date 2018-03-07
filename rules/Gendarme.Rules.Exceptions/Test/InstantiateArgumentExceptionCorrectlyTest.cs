@@ -666,9 +666,11 @@ namespace Test.Rules.Exceptions {
 		// adapted from NamespaceEngine.cs 
 		// gmcs creates an inner type with fields and the exception can be thrown from there (without parameter)
 		class CompilerGeneratedInnerIterator {
-			private static IList<TypeDefinition> types;
+#pragma warning disable 649
+            private static IList<TypeDefinition> types;
+#pragma warning restore 649
 
-			public static IEnumerable<TypeDefinition> TypesInside (string nameSpace)
+            public static IEnumerable<TypeDefinition> TypesInside (string nameSpace)
 			{
 				if (nameSpace == null)
 					throw new ArgumentNullException ("nameSpace");

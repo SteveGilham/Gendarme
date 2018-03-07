@@ -111,7 +111,8 @@ namespace Test.Rules.Design{
 			}
 		}
 
-		public class SecondLevelClone : UsingCloneAndImplementingICloneable {
+#pragma warning disable 114
+        public class SecondLevelClone : UsingCloneAndImplementingICloneable {
 
 			// CS0108 on purpose
 			public object Clone ()
@@ -119,8 +120,9 @@ namespace Test.Rules.Design{
 				return new SecondLevelClone ();
 			}
 		}
+#pragma warning restore 114
 
-		public class SecondLevelCloneWithOverride : UsingCloneAndImplementingICloneable {
+        public class SecondLevelCloneWithOverride : UsingCloneAndImplementingICloneable {
 
 			public override object Clone ()
 			{

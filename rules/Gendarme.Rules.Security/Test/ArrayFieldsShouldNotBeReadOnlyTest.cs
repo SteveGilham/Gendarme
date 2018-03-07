@@ -47,7 +47,8 @@ namespace Test.Rules.Security {
 		protected readonly string [] Array;
 	}
 
-	public class HasInternalReadonlyArray {
+#pragma warning disable 169,649
+    public class HasInternalReadonlyArray {
 		internal readonly string [] Array;
 	}
 
@@ -83,8 +84,9 @@ namespace Test.Rules.Security {
 	public struct StructHasPrivateReadonlyArray {
 		private readonly string [] Array;
 	}
+#pragma warning restore 169, 649
 
-	public struct StructHasNoReadonlyArray {
+    public struct StructHasNoReadonlyArray {
 		public readonly string NoArray;
 	}
 

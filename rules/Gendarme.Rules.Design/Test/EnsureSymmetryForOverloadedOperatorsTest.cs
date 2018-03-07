@@ -41,7 +41,7 @@ namespace Test.Rules.Design {
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
@@ -81,7 +81,8 @@ namespace Test.Rules.Design {
 			AssertRuleSuccess (SimpleTypes.Structure);
 		}
 
-		class EverythingOK {
+#pragma warning disable 660,661
+        class EverythingOK {
 			public static EverythingOK operator + (EverythingOK a, EverythingOK b) { return null; }
 			public static EverythingOK operator - (EverythingOK a, EverythingOK b) { return null; }
 			public static EverythingOK operator * (EverythingOK a, EverythingOK b) { return null; }
@@ -98,7 +99,9 @@ namespace Test.Rules.Design {
 			public static bool operator false (EverythingOK a) { return true; }
 		}
 
-		[Test]
+#pragma warning restore 660,661
+
+        [Test]
 		public void TestEverythingOK ()
 		{
 			AssertRuleSuccess<EverythingOK> ();

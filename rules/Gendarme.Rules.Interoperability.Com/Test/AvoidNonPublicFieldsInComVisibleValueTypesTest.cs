@@ -64,10 +64,12 @@ namespace Test.Rules.Interoperability.Com {
 	/** Fail */
 	[ComVisible (true)]
 	public struct ComVisibleBad {
-		internal int SomeValue;
-	}
+#pragma warning disable 649
+        internal int SomeValue;
+#pragma warning restore 649
+    }
 
-	[TestFixture]
+    [TestFixture]
 	public class AvoidNonPublicFieldsInComVisibleValueTypesTest : TypeRuleTestFixture<AvoidNonPublicFieldsInComVisibleValueTypesRule> {
 
 		[Test]

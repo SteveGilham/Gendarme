@@ -187,9 +187,11 @@ namespace Test.Rules.Correctness {
 			public int HashCode;
 			public int Next;
 		}
-		private Link [] links;
+#pragma warning disable 649
+        private Link [] links;
+#pragma warning restore 649
 
-		private void HashSetGood (int a, int b)
+        private void HashSetGood (int a, int b)
 		{
 			links [a].Next = links [b].Next;
 		}

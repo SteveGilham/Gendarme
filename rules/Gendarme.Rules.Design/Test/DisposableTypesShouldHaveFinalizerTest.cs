@@ -42,7 +42,8 @@ using Test.Rules.Helpers;
 
 namespace Test.Rules.Design {
 
-	class HasFinalizer : IDisposable {
+#pragma warning disable 649, 169
+    class HasFinalizer : IDisposable {
 		IntPtr A;
 		~HasFinalizer ()
 		{

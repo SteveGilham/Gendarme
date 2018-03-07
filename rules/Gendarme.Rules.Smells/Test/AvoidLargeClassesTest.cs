@@ -50,6 +50,7 @@ namespace Test.Rules.Smells {
 		W6, W7, W8, W9
 	}
 	
+#pragma warning disable 169
 	public class LargeClass {
 		int x, x1, x2, x3;
 		string foo, foo1, foo2, foo3;
@@ -120,7 +121,7 @@ namespace Test.Rules.Smells {
 		private TypeDefinition type;
 		private TestRunner runner;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp () 
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;

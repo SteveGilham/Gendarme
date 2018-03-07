@@ -43,7 +43,8 @@ namespace Test.Rules.Serialization {
 		class AutomaticSerialization {
 		}
 
-		[Serializable]
+#pragma warning disable 169
+        [Serializable]
 		class ImplementationWithNonSerialized : ISerializable {
 			int foo;
 			[NonSerialized]
@@ -77,7 +78,8 @@ namespace Test.Rules.Serialization {
 		}
 
 
-		[Serializable]
+#pragma warning disable 649
+        [Serializable]
 		class TrickyImplementationWithoutNonSerialized : ISerializable {
 			int foo;
 			string bar;
@@ -202,9 +204,10 @@ namespace Test.Rules.Serialization {
 		public void SuccessOnSerializableWithOverridenMethodTest ()
 		{
 			AssertRuleSuccess<SerializableWithOverridenMethod> ();
-		}	
+		}
 
-		[Serializable]
+#pragma warning disable 414
+        [Serializable]
 		class SerializableWithConstsAndStatic : ISerializable {
 			const int Result = 42;
 			static int Foo = 50;
@@ -217,8 +220,9 @@ namespace Test.Rules.Serialization {
 			{
 			}
 		}
+#pragma warning restore 414
 
-		[Test]
+        [Test]
 		public void SuccessOnSerializableWithConstsAndStaticTest ()
 		{
 			AssertRuleSuccess<SerializableWithConstsAndStatic> ();
@@ -291,7 +295,8 @@ namespace Test.Rules.Serialization {
 			AssertRuleFailure<SerializableThroughPropertiesAndOneNonSerialized> (1);
 		}
 
-		[Serializable]
+#pragma warning disable 649
+        [Serializable]
 		sealed class OperatingSystem : ISerializable {
 			private System.PlatformID _platform;
 			private Version _version;
@@ -320,8 +325,9 @@ namespace Test.Rules.Serialization {
 				info.AddValue ("foo", foo, typeof (int));
 			}
 		}
+#pragma warning restore 649
 
-		[Test]
+        [Test]
 		public void SuccessOnAddValueWithMoreParametersTest ()
 		{
 			AssertRuleSuccess<AddValueWithMoreParameters> ();

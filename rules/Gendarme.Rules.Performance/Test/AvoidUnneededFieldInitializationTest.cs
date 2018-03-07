@@ -50,7 +50,8 @@ namespace Test.Rules.Performance {
 			AssertRuleDoesNotApply (SimpleMethods.GeneratedCodeMethod);
 		}
 
-		class ClassWithBadStaticCtor {
+#pragma warning disable 414
+        class ClassWithBadStaticCtor {
 			public static int i;
 			static object o;
 
@@ -67,8 +68,9 @@ namespace Test.Rules.Performance {
 				o = null;
 			}
 		}
+#pragma warning restore 414
 
-		class ClassWithGoodStaticCtor {
+        class ClassWithGoodStaticCtor {
 			static string s;
 
 			static ClassWithGoodStaticCtor ()
@@ -109,7 +111,8 @@ namespace Test.Rules.Performance {
 			}
 		}
 
-		struct StructWithStatic {
+#pragma warning disable 414
+        struct StructWithStatic {
 			static string s;
 			DayOfWeek dow;
 
@@ -133,8 +136,9 @@ namespace Test.Rules.Performance {
 				dow = DayOfWeek.Sunday;
 			}
 		}
+#pragma warning disable 414
 
-		[Test]
+        [Test]
 		public void Bad ()
 		{
 			AssertRuleFailure<ClassWithBadStaticCtor> (".cctor", 2);

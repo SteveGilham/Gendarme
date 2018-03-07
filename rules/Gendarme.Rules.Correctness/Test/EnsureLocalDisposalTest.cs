@@ -40,8 +40,10 @@ using Test.Rules.Definitions;
 namespace Test.Rules.Correctness {
 
 	class DisposalCases {
-		string foo;
-		StreamReader sr;
+#pragma warning disable 649
+        string foo;
+#pragma warning restore 649
+        StreamReader sr;
 
 		StreamReader StreamReader { get; set; }
 
@@ -77,7 +79,8 @@ namespace Test.Rules.Correctness {
 			}
 		}
 
-		void Success3 (IDisposable disposable) {
+#pragma warning disable 219
+        void Success3 (IDisposable disposable) {
 			int x = 0;
 			disposable.Dispose ();
 		}
@@ -86,9 +89,10 @@ namespace Test.Rules.Correctness {
 			int x = 0;
 			sr = new StreamReader ("bar.xml"); //field
 		}
+#pragma warning restore 219
 
-		//foreach(enumerator)
-		static string Success5 (IEnumerable<string> strings)
+        //foreach(enumerator)
+        static string Success5 (IEnumerable<string> strings)
 		{
 			foreach (var s in strings) {
 				if (s.Length > 0)

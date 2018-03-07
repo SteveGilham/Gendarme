@@ -40,7 +40,7 @@ namespace Test.Rules.Design {
 	[TestFixture]
 	public class MarkAssemblyWithAssemblyVersionTest : AssemblyRuleTestFixture<MarkAssemblyWithAssemblyVersionRule> {
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
@@ -77,7 +77,7 @@ namespace Test.Rules.Design {
 
 			MethodDefinition ctor = DefinitionLoader.GetMethodDefinition (type, ".ctor",
 				new Type [] { typeof (string), typeof (string) });
-			CustomAttribute ca = new CustomAttribute (assembly.MainModule.Import (ctor));
+			CustomAttribute ca = new CustomAttribute (assembly.MainModule.ImportReference (ctor));
 			ca.ConstructorArguments.Add (
 				new CustomAttributeArgument (
 					assembly.MainModule.TypeSystem.String, "Microsoft.Design"));

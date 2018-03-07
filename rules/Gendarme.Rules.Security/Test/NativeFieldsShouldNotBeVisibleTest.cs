@@ -34,8 +34,8 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
 namespace Test.Rules.Security {
-
-	public class HasPublicNativeField {
+#pragma warning disable 169,649
+    public class HasPublicNativeField {
 		public IntPtr Native;
 	}
 

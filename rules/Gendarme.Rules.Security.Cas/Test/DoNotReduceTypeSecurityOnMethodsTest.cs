@@ -128,7 +128,8 @@ namespace Test.Rules.Security.Cas {
 			AssertRuleSuccess<DemandSubsetClass> ();
 		}
 
-		[SecurityPermission (SecurityAction.Deny, Unrestricted = true)]
+#pragma warning disable 618
+        [SecurityPermission (SecurityAction.Deny, Unrestricted = true)]
 		public class DenyNotSubsetClass {
 
 			public DenyNotSubsetClass ()
@@ -140,8 +141,9 @@ namespace Test.Rules.Security.Cas {
 			{
 			}
 		}
+#pragma warning restore 618
 
-		[Test]
+        [Test]
 		public void DenyNotSubset ()
 		{
 			AssertRuleFailure<DenyNotSubsetClass> (1);

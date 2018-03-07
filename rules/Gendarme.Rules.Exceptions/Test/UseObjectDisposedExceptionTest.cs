@@ -68,26 +68,31 @@ namespace Test.Rules.Exceptions {
 			{
 				DoSomething ();
 			}
-			
-			public event EventHandler Closed;
 
-			// These are not public.
-			internal void Write2 (string message)
+#pragma warning disable 67
+            public event EventHandler Closed;
+#pragma warning restore 67
+
+            // These are not public.
+            internal void Write2 (string message)
 			{
 				DoSomething ();
 			}
-			
-			protected void Write3 (string message)
+
+#pragma warning disable 628
+            protected void Write3 (string message)
 			{
 				DoSomething ();
 			}
-			
-			private void Write4 (string message)
+#pragma warning restore 628
+
+            private void Write4 (string message)
 			{
 				DoSomething ();
 			}
-			
-			internal bool disposed;
+
+#pragma warning disable 649
+            internal bool disposed;
 			
 			private void DoSomething ()
 			{

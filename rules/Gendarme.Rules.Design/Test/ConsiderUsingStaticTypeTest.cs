@@ -92,9 +92,11 @@ namespace Test.Rules.Design {
 		//You cannot do this class static
 		//This is the same testcase that EventArgs inheritance
 		public class InheritAddingStatic : EmptyClass {
-			static private int x;
+#pragma warning disable 649
+            static private int x;
+#pragma warning restore 649
 
-			static public void Show ()
+            static public void Show ()
 			{
 				Console.WriteLine (x);
 			}
@@ -117,12 +119,14 @@ namespace Test.Rules.Design {
 			AssertRuleDoesNotApply<InheritAddingInstance> ();
 		}
 
-		public class ClassWithOnlyFields {
+#pragma warning disable 169
+        public class ClassWithOnlyFields {
 			int x;
 			char c;
 		}
+#pragma warning restore 169
 
-		[Test]
+        [Test]
 		public void SuccessOnClassWithOnlyFieldsTest ()
 		{
 			AssertRuleSuccess<ClassWithOnlyFields> ();

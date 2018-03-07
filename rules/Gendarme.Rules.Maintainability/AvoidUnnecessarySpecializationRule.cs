@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Linq;
 using System.Text;
 
 using Mono.Cecil;
@@ -187,7 +188,7 @@ namespace Gendarme.Rules.Maintainability {
 		{
 			TypeDefinition ifaceDef = null;
 
-			foreach (TypeReference iface in type.Interfaces) {
+			foreach (TypeReference iface in type.Interfaces.Select(t => t.InterfaceType)) {
 				// ignore non-cls-compliant interfaces
 				if (iface.Name.StartsWith ("_", StringComparison.Ordinal))
 					continue;
@@ -456,7 +457,7 @@ namespace Gendarme.Rules.Maintainability {
 
 		static bool IsSignatureDictatedByInterface (IMemberDefinition method, MethodSignature sig)
 		{
-			foreach (TypeReference intf_ref in method.DeclaringType.Interfaces) {
+			foreach (TypeReference intf_ref in method.DeclaringType.Interfaces.Select(t => t.InterfaceType)) {
 				TypeDefinition intr = intf_ref.Resolve ();
 				if (intr == null)
 					continue;

@@ -50,11 +50,13 @@ namespace Test.Rules.Performance {
 			AssertRuleDoesNotApply (SimpleTypes.GeneratedType);
 		}
 
-		public struct StructWithoutEqualsObject {
+#pragma warning disable 169
+        public struct StructWithoutEqualsObject {
 			int i;
 		}
+#pragma warning restore 169
 
-		public struct StructWithEqualsObject {
+        public struct StructWithEqualsObject {
 			public override bool Equals (object obj)
 			{
 				return base.Equals (obj);
@@ -122,11 +124,13 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<EquatableStructWithBothEquals> ();
 		}
 
-		public class ClassWithoutEqualsObject {
+#pragma warning disable 169
+        public class ClassWithoutEqualsObject {
 			int i;
 		}
+#pragma warning restore 169
 
-		public class ClassWithEqualsObject {
+        public class ClassWithEqualsObject {
 			public override bool Equals (object obj)
 			{
 				return base.Equals (obj);

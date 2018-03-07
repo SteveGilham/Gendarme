@@ -103,14 +103,16 @@ namespace Test.Rules.Correctness {
 				String.Format (message, val);
 			}
 
-			public void MethodWithBadFormattingLoadingFromLocal ()
+#pragma warning disable 219
+            public void MethodWithBadFormattingLoadingFromLocal ()
 			{
 				string message = "The error {0} is not valid";
 				string val = "Foo";
 				String.Format (message);
 			}
+#pragma warning restore 219
 
-			public void MethodWithoutParameters ()
+            public void MethodWithoutParameters ()
 			{
 				String.Format ("I forget include parameters.");
 			}

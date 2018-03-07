@@ -84,7 +84,8 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<DestructorClass> ();
 		}
 
-		class NullifyFieldClass : DestructorClass {
+#pragma warning disable 414
+        class NullifyFieldClass : DestructorClass {
 
 			object field;
 
@@ -93,8 +94,9 @@ namespace Test.Rules.Performance {
 				field = null;
 			}
 		}
+#pragma warning restore 414
 
-		[Test]
+        [Test]
 		public void NullifyField ()
 		{
 			AssertRuleFailure<NullifyFieldClass> (1);
@@ -110,7 +112,8 @@ namespace Test.Rules.Performance {
 			}
 		}
 
-		class DelegatedCleanupClass : DestructorClass {
+#pragma warning disable 414
+        class DelegatedCleanupClass : DestructorClass {
 
 			object field;
 
@@ -124,8 +127,9 @@ namespace Test.Rules.Performance {
 				field = null;
 			}
 		}
+#pragma warning restore 414
 
-		[Test]
+        [Test]
 		public void MoreCoverage ()
 		{
 			AssertRuleSuccess<SettingFieldClass> ();

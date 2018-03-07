@@ -54,8 +54,9 @@ namespace Test.Rules.Design {
 		{
 			AssertRuleSuccess<NoOperator> ();
 		}
+#pragma warning disable 659,660,661
 
-		class EverythingIsThere {
+        class EverythingIsThere {
 
 			public static EverythingIsThere operator + (EverythingIsThere a) { return null; }
 			public static EverythingIsThere operator - (EverythingIsThere a) { return null; }

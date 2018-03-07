@@ -46,14 +46,14 @@ namespace Tests.Rules.Performance {
 			// no calls, so String.Concat is never called
 			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
 		}
-
-		string s;
+#pragma warning disable 649
+        string s;
 		char c;
 
 		static string ss;
 		static char sc;
-
-		const char cc = 'a';
+#pragma warning restore 649
+        const char cc = 'a';
 		const string cs = "s";
 
 		private string ManualConcat (char a, char b)

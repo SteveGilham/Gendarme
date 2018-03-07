@@ -180,7 +180,8 @@ namespace Test.Rules.Maintainability {
 			return watch.Elapsed;
 		}
 
-		private object boxed;
+#pragma warning disable 649
+        private object boxed;
 
 		private bool Box (object a, object b)
 		{

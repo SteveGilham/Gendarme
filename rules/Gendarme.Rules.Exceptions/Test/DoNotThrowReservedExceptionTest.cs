@@ -44,12 +44,14 @@ namespace Test.Rules.Exceptions {
 			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
 		}
 
-		public Exception CreateExceptionBad ()
+#pragma warning disable 618
+        public Exception CreateExceptionBad ()
 		{
 			return new ExecutionEngineException ("uho");
 		}
+#pragma warning restore 618
 
-		public void ThrowOutOfRangeExceptionBad ()
+        public void ThrowOutOfRangeExceptionBad ()
 		{
 			throw new IndexOutOfRangeException ();
 		}

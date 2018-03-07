@@ -101,7 +101,8 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<StructureWithStatics> ();
 		}
 
-		public class ClassWithReadOnly {
+#pragma warning disable 414
+        public class ClassWithReadOnly {
 			static readonly sbyte one = 1;
 			static readonly short two = 2;
 			static readonly int three = 3;
@@ -110,8 +111,9 @@ namespace Test.Rules.Performance {
 			static readonly double six = 6.0d;
 			static readonly string seven = "7";
 		}
+#pragma warning disable 414
 
-		public struct StructureWithReadOnly {
+        public struct StructureWithReadOnly {
 			public static readonly byte one = 1;
 			public static readonly ushort two = 2;
 			public static readonly uint three = 3;

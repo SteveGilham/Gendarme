@@ -47,7 +47,8 @@ namespace Test.Rules.Design {
 			AssertRuleDoesNotApply (SimpleTypes.Interface);
 		}
 
-		public class ImplementsEqualsButNotGetHashCode {
+#pragma warning disable 659
+        public class ImplementsEqualsButNotGetHashCode {
 			public override bool Equals (Object obj)
 			{
 				return this == obj;
@@ -163,14 +164,16 @@ namespace Test.Rules.Design {
 			AssertRuleFailure<ImplementsGetHashCodeUsesObjectEquals> (1);
 		}
 
-		public class ImplementingEqualsWithTwoArgs {
+#pragma warning disable 108
+        public class ImplementingEqualsWithTwoArgs {
 			public bool Equals (Object obj1, Object obj2)
 			{
 				return obj1 == obj2;
 			}
 		}
+#pragma warning restore 108
 
-		[Test]
+        [Test]
 		public void EqualsWithTwoArgsTest ()
 		{
 			AssertRuleSuccess<ImplementingEqualsWithTwoArgs> ();

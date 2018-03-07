@@ -55,7 +55,8 @@ namespace Test.Rules.Design {
 			AssertRuleSuccess<NoOperator> ();
 		}
 
-		class EverythingOK {
+#pragma warning disable 659,660,661
+        class EverythingOK {
 			public static bool operator == (EverythingOK a, EverythingOK b)
 			{
 				return true;

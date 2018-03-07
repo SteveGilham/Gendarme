@@ -189,7 +189,7 @@ namespace Test.Rules.Portability {
 		private TypeDefinition envSetExitCodeTester;
 		private TypeDefinition envExitTester;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
@@ -220,7 +220,7 @@ namespace Test.Rules.Portability {
 		static TypeDefinition Inject (TypeDefinition type, AssemblyDefinition target)
 		{
 			var module = ModuleDefinition.ReadModule (
-				type.Module.FullyQualifiedName,
+				type.Module.FileName,
 				new ReaderParameters { ReadingMode = ReadingMode.Immediate });
 
 			type = module.GetType (type.FullName);

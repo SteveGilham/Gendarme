@@ -62,10 +62,13 @@ namespace Test.Rules.Correctness {
 
 		public class CannotBeMadeStatic_Field {
 
-			private int field = 42;
-		}
+#pragma warning disable 414
+            private int field = 42;
+#pragma warning restore 414
 
-		public class CannotBeMadeStatic_Ctor {
+        }
+
+        public class CannotBeMadeStatic_Ctor {
 
 			CannotBeMadeStatic_Ctor (int a, int b)
 			{
@@ -115,9 +118,11 @@ namespace Test.Rules.Correctness {
 		}
 
 		public class InheritClass : EmptyClass {
-			private int x;
+#pragma warning disable 649
+            private int x;
+#pragma warning restore 649
 
-			public void Show ()
+            public void Show ()
 			{
 				Console.WriteLine (x);
 			}

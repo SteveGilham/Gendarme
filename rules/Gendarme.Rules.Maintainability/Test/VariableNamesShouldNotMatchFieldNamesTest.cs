@@ -44,7 +44,8 @@ namespace Test.Rules.Maintainability {
 	[TestFixture]
 	public class VariableNamesShouldNotMatchFieldNamesTest : TypeRuleTestFixture<VariableNamesShouldNotMatchFieldNamesRule> {
 
-		private class GoodClass {
+#pragma warning disable 169
+        private class GoodClass {
 			int Value;
 			void DoSomething(int OtherValue)
 			{
@@ -62,8 +63,10 @@ namespace Test.Rules.Maintainability {
 
 		// We ignore this, as we need .pdb access to resolve local variable names.
 		private class BadIgnore {
-			int Value = 0, Value1 = 1;
-			void DoSomething(int Value)
+#pragma warning disable 414
+            int Value = 0, Value1 = 1;
+#pragma warning restore 414
+            void DoSomething(int Value)
 			{
 				int Value1;
 				Value1 = Value + this.Value;
@@ -82,7 +85,7 @@ namespace Test.Rules.Maintainability {
 
 		private TypeDefinition DoesNotApplyClassSpecial;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetUp()
 		{
 			// A type always has a method (implicit constructor) so we have to hack our own

@@ -44,7 +44,8 @@ namespace Test.Rules.Serialization {
 		class SerializableClass {
 		}
 
-		[Serializable]
+#pragma warning disable 169
+        [Serializable]
 		class SerializableWithoutMarks {
 			NonSerializableClass nonSerializableClass;
 			NonSerializableClass nonSerializableClass1;
@@ -95,8 +96,9 @@ namespace Test.Rules.Serialization {
 		class SerializableWithStaticFieldsClass {
 			static NonSerializableClass nonSerializable;
 		}
+#pragma warning restore 169
 
-		[Test]
+        [Test]
 		public void SkipOnNonSerializableClassesTest ()
 		{
 			AssertRuleDoesNotApply<NonSerializableClass> ();

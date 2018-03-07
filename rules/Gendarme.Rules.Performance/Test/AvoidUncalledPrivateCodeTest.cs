@@ -732,16 +732,17 @@ namespace Test.Rules.Performance {
 		}
 
 		private class EventCases : IFoo, IBar {
-			private event EventHandler unused;
+#pragma warning disable 67
+            private event EventHandler unused;
 
 			event EventHandler Unused {
 				add { unused += value; }
 				remove { unused -= value; }
 			}
 
-			private event EventHandler used;
-
-			event EventHandler Used {
+            private event EventHandler used;
+#pragma warning restore 67
+            event EventHandler Used {
 				add { used += value; }
 				remove { used -= value; }
 			}
@@ -757,10 +758,10 @@ namespace Test.Rules.Performance {
 			{
 				Used -= new EventHandler (Common);
 			}
-
-			private event EventHandler foo, bar;
-
-			event EventHandler IFoo.Foo {
+#pragma warning disable 67
+            private event EventHandler foo, bar;
+#pragma warning restore 67
+            event EventHandler IFoo.Foo {
 				add { foo += value; }
 				remove { foo -= value; }
 			}

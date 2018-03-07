@@ -62,11 +62,12 @@ namespace Test.Rules.Performance {
 		{
 		}
 	}
-	
-	[TestFixture]
+
+#pragma warning disable 659,660,661
+    [TestFixture]
 	public class AvoidUnusedParametersTest : MethodRuleTestFixture<AvoidUnusedParametersRule> {
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
@@ -224,8 +225,10 @@ namespace Test.Rules.Performance {
 		}
 
 		public delegate void SimpleEventHandler (int x);
-		public event SimpleEventHandler SimpleEvent;
-		public void OnSimpleEvent (int x) 
+#pragma warning disable 67
+        public event SimpleEventHandler SimpleEvent;
+#pragma warning restore 67
+        public void OnSimpleEvent (int x) 
 		{
 		}
 

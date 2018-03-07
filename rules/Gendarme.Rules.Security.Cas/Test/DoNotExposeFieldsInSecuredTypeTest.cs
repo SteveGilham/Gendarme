@@ -70,7 +70,8 @@ namespace Test.Rules.Security {
 			AssertRuleDoesNotApply<NoSecurityClass> ();
 		}
 
-		[SecurityPermission (SecurityAction.Deny, Unrestricted = true)]
+#pragma warning disable 618
+        [SecurityPermission (SecurityAction.Deny, Unrestricted = true)]
 		public class NoDemandClass {
 
 			public object Field = new object ();
@@ -79,8 +80,9 @@ namespace Test.Rules.Security {
 			{
 			}
 		}
+#pragma warning restore 618
 
-		[Test]
+        [Test]
 		public void NoDemand ()
 		{
 			AssertRuleDoesNotApply<NoDemandClass> ();

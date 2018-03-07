@@ -99,11 +99,13 @@ namespace Test.Rules.Naming {
 				throw new NotImplementedException ();
 			}
 
-			protected virtual void NoOverwrite (int a, int bb)
+#pragma warning disable 114
+            protected virtual void NoOverwrite (int a, int bb)
 			{
 			}
+#pragma warning restore 114
 
-			public bool InterfaceMethod (int im_)
+            public bool InterfaceMethod (int im_)
 			{
 				return false;
 			}

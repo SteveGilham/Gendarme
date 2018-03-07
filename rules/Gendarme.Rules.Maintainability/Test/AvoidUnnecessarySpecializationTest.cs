@@ -498,10 +498,12 @@ namespace Test.Rules.Maintainability {
 			AssertRuleSuccess<Bitmask<Confidence>> ("Set");
 		}
 
-		// from AvoidUncalledPrivateCodeRule
-		static Dictionary<TypeDefinition, HashSet<uint>> cache;
+        // from AvoidUncalledPrivateCodeRule
+#pragma warning disable 649
+        static Dictionary<TypeDefinition, HashSet<uint>> cache;
+#pragma warning restore 649
 
-		private static HashSet<uint> GetCache (TypeDefinition type)
+        private static HashSet<uint> GetCache (TypeDefinition type)
 		{
 			HashSet<uint> methods;
 			if (!cache.TryGetValue (type, out methods)) {
@@ -641,7 +643,8 @@ namespace Test.Rules.Maintainability {
 			AssertRuleFailure<SpecializedClass> ("OverloadNotSupportedByInterface", 1);
 		}
 
-		class TestCase690057 {
+#pragma warning disable 168,649
+        class TestCase690057 {
 			public class nauczyciel {
 				public Guid Oid;
 				public List<object> NoweGrupies = new List<object> ();

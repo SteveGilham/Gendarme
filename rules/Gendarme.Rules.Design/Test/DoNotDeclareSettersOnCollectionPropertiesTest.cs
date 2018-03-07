@@ -61,7 +61,8 @@ namespace Test.Rules.Design {
 			public ICollection<string> GenericCollection { get; private set; }
 		}
 
-		public struct GoodStruct {
+#pragma warning disable 649
+        public struct GoodStruct {
 			private ArrayList list;
 
 			public IDictionary Dictionary { get; private set; }
@@ -69,8 +70,9 @@ namespace Test.Rules.Design {
 				get { return list; }
 			}
 		}
+#pragma warning restore 649
 
-		[Test]
+        [Test]
 		public void Good ()
 		{
 			AssertRuleSuccess<IGoodInterface> ();
@@ -107,7 +109,8 @@ namespace Test.Rules.Design {
 			public NamedPermissionSet NamedPermissions { get; set; }
 		}
 
-		public class Indexers {
+#pragma warning disable 649
+        public class Indexers {
 			int [] array;
 
 			public int this [int index] {
@@ -120,8 +123,9 @@ namespace Test.Rules.Design {
 				set { array [y] = value; }
 			}
 		}
+#pragma warning restore 649
 
-		public class Arrays {
+        public class Arrays {
 
 			public Array Array { get; set; }
 		}

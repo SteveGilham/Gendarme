@@ -45,7 +45,8 @@ namespace Test.Rules.Correctness {
 		}
 	}
 
-	class NoDisposeableFields {
+#pragma warning disable 169
+    class NoDisposeableFields {
 		int A;
 		object b;
 	}
@@ -89,8 +90,9 @@ namespace Test.Rules.Correctness {
 			throw new NotImplementedException ();
 		}
 	}
+#pragma warning disable 649
 
-	abstract class DisposeableFieldsImplementsIDisposeableAbstract : IDisposable {
+    abstract class DisposeableFieldsImplementsIDisposeableAbstract : IDisposable {
 		object A;
 		Disposable B;
 		public void Dispose (object asd) { B.Dispose (); }
@@ -119,7 +121,8 @@ namespace Test.Rules.Correctness {
 		}
 	}
 
-	public class DisposeableFieldsNullAssigned : ICloneable {
+#pragma warning disable 414
+    public class DisposeableFieldsNullAssigned : ICloneable {
 		object A;
 		Disposable B;
 

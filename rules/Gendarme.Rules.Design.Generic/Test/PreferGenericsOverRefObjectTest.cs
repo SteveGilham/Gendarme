@@ -44,9 +44,11 @@ namespace Test.Rules.Design.Generic {
 			set { ;}
 		}
 
-		public event EventHandler<EventArgs> Event;
+#pragma warning disable 67
+        public event EventHandler<EventArgs> Event;
+#pragma warning restore 67
 
-		[Test]
+        [Test]
 		public void DoesNotApply ()
 		{
 			// no parameters

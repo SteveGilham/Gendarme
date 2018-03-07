@@ -38,8 +38,9 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
 namespace Test.Rules.Design {
+#pragma warning disable 169
 
-	class NoNativeFields {
+    class NoNativeFields {
 		int A;
 		object b;
 	}
@@ -158,7 +159,8 @@ namespace Test.Rules.Design {
 		}
 	}
 
-	class NativeFieldsHandleRefAssigned : ICloneable {
+#pragma warning disable 649
+    class NativeFieldsHandleRefAssigned : ICloneable {
 		object A;
 		HandleRef B;
 

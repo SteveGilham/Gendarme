@@ -107,12 +107,14 @@ namespace Test.Rules.Correctness {
 			public void NonConditionalCall (object data)
 			{
 			}
-			
-			private int instance_data;
+
+#pragma warning disable 414
+            private int instance_data;
 			private static int class_data;
-		}
-		
-		[Test]
+#pragma warning restore 414
+        }
+
+        [Test]
 		public void DoesNotApply ()
 		{
 			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);

@@ -154,8 +154,10 @@ namespace Test.Rules.Correctness {
 				new PermissionSet (PermissionState.None).Assert ();
 			}
 
-			static Helper help;
-			public static void Write (bool value)
+#pragma warning disable 649
+            static Helper help;
+#pragma warning restore 649
+            public static void Write (bool value)
 			{
 				help.Write (value);
 			}

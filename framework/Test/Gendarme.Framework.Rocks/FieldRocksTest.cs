@@ -43,9 +43,10 @@ namespace Test.Framework.Rocks {
 	public class FieldRocksTest {
 
 		[System.Runtime.CompilerServices.CompilerGeneratedAttribute]
-		private static int cga = 1;
-
-		[System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
+#pragma warning disable 414
+        private static int cga = 1;
+#pragma warning restore 414
+        [System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
 		protected double gca = 1.0;
 
 		internal IntPtr ptr = IntPtr.Zero;
@@ -54,7 +55,7 @@ namespace Test.Framework.Rocks {
 
 		private TypeDefinition type;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;
@@ -73,17 +74,17 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Namespace_Null ()
 		{
-			GetField ("assembly").HasAttribute (null, "a");
+            Assert.Throws<ArgumentNullException>(() => 
+            GetField("assembly").HasAttribute (null, "a"));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Name_Null ()
 		{
-			GetField ("assembly").HasAttribute ("a", null);
+            Assert.Throws<ArgumentNullException>(() => 
+            GetField("assembly").HasAttribute ("a", null));
 		}
 
 		[Test]

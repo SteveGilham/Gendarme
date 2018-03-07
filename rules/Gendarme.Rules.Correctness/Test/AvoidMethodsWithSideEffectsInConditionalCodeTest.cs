@@ -82,15 +82,17 @@ namespace Test.Rules.Correctness {
 			{
 				ConditionalCall (x + y);
 			}
-			
-			// All Contract methods can be used with conditional code.
-			public void Good5 (bool data)
+
+#pragma warning disable 436
+            // All Contract methods can be used with conditional code.
+            public void Good5 (bool data)
 			{
 				ConditionalCall (Contract.Foo (data));
 			}
-			
-			// All System.String methods can be used with conditional code.
-			public void Good6 (string data)
+#pragma warning restore 436
+
+            // All System.String methods can be used with conditional code.
+            public void Good6 (string data)
 			{
 				ConditionalCall (data.GetHashCode ());
 			}
@@ -171,17 +173,19 @@ namespace Test.Rules.Correctness {
 			public void NonConditionalCall (object data)
 			{
 			}
-			
-			[Pure]
+
+#pragma warning disable 436
+            [Pure]
 			public delegate bool PureDelegate (bool data);
-			
-			public delegate bool NonPureDelegate (bool data);
+
+            public delegate bool NonPureDelegate (bool data);
 			
 			[Pure]
 			private object PureIdentity (object data)
 			{
 				return data;
 			}
+#pragma warning restore 436
 			
 			private object NonPureIdentity (object data)
 			{

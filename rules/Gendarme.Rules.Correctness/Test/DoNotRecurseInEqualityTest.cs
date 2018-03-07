@@ -44,7 +44,8 @@ namespace Test.Rules.Correctness {
 	[TestFixture]
 	public class DoNotRecurseInEqualityTest : MethodRuleTestFixture<DoNotRecurseInEqualityRule> {
 
-		private sealed class GoodCase {
+#pragma warning disable 660,661
+        private sealed class GoodCase {
 			public static bool operator== (GoodCase lhs, GoodCase rhs)
 			{
 				if (object.ReferenceEquals (lhs, rhs))

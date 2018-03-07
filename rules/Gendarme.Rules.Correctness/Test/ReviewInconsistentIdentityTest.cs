@@ -37,7 +37,8 @@ namespace Test.Rules.Correctness {
 	[TestFixture]
 	public sealed class ReviewInconsistentIdentityTest : TypeRuleTestFixture<ReviewInconsistentIdentityRule> {
 
-		private sealed class NoFields {
+#pragma warning disable 649
+        private sealed class NoFields {
 		}
 
 		private sealed class Good1 {
@@ -811,7 +812,8 @@ namespace Test.Rules.Correctness {
 			AssertRuleFailure<Bad10> (1);
 		}
 
-		public abstract class AbstractEqualsTest : IEquatable<AbstractEqualsTest> {
+#pragma warning disable 659,169
+        public abstract class AbstractEqualsTest : IEquatable<AbstractEqualsTest> {
 
 			private int field;
 

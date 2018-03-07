@@ -35,8 +35,9 @@ using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
 
 namespace Test.Rules.Design {
+#pragma warning disable 649,659,660,661
 
-	[TestFixture]
+    [TestFixture]
 	public class ImplementIComparableCorrectlyTest : TypeRuleTestFixture<ImplementIComparableCorrectlyRule> {
 
 		[Test]

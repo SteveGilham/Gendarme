@@ -41,7 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1590</NoWarn>
+    <NoWarn>1590;1591</NoWarn>
     <WarningsAsErrors>1571</WarningsAsErrors>
     <DocumentationFile>..\..\console\bin\Debug\Gendarme.Rules.Ui.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>

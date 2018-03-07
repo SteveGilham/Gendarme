@@ -41,7 +41,8 @@ namespace Test.Rules.BadPractice {
 	[TestFixture]
 	public sealed class PreferSafeHandleTest : TypeRuleTestFixture<PreferSafeHandleRule> {
 
-		internal class Good1 {
+#pragma warning disable 649
+        internal class Good1 {
 			internal SafeHandle ptr;
 		}
 

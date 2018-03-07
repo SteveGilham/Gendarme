@@ -62,16 +62,19 @@ namespace Cancelled.ComPlus.Indices.ShouldntBe.Writeable {
 
 	abstract public class CouldntLogInOrSignOn {
 
-		WouldntLogOutOrSignOff DoesntMatterAnymore;
+#pragma warning disable 169
+        WouldntLogOutOrSignOff DoesntMatterAnymore;
+#pragma warning restore 169
 
-		abstract public bool WasntHere { get; }
+        abstract public bool WasntHere { get; }
 
 		internal void DontTryThisAtHome ()
 		{
 		}
-
-		public event EventHandler<EventArgs> HaventVoted;
-	}
+#pragma warning disable 67
+        public event EventHandler<EventArgs> HaventVoted;
+#pragma warning restore 67
+    }
 }
 
 namespace Test.Rules.Naming {
@@ -80,9 +83,11 @@ namespace Test.Rules.Naming {
 	public class UsePreferredTermsAssemblyTest : AssemblyRuleTestFixture<UsePreferredTermsRule> {
 
 		AssemblyDefinition assembly;
-		bool parentMatches;
+#pragma warning disable 169
+        bool parentMatches;
+#pragma warning restore 169
 
-		[TestFixtureSetUp]
+        [OneTimeSetUp]
 		public void FixtureSetup ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;

@@ -79,9 +79,11 @@ namespace Test.Rules.Design {
 				get { return false; }
 			}
 
-			byte [] Baz;
+#pragma warning disable 649
+            byte[] Baz;
+#pragma warning restore 649
 
-			byte [] GetBaz () { return Baz; }
+            byte[] GetBaz () { return Baz; }
 
 			byte [] HasBaz () { return null; }
 		}

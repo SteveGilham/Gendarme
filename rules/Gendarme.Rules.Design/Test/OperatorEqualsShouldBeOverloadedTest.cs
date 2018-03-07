@@ -68,7 +68,8 @@ namespace Test.Rules.Design {
 			AssertRuleSuccess<OnlyOneOperator> ();
 		}
 
-		class EverythingOK {
+#pragma warning disable 660,661
+        class EverythingOK {
 			public static EverythingOK operator + (EverythingOK a, EverythingOK b)
 			{
 				return new EverythingOK ();
@@ -89,8 +90,8 @@ namespace Test.Rules.Design {
 				return true;
 			}
 		}
-
-		[Test]
+#pragma warning restore 660,661
+        [Test]
 		public void TestEverythingOK ()
 		{
 			AssertRuleSuccess<EverythingOK> ();
@@ -124,7 +125,8 @@ namespace Test.Rules.Design {
 			AssertRuleSuccess<StructNoOperator> ();
 		}
 
-		struct StructNoEquality {
+#pragma warning disable 659
+        struct StructNoEquality {
 			public override bool Equals (object obj)
 			{
 				return base.Equals (obj);

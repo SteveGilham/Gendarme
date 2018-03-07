@@ -61,7 +61,8 @@ namespace Test.Rules.Performance {
 		public struct EmptyStruct {
 		}
 
-		public struct PublicStruct {
+#pragma warning disable 169
+        public struct PublicStruct {
 			int i;
 		}
 
@@ -77,15 +78,18 @@ namespace Test.Rules.Performance {
 		internal struct InternalStruct {
 			string s;
 		}
+#pragma warning restore 169
 
-		public struct EqualsOnly {
+#pragma warning disable 659,660,661
+        public struct EqualsOnly {
 			public override bool Equals (object obj)
 			{
 				return base.Equals (obj);
 			}
 		}
+#pragma warning restore 659, 660, 661
 
-		public struct GetHashCodeOnly {
+        public struct GetHashCodeOnly {
 			public override int GetHashCode ()
 			{
 				return base.GetHashCode ();
@@ -105,7 +109,8 @@ namespace Test.Rules.Performance {
 			}
 		}
 
-		public struct OperatorsOnly {
+#pragma warning disable 660, 661
+        public struct OperatorsOnly {
 
 			public static bool operator== (OperatorsOnly left, OperatorsOnly right)
 			{
@@ -117,8 +122,9 @@ namespace Test.Rules.Performance {
 				return !left.Equals (right);
 			}
 		}
+#pragma warning restore 660, 661
 
-		public struct Ok {
+        public struct Ok {
 			public override bool Equals (object obj)
 			{
 				return base.Equals (obj);

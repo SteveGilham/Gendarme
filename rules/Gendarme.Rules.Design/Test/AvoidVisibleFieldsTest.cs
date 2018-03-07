@@ -141,11 +141,13 @@ namespace Test.Rules.Design {
 			AssertRuleDoesNotApply<NestedInternal> ();
 		}
 
-		public class EventOnly {
+#pragma warning disable 67
+        public class EventOnly {
 			public event EventHandler<EventArgs> Event;
 		}
+#pragma warning restore 67
 
-		public class NonEvent {
+        public class NonEvent {
 			public /* event */ EventHandler<EventArgs> Event;
 		}
 

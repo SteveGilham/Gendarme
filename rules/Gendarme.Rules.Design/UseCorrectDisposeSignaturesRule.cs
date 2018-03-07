@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
 using System.Linq;
 
 using Mono.Cecil;
@@ -235,7 +234,7 @@ namespace Gendarme.Rules.Design {
 		static bool DirectlyImplementsIDisposable (TypeDefinition type)
 		{
 			if (type.HasInterfaces) {
-				foreach (TypeReference candidate in type.Interfaces) {
+				foreach (TypeReference candidate in type.Interfaces.Select(t => t.InterfaceType)) {
 					if (candidate.IsNamed ("System", "IDisposable"))
 						return true;
 				}

@@ -48,7 +48,8 @@ namespace Test.Rules.Concurrency {
 		protected static int Field;
 	}
 
-	public class HasInternalNonConstantStaticField {
+#pragma warning disable 169,649
+    public class HasInternalNonConstantStaticField {
 		internal static int Field;
 	}
 
@@ -59,8 +60,9 @@ namespace Test.Rules.Concurrency {
 	public class HasPrivateNonConstantStaticField {
 		private static int Field;
 	}
+#pragma warning restore 169,649
 
-	public class HasPublicNonConstantField {
+    public class HasPublicNonConstantField {
 		public int Field;
 	}
 

@@ -50,17 +50,20 @@ namespace Test_Rules_Naming {
 			};
 		}
 
-		public event EventHandler<EventArgs> Event_With_Underscore;
+#pragma warning disable 67
+        public event EventHandler<EventArgs> Event_With_Underscore;
+#pragma warning restore 67
 
-		public bool Property_With_Underscore {
+        public bool Property_With_Underscore {
 			get { return false; }
 		}
 	}
 
 	public class TypeWithoutUnderscore {
-
-		protected int FieldWithoutUnderscore;
-		private int Field_With_Underscore;	// non-visible
+#pragma warning disable 169
+        protected int FieldWithoutUnderscore;
+        private int Field_With_Underscore;	// non-visible
+#pragma warning restore 169
 
 		public void MethodWithoutUnderscore (string paramWithoutUnderscore)
 		{
@@ -69,9 +72,11 @@ namespace Test_Rules_Naming {
 			};
 		}
 
-		protected event EventHandler<EventArgs> EventWithoutUnderscore;
+#pragma warning disable 67
+        protected event EventHandler<EventArgs> EventWithoutUnderscore;
+#pragma warning restore 67
 
-		public bool PropertyWithoutUnderscore {
+        public bool PropertyWithoutUnderscore {
 			get { return false; }
 		}
 
@@ -113,7 +118,7 @@ namespace Test.Rules.Naming {
 
 		AssemblyDefinition assembly;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;

@@ -45,7 +45,7 @@ namespace Test.Framework {
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;
@@ -314,7 +314,8 @@ namespace Test.Framework {
 			Assert.AreEqual (OpCodes.Callvirt, result [0].Instruction.OpCode, "result-Opcode-Callvirt");
 		}
 
-		public object TryCatch ()
+#pragma warning disable 219
+        public object TryCatch ()
 		{
 			object a = new object ();
 			object b = null;
@@ -332,8 +333,9 @@ namespace Test.Framework {
 			}
 			return b.GetHashCode ();
 		}
+#pragma warning restore 219
 
-		[Test]
+        [Test]
 		public void TestTryCatch ()
 		{
 			MethodDefinition m = GetTest ("TryCatch");

@@ -68,7 +68,8 @@ namespace Test.Rules.BadPractice {
 			AssertRuleFailure<AvoidCallingProblematicMethodsTest> ("MethodWithGCCall", 2);
 		}
 
-		public void MethodWithThreadSuspendCall ()
+#pragma warning disable 618
+        public void MethodWithThreadSuspendCall ()
 		{
 			Thread thread = new Thread (delegate () {
 				Console.WriteLine ("Stupid code");
@@ -160,7 +161,8 @@ namespace Test.Rules.BadPractice {
 			AssertRuleFailure<AvoidCallingProblematicMethodsTest> ("MethodWithSafeHandleDangerousGetHandleCall");
 		}
 
-		public void MethodWithAssemblyLoadFromCall ()
+#pragma warning disable 618
+        public void MethodWithAssemblyLoadFromCall ()
 		{
 			Assembly.LoadFrom ("myAssembly.dll");	
 			Assembly.LoadFrom ("myAssembly.dll", new Evidence ());
@@ -192,8 +194,9 @@ namespace Test.Rules.BadPractice {
 			Assembly.LoadWithPartialName ("MyAssembly");
 			Assembly.LoadWithPartialName ("MyAssembly", new Evidence ());
 		}
+#pragma warning restore 618
 
-		[Test]
+        [Test]
 		public void MethodWithAssemblyLoadWithPartialNameCallTest ()
 		{
 			AssertRuleFailure<AvoidCallingProblematicMethodsTest> ("MethodWithAssemblyLoadWithPartialNameCall", 2);

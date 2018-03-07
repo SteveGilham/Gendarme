@@ -207,16 +207,18 @@ namespace Test.Rules.Concurrency {
 			
 			[ThreadModel (ThreadModel.Concurrent)]
 			public delegate void DataHandler2 (object sender, EventArgs e);
-			
-			[ThreadModel (ThreadModel.MainThread)]
+
+#pragma warning disable 67
+            [ThreadModel (ThreadModel.MainThread)]
 			public event DataHandler1 RecvData1;
 			
 			[ThreadModel (ThreadModel.Concurrent)]
 			public event DataHandler2 RecvData2;
-		}
-		
-		// Delegates must be able to call the methods they are bound to.
-		internal class Good7 {
+#pragma warning restore 67
+        }
+
+        // Delegates must be able to call the methods they are bound to.
+        internal class Good7 {
 			public void Setup ()
 			{
 				single_callback = this.SingleStuff;
@@ -309,8 +311,9 @@ namespace Test.Rules.Concurrency {
 				
 				return hash;
 			}
-			
-			internal int data;
+
+#pragma warning disable 649
+            internal int data;
 		}
 		
 		// Methods used within anonymous thread roots must be threaded.
@@ -407,9 +410,11 @@ namespace Test.Rules.Concurrency {
 		// (Non-threaded) system delegates work with anything.
 		internal sealed class Good13 {
 			public string path;
-			private System.Threading.Thread thread;
-			
-			public void Spawn ()
+#pragma warning disable 169
+            private System.Threading.Thread thread;
+#pragma warning restore 169
+
+            public void Spawn ()
 			{
 				Action a = () => SingleStuff (path);
 				a ();
@@ -427,9 +432,10 @@ namespace Test.Rules.Concurrency {
 			{
 			}
 		}
-		
-		// Another anonymous method case.
-		internal sealed class Good14 {
+#pragma warning restore 649
+
+        // Another anonymous method case.
+        internal sealed class Good14 {
 			public void Spawn (object data)
 			{
 				Process (() => Stuff (data));
@@ -536,10 +542,11 @@ namespace Test.Rules.Concurrency {
 			{
 			}
 		}
-		
-		// A delegate used with a threaded event must use the same threading model as the 
-		// event.
-		internal class Bad5 {
+
+#pragma warning disable 67
+        // A delegate used with a threaded event must use the same threading model as the 
+        // event.
+        internal class Bad5 {
 			[ThreadModel (ThreadModel.Concurrent)]
 			public delegate void DataHandler1 (object sender, EventArgs e);
 			
@@ -551,9 +558,10 @@ namespace Test.Rules.Concurrency {
 			[ThreadModel (ThreadModel.Concurrent)]
 			public event DataHandler2 RecvData2;
 		}
-		
-		// Delegates must be able to call the methods they are bound to.
-		internal class Bad6 {
+#pragma warning restore 67
+
+        // Delegates must be able to call the methods they are bound to.
+        internal class Bad6 {
 			public void Setup ()
 			{
 				concurrent_callback = this.SingleStuff;
@@ -595,9 +603,10 @@ namespace Test.Rules.Concurrency {
 			{
 			}
 		}
-		
-		// Methods used within anonymous thread roots must be threaded.
-		internal sealed class Bad8 {
+
+#pragma warning disable 649
+        // Methods used within anonymous thread roots must be threaded.
+        internal sealed class Bad8 {
 			public string path;
 			private System.Threading.Thread thread;
 			
@@ -611,9 +620,10 @@ namespace Test.Rules.Concurrency {
 			{
 			}
 		}
-		
-		// Delegates can be constructed in different ways.
-		public sealed class Bad9 {
+#pragma warning restore 649
+
+        // Delegates can be constructed in different ways.
+        public sealed class Bad9 {
 			public void Spawn ()
 			{
 				new Thread (Bad9.Thread1).Start ();

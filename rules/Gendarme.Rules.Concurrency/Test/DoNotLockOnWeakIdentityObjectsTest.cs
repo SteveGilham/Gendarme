@@ -77,11 +77,13 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 
-		// sealed type
-		private static ExecutionEngineException static_eee;
-		// sealed type
-		private StackOverflowException so;
+        // sealed type
+#pragma warning disable 618,649 //obsolete
+        private static ExecutionEngineException static_eee;
 
+        // sealed type
+        private StackOverflowException so;
+#pragma warning restore 618,649
 		public bool LocksOnExceptions ()
 		{
 			lock (static_eee) {
@@ -93,10 +95,12 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 
-		// sealed type
-		private Thread thread;
+#pragma warning disable 169
+        // sealed type
+        private Thread thread;
+#pragma warning restore 169
 
-		public bool LockOnThread (string s)
+        public bool LockOnThread (string s)
 		{
 			lock (Thread.CurrentThread) {
 				return cache.ContainsKey (s);
@@ -129,15 +133,17 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 
-		// non-sealed type
-		private OutOfMemoryException oom;
+#pragma warning disable 649
+        // non-sealed type
+        private OutOfMemoryException oom;
 
 		public class MyOutOfMemoryException : OutOfMemoryException {
 		}
 
 		private MyOutOfMemoryException myOom;
+#pragma warning restore 649
 
-		public bool LocksOnOutOfMemory ()
+        public bool LocksOnOutOfMemory ()
 		{
 			lock (oom) {
 				if (cache.ContainsKey ("a"))
@@ -148,12 +154,14 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 
-		// abstract type
-		private MemberInfo mi;
+#pragma warning disable 649
+        // abstract type
+        private MemberInfo mi;
 		// non-sealed type
 		private ParameterInfo pi;
+#pragma warning restore 649
 
-		public bool LockOnReflectionObjects (string s)
+        public bool LockOnReflectionObjects (string s)
 		{
 			lock (mi) {
 				lock (pi) {

@@ -44,10 +44,12 @@ namespace Test.Rules.Design {
 				set { ; }
 			}
 
-			public event EventHandler<EventArgs> RemoveOn;
-		}
+#pragma warning disable 67
+            public event EventHandler<EventArgs> RemoveOn;
+#pragma warning restore 67
+        }
 
-		[Test]
+        [Test]
 		public void DoesNotApply ()
 		{
 			AssertRuleDoesNotApply<DoesNotApplyCases> ("get_AddOn");

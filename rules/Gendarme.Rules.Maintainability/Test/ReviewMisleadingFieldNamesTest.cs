@@ -42,7 +42,8 @@ namespace Test.Rules.Maintainability {
 	[TestFixture]
 	public class ReviewMisleadingFieldNamesTest : TypeRuleTestFixture<ReviewMisleadingFieldNamesRule> {
 
-		private class GoodClass {
+#pragma warning disable 169
+        private class GoodClass {
 			int m_SomeValue;
 			static int s_SomeValue;
 		}
@@ -56,8 +57,9 @@ namespace Test.Rules.Maintainability {
 			int s_SomeValue;
 			static int m_SomeValue;
 		}
+#pragma warning restore 169
 
-		[Test]
+        [Test]
 		public void Good ()
 		{
 			AssertRuleSuccess<GoodClass> ();

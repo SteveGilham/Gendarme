@@ -45,9 +45,9 @@ namespace Test.Rules.Performance {
 			// no IL for p/invokes
 			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
 		}
-
-		// from mcs/class/Managed.Windows.Forms/System.Windows.Forms/Message.cs
-		public struct Message {
+#pragma warning disable 649, 659, 1718
+        // from mcs/class/Managed.Windows.Forms/System.Windows.Forms/Message.cs
+        public struct Message {
 			private int msg;
 			private IntPtr hwnd;
 			private IntPtr lParam;

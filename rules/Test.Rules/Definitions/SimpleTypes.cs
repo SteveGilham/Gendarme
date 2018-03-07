@@ -52,20 +52,22 @@ namespace Test.Rules.Definitions {
 				get { return 42; }
 			}
 		}
-		
-		/// <summary>
-		/// A structure to be used as the common one.
-		/// </summary>
-		struct Album {
+
+#pragma warning disable 649
+        /// <summary>
+        /// A structure to be used as the common one.
+        /// </summary>
+        struct Album {
 			public string Name;
 			public int Year;
 			public int TrackCount;
 		}
-	
-		/// <summary>
-		/// An enum to be used as the common one.
-		/// </summary>
-		enum Songs {
+#pragma warning restore 649
+        
+        /// <summary>
+        /// An enum to be used as the common one.
+        /// </summary>
+        enum Songs {
 			IAmTheWalrus,
 			AllYouNeedIsLove,
 			AcrossTheUniverse

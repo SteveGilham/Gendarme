@@ -39,11 +39,13 @@ namespace Tests.Rules.Correctness {
 	[TestFixture]
 	public class DeclareEventsExplicitlyTest : TypeRuleTestFixture<DeclareEventsExplicitlyRule> {
 
-		struct StructInstanceCorrect {
+#pragma warning disable 67
+        struct StructInstanceCorrect {
 			public event EventHandler<EventArgs> MyEvent;
 		}
 
-		struct StructInstanceIncorrect {
+#pragma warning disable 67,649
+        struct StructInstanceIncorrect {
 			public EventHandler<EventArgs> MyEvent;
 		}
 

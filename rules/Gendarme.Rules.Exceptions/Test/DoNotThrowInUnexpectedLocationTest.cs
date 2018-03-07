@@ -405,7 +405,8 @@ namespace Test.Rules.Exceptions {
 			AssertRuleFailure<Bad12> ("get_Item", 1);
 		}
 
-		class Bad : IDisposable {
+#pragma warning disable 659,660,661
+        class Bad : IDisposable {
 			static Bad ()
 			{
 				throw new NullReferenceException ();
@@ -555,9 +556,11 @@ namespace Test.Rules.Exceptions {
 		}
 
 		struct Unbox {
-			int i;
+#pragma warning disable 649
+            int i;
+#pragma warning restore 649
 
-			public override bool Equals (object obj)
+            public override bool Equals (object obj)
 			{
 				Unbox ub = (Unbox) obj;
 				return ub.i == i;

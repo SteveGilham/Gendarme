@@ -55,11 +55,13 @@ namespace Test.Rules.Exceptions {
 			try {
 				File.Open ("foo.txt", FileMode.Open);
 			}
-			catch (Exception exception) {
+#pragma warning disable 168
+            catch (Exception exception) {
 			}
-		}
+#pragma warning restore 168
+        }
 
-		[Test]
+        [Test]
 		public void SwallowErrorsCatchingExceptionsEmptyCatchBlockTest () 
 		{
 			AssertRuleFailure<DoNotSwallowErrorsCatchingNonSpecificExceptionsTest> ("SwallowErrorsCatchingExceptionEmptyCatchBlock", 1);
@@ -82,7 +84,8 @@ namespace Test.Rules.Exceptions {
 			AssertRuleFailure<DoNotSwallowErrorsCatchingNonSpecificExceptionsTest> ("SwallowErrorsCatchingExceptionNoEmptyCatchBlock", 1);
 		}
 
-		public void SwallowErrorsCatchingSystemExceptionEmptyCatchBlock ()
+#pragma warning disable 168
+        public void SwallowErrorsCatchingSystemExceptionEmptyCatchBlock ()
 		{
 			try {
 				File.Open ("foo.txt", FileMode.Open);
@@ -176,7 +179,8 @@ namespace Test.Rules.Exceptions {
 			AssertRuleFailure<DoNotSwallowErrorsCatchingNonSpecificExceptionsTest> ("SwallowErrorsCatchingAllNoEmptyCatchBlock", 1);
 		}
 
-		public void NotSwallowRethrowingGeneralException ()
+#pragma warning disable 162
+        public void NotSwallowRethrowingGeneralException ()
 		{
 			try {
 				File.Open ("foo.txt", FileMode.Open);

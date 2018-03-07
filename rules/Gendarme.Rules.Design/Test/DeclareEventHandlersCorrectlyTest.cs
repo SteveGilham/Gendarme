@@ -45,8 +45,9 @@ namespace Test.Rules.Design {
 			AssertRuleDoesNotApply (SimpleTypes.Structure);
 			AssertRuleDoesNotApply (SimpleTypes.Enum);
 		}
+#pragma warning disable 67
 
-		delegate void GoodDelegate (object sender, EventArgs e);
+        delegate void GoodDelegate (object sender, EventArgs e);
 		class ClassWithGoodDelegate {
 			public event GoodDelegate CustomEventA;
 			public event GoodDelegate CustomEventB;
@@ -150,11 +151,13 @@ namespace Test.Rules.Design {
 
 		delegate int SampleDelegate ();
 
-		class ClassWithDelegate {
+#pragma warning disable 169
+        class ClassWithDelegate {
 			SampleDelegate myDelegate;
 		}
+#pragma warning restore 169
 
-		[Test]
+        [Test]
 		public void SuccessOnClassWithDelegateTest ()
 		{
 			AssertRuleDoesNotApply<ClassWithDelegate> ();

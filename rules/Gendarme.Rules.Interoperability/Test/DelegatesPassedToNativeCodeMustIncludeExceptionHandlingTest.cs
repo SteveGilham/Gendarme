@@ -41,7 +41,8 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Interoperability {
 
-	[TestFixture]
+#pragma warning disable 219,169
+    [TestFixture]
 	public class DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest
 	{
 
@@ -138,8 +139,9 @@ namespace Test.Rules.Interoperability {
 		{
 			Console.WriteLine ();
 		}
-		
-		private void CallbackFailNoCatch ()
+
+#pragma warning disable 168
+        private void CallbackFailNoCatch ()
 		{
 			try {
 				Console.WriteLine ();
@@ -186,7 +188,7 @@ namespace Test.Rules.Interoperability {
 		}
 		#endregion
 		
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;

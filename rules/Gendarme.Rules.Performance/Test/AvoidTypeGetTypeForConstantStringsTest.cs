@@ -124,7 +124,7 @@ namespace Test.Rules.Performance {
 			}
 		}
 
-		public System.Type GetType ()
+		public new System.Type GetType ()
 		{
 			return Type.GetType ("System.Int32");
 		}

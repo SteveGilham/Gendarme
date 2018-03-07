@@ -33,10 +33,12 @@ namespace Test.Framework.Rocks {
 	public abstract class PublicType {
 		public int PublicField;
 		protected int ProtectedField;
-		internal int InternalField;
+#pragma warning disable 649, 169
+        internal int InternalField;
 		private int PrivateField;
+#pragma warning restore 649, 169
 
-		public abstract void PublicMethod ();
+        public abstract void PublicMethod ();
 		protected abstract void ProtectedMethod ();
 		internal abstract void InternalMethod ();
 		private void PrivateMethod () { }
@@ -44,9 +46,11 @@ namespace Test.Framework.Rocks {
 		public abstract class NestedPublicType {
 			public int PublicField;
 			protected int ProtectedField;
-			private int PrivateField;
+#pragma warning disable 169
+            private int PrivateField;
+#pragma warning restore 169
 
-			public abstract void PublicMethod ();
+            public abstract void PublicMethod ();
 			protected abstract void ProtectedMethod ();
 			private void PrivateMethod () { }
 
@@ -60,19 +64,24 @@ namespace Test.Framework.Rocks {
 			public abstract void PublicMethod ();
 		}
 
-		private abstract class NestedPrivateType {
+#pragma warning disable 649
+
+        private abstract class NestedPrivateType {
 			public int PublicField;
 
 			public abstract void PublicMethod ();
 		}
+#pragma warning restore 649
 
-		internal abstract class NestedInternalType {
+        internal abstract class NestedInternalType {
 		}
 	}
 
-	internal abstract class InternalType {
+#pragma warning disable 649
+    internal abstract class InternalType {
 		public int PublicField;
 
 		public abstract void PublicMethod ();
 	}
+#pragma warning restore 649
 }

@@ -77,7 +77,8 @@ namespace Test.Rules.Correctness {
 			AssertRuleSuccess<AbstractExplicitDisposable> ();
 		}
 
-		class FalsePositive : IDisposable {
+#pragma warning disable 169
+        class FalsePositive : IDisposable {
 			int A;
 			object[] b;
 
@@ -94,7 +95,8 @@ namespace Test.Rules.Correctness {
 		}
 
 
-		class Disposable : IDisposable {
+#pragma warning disable 649
+        class Disposable : IDisposable {
 			public Disposable A;
 			public virtual void Dispose () //no warning
 			{
@@ -163,7 +165,8 @@ namespace Test.Rules.Correctness {
 		}
 
 
-		class ExtendsDispose2 : Disposable, IDisposable {
+#pragma warning disable 114
+        class ExtendsDispose2 : Disposable, IDisposable {
 			public Disposable B;
 			void Dispose () //warn: should dispose B
 			{

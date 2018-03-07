@@ -104,7 +104,8 @@ namespace Test.Framework.Rocks {
 		class AttributeInheritsOuterAttributeDerivingAttribute : AttributeInheritsOuterAttribute {
 		}
 
-		private byte [] array_of_bytes;
+#pragma warning disable 169
+        private byte [] array_of_bytes;
 		private Enum [] array_of_enum;
 		private Flags [] array_of_flags;
 		private string [] array_of_strings;
@@ -114,17 +115,17 @@ namespace Test.Framework.Rocks {
 		private float SingleValue;
 		private double DoubleValue;
 
-		private IntPtr IntPtrValue;
+        private IntPtr IntPtrValue;
 		private UIntPtr UIntPtrValue;
 		private HandleRef HandleRefValue;
 
 		public void MethodA (bool parameter) { }
+#pragma warning restore 169
 
-
-		private AssemblyDefinition assembly;
+        private AssemblyDefinition assembly;
 		private TypeDefinition type;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
@@ -178,17 +179,17 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Namespace_Null ()
 		{
-			GetType (String.Empty).HasAttribute (null, "a");
+            Assert.Throws<ArgumentNullException>(() => 
+            GetType(String.Empty).HasAttribute (null, "a"));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Name_Null ()
 		{
-			GetType (String.Empty).HasAttribute ("a", null);
+            Assert.Throws<ArgumentNullException>(() => 
+            GetType(String.Empty).HasAttribute ("a", null));
 		}
 
 		[Test]
@@ -210,17 +211,17 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Implements_Namespace_Null ()
 		{
-			GetType (String.Empty).Implements (null, "a");
+            Assert.Throws<ArgumentNullException>(() => 
+            GetType(String.Empty).Implements (null, "a"));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Implements_Name_Null ()
 		{
-			GetType (String.Empty).Implements ("a", null);
+            Assert.Throws<ArgumentNullException>(() => 
+            GetType(String.Empty).Implements ("a", null));
 		}
 
 		[Test]
@@ -235,17 +236,17 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Inherits_Namespace_Null ()
 		{
-			GetType (String.Empty).Inherits (null, "a");
+            Assert.Throws<ArgumentNullException>(() => 
+            GetType(String.Empty).Inherits (null, "a"));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void Inherits_Name_Null ()
 		{
-			GetType (String.Empty).Inherits ("a", null);
+            Assert.Throws<ArgumentNullException>(() => 
+            GetType(String.Empty).Inherits ("a", null));
 		}
 
 		[Test]

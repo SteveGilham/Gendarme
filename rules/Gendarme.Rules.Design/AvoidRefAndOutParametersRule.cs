@@ -28,6 +28,7 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 using Mono.Cecil;
 
 using Gendarme.Framework;
@@ -96,7 +97,7 @@ namespace Gendarme.Rules.Design {
 			if (td == null)
 				return false;
 
-			foreach (TypeReference intf_ref in td.Interfaces) {
+			foreach (TypeReference intf_ref in td.Interfaces.Select(t => t.InterfaceType)) {
 				TypeDefinition intr = intf_ref.Resolve ();
 				if (intr == null)
 					continue;

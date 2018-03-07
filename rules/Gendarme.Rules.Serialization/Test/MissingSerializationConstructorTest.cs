@@ -58,11 +58,13 @@ namespace Test.Rules.Serialization {
 	[Serializable]
 	public sealed class SealedClassWrongCtorVisibility : ISerializable {
 
-		protected SealedClassWrongCtorVisibility (SerializationInfo info, StreamingContext context)
+#pragma warning disable 628
+        protected SealedClassWrongCtorVisibility (SerializationInfo info, StreamingContext context)
 		{
 		}
+#pragma warning restore 628
 
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+        public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 		}
 	}

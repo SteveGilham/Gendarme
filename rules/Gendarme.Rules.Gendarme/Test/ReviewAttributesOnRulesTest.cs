@@ -542,7 +542,8 @@ namespace Test.Rules.Gendarme {
 			AssertRuleSuccess<Case29> (); // both attributes are used in correct place and Desciprion argument is not empty
 		}
 
-		[Test]
+#pragma warning disable 108
+        [Test]
 		public void Runner ()
 		{
 			AssertRuleSuccess<TestRunner> ();

@@ -55,8 +55,9 @@ namespace Tests.Rules.Maintainability {
 	[Obsolete]
 	interface IObsolete {
 	}
+#pragma warning disable 612
 
-	class TypeInheritObsoleteType : ObsoleteType {
+    class TypeInheritObsoleteType : ObsoleteType {
 	}
 
 	class TypeImplementObsoleteInterface : IObsolete {
@@ -72,7 +73,8 @@ namespace Tests.Rules.Maintainability {
 		[Obsolete] Four
 	}
 
-	class TypeWithEnumFields {
+#pragma warning disable 169, 414
+    class TypeWithEnumFields {
 		private ObsoleteEnum a;
 		private ObsoleteEnum b;
 		private EnumWithObsoleteValues c; // ok, the enum is not obsolete
@@ -116,21 +118,24 @@ namespace Tests.Rules.Maintainability {
 		ObsoleteType Type { get; set; }
 	}
 
-	struct StructWithObsoleteEvents {
+#pragma warning disable 67
+    struct StructWithObsoleteEvents {
 		[Obsolete]
 		event EventHandler WayTooLate;
 		[Obsolete]
 		public event EventHandler<EventArgs> TooLate;
 	}
+#pragma warning restore 67
 
-	[Obsolete]
+    [Obsolete]
 	public class ObsoleteEventArgs : EventArgs {
 	}
 
 	[Obsolete]
 	public delegate void ObsoleteEventHandler (object sender, ObsoleteEventArgs e);
 
-	struct StructWithObsoleteEventsType {
+#pragma warning disable 67
+    struct StructWithObsoleteEventsType {
 		event ObsoleteEventHandler WayTooLate;
 		public event EventHandler<ObsoleteEventArgs> TooLate;
 	}

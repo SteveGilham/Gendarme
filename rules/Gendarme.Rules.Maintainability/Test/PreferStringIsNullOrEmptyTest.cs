@@ -69,9 +69,11 @@ namespace Test.Rules.Maintainability {
 			AssertRuleSuccess<PreferStringIsNullOrEmptyTest> ("ArgumentIsNullOrEmpty");
 		}
 
-		private string str;
+#pragma warning disable 649
+        private string str;
+#pragma warning restore 649
 
-		public bool FieldNullAndLengthCheck ()
+        public bool FieldNullAndLengthCheck ()
 		{
 			return ((str == null) || (str.Length == 0));
 		}
@@ -121,9 +123,11 @@ namespace Test.Rules.Maintainability {
 			AssertRuleSuccess<PreferStringIsNullOrEmptyTest> ("ArgumentVariationForCoverage");
 		}
 
-		private static string static_str;
+#pragma warning disable 649
+        private static string static_str;
+#pragma warning disable 649
 
-		public void StaticFieldNullAndLengthCheck ()
+        public void StaticFieldNullAndLengthCheck ()
 		{
 			if ((static_str == null) || (static_str.Length == 0))
 				Console.WriteLine ("Empty");

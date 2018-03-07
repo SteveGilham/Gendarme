@@ -54,8 +54,8 @@ namespace Test.Rules.Performance {
 
 		public class TestEventArgs : EventArgs {
 		}
-
-		public class PublicDefaultType {
+#pragma warning disable 67
+        public class PublicDefaultType {
 			// visible, ok to let the compiler make them synchronized
 			public event EventHandler Public;
 			protected event EventHandler<TestEventArgs> Protected;

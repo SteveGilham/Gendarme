@@ -40,7 +40,8 @@ namespace Test.Rules.BadPractice {
 	public class PreferEmptyInstanceOverNullTest : MethodRuleTestFixture<PreferEmptyInstanceOverNullRule> {
 
 		public class DoesNotApplyCases {
-			bool foo;
+#pragma warning disable 649
+            bool foo;
 			string x;
 
 			public void Void () {

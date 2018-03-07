@@ -47,7 +47,7 @@ namespace Test.Rules.Naming {
 		private TypeDefinition type;
 		private TestRunner runner;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;
@@ -67,10 +67,12 @@ namespace Test.Rules.Naming {
 		}
 
 		struct NonEnum {
-			int Reserved, NonEnum2;
-		}
+#pragma warning disable 169
+            int Reserved, NonEnum2;
+#pragma warning restore 169
+        }
 
-		[Test]
+        [Test]
 		public void TestNonEnum ()
 		{
 			TypeDefinition type = GetTest ("NonEnum");

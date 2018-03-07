@@ -72,22 +72,24 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<RemoveUnusedLocalVariablesTest> ("ReturnLocal_Ok");
 		}
 
-		private bool ReturnLocal_Unused ()
+#pragma warning disable 168,219
+        private bool ReturnLocal_Unused ()
 		{
 			bool a = false;
 			bool b; // unused but CSC removed it from IL while [g]mcs keeps it
 			return a;
 		}
 
-		private bool ReturnLocal_StoreOnly ()
+        private bool ReturnLocal_StoreOnly ()
 		{
 			bool a = false;
 			bool b = false; // stored only - so it's, in fact, unused
 					// again CSC removes it from IL while [g]mcs keeps it
 			return a;
 		}
+#pragma warning restore 168, 219
 
-		[Test]
+        [Test]
 		[Ignore ("depends if the compiler removes the unused variables or not from IL")]
 		public void CompilerDependent ()
 		{

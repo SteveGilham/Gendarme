@@ -227,10 +227,12 @@ namespace Test.Rules.Performance {
 			return Object.Equals ("", String.Empty);
 		}
 
-		static string static_string;
+#pragma warning disable 649
+        static string static_string;
 		string instance_string;
+#pragma warning restore 649
 
-		public bool Fields ()
+        public bool Fields ()
 		{
 			return ("".Equals (static_string) || String.Empty.Equals (instance_string));
 		}

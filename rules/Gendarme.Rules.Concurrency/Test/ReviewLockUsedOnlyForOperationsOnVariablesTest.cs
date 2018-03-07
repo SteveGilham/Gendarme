@@ -279,8 +279,11 @@ namespace Test.Rules.Concurrency {
 
 		public void Failure8 (int i, int j)
 		{
-			bool ret = false;
-			lock (locker) {
+#pragma warning disable 219
+            bool ret = false;
+#pragma warning restore 219
+
+            lock (locker) {
 				lock (locker2) {
 					ret = true;
 				}
@@ -301,7 +304,8 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 
-		Dictionary<string, int> cache;
+#pragma warning disable 649
+        Dictionary<string, int> cache;
 		int x;
 		int y;
 	}

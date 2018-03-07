@@ -69,8 +69,9 @@ namespace Test.Rules.Exceptions {
 			{
 				throw new SystemException ("zhazha");
 			}
-			
-			public void ThrowSpecificExceptions ()
+
+#pragma warning disable 618
+            public void ThrowSpecificExceptions ()
 			{
 				Random r = new Random ();
 				// to avoid compiler optimizations that remove everything after throw
@@ -92,9 +93,10 @@ namespace Test.Rules.Exceptions {
 				if (r.NextDouble () > 0.5) throw new ExecutionEngineException ();
 			}
 		}
-		
-		
-		[Test]
+#pragma warning restore 618
+
+
+        [Test]
 		public void DoesNotApply ()
 		{
 			// no IL

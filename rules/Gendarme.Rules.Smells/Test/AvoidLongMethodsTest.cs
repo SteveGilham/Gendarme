@@ -55,7 +55,8 @@ namespace Gtk {
 }
 
 namespace Test.Rules.Smells {
-	public class LongStaticConstructorWithFields {
+#pragma warning disable 414
+    public class LongStaticConstructorWithFields {
 		static readonly int foo;
 		static string bar;
 		static object baz;
@@ -132,8 +133,9 @@ namespace Test.Rules.Smells {
 			}
 		}
 	}
+#pragma warning restore 414
 
-	public class LongStaticConstructorWithoutFields {
+    public class LongStaticConstructorWithoutFields {
 		static LongStaticConstructorWithoutFields () {
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
@@ -204,8 +206,9 @@ namespace Test.Rules.Smells {
 			}
 		}
 	}
-	
-	public class LongConstructorWithReadonlyFields {
+
+#pragma warning disable 169, 414
+    public class LongConstructorWithReadonlyFields {
 		readonly int foo;
 		readonly string bar, bar1, bar2, bar3;
 		readonly object baz, baz1, baz2, baz3;
@@ -434,9 +437,9 @@ namespace Test.Rules.Smells {
 			}
 		}
 	}
+#pragma warning restore 169,414
 
-
-	public class MainWidget : Gtk.Bin {
+    public class MainWidget : Gtk.Bin {
 		protected virtual void Build () 
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
@@ -1368,7 +1371,7 @@ namespace Test.Rules.Smells {
 			Rule.UseIlApproximation = false;
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition<AvoidLongMethodsTest> ();

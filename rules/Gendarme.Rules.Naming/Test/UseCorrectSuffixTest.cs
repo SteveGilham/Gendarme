@@ -165,12 +165,14 @@ namespace Test.Rules.Naming {
 			get { throw new NotImplementedException (); }
 		}
 
-		public IEnumerator GetEnumerator ()
+#pragma warning disable 108
+        public IEnumerator GetEnumerator ()
 		{
 			throw new NotImplementedException ();
 		}
+#pragma warning restore 108
 
-		public void CopyTo (Array array, int index)
+        public void CopyTo (Array array, int index)
 		{
 			throw new NotImplementedException ();
 		}

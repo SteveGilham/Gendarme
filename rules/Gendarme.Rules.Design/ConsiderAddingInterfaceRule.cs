@@ -190,7 +190,7 @@ namespace Gendarme.Rules.Design {
 			}
 
 			if (iface.HasInterfaces) {
-				foreach (TypeReference tr in iface.Interfaces) {
+				foreach (TypeReference tr in iface.Interfaces.Select(t => t.InterfaceType)) {
 					TypeDefinition td = tr.Resolve ();
 					if (td == null)
 						continue;

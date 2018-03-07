@@ -43,6 +43,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\console\bin\Debug\Gendarme.Rules.Globalization.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

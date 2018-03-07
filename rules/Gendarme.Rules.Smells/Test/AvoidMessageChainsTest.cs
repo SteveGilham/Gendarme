@@ -165,14 +165,16 @@ namespace Test.Rules.Smells {
 			int major = version.Major;
 		}
 
-		public void NoChainWithTemporaryVariables ()
+#pragma warning disable 168
+        public void NoChainWithTemporaryVariables ()
 		{
 			int x;
 			char c;
 			Console.WriteLine ("More tests");
 		}
+#pragma warning restore 168
 
-		[Test]
+        [Test]
 		public void NoChainWithTemporaryVariablesTest ()
 		{
 			AssertRuleSuccess<AvoidMessageChainsTest> ("SmallChainWithTemporaryVariables");

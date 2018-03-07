@@ -39,7 +39,8 @@ namespace Test.Rules.Concurrency {
 	[TestFixture]
 	public sealed class DoNotUseThreadStaticWithInstanceFieldsTest : TypeRuleTestFixture<DoNotUseThreadStaticWithInstanceFieldsRule> {
 
-		private sealed class Good1 {
+#pragma warning disable 649
+        private sealed class Good1 {
 			[ThreadStatic]
 			public static string name;
 		}
@@ -59,8 +60,9 @@ namespace Test.Rules.Concurrency {
 			[ThreadStatic]
 			public string name2;
 		}
-		
-		[Test]
+#pragma warning restore 649
+
+        [Test]
 		public void NotApplicable ()
 		{
 			AssertRuleDoesNotApply (SimpleTypes.Delegate);

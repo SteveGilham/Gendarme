@@ -436,8 +436,9 @@ namespace Tests.Rules.Correctness {
 			AssertRuleSuccess<StructContainer> ("Equals");
 		}
 
-		// constrained to struct == valuetype
-		public class Bitmask<T> where T : struct, IConvertible {
+#pragma warning disable 649
+        // constrained to struct == valuetype
+        public class Bitmask<T> where T : struct, IConvertible {
 
 			ulong mask;
 
