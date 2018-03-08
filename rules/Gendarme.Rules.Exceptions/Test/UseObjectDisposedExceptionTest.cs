@@ -69,9 +69,9 @@ namespace Test.Rules.Exceptions {
 				DoSomething ();
 			}
 
-#pragma warning disable 67
-            public event EventHandler Closed;
-#pragma warning restore 67
+//#pragma warning disable 67 -- counts as DNA/Compiler generated now
+//            public event EventHandler Closed;
+//#pragma warning restore 67
 
             // These are not public.
             internal void Write2 (string message)
