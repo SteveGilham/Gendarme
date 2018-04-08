@@ -244,7 +244,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the interface to be matched</param>
 		/// <returns>True if we found that the type implements the interface, False otherwise (either it
 		/// does not implement it, or we could not find where it does).</returns>
-		public static bool Implements (this TypeReference self, string nameSpace, string name)
+		public static bool Implements (this TypeReference self, string nameSpace, string name, TypeReference fallback)
 		{
 			if (nameSpace == null)
 				throw new ArgumentNullException ("nameSpace");
@@ -258,22 +258,22 @@ namespace Gendarme.Framework.Rocks {
 				return false;	// not enough information available
 
 			// special case, check if we implement ourselves
-			if (type.IsInterface && type.IsNamed (nameSpace, name))
+			if (type.IsInterface && type.IsNamed (nameSpace, name, fallback))
 				return true;
 
-			return Implements (type, nameSpace, name);
+			return Implements (type, nameSpace, name, fallback);
 		}
 
-		private static bool Implements (TypeDefinition type, string nameSpace, string iname)
+		private static bool Implements (TypeDefinition type, string nameSpace, string iname, TypeReference fallback)
 		{
 			while (type != null) {
 				// does the type implements it itself
 				if (type.HasInterfaces) {
 					foreach (TypeReference iface in type.Interfaces.Select(t => t.InterfaceType)) {
-						if (iface.IsNamed (nameSpace, iname))
+						if (iface.IsNamed (nameSpace, iname, fallback))
 							return true;
 						//if not, then maybe one of its parent interfaces does
-						if (Implements (iface.Resolve (), nameSpace, iname))
+						if (Implements (iface.Resolve (), nameSpace, iname, fallback))
 							return true;
 					}
 				}
@@ -339,7 +339,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="nameSpace">The namespace of the base class to be matched</param>
 		/// <param name="name">The name of the base class to be matched</param>
 		/// <returns>True if the type inherits from specified class, False otherwise</returns>
-		public static bool Inherits (this TypeReference self, string nameSpace, string name)
+		public static bool Inherits (this TypeReference self, string nameSpace, string name, TypeReference fallback)
 		{
 			if (nameSpace == null)
 				throw new ArgumentNullException ("nameSpace");
@@ -350,9 +350,9 @@ namespace Gendarme.Framework.Rocks {
 
 			TypeReference current = self.Resolve ();
 			while (current != null) {
-				if (current.IsNamed (nameSpace, name))
+				if (current.IsNamed (nameSpace, name, fallback))
 					return true;
-				if (current.IsNamed ("System", "Object"))
+				if (current.IsNamed ("System", "Object", null))
 					return false;
 
 				TypeDefinition td = current.Resolve ();
@@ -371,7 +371,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="nameSpace">The namespace to be matched</param>
 		/// <param name="name">The type name to be matched</param>
 		/// <returns>True if the type is namespace and name match the arguments, False otherwise</returns>
-		public static bool IsNamed (this TypeReference self, string nameSpace, string name)
+		public static bool IsNamed (this TypeReference self, string nameSpace, string name, TypeReference fallback)
 		{
 			if (nameSpace == null)
 				throw new ArgumentNullException ("nameSpace");
@@ -381,11 +381,10 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			if (self.IsNested) {
-				int spos = name.LastIndexOf ('/');
-				if (spos == -1)
-					return false;
-				// GetFullName could be optimized away but it's a fairly uncommon case
-				return (nameSpace + "." + name == self.GetFullName ());
+                if (String.IsNullOrEmpty(nameSpace) && fallback != null && fallback.IsNested)
+                    return (fallback.GetFullName() == self.GetFullName());
+                // GetFullName could be optimized away but it's a fairly uncommon case
+                return (nameSpace + "." + name == self.GetFullName ());
 			}
 
 			return ((self.Namespace == nameSpace) && (self.Name == name));
@@ -440,7 +439,7 @@ namespace Gendarme.Framework.Rocks {
 			if (self == null)
 				return false;
 
-			return self.Inherits ("System", "Attribute");
+			return self.Inherits ("System", "Attribute", null);
 		}
 
 		/// <summary>
@@ -479,7 +478,7 @@ namespace Gendarme.Framework.Rocks {
 			if ((type == null) || !type.IsEnum || !type.HasCustomAttributes)
 				return false;
 
-			return type.HasAttribute ("System", "FlagsAttribute");
+			return type.HasAttribute ("System", "FlagsAttribute", null);
 		}
 
 		/// <summary>
@@ -546,7 +545,7 @@ namespace Gendarme.Framework.Rocks {
 				string name = self.Name;
 				return ((name == "IntPtr") || (name == "UIntPtr"));
 			}
-			return self.IsNamed ("System.Runtime.InteropServices", "HandleRef");
+			return self.IsNamed ("System.Runtime.InteropServices", "HandleRef", null);
 		}
 
 		/// <summary>

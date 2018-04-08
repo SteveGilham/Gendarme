@@ -130,7 +130,7 @@ namespace Gendarme.Rules.Exceptions {
 				return;
 
 			// OK		public ArgumentException (string message, Exception innerException)
-			if (!pdc [1].ParameterType.IsNamed ("System", "String"))
+			if (!pdc [1].ParameterType.IsNamed ("System", "String", null))
 				return;
 
 			// CHECK	public ArgumentException (string message, string paramName)
@@ -153,7 +153,7 @@ namespace Gendarme.Rules.Exceptions {
 			// OK		protected ArgumentNullException (SerializationInfo info, StreamingContext context)
 			// OK		public ArgumentNullException (string message, Exception innerException)
 			IList<ParameterDefinition> pdc = constructor.Parameters;
-			if ((pdc.Count == 2) && !pdc [1].ParameterType.IsNamed ("System", "String"))
+			if ((pdc.Count == 2) && !pdc [1].ParameterType.IsNamed ("System", "String", null))
 				return;
 
 			// CHECK	public ArgumentNullException (string paramName)

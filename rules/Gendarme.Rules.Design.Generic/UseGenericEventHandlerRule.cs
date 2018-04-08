@@ -74,7 +74,7 @@ namespace Gendarme.Rules.Design.Generic {
 			if (invoke == null)
 				return RuleResult.DoesNotApply;
 
-			if (!invoke.ReturnType.IsNamed ("System", "Void"))
+			if (!invoke.ReturnType.IsNamed ("System", "Void", null))
 				return RuleResult.Success;
 
 			if (!invoke.HasParameters)
@@ -83,9 +83,9 @@ namespace Gendarme.Rules.Design.Generic {
 			IList<ParameterDefinition> pdc = invoke.Parameters;
 			if (pdc.Count != 2)
 				return RuleResult.Success;
-			if (!pdc [0].ParameterType.IsNamed ("System", "Object"))
+			if (!pdc [0].ParameterType.IsNamed ("System", "Object", null))
 				return RuleResult.Success;
-			if (!pdc [1].ParameterType.Inherits ("System", "EventArgs"))
+			if (!pdc [1].ParameterType.Inherits ("System", "EventArgs", null))
 				return RuleResult.Success;
 
 			Runner.Report (type, Severity.Medium, Confidence.High);

@@ -121,11 +121,11 @@ namespace Gendarme.Framework.Helpers {
 		// TryParse
 		public static readonly MethodSignature TryParse = new MethodSignature ("TryParse",
 			delegate (MethodReference method) {
-				if (!method.ReturnType.IsNamed ("System", "Boolean"))
+				if (!method.ReturnType.IsNamed ("System", "Boolean", null))
 					return false;
 
 				IList<ParameterDefinition> pdc = method.Parameters;
-				if (!pdc [0].ParameterType.IsNamed ("System", "String"))
+				if (!pdc [0].ParameterType.IsNamed ("System", "String", null))
 					return false;
 
 				TypeReference last = pdc [pdc.Count - 1].ParameterType;
@@ -146,9 +146,9 @@ namespace Gendarme.Framework.Helpers {
 			delegate (MethodReference method) {
 				if (!method.HasParameters)
 					return false;
-				if (!method.ReturnType.IsNamed (method.DeclaringType.Namespace, method.DeclaringType.Name))
+				if (!method.ReturnType.IsNamed (method.DeclaringType.Namespace, method.DeclaringType.Name, method.DeclaringType))
 					return false;
-				return method.Parameters [0].ParameterType.IsNamed ("System", "String");
+				return method.Parameters [0].ParameterType.IsNamed ("System", "String", null);
 			}
 		);
 	}

@@ -199,7 +199,7 @@ namespace Gendarme.Rules.Interoperability {
 					bool uintptr = (name == "UIntPtr");
 					if (intptr || uintptr)
 						CheckCastOnIntPtr (method, ins, mr, intptr, uintptr);
-				} else if (type.IsNamed ("System.Runtime.InteropServices", "Marshal")) {
+				} else if (type.IsNamed ("System.Runtime.InteropServices", "Marshal", null)) {
 					CheckCastOnMarshal (method, ins, mr);
 				}
 			}

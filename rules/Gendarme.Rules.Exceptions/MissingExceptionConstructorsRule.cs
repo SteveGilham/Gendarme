@@ -95,15 +95,15 @@ namespace Gendarme.Rules.Exceptions {
 			if (!ctor.IsPublic)
 				return false;
 
-			return (ctor.Parameters [0].ParameterType.IsNamed ("System", "String"));
+			return (ctor.Parameters [0].ParameterType.IsNamed ("System", "String", null));
 		}
 
 		private static bool CheckForInnerExceptionConstructor (IMethodSignature ctor)
 		{
 			IList<ParameterDefinition> pdc = ctor.Parameters;
-			if (!pdc [0].ParameterType.IsNamed ("System", "String"))
+			if (!pdc [0].ParameterType.IsNamed ("System", "String", null))
 				return false;
-			return pdc [pdc.Count - 1].ParameterType.IsNamed ("System", "Exception");
+			return pdc [pdc.Count - 1].ParameterType.IsNamed ("System", "Exception", null);
 		}
 
 		private static bool CheckForSerializationConstructor (MethodDefinition ctor)
@@ -117,7 +117,7 @@ namespace Gendarme.Rules.Exceptions {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only to type that inherits from System.Exception
-			if (!type.Inherits ("System", "Exception"))
+			if (!type.Inherits ("System", "Exception", null))
 				return RuleResult.DoesNotApply;
 
 			// rule applies, only Success or Failure from the point on

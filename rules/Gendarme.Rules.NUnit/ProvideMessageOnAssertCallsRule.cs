@@ -95,7 +95,7 @@ namespace Gendarme.Rules.NUnit {
 					continue;
 
 				MethodReference m = (instruction.Operand as MethodReference);
-				if (m == null || !m.DeclaringType.IsNamed ("NUnit.Framework", "Assert") ||
+				if (m == null || !m.DeclaringType.IsNamed ("NUnit.Framework", "Assert", null) ||
 					exceptions.Contains (m.Name))
 					continue;
 
@@ -105,7 +105,7 @@ namespace Gendarme.Rules.NUnit {
 					if (resolvedMethod == null)
 						continue;
 					foreach (ParameterDefinition parameter in resolvedMethod.Parameters) {
-						if (parameter.ParameterType.IsNamed ("System", "String") &&
+						if (parameter.ParameterType.IsNamed ("System", "String", null) &&
 							parameter.Name == "message") {
 							foundMessage = true;
 							break;

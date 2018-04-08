@@ -115,10 +115,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 				// any attribute without arguments can be skipped
 				if (!attribute.HasConstructorArguments)
 					continue;
-				if (!attribute.AttributeType.IsNamed ("System.Runtime.InteropServices", "ClassInterfaceAttribute"))
+				if (!attribute.AttributeType.IsNamed ("System.Runtime.InteropServices", "ClassInterfaceAttribute", null))
 					continue;
 				var ctorArgs = attribute.ConstructorArguments;
-				if (ctorArgs [0].Type.IsNamed ("System", "Int16"))
+				if (ctorArgs [0].Type.IsNamed ("System", "Int16", null))
 					return (ClassInterfaceType)(short)ctorArgs [0].Value;
 				return (ClassInterfaceType)(int)ctorArgs [0].Value;
 			}

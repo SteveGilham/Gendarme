@@ -103,7 +103,7 @@ namespace Gendarme.Rules.Performance {
 					break;
 				case "op_Equality":
 				case "op_Inequality":
-					if (!mref.DeclaringType.IsNamed ("System", "String"))
+					if (!mref.DeclaringType.IsNamed ("System", "String", null))
 						continue;
 					break;
 				default:
@@ -118,7 +118,7 @@ namespace Gendarme.Rules.Performance {
 					break;
 				case Code.Ldsfld:
 					FieldReference field = (prev.Operand as FieldReference);
-					if (!field.DeclaringType.IsNamed ("System", "String"))
+					if (!field.DeclaringType.IsNamed ("System", "String", null))
 						continue;
 					// unlikely to be anything else (at least with released fx)
 					if (field.Name != "Empty")

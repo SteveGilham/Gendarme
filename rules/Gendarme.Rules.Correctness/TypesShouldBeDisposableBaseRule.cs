@@ -75,7 +75,7 @@ namespace Gendarme.Rules.Correctness {
 
 			bool abstractWarning = false;
 
-			if (type.Implements ("System", "IDisposable")) {
+			if (type.Implements ("System", "IDisposable", null)) {
 				implicitDisposeMethod = type.GetMethod (MethodSignatures.Dispose);
 				explicitDisposeMethod = type.GetMethod (MethodSignatures.DisposeExplicit);
 

@@ -107,7 +107,7 @@ namespace Gendarme.Rules.Interoperability {
 		private void CheckSuppressUnmanagedCodeSecurity (ICustomAttributeProvider type, bool required)
 		{
 			string msg = null;
-			if (type.HasAttribute ("System.Security", "SuppressUnmanagedCodeSecurityAttribute")) {
+			if (type.HasAttribute ("System.Security", "SuppressUnmanagedCodeSecurityAttribute", null)) {
 				if (!required)
 					 msg = "Remove [SuppressUnmanagedCodeSecurity] attribute on the type declaration.";
 			} else {

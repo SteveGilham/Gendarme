@@ -90,7 +90,7 @@ namespace Gendarme.Rules.BadPractice {
 
 		static bool IsGetEntryAssembly (MemberReference method)
 		{
-			return method.IsNamed ("System.Reflection", "Assembly", "GetEntryAssembly");
+			return method.IsNamed ("System.Reflection", "Assembly", "GetEntryAssembly", null);
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)

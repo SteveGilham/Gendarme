@@ -507,7 +507,7 @@ namespace Gendarme.Rules.Interoperability {
 					
 					// check for catch all clauses
 					TypeReference ctype = eh.CatchType;
-					if (!(ctype == null || ctype.IsNamed ("System", "Object") || ctype.IsNamed ("System", "Exception")))
+					if (!(ctype == null || ctype.IsNamed ("System", "Object", null) || ctype.IsNamed ("System", "Exception", null)))
 						continue;
 					
 					// Mark the code this exception handler handles as safe.

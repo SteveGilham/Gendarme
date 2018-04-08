@@ -109,11 +109,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 				bool foundRegisterUnregisterMethod = false; // method level variable
 				foreach (CustomAttribute attribute in method.CustomAttributes) {
 					TypeReference atype = attribute.AttributeType;
-					if (!foundRegister && atype.IsNamed ("System.Runtime.InteropServices", "ComRegisterFunctionAttribute")) {
+					if (!foundRegister && atype.IsNamed ("System.Runtime.InteropServices", "ComRegisterFunctionAttribute", null)) {
 						foundRegister = true;
 						foundRegisterUnregisterMethod = true;
 					}
-					if (!foundUnregister && atype.IsNamed ("System.Runtime.InteropServices", "ComUnregisterFunctionAttribute")) {
+					if (!foundUnregister && atype.IsNamed ("System.Runtime.InteropServices", "ComUnregisterFunctionAttribute", null)) {
 						foundUnregister = true;
 						foundRegisterUnregisterMethod = true;
 					}

@@ -124,7 +124,7 @@ namespace Gendarme.Rules.Security {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Net", "ICertificatePolicy");
+						return tr.IsNamed ("System.Net", "ICertificatePolicy", null);
 					})
 				);
 			};
@@ -163,7 +163,7 @@ namespace Gendarme.Rules.Security {
 			// since ICertificatePolicy is an interface we need to check its name
 			string name = method.Name;
 			if (name == "CheckValidationResult") {
-				if (!method.DeclaringType.Implements ("System.Net", "ICertificatePolicy"))
+				if (!method.DeclaringType.Implements ("System.Net", "ICertificatePolicy", null))
 					return RuleResult.Success;
 			} else if (name != "System.Net.ICertificatePolicy.CheckValidationResult")
 				return RuleResult.Success;
@@ -190,7 +190,7 @@ namespace Gendarme.Rules.Security {
 
 			IList<ParameterDefinition> pdc = method.Parameters;
 			int count = pdc.Count;
-			if ((count != 4) || !method.ReturnType.IsNamed ("System", "Boolean"))
+			if ((count != 4) || !method.ReturnType.IsNamed ("System", "Boolean", null))
 				return RuleResult.DoesNotApply;
 
 			// this method could be a candidate for both policy or callback

@@ -101,7 +101,7 @@ namespace Gendarme.Rules.Performance {
 			foreach (CustomAttribute ca in method.CustomAttributes) {
 				TypeReference cat = ca.AttributeType;
 				string name = cat.Name;
-				if ((cat.IsNamed ("System.Diagnostics", name)) || (cat.Namespace == "System.Runtime.InteropServices" && 
+				if ((cat.IsNamed ("System.Diagnostics", name, null)) || (cat.Namespace == "System.Runtime.InteropServices" && 
 					(name == "ComRegisterFunctionAttribute" || name == "ComUnregisterFunctionAttribute"))) {
 					return true;
 				}

@@ -145,7 +145,7 @@ namespace Gendarme.Rules.Design {
 				string name = type.Name;
 				return ((name == "XmlDocument") || (name == "XmlNode"));
 			}
-			return type.IsNamed ("System.Xml.XPath", "XPathDocument");
+			return type.IsNamed ("System.Xml.XPath", "XPathDocument", null);
 		}
 
 		static Severity GetSeverity (MethodDefinition method)

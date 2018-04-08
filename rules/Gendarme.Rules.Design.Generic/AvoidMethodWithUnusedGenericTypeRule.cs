@@ -82,31 +82,31 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
 	public class AvoidMethodWithUnusedGenericTypeRule : GenericsBaseRule, IMethodRule {
 
-		static bool FindGenericType (IGenericInstance git, string nameSpace, string name)
+		static bool FindGenericType (IGenericInstance git, string nameSpace, string name, TypeReference fallback)
 		{
 			foreach (object o in git.GenericArguments) {
-				if (IsGenericParameter (o, nameSpace, name))
+				if (IsGenericParameter (o, nameSpace, name, fallback))
 					return true;
 
 				GenericInstanceType inner = (o as GenericInstanceType);
-				if ((inner != null) && (FindGenericType (inner, nameSpace, name)))
+				if ((inner != null) && (FindGenericType (inner, nameSpace, name, fallback)))
 					return true;
 			}
 			return false;
 		}
 
-		static bool IsGenericParameter (object obj, string nameSpace, string name)
+		static bool IsGenericParameter (object obj, string nameSpace, string name, TypeReference fallback)
 		{
-			return (obj as GenericParameter).IsNamed (nameSpace, name);
+			return (obj as GenericParameter).IsNamed (nameSpace, name, fallback);
 		}
 
-		static bool IsGenericType (TypeReference type, string nspace, string name)
+		static bool IsGenericType (TypeReference type, string nspace, string name, TypeReference fallback)
 		{
-			if (type.IsNamed (nspace, name))
+			if (type.IsNamed (nspace, name, fallback))
 				return true;
 
 			var type_spec = type as TypeSpecification;
-			if (type_spec != null && type_spec.ElementType.IsNamed (nspace, name))
+			if (type_spec != null && type_spec.ElementType.IsNamed (nspace, name, fallback))
 				return true;
 
 			// handle things like ICollection<T>
@@ -114,7 +114,7 @@ namespace Gendarme.Rules.Design.Generic {
 			if (git == null)
 				return false;
 
-			return FindGenericType (git, nspace, name);
+			return FindGenericType (git, nspace, name, fallback);
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)
@@ -131,14 +131,14 @@ namespace Gendarme.Rules.Design.Generic {
 				string name = gp.Name;
 				// ... is being used by the method parameters
 				foreach (ParameterDefinition pd in method.Parameters) {
-					if (IsGenericType (pd.ParameterType, nspace, name)) {
+					if (IsGenericType (pd.ParameterType, nspace, name, gp)) {
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
 					// it's a defect when used only for the return value - but we reduce its severity
-					if (IsGenericType (method.ReturnType, nspace, name))
+					if (IsGenericType (method.ReturnType, nspace, name, gp))
 						severity = Severity.Low;
 				}
 				if (!found) {

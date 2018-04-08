@@ -92,7 +92,7 @@ namespace Gendarme.Rules.Correctness {
 
 		static bool IsInt64BitsToDouble (MemberReference method)
 		{
-			return method.IsNamed ("System", "BitConverter", "Int64BitsToDouble");
+			return method.IsNamed ("System", "BitConverter", "Int64BitsToDouble", null);
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)

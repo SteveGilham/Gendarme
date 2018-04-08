@@ -52,7 +52,7 @@ namespace Gendarme.Rules.Smells {
 		{
 			if (ins.OpCode.Code != Code.Isinst)
 				return false;
-			return (ins.Operand as TypeReference).IsNamed ("System", "IDisposable");
+			return (ins.Operand as TypeReference).IsNamed ("System", "IDisposable", null);
 		}
 
 		// look for:
@@ -62,7 +62,7 @@ namespace Gendarme.Rules.Smells {
 		{
 			if (ins.OpCode.Code != Code.Callvirt)
 				return false;
-			if (!(ins.Operand as MethodReference).IsNamed ("System", "IDisposable", "Dispose"))
+			if (!(ins.Operand as MethodReference).IsNamed ("System", "IDisposable", "Dispose", null))
 				return false;
 			return ins.Next.Is (Code.Endfinally);
 		}
@@ -84,9 +84,9 @@ namespace Gendarme.Rules.Smells {
 				// foreach
 				if (ins.OpCode.Code == Code.Callvirt) {
 					MethodReference mr = (ins.Operand as MethodReference);
-					if (mr.IsNamed ("System.Collections", "IEnumerator", "get_Current"))
+					if (mr.IsNamed ("System.Collections", "IEnumerator", "get_Current", null))
 						return true;
-					if (mr.IsNamed ("System.Collections", "IEnumerator", "MoveNext"))
+					if (mr.IsNamed ("System.Collections", "IEnumerator", "MoveNext", null))
 						return !call;
 				}
 				// if there's a unknown call then it's likely not (totally) compiler generated

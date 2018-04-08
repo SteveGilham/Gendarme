@@ -72,7 +72,7 @@ namespace Gendarme.Rules.Interoperability {
 		private static bool IsStringOrSBuilder (TypeReference reference)
 		{
 			TypeReference type = reference.GetElementType ();
-			return (type.IsNamed ("System", "String") || type.IsNamed ("System.Text", "StringBuilder"));
+			return (type.IsNamed ("System", "String", null) || type.IsNamed ("System.Text", "StringBuilder", null));
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)

@@ -98,7 +98,7 @@ namespace Gendarme.Rules.Performance {
 				// then no method inside it will be using it
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "LocalDataStoreSlot");
+						return tr.IsNamed ("System", "LocalDataStoreSlot", null);
 					}));
 			};
 		}

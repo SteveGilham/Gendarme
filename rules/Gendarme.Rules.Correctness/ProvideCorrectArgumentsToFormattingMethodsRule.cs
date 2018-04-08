@@ -243,13 +243,13 @@ namespace Gendarme.Rules.Correctness {
 			// String.Format (string, object, object, object) -> elementsPushed = 3
 			// String.Format (string, object[]) -> compute
 			// String.Format (IFormatProvider, string, object[]) -> compute
-			if (!pdc [nbParameters - 1].ParameterType.IsNamed ("System", "Object")) {
+			if (!pdc [nbParameters - 1].ParameterType.IsNamed ("System", "Object", null)) {
 				// If we cannot determine the array size, we succeed (well we don't fail/report)
 				if (!TryComputeArraySize (call, method, nbParameters - 1, out elementsPushed))
 					return;
 
 				// String.Format (IFormatProvider, string, object[]) -> formatPosition = 1
-				if (!pdc [0].ParameterType.IsNamed ("System", "String"))
+				if (!pdc [0].ParameterType.IsNamed ("System", "String", null))
 					formatPosition = 1;
 			}
 
@@ -297,7 +297,7 @@ namespace Gendarme.Rules.Correctness {
 					continue;
 
 				MethodReference mr = (instruction.Operand as MethodReference);
-				if (formatSignature.Matches (mr) && mr.DeclaringType.IsNamed ("System", "String"))
+				if (formatSignature.Matches (mr) && mr.DeclaringType.IsNamed ("System", "String", null))
 					CheckCallToFormatter (instruction, method);
 			}
 

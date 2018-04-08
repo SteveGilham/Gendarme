@@ -92,15 +92,15 @@ namespace Gendarme.Rules.Design {
 
 		static bool IsICollection (TypeReference type)
 		{
-			if (type.Implements ("System.Collections", "ICollection"))
+			if (type.Implements ("System.Collections", "ICollection", null))
 				return true;
 
-			return type.Implements ("System.Collections.Generic", "ICollection`1");
+			return type.Implements ("System.Collections.Generic", "ICollection`1", null);
 		}
 
 		static bool IsSpecialCase (TypeReference type)
 		{
-			return type.Inherits ("System.Security", "PermissionSet");
+			return type.Inherits ("System.Security", "PermissionSet", null);
 		}
 
 		public RuleResult CheckType (TypeDefinition type)

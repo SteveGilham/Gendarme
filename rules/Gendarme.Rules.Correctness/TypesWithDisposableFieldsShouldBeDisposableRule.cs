@@ -129,7 +129,7 @@ namespace Gendarme.Rules.Correctness {
 			if ((type == null) || type.IsEnum || type.IsPrimitive)
 				return false;
 
-			return type.Implements ("System", "IDisposable");
+			return type.Implements ("System", "IDisposable", null);
 		}
 	}
 }

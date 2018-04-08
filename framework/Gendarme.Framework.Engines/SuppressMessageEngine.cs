@@ -71,7 +71,7 @@ namespace Gendarme.Framework.Engines {
 		{
 			// we only need to check the custom attributes if [SuppressMessage] is referenced (note: won't work for mscorlib)
 			AssemblyDefinition assembly = (sender as AssemblyDefinition);
-			if (assembly.MainModule.AnyTypeReference ((TypeReference tr) => { return tr.IsNamed ("System.Diagnostics.CodeAnalysis", "SuppressMessageAttribute"); })) {
+			if (assembly.MainModule.AnyTypeReference ((TypeReference tr) => { return tr.IsNamed ("System.Diagnostics.CodeAnalysis", "SuppressMessageAttribute", null); })) {
 				Controller.BuildingCustomAttributes += new EventHandler<EngineEventArgs> (OnCustomAttributes);
 			} else {
 				Controller.BuildingCustomAttributes -= new EventHandler<EngineEventArgs> (OnCustomAttributes);
@@ -103,7 +103,7 @@ namespace Gendarme.Framework.Engines {
 			foreach (CustomAttribute ca in cap.CustomAttributes) {
 				if (!ca.HasConstructorArguments)
 					continue;
-				if (!ca.AttributeType.IsNamed ("System.Diagnostics.CodeAnalysis", "SuppressMessageAttribute"))
+				if (!ca.AttributeType.IsNamed ("System.Diagnostics.CodeAnalysis", "SuppressMessageAttribute", null))
 					continue;
 
 				var arguments = ca.ConstructorArguments;

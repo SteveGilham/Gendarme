@@ -165,7 +165,7 @@ namespace Gendarme.Rules.Gendarme {
 			var typeName = type.GetFullName ();
 			bool result;
 			if (!typeIsRule.TryGetValue (typeName, out result)) {
-				result = type.Implements ("Gendarme.Framework", "IRule");
+				result = type.Implements ("Gendarme.Framework", "IRule", null);
 				typeIsRule [typeName] = result;
 			}
 			return result;
@@ -203,7 +203,7 @@ namespace Gendarme.Rules.Gendarme {
 		private void CheckEngineDependencyAttribute (CustomAttribute attribute, ICustomAttributeProvider provider)
 		{
 			TypeDefinition td = (provider as TypeDefinition);
-			if (td == null || !(IsRule (td) || td.Implements ("Gendarme.Framework", "IRunner")))
+			if (td == null || !(IsRule (td) || td.Implements ("Gendarme.Framework", "IRunner", null)))
 				Runner.Report (td, Severity.Medium, Confidence.High, "[EngineDependency] can only be used on rules and runners");
 
 			CheckIfStringArgumentsAreNotNullOrEmpty (attribute, provider);
@@ -213,9 +213,9 @@ namespace Gendarme.Rules.Gendarme {
 			var argument = attribute.ConstructorArguments [0];
 
 			// if possible, check if argument type implements IEngine
-			if (argument.Type.IsNamed ("System", "Type")) {
+			if (argument.Type.IsNamed ("System", "Type", null)) {
 				TypeReference tr = (argument.Value as TypeReference);
-				if (tr == null || !tr.Inherits ("Gendarme.Framework", "Engine")) // IEngine does not exist yet
+				if (tr == null || !tr.Inherits ("Gendarme.Framework", "Engine", null)) // IEngine does not exist yet
 					Runner.Report (provider, Severity.Medium, Confidence.High,
 						"EngineDependency attribute argument should implement IEngine interface");
 
@@ -251,7 +251,7 @@ namespace Gendarme.Rules.Gendarme {
 			if (!attribute.HasConstructorArguments)
 				return true;
 			foreach (CustomAttributeArgument argument in attribute.ConstructorArguments) {
-				if (!argument.Type.IsNamed ("System", "String"))
+				if (!argument.Type.IsNamed ("System", "String", null))
 					continue;
 				if (String.IsNullOrEmpty ((string) argument.Value)) {
 					Runner.Report (provider, Severity.Medium, Confidence.High,

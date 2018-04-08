@@ -84,7 +84,7 @@ namespace Gendarme.Rules.UI {
 				string assembly_name = e.CurrentAssembly.Name.Name;
 				Active = ((assembly_name == "WindowsBase" || assembly_name == "System.Windows") ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Windows", "Size");
+						return tr.IsNamed ("System.Windows", "Size", null);
 					})
 				);
 			};
@@ -92,7 +92,7 @@ namespace Gendarme.Rules.UI {
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			if (!type.IsClass || !type.HasMethods || !type.Inherits ("System.Windows", "FrameworkElement"))
+			if (!type.IsClass || !type.HasMethods || !type.Inherits ("System.Windows", "FrameworkElement", null))
 				return RuleResult.DoesNotApply;
 			var arrangeOverride = type.GetMethod (arrangeSignature);
 			var measureOverride = type.GetMethod (measureSignature);

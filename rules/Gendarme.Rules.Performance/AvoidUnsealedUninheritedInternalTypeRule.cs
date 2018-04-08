@@ -78,13 +78,13 @@ namespace Gendarme.Rules.Performance {
 			string nspace = type.Namespace;
 			foreach (TypeDefinition type_definition in module.GetAllTypes ()) {
 				// skip ourself
-				if (type_definition.IsNamed (nspace, name))
+				if (type_definition.IsNamed (nspace, name, type))
 					continue;
-				if (type_definition.Inherits (nspace, name))
+				if (type_definition.Inherits (nspace, name, type))
 					return RuleResult.Success;
 			}
 
-			Confidence c = module.Assembly.HasAttribute ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute") ?
+			Confidence c = module.Assembly.HasAttribute ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute", null) ?
 				Confidence.High : Confidence.Total;
 			Runner.Report (type, Severity.Medium, c);
 			return RuleResult.Failure;

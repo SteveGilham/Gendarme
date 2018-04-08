@@ -137,10 +137,10 @@ namespace Gendarme.Rules.Correctness {
 			if (method.IsConstructor) {
 				if (method.DeclaringType.IsGeneratedCode ())
 					return false; //eg. generators
-				return method.DeclaringType.Implements ("System", "IDisposable");
+				return method.DeclaringType.Implements ("System", "IDisposable", null);
 			}
 
-			return method.ReturnType.Implements ("System", "IDisposable");
+			return method.ReturnType.Implements ("System", "IDisposable", null);
 		}
 
 		static bool IsSetter (MethodReference m)
@@ -333,9 +333,9 @@ namespace Gendarme.Rules.Correctness {
 			string nspace = rtype.Namespace;
 			string name = rtype.Name;
 			// StringBuilder StringBuilder.Append (...)
-			if (method.DeclaringType.IsNamed (nspace, name))
+			if (method.DeclaringType.IsNamed (nspace, name, rtype))
 				return true;
-			return (method.HasParameters && method.Parameters [0].ParameterType.IsNamed (nspace, name));
+			return (method.HasParameters && method.Parameters [0].ParameterType.IsNamed (nspace, name, rtype));
 		}
 
 		void ReportCall (MethodDefinition method, Instruction ins, MethodReference call)

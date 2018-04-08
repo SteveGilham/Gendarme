@@ -76,7 +76,7 @@ namespace Gendarme.Rules.Design {
 
 		static bool IsHasField (FieldReference fd, ref string prefix, ref string suffix)
 		{
-			if (!fd.FieldType.IsNamed ("System", "Boolean"))
+			if (!fd.FieldType.IsNamed ("System", "Boolean", null))
 				return false;
 
 			string name = fd.Name;
@@ -143,7 +143,7 @@ namespace Gendarme.Rules.Design {
 		{
 			foreach (FieldDefinition field in type.Fields) {
 				if (field.FieldType.IsValueType
-					&& !field.FieldType.GetElementType ().IsNamed ("System", "Nullable`1")
+					&& !field.FieldType.GetElementType ().IsNamed ("System", "Nullable`1", null)
 					&& 0 == string.Compare(name, field.Name, StringComparison.OrdinalIgnoreCase))
 					return field;
 			}

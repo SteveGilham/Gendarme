@@ -78,7 +78,7 @@ namespace Gendarme.Rules.BadPractice {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.IO", "FileMode");
+						return tr.IsNamed ("System.IO", "FileMode", null);
 					}));
 			};
 		}
@@ -127,9 +127,9 @@ namespace Gendarme.Rules.BadPractice {
 				bool foundFileAccess = false;
 				foreach (ParameterDefinition parameter in m.Parameters) {
 					TypeReference ptype = parameter.ParameterType;
-					if (!foundFileMode && ptype.IsNamed ("System.IO", "FileMode"))
+					if (!foundFileMode && ptype.IsNamed ("System.IO", "FileMode", null))
 						foundFileMode = true;
-					if (!foundFileAccess && (ptype.IsNamed ("System.IO", "FileAccess") || ptype.IsNamed ("System.Security.AccessControl", "FileSystemRights")))
+					if (!foundFileAccess && (ptype.IsNamed ("System.IO", "FileAccess", null) || ptype.IsNamed ("System.Security.AccessControl", "FileSystemRights", null)))
 						foundFileAccess = true;
 				}
 				if (foundFileMode && !foundFileAccess) {

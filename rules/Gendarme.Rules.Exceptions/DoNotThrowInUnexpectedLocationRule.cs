@@ -209,7 +209,7 @@ namespace Gendarme.Rules.Exceptions {
 			base.Initialize (runner);
 
 			Runner.AnalyzeType += delegate (object sender, RunnerEventArgs e) {
-				if (e.CurrentType.Implements ("System.Collections.Generic", "IEqualityComparer`1")) {
+				if (e.CurrentType.Implements ("System.Collections.Generic", "IEqualityComparer`1", null)) {
 					equals_signature = EqualityComparer_Equals;
 					hashcode_signature = EqualityComparer_GetHashCode;
 				} else {
@@ -240,7 +240,7 @@ namespace Gendarme.Rules.Exceptions {
 				return PreflightVirtualMethod (method);
 			} else if (method.HasParameters && (method.Name == "Dispose")) {
 				IList<ParameterDefinition> pdc = method.Parameters;
-				if ((pdc.Count == 1) && pdc [0].ParameterType.IsNamed ("System", "Boolean"))
+				if ((pdc.Count == 1) && pdc [0].ParameterType.IsNamed ("System", "Boolean", null))
 					return "Dispose (bool)";
 			} else if (MethodSignatures.TryParse.Matches (method)) {
 				return "TryParse";
@@ -289,7 +289,7 @@ namespace Gendarme.Rules.Exceptions {
 			} else if (MethodSignatures.Finalize.Matches (method)) {
 				return "Finalizers";
 			} else if (MethodSignatures.Dispose.Matches (method) || MethodSignatures.DisposeExplicit.Matches (method)) {
-				if (method.DeclaringType.Implements ("System", "IDisposable"))
+				if (method.DeclaringType.Implements ("System", "IDisposable", null))
 					return "IDisposable.Dispose";
 			} else if (equals_signature != null && equals_signature.Matches (method)) {
 				return "IEqualityComparer<T>.Equals";
@@ -382,7 +382,7 @@ namespace Gendarme.Rules.Exceptions {
 						if (ins.Previous.Is (Code.Newobj)) {
 							MethodReference mr = (MethodReference) ins.Previous.Operand;
 							TypeReference tr = mr.DeclaringType;
-							if (tr.IsNamed ("System", "NotImplementedException") || tr.Inherits ("System", "NotImplementedException"))
+							if (tr.IsNamed ("System", "NotImplementedException", null) || tr.Inherits ("System", "NotImplementedException", null))
 								continue;
 						}	
 					
@@ -397,12 +397,12 @@ namespace Gendarme.Rules.Exceptions {
 							TypeReference type = (ins.Previous.Operand as MethodReference ).DeclaringType;
 							bool allowed = false;
 							foreach (string[] entry in allowedExceptions) {
-								if (type.IsNamed (entry [0], entry [1]))
+								if (type.IsNamed (entry [0], entry [1], null)) // assume not nested
 									allowed = true;
 							}
 							if (!allowed) {
 								foreach (string [] entry in allowedExceptions) {
-									if (type.Inherits (entry [0], entry [1])) {
+									if (type.Inherits (entry [0], entry [1], null)) { // assume not nested
 										allowed = true;
 										break;
 									}

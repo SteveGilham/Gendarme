@@ -203,7 +203,7 @@ namespace Gendarme.Rules.Maintainability {
 					continue;
 
 				MethodReference mr = (current.Operand as MethodReference);
-				if (mr.IsNamed ("System", "String", "get_Length")) {
+				if (mr.IsNamed ("System", "String", "get_Length", null)) {
 					// now that we found it we check that
 					// 1 - we previously did a check null on the same value (that we already know is a string)
 					Instruction branch = PreLengthCheck (method, current.Previous);

@@ -65,11 +65,11 @@ namespace Gendarme.Rules.Globalization {
 			if (!typeDefinition.HasCustomAttributes)
 				return false;
 
-			if (typeDefinition.HasAttribute ("System.CodeDom.Compiler", "GeneratedCodeAttribute"))
+			if (typeDefinition.HasAttribute ("System.CodeDom.Compiler", "GeneratedCodeAttribute", null))
 				return true;
-			if (typeDefinition.HasAttribute ("System.Diagnostics", "DebuggerNonUserCodeAttribute"))
+			if (typeDefinition.HasAttribute ("System.Diagnostics", "DebuggerNonUserCodeAttribute", null))
 				return true;
-			if (typeDefinition.HasAttribute ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute"))
+			if (typeDefinition.HasAttribute ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute", null))
 				return true;
 
 			return false;

@@ -95,7 +95,7 @@ namespace Gendarme.Rules.Design {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies to type that doesn't implement System.IClonable
-			if (type.Implements ("System", "ICloneable"))
+			if (type.Implements ("System", "ICloneable", null))
 				return RuleResult.DoesNotApply;
 
 			foreach (MethodDefinition method in type.Methods) {
@@ -110,7 +110,7 @@ namespace Gendarme.Rules.Design {
 
 				// that return System.Object, e.g. public object Clone()
 				// or the current type, e.g. public <type> Clone()
-				if (method.ReturnType.IsNamed ("System", "Object"))
+				if (method.ReturnType.IsNamed ("System", "Object", null))
 					Runner.Report (method, Severity.Low, Confidence.High);
 			}
 

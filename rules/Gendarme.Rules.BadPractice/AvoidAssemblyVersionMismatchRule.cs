@@ -81,7 +81,7 @@ namespace Gendarme.Rules.BadPractice {
 				// any attribute without arguments can be skipped
 				if (!ca.HasConstructorArguments)
 					continue;
-				if (!ca.AttributeType.IsNamed ("System.Reflection", "AssemblyFileVersionAttribute"))
+				if (!ca.AttributeType.IsNamed ("System.Reflection", "AssemblyFileVersionAttribute", null))
 					continue;
 
 				Version.TryParse (ca.ConstructorArguments [0].Value as string, out file_version);

@@ -127,7 +127,7 @@ namespace Gendarme.Rules.Serialization {
 				if (ins.OpCode.OperandType != OperandType.InlineField)
 					continue;
 				FieldDefinition field = (ins.Operand as FieldDefinition);
-				if ((field != null) && field.FieldType.IsNamed (return_type.Namespace, return_type.Name))
+				if ((field != null) && field.FieldType.IsNamed (return_type.Namespace, return_type.Name, return_type))
 					return field;
 			}
 			return null;
@@ -143,7 +143,7 @@ namespace Gendarme.Rules.Serialization {
 					if (!mr.HasParameters || (mr.Name != "AddValue") || (mr.Parameters.Count < 2))
 						continue;
 					// type is sealed so this check is ok
-					if (!mr.DeclaringType.IsNamed ("System.Runtime.Serialization", "SerializationInfo"))
+					if (!mr.DeclaringType.IsNamed ("System.Runtime.Serialization", "SerializationInfo", null))
 						continue;
 
 					// look at the second parameter, which should be (or return) the field
@@ -189,7 +189,7 @@ namespace Gendarme.Rules.Serialization {
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			if (!type.IsSerializable || !type.Implements ("System.Runtime.Serialization", "ISerializable"))
+			if (!type.IsSerializable || !type.Implements ("System.Runtime.Serialization", "ISerializable", null))
 				return RuleResult.DoesNotApply;
 
 			MethodDefinition getObjectData = type.GetMethod (MethodSignatures.GetObjectData);

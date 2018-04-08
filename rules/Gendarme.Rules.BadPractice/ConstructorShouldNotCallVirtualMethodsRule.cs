@@ -178,7 +178,7 @@ namespace Gendarme.Rules.BadPractice {
 						if (mr.HasThis)
 							parameters++;
 						parameters += mr.Parameters.Count;
-						if (!mr.ReturnType.IsNamed ("System", "Void"))
+						if (!mr.ReturnType.IsNamed ("System", "Void", null))
 							parameters--;
 					}
 					break;

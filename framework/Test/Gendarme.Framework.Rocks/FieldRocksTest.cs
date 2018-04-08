@@ -77,21 +77,21 @@ namespace Test.Framework.Rocks {
 		public void HasAttribute_Namespace_Null ()
 		{
             Assert.Throws<ArgumentNullException>(() => 
-            GetField("assembly").HasAttribute (null, "a"));
+            GetField("assembly").HasAttribute (null, "a", null));
 		}
 
 		[Test]
 		public void HasAttribute_Name_Null ()
 		{
             Assert.Throws<ArgumentNullException>(() => 
-            GetField("assembly").HasAttribute ("a", null));
+            GetField("assembly").HasAttribute ("a", null, null));
 		}
 
 		[Test]
 		public void HasAttribute ()
 		{
-			Assert.IsTrue (GetField ("cga").HasAttribute ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), "CompilerGeneratedAttribute");
-			Assert.IsFalse (GetField ("cga").HasAttribute ("NUnit.Framework", "TestFixtureAttribute"), "TestFixtureAttribute");
+			Assert.IsTrue (GetField ("cga").HasAttribute ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute", null), "CompilerGeneratedAttribute");
+			Assert.IsFalse (GetField ("cga").HasAttribute ("NUnit.Framework", "TestFixtureAttribute", null), "TestFixtureAttribute");
 		}
 
 		[Test]

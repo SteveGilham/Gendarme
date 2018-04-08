@@ -108,7 +108,7 @@ namespace Gendarme.Rules.Performance {
 
 			IList<ParameterDefinition> pdc = call.Parameters;
 			int last = pdc.Count;
-			if (!pdc [last - 1].ParameterType.IsNamed ("System", "StringComparison")) {
+			if (!pdc [last - 1].ParameterType.IsNamed ("System", "StringComparison", null)) {
 				// confidence is normal because it's possible that the code expects a
 				// culture sensitive comparison (but that will break in .NET 4).
 				Report (method, ins, Confidence.Normal, call, p1);
@@ -150,7 +150,7 @@ namespace Gendarme.Rules.Performance {
 
 		static bool CheckFirstParameterIsString (IMethodSignature method)
 		{
-			return (method.HasParameters && method.Parameters [0].ParameterType.IsNamed ("System", "String"));
+			return (method.HasParameters && method.Parameters [0].ParameterType.IsNamed ("System", "String", null));
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)
@@ -168,7 +168,7 @@ namespace Gendarme.Rules.Performance {
 					continue;
 
 				MethodReference call = (ins.Operand as MethodReference);
-				if (!call.DeclaringType.IsNamed ("System", "String"))
+				if (!call.DeclaringType.IsNamed ("System", "String", null))
 					continue;
 
 				switch (call.Name) {

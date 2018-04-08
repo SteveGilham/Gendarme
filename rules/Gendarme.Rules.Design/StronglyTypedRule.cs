@@ -43,6 +43,7 @@ namespace Gendarme.Rules.Design {
 		abstract protected string [] GetProperties ();
 		abstract protected string InterfaceName { get; }
 		abstract protected string InterfaceNamespace { get; }
+        abstract protected TypeReference InterfaceType { get; }
 
 		MethodSignature [] signatures;
 		string [] propertyNames;
@@ -50,7 +51,7 @@ namespace Gendarme.Rules.Design {
 
 		virtual public RuleResult CheckType (TypeDefinition type)
 		{
-			if (type.IsAbstract || type.IsGeneratedCode () || !type.Implements (InterfaceNamespace, InterfaceName))
+			if (type.IsAbstract || type.IsGeneratedCode () || !type.Implements (InterfaceNamespace, InterfaceName, InterfaceType))
 				return RuleResult.DoesNotApply;
 
 			signatures = GetMethods ();

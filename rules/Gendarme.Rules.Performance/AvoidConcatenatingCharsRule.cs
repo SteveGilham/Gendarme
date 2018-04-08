@@ -78,7 +78,7 @@ namespace Gendarme.Rules.Performance {
 		static bool HasReferenceToStringConcatObject (ModuleDefinition module)
 		{
 			foreach (MemberReference mr in module.GetMemberReferences ()) {
-				if (mr.IsNamed ("System", "String", "Concat")) {
+				if (mr.IsNamed ("System", "String", "Concat", null)) {
 					MethodReference method = (mr as MethodReference);
 					// catch both System.Object and System.Object[]
 					if (!method.HasParameters)
@@ -155,7 +155,7 @@ namespace Gendarme.Rules.Performance {
 
 				// look for String.Concat overloads using System.Object
 				MethodReference mr = (ins.Operand as MethodReference);
-				if (!mr.HasParameters || !mr.IsNamed ("System", "String", "Concat"))
+				if (!mr.HasParameters || !mr.IsNamed ("System", "String", "Concat", null))
 					continue;
 
 				TypeReference ptype = mr.Parameters [0].ParameterType;

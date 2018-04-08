@@ -88,7 +88,7 @@ namespace Gendarme.Rules.Performance {
 				MethodReference mr = (ins.Operand as MethodReference);
 				if ((mr == null) || !mr.HasParameters)
 					continue;
-				if (!mr.IsNamed ("System", "Type", "GetType"))
+				if (!mr.IsNamed ("System", "Type", "GetType", null))
 					continue;
 
 				if (ins.Previous.OpCode.Code != Code.Ldstr)

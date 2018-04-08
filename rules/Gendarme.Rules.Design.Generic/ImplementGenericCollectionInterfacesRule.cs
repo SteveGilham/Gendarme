@@ -81,15 +81,15 @@ namespace Gendarme.Rules.Design.Generic {
 				return RuleResult.DoesNotApply;
 
 			// rule only applies if the type implements IEnumerable
-			if (!type.Implements ("System.Collections", "IEnumerable"))
+			if (!type.Implements ("System.Collections", "IEnumerable", null))
 				return RuleResult.DoesNotApply;
 		
 			// rule does not apply to the types implementing IDictionary
-			if (type.Implements ("System.Collections", "IDictionary"))
+			if (type.Implements ("System.Collections", "IDictionary", null))
 				return RuleResult.DoesNotApply;
 
 			// the type should implement IEnumerable<T> too
-			if (!type.Implements ("System.Collections.Generic", "IEnumerable`1"))
+			if (!type.Implements ("System.Collections.Generic", "IEnumerable`1", null))
 				Runner.Report (type, Severity.Medium, Confidence.High);
 
 			return Runner.CurrentRuleResult;

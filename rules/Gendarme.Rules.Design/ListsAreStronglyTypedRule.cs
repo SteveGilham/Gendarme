@@ -110,5 +110,10 @@ namespace Gendarme.Rules.Design {
 		protected override string InterfaceNamespace {
 			get { return "System.Collections"; }
 		}
-	}
+
+        protected override TypeReference InterfaceType
+        {
+            get { return null; }
+        }
+    }
 }

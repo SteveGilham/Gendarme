@@ -140,7 +140,7 @@ namespace Gendarme.Rules.Design {
 			if (type.IsInterface || type.IsEnum || type.IsDelegate ())
 				return RuleResult.DoesNotApply;
 			
-			if (type.Implements ("System", "IDisposable")) {
+			if (type.Implements ("System", "IDisposable", null)) {
 				Log.WriteLine (this);
 				Log.WriteLine (this, "----------------------------------");
 				Log.WriteLine (this, type);
@@ -235,7 +235,7 @@ namespace Gendarme.Rules.Design {
 		{
 			if (type.HasInterfaces) {
 				foreach (TypeReference candidate in type.Interfaces.Select(t => t.InterfaceType)) {
-					if (candidate.IsNamed ("System", "IDisposable"))
+					if (candidate.IsNamed ("System", "IDisposable", null))
 						return true;
 				}
 			}

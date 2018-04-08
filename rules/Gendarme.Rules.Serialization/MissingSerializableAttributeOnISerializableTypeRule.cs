@@ -72,11 +72,11 @@ namespace Gendarme.Rules.Serialization {
 				return RuleResult.DoesNotApply;
 
 			// rule does not apply if the type does not implements ISerializable 
-			if (!type.Implements ("System.Runtime.Serialization", "ISerializable"))
+			if (!type.Implements ("System.Runtime.Serialization", "ISerializable", null))
 				return RuleResult.DoesNotApply;
 
 			// rule applies only if base type is serializable
-			if (!type.BaseType.IsNamed ("System", "Object")) {
+			if (!type.BaseType.IsNamed ("System", "Object", null)) {
 				TypeDefinition base_type = type.BaseType.Resolve ();
 				// in doubt don't report
 				if ((base_type == null) || !base_type.IsSerializable)

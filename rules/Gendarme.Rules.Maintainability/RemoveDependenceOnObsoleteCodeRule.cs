@@ -115,7 +115,7 @@ namespace Gendarme.Rules.Maintainability {
 			bool obsolete = false;
 			if (!types.TryGetValue (type, out obsolete)) {
 				TypeDefinition t = type.Resolve ();
-				obsolete = t.HasAttribute ("System", "ObsoleteAttribute");
+				obsolete = t.HasAttribute ("System", "ObsoleteAttribute", null);
 				types.Add (type, obsolete);
 			}
 			return obsolete;
@@ -129,7 +129,7 @@ namespace Gendarme.Rules.Maintainability {
 			bool obsolete = false;
 			if (!methods.TryGetValue (method, out obsolete)) {
 				MethodDefinition md = method.Resolve ();
-				obsolete = md.HasAttribute ("System", "ObsoleteAttribute");
+				obsolete = md.HasAttribute ("System", "ObsoleteAttribute", null);
 				methods.Add (method, obsolete);
 			}
 			return obsolete;
@@ -143,7 +143,7 @@ namespace Gendarme.Rules.Maintainability {
 			bool obsolete = false;
 			if (!fields.TryGetValue (field, out obsolete)) {
 				FieldDefinition fd = field.Resolve ();
-				obsolete = fd.HasAttribute ("System", "ObsoleteAttribute");
+				obsolete = fd.HasAttribute ("System", "ObsoleteAttribute", null);
 				fields.Add (field, obsolete);
 			}
 			return obsolete;
@@ -220,7 +220,7 @@ namespace Gendarme.Rules.Maintainability {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// we're not interested in the details of [Obsolete] types
-			if (type.HasAttribute ("System", "ObsoleteAttribute"))
+			if (type.HasAttribute ("System", "ObsoleteAttribute", null))
 				return RuleResult.DoesNotApply;
 
 			// check if we inherit from an [Obsolete] class / struct / enum
@@ -339,7 +339,7 @@ namespace Gendarme.Rules.Maintainability {
 				return RuleResult.DoesNotApply;
 
 			// if the method is obsolete (directly or because it's type is)
-			if (method.HasAttribute ("System", "ObsoleteAttribute") || method.DeclaringType.HasAttribute ("System", "ObsoleteAttribute"))
+			if (method.HasAttribute ("System", "ObsoleteAttribute", null) || method.DeclaringType.HasAttribute ("System", "ObsoleteAttribute", null))
 				return RuleResult.DoesNotApply;
 
 			// check method signature (parameters, return value)

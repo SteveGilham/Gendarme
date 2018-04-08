@@ -72,9 +72,9 @@ namespace Gendarme.Rules.Performance {
 			TypeReference arg = git.GenericArguments [0];
 			switch (arg.MetadataType) {
 			case MetadataType.MVar:
-				return (arg.IsGenericParameter && arg.IsNamed (String.Empty, "T"));
+				return (arg.IsGenericParameter && arg.IsNamed (String.Empty, "T", null));
 			case MetadataType.ValueType:
-				return arg.IsNamed ("System", "Decimal");
+				return arg.IsNamed ("System", "Decimal", null);
 			case MetadataType.Boolean:
 			case MetadataType.Byte:
 			case MetadataType.Char:

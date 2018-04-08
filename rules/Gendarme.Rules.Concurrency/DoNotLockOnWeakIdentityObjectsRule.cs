@@ -113,9 +113,9 @@ namespace Gendarme.Rules.Concurrency {
 			}
 		}
 
-		static string InheritFromWeakType (TypeReference type, string nameSpace, string name)
+		static string InheritFromWeakType (TypeReference type, string nameSpace, string name, TypeReference fallback)
 		{
-			if (!type.Inherits (nameSpace, name))
+			if (!type.Inherits (nameSpace, name, fallback))
 				return String.Empty;
 			return String.Format (CultureInfo.InvariantCulture, "'{0}' inherits from '{1}.{2}'.", 
 				type.GetFullName (), nameSpace, name);
@@ -134,7 +134,7 @@ namespace Gendarme.Rules.Concurrency {
 			if (first.OpCode.Code == Code.Dup)
 				first = first.Previous;
 			type = first.GetOperandType (method);
-			if (type.IsNamed ("System", "Object")) {
+			if (type.IsNamed ("System", "Object", null)) {
 				// newer GMCS use a temporary local that hides the real type
 				Instruction prev = first.Previous;
 				if (first.IsLoadLocal () && prev.IsStoreLocal ()) {
@@ -149,22 +149,22 @@ namespace Gendarme.Rules.Concurrency {
 			if (IsWeakSealedType (type)) {
 				Runner.Report (method, call, Severity.High, Confidence.Normal, type.GetFullName ());
 			} else {
-				string msg = InheritFromWeakType (type, "System", "MarshalByRefObject");
+				string msg = InheritFromWeakType (type, "System", "MarshalByRefObject", null);
 				if (msg.Length > 0) {
 					Runner.Report (method, call, Severity.High, Confidence.Normal, msg);
 					return;
 				}
-				msg = InheritFromWeakType (type, "System", "OutOfMemoryException");
+				msg = InheritFromWeakType (type, "System", "OutOfMemoryException", null);
 				if (msg.Length > 0) {
 					Runner.Report (method, call, Severity.High, Confidence.Normal, msg);
 					return;
 				}
-				msg = InheritFromWeakType (type, "System.Reflection", "MemberInfo");
+				msg = InheritFromWeakType (type, "System.Reflection", "MemberInfo", null);
 				if (msg.Length > 0) {
 					Runner.Report (method, call, Severity.High, Confidence.Normal, msg);
 					return;
 				}
-				msg = InheritFromWeakType (type, "System.Reflection", "ParameterInfo");
+				msg = InheritFromWeakType (type, "System.Reflection", "ParameterInfo", null);
 				if (msg.Length > 0) {
 					Runner.Report (method, call, Severity.High, Confidence.Normal, msg);
 				}

@@ -105,7 +105,7 @@ namespace Gendarme.Rules.Correctness {
 				break;
 			case Code.Ldsfld:
 				FieldReference f = (FieldReference) ld.Operand;
-				if (f.Name == "Empty" && f.DeclaringType.IsNamed ("System", "String"))
+				if (f.Name == "Empty" && f.DeclaringType.IsNamed ("System", "String", null))
 					CheckString (method, ins, null);
 				break;
 			case Code.Ldnull:
@@ -137,13 +137,13 @@ namespace Gendarme.Rules.Correctness {
 
 			switch (mref.Name) {
 			case "LoadXml":
-				if (mref.DeclaringType.IsNamed ("System.Xml", "XmlDocument"))
+				if (mref.DeclaringType.IsNamed ("System.Xml", "XmlDocument", null))
 					CheckString (method, ins, -1);
 				break;
 			case "set_InnerXml":
 			case "set_OuterXml":
 				TypeReference tr = mref.DeclaringType;
-				if (tr.Inherits ("System.Xml", "XmlNode") || tr.Inherits ("System.Xml.XPath", "XPathNavigator"))
+				if (tr.Inherits ("System.Xml", "XmlNode", null) || tr.Inherits ("System.Xml.XPath", "XPathNavigator", null))
 					CheckString (method, ins, -1);
 				break;
 			case "AppendChild":
@@ -152,8 +152,8 @@ namespace Gendarme.Rules.Correctness {
 			case "InsertBefore":
 				IList<ParameterDefinition> pdc = mref.Parameters;
 				if (pdc.Count == 1
-					&& pdc [0].ParameterType.IsNamed ("System", "String")
-					&& mref.DeclaringType.Inherits ("System.Xml.XPath", "XPathNavigator"))
+					&& pdc [0].ParameterType.IsNamed ("System", "String", null)
+					&& mref.DeclaringType.Inherits ("System.Xml.XPath", "XPathNavigator", null))
 					CheckString (method, ins, -1);
 				break;
 			}

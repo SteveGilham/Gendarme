@@ -159,10 +159,10 @@ namespace Gendarme.Rules.Performance {
 		{
 			TypeReference type = method.DeclaringType;
 			// Elapsed* and IsRunning
-			if (type.IsNamed ("System.Diagnostics", "Stopwatch"))
+			if (type.IsNamed ("System.Diagnostics", "Stopwatch", null))
 				return true;
 			// Now and UtcNow
-			else if (type.IsNamed ("System", "DateTime"))
+			else if (type.IsNamed ("System", "DateTime", null))
 				return method.IsStatic;
 
 			return false;

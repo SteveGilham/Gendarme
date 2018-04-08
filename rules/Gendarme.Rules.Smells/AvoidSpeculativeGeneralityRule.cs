@@ -124,7 +124,7 @@ namespace Gendarme.Rules.Smells {
 				foreach (ModuleDefinition module in assembly.Modules) {
 					foreach (TypeDefinition type in module.GetAllTypes ()) {
 						if ((baseType == type.BaseType) || (type.BaseType != null &&
-							type.BaseType.IsNamed (baseType.Namespace, baseType.Name))) {
+							type.BaseType.IsNamed (baseType.Namespace, baseType.Name, baseType))) {
 							if (++count > expected)
 								return false;
 						}
@@ -167,7 +167,7 @@ namespace Gendarme.Rules.Smells {
 
 		private static bool InheritsOnlyFromObject (TypeDefinition type)
 		{
-			return !type.HasInterfaces && type.BaseType.IsNamed ("System", "Object");
+			return !type.HasInterfaces && type.BaseType.IsNamed ("System", "Object", null);
 		}
 
 		private static bool MostlyMethodsDelegatesCall (TypeDefinition type)

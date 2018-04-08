@@ -217,7 +217,7 @@ namespace Gendarme.Rules.Correctness {
 				if (!attr.HasConstructorArguments)
 					continue;
 				if (StringConstructor.Matches (attr.Constructor)) {
-					if (attr.AttributeType.IsNamed ("System.Diagnostics", "ConditionalAttribute")) {
+					if (attr.AttributeType.IsNamed ("System.Diagnostics", "ConditionalAttribute", null)) {
 						return (string) attr.ConstructorArguments [0].Value;
 					}
 				}

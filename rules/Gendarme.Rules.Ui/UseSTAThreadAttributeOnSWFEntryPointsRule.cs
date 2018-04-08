@@ -112,8 +112,8 @@ namespace Gendarme.Rules.UI {
 			if (!referencesSWF)
 				return RuleResult.DoesNotApply;
 
-			bool hasSTA = entry_point.HasAttribute ("System", "STAThreadAttribute");
-			bool hasMTA = entry_point.HasAttribute ("System", "MTAThreadAttribute");
+			bool hasSTA = entry_point.HasAttribute ("System", "STAThreadAttribute", null);
+			bool hasMTA = entry_point.HasAttribute ("System", "MTAThreadAttribute", null);
 
 			// success if only [STAThread] attribute is present
 			if (hasSTA && !hasMTA)

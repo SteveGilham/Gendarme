@@ -114,7 +114,7 @@ namespace Gendarme.Rules.Correctness {
 
 			// methods with [Conditional] can be empty (not using 'this') IL-wise but not source-wise, ignore them
 			if (method.HasCustomAttributes) {
-				if (method.HasAttribute ("System.Diagnostics", "ConditionalAttribute"))
+				if (method.HasAttribute ("System.Diagnostics", "ConditionalAttribute", null))
 					return RuleResult.DoesNotApply;
 			}
 

@@ -99,7 +99,12 @@ namespace Gendarme.Rules.Design {
 			get { return "System.Collections"; }
 		}
 
-		override public RuleResult CheckType (TypeDefinition type)
+        protected override TypeReference InterfaceType
+        {
+            get { return null; }
+        }
+
+        override public RuleResult CheckType (TypeDefinition type)
 		{
 			TypeReference baseType = type;
 			while (baseType != null) {

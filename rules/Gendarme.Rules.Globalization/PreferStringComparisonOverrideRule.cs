@@ -69,7 +69,7 @@ namespace Gendarme.Rules.Globalization {
 
 		protected override bool IsPrefered (TypeReference type)
 		{
-			return type.IsNamed ("System", "StringComparison");
+			return type.IsNamed ("System", "StringComparison", null);
 		}
 
 		protected override void Report (MethodDefinition method, Instruction instruction, MethodReference prefered)

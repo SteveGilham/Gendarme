@@ -468,7 +468,7 @@ namespace Gendarme.Rules.Portability {
 				// this is a constructor call
 				MethodReference ctor = (MethodReference) ins.Operand;
 				// avoid catching regular expressions
-				if (ctor.DeclaringType.IsNamed ("System.Text.RegularExpressions", "Regex"))
+				if (ctor.DeclaringType.IsNamed ("System.Text.RegularExpressions", "Regex", null))
 					AddPoints (-42);
 
 				break;

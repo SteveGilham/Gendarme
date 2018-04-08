@@ -89,7 +89,7 @@ namespace Gendarme.Rules.Maintainability {
 				Active = (e.CurrentModule.Runtime >= TargetRuntime.Net_2_0
 					&& (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "DateTime");
+						return tr.IsNamed ("System", "DateTime", null);
 					}
 				)));
 			};
@@ -106,7 +106,7 @@ namespace Gendarme.Rules.Maintainability {
 				return false;
 
 			MethodReference calledMethod = (MethodReference) ins.Operand;
-			return calledMethod.IsNamed ("System", "DateTime", "get_Now");
+			return calledMethod.IsNamed ("System", "DateTime", "get_Now", null);
 		}
 		
 		private static bool CheckParameters (MethodDefinition method, Instruction ins)
@@ -164,7 +164,7 @@ namespace Gendarme.Rules.Maintainability {
 				MethodReference calledMethod = ins.GetMethod ();
 				if (calledMethod == null)
 					continue;
-				if (!calledMethod.DeclaringType.IsNamed ("System", "DateTime"))
+				if (!calledMethod.DeclaringType.IsNamed ("System", "DateTime", null))
 					continue;
 				if (!MethodSignatures.op_Subtraction.Matches (calledMethod))
 					continue;

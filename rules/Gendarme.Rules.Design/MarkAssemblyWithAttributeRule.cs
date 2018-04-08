@@ -40,6 +40,7 @@ namespace Gendarme.Rules.Design {
 
 		abstract protected string AttributeNamespace { get; }
 		abstract protected string AttributeName { get; }
+        abstract protected TypeReference AttributeType { get; }
 
 		abstract protected Severity Severity { get; }
 
@@ -48,7 +49,7 @@ namespace Gendarme.Rules.Design {
 			if (!assembly.HasCustomAttributes)
 				return RuleResult.DoesNotApply;
 
-			if (assembly.HasAttribute (AttributeNamespace, AttributeName))
+			if (assembly.HasAttribute (AttributeNamespace, AttributeName, AttributeType))
 				return RuleResult.Success;
 
 			Runner.Report (assembly, Severity, Confidence.Total);

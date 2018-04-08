@@ -104,13 +104,13 @@ namespace Gendarme.Rules.Performance {
 			case "System.String":
 				// Since strings are immutable, calling System.String methods that returns strings 
 				// better be assigned to something
-				return !method.ReturnType.IsNamed ("System", "String");
+				return !method.ReturnType.IsNamed ("System", "String", null);
 			case "System.IO.DirectoryInfo":
 				// GetDirectories overloads don't apply to the instance
 				return (method.Name != "GetDirectories");
 			case "System.Security.PermissionSet":
 				// Intersection and Union returns a new PermissionSet (it does not change the instance)
-				return !method.ReturnType.IsNamed ("System.Security", "PermissionSet");
+				return !method.ReturnType.IsNamed ("System.Security", "PermissionSet", null);
 			default:
 				// this is useless anytime, if unassigned, more in cases like a StringBuilder
 				return (method.Name != "ToString");

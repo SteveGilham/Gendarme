@@ -135,7 +135,7 @@ namespace Gendarme.Rules.Performance {
 			if (call.HasParameters)
 				return String.Empty;
 
-			if (!ins.Previous.GetOperandType (method).IsNamed ("System", "String"))
+			if (!ins.Previous.GetOperandType (method).IsNamed ("System", "String", null))
 				return  String.Empty;
 
 			return String.Format (CultureInfo.InvariantCulture, MessageString, call.Name, String.Empty);
@@ -143,7 +143,7 @@ namespace Gendarme.Rules.Performance {
 
 		private static string CheckSubstring (MethodReference call, Instruction ins)
 		{
-			if (!call.DeclaringType.IsNamed ("System", "String"))
+			if (!call.DeclaringType.IsNamed ("System", "String", null))
 				return String.Empty;
 
 			// ensure it's System.String::Substring(System.Int32) and that it's given 0 as a parameter
@@ -157,7 +157,7 @@ namespace Gendarme.Rules.Performance {
 
 		private static string CheckToString (MethodReference call, Instruction ins, MethodDefinition method)
 		{
-			if (call.DeclaringType.IsNamed ("System", "String")) {
+			if (call.DeclaringType.IsNamed ("System", "String", null)) {
 				// most probably ToString(IFormatProvider), possibly ToString()
 				return String.Format (CultureInfo.InvariantCulture, MessageString, call.Name, 
 					(call.HasParameters && (call.Parameters.Count > 1)) ? "IFormatProvider" : String.Empty);

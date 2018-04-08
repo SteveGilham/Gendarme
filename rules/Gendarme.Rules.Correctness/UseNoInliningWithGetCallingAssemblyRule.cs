@@ -88,7 +88,7 @@ namespace Gendarme.Rules.Correctness {
 
 		static bool IsGetCallingAssembly (MemberReference method)
 		{
-			return method.IsNamed ("System.Reflection", "Assembly", "GetCallingAssembly");
+			return method.IsNamed ("System.Reflection", "Assembly", "GetCallingAssembly", null);
 		}
 
 		static bool IsCallToGetCallingAssembly (Instruction instruction)

@@ -64,7 +64,12 @@ namespace Gendarme.Rules.Design {
 			get { return "CLSCompliantAttribute"; }
 		}
 
-		protected override Severity Severity {
+        protected override TypeReference AttributeType
+        {
+            get { return null; }
+        }
+
+        protected override Severity Severity {
 			get { return Severity.High; }
 		}
 	}

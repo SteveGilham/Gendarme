@@ -55,13 +55,13 @@ namespace Gendarme.Framework.Rocks {
 	/// </summary>
 	public static class MethodRocks {
 
-		public static bool IsNamed (this MemberReference self, string nameSpace, string typeName, string methodName)
+		public static bool IsNamed (this MemberReference self, string nameSpace, string typeName, string methodName, TypeReference fallback)
 		{
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 			if (self == null)
 				return false;
-			return ((self.Name == methodName) && self.DeclaringType.IsNamed (nameSpace, typeName));
+			return ((self.Name == methodName) && self.DeclaringType.IsNamed (nameSpace, typeName, fallback));
 		}
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			return (self.HasThis && !self.HasParameters && (self.Name == "Finalize") &&
-				self.ReturnType.IsNamed ("System", "Void"));
+				self.ReturnType.IsNamed ("System", "Void", null));
 		}
 
 		/// <summary>
@@ -237,11 +237,11 @@ namespace Gendarme.Framework.Rocks {
 			TypeReference type = parameters [1].ParameterType;
 			GenericParameter gp = (type as GenericParameter);
 			if (gp == null)
-				return type.Inherits ("System", "EventArgs");
+				return type.Inherits ("System", "EventArgs", null);
 
 			if (gp.HasConstraints) {
 				IList<TypeReference> cc = gp.Constraints;
-				return ((cc.Count == 1) && cc [0].IsNamed ("System", "EventArgs"));
+				return ((cc.Count == 1) && cc [0].IsNamed ("System", "EventArgs", null));
 			}
 
 			return false;
@@ -274,7 +274,7 @@ namespace Gendarme.Framework.Rocks {
 
 		private static bool AreSameElementTypes (TypeReference a, TypeReference b)
 		{
-			return a.IsGenericParameter || b.IsGenericParameter || b.IsNamed (a.Namespace, a.Name);
+			return a.IsGenericParameter || b.IsGenericParameter || b.IsNamed (a.Namespace, a.Name, a);
 		}
 
 		/// <summary>

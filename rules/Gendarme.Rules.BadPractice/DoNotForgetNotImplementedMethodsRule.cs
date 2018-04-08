@@ -93,7 +93,7 @@ namespace Gendarme.Rules.BadPractice {
 				if (inst.OpCode.Code != Code.Newobj)
 					continue;
 				MethodReference ctor = (MethodReference) inst.Operand;
-				if (!ctor.DeclaringType.IsNamed ("System", "NotImplementedException"))
+				if (!ctor.DeclaringType.IsNamed ("System", "NotImplementedException", null))
 					continue;
 				if (inst.Next.OpCode.Code != Code.Throw)
 					continue;

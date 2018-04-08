@@ -134,7 +134,7 @@ namespace Gendarme.Rules.Concurrency {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Threading", "Monitor");
+						return tr.IsNamed ("System.Threading", "Monitor", null);
 					}));
 			};
 		}
@@ -160,9 +160,9 @@ namespace Gendarme.Rules.Concurrency {
 				if (m == null)
 					continue;
 
-				if (m.IsNamed ("System.Threading", "Monitor", "Enter")) {
+				if (m.IsNamed ("System.Threading", "Monitor", "Enter", null)) {
 					enter++;
-				} else if (m.IsNamed ("System.Threading", "Monitor", "Exit")) {
+				} else if (m.IsNamed ("System.Threading", "Monitor", "Exit", null)) {
 					exit++;
 				}
 			}

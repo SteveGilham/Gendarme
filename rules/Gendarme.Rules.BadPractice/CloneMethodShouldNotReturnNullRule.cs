@@ -78,7 +78,7 @@ namespace Gendarme.Rules.BadPractice {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "ICloneable");
+						return tr.IsNamed ("System", "ICloneable", null);
 					}));
 			};
 		}
@@ -90,7 +90,7 @@ namespace Gendarme.Rules.BadPractice {
 				return RuleResult.DoesNotApply;
 
 			// where the type implements ICloneable
-			if (!method.DeclaringType.Implements ("System", "ICloneable"))
+			if (!method.DeclaringType.Implements ("System", "ICloneable", null))
 				return RuleResult.DoesNotApply;
 
 			// call base class to detect if the method can return null

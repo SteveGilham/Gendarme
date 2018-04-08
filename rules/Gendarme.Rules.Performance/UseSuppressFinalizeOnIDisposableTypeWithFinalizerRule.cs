@@ -128,7 +128,7 @@ namespace Gendarme.Rules.Performance {
 				case Code.Callvirt:
 					// are we calling GC.SuppressFinalize ?
 					MethodReference callee = (ins.Operand as MethodReference);
-					if (callee.IsNamed ("System", "GC", "SuppressFinalize")) {
+					if (callee.IsNamed ("System", "GC", "SuppressFinalize", null)) {
 						return true;
 					} else if (level < 3) {
 						if (Recurse (callee.Resolve (), level + 1))
@@ -154,7 +154,7 @@ namespace Gendarme.Rules.Performance {
 				return RuleResult.DoesNotApply;
 
 			// rule applies to types that implements System.IDisposable
-			if (!type.Implements ("System", "IDisposable"))
+			if (!type.Implements ("System", "IDisposable", null))
 				return RuleResult.DoesNotApply;
 
 			// and provide a finalizer

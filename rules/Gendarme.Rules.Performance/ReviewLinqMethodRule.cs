@@ -252,7 +252,7 @@ namespace Gendarme.Rules.Performance {
 				
 				// and the method is a System.Linq.Enumerable method then,
 				var target = ins.Operand as MethodReference;
-				if (!target.DeclaringType.IsNamed ("System.Linq", "Enumerable"))
+				if (!target.DeclaringType.IsNamed ("System.Linq", "Enumerable", null))
 					continue;
 
 				string tname = target.Name;

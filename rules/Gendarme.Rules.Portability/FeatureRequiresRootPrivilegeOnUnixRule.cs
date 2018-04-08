@@ -95,8 +95,8 @@ namespace Gendarme.Rules.Portability {
 			// then it's not being used inside it
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-					ping_present = tr.IsNamed ("System.Net.NetworkInformation", "Ping");
-					process_present = tr.IsNamed ("System.Diagnostics", "Process");
+					ping_present = tr.IsNamed ("System.Net.NetworkInformation", "Ping", null);
+					process_present = tr.IsNamed ("System.Diagnostics", "Process", null);
 					// return true to stop looping when both Ping and Process are found
 					return (ping_present && process_present);
 				});
@@ -113,7 +113,7 @@ namespace Gendarme.Rules.Portability {
 			MethodReference method = (ins.Operand as MethodReference);
 			if ((method == null) || (method.Name != "set_PriorityClass"))
 				return false;
-			if (!method.DeclaringType.IsNamed ("System.Diagnostics", "Process"))
+			if (!method.DeclaringType.IsNamed ("System.Diagnostics", "Process", null))
 				return false;
 
 			Instruction prev = ins.Previous; //check stack
@@ -133,7 +133,7 @@ namespace Gendarme.Rules.Portability {
 		private static bool CheckPing (Instruction ins)
 		{
 			MethodReference method = (ins.Operand as MethodReference);
-			return ((method != null) && (method.DeclaringType.IsNamed ("System.Net.NetworkInformation", "Ping")));
+			return ((method != null) && (method.DeclaringType.IsNamed ("System.Net.NetworkInformation", "Ping", null)));
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)

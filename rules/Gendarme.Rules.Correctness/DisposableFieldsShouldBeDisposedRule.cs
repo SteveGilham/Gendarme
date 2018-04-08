@@ -117,7 +117,7 @@ namespace Gendarme.Rules.Correctness {
 
 			// note: other rule will complain if there are disposable or native fields
 			// in a type that doesn't implement IDisposable, so we don't bother here
-			if (!type.Implements ("System", "IDisposable"))
+			if (!type.Implements ("System", "IDisposable", null))
 				return RuleResult.DoesNotApply;
 
 			MethodDefinition implicitDisposeMethod = GetNonAbstractMethod (type, MethodSignatures.Dispose);
@@ -149,7 +149,7 @@ namespace Gendarme.Rules.Correctness {
 				TypeDefinition fieldType = field.FieldType.Resolve ();
 				if (fieldType == null)
 					continue;
-				if (fieldType.Implements ("System", "IDisposable"))
+				if (fieldType.Implements ("System", "IDisposable", null))
 					disposeableFields.Add (field);
 			}
 
@@ -178,10 +178,10 @@ namespace Gendarme.Rules.Correctness {
 		private void CheckBaseDispose (TypeDefinition type, MethodDefinition implicitDisposeMethod, MethodDefinition explicitDisposeMethod)
 		{
 			TypeDefinition baseType = type;
-			while (!baseType.BaseType.IsNamed ("System", "Object")) {
+			while (!baseType.BaseType.IsNamed ("System", "Object", null)) {
 				baseType = baseType.BaseType.Resolve ();
 				// also checks parents, so no need to search further
-				if ((baseType == null) || !baseType.Implements ("System", "IDisposable"))
+				if ((baseType == null) || !baseType.Implements ("System", "IDisposable", null))
 					break;
 
 				//we just check for Dispose() here

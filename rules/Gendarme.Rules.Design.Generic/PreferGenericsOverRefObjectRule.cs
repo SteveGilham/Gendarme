@@ -74,11 +74,11 @@ namespace Gendarme.Rules.Design.Generic {
 				return RuleResult.DoesNotApply;
 
 			// exclude the "bool Try* (ref)" pattern from the rule
-			if (method.Name.StartsWith ("Try", StringComparison.Ordinal) && method.ReturnType.IsNamed ("System", "Boolean"))
+			if (method.Name.StartsWith ("Try", StringComparison.Ordinal) && method.ReturnType.IsNamed ("System", "Boolean", null))
 				return RuleResult.DoesNotApply;
 
 			foreach (ParameterDefinition parameter in method.Parameters) {
-				if (!parameter.ParameterType.IsNamed ("System", "Object&"))
+				if (!parameter.ParameterType.IsNamed ("System", "Object&", null))
 					continue;
 
 				// suggest using generics

@@ -85,7 +85,7 @@ namespace Gendarme.Rules.Correctness {
 		{
 			for (int index = 0; index < arguments.Count; index++) {
 				ParameterDefinition parameter = constructor.Parameters[index];
-				if (parameter.ParameterType.IsNamed ("System", "String")) {
+				if (parameter.ParameterType.IsNamed ("System", "String", null)) {
 					string value = (string) arguments [index].Value;
 					if (Contains (parameter.Name, "version")) {
 						Version v = null;

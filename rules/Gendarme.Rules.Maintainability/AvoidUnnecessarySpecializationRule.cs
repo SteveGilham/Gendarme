@@ -279,7 +279,7 @@ namespace Gendarme.Rules.Maintainability {
 			//HACK: BOO:
 			case "EqualityOperator" :
 				return (method.HasParameters && (method.Parameters.Count == 2) && 
-					(method.DeclaringType.IsNamed ("Boo.Lang.Runtime", "RuntimeServices")));
+					(method.DeclaringType.IsNamed ("Boo.Lang.Runtime", "RuntimeServices", null)));
 			}
 			return false;
 		}
@@ -291,7 +291,7 @@ namespace Gendarme.Rules.Maintainability {
 
 		private static bool IsIgnoredSuggestionType (TypeReference type)
 		{
-			return (type.IsNamed ("System", "Object") || IsFromNonGenericCollectionNamespace (type.Namespace));
+			return (type.IsNamed ("System", "Object", null) || IsFromNonGenericCollectionNamespace (type.Namespace));
 		}
 
 		private static List<MethodSignature> GetSignatures (IEnumerable<StackEntryUsageResult> usageResults)

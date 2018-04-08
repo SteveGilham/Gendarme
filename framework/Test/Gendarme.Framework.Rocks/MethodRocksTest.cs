@@ -114,22 +114,22 @@ namespace Test.Framework.Rocks {
 		public void HasAttribute_Namespace_Null ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-            Assert.Throws<ArgumentNullException>(() => method.HasAttribute (null, "a"));
+            Assert.Throws<ArgumentNullException>(() => method.HasAttribute (null, "a", null));
 		}
 
 		[Test]
 		public void HasAttribute_Name_Null ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-            Assert.Throws<ArgumentNullException>(() => method.HasAttribute ("a", null));
+            Assert.Throws<ArgumentNullException>(() => method.HasAttribute ("a", null, null));
 		}
 
 		[Test]
 		public void HasAttribute ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-			Assert.IsTrue (method.HasAttribute ("NUnit.Framework", "OneTimeSetUpAttribute"), "NUnit.Framework.OneTimeSetUpAttribute");
-			Assert.IsFalse (method.HasAttribute ("NUnit.Framework", "OneTimeSetUp"), "NUnit.Framework.OneTimeSetUp");
+			Assert.IsTrue (method.HasAttribute ("NUnit.Framework", "OneTimeSetUpAttribute", null), "NUnit.Framework.OneTimeSetUpAttribute");
+			Assert.IsFalse (method.HasAttribute ("NUnit.Framework", "OneTimeSetUp", null), "NUnit.Framework.OneTimeSetUp");
 		}
 
 		[Test]

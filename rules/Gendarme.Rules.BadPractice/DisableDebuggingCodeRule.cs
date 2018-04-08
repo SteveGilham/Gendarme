@@ -98,7 +98,7 @@ namespace Gendarme.Rules.BadPractice {
 				// any attribute without arguments can be skipped
 				if (!ca.HasConstructorArguments)
 					continue;
-				if (ca.AttributeType.IsNamed ("System.Diagnostics", "ConditionalAttribute")) {
+				if (ca.AttributeType.IsNamed ("System.Diagnostics", "ConditionalAttribute", null)) {
 					switch (ca.ConstructorArguments [0].Value as string) {
 					case "DEBUG":
 					case "TRACE":
@@ -124,7 +124,7 @@ namespace Gendarme.Rules.BadPractice {
 					// method inside it will be calling any Console.write* methods
 					(e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "Console");
+						return tr.IsNamed ("System", "Console", null);
 					}));
 			};
 		}
@@ -156,7 +156,7 @@ namespace Gendarme.Rules.BadPractice {
 		                if (mr == null)
                				continue;
 
-				if (!mr.DeclaringType.IsNamed ("System", "Console"))
+				if (!mr.DeclaringType.IsNamed ("System", "Console", null))
 					continue;
 
 				// ... Write* methods

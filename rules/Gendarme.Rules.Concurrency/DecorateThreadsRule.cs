@@ -446,7 +446,7 @@ namespace Gendarme.Rules.Concurrency {
 							methods.AddIfNew ((MethodReference) ins.Previous.Previous.Operand);
 						
 						// Misc threaded events.
-						} else if (call_type.IsNamed ("System.ComponentModel", "BackgroundWorker")) {
+						} else if (call_type.IsNamed ("System.ComponentModel", "BackgroundWorker", null)) {
 							if (call.Name == "add_DoWork") {
 								candidate = (MethodReference) ins.Previous.Previous.Operand;
 							}
@@ -507,7 +507,7 @@ namespace Gendarme.Rules.Concurrency {
 			// but mono doesn't.
 			case "add_ErrorDataReceived":
 			case "add_OutputDataReceived":
-				if (method.DeclaringType.IsNamed ("System.Diagnostics", "Process"))
+				if (method.DeclaringType.IsNamed ("System.Diagnostics", "Process", null))
 					return true;
 				break;
 			}

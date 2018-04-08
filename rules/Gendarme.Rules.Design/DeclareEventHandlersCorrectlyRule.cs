@@ -87,7 +87,7 @@ namespace Gendarme.Rules.Design {
 		private bool CheckReturnVoid (IMetadataTokenProvider eventType, IMethodSignature invoke)
 		{
 			TypeReference rtype = invoke.ReturnType;
-			if (rtype.IsNamed ("System", "Void"))
+			if (rtype.IsNamed ("System", "Void", null))
 				return true;
 
 			string msg = String.Format (CultureInfo.InvariantCulture, 
@@ -115,7 +115,7 @@ namespace Gendarme.Rules.Design {
 			int count = pdc.Count;
 			if (count >= 1) {
 				TypeReference ptype = pdc [0].ParameterType;
-				if (!ptype.IsNamed ("System", "Object")) {
+				if (!ptype.IsNamed ("System", "Object", null)) {
 					string msg = String.Format (CultureInfo.InvariantCulture, 
 						"The first parameter should have an object, not {0}", ptype.GetFullName ());
 					Runner.Report (eventType, Severity.Medium, Confidence.High, msg);
@@ -123,7 +123,7 @@ namespace Gendarme.Rules.Design {
 				}
 			}
 			if (count >= 2) {
-				if (!pdc [1].ParameterType.Inherits ("System", "EventArgs")) {
+				if (!pdc [1].ParameterType.Inherits ("System", "EventArgs", null)) {
 					Runner.Report (eventType, Severity.Medium, Confidence.High, "The second parameter should be a subclass of System.EventArgs");
 					ok = false;
 				}
@@ -197,7 +197,7 @@ namespace Gendarme.Rules.Design {
 
 		private bool CheckGenericDelegate (TypeReference type)
 		{
-			if (type.IsNamed ("System", "EventHandler`1"))
+			if (type.IsNamed ("System", "EventHandler`1", null))
 				return true;
 
 			Runner.Report (type, Severity.Medium, Confidence.High, "Generic delegates should use EventHandler<TEventArgs>");

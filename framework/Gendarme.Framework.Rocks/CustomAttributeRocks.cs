@@ -51,8 +51,8 @@ namespace Gendarme.Framework.Rocks {
 
 			foreach (CustomAttribute ca in self.CustomAttributes) {
 				TypeReference cat = ca.AttributeType;
-				if (cat.IsNamed ("System.CodeDom.Compiler", "GeneratedCodeAttribute") ||
-					cat.IsNamed ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute")) {
+				if (cat.IsNamed ("System.CodeDom.Compiler", "GeneratedCodeAttribute", null) ||
+					cat.IsNamed ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute", null)) {
 					return true;
 				}
 			}
@@ -68,7 +68,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the attribute to be matched</param>
 		/// <returns>True if the provider contains an attribute of the same name,
 		/// False otherwise.</returns>
-		public static bool HasAttribute (this ICustomAttributeProvider self, string nameSpace, string name)
+		public static bool HasAttribute (this ICustomAttributeProvider self, string nameSpace, string name, TypeReference fallback)
 		{
 			if (nameSpace == null)
 				throw new ArgumentNullException ("nameSpace");
@@ -79,7 +79,7 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			foreach (CustomAttribute ca in self.CustomAttributes) {
-				if (ca.AttributeType.IsNamed (nameSpace, name))
+				if (ca.AttributeType.IsNamed (nameSpace, name, fallback))
 					return true;
 			}
 			return false;

@@ -91,7 +91,7 @@ namespace Gendarme.Rules.Concurrency {
 			// skip fields decorated with [ThreadStatic] (the runtime will use
 			// thread local storage for these so they are thread safe)
 			if (fd.HasCustomAttributes) {
-				if (fd.HasAttribute ("System", "ThreadStaticAttribute"))
+				if (fd.HasAttribute ("System", "ThreadStaticAttribute", null))
 					return false;
 			}
 			return true;

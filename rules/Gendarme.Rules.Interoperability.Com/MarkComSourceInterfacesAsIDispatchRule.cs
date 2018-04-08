@@ -80,10 +80,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 		}
 
 		// Finds a CustomAttribute on a type from the given name.
-		private static CustomAttribute FindCustomAttribute (ICustomAttributeProvider type, string nameSpace, string name)
+		private static CustomAttribute FindCustomAttribute (ICustomAttributeProvider type, string nameSpace, string name, TypeReference fallback)
 		{
 			foreach (var attribute in type.CustomAttributes) {
-				if (attribute.AttributeType.IsNamed (nameSpace, name))
+				if (attribute.AttributeType.IsNamed (nameSpace, name, fallback))
 					return attribute;
 			}
 			return null;
@@ -100,7 +100,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 				return;
 			}
 
-			var attribute = FindCustomAttribute (def, "System.Runtime.InteropServices", "InterfaceTypeAttribute");
+			var attribute = FindCustomAttribute (def, "System.Runtime.InteropServices", "InterfaceTypeAttribute", null);
 			if (attribute == null) {
 				Runner.Report (def, Severity.High, Confidence.Total, "No [InterfaceType] attribute is present on a specified interface");
 				return;
@@ -132,7 +132,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 			if (!type.IsClass || !type.HasCustomAttributes)
 				return RuleResult.DoesNotApply;
 
-			var attribute = FindCustomAttribute (type, "System.Runtime.InteropServices", "ComSourceInterfacesAttribute");
+			var attribute = FindCustomAttribute (type, "System.Runtime.InteropServices", "ComSourceInterfacesAttribute", null);
 			if (attribute == null)
 				return RuleResult.DoesNotApply;
 			// The attribute's paramemters may be a single null-delimited string, or up to four System.Types.

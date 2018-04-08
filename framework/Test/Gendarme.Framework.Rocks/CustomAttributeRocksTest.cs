@@ -52,25 +52,25 @@ namespace Test.Framework.Rocks {
 		public void HasAttribute_Namespace_Null ()
 		{
 			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.CustomAttributeRocksTest");
-            Assert.Throws<ArgumentNullException>(() => type.HasAttribute (null, "a"));
+            Assert.Throws<ArgumentNullException>(() => type.HasAttribute (null, "a", null));
 		}
 
 		[Test]
 		public void HasAttribute_Name_Null ()
 		{
 			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.CustomAttributeRocksTest");
-            Assert.Throws<ArgumentNullException>(() => type.HasAttribute ("a", null));
+            Assert.Throws<ArgumentNullException>(() => type.HasAttribute ("a", null, null));
 		}
 		
 		[Test]
 		public void HasAttribute ()
 		{
 			TypeDefinition type = null;
-			Assert.IsFalse (type.HasAttribute ("NUnit.Framework", "TestFixtureAttribute"), "null-type");
+			Assert.IsFalse (type.HasAttribute ("NUnit.Framework", "TestFixtureAttribute", null), "null-type");
 
 			type = assembly.MainModule.GetType ("Test.Framework.Rocks.CustomAttributeRocksTest");
-			Assert.IsTrue (type.HasAttribute ("NUnit.Framework", "TestFixtureAttribute"), "true");
-			Assert.IsFalse (type.HasAttribute ("NUnit.Framework", "TestAttribute"), "false");
+			Assert.IsTrue (type.HasAttribute ("NUnit.Framework", "TestFixtureAttribute", null), "true");
+			Assert.IsFalse (type.HasAttribute ("NUnit.Framework", "TestAttribute", null), "false");
 		}
 	}
 }

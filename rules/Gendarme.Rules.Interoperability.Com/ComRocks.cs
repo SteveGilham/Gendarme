@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 					// any attribute without arguments can be skipped
 					if (!attribute.HasConstructorArguments)
 						continue;
-					if (!attribute.Constructor.DeclaringType.IsNamed ("System.Runtime.InteropServices", "ComVisibleAttribute"))
+					if (!attribute.Constructor.DeclaringType.IsNamed ("System.Runtime.InteropServices", "ComVisibleAttribute", null))
 						continue;
 					return (bool) attribute.ConstructorArguments[0].Value;
 				}

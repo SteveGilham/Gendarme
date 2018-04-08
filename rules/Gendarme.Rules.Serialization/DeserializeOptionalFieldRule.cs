@@ -101,7 +101,7 @@ namespace Gendarme.Rules.Serialization {
 					// then nothing will be reported by this rule
 					(e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Runtime.Serialization", "OptionalFieldAttribute");
+						return tr.IsNamed ("System.Runtime.Serialization", "OptionalFieldAttribute", null);
 					})
 				);
 			};
@@ -121,9 +121,9 @@ namespace Gendarme.Rules.Serialization {
 					if (method.IsConstructor || !method.HasCustomAttributes)
 						continue;
 
-					if (method.HasAttribute ("System.Runtime.Serialization", "OnDeserializedAttribute"))
+					if (method.HasAttribute ("System.Runtime.Serialization", "OnDeserializedAttribute", null))
 						deserialized_candidate = true;
-					if (method.HasAttribute ("System.Runtime.Serialization", "OnDeserializingAttribute"))
+					if (method.HasAttribute ("System.Runtime.Serialization", "OnDeserializingAttribute", null))
 						deserializing_candidate = true;
 
 					if (deserialized_candidate && deserializing_candidate)
@@ -133,7 +133,7 @@ namespace Gendarme.Rules.Serialization {
 
 			// check if we found some optional fields, if none then it's all ok
 			foreach (FieldDefinition field in type.Fields) {
-				if (field.HasAttribute ("System.Runtime.Serialization", "OptionalFieldAttribute")) {
+				if (field.HasAttribute ("System.Runtime.Serialization", "OptionalFieldAttribute", null)) {
 					if (type.IsSerializable) {
 						// report if we didn't find a deserialization method
 						if (!deserialized_candidate || !deserializing_candidate) {

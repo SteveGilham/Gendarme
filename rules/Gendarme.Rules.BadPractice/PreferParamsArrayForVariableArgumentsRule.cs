@@ -84,7 +84,7 @@ namespace Gendarme.Rules.BadPractice {
 			Runner.AnalyzeModule += (object o, RunnerEventArgs e) => {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "ArgIterator");
+						return tr.IsNamed ("System", "ArgIterator", null);
 					}));
 			};
 		}

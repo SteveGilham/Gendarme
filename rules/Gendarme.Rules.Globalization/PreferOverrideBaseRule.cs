@@ -65,7 +65,7 @@ namespace Gendarme.Rules.Globalization {
 				if (pd.IsParams ())
 					return true;
 				TypeReference ptype = pd.ParameterType;
-				if (!pmethod [i].ParameterType.IsNamed (ptype.Namespace, ptype.Name))
+				if (!pmethod [i].ParameterType.IsNamed (ptype.Namespace, ptype.Name, ptype))
 					return false;
 			}
 			return (ccount - count <= 1);
@@ -103,7 +103,7 @@ namespace Gendarme.Rules.Globalization {
 
 				// compare parameters and return value
 				TypeReference rtype = md.ReturnType;
-				if (!method.ReturnType.IsNamed (rtype.Namespace, rtype.Name))
+				if (!method.ReturnType.IsNamed (rtype.Namespace, rtype.Name, rtype))
 					continue;
 
 				// last parameter could be our "prefered" type
