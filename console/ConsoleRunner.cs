@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme Console Runner
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -434,7 +434,7 @@ namespace Gendarme {
 
 		private Stopwatch total = new Stopwatch ();
 		private Stopwatch local = new Stopwatch ();
-		
+
 		private static string TimeToString (TimeSpan time)
 		{
 			if (time >= TimeSpan.FromMilliseconds (100))
@@ -450,7 +450,7 @@ namespace Gendarme {
 				total.Start ();
 				local.Start ();
 			}
-			
+
 			base.Initialize ();
 
 			if (!quiet) {
@@ -473,6 +473,9 @@ namespace Gendarme {
 				local.Stop ();
 		}
 
+		/// <summary>
+		/// Release all resources, free memory, e.t.c.
+		/// </summary>
 		public override void TearDown ()
 		{
 			if (!quiet) {
@@ -480,7 +483,7 @@ namespace Gendarme {
 				local.Start ();
 				local.Reset ();
 			}
-			
+
 			base.TearDown ();
 
 			if (!quiet) {
@@ -501,7 +504,7 @@ namespace Gendarme {
 					files.RemoveAll (string.IsNullOrEmpty);
 					hint = String.Format (CultureInfo.CurrentCulture, "Report{0} written to: {1}.",
 						(files.Count > 1) ? "s" : string.Empty,
-						string.Join (",", files.Select (file => 
+						string.Join (",", files.Select (file =>
 							String.Format (CultureInfo.CurrentCulture, "`{0}'", file)).ToArray ()));
 				}
 
@@ -522,12 +525,12 @@ namespace Gendarme {
 					Console.WriteLine (": {0}", TimeToString (local.Elapsed));
 					local.Reset ();
 				}
-			
+
 				// next assembly
 				Console.Write (Path.GetFileName (e.CurrentAssembly.MainModule.FullyQualifiedName));
 				local.Start ();
 			}
-			
+
 			base.OnAssembly (e);
 		}
 
@@ -586,11 +589,11 @@ namespace Gendarme {
 		}
 
 		/// <summary>
-		/// 
+		/// Main entry point
 		/// </summary>
-		/// <param name="args"></param>
-		/// <returns>0 for success, 
-		/// 1 if some defects are found, 
+		/// <param name="args">Command line arguments</param>
+		/// <returns>0 for success,
+		/// 1 if some defects are found,
 		/// 2 if some parameters are bad,
 		/// 3 if a problem is related to the xml configuration file
 		/// 4 if an uncaught exception occured</returns>

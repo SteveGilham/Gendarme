@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Maintainability.AvoidAlwaysNullFieldRule
 //
 // Authors:
@@ -50,7 +50,7 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// internal sealed class Bad {
 	/// 	private List&lt;int&gt; values;
-	/// 	
+	///
 	/// 	public List&lt;int&gt; Values {
 	/// 		get {
 	/// 			return values;
@@ -64,7 +64,7 @@ namespace Gendarme.Rules.Maintainability {
 	/// <code>
 	/// internal sealed class Good {
 	/// 	private List&lt;int&gt; values = new List&lt;int&gt;();
-	/// 	
+	///
 	/// 	public List&lt;int&gt; Values {
 	/// 		get {
 	/// 			return values;
@@ -83,9 +83,9 @@ namespace Gendarme.Rules.Maintainability {
 		private HashSet <FieldReference> nullFields = new HashSet <FieldReference>();
 		private HashSet <FieldReference> setFields = new HashSet <FieldReference>();
 		private HashSet <FieldReference> usedFields = new HashSet <FieldReference>();
-		
+
 		private bool usesWinForms;
-		
+
 		private static OpCodeBitmask LoadStoreFields = new OpCodeBitmask (0x0, 0x3F00000000000000, 0x0, 0x0);
 
 		static bool CheckForNullAssignment (Instruction ins)
@@ -102,8 +102,8 @@ namespace Gendarme.Rules.Maintainability {
 
 		private void CheckMethod (MethodDefinition method)
 		{
-			Log.WriteLine (this, method);	
-			
+			Log.WriteLine (this, method);
+
 			FieldDefinition field;
 			if (method.HasBody && OpCodeEngine.GetBitmask (method).Intersect (LoadStoreFields)) {
 				foreach (Instruction ins in method.Body.Instructions) {
@@ -114,13 +114,13 @@ namespace Gendarme.Rules.Maintainability {
 						// if non-resolved then it will not be a field of this type
 						if (field == null)
 							continue;
-						// FIXME: we'd catch more cases (and avoid some false positives) 
+						// FIXME: we'd catch more cases (and avoid some false positives)
 						// if we used a null value tracker.
 						if (CheckForNullAssignment (ins)) {
 							setFields.Add (field);
 							Log.WriteLine (this, "{0} is set to null at {1:X4}", field.Name, ins.Offset);
 						} else {
-							nullFields.Remove (field);	
+							nullFields.Remove (field);
 							Log.WriteLine (this, "{0} is set at {1:X4}", field.Name, ins.Offset);
 						}
 						break;
@@ -131,7 +131,7 @@ namespace Gendarme.Rules.Maintainability {
 						// if non-resolved then it will not be a field of this type
 						if (field == null)
 							continue;
-						nullFields.Remove (field);	
+						nullFields.Remove (field);
 						Log.WriteLine (this, "{0} is set at {1:X4}", field.Name, ins.Offset);
 						break;
 
@@ -150,12 +150,18 @@ namespace Gendarme.Rules.Maintainability {
 
 			Log.WriteLine (this);
 		}
-		
+
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
-						
-			// If the module does not reference SWF we can skip the type.Inherits 
+
+			// If the module does not reference SWF we can skip the type.Inherits
 			// check below.
 			Runner.AnalyzeModule += (o, e) =>
 			{
@@ -177,15 +183,20 @@ namespace Gendarme.Rules.Maintainability {
 			for (int i = 0; i < mc.Count && nullFields.Count > 0; ++i)
 				CheckMethod (mc [i]);
 		}
-		
+
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsInterface || !type.HasFields)
 				return RuleResult.DoesNotApply;
-				
+
 			Log.WriteLine (this);
 			Log.WriteLine (this, "----------------------------------");
-			
+
 			bool isWinFormControl = usesWinForms && type.Inherits ("System.Windows.Forms", "Control");
 
 			// All fields start out as always null and unused.
@@ -200,18 +211,18 @@ namespace Gendarme.Rules.Maintainability {
 				foreach (TypeDefinition nested in type.NestedTypes)
 					CheckMethods (nested);
 			}
-				
+
 			string message;
 			IMetadataTokenProvider cause;
 
 			// Report a defect if:
-			// 1) The field is explicitly set to null and not used (if 
-			// if is implicitly set to null and not used AvoidUnusedPrivateFieldsRule 
+			// 1) The field is explicitly set to null and not used (if
+			// if is implicitly set to null and not used AvoidUnusedPrivateFieldsRule
 			// will catch it).
-			setFields.IntersectWith (nullFields);	
-			setFields.ExceptWith (usedFields);	
+			setFields.IntersectWith (nullFields);
+			setFields.ExceptWith (usedFields);
 			if (setFields.Count > 0) {
-				foreach (FieldDefinition field in setFields) {
+				foreach (FieldReference field in setFields) {
 					cause = field.GetGeneratedCodeSource ();
 					message = GenerateMessage (field, cause, used: true);
 					if (ReferenceEquals (cause, null))
@@ -224,7 +235,7 @@ namespace Gendarme.Rules.Maintainability {
 			// 2) The field is always null and used somewhere.
 			nullFields.IntersectWith (usedFields);
 			if (nullFields.Count > 0) {
-				foreach (FieldDefinition field in nullFields) {
+				foreach (FieldReference field in nullFields) {
 					cause = field.GetGeneratedCodeSource ();
 					message = GenerateMessage (field, cause, used: false);
 					if (ReferenceEquals (cause, null))
@@ -233,33 +244,33 @@ namespace Gendarme.Rules.Maintainability {
 					Runner.Report (cause, Severity.Medium, Confidence.High, message);
 				}
 			}
-			
+
 			nullFields.Clear ();
 			setFields.Clear ();
 			usedFields.Clear ();
-			
+
 			return Runner.CurrentRuleResult;
 		}
 
-    private static string GenerateMessage(FieldReference field, IMetadataTokenProvider cause, bool used)
-    {
-      if (ReferenceEquals (cause, null))
-        return string.Empty;
+		private static string GenerateMessage(FieldReference field, IMetadataTokenProvider cause, bool used)
+		{
+			if (ReferenceEquals (cause, null))
+				return string.Empty;
 
-      MethodReference reference = cause as MethodReference;
-      if ((!ReferenceEquals(reference, null)) && IsEnumerator (reference.ReturnType)) {
-        return string.Format(CultureInfo.InvariantCulture,
-          "The '{0}' method probably incorrectly implement the yield return / yield break sequence. To implement empty enumeration, prefer 'IEnumerable<T> empty = new T[0]'", reference);
-      }
-      return string.Format (CultureInfo.InvariantCulture, 
-        "The compiler generated field '{0}' is always null{2}. See implementation of '{1}' to analyze the problem or to suppress the warning.",
-        field.Name, cause, ((used) ? (string.Empty) : (" and is never used")));
-    }
+			MethodReference reference = cause as MethodReference;
+			if ((!ReferenceEquals(reference, null)) && IsEnumerator (reference.ReturnType)) {
+				return string.Format(CultureInfo.InvariantCulture,
+					"The '{0}' method probably incorrectly implement the yield return / yield break sequence. To implement empty enumeration, prefer 'IEnumerable<T> empty = new T[0]'", reference);
+			}
+			return string.Format (CultureInfo.InvariantCulture,
+				"The compiler generated field '{0}' is always null{2}. See implementation of '{1}' to analyze the problem or to suppress the warning.",
+				field.Name, cause, ((used) ? (string.Empty) : (" and is never used")));
+		}
 
-    private static bool IsEnumerator(TypeReference returnType)
-    {
-      return (returnType.IsNamed ("System.Collections.IEnumerator") || returnType.IsNamed ("System.Collections.Generic", "IEnumerator`1"));
-    }
+		private static bool IsEnumerator(TypeReference returnType)
+		{
+			return (returnType.IsNamed ("System.Collections.IEnumerator") || returnType.IsNamed ("System.Collections.Generic", "IEnumerator`1"));
+		}
 
 #if false
 		public void Bitmask ()

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Maintainability.AvoidLackOfCohesionOfMethodsRule class
 //
 // Authors:
@@ -43,7 +43,7 @@ namespace Gendarme.Rules.Maintainability {
 
 	/// <summary>
 	/// This rule checks every type for lack of cohesion between the fields and the methods. Low cohesion is often
-	/// a sign that a type is doing too many, different and unrelated things. The cohesion score is given for each defect 
+	/// a sign that a type is doing too many, different and unrelated things. The cohesion score is given for each defect
 	/// (higher is better).
 	/// Automatic properties (e.g. available in C# 3) are considered as fields since their 'backing field' cannot be
 	/// directly used and the getter/setter is only used to update a single field.
@@ -59,7 +59,7 @@ namespace Gendarme.Rules.Maintainability {
 		private const double DefaultMediumCoh = 0.2;
 		private const int DefaultMethodMinimumCount = 2;	// set at 2 to remove 'uninteresting' types
 		private const int DefaultFieldMinimumCount = 1;		// set at 1 to remove 'uninteresting' types (this shouldn't be set to a value other than MinimumMethodCount/2)
-		
+
 		private double successCoh = DefaultSuccessCoh;
 		private double lowCoh = DefaultLowCoh;
 		private double medCoh = DefaultMediumCoh;
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Maintainability {
 		private Dictionary<MemberReference, int> F = new Dictionary<MemberReference, int> ();
 		private List<MemberReference> Fset = new List<MemberReference> ();
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			//does rule apply?

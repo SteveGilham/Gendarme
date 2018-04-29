@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for DoNotDeclareProtectedMembersInSealedTypeRule
 //
 // Authors:
@@ -67,7 +67,7 @@ namespace Test.Rules.Design {
 			public string s;
 			private float f;
 		}
-		
+
 		[Test]
 		public void SealedClassWithoutProtectedFieldsTest ()
 		{

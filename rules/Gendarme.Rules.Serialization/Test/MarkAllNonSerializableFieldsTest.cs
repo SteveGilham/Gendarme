@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for MarkAllNonSerializableFieldsRule
 //
 // Authors:
@@ -36,7 +36,7 @@ using Test.Rules.Fixtures;
 namespace Test.Rules.Serialization {
 	[TestFixture]
 	public class MarkAllNonSerializableFieldsTest : TypeRuleTestFixture<MarkAllNonSerializableFieldsRule> {
-		
+
 		class NonSerializableClass {
 		}
 
@@ -66,7 +66,7 @@ namespace Test.Rules.Serialization {
 			class Serializable {
 			}
 		}
-		
+
 		[Serializable]
 		class CustomSerializationClass : ISerializable {
 			NonSerializableClass nonSerializable;
@@ -148,7 +148,7 @@ namespace Test.Rules.Serialization {
 		}
 
 		[Test]
-		public void FailOnSerializableWithInterfaceClassTest () 
+		public void FailOnSerializableWithInterfaceClassTest ()
 		{
 			//The SerializableAttribute can't be applied to an
 			//interface, and we can only check the polimorphism in

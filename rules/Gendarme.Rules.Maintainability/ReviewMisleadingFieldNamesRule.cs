@@ -3,7 +3,7 @@
 //
 // Authors:
 //	N Lum <nol888@gmail.com>
-// 
+//
 // Copyright (C) 2010 N Lum
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -40,8 +40,8 @@ namespace Gendarme.Rules.Maintainability {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	int s_value;
-	///	static int m_other_value;
+	/// 	int s_value;
+	/// 	static int m_other_value;
 	/// }
 	/// </code>
 	/// </example>
@@ -49,8 +49,8 @@ namespace Gendarme.Rules.Maintainability {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	int value;
-	///	static int other_value;
+	/// 	int value;
+	/// 	static int other_value;
 	/// }
 	/// </code>
 	/// </example>

@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidCodeDuplicatedInSameClass Rule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,42 +45,42 @@ using Test.Rules.Helpers;
 namespace Test.Rules.Smells {
 
 	[TestFixture]
-	public class AvoidCodeDuplicatedInSameClassTest : TypeRuleTestFixture<AvoidCodeDuplicatedInSameClassRule> { 
+	public class AvoidCodeDuplicatedInSameClassTest : TypeRuleTestFixture<AvoidCodeDuplicatedInSameClassRule> {
 		static IList myList;
 
 		class DuplicatedCodeWithForeachLoops {
 
-			public void PrintAndAddANewValue () 
+			public void PrintAndAddANewValue ()
 			{
-				foreach (string value in myList) 
+				foreach (string value in myList)
 					Console.WriteLine (value);
 				myList.Add ("FooReplied");
 			}
 
-			public void PrintAndRemoveANewValue () 
+			public void PrintAndRemoveANewValue ()
 			{
-				foreach (string value in myList) 
-					Console.WriteLine (value);              
+				foreach (string value in myList)
+					Console.WriteLine (value);
 				myList.Remove ("FooReplied");
-			} 
+			}
 		}
 
 		[Test]
-		public void FailOnDuplicatedCodeWithForeachLoopsTest () 
+		public void FailOnDuplicatedCodeWithForeachLoopsTest ()
 		{
 			AssertRuleFailure<DuplicatedCodeWithForeachLoops> (1);
 		}
 
 		class DuplicatedCodeInDifferentPlaces {
 
-			public void ShowBannerAndAdd () 
+			public void ShowBannerAndAdd ()
 			{
 				Console.WriteLine ("Banner");
 				Console.WriteLine ("Print");
 				myList.Add ("MoreBar");
 			}
-		
-			public void AddAndShowBanner () 
+
+			public void AddAndShowBanner ()
 			{
 				myList.Add ("MoreFoo");
 				Console.WriteLine ("Banner");
@@ -89,24 +89,24 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void FailOnDuplicatedCodeInDifferentPlacesTest () 
+		public void FailOnDuplicatedCodeInDifferentPlacesTest ()
 		{
 			AssertRuleFailure<DuplicatedCodeInDifferentPlaces> (1);
 		}
 
 		class DuplicatedCodeInForLoop {
-		
-			public void PrintUsingAForLoopAndAddAValue () 
+
+			public void PrintUsingAForLoopAndAddAValue ()
 			{
-				for (int index = 0; index < myList.Count; index++) 
-					Console.WriteLine (myList[index]);	
+				for (int index = 0; index < myList.Count; index++)
+					Console.WriteLine (myList[index]);
 				myList.Add ("MoreFoo");
 			}
-		
-			public void PrintUsingAForLoopAndRemoveAValue () 
+
+			public void PrintUsingAForLoopAndRemoveAValue ()
 			{
-				for (int index = 0; index < myList.Count; index++) 
-					Console.WriteLine (myList[index]);	
+				for (int index = 0; index < myList.Count; index++)
+					Console.WriteLine (myList[index]);
 				myList.Remove ("MoreFoo");
 			}
 		}
@@ -118,12 +118,12 @@ namespace Test.Rules.Smells {
 		}
 
 		class DuplicatedCodeInConditional {
-			
+
 			public void IfConditionAndRemove () {
 				if (myList.Contains ("MoreFoo") & myList.Contains ("MoreBar"))
 					myList.Remove ("MoreFoo");
 			}
-		
+
 			public void IfConditionAndRemoveReplied () {
 				if (myList.Contains ("MoreFoo") & myList.Contains ("MoreFoo"))
 					myList.Remove ("MoreFoo");
@@ -137,12 +137,12 @@ namespace Test.Rules.Smells {
 		}
 
 		class NonDuplicatedWithOneInstructionOnly {
-			public void WriteLine () 
+			public void WriteLine ()
 			{
 				Console.WriteLine ("Foo");
 			}
 
-			public void WriteTheSame () 
+			public void WriteTheSame ()
 			{
 				Console.WriteLine ("Foo");
 			}
@@ -156,7 +156,7 @@ namespace Test.Rules.Smells {
 
 		class LazyLoad {
 			IList otherList;
-	
+
 			public IList MyList {
 				get {
 					if (myList == null)
@@ -164,7 +164,7 @@ namespace Test.Rules.Smells {
 					return myList;
 				}
 			}
-			
+
 			public IList OtherList {
 				get {
 					if (otherList == null)
@@ -174,7 +174,7 @@ namespace Test.Rules.Smells {
 			}
 		}
 
-		
+
 		[Test]
 		public void SuccesOnLazyLoadTest ()
 		{
@@ -182,19 +182,19 @@ namespace Test.Rules.Smells {
 		}
 
 		class NonDuplicatedForeachLoop {
-			void PrintValuesInList () 
+			void PrintValuesInList ()
 			{
-				foreach (string value in myList) 
+				foreach (string value in myList)
 					Console.WriteLine (value);
 			}
 
-			public void PrintAndAddANewValue () 
+			public void PrintAndAddANewValue ()
 			{
 				PrintValuesInList ();
 				myList.Add ("FooReplied");
 			}
 
-			public void PrintAndRemoveANewValue () 
+			public void PrintAndRemoveANewValue ()
 			{
 				PrintValuesInList ();
 				myList.Remove ("FooReplied");
@@ -208,21 +208,21 @@ namespace Test.Rules.Smells {
 		}
 
 		class NonDuplicatedForLoop {
-			
-			private void PrintValuesInListUsingAForLoop () 
+
+			private void PrintValuesInListUsingAForLoop ()
 			{
-				for (int index = 0; index < myList.Count; index++) 
-					Console.WriteLine (myList[index]);	
+				for (int index = 0; index < myList.Count; index++)
+					Console.WriteLine (myList[index]);
 			}
 
-			public void PrintUsingAForLoopAndRemoveAValueIfNotExists () 
+			public void PrintUsingAForLoopAndRemoveAValueIfNotExists ()
 			{
 				PrintValuesInListUsingAForLoop ();
 				if (!myList.Contains ("Bar"))
 					myList.Remove ("Bar");
 			}
-		
-			public void PrintUsingAForLoopAndRemoveAValueIfExists () 
+
+			public void PrintUsingAForLoopAndRemoveAValueIfExists ()
 			{
 				PrintValuesInListUsingAForLoop ();
 				if (myList.Contains ("Bar"))
@@ -231,7 +231,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedForLoopTest () 
+		public void SuccessOnNonDuplicatedForLoopTest ()
 		{
 			AssertRuleSuccess<NonDuplicatedForLoop> ();
 		}
@@ -241,13 +241,13 @@ namespace Test.Rules.Smells {
 		class NonDuplicatedCodeIntoForeachLoop {
 			public void PrintValues ()
 			{
-				foreach (string value in myList) 
+				foreach (string value in myList)
 					Console.WriteLine (value);
 			}
 
 			public void PrintValuesInSameLine ()
 			{
-				foreach (string value in myList) 
+				foreach (string value in myList)
 					Console.Write (value);
 			}
 		}
@@ -268,7 +268,7 @@ namespace Test.Rules.Smells {
 
 			public void UsingAndWriteStream ()
 			{
-				using (Stream stream = new FileStream ("sample.txt", FileMode.Create)) 
+				using (Stream stream = new FileStream ("sample.txt", FileMode.Create))
 					stream.WriteByte (1);
 			}
 		}
@@ -348,7 +348,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedInSwitchsTest () 
+		public void SuccessOnNonDuplicatedInSwitchsTest ()
 		{
 			AssertRuleSuccess<NonDuplicatedInSwitchs> ();
 		}
@@ -357,7 +357,7 @@ namespace Test.Rules.Smells {
 			string option = "LOW";
 			Severity severity = Severity.Low;
 
-			public void FirstDuplicatedSwitch () 
+			public void FirstDuplicatedSwitch ()
 			{
 				switch (option) {
 				case "AUDIT":
@@ -430,7 +430,7 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleFailure<DuplicatedInSwitchsLoadingByFields> (1);
 		}
-		
+
 		class NonDuplicatedInSwitchsLoadingByFields {
 			string option = "LOW";
 			Severity severity = Severity.Low;
@@ -499,23 +499,23 @@ namespace Test.Rules.Smells {
 				}
 			}
 		}
-		
+
 		[Test]
-		public void SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest () 
+		public void SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest ()
 		{
-			AssertRuleSuccess<NonDuplicatedInSwitchsLoadingByFields> ();	
+			AssertRuleSuccess<NonDuplicatedInSwitchsLoadingByFields> ();
 		}
 
 		class NonDuplicatedCodeInParameterChecking {
-			void MethodWithParameters (string x, string y) 
+			void MethodWithParameters (string x, string y)
 			{
 				if ((x == null) || (y == null))
 					return;
-				
+
 				char z = 'a';
 			}
 
-			void MethodWithParameters (object x, string y) 
+			void MethodWithParameters (object x, string y)
 			{
 				if ((x == null) || (y == null))
 					return;
@@ -525,13 +525,13 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedCodeInParameterChecking () 
+		public void SuccessOnNonDuplicatedCodeInParameterChecking ()
 		{
 			AssertRuleSuccess<NonDuplicatedCodeInParameterChecking> ();
 		}
 
 		class NonDuplicatedCodeInForeachLoopsReturningBoolean {
-			bool ForeachComparingTypes () 
+			bool ForeachComparingTypes ()
 			{
 				foreach (object obj in myList) {
 					if (obj.GetType ().Equals (Type.EmptyTypes))
@@ -540,7 +540,7 @@ namespace Test.Rules.Smells {
 				return false;
 			}
 
-			bool ForeachComparingValues () 
+			bool ForeachComparingValues ()
 			{
 				foreach (int x in myList) {
 					if (x % 2 == 0)
@@ -551,7 +551,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedCodeInForeachLoopsReturningBooleanTest () 
+		public void SuccessOnNonDuplicatedCodeInForeachLoopsReturningBooleanTest ()
 		{
 			AssertRuleSuccess<NonDuplicatedCodeInForeachLoopsReturningBoolean> ();
 		}
@@ -570,19 +570,19 @@ namespace Test.Rules.Smells {
 			IRule GetRule (string name)
 			{
 				foreach (IRule rule in runner.Rules) {
-					if (rule.GetType ().ToString ().Contains (name)) 
+					if (rule.GetType ().ToString ().Contains (name))
 						return rule;
 				}
 				return null;
 			}
-		
+
 		 	void SetCustomParameters (XmlNode rules)
 			{
 				foreach (XmlElement parameter in rules.SelectNodes ("parameter")) {
 					string ruleName = GetAttribute (parameter, "rule", String.Empty);
 					string propertyName = GetAttribute (parameter, "property", String.Empty);
 					int value = Int32.Parse (GetAttribute (parameter, "value", String.Empty));
-				
+
 					IRule rule = GetRule (ruleName);
 					if (rule == null)
 						throw new XmlException (String.Format ("The rule with name {0} doesn't exist.  Review your configuration file.", ruleName));
@@ -597,7 +597,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnFalsePositiveInConsoleRunnerTest () 
+		public void SuccessOnFalsePositiveInConsoleRunnerTest ()
 		{
 			AssertRuleSuccess<FalsePositiveInConsoleRunner> ();
 		}
@@ -605,7 +605,7 @@ namespace Test.Rules.Smells {
 		class NonDuplicatedCodeCheckingSubsetOfParameters {
 			ArrayList engine_dependencies = new ArrayList ();
 
-			void Initialize () 
+			void Initialize ()
 			{
 				if (engine_dependencies.Count == 0)
 					return;
@@ -614,18 +614,18 @@ namespace Test.Rules.Smells {
 					Console.WriteLine (eda);
 			}
 
-			void TearDown () 
+			void TearDown ()
 			{
 				if ((engine_dependencies == null) || (engine_dependencies.Count == 0))
 					return;
 
-				foreach (object eda in engine_dependencies) 
+				foreach (object eda in engine_dependencies)
 					Console.Write (eda);
 			}
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedCodeCheckingSubsetOfParametersTest () 
+		public void SuccessOnNonDuplicatedCodeCheckingSubsetOfParametersTest ()
 		{
 			AssertRuleSuccess<NonDuplicatedCodeCheckingSubsetOfParameters> ();
 		}
@@ -633,14 +633,14 @@ namespace Test.Rules.Smells {
 		class NonDuplicatedCheckingAndReturningDifferentOperations {
 			ulong mask;
 
-			bool IsSubsetOf (string bitmask) 
+			bool IsSubsetOf (string bitmask)
 			{
 				if (bitmask == null)
 					return false;
 				return ((mask & bitmask[0]) == mask);
 			}
 
-			bool Equals (string bitmask) 
+			bool Equals (string bitmask)
 			{
 				if (bitmask == null)
 					return false;
@@ -649,15 +649,15 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedCheckingAndReturningDifferentOperationsTest () 
+		public void SuccessOnNonDuplicatedCheckingAndReturningDifferentOperationsTest ()
 		{
-			AssertRuleSuccess<NonDuplicatedCheckingAndReturningDifferentOperations> ();	
+			AssertRuleSuccess<NonDuplicatedCheckingAndReturningDifferentOperations> ();
 		}
 
 		class CheckingIntegersAndStrings {
 			private IRunner Runner;
 
-			bool CheckParameters (TypeReference eventType, MethodReference invoke) 
+			bool CheckParameters (TypeReference eventType, MethodReference invoke)
 			{
 				if (invoke.Parameters.Count == 2)
 					return true;
@@ -678,13 +678,13 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnCheckingIntegersAndStringsTest () 
+		public void SuccessOnCheckingIntegersAndStringsTest ()
 		{
 			AssertRuleSuccess<CheckingIntegersAndStrings> ();
 		}
 
 		class NonDuplicatedComparingAndReturningNull {
-			string CheckTwoOptions (TypeReference type) 
+			string CheckTwoOptions (TypeReference type)
 			{
 				if (type.Implements ("System.Collections", "IDictionary") || type.Implements ("System.Collections.Generic", "IDictionary`2"))
 					return null;
@@ -698,7 +698,7 @@ namespace Test.Rules.Smells {
 					type.Implements ("System.Collections.Generic", "ICollection`1"))
 					return null;
 
-				if (type.Inherits ("System.Collections", "Queue") || type.Inherits ("System.Collections", "Stack") || 
+				if (type.Inherits ("System.Collections", "Queue") || type.Inherits ("System.Collections", "Stack") ||
 					type.Inherits ("System.Data", "DataSet") || type.Inherits ("System.Data", "DataTable"))
 					return null;
 
@@ -707,18 +707,18 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedComparingAndReturningNullTest () 
+		public void SuccessOnNonDuplicatedComparingAndReturningNullTest ()
 		{
 			AssertRuleSuccess<NonDuplicatedComparingAndReturningNull> ();
 		}
 
 		class NonDuplicatedCodeComparingStringEmpty {
-			int IndexOfFirstCorrectChar (string name) 
+			int IndexOfFirstCorrectChar (string name)
 			{
 				return 1;
 			}
 
-			string CheckStringAndReturn (string name) 
+			string CheckStringAndReturn (string name)
 			{
 				if (String.IsNullOrEmpty (name))
 					return String.Empty;
@@ -730,7 +730,7 @@ namespace Test.Rules.Smells {
 				return Char.ToUpperInvariant (name [index]) + name.Substring (index + 1);
 			}
 
-			string CheckStringAndReturnTheOpposite (string name) 
+			string CheckStringAndReturnTheOpposite (string name)
 			{
 				if (String.IsNullOrEmpty (name))
 					return String.Empty;
@@ -744,13 +744,13 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedCodeComparingStringEmptyTest () 
+		public void SuccessOnNonDuplicatedCodeComparingStringEmptyTest ()
 		{
 			AssertRuleSuccess<NonDuplicatedCodeComparingStringEmpty> ();
 		}
 
 		class NonDuplicatedCodeWithNonCompatibleTypes {
-			
+
 			public string EngineType { get; internal set; }
 
 			public void SetEngineTypeFromType (Type engineType)
@@ -769,7 +769,7 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void SuccessOnNonDuplicatedCodeWithNonCompatibleTypesTest () 
+		public void SuccessOnNonDuplicatedCodeWithNonCompatibleTypesTest ()
 		{
 			//Although it seems the same pattern, we are not able to
 			//extract the code fairly

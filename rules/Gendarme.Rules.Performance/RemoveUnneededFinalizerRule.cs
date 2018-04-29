@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.RemoveUnneededFinalizerRule
 //
 // Authors:
@@ -44,18 +44,18 @@ namespace Gendarme.Rules.Performance {
 	// FI: Finalizer only nulls fields (FI_FINALIZER_ONLY_NULLS_FIELDS)
 
 	/// <summary>
-	/// This rule looks for types that have an empty finalizer (a.k.a. destructor in C# or 
+	/// This rule looks for types that have an empty finalizer (a.k.a. destructor in C# or
 	/// <c>Finalize</c> method). Finalizers that simply set fields to null are considered to be
-	/// empty because this does not help the garbage collection. You should remove the empty 
+	/// empty because this does not help the garbage collection. You should remove the empty
 	/// finalizer to alleviate pressure on the garbage collector and finalizer thread.
 	/// </summary>
 	/// <example>
 	/// Bad example (empty):
 	/// <code>
 	/// class Bad {
-	///	~Bad ()
-	///	{
-	///	}
+	/// 	~Bad ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,12 +63,12 @@ namespace Gendarme.Rules.Performance {
 	/// Bad example (only nulls fields):
 	/// <code>
 	/// class Bad {
-	///	object o;
-	///	
-	///	~Bad ()
-	///	{
-	///		o = null;
-	///	}
+	/// 	object o;
+	///
+	/// 	~Bad ()
+	/// 	{
+	/// 		o = null;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -76,7 +76,7 @@ namespace Gendarme.Rules.Performance {
 	/// Good example:
 	/// <code>
 	/// class Good {
-	///	object o;
+	/// 	object o;
 	/// }
 	/// </code>
 	/// </example>
@@ -87,6 +87,11 @@ namespace Gendarme.Rules.Performance {
 	[FxCopCompatibility ("Microsoft.Performance", "CA1821:RemoveEmptyFinalizers")]
 	public class RemoveUnneededFinalizerRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to type with a finalizer
@@ -131,8 +136,8 @@ namespace Gendarme.Rules.Performance {
 			}
 
 			// finalizer is empty (bad / useless)
-			string msg = nullify_fields == 0 ? String.Empty : 
-				String.Format (CultureInfo.InvariantCulture, 
+			string msg = nullify_fields == 0 ? String.Empty :
+				String.Format (CultureInfo.InvariantCulture,
 					"Contains {0} fields being nullified needlessly", nullify_fields);
 			Runner.Report (type, Severity.Medium, Confidence.Normal, msg);
 			return RuleResult.Failure;

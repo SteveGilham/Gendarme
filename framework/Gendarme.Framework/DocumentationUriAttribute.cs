@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.DocumentationUriAttribute class
 //
 // Authors:
@@ -31,8 +31,8 @@ using System;
 namespace Gendarme.Framework {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 	public sealed class DocumentationUriAttribute : Attribute {
-		
-		public DocumentationUriAttribute (string documentationUri) 
+
+		public DocumentationUriAttribute (string documentationUri)
 		{
 			DocumentationUri = new Uri (documentationUri);
 		}

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.DoNotUseThreadStaticWithInstanceFieldsRule
 //
 // Authors:
@@ -39,7 +39,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Concurrency {
 
 	/// <summary>
-	/// This rule will fire if an instance field is decorated with a <c>[ThreadStatic]</c> attribute. 
+	/// This rule will fire if an instance field is decorated with a <c>[ThreadStatic]</c> attribute.
 	/// This is an error because the attribute will only work with static fields.
 	/// </summary>
 	/// <example>
@@ -48,17 +48,17 @@ namespace Gendarme.Rules.Concurrency {
 	/// // the field isn't static so this will do nothing
 	/// [ThreadStatic]
 	/// private List&lt;object&gt; items;
-	/// 
+	///
 	/// public void Add (object item)
 	/// {
-	/// 	// If the field was thread safe this would ensure that each thread had 
+	/// 	// If the field was thread safe this would ensure that each thread had
 	/// 	// its own copy of the list.
 	/// 	if (items == null) {
 	/// 		items = new List&lt;object&gt; ();
-	///	 	}
-	/// 		
+	/// 	}
+	///
 	/// 	items.Add (item);
-	/// } 
+	/// }
 	/// </code>
 	/// </example>
 	/// <example>
@@ -66,7 +66,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// <code>
 	/// private List&lt;object&gt; items = new List&lt;object&gt; ();
 	/// private object mutex = new object ();
-	/// 
+	///
 	/// // Typically some form of locking such as the code below is used to
 	/// // serialize access to instance fields. However you can also use
 	/// // Threading.Thread.Thread::AllocateNamedDataSlot or AllocateDataSlot.
@@ -75,7 +75,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// 	lock (mutex) {
 	/// 		items.Add (item);
 	/// 	}
-	/// } 
+	/// }
 	/// </code>
 	/// </example>
 	/// <remarks>This rule is available since Gendarme 2.6</remarks>
@@ -84,17 +84,22 @@ namespace Gendarme.Rules.Concurrency {
 	[Solution ("ThreadStaticAttribute will only make static fields thread safe. To make an instance field thread safe you need to use techniques like locking or System.Threading.Thread.Thread::AllocateNamedDataSlot.")]
 	public sealed class DoNotUseThreadStaticWithInstanceFieldsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasFields || type.IsEnum)
 				return RuleResult.DoesNotApply;
-			
+
 			foreach (FieldDefinition field in type.Fields) {
 				if (!field.IsStatic && field.HasAttribute ("System", "ThreadStaticAttribute")) {
 					Runner.Report (field, Severity.Critical, Confidence.Total);
 				}
 			}
-						
+
 			return Runner.CurrentRuleResult;
 		}
 	}

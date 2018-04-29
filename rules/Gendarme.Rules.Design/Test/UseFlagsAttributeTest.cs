@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for UseFlagsAttributeRule
 //
 // Authors:
@@ -42,25 +42,25 @@ namespace Test.Rules.Design {
 	[TestFixture]
 	public sealed class UseFlagsAttributeTest : TypeRuleTestFixture<UseFlagsAttributeRule> {
 
-		[Flags]		
+		[Flags]
 		private enum NotApplicable1 {	// has FlagsAttribute
 			One = 1,
 			Two = 2,
 			Four = 4,
 		}
-	
+
 		private enum Good1 {	// not enough non-zero values
 			Zero,
 			One,
 			Two,
 		}
-	
+
 		private enum Good2 {	// values are sequential
 			One = 1,
 			Two = 2,
 			Three = 3,
 		}
-		
+
 		private enum Good3 {	// values are sequential
 			One = 1,
 			Two = 2,
@@ -69,7 +69,7 @@ namespace Test.Rules.Design {
 			Five = 5,
 			Six = 6,
 		}
-		
+
 		private enum Good4 {	// last value is not a bitmask
 			One = 1,
 			Two = 2,
@@ -93,26 +93,26 @@ namespace Test.Rules.Design {
 			UISF_ACTIVE    = 0x4
 		}
 
-		private enum Bad1 {	
+		private enum Bad1 {
 			One = 1,
 			Two = 2,
 			Four = 4,
 		}
-	
-		private enum Bad2 {	
+
+		private enum Bad2 {
 			One = 1,
 			Four = 4,
 			Two = 2,
 		}
-	
-		private enum Bad3 {	
+
+		private enum Bad3 {
 			One = 1,
 			Two = 2,
 			Four = 4,
 			AliasedFour = 4,
 		}
-	
-		private enum Bad4 {	
+
+		private enum Bad4 {
 			One = 1,
 			Two = 2,
 			Four = 4,

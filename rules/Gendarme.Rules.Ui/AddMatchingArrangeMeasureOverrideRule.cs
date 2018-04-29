@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Ui.AddMatchingArrangeMeasureOverrideRule
 //
 // Authors:
@@ -37,16 +37,16 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.UI {
 
 	/// <summary>
-	/// An object that inherits from System.Windows.FrameworkElement and provides either 
+	/// An object that inherits from System.Windows.FrameworkElement and provides either
 	/// an ArrangeOverride or MeasureOverride method should also provide the other.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// class BadClass : System.Windows.FrameworkElement {
-	///	protected override Size MeasureOverride (Size availableSize)
-	///	{
-	///	}
+	/// 	protected override Size MeasureOverride (Size availableSize)
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -74,11 +74,17 @@ namespace Gendarme.Rules.UI {
 		private static MethodSignature measureSignature = new MethodSignature ("MeasureOverride",
 									Size, parameters, checkOverride);
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
 
-			// if the module does not reference System.Windows.Size, 
+			// if the module does not reference System.Windows.Size,
 			// then it will not be using the overrides
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				string assembly_name = e.CurrentAssembly.Name.Name;
@@ -90,6 +96,11 @@ namespace Gendarme.Rules.UI {
 			};
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || !type.HasMethods || !type.Inherits ("System.Windows", "FrameworkElement"))

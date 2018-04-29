@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.StronglyTypeICollectionMembersRule
 //
 // Authors:
@@ -45,11 +45,11 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// class Bad : ICollection {
-	///	public void CopyTo (Array array, int index)
-	///	{
-	///		// method code
-	///	}
-	///	// other ICollection members
+	/// 	public void CopyTo (Array array, int index)
+	/// 	{
+	/// 		// method code
+	/// 	}
+	/// 	// other ICollection members
 	/// }
 	/// </code>
 	/// </example>
@@ -57,14 +57,14 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// class Good : ICollection {
-	///	public void ICollection.CopyTo (Array array, int index)
-	///	{
-	///		// method code
-	///	}
-	///	public void CopyTo (Exception [] array, int index)
-	///	{
-	///		((ICollection)this).CopyTo(array, index);
-	///	}
+	/// 	public void ICollection.CopyTo (Array array, int index)
+	/// 	{
+	/// 		// method code
+	/// 	}
+	/// 	public void CopyTo (Exception [] array, int index)
+	/// 	{
+	/// 		((ICollection)this).CopyTo(array, index);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>

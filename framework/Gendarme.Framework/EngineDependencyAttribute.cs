@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.EngineDependencyAttribute
 //
 // Authors:
@@ -31,7 +31,7 @@ namespace Gendarme.Framework {
 
 	/// <summary>
 	/// This attribute is needed to declare that a rule depends on an a engine.
-	/// This guarantee that the engine will have done it's job prior to the 
+	/// This guarantee that the engine will have done it's job prior to the
 	/// Runner calls into the rules Check* methods
 	/// </summary>
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = true, Inherited = true)]

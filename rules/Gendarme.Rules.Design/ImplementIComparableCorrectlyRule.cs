@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ImplementIComparableCorrectlyRule
 //
 // Authors:
@@ -46,13 +46,13 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public struct Comparable : IComparable {
-	/// 
-	///	private int x;
-	/// 
-	///	public int CompareTo (object obj)
-	///	{
-	///		return x.CompareTo (((Comparable)obj).x);
-	///	}
+	///
+	/// 	private int x;
+	///
+	/// 	public int CompareTo (object obj)
+	/// 	{
+	/// 		return x.CompareTo (((Comparable)obj).x);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -60,36 +60,36 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public struct Comparable : IComparable {
-	/// 
-	///	public int CompareTo (object obj)
-	///	{
-	///		return x.CompareTo (((Comparable)obj).x);
-	///	}
-	///	
-	///	public override bool Equals (object obj)
-	///	{
-	///		return x == ((Comparable) obj).x;
-	///	}
-	///	
-	///	static public bool operator == (Comparable left, Comparable right)
-	///	{
-	///		return (left.x == right.x);
-	///	}
-	///	
-	///	static public bool operator != (Comparable left, Comparable right)
-	///	{
-	///		return (left.x != right.x);
-	///	}
-	///	
-	///	static public bool operator &gt; (Comparable left, Comparable right)
-	///	{
-	///		return (left.x &gt; right.x);
-	///	}
-	///	
-	///	static public bool operator &lt; (Comparable left, Comparable right)
-	///	{
-	///		return (left.x &lt; right.x);
-	///	}
+	///
+	/// 	public int CompareTo (object obj)
+	/// 	{
+	/// 		return x.CompareTo (((Comparable)obj).x);
+	/// 	}
+	///
+	/// 	public override bool Equals (object obj)
+	/// 	{
+	/// 		return x == ((Comparable) obj).x;
+	/// 	}
+	///
+	/// 	static public bool operator == (Comparable left, Comparable right)
+	/// 	{
+	/// 		return (left.x == right.x);
+	/// 	}
+	///
+	/// 	static public bool operator != (Comparable left, Comparable right)
+	/// 	{
+	/// 		return (left.x != right.x);
+	/// 	}
+	///
+	/// 	static public bool operator &gt; (Comparable left, Comparable right)
+	/// 	{
+	/// 		return (left.x &gt; right.x);
+	/// 	}
+	///
+	/// 	static public bool operator &lt; (Comparable left, Comparable right)
+	/// 	{
+	/// 		return (left.x &lt; right.x);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -100,6 +100,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1036:OverrideMethodsOnComparableTypes")]
 	public class ImplementIComparableCorrectlyRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enums, interfaces and to generated code

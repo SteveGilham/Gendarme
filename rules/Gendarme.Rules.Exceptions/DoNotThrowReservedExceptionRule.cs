@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Exceptions.DoNotThrowReservedExceptionRule
 //
 // Authors:
@@ -40,10 +40,10 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Add (object obj)
 	/// {
-	///	if (obj == null) {
-	///		throw new NullReferenceException ("obj");
-	///	}
-	///	Inner.Add (obj);
+	/// 	if (obj == null) {
+	/// 		throw new NullReferenceException ("obj");
+	/// 	}
+	/// 	Inner.Add (obj);
 	/// }
 	/// </code>
 	/// </example>
@@ -52,10 +52,10 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Add (object obj)
 	/// {
-	///	if (obj == null) {
-	///		throw new ArgumentNullException ("obj");
-	///	}
-	///	Inner.Add (obj);
+	/// 	if (obj == null) {
+	/// 		throw new ArgumentNullException ("obj");
+	/// 	}
+	/// 	Inner.Add (obj);
 	/// }
 	/// </code>
 	/// </example>

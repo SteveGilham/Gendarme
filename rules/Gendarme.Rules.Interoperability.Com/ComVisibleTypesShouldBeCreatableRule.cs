@@ -1,9 +1,9 @@
-//
+﻿//
 // Gendarme.Rules.Interoperability.Com.ComVisibleTypesShouldBeCreatableRule
 //
 // Authors:
 //	Nicholas Rioux
-// 
+//
 // Copyright (C) 2010 Nicholas Rioux
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,32 +36,32 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Interoperability.Com {
 
 	/// <summary>
-	/// This rule checks for ComVisible reference types which have a public parameterized constructor, 
+	/// This rule checks for ComVisible reference types which have a public parameterized constructor,
 	/// but lack a default public constructor.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
-	///	[ComVisible (true)]
-	///	public class BadClass {
-	///		public BadClass (int param) {
-	///		
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class BadClass {
+	/// 		public BadClass (int param) {
+	///
+	/// 		}
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
-	///	[ComVisible (true)]
-	///	public class GoodClass {
-	///		public GoodClass () {
-	///		
-	///		}
-	///		public GoodClass (int param) {
-	///			
-	///		}
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class GoodClass {
+	/// 		public GoodClass () {
+	///
+	/// 		}
+	/// 		public GoodClass (int param) {
+	///
+	/// 		}
+	/// 	}
 	/// </code>
 	/// </example>
 
@@ -69,6 +69,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[Solution ("Either add a default public constructor, or remove the ComVisibleAttribute from the type.")]
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1409:ComVisibleTypesShouldBeCreatable")]
 	public class ComVisibleTypesShouldBeCreatableRule : Rule, ITypeRule {
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// Check only for reference types with attributes.
@@ -95,7 +100,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 			}
 			if (!hasParameterizedCtor || hasDefaultCtor)
 				return RuleResult.Success;
-				
+
 			Runner.Report (type, Severity.Medium, Confidence.Total);
 
 			return Runner.CurrentRuleResult;

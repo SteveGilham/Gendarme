@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.DeclareEventHandlersCorrectlyRule
 //
 // Authors:
@@ -41,7 +41,7 @@ namespace Gendarme.Rules.Design {
 	/// the .NET guidelines. The return type of the event should be void (because there
 	/// is no good way to handle return values if multiple delegates are attached to the
 	/// event). And the event should take two arguments. The first should be of type
-	/// <c>System.Object</c> and be named &apos;sender&apos;. The second should be of type 
+	/// <c>System.Object</c> and be named &apos;sender&apos;. The second should be of type
 	/// <c>System.EventArgs</c> (or a subclass) and named &apos;e&apos;. This helps tools
 	/// such as visual designers identify the delegates and methods which may be
 	/// attached to events. Note that .NET 2.0 added a generic <c>System.EventHandler</c>
@@ -52,9 +52,9 @@ namespace Gendarme.Rules.Design {
 	/// <code>
 	/// // the second parameter (which should be System.EventArgs or a derived class) is missing
 	/// delegate void MyDelegate (int sender);
-	/// 
+	///
 	/// class Bad {
-	///	public event MyDelegate CustomEvent;
+	/// 	public event MyDelegate CustomEvent;
 	/// }
 	/// </code>
 	/// </example>
@@ -62,9 +62,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example (delegate):
 	/// <code>
 	/// delegate void MyDelegate (int sender, EventArgs e);
-	/// 
+	///
 	/// class Good {
-	///	public event MyDelegate CustomEvent;
+	/// 	public event MyDelegate CustomEvent;
 	/// }
 	/// </code>
 	/// </example>
@@ -72,7 +72,7 @@ namespace Gendarme.Rules.Design {
 	/// Good example (generics):
 	/// <code>
 	/// class Good {
-	///	public event EventHandler&lt;EventArgs&gt; CustomEvent;
+	/// 	public event EventHandler&lt;EventArgs&gt; CustomEvent;
 	/// }
 	/// </code>
 	/// </example>
@@ -90,7 +90,7 @@ namespace Gendarme.Rules.Design {
 			if (rtype.IsNamed ("System", "Void"))
 				return true;
 
-			string msg = String.Format (CultureInfo.InvariantCulture, 
+			string msg = String.Format (CultureInfo.InvariantCulture,
 				"The delegate should return void, not {0}", rtype.GetFullName ());
 			Runner.Report (eventType, Severity.Medium, Confidence.High, msg);
 			return false;
@@ -116,7 +116,7 @@ namespace Gendarme.Rules.Design {
 			if (count >= 1) {
 				TypeReference ptype = pdc [0].ParameterType;
 				if (!ptype.IsNamed ("System", "Object")) {
-					string msg = String.Format (CultureInfo.InvariantCulture, 
+					string msg = String.Format (CultureInfo.InvariantCulture,
 						"The first parameter should have an object, not {0}", ptype.GetFullName ());
 					Runner.Report (eventType, Severity.Medium, Confidence.High, msg);
 					ok = false;
@@ -136,12 +136,17 @@ namespace Gendarme.Rules.Design {
 			if (invokeParameter.Name == expectedName)
 				return true;
 
-			string msg = String.Format (CultureInfo.InvariantCulture, "The expected name is {0}, not {1}", 
+			string msg = String.Format (CultureInfo.InvariantCulture, "The expected name is {0}, not {1}",
 				expectedName, invokeParameter.Name);
 			Runner.Report (eventType, Severity.Low, Confidence.High, msg);
 			return false;
 		}
-		
+
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasEvents)
@@ -159,9 +164,9 @@ namespace Gendarme.Rules.Design {
 					continue;
 
 				TypeDefinition td = tr.Resolve ();
-				if (td == null) 
+				if (td == null)
 					continue;
-				
+
 				//If we are using the Generic
 				//EventHandler<TEventArgs>, the compiler forces
 				//us to write the correct signature
@@ -204,6 +209,9 @@ namespace Gendarme.Rules.Design {
 			return false;
 		}
 
+		/// <summary>
+		/// Release all resources, free memory, e.t.c.
+		/// </summary>
 		public override void TearDown ()
 		{
 			valid_event_handler_types.Clear ();

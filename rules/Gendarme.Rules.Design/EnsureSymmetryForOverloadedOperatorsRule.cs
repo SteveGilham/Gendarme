@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.EnsureSymmetryForOverloadedOperatorsRule
 //
 // Authors:
@@ -55,10 +55,10 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// class DoesNotOverloadAdd {
-	///	public static int operator - (DoesNotOverloadAdd left, DoesNotOverloadAdd right)
-	///	{
-	///		return 0;
-	///	}
+	/// 	public static int operator - (DoesNotOverloadAdd left, DoesNotOverloadAdd right)
+	/// 	{
+	/// 		return 0;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -66,15 +66,15 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// class Good {
-	///	public static int operator + (Good right, Good left)
-	///	{
-	///		return 0;
-	///	}
-	///	
-	///	public static int operator - (Good right, Good left)
-	///	{
-	///		return 0;
-	///	}
+	/// 	public static int operator + (Good right, Good left)
+	/// 	{
+	/// 		return 0;
+	/// 	}
+	///
+	/// 	public static int operator - (Good right, Good left)
+	/// 	{
+	/// 		return 0;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -86,18 +86,23 @@ namespace Gendarme.Rules.Design {
 
 		private const string Message = "The '{0}' operator is present, for symmetry, the '{1}' operator should be added.";
 
-		static KeyValuePair<MethodSignature, MethodSignature> [] SymmetricOperators_Warning = new KeyValuePair<MethodSignature, MethodSignature> [] { 
+		static KeyValuePair<MethodSignature, MethodSignature> [] SymmetricOperators_Warning = new KeyValuePair<MethodSignature, MethodSignature> [] {
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Addition, MethodSignatures.op_Subtraction),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Multiply, MethodSignatures.op_Division),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Division, MethodSignatures.op_Modulus),
 		};
-		static KeyValuePair<MethodSignature, MethodSignature> [] SymmetricOperators_Error = new KeyValuePair<MethodSignature, MethodSignature> [] { 
+		static KeyValuePair<MethodSignature, MethodSignature> [] SymmetricOperators_Error = new KeyValuePair<MethodSignature, MethodSignature> [] {
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_GreaterThan, MethodSignatures.op_LessThan),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_GreaterThanOrEqual, MethodSignatures.op_LessThanOrEqual),
 			new KeyValuePair<MethodSignature, MethodSignature> (MethodSignatures.op_Equality, MethodSignatures.op_Inequality),
 			new KeyValuePair<MethodSignature, MethodSignature> (MethodSignatures.op_True, MethodSignatures.op_False),
 		};
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsInterface || type.IsEnum || type.IsDelegate ())
@@ -111,7 +116,7 @@ namespace Gendarme.Rules.Design {
 			return Runner.CurrentRuleResult;
 		}
 
-		private void CheckOperatorPair (KeyValuePair<MethodSignature, MethodSignature> pair, 
+		private void CheckOperatorPair (KeyValuePair<MethodSignature, MethodSignature> pair,
 			TypeReference type, Severity severity)
 		{
 			MethodDefinition op = type.GetMethod (pair.Key);

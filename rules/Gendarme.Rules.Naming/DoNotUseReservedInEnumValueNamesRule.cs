@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.DoNotUseReservedInEnumValueNamesRule
 //
 // Authors:
@@ -36,17 +36,17 @@ namespace Gendarme.Rules.Naming {
 	/// <summary>
 	/// This rule checks for enumerations that contain values named <c>reserved</c>. This
 	/// practice, often seen in C/C++ sources, is not needed in .NET since adding new
-	/// values will not normally break binary compatibility. However renaming a <c>reserved</c> 
+	/// values will not normally break binary compatibility. However renaming a <c>reserved</c>
 	/// enum value can since there is no way to prevent people from using the old value.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public enum Answer {
-	///	Yes,
-	///	No,
-	///	Reserved
-	///	// ^ renaming this to 'Maybe' would be a breaking change
+	/// 	Yes,
+	/// 	No,
+	/// 	Reserved
+	/// 	// ^ renaming this to 'Maybe' would be a breaking change
 	/// }
 	/// </code>
 	/// </example>
@@ -54,11 +54,11 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// public enum Answer {
-	///	Yes,
-	///	No
-	///	// we can add Maybe here without causing a breaking change
-	///	// (but note that we may break code if we change the values of
-	///	// existing enumerations)
+	/// 	Yes,
+	/// 	No
+	/// 	// we can add Maybe here without causing a breaking change
+	/// 	// (but note that we may break code if we change the values of
+	/// 	// existing enumerations)
 	/// }
 	/// </code>
 	/// </example>
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Naming {
 	[FxCopCompatibility ("Microsoft.Naming", "CA1700:DoNotNameEnumValuesReserved")]
 	public class DoNotUseReservedInEnumValueNamesRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsEnum)

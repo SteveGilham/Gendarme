@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.GendarmeRule
 //
 // Authors:
@@ -36,14 +36,21 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Gendarme {
 
+	/// <summary>
+	/// Base rule for the Gendarme.Rules.Gendarme set of rules.
+	/// </summary>
 	abstract public class GendarmeRule : Rule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization.
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
 			AssemblyResolver.Resolver.CacheAssembly ( typeof (Rule).Assembly );
 
-			// If the assembly doesn't reference Gendarme.Framework then it 
+			// If the assembly doesn't reference Gendarme.Framework then it
 			// obviously is not a Gendarme Rules assembly
 			Runner.AnalyzeModule += (object o, RunnerEventArgs e) =>
 			{

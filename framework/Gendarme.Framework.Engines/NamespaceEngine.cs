@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Engines.NamespaceEngine
 //
 // Authors:

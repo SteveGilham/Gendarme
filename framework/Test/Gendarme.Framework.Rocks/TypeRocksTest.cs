@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for TypeRocks
 //
 // Authors:
@@ -555,7 +555,7 @@ namespace Test.Framework.Rocks {
 			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.NestedNestedPublicType);
 
 			Assert.IsTrue (type.IsNamed (TestTypeNames.NestedNestedPublicType));
-			
+
 			Assert.IsTrue (type.IsNamed (TestTypeNames.Namespace, "PublicType/NestedPublicType/NestedNestedPublicType"));
 		}
 

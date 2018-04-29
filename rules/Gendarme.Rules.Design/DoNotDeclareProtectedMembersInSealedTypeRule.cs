@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.DoNotDeclareProtectedMembersInSealedTypeRule
 //
 // Authors:
@@ -36,15 +36,15 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule ensures that <c>sealed</c> types (i.e. types that you can't inherit from) 
+	/// This rule ensures that <c>sealed</c> types (i.e. types that you can't inherit from)
 	/// do not define family (<c>protected</c> in C#) fields or methods. Instead make the
-	/// member private so that its accessibility is not misleading. 
+	/// member private so that its accessibility is not misleading.
 	/// </summary>
 	/// <example>
 	/// Bad example (field):
 	/// <code>
 	/// public sealed class MyClass {
-	///	protected int someValue;
+	/// 	protected int someValue;
 	/// }
 	/// </code>
 	/// </example>
@@ -52,10 +52,10 @@ namespace Gendarme.Rules.Design {
 	/// Bad example (method):
 	/// <code>
 	/// public sealed class MyClass {
-	///	protected int GetAnswer ()
-	///	{
-	///		return 42;
-	///	}
+	/// 	protected int GetAnswer ()
+	/// 	{
+	/// 		return 42;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,7 +63,7 @@ namespace Gendarme.Rules.Design {
 	/// Good example (field):
 	/// <code>
 	/// public sealed class MyClass {
-	///	private int someValue; 
+	/// 	private int someValue;
 	/// }
 	/// </code>
 	/// </example>
@@ -71,10 +71,10 @@ namespace Gendarme.Rules.Design {
 	/// Good example (method):
 	/// <code>
 	/// public sealed class MyClass {
-	///	private int GetAnswer ()
-	///	{
-	///		return 42;
-	///	}
+	/// 	private int GetAnswer ()
+	/// 	{
+	/// 		return 42;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -85,6 +85,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1047:DoNotDeclareProtectedMembersInSealedTypes")]
 	public class DoNotDeclareProtectedMembersInSealedTypeRule: Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to sealed types, but not to enum, value types and delegate (sealed)

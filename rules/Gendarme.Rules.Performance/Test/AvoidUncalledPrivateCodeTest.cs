@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for AvoidUncalledPrivateCodeRule
 //
 // Authors:
@@ -66,7 +66,7 @@ namespace Test.Rules.Performance {
 
 	[TestFixture]
 	public class AvoidUncalledPrivateCodeTest : MethodRuleTestFixture<AvoidUncalledPrivateCodeRule> {
-		
+
 		public class UncalledPrivateMethod {
 			private void display ()
 			{
@@ -355,7 +355,7 @@ namespace Test.Rules.Performance {
 		}
 
 		public class UncalledInternalOverriddenMethod : UncalledPublicOverriddenMethod {
-			// this can be accessed thru UncalledPublicOverriddenMethod 
+			// this can be accessed thru UncalledPublicOverriddenMethod
 			internal override string ToStringToo ()
 			{
 				return "aha!";

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ImplementEqualsAndGetHashCodeInPairRule
 //
 // Authors:
@@ -25,7 +25,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-				
+
 using System;
 using System.Globalization;
 
@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule checks for types that either override the <c>Equals(object)</c> method 
+	/// This rule checks for types that either override the <c>Equals(object)</c> method
 	/// without overriding <c>GetHashCode()</c> or override <c>GetHashCode</c> without
 	/// overriding <c>Equals</c>. In order to work correctly types should always override
 	/// these together.
@@ -73,7 +73,7 @@ namespace Gendarme.Rules.Design {
 	/// 	{
 	/// 		return this == obj;
 	/// 	}
-	/// 	
+	///
 	/// 	public override int GetHashCode ()
 	/// 	{
 	/// 		return 42;
@@ -89,6 +89,11 @@ namespace Gendarme.Rules.Design {
 
 		private const string Message = "Type implements '{0}' but is missing '{1}'.";
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule doesn't apply to interfaces and enums

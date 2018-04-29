@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.Interoperability.Com.ReviewComRegistrationMethodsTest
 //
 // Authors:

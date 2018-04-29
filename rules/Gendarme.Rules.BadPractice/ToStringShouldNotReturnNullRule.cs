@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.BadPractice.ToStringShouldNotReturnNullRule
 //
 // Authors:
@@ -45,7 +45,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public override string ToString ()
 	/// {
-	///	return (count == 0) ? null : count.ToString ();
+	/// 	return (count == 0) ? null : count.ToString ();
 	/// }
 	/// </code>
 	/// </example>
@@ -54,7 +54,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// public override string ToString ()
 	/// {
-	///	return count.ToString ();
+	/// 	return count.ToString ();
 	/// }
 	/// </code>
 	/// </example>
@@ -64,6 +64,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("Return an appropriately descriptive string or an empty string instead of returning null.")]
 	public class ToStringShouldNotReturnNullRule: ReturnNullRule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rules applies to types that overrides System.Object.Equals(object)

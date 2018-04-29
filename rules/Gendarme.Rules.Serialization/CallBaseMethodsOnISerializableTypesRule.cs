@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Serialization.CallBaseMethodsOnISerializableTypesRule
 //
 // Authors:
@@ -47,22 +47,22 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public class Base : ISerializable {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// [Serializable]
 	/// public class Bad : Base {
-	///	int value;
-	///	
-	///	protected BadDerived (SerializationInfo info, StreamingContext context)
-	///	{
-	///		value = info.GetInt32 ("value");
-	///	}
-	///	
-	///	public override void GetObjectData (SerializationInfo info, StreamingContext context)
-	///	{
-	///		info.AddValue ("value", value);
-	///	}
+	/// 	int value;
+	///
+	/// 	protected BadDerived (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		value = info.GetInt32 ("value");
+	/// 	}
+	///
+	/// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		info.AddValue ("value", value);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -71,23 +71,23 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public class Base : ISerializable {
-	///	// ...
+	/// 	// ...
 	/// }
-	/// 
+	///
 	/// [Serializable]
 	/// public class Good : Base {
-	///	int value;
-	///	
-	///	protected BadDerived (SerializationInfo info, StreamingContext context) : base (info, context)
-	///	{
-	///		value = info.GetInt32 ("value");
-	///	}
-	///	
-	///	public override void GetObjectData (SerializationInfo info, StreamingContext context)
-	///	{
-	///		info.AddValue ("value", value);
-	///		base.GetObjectData (info, context);
-	///	}
+	/// 	int value;
+	///
+	/// 	protected BadDerived (SerializationInfo info, StreamingContext context) : base (info, context)
+	/// 	{
+	/// 		value = info.GetInt32 ("value");
+	/// 	}
+	///
+	/// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		info.AddValue ("value", value);
+	/// 		base.GetObjectData (info, context);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -133,6 +133,11 @@ namespace Gendarme.Rules.Serialization {
 			Runner.Report (method, Severity.High, Confidence.High);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!InheritsFromISerializableImplementation (type))

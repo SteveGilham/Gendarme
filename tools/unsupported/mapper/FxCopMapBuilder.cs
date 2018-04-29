@@ -59,7 +59,7 @@ namespace FxCopMapBuilder {
 			}
 
 			string ext = (xmloutput) ? "xml" : "md";
-			
+
 			fxCopFile = Path.ChangeExtension (fxCopFile, ext);
 			gendarmeFile = Path.ChangeExtension (gendarmeFile, ext);
 
@@ -119,7 +119,7 @@ namespace FxCopMapBuilder {
 							GendarmeToFxCop.Add (type.FullName, new List<FxCopRule> { rule });
 					}
 
-					// add gendarme rule to the dictionary even if it 
+					// add gendarme rule to the dictionary even if it
 					// was not mapped with any fxcop rule
 					if (include && !GendarmeToFxCop.ContainsKey (type.FullName))
 						GendarmeToFxCop.Add (type.FullName, new List<FxCopRule> ());
@@ -200,7 +200,7 @@ namespace FxCopMapBuilder {
 			StringBuilder sb = new StringBuilder ();
 			string category = String.Empty;
 			foreach (var element in rootNode.Elements ()) {
-				if (element.Attribute ("category").Value != category) { 
+				if (element.Attribute ("category").Value != category) {
 					category = element.Attribute ("category").Value;
 					sb.AppendLine(String.Format("## {0}",  category));
 				}
@@ -222,7 +222,7 @@ namespace FxCopMapBuilder {
 					idName [0], idName [1], rule.Attribute ("category").Value);
 			}
 			if (rule.Attribute ("type").Value == "gendarme") {
-				return String.Format ("[[{1}|{0}.{1}{2}]]", rule.Attribute ("category").Value, 
+				return String.Format ("[[{1}|{0}.{1}{2}]]", rule.Attribute ("category").Value,
 					rule.Attribute ("id").Value, "(2.10)");
 			}
 			return String.Empty;

@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for DisposableTypesShouldHaveFinalizerRule
 //
 // Authors:
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -67,7 +67,7 @@ namespace Test.Rules.Design {
 			throw new NotImplementedException ();
 		}
 	}
-	
+
 	class NotDisposable {
 		IntPtr A;
 	}
@@ -129,7 +129,7 @@ namespace Test.Rules.Design {
 		public void DoesNotApplyGeneratedCode ()
 		{
 			var declaring_type = DefinitionLoader.GetTypeDefinition<HasFinalizer> ();
-	
+
 			Assert.IsTrue (declaring_type.HasNestedTypes, "HasFinalizer-HasNestedTypes");
 			Assert.AreEqual (1, declaring_type.NestedTypes.Count, "HasFinalized-NestedTypesCount-1");
 

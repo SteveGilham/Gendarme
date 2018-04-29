@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.InstructionMatcher class
 //
 // Authors:
@@ -99,7 +99,7 @@ namespace Gendarme.Rules.Smells {
 				source.Previous.OpCode.Code == Code.Ldnull ||
 				source.Previous.OpCode.StackBehaviourPush == StackBehaviour.Push1))
 				return false;
-			
+
 			//if (source.Operand != target.Operand)
 			if (source.Operand != null && target.Operand != null) {
 				// we're sure that target.Operand is of the same type as source.Operand (same OpCode is used)

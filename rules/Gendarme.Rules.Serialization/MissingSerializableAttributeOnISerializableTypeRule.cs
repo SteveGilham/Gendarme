@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Serialization.MissingSerializableAttributeOnISerializableTypeRule
 //
 // Authors:
@@ -35,10 +35,10 @@ namespace Gendarme.Rules.Serialization {
 
 	/// <summary>
 	/// This rule checks for types that implement <c>System.ISerializable</c> but are
-	/// not decorated with the <c>[Serializable]</c> attribute. Implementing 
-	/// <c>System.ISerializable</c> is not enough to make a class serializable as this 
-	/// interface only gives you more control over the basic serialization process. 
-	/// In order for the runtime to know your type is serializable it must have the 
+	/// not decorated with the <c>[Serializable]</c> attribute. Implementing
+	/// <c>System.ISerializable</c> is not enough to make a class serializable as this
+	/// interface only gives you more control over the basic serialization process.
+	/// In order for the runtime to know your type is serializable it must have the
 	/// <c>[Serializable]</c> attribute.
 	/// </summary>
 	/// <example>
@@ -64,6 +64,11 @@ namespace Gendarme.Rules.Serialization {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable")]
 	public class MissingSerializableAttributeOnISerializableTypeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface (since [Serializable] is not applicable to interfaces)
@@ -71,7 +76,7 @@ namespace Gendarme.Rules.Serialization {
 			if (type.IsInterface || type.IsDelegate ())
 				return RuleResult.DoesNotApply;
 
-			// rule does not apply if the type does not implements ISerializable 
+			// rule does not apply if the type does not implements ISerializable
 			if (!type.Implements ("System.Runtime.Serialization", "ISerializable"))
 				return RuleResult.DoesNotApply;
 

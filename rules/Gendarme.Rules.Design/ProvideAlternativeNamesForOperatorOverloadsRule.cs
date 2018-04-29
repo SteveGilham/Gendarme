@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ProvideAlternativeNamesForOperatorOverloadsRule
 //
 // Authors:
@@ -40,8 +40,8 @@ namespace Gendarme.Rules.Design {
 	// TODO: Shouldn't this only fire for externally visible operators?
 
 	/// <summary>
-	/// The rule ensure that all overloaded operators are also accessible using named 
-	/// alternatives because some languages, like VB.NET, cannot use overloaded operators. 
+	/// The rule ensure that all overloaded operators are also accessible using named
+	/// alternatives because some languages, like VB.NET, cannot use overloaded operators.
 	/// For those languages named methods should be implemented that provide the same
 	/// functionality. This rule verifies that a named alternative exists for each overloaded operator.
 	/// <list type="bullet">
@@ -85,10 +85,10 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// class DoesNotImplementAlternative {
-	///	public static int operator + (DoesNotOverloadOperatorEquals a, DoesNotOverloadOperatorEquals b)
-	///	{
-	///		return 0;
-	///	}
+	/// 	public static int operator + (DoesNotOverloadOperatorEquals a, DoesNotOverloadOperatorEquals b)
+	/// 	{
+	/// 		return 0;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -96,15 +96,15 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// class DoesImplementAdd {
-	///	public static int operator + (DoesImplementAdd a, DoesImplementAdd b)
-	///	{
-	///		return 0;
-	///	}
-	///	
-	///	public int Add (DoesImplementAdd a)
-	///	{
-	///		return this + a;
-	///	}
+	/// 	public static int operator + (DoesImplementAdd a, DoesImplementAdd b)
+	/// 	{
+	/// 		return 0;
+	/// 	}
+	///
+	/// 	public int Add (DoesImplementAdd a)
+	/// 	{
+	/// 		return this + a;
+	/// 	}
 	///}
 	/// </code>
 	/// </example>
@@ -120,20 +120,20 @@ namespace Gendarme.Rules.Design {
 
 		static MethodSignature Compare = new MethodSignature ("Compare", null, OneParameter);
 
-		static KeyValuePair<MethodSignature, MethodSignature> [] AlternativeMethodNames = new KeyValuePair<MethodSignature, MethodSignature> [] { 
+		static KeyValuePair<MethodSignature, MethodSignature> [] AlternativeMethodNames = new KeyValuePair<MethodSignature, MethodSignature> [] {
 			//unary
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_UnaryPlus, new MethodSignature ("Plus", null, NoParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_UnaryNegation, new MethodSignature ("Negate", null, NoParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_LogicalNot, new MethodSignature ("LogicalNot", null, NoParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_OnesComplement, new MethodSignature ("OnesComplement", null, NoParameter)),
-			
+
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Increment, new MethodSignature ("Increment", null, NoParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Decrement, new MethodSignature ("Decrement", null, NoParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_True, new MethodSignature ("IsTrue", null, NoParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_False, new MethodSignature ("IsFalse", null, NoParameter)),
 
 			//binary
-			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Addition, new MethodSignature ("Add", null, OneParameter)), 
+			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Addition, new MethodSignature ("Add", null, OneParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Subtraction, new MethodSignature ("Subtract", null, OneParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Multiply, new MethodSignature ("Multiply", null, OneParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Division, new MethodSignature ("Divide", null, OneParameter)),
@@ -142,10 +142,10 @@ namespace Gendarme.Rules.Design {
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_BitwiseAnd, new MethodSignature ("BitwiseAnd", null, OneParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_BitwiseOr, new MethodSignature ("BitwiseOr", null, OneParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_ExclusiveOr, new MethodSignature ("ExclusiveOr", null, OneParameter)),
-			
+
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_LeftShift, new MethodSignature ("LeftShift", null, OneParameter)),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_RightShift, new MethodSignature ("RightShift", null, OneParameter)),
-		
+
 			// new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Equality, MethodSignatures.Equals), //handled by OverrideEqualsMethodRule
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_Inequality, MethodSignatures.Equals),
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_GreaterThan, Compare),
@@ -154,6 +154,11 @@ namespace Gendarme.Rules.Design {
 			new KeyValuePair<MethodSignature,MethodSignature> (MethodSignatures.op_LessThanOrEqual, Compare),
 		};
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsInterface || type.IsDelegate ())

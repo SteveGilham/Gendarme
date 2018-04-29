@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for PreferSafeHandleRule
 //
 // Authors:
@@ -57,7 +57,7 @@ namespace Test.Rules.BadPractice {
 			~Bad3 ()
 			{
 			}
-			
+
 			internal UIntPtr ptr;
 		}
 
@@ -65,7 +65,7 @@ namespace Test.Rules.BadPractice {
 			public void Dispose ()
 			{
 			}
-			
+
 			internal UIntPtr ptr;
 		}
 
@@ -73,11 +73,11 @@ namespace Test.Rules.BadPractice {
 			~Bad5 ()
 			{
 			}
-			
+
 			public void Dispose ()
 			{
 			}
-			
+
 			internal UIntPtr ptr;
 		}
 
@@ -93,7 +93,7 @@ namespace Test.Rules.BadPractice {
 		public void Cases ()
 		{
 			AssertRuleSuccess<Good1> ();
-			
+
 			AssertRuleFailure<Bad1> ();
 			Assert.AreEqual (Confidence.Low, Runner.Defects [0].Confidence, "Bad1-Confidence-Low");
 

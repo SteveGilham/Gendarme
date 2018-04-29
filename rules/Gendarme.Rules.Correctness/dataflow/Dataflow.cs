@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Dataflow.cs: a generic dataflow analysis algorithm
  *
  * Authors:
@@ -31,7 +31,7 @@ public class Dataflow {
         this.inFact = new Hashtable();
         this.outFact = new Hashtable();
     }
-    
+
 	public bool Verbose { get; set; }
 
     /* This only does forward analysis so far. We might need to make it
@@ -59,7 +59,7 @@ public class Dataflow {
         do {
         	if (Verbose)
 				Trace.WriteLine(string.Format("-------- iteration {0}", iteration));
-				
+
             iteration++;
             changed = false;
             foreach(object o in dfs.OrderedNodes) {
@@ -85,7 +85,7 @@ public class Dataflow {
          * order, so that messages will be sorted by location. */
         if (Verbose)
 			Trace.WriteLine("-------- final iteration");
-				
+
         foreach(object o in cfg.Nodes) {
             Node node = (Node)o;
             foreach(object pred in cfg.Predecessors(node))

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.TypesWithDisposableFieldsShouldBeDisposableRule
 //
 // Authors:
@@ -39,7 +39,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
-	/// This rule will fire if a type contains disposable fields, i.e. fields whose types implements 
+	/// This rule will fire if a type contains disposable fields, i.e. fields whose types implements
 	/// <c>System.IDisposable</c>, but where the type itself does not implement <c>System.IDisposable</c>.
 	/// The rule will not report types that are not assigning themselves new instances to the fields.
 	/// </summary>
@@ -47,14 +47,14 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad examples:
 	/// <code>
 	/// class DoesNotImplementIDisposable {
-	///	IDisposable field;
+	/// 	IDisposable field;
 	/// }
-	/// 
+	///
 	/// class AbstractDispose : IDisposable {
-	///	IDisposable field;
-	///	
-	///	// the field should be disposed in the type that declares it
-	///	public abstract void Dispose ();
+	/// 	IDisposable field;
+	///
+	/// 	// the field should be disposed in the type that declares it
+	/// 	public abstract void Dispose ();
 	/// }
 	/// </code>
 	/// </example>
@@ -62,12 +62,12 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// class Dispose : IDisposable {
-	///	IDisposable field;
-	///	
-	///	public void Dispose ()
-	///	{
-	///		field.Dispose ();
-	///	}
+	/// 	IDisposable field;
+	///
+	/// 	public void Dispose ()
+	/// 	{
+	/// 		field.Dispose ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -80,15 +80,15 @@ namespace Gendarme.Rules.Correctness {
 
 		static OpCodeBitmask StoreFieldBitmask = new OpCodeBitmask (0x0, 0x400000000000000, 0x80000000, 0x0);
 
-		protected override string AbstractTypeMessage { 
+		protected override string AbstractTypeMessage {
 			get { return "Field implement IDisposable. Type should implement a non-abstract Dispose() method"; }
 		}
 
-		protected override string TypeMessage { 
+		protected override string TypeMessage {
 			get { return "Field implement IDisposable. Type should implement a Dispose() method";  }
 		}
 
-		protected override string AbstractDisposeMessage { 
+		protected override string AbstractDisposeMessage {
 			get { return "Some field(s) implement IDisposable. Making this method abstract shifts the reponsability of disposing those fields to the inheritors of this class."; }
 		}
 

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.SealedTypeWithInheritanceDemandRule
 //
 // Authors:
@@ -35,7 +35,7 @@ namespace Gendarme.Rules.Security.Cas {
 
 	/// <summary>
 	/// This rule checks for sealed types that have <c>InheritanceDemand</c> declarative
-	/// security applied to them. Since those types cannot be inherited from the 
+	/// security applied to them. Since those types cannot be inherited from the
 	/// <c>InheritanceDemand</c> will never be executed by the runtime. Check if the permission
 	/// is required and, if so, change the <c>SecurityAction</c> to the correct one. Otherwise
 	/// remove the permission.
@@ -70,6 +70,11 @@ namespace Gendarme.Rules.Security.Cas {
 	[Solution ("Review the InheritanceDemand on this type and either remove it or change its SecurityAction to, probably, a LinkDemand.")]
 	public class ReviewSealedTypeWithInheritanceDemandRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// 1 - this applies only to sealed types

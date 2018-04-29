@@ -231,10 +231,10 @@ namespace Test.Rules.Correctness {
 				float f = 0f;
 				bool a;
 				bool b;
-				
+
 				//a = float.PositiveInfinity == f;
 				b = f == float.PositiveInfinity;
-				
+
 				//a = float.NegativeInfinity == f;
 				b = f == float.NegativeInfinity;
 			}
@@ -292,7 +292,7 @@ namespace Test.Rules.Correctness {
 			AssertRuleFailure<Float> ("MethodResult", 2);
 			AssertRuleFailure<Double> ("MethodResult", 2);
 		}
-		
+
 		[Test]
 		public void TestParameters ()
 		{
@@ -347,7 +347,7 @@ namespace Test.Rules.Correctness {
 			AssertRuleFailure<Float> ("EqualsCall", 1);
 			AssertRuleFailure<Double> ("EqualsCall", 3);
 		}
-		
+
 		[Test]
 		public void TestNoFloatComparison()
 		{

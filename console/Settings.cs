@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme Console Settings
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -92,7 +92,7 @@ namespace Gendarme {
 			return (type.ToString () == (interfaceName as string));
 		}
 
-		private static void SetApplicabilityScope (IRule rule, string applicabilityScope) 
+		private static void SetApplicabilityScope (IRule rule, string applicabilityScope)
 		{
 			switch (applicabilityScope) {
 			case "visible":
@@ -151,7 +151,7 @@ namespace Gendarme {
 
 		private void OnValidationErrors (object sender, ValidationEventArgs args)
 		{
-			validation_errors.Add (args.Exception.Message.Replace ("XmlSchema error", 
+			validation_errors.Add (args.Exception.Message.Replace ("XmlSchema error",
 				String.Format (CultureInfo.CurrentCulture, "Error in the configuration file {0}", config_file)));
 		}
 
@@ -169,7 +169,7 @@ namespace Gendarme {
 				}
 			}
 		}
-	
+
 		public IEnumerable<string> ValidationErrors {
 			get {
 				return validation_errors;
@@ -179,18 +179,18 @@ namespace Gendarme {
 		private IRule GetRule (string name)
 		{
 			foreach (IRule rule in rules) {
-				if (rule.GetType ().ToString ().Contains (name)) 
+				if (rule.GetType ().ToString ().Contains (name))
 					return rule;
 			}
 			return null;
 		}
-		
+
 		private void SetCustomParameters (XmlNode nodes)
 		{
 			foreach (XmlElement parameter in nodes.SelectNodes ("parameter")) {
 				string ruleName = GetAttribute (parameter, "rule", String.Empty);
 				string propertyName = GetAttribute (parameter, "property", String.Empty);
-				
+
 				IRule rule = GetRule (ruleName);
 				if (rule == null)
 					throw GetException ("The rule with name {0} doesn't exist", ruleName, String.Empty, String.Empty);
@@ -230,7 +230,7 @@ namespace Gendarme {
 
 		static Exception GetException (string message, string ruleName, string propertyName, string value)
 		{
-			return new XmlException (String.Format (CultureInfo.CurrentCulture, 
+			return new XmlException (String.Format (CultureInfo.CurrentCulture,
 				message + ".  Review your configuration file.", ruleName, propertyName, value));
 		}
 
@@ -242,7 +242,7 @@ namespace Gendarme {
 
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (config_file);
-			
+
 			bool result = false;
 			foreach (XmlElement ruleset in doc.DocumentElement.SelectNodes ("ruleset")) {
 				if (ruleset.Attributes ["name"].Value != rule_set)
@@ -255,7 +255,7 @@ namespace Gendarme {
 
 					int n = LoadRulesFromAssembly (from, include, exclude, applicabilityScope);
 					result = (result || (n > 0));
-					if (result) 
+					if (result)
 						SetCustomParameters (assembly);
 				}
 			}

@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.HierarchicalEventArgs
 //
 // Authors:

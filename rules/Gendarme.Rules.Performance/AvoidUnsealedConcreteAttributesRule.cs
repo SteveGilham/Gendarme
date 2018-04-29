@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Performance.AvoidUnsealedConcreteAttributesRule
 //
 // Authors:
@@ -35,9 +35,9 @@ namespace Gendarme.Rules.Performance {
 
 	/// <summary>
 	/// This rule fires if an attribute is defined which is both concrete (i.e. not abstract)
-	/// and unsealed. This is a performance problem because it means that 
+	/// and unsealed. This is a performance problem because it means that
 	/// <c>System.Attribute.GetCustomAttribute</c> has to search the attribute type
-	/// hierarchy for derived types. To fix this either seal the type or make it abstract. 
+	/// hierarchy for derived types. To fix this either seal the type or make it abstract.
 	/// </summary>
 	/// <example>
 	/// Bad example:
@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Performance {
 	/// [AttributeUsage (AttributeTargets.All)]
 	/// public abstract class AbstractAttribute : Attribute {
 	/// }
-	/// 
+	///
 	/// [AttributeUsage (AttributeTargets.All)]
 	/// public sealed class ConcreteAttribute : AbstractAttribute {
 	/// }
@@ -74,6 +74,11 @@ namespace Gendarme.Rules.Performance {
 	[FxCopCompatibility ("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
 	public class AvoidUnsealedConcreteAttributesRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to attributes

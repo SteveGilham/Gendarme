@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.BadPractice.AvoidAssemblyVersionMismatchRule
 //
 // Authors:
@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// This rule checks that the <c>[AssemblyVersion]</c> matches the <c>[AssemblyFileVersion]</c> 
+	/// This rule checks that the <c>[AssemblyVersion]</c> matches the <c>[AssemblyFileVersion]</c>
 	/// when both are present inside an assembly. Having different version numbers in both
 	/// attributes can be confusing once the application is deployed.
 	/// </summary>
@@ -62,6 +62,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("This situation can be confusing once deployed. Make sure both version are identical.")]
 	public class AvoidAssemblyVersionMismatchRule : Rule, IAssemblyRule {
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			if (!assembly.HasCustomAttributes)

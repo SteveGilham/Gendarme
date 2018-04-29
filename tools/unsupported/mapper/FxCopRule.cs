@@ -38,7 +38,7 @@ namespace FxCopMapBuilder {
 		public FxCopRule (string category, string id)
 		{
 			Category = category;
-			// Splits a string like CA1034:NestedTypesShouldNotBeVisible to 
+			// Splits a string like CA1034:NestedTypesShouldNotBeVisible to
 			// the Id (CA1034) and Name (NestedTypesShouldNotBeVisible)
 			if (id.Contains(".")) {
 				string [] ruleInfo = id.Split (':');

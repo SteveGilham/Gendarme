@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.Rocks.InstructionRocks
 //
 // Authors:
@@ -53,7 +53,7 @@ namespace Gendarme.Framework.Rocks {
 		/// Get the FieldDefinition associated with the Instruction.
 		/// </summary>
 		/// <param name="self">The Instruction on which the extension method can be called.</param>
-		/// <returns>The FieldDefinition associated with the instruction 
+		/// <returns>The FieldDefinition associated with the instruction
 		/// or null if the instruction does apply to fields.</returns>
 		public static FieldDefinition GetField (this Instruction self)
 		{
@@ -76,7 +76,7 @@ namespace Gendarme.Framework.Rocks {
 		{
 			if ((self == null) || (self.OpCode.FlowControl != FlowControl.Call))
 				return null;
-			// we want to avoid InlineSig which is a CallSite (inheriting from MethodReference) 
+			// we want to avoid InlineSig which is a CallSite (inheriting from MethodReference)
 			// but without a DeclaringType
 			if (self.OpCode.OperandType != OperandType.InlineMethod)
 				return null;
@@ -131,7 +131,7 @@ namespace Gendarme.Framework.Rocks {
 			case Code.Ldc_I4_6:
 			case Code.Ldc_I4_7:
 			case Code.Ldc_I4_8:
-				return (code - Code.Ldc_I4_0); 
+				return (code - Code.Ldc_I4_0);
 			case Code.Ldc_I4_S:
 				return (int) (sbyte) self.Operand;
 			default:
@@ -213,9 +213,9 @@ namespace Gendarme.Framework.Rocks {
 		/// Get the ParameterDefinition associated with the Instruction.
 		/// </summary>
 		/// <param name="self">The Instruction on which the extension method can be called.</param>
-		/// <param name="method">The method inside which the instruction comes from. 
+		/// <param name="method">The method inside which the instruction comes from.
 		/// Needed for the macro instruction where only the variable index is available.</param>
-		/// <returns>The ParameterDefinition associated with the instruction 
+		/// <returns>The ParameterDefinition associated with the instruction
 		/// or null if the instruction does apply to arguments.</returns>
 		public static ParameterDefinition GetParameter (this Instruction self, MethodDefinition method)
 		{
@@ -252,7 +252,7 @@ namespace Gendarme.Framework.Rocks {
 		/// Get the number of values removed on the stack for this instruction.
 		/// </summary>
 		/// <param name="self">The Instruction on which the extension method can be called.</param>
-		/// <param name="method">The method inside which the instruction comes from 
+		/// <param name="method">The method inside which the instruction comes from
 		/// (needed for StackBehaviour.Varpop).</param>
 		/// <returns>The number of value removed (pop) from the stack for this instruction.</returns>
 		public static int GetPopCount (this Instruction self, IMethodSignature method)
@@ -361,9 +361,9 @@ namespace Gendarme.Framework.Rocks {
 		/// Get the VariableDefinition associated with the Instruction.
 		/// </summary>
 		/// <param name="self">The Instruction on which the extension method can be called.</param>
-		/// <param name="method">The method inside which the instruction comes from. 
+		/// <param name="method">The method inside which the instruction comes from.
 		/// Needed for the macro instruction where only the variable index is available.</param>
-		/// <returns>The VariableDefinition associated with the instruction 
+		/// <returns>The VariableDefinition associated with the instruction
 		/// or null if the instruction does apply to local variables.</returns>
 		public static VariableDefinition GetVariable (this Instruction self, MethodDefinition method)
 		{
@@ -512,7 +512,7 @@ namespace Gendarme.Framework.Rocks {
 		}
 
 		/// <summary>
-		/// Return the instruction that match the current instruction. This is computed by 
+		/// Return the instruction that match the current instruction. This is computed by
 		/// substracting push and adding pop counts until the total becomes zero.
 		/// </summary>
 		/// <param name="self">The Instruction on which the extension method can be called.</param>
@@ -524,7 +524,7 @@ namespace Gendarme.Framework.Rocks {
 		}
 
 		/// <summary>
-		/// Return the instruction that match the current instruction. This is computed by 
+		/// Return the instruction that match the current instruction. This is computed by
 		/// substracting push and adding pop counts until the total becomes zero.
 		/// </summary>
 		/// <param name="self">The Instruction on which the extension method can be called.</param>

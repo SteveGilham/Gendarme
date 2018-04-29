@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.DoNotDeclareVirtualMethodsInSealedTypeRule
 //
 // Authors:
@@ -34,7 +34,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule ensure that <c>sealed</c> types (i.e. types that you can't inherit from) 
+	/// This rule ensure that <c>sealed</c> types (i.e. types that you can't inherit from)
 	/// do not define new <c>virtual</c> methods. Such methods would only be useful in
 	/// sub-types. Note that some compilers, like C# and VB.NET compilers, do not allow you
 	/// to define such methods.
@@ -43,11 +43,11 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public sealed class MyClass {
-	///	// note that C# compilers won't allow this to compile
-	///	public virtual int GetAnswer ()
-	///	{
-	///		return 42;
-	///	}
+	/// 	// note that C# compilers won't allow this to compile
+	/// 	public virtual int GetAnswer ()
+	/// 	{
+	/// 		return 42;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -55,10 +55,10 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public sealed class MyClass {
-	///	public int GetAnswer ()
-	///	{
-	///		return 42;
-	///	}
+	/// 	public int GetAnswer ()
+	/// 	{
+	/// 		return 42;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes")]
 	public class DoNotDeclareVirtualMethodsInSealedTypeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to sealed types, but not to enum, value types and delegate (sealed)

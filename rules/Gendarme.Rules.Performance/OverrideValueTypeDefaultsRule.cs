@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.OverrideValueTypeDefaultsRule
 //
 // Authors:
@@ -38,21 +38,21 @@ using Gendarme.Framework.Helpers;
 namespace Gendarme.Rules.Performance {
 
 	/// <summary>
-	/// This rule checks all value types, except enumerations, to see if they use the default 
-	/// implementation of <c>Equals(object)</c> and <c>GetHashCode()</c> methods. While 
+	/// This rule checks all value types, except enumerations, to see if they use the default
+	/// implementation of <c>Equals(object)</c> and <c>GetHashCode()</c> methods. While
 	/// <c>ValueType</c> implementations work for any value type they do so at the expense of
-	/// performance (the default implementation uses reflection to access fields). You can easily 
-	/// override both methods 
-	/// with much faster code since you know all meaningful fields inside your structure. 
-	/// At the same time you should also provide, if your language allows it, operator overloads 
-	/// for equality (<c>op_Equality</c>, <c>==</c>) and inequality (<c>op_Inequality</c>, 
-	/// <c>!=</c>). 
+	/// performance (the default implementation uses reflection to access fields). You can easily
+	/// override both methods
+	/// with much faster code since you know all meaningful fields inside your structure.
+	/// At the same time you should also provide, if your language allows it, operator overloads
+	/// for equality (<c>op_Equality</c>, <c>==</c>) and inequality (<c>op_Inequality</c>,
+	/// <c>!=</c>).
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public struct Coord {
-	///	int X, Y, Z;
+	/// 	int X, Y, Z;
 	/// }
 	/// </code>
 	/// </example>
@@ -60,31 +60,31 @@ namespace Gendarme.Rules.Performance {
 	/// Good example:
 	/// <code>
 	/// public struct Coord {
-	///	int X, Y, Z;
-	///	
-	///	public override bool Equals (object obj)
-	///	{
-	///		if (obj == null) {
-	///			return false;
-	///		}
-	///		Coord c = (Coord)obj;
-	///		return ((X == c.X) &amp;&amp; (Y == c.Y) &amp;&amp; (Z == c.Z));
-	///	}
-	///	
-	///	public override int GetHashCode ()
-	///	{
-	///		return X ^ Y ^ Z;
-	///	}
-	///	
-	///	public static bool operator == (Coord left, Coord right)
-	///	{
-	///		return left.Equals (right);
-	///	}
-	///	
-	///	public static bool operator != (Coord left, Coord right)
-	///	{
-	///		return !left.Equals (right);
-	///	}
+	/// 	int X, Y, Z;
+	///
+	/// 	public override bool Equals (object obj)
+	/// 	{
+	/// 		if (obj == null) {
+	/// 			return false;
+	/// 		}
+	/// 		Coord c = (Coord)obj;
+	/// 		return ((X == c.X) &amp;&amp; (Y == c.Y) &amp;&amp; (Z == c.Z));
+	/// 	}
+	///
+	/// 	public override int GetHashCode ()
+	/// 	{
+	/// 		return X ^ Y ^ Z;
+	/// 	}
+	///
+	/// 	public static bool operator == (Coord left, Coord right)
+	/// 	{
+	/// 		return left.Equals (right);
+	/// 	}
+	///
+	/// 	public static bool operator != (Coord left, Coord right)
+	/// 	{
+	/// 		return !left.Equals (right);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -98,6 +98,11 @@ namespace Gendarme.Rules.Performance {
 		private const string MissingImplementationMessage = "Missing type-specific implementation for '{0}'. {1}";
 		private const string MissingOperatorsMessage = "If your langage supports overloading operators then you should implement the equality (==) and inequality (!=) operators.";
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to ValueType, except enums and generated code
@@ -108,7 +113,7 @@ namespace Gendarme.Rules.Performance {
 
 			bool equals = type.HasMethod (MethodSignatures.Equals);
 			bool gethashcode = type.HasMethod (MethodSignatures.GetHashCode);
-			bool operators = type.HasMethod (MethodSignatures.op_Equality) && 
+			bool operators = type.HasMethod (MethodSignatures.op_Equality) &&
 				type.HasMethod (MethodSignatures.op_Inequality);
 
 			// note: we want to avoid reporting 4 defects each (well most) of the time

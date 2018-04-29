@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.MarkAssemblyWithAssemblyVersionRule
 //
 // Authors:
@@ -55,9 +55,15 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1016:MarkAssembliesWithAssemblyVersion")]
 	public class MarkAssemblyWithAssemblyVersionRule : Rule, IAssemblyRule {
 
-		// [AssemblyVersion] is not compiled into a "real" custom attribute so
-		// we're not inheriting from MarkAssemblyWithAttributeRule for this rule
-
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
+		/// <remarks>
+		/// [AssemblyVersion] is not compiled into a "real" custom attribute so
+		/// we're not inheriting from MarkAssemblyWithAttributeRule for this rule
+		/// </remarks>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			if (!assembly.Name.Version.IsEmpty ())

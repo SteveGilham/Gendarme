@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for DoNotDeclareSettersOnCollectionPropertiesRule
 //
 // Authors:
@@ -65,7 +65,7 @@ namespace Test.Rules.Design {
 			private ArrayList list;
 
 			public IDictionary Dictionary { get; private set; }
-			public ArrayList List { 
+			public ArrayList List {
 				get { return list; }
 			}
 		}

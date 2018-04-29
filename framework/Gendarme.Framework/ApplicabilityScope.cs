@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.ApplicabilityScope class
 //
 // Authors:
@@ -33,7 +33,7 @@ namespace Gendarme.Framework {
 	[Serializable]
 	public enum ApplicabilityScope {
 		Visible = 0,
-		NonVisible, 
+		NonVisible,
 		All
 	}
 }

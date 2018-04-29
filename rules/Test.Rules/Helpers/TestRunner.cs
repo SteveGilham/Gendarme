@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.TestRunner
 //
 // Authors:
@@ -36,9 +36,9 @@ namespace Test.Rules.Helpers {
 	/// <summary>
 	/// To execute properly Gendarme.Framework.Runner keeps the state of
 	/// two variables internally, the current I[Assembly|Type|Method]Rule
-	/// and the current target (IMetadataTokenProvider to match the 
-	/// [Assembly|Module|Type|Method]Definition being analyzed). This 
-	/// class emulate this behavior and also reset the Defects count 
+	/// and the current target (IMetadataTokenProvider to match the
+	/// [Assembly|Module|Type|Method]Definition being analyzed). This
+	/// class emulate this behavior and also reset the Defects count
 	/// before each Check[Assembly|Type|Method] calls so we can easily
 	/// Assert on Defects.Count.
 	/// </summary>
@@ -82,19 +82,24 @@ namespace Test.Rules.Helpers {
 
 			return IgnoreList.IsIgnored (CurrentRule, obj) ? RuleResult.DoesNotApply : RuleResult.Success;
 		}
-		
+
 		private RuleResult PostCheck (RuleResult beforeTearingDown)
 		{
 			CurrentRule.TearDown ();
 			//If current is not the default, and report the greater
-			if (beforeTearingDown == RuleResult.DoesNotApply) 
+			if (beforeTearingDown == RuleResult.DoesNotApply)
 				return beforeTearingDown;
-			
-			if (CurrentRuleResult > beforeTearingDown) 
+
+			if (CurrentRuleResult > beforeTearingDown)
 				return CurrentRuleResult;
-			return beforeTearingDown;	
+			return beforeTearingDown;
 		}
-	
+
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			RuleResult result = PreCheck (assembly);
@@ -103,6 +108,11 @@ namespace Test.Rules.Helpers {
 			return PostCheck (result);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			RuleResult result = PreCheck (type);
@@ -111,6 +121,11 @@ namespace Test.Rules.Helpers {
 			return PostCheck (result);
 		}
 
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			RuleResult result = PreCheck (method);

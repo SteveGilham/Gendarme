@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.Cas.SecureGetObjectDataOverridesRule
 //
 // Authors:
@@ -40,7 +40,7 @@ namespace Gendarme.Rules.Security.Cas {
 
 	/// <summary>
 	/// This rule fires if a type implements <c>System.Runtime.Serialization.ISerializable</c>
-	/// but the <c>GetObjectData</c> method is not protected with a <c>Demand</c> or 
+	/// but the <c>GetObjectData</c> method is not protected with a <c>Demand</c> or
 	/// <c>LinkDemand</c> for <c>SerializationFormatter</c>.
 	/// </summary>
 	/// <example>
@@ -57,7 +57,7 @@ namespace Gendarme.Rules.Security.Cas {
 	/// Good example:
 	/// <code>
 	/// public class Good : ISerializable {
-	///	[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+	/// 	[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 	/// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
 	/// 	{
 	/// 	}
@@ -85,6 +85,11 @@ namespace Gendarme.Rules.Security.Cas {
 			}
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to types that implements ISerializable

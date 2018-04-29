@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for UseStringEmptyRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,48 +43,48 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
 		}
-	
+
 		public class TestCase {
-		
+
 			public const string public_const_field = "";
-			
+
 			private static string private_static_field = "";
-			
-			
+
+
 			public string GetConstField ()
 			{
 				return public_const_field;
 			}
-			
+
 			public string GetStaticField ()
 			{
 				return private_static_field;
 			}
-			
+
 			public string Append (string user_value)
 			{
 				return user_value + "";
 			}
-			
+
 			public string Enclose (string user_value)
 			{
 				return "" + user_value + "";
 			}
-						
+
 			// nice way
 
 			public string public_field = "";
-			
+
 			public string GetField ()
 			{
 				return public_field;
 			}
-			
+
 			public string Prepend (string user_value)
 			{
 				return String.Empty + user_value;
 			}
-			
+
 			public int NoStringWereHarmedInThisTestCase ()
 			{
 				return 42;
@@ -182,7 +182,7 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleDoesNotApply<TestCase> ("Prepend");
 		}
-		
+
 		[Test]
 		public void NoHarm ()
 		{

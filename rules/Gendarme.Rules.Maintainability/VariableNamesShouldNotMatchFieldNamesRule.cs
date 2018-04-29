@@ -3,7 +3,7 @@
 //
 // Authors:
 //	N Lum <nol888@gmail.com>
-// 
+//
 // Copyright (C) 2010 N Lum
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -44,28 +44,28 @@ namespace Gendarme.Rules.Maintainability {
 	/// <example>
 	/// Bad example:
 	/// <code>
-	///	public class Bad {
-	///		public int value;
+	/// 	public class Bad {
+	/// 		public int value;
 	///
-	///		public void DoSomething (int value)
-	///		{
-	///			// without 'this.' the field will never be set
-	///			this.value = value;
-	///		}
-	///	}
+	/// 		public void DoSomething (int value)
+	/// 		{
+	/// 			// without 'this.' the field will never be set
+	/// 			this.value = value;
+	/// 		}
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
-	///	public class Good {
-	///		public int value;
+	/// 	public class Good {
+	/// 		public int value;
 	///
-	///		public void DoSomething (int integralValue)
-	///		{
-	///			value = integralValue;
-	///		}
-	///	}
+	/// 		public void DoSomething (int integralValue)
+	/// 		{
+	/// 			value = integralValue;
+	/// 		}
+	/// 	}
 	/// </code>
 	/// </example>
 

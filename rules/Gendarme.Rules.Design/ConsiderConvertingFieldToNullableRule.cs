@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ConsiderConvertingFieldToNullableRule
 //
 // Authors:
@@ -36,8 +36,8 @@ namespace Gendarme.Rules.Design {
 
 	/// <summary>
 	/// This rule checks for pairs of fields which seem to provide the same
-	/// functionality as a single nullable field. If the assembly targets version 2.0, 
-	/// or more recent, of the CLR then the rule will fire to let you know that a 
+	/// functionality as a single nullable field. If the assembly targets version 2.0,
+	/// or more recent, of the CLR then the rule will fire to let you know that a
 	/// nullable field can be used instead. The rule will ignore assemblies targeting
 	/// earlier versions of the CLR.
 	/// </summary>
@@ -45,8 +45,8 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public class Bad {
-	///	bool hasFoo;
-	///	int foo;
+	/// 	bool hasFoo;
+	/// 	int foo;
 	/// }
 	/// </code>
 	/// </example>
@@ -54,7 +54,7 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public class Good {
-	///	int? foo;
+	/// 	int? foo;
 	/// }
 	/// </code>
 	/// </example>
@@ -64,6 +64,12 @@ namespace Gendarme.Rules.Design {
 	[Solution ("Change the field's type to a nullable type or ignore the defect.")]
 	public class ConsiderConvertingFieldToNullableRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -108,6 +114,11 @@ namespace Gendarme.Rules.Design {
 			return false;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || !type.HasFields || type.IsGeneratedCode ())
@@ -123,8 +134,8 @@ namespace Gendarme.Rules.Design {
 					&& HasValueTypeField(type, string.Concat(prefix,suffix)) ) {
 					//TODO: check if they are both used in the same method? does the complexity worth it?
 					string s = (Runner.VerbosityLevel > 0)
-						? String.Format (CultureInfo.InvariantCulture, 
-							"Field '{0}' should probably be a nullable if '{1}' purpose is to inform if '{0}' has been set.", 
+						? String.Format (CultureInfo.InvariantCulture,
+							"Field '{0}' should probably be a nullable if '{1}' purpose is to inform if '{0}' has been set.",
 							fd.Name, suffix)
 						: string.Empty;
 					Runner.Report (fd, Severity.Low, Confidence.Low, s);

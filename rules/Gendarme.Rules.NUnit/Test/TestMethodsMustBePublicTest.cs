@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.NUnit.TestMethodsMustBePublicTest
 //
 // Authors:

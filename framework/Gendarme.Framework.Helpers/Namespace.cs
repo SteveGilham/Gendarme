@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Helpers.NamespaceDefinition
 //
 // Authors:
@@ -54,7 +54,7 @@ namespace Gendarme.Framework.Helpers {
 		}
 
 		/// <summary>
-		/// This is not a true, CLR-wise, metadata object but it 
+		/// This is not a true, CLR-wise, metadata object but it
 		/// returns a fake token so other API, like rocks, can use it
 		/// like any real <c>IMetadataTokenProvider</c>
 		/// </summary>
@@ -68,14 +68,14 @@ namespace Gendarme.Framework.Helpers {
 		}
 
 
-		static string [] Specializations = { 
-			".Design", 
-			".Interop", 
+		static string [] Specializations = {
+			".Design",
+			".Interop",
 			".Permissions"
 		};
 
 		/// <summary>
-		/// Check if the specified namespace is a 'specialized' namespace, i.e. a 
+		/// Check if the specified namespace is a 'specialized' namespace, i.e. a
 		/// namespace that the framework suggest you to use.
 		/// </summary>
 		/// <param name="name">Namespace to be verified.</param>
@@ -104,7 +104,7 @@ namespace Gendarme.Framework.Helpers {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			// note: "" (empty) is a valid namespace
-			
+
 			NamespaceDefinition nd;
 			if (!cache.TryGetValue (name, out nd)) {
 				nd = new NamespaceDefinition (name);

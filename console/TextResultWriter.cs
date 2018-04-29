@@ -1,4 +1,4 @@
-//
+﻿//
 // TextResultWriter
 //
 // Authors:
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -80,10 +80,10 @@ namespace Gendarme {
 			var query = from n in Runner.Defects
 				    orderby (int) n.Severity, n.Rule.Name
 				    select n;
-			
+
 			WriteHeader ();
 			int num = 0;
-			if (query.Any ()) {				
+			if (query.Any ()) {
 				string name = string.Empty;
 				string delimiter = new string ('-', 60);
 				foreach (Defect defect in query) {
@@ -92,13 +92,13 @@ namespace Gendarme {
 						writer.WriteLine (delimiter);
 						name = rname;
 					}
-					
+
 					WriteEntry (++num, defect);
 				}
 			}
 			WriteTrailer (num);
 		}
-		
+
 		private void WriteHeader ()
 		{
 			writer.WriteLine ("Produced on {0} for:", DateTime.UtcNow);
@@ -128,7 +128,7 @@ namespace Gendarme {
 			writer.WriteLine ("* Target:   {0}", defect.Target);
 
 			if (defect.Location != defect.Target)
-				writer.WriteLine ("* Location: {0}", defect.Location);	
+				writer.WriteLine ("* Location: {0}", defect.Location);
 
 			string source = defect.Source;
 			if (!String.IsNullOrEmpty (source))
@@ -154,7 +154,7 @@ namespace Gendarme {
 			int num_rules = Runner.Rules.Count;
 			if (num_rules == 1)
 				writer.Write ("Processed one rule");
-			else 
+			else
 				writer.Write ("Processed {0} rules", num_rules);
 
 			if (numDefects == 0)

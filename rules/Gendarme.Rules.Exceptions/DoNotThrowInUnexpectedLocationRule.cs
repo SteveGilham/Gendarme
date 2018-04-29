@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Exceptions.DoNotThrowInUnexpectedLocationRule
 //
 // Authors:
@@ -49,28 +49,28 @@ namespace Gendarme.Rules.Exceptions {
 	/// <summary>
 	/// There are a number of methods which have constraints on the exceptions
 	/// which they may throw. This rule checks the following methods:
-	/// <list type="bullet"> 
-	/// <item> 
-	/// <description>Property getters - properties should work very much 
-	/// like fields: they should execute very quickly and, in general, should 
-	/// not throw exceptions. However they may throw System.InvalidOperationException, 
-	/// System.NotSupportedException, or an exception derived from these. 
-	/// Indexed getters may also throw System.ArgumentException or 
+	/// <list type="bullet">
+	/// <item>
+	/// <description>Property getters - properties should work very much
+	/// like fields: they should execute very quickly and, in general, should
+	/// not throw exceptions. However they may throw System.InvalidOperationException,
+	/// System.NotSupportedException, or an exception derived from these.
+	/// Indexed getters may also throw System.ArgumentException or
 	/// System.Collections.Generic.KeyNotFoundException.</description>
 	/// </item>
-	/// <item> 
-	/// <description>Event accessors - in general events should not throw 
-	/// when adding or removing a handler. However they may throw 
-	/// System.InvalidOperationException, System.NotSupportedException, 
+	/// <item>
+	/// <description>Event accessors - in general events should not throw
+	/// when adding or removing a handler. However they may throw
+	/// System.InvalidOperationException, System.NotSupportedException,
 	/// System.ArgumentException, or an exception derived from these.</description>
 	/// </item>
 	/// <item>
-	/// <description>Object.Equals and IEqualityComparer&lt;T&gt;.Equals - should 
+	/// <description>Object.Equals and IEqualityComparer&lt;T&gt;.Equals - should
 	/// not throw. In particular they should do something sensible when passed
 	/// null arguments or unexpected types.</description>
 	/// </item>
 	/// <item>
-	/// <description>Object.GetHashCode - should not throw or the object 
+	/// <description>Object.GetHashCode - should not throw or the object
 	/// will not work properly with dictionaries and hash sets.</description>
 	/// </item>
 	/// <item>
@@ -78,13 +78,13 @@ namespace Gendarme.Rules.Exceptions {
 	/// System.ArgumentException.</description>
 	/// </item>
 	/// <item>
-	/// <description>Object.ToString - these are called by the debugger to display 
-	/// objects and are also often used with printf style debugging so they should 
+	/// <description>Object.ToString - these are called by the debugger to display
+	/// objects and are also often used with printf style debugging so they should
 	/// not change the object's state and should not throw.</description>
 	/// </item>
 	/// <item>
-	/// <description>static constructors - should very rarely throw. If they 
-	/// do throw then the type will not be useable within that application 
+	/// <description>static constructors - should very rarely throw. If they
+	/// do throw then the type will not be useable within that application
 	/// domain.</description>
 	/// </item>
 	/// <item>
@@ -96,18 +96,18 @@ namespace Gendarme.Rules.Exceptions {
 	/// it's much harder to guarantee that objects clean up properly.</description>
 	/// </item>
 	/// <item>
-	/// <description>Dispose (bool) - should not throw because that makes 
+	/// <description>Dispose (bool) - should not throw because that makes
 	/// it very difficult to clean up objects and because they are often
 	/// called from a finalizer.</description>
 	/// </item>
 	/// <item>
-	/// <description>operator== and operator!= - should not throw. In particular 
-	/// they should do something sensible when passed null arguments or 
+	/// <description>operator== and operator!= - should not throw. In particular
+	/// they should do something sensible when passed null arguments or
 	/// unexpected types.</description>
 	/// </item>
 	/// <item>
 	/// <description>implicit cast operators - should not throw. These methods
-	/// are called implicitly so it tends to be quite surprising if they throw 
+	/// are called implicitly so it tends to be quite surprising if they throw
 	/// exceptions.</description>
 	/// </item>
 	/// <item>
@@ -116,8 +116,8 @@ namespace Gendarme.Rules.Exceptions {
 	/// (unlike the <c>Parse</c> methods).</description>
 	/// </item>
 	/// </list>
-	/// Note that the rule does not complain if a method throws 
-	/// System.NotImplementedException because 
+	/// Note that the rule does not complain if a method throws
+	/// System.NotImplementedException because
 	/// DoNotForgetNotImplementedMethodsRule will flag them. Also the rule
 	/// may fire with anonymous types with gmcs versions prior to 2.2, see
 	/// [https://bugzilla.novell.com/show_bug.cgi?id=462622] for more details.
@@ -130,7 +130,7 @@ namespace Gendarme.Rules.Exceptions {
 	/// 	if (obj == null) {
 	/// 		return false;
 	/// 	}
-	/// 	
+	///
 	/// 	Customer rhs = (Customer) obj;	// throws if obj is not a Customer
 	/// 	return name == rhs.name;
 	/// }
@@ -145,7 +145,7 @@ namespace Gendarme.Rules.Exceptions {
 	/// 	if (rhs == null) {
 	/// 		return false;
 	/// 	}
-	/// 	
+	///
 	/// 	return name == rhs.name;
 	/// }
 	/// </code>
@@ -169,15 +169,15 @@ namespace Gendarme.Rules.Exceptions {
 		};
 
 		private static readonly string [][] IndexerExceptions = new string [][] {
-			new string [] { "System", "InvalidOperationException" }, 
-			new string [] { "System", "NotSupportedException" }, 
-			new string [] { "System", "ArgumentException" }, 
+			new string [] { "System", "InvalidOperationException" },
+			new string [] { "System", "NotSupportedException" },
+			new string [] { "System", "ArgumentException" },
 			new string [] { "System.Collections.Generic", "KeyNotFoundException" }
 		};
 
 		private static readonly string [][] EventExceptions = new string [][] {
-			new string [] { "System", "InvalidOperationException" }, 
-			new string [] { "System", "NotSupportedException" }, 
+			new string [] { "System", "InvalidOperationException" },
+			new string [] { "System", "NotSupportedException" },
 			new string [] { "System", "ArgumentException" }
 		};
 
@@ -190,20 +190,26 @@ namespace Gendarme.Rules.Exceptions {
 			MethodDefinition md = method.Resolve ();
 			return ((md == null) || ((md.Attributes & attrs) == attrs));
 		}
-		
+
 		private static MethodSignature EqualityComparer_Equals = new MethodSignature ("Equals", "System.Boolean", new string [2],
 			(method) => (CheckAttributes (method, MethodAttributes.Public)));
-		private static MethodSignature EqualityComparer_GetHashCode = new MethodSignature ("GetHashCode", "System.Int32", new string [1], 
+		private static MethodSignature EqualityComparer_GetHashCode = new MethodSignature ("GetHashCode", "System.Int32", new string [1],
 			(method) => (CheckAttributes (method, MethodAttributes.Public)));
 		private static readonly MethodSignature GetTypeSig = new MethodSignature ("GetType", "System.Type", new string [0],
 			(method) => (CheckAttributes (method, MethodAttributes.Public)));
-		
+
 		private MethodSignature equals_signature;
 		private MethodSignature hashcode_signature;
 		private string [][] allowedExceptions;
 		private Severity severity;
 		private bool is_equals;
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -219,7 +225,7 @@ namespace Gendarme.Rules.Exceptions {
 			};
 		}
 
-		static bool HasCatchBlock (MethodBody body)	
+		static bool HasCatchBlock (MethodBody body)
 		{
 			if (!body.HasExceptionHandlers)
 				return false;
@@ -228,7 +234,7 @@ namespace Gendarme.Rules.Exceptions {
 				if (handler.HandlerType == ExceptionHandlerType.Catch)
 					return true;
 			}
-			
+
 			return false;
 		}
 
@@ -245,7 +251,7 @@ namespace Gendarme.Rules.Exceptions {
 			} else if (MethodSignatures.TryParse.Matches (method)) {
 				return "TryParse";
 			}
-			
+
 			return String.Empty;
 		}
 
@@ -269,11 +275,11 @@ namespace Gendarme.Rules.Exceptions {
 				return "Event accessors";
 			} else if (MethodSignatures.op_Equality.Matches (method)) {
 				return "operator==";
-			} else if (MethodSignatures.op_Inequality.Matches (method)) {	
+			} else if (MethodSignatures.op_Inequality.Matches (method)) {
 				return "operator!=";
 			} else if (name == "op_Implicit") {
 				return "Implicit cast operators";
-			} 
+			}
 			return String.Empty;
 		}
 
@@ -303,12 +309,12 @@ namespace Gendarme.Rules.Exceptions {
 		// It's not always apparent why the code throws so we'll try to explain
 		// the reason here (for example foreach can generate castclass or unbox
 		// instructions and assemblies compiled with checked arithmetic can
-		// throw even if the code doesn't explicitly use an arithmetic operator). 
+		// throw even if the code doesn't explicitly use an arithmetic operator).
 		static string ExplainThrow (Instruction ins)
 		{
 			switch (ins.OpCode.Code) {
 			case Code.Castclass:
-				return String.Format (CultureInfo.InvariantCulture, " (cast to {0})", 
+				return String.Format (CultureInfo.InvariantCulture, " (cast to {0})",
 					((TypeReference) ins.Operand).Name);
 
 			case Code.Throw:					// this one is obvious
@@ -316,12 +322,12 @@ namespace Gendarme.Rules.Exceptions {
 
 			case Code.Unbox:
 			case Code.Unbox_Any:
-				return String.Format (CultureInfo.InvariantCulture, " (unbox from {0})", 
+				return String.Format (CultureInfo.InvariantCulture, " (unbox from {0})",
 					((TypeReference) ins.Operand).Name);
-				
+
 			case Code.Ckfinite:
 				return " (the expression will throw if the value is a NAN or an infinity)";
-				
+
 			default:
 				Debug.Assert (ins.OpCode.Name.Contains (".ovf"), "expected an overflow opcode, not " + ins.OpCode.Name);
 				return " (checked arithmetic is being used)";
@@ -340,11 +346,11 @@ namespace Gendarme.Rules.Exceptions {
 				return false;
 			}
 		}
-				
+
 		private void ProcessMethod (MethodDefinition method, string methodLabel)
 		{
 			bool casts_are_ok = false;
-			
+
 			foreach (Instruction ins in method.Body.Instructions) {
 				if (is_equals && !casts_are_ok)
 					casts_are_ok = AreCastsOk (ins);
@@ -355,19 +361,19 @@ namespace Gendarme.Rules.Exceptions {
 					// A few instructions are bad to the bone.
 					if (code == Code.Ckfinite) {
 						Report (method, ins, methodLabel);
-				
-					// If the instruction is castclass or unbox then we may have a 
-					// problem, but only within Object.Equals (casts occur way too 
+
+					// If the instruction is castclass or unbox then we may have a
+					// problem, but only within Object.Equals (casts occur way too
 					// often to flag them everywhere, but it's common mistake to
-					// cast the Equals argument without an is or GetType check). 
+					// cast the Equals argument without an is or GetType check).
 					} else if (Casts.Get (code)) {
 						if (is_equals && !casts_are_ok)
 							Report (method, ins, methodLabel);
-			
-					// If the instruction is a checked math instruction then we have 
-					// a problem, but only in GetHashCode methods (they are 
-					// potential problems elsewhere but the likelihood of an actual 
-					// problem is much higher in hash code methods and there are 
+
+					// If the instruction is a checked math instruction then we have
+					// a problem, but only in GetHashCode methods (they are
+					// potential problems elsewhere but the likelihood of an actual
+					// problem is much higher in hash code methods and there are
 					// too many defects if we flag them everywhere).
 					} else if (OverflowThrowers.Get (code)) {
 						if (method.Name == "GetHashCode")
@@ -375,8 +381,8 @@ namespace Gendarme.Rules.Exceptions {
 
 					// If the instruction is a throw,
 					} else if (code == Code.Throw) {
-							
-						// and is throwing NotImplementedException then it is OK (this 
+
+						// and is throwing NotImplementedException then it is OK (this
 						// is a fairly common case and we'll let DoNotForgetNotImplementedMethodsRule
 						// handle it).
 						if (ins.Previous.Is (Code.Newobj)) {
@@ -384,14 +390,14 @@ namespace Gendarme.Rules.Exceptions {
 							TypeReference tr = mr.DeclaringType;
 							if (tr.IsNamed ("System", "NotImplementedException") || tr.Inherits ("System", "NotImplementedException"))
 								continue;
-						}	
-					
-						// If the method doesn't allow any exceptions then we have a 
+						}
+
+						// If the method doesn't allow any exceptions then we have a
 						// problem.
 						if (allowedExceptions == null)
 							Report (method, ins, methodLabel);
-							
-						// If the throw does not one of the enumerated exceptions  (or 
+
+						// If the throw does not one of the enumerated exceptions  (or
 						// a subclass) then we have a problem.
 						else if (ins.Previous.Is (Code.Newobj)) {
 							TypeReference type = (ins.Previous.Operand as MethodReference ).DeclaringType;
@@ -410,7 +416,7 @@ namespace Gendarme.Rules.Exceptions {
 							}
 							if (!allowed)
 								Report (method, ins, methodLabel);
-						}	
+						}
 					}
 				}
 			}
@@ -439,11 +445,16 @@ namespace Gendarme.Rules.Exceptions {
 			Runner.Report (method, ins, severity, Confidence.High, mesg);
 		}
 
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (!method.HasBody)
 				return RuleResult.DoesNotApply;
-				
+
 			if (!Throwers.Intersect (OpCodeEngine.GetBitmask (method)))
 				return RuleResult.DoesNotApply;
 
@@ -456,7 +467,7 @@ namespace Gendarme.Rules.Exceptions {
 				is_equals = false;
 
 				string method_label = PreflightMethod (method);
-				if (method_label.Length > 0) { 
+				if (method_label.Length > 0) {
 					Log.WriteLine (this);
 					Log.WriteLine (this, "-------------------------------------------");
 					Log.WriteLine (this, method);
@@ -464,10 +475,13 @@ namespace Gendarme.Rules.Exceptions {
 					ProcessMethod (method, method_label);
 				}
 			}
-			
+
 			return Runner.CurrentRuleResult;
 		}
 
+		/// <summary>
+		/// Skip methods generated by Visual Studio (and/or other) GUI environments?
+		/// </summary>
 		public bool SkipGeneratedGuiMethods
 		{
 			get
@@ -477,7 +491,7 @@ namespace Gendarme.Rules.Exceptions {
 		}
 
 #if false
-		// Note that none of these instructions throw an exception that is 
+		// Note that none of these instructions throw an exception that is
 		// ever allowed.
 		private static readonly Code [] AlwaysBad = new Code []
 		{
@@ -520,30 +534,30 @@ namespace Gendarme.Rules.Exceptions {
 			Code.Conv_Ovf_I,
 			Code.Conv_Ovf_U,
 		};
-		
+
 		public void GenerateBitmask ()
 		{
 			OpCodeBitmask throwers = new OpCodeBitmask ();
 			OpCodeBitmask alwaysBad = new OpCodeBitmask ();
 			OpCodeBitmask overflow = new OpCodeBitmask ();
 			OpCodeBitmask casts = new OpCodeBitmask ();
-			
+
 			foreach (Code code in AlwaysBad) {
 				throwers.Set (code);
 				alwaysBad.Set (code);
 			}
-			
+
 			foreach (Code code in Casts) {
 				casts.Set (code);
 				throwers.Set (code);
 			}
 			throwers.Set (Code.Throw);
-			
+
 			foreach (Code code in Overflow) {
 				throwers.Set (code);
 				overflow.Set (code);
 			}
-			
+
 			Console.WriteLine ("throwers: {0}", throwers);
 			Console.WriteLine ("alwaysBad: {0}", alwaysBad);
 			Console.WriteLine ("overflow: {0}", overflow);

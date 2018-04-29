@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Globalization.PreferIFormatProviderOverrideRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,7 +40,7 @@ namespace Gendarme.Rules.Globalization {
 	/// This rule detects calls to method that could be changed to call an <c>override</c> accepting an
 	/// extra <c>System.IFormatProvider</c> or <c>System.Globalization.CultureInfo</c> parameter (the
 	/// later implements <c>System.IFormatProvider</c>).
-	/// Generally data displayed to the end user should be using 
+	/// Generally data displayed to the end user should be using
 	/// <c>System.Globalization.CultureInfo.CurrentCulture</c> while other data (e.g. used internally,
 	/// stored in files/databases) should use <c>System.Globalization.CultureInfo.InvariantCulture</c>.
 	/// The rule will ignore the following special methods:
@@ -55,9 +55,9 @@ namespace Gendarme.Rules.Globalization {
 	/// <code>
 	/// public bool Confirm (double amount)
 	/// {
-	///	string msg = String.Format ("Accept payment of {0} ?", amount);
-	///	Transaction.Log ("{0} {1}", DateTime.Now, amount);
-	///	return Prompt (msg);
+	/// 	string msg = String.Format ("Accept payment of {0} ?", amount);
+	/// 	Transaction.Log ("{0} {1}", DateTime.Now, amount);
+	/// 	return Prompt (msg);
 	/// }
 	/// </code>
 	/// </example>
@@ -66,9 +66,9 @@ namespace Gendarme.Rules.Globalization {
 	/// <code>
 	/// public bool Confirm (double amount)
 	/// {
-	///	string msg = String.Format (CultureInfo.CurrentCulture, "Accept payment of {0} ?", amount);
-	///	Transaction.Log (CultureInfo.InvariantCulture, "{0} {1}", DateTime.Now, amount);
-	///	return Prompt (msg);
+	/// 	string msg = String.Format (CultureInfo.CurrentCulture, "Accept payment of {0} ?", amount);
+	/// 	Transaction.Log (CultureInfo.InvariantCulture, "{0} {1}", DateTime.Now, amount);
+	/// 	return Prompt (msg);
 	/// }
 	/// </code>
 	/// </example>
@@ -78,16 +78,29 @@ namespace Gendarme.Rules.Globalization {
 	[FxCopCompatibility ("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider")]
 	public class PreferIFormatProviderOverrideRule : PreferOverrideBaseRule {
 
+		/// <summary>
+		/// Check first parameter
+		/// </summary>
 		protected override bool CheckFirstParameter
 		{
 			get { return true; }
 		}
 
+		/// <summary>
+		/// Is prefered type?
+		/// </summary>
+		/// <param name="type">Type to check</param>
+		/// <returns>true for prefered type; otherwise, false</returns>
 		protected override bool IsPrefered (TypeReference type)
 		{
 			return (type.IsNamed ("System", "IFormatProvider") || type.IsNamed ("System.Globalization", "CultureInfo"));
 		}
 
+		/// <summary>
+		/// Is special case method?
+		/// </summary>
+		/// <param name="method">Method to test</param>
+		/// <returns>true for special case method; otherwise, false</returns>
 		protected override bool IsSpecialCase (MethodReference method)
 		{
 			if ((method == null) || method.IsNamed ("System", "Activator", "CreateInstance"))
@@ -101,6 +114,12 @@ namespace Gendarme.Rules.Globalization {
 			return (name == "GetObject" || name == "GetString");
 		}
 
+		/// <summary>
+		/// Repot defect
+		/// </summary>
+		/// <param name="method">Source method</param>
+		/// <param name="instruction">Target instruction</param>
+		/// <param name="prefered">Prefered method to use</param>
 		protected override void Report (MethodDefinition method, Instruction instruction, MethodReference prefered)
 		{
 			string msg = String.Format (CultureInfo.InvariantCulture,

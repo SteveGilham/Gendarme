@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.AvoidTypeInterfaceInconsistencyRule
 //
 // Authors:
@@ -43,17 +43,17 @@ namespace Gendarme.Rules.Naming {
 	/// Bad example:
 	/// <code>
 	/// public interface IMember {
-	///	string Name {
-	///		get;
-	///	}
+	/// 	string Name {
+	/// 		get;
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public class Member {
-	///	public string Name {
-	///		get {
-	///			return String.Empty;
-	///		}
-	///	}
+	/// 	public string Name {
+	/// 		get {
+	/// 			return String.Empty;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -61,17 +61,17 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// public interface IMember {
-	///	string Name {
-	///		get;
-	///	}
+	/// 	string Name {
+	/// 		get;
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public class Member : IMember {
-	///	public string Name {
-	///		get {
-	///			return String.Empty;
-	///		}
-	///	}
+	/// 	public string Name {
+	/// 		get {
+	/// 			return String.Empty;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -81,6 +81,11 @@ namespace Gendarme.Rules.Naming {
 	[Solution ("Rename either the interface or the type to something else or implement the interface for the type.")]
 	public class AvoidTypeInterfaceInconsistencyRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to interfaces

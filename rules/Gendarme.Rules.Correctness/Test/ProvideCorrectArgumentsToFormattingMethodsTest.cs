@@ -48,13 +48,13 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
 		}
-		
+
 		class FormattingCases {
 			public void MethodWithBadFormatting (object value)
 			{
 				String.Format ("The value {0} isn't valid");
 			}
-		
+
 			public void MethodWithGoodFormatting (object value)
 			{
 				String.Format ("The value {0} isn't valid", value);
@@ -176,13 +176,13 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormatting");
 		}
-		
+
 		[Test]
 		public void SuccessOnMethodWithGoodFormattingAndThreeParamsTest ()
 		{
 			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndThreeParams");
 		}
-		
+
 		[Test]
 		public void SuccessOnMethodWithGoodFormattingAndFiveParamsTest ()
 		{

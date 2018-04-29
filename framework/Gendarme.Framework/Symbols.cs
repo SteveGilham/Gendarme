@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Symbols
 //
 // Authors:
@@ -61,7 +61,7 @@ namespace Gendarme.Framework {
 			// note that the first instruction often does not have a sequence point
 			while (ins != null && ins.SequencePoint == null)
 				ins = ins.Next;
-				
+
 			return (ins != null && ins.SequencePoint != null) ? ins : null;
 		}
 
@@ -121,7 +121,7 @@ namespace Gendarme.Framework {
 		{
 			return FormatSequencePoint (sp.Document.Url, sp.StartLine, sp.StartColumn, exact);
 		}
-		
+
 		// It would probably be a good idea to move this formatting into
 		// the reporting layer. The XML formatter would ideally not do
 		// any formatting at all so that tools could extract the line
@@ -129,7 +129,7 @@ namespace Gendarme.Framework {
 		//
 		// We might also want to allow some sort of customization of the
 		// formatting used by the text reporter. For example, most editors
-		// on the Mac have direct support for paths like foo/bar.cs:10 
+		// on the Mac have direct support for paths like foo/bar.cs:10
 		// which include line numbers and foo/bar.cs:10:5 for paths which
 		// include line and column.
 		private static string FormatSequencePoint (string document, int line, int column, bool exact)
@@ -165,7 +165,7 @@ namespace Gendarme.Framework {
 			// no details, we only have the IL offset to report
 			return String.Format (CultureInfo.InvariantCulture, "debugging symbols unavailable, IL offset 0x{0:x4}", ins.Offset);
 		}
-		
+
 		static private string FormatSource (Instruction candidate)
 		{
 			int line = candidate.SequencePoint.StartLine;
@@ -195,7 +195,7 @@ namespace Gendarme.Framework {
 			MethodDefinition method = FindMethodFromLocation (defect.Location);
 			if (method != null) {
 				candidate = ExtractFirst (method);
-				if (candidate != null) 
+				if (candidate != null)
 					return FormatSource (candidate);
 
 				// we may still be lucky to find the (a) source file for the type itself

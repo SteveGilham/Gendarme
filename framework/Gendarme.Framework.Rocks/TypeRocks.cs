@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.Rocks.TypeRocks
 //
 // Authors:
@@ -50,7 +50,7 @@ namespace Gendarme.Framework.Rocks {
 	/// <summary>
 	/// TypeRocks contains extensions methods for Type[Definition|Reference]
 	/// and the related collection classes.
-	/// 
+	///
 	/// Note: whenever possible try to use TypeReference since it's extend the
 	/// reach/usability of the code.
 	/// </summary>
@@ -66,17 +66,17 @@ namespace Gendarme.Framework.Rocks {
 		{
 			var types = new List<TypeReference> ();
 			types.Add (self);
-			
+
 			int i = 0;
 			while (i < types.Count) {
 				TypeDefinition type = types [i++].Resolve ();
 				if (type != null) {
 					yield return type;
-					
+
 					foreach (TypeReference super in type.Interfaces) {
 						types.AddIfNew (super);
 					}
-					
+
 					if (type.BaseType != null)
 						types.AddIfNew (type.BaseType);
 				}
@@ -235,7 +235,7 @@ namespace Gendarme.Framework.Rocks {
 
 		/// <summary>
 		/// Recursively check if the type implemented a specified interface. Note that it is possible
-		/// that we might now be able to know everything that a type implements since the assembly 
+		/// that we might now be able to know everything that a type implements since the assembly
 		/// where the information resides could be unavailable. False is returned in this case.
 		/// </summary>
 		/// <param name="self">The TypeDefinition on which the extension method can be called.</param>
@@ -285,7 +285,7 @@ namespace Gendarme.Framework.Rocks {
 
 		/// <summary>
 		/// Recursively check if the type implemented a specified interface. Note that it is possible
-		/// that we might now be able to know everything that a type implements since the assembly 
+		/// that we might now be able to know everything that a type implements since the assembly
 		/// where the information resides could be unavailable. False is returned in this case.
 		/// </summary>
 		/// <param name="self">The TypeDefinition on which the extension method can be called.</param>
@@ -350,7 +350,7 @@ namespace Gendarme.Framework.Rocks {
 
 		/// <summary>
 		/// Check if the type inherits from the specified type. Note that it is possible that
-		/// we might not be able to know the complete inheritance chain since the assembly 
+		/// we might not be able to know the complete inheritance chain since the assembly
 		/// where the information resides could be unavailable.
 		/// </summary>
 		/// <param name="self">The TypeReference on which the extension method can be called.</param>
@@ -384,7 +384,7 @@ namespace Gendarme.Framework.Rocks {
 
 		/// <summary>
 		/// Check if the type inherits from the specified type. Note that it is possible that
-		/// we might not be able to know the complete inheritance chain since the assembly 
+		/// we might not be able to know the complete inheritance chain since the assembly
 		/// where the information resides could be unavailable.
 		/// </summary>
 		/// <param name="self">The TypeReference on which the extension method can be called.</param>
@@ -504,11 +504,11 @@ namespace Gendarme.Framework.Rocks {
 
 		/// <summary>
 		/// Checks if type is attribute. Note that it is possible that
-		/// we might now be able to know all inheritance since the assembly where 
+		/// we might now be able to know all inheritance since the assembly where
 		/// the information resides could be unavailable.
 		/// </summary>
 		/// <param name="self">The TypeReference on which the extension method can be called.</param>
-		/// <returns>True if the type inherits from <c>System.Attribute</c>, 
+		/// <returns>True if the type inherits from <c>System.Attribute</c>,
 		/// False otherwise.</returns>
 		public static bool IsAttribute (this TypeReference self)
 		{
@@ -578,7 +578,7 @@ namespace Gendarme.Framework.Rocks {
 		/// Check if the type is generated code, either by the compiler or by a tool.
 		/// </summary>
 		/// <param name="self">The TypeReference on which the extension method can be called.</param>
-		/// <returns>True if the code is not generated directly by the developer, 
+		/// <returns>True if the code is not generated directly by the developer,
 		/// False otherwise (e.g. compiler or tool generated)</returns>
 		public static bool IsGeneratedCode (this TypeReference self)
 		{

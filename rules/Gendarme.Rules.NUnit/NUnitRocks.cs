@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.NUnitRocks
 //
 // Authors:
@@ -32,7 +32,7 @@ namespace Gendarme.Rules.NUnit {
 	/// NUnitRocks contains extensions methods for NUnit-related methods and types.
 	/// </summary>
 	public static class NUnitRocks {
-		
+
 		/// <summary>
 		/// Checks if the method is a valid unit test (has corresponding attribute).
 		/// </summary>

@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.FlagsShouldNotDefineAZeroValueRule
 //
 // Authors:
@@ -34,8 +34,8 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule ensures that enumerations decorated with the [System.Flags]  
-	/// attribute do not contain a 0 value. This value would not be usable  
+	/// This rule ensures that enumerations decorated with the [System.Flags] �
+	/// attribute do not contain a 0 value. This value would not be usable �
 	/// with bitwise operators.
 	/// </summary>
 	/// <example>
@@ -55,7 +55,7 @@ namespace Gendarme.Rules.Design {
 	/// [Flags]
 	/// [Serializable]
 	/// enum Access {
-	///	// this is less severe since the name of the 0 value helps
+	/// 	// this is less severe since the name of the 0 value helps
 	/// 	None = 0,
 	/// 	Read = 1,
 	/// 	Write = 2
@@ -68,8 +68,8 @@ namespace Gendarme.Rules.Design {
 	/// [Flags]
 	/// [Serializable]
 	/// enum Access {
-	///	Read = 1,
-	///	Write = 2
+	/// 	Read = 1,
+	/// 	Write = 2
 	/// }
 	/// </code>
 	/// </example>
@@ -79,6 +79,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue")]
 	public class FlagsShouldNotDefineAZeroValueRule : DefineAZeroValueRule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only on [Flags] (this takes care of checking for enums)

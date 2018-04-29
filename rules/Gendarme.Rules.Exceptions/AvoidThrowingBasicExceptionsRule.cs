@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Exceptions.AvoidThrowingBasicExceptionsRule
 //
 // Authors:
@@ -42,10 +42,10 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Add (object obj)
 	/// {
-	///	if (obj == null) {
-	///		throw new Exception ();
-	///	}
-	///	Inner.Add (obj);
+	/// 	if (obj == null) {
+	/// 		throw new Exception ();
+	/// 	}
+	/// 	Inner.Add (obj);
 	/// }
 	/// </code>
 	/// </example>
@@ -54,10 +54,10 @@ namespace Gendarme.Rules.Exceptions {
 	/// <code>
 	/// public void Add (object obj)
 	/// {
-	///	if (obj == null) {
-	///		throw new ArgumentNullException ("obj");
-	///	}
-	///	Inner.Add (obj);
+	/// 	if (obj == null) {
+	/// 		throw new ArgumentNullException ("obj");
+	/// 	}
+	/// 	Inner.Add (obj);
 	/// }
 	/// </code>
 	/// </example>

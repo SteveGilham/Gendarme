@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Security.StaticConstructorsShouldBePrivateRule
 //
 // Authors:
@@ -35,7 +35,7 @@ namespace Gendarme.Rules.Security {
 	/// This rule will fire if a type's static constructor is not private. This is a problem
 	/// because the static constructor is meant to be called by the runtime but if it is
 	/// not private then other code may call it as well which may lead to security
-	/// vulnerabilities. Note that C# and VB.NET enforce this rule. 
+	/// vulnerabilities. Note that C# and VB.NET enforce this rule.
 	/// </summary>
 
 	[Problem ("Static constructors must be private because otherwise they may be called multiple times from user code.")]
@@ -43,6 +43,11 @@ namespace Gendarme.Rules.Security {
 	[FxCopCompatibility ("Microsoft.Security", "CA2121:StaticConstructorsShouldBePrivate")]
 	public class StaticConstructorsShouldBePrivateRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface, enumerations or delegates

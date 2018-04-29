@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.Helpers.DefinitionLoader
 //
 // Authors:
@@ -36,7 +36,7 @@ using Mono.Cecil;
 using Gendarme.Framework.Rocks;
 
 namespace Test.Rules.Helpers {
-	
+
 	/// <summary>
 	/// Class that provides helper methods to load type and method definitions.
 	/// </summary>
@@ -142,7 +142,7 @@ namespace Test.Rules.Helpers {
 
 			if (typeDefinition == null)
 				throw new ArgumentException (string.Format ("Could not load {0} type.", typeof (T).FullName));
-			
+
 			return GetMethodDefinition (typeDefinition, methodName, methodParameters);
 		}
 
@@ -165,8 +165,8 @@ namespace Test.Rules.Helpers {
 		public static AssemblyDefinition GetAssemblyDefinition<T> ()
 		{
 			return GetAssemblyDefinition (typeof (T));
-		}			
-						
+		}
+
 		/// Gets AssemblyDefiniton containing the specified type.
 		/// </summary>
 		/// <param name="type">Type the definition to be retrieved for.</param>
@@ -174,8 +174,8 @@ namespace Test.Rules.Helpers {
 		public static AssemblyDefinition GetAssemblyDefinition (Type type)
 		{
 			return AssemblyCache.GetDefinition (type.Assembly);
-		}			
-			
+		}
+
 		/// <summary>
 		/// Gets TypeDefinition for the specified type.
 		/// </summary>
@@ -184,8 +184,8 @@ namespace Test.Rules.Helpers {
 		public static TypeDefinition GetTypeDefinition<T> ()
 		{
 			return GetTypeDefinition (typeof (T));
-		}		
-						
+		}
+
 		/// <summary>
 		/// Gets TypeDefinition for the specified type.
 		/// </summary>
@@ -195,8 +195,8 @@ namespace Test.Rules.Helpers {
 		{
 			return GetAssemblyDefinition (type)
 			         .MainModule.GetType (GetCecilTypeName (type));
-		}				
-		
+		}
+
 		/// <summary>
 		/// Gets TypeDefinition for the specified type.
 		/// </summary>
@@ -208,6 +208,6 @@ namespace Test.Rules.Helpers {
 			return AssemblyCache.GetDefinition (assembly)
 			         .MainModule.GetType (GetCecilNestedTypeName (typeName));
 			// well, we don't really need to check if type is nested in this case
-		}	
+		}
 	}
 }

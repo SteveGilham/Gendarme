@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.Fixtures.RuleTestFixture<T>
 // Base class for rule test fixtures that simplifies writing unit tests for Gendarme.
 //
@@ -37,7 +37,7 @@ using Mono.Cecil;
 using NUnit.Framework;
 
 namespace Test.Rules.Fixtures {
-	
+
 	/// <summary>
 	/// Base class inRuleTestFixture helpers hierarchy providing methods for making assertions on rule execution results.
 	/// </summary>
@@ -67,27 +67,27 @@ namespace Test.Rules.Fixtures {
 			rule = new TRule ();
 			runner = new TestRunner (rule);
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule does not apply to a particular token. 
+		/// Asserts that the rule does not apply to a particular token.
 		/// </summary>
 		/// <param name="token">Cecil metadata token to check.</param>
 		protected void AssertRuleDoesNotApply (TMetadataToken token)
 		{
 			RunRuleAndCheckResults (token, RuleResult.DoesNotApply, null);
-		}		
-		
+		}
+
 		/// <summary>
-		/// Asserts that the rule has been executed successfully. 
+		/// Asserts that the rule has been executed successfully.
 		/// </summary>
 		/// <param name="token">Cecil metadata token to check.</param>
 		protected void AssertRuleSuccess (TMetadataToken token)
 		{
 			RunRuleAndCheckResults (token, RuleResult.Success, null);
-		}		
-						
+		}
+
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <param name="token">Cecil metadata token to check.</param>
 		protected void AssertRuleFailure (TMetadataToken token)
@@ -96,7 +96,7 @@ namespace Test.Rules.Fixtures {
 		}
 
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <param name="token">Cecil metadata token to check.</param>
 		/// <param name="expectedCount">Expected defects count.</param>
@@ -104,23 +104,23 @@ namespace Test.Rules.Fixtures {
 		{
 			RunRuleAndCheckResults (token, RuleResult.Failure, expectedCount);
 		}
-					
+
 		/// <summary>
 		/// Runs the rule and checks the results against the specified matcher.
 		/// </summary>
 		private void RunRuleAndCheckResults (TMetadataToken token, RuleResult expectedResult, int? expectedDefectCount)
 		{
 			RuleResult result = RunRule (token);
-			Assert.AreEqual (expectedResult, result, "{0} failed on {1}: result should be {2} but got {3}.", 
+			Assert.AreEqual (expectedResult, result, "{0} failed on {1}: result should be {2} but got {3}.",
 				typeof (TRule).Name, token, expectedResult, result);
 
 			if (expectedDefectCount.HasValue) {
-				Assert.AreEqual (expectedDefectCount.Value, runner.Defects.Count, 
-					"{0} failed on {1}: should have {2} defects but got {3}.", 
+				Assert.AreEqual (expectedDefectCount.Value, runner.Defects.Count,
+					"{0} failed on {1}: should have {2} defects but got {3}.",
 					typeof (TRule).Name, token, expectedDefectCount.Value, runner.Defects.Count);
 			}
 		}
-						
+
 		/// <summary>
 		/// Runs the rule and checks the results against the specified matcher.
 		/// </summary>
@@ -130,7 +130,7 @@ namespace Test.Rules.Fixtures {
 			if (result == RuleResult.DoesNotApply) {
 				return false;
 			}
-			Assert.AreEqual (RuleResult.Success, result, "{0} failed on {1}: result should be {2} but got {3}.", 
+			Assert.AreEqual (RuleResult.Success, result, "{0} failed on {1}: result should be {2} but got {3}.",
 				typeof (TRule).Name, token, RuleResult.Success, result);
 			return true;
 		}

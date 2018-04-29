@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.AvoidCodeDuplicatedInSameClassRule class
 //
 // Authors:
@@ -35,34 +35,34 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Smells {
 
 	/// <summary>
-	/// This rule checks for duplicated code in the same class.  
+	/// This rule checks for duplicated code in the same class.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public class MyClass {
-	///	private IList myList;
+	/// 	private IList myList;
 	///
-	///	public MyClass () {
-	///	        myList = new ArrayList ();
-	///	        myList.Add ("Foo");
-	///	        myList.Add ("Bar");
-	///	        myList.Add ("Baz");
-	///	}
+	/// 	public MyClass () {
+	/// 	        myList = new ArrayList ();
+	/// 	        myList.Add ("Foo");
+	/// 	        myList.Add ("Bar");
+	/// 	        myList.Add ("Baz");
+	/// 	}
 	///
-	///	public void MakeStuff () {
-	///	        foreach (string value in myList) {
-	///	                Console.WriteLine (value);
-	///	        }
-	///	        myList.Add ("FooReplied");
-	///	}
+	/// 	public void MakeStuff () {
+	/// 	        foreach (string value in myList) {
+	/// 	                Console.WriteLine (value);
+	/// 	        }
+	/// 	        myList.Add ("FooReplied");
+	/// 	}
 	///
-	///	public void MakeMoreStuff () {
-	///	        foreach (string value in myList) {
-	///	                Console.WriteLine (value);              
-	///	        }
-	///	        myList.Remove ("FooReplied");
-	///	}
+	/// 	public void MakeMoreStuff () {
+	/// 	        foreach (string value in myList) {
+	/// 	                Console.WriteLine (value);
+	/// 	        }
+	/// 	        myList.Remove ("FooReplied");
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -74,24 +74,24 @@ namespace Gendarme.Rules.Smells {
 	///
 	/// 	public MyClass () {
 	/// 		myList = new ArrayList ();
-	///		myList.Add ("Foo");
-	///		myList.Add ("Bar");
-	///		myList.Add ("Baz");
-	///	}	
+	/// 		myList.Add ("Foo");
+	/// 		myList.Add ("Bar");
+	/// 		myList.Add ("Baz");
+	/// 	}
 	///
 	/// 	private void PrintValuesInList () {
 	/// 		foreach (string value in myList) {
 	/// 			Console.WriteLine (value);
-	/// 		}      
-	///	}
+	/// 		}
+	/// 	}
 	///
 	/// 	public void MakeStuff () {
 	/// 		PrintValuesInList ();
-	///	        myList.Add ("FooReplied");
+	/// 	        myList.Add ("FooReplied");
 	/// 	}
 	///
 	/// 	public void MakeMoreStuff () {
-	///		PrintValuesInList ();
+	/// 		PrintValuesInList ();
 	/// 		myList.Remove ("FooReplied");
 	/// 	}
 	/// }
@@ -109,6 +109,11 @@ namespace Gendarme.Rules.Smells {
 			locator = new CodeDuplicatedLocator (this);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// don't analyze cases where no methods (or body) are available

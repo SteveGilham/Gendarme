@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.AvoidDeepNamespaceHierarchyRule class
 //
 // Authors:
@@ -47,10 +47,10 @@ namespace Gendarme.Rules.Naming {
 	/// support for its base namespace.</description></item>
 	/// <item><term>Interop</term><description>Namespace that provides all interoperability
 	/// code (e.g. p./invokes) for its base namespace.</description></item>
-	/// <item><term>Permissions</term><description>Namespace that provides all custom 
+	/// <item><term>Permissions</term><description>Namespace that provides all custom
 	/// permissions for its base namespace.</description></item>
 	/// <item><term>Internal</term><description>Namespace that provides non visible (outside
-	/// the assembly) helper code for its base namespace. <c>Impl</c> while allowed by the 
+	/// the assembly) helper code for its base namespace. <c>Impl</c> while allowed by the
 	/// rule is not encouraged.
 	/// </description></item>
 	/// </list>
@@ -59,8 +59,8 @@ namespace Gendarme.Rules.Naming {
 	/// Bad example:
 	/// <code>
 	/// namespace One.Two.Three.Four.Five {
-	///	internal class Helper {
-	///	}
+	/// 	internal class Helper {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -68,8 +68,8 @@ namespace Gendarme.Rules.Naming {
 	/// Good example:
 	/// <code>
 	/// namespace One.Two.Three.Four {
-	///	internal class FiveHelper {
-	///	}
+	/// 	internal class FiveHelper {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -77,8 +77,8 @@ namespace Gendarme.Rules.Naming {
 	/// Good example (exception for some namespace specialization):
 	/// <code>
 	/// namespace One.Two.Three.Four.Internal {
-	///	internal class Helper {
-	///	}
+	/// 	internal class Helper {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -120,6 +120,11 @@ namespace Gendarme.Rules.Naming {
 			return levels;
 		}
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// check every namespaces inside the assembly using the NamespaceEngine

@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.NUnitRule
 //
 // Authors:
@@ -36,17 +36,29 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.NUnit {
 
+	/// <summary>
+	/// Base class for NUnit rules
+	/// </summary>
 	abstract public class NUnitRule : Rule {
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public Version NUnitVersion { get; set; }
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
 
-			// If the assembly doesn't references nunit.framework then it 
+			// If the assembly doesn't references nunit.framework then it
 			// obviously doesn't use any of its types
-			Runner.AnalyzeModule += (object o, RunnerEventArgs e) => 
+			Runner.AnalyzeModule += (object o, RunnerEventArgs e) =>
 			{
 				Active = false;
 				foreach (AssemblyNameReference assembly in e.CurrentModule.AssemblyReferences) {

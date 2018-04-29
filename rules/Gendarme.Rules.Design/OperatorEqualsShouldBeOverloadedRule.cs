@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.OperatorEqualsShouldBeOverloadedRule
 //
 // Authors:
@@ -43,15 +43,15 @@ namespace Gendarme.Rules.Design {
 	/// Bad example (add/substract):
 	/// <code>
 	/// class DoesNotOverloadOperatorEquals {
-	///	public static int operator + (DoesNotOverloadOperatorEquals a)
-	///	{
-	///		return 0;
-	///	}
-	///	
-	///	public static int operator - (DoesNotOverloadOperatorEquals a)
-	///	{
-	///		return 0;
-	///	}
+	/// 	public static int operator + (DoesNotOverloadOperatorEquals a)
+	/// 	{
+	/// 		return 0;
+	/// 	}
+	///
+	/// 	public static int operator - (DoesNotOverloadOperatorEquals a)
+	/// 	{
+	/// 		return 0;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -59,10 +59,10 @@ namespace Gendarme.Rules.Design {
 	/// Bad example (value type):
 	/// <code>
 	/// struct OverridesEquals {
-	///	public override bool Equals (object obj)
-	///	{
-	///		return base.Equals (obj);
-	///	}
+	/// 	public override bool Equals (object obj)
+	/// 	{
+	/// 		return base.Equals (obj);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -70,25 +70,25 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// struct OverloadsOperatorEquals {
-	///	public static int operator + (OverloadsOperatorEquals a)
-	///	{
-	///		return 0;
-	///	}
-	///	
-	///	public static int operator - (OverloadsOperatorEquals a)
-	///	{
-	///		return 0;
-	///	}
-	///	
-	///	public static bool operator == (OverloadsOperatorEquals a, OverloadsOperatorEquals b)
-	///	{
-	///		return a.Equals (b);
-	///	}
-	///	
-	///	public override bool Equals (object obj)
-	///	{
-	///		return base.Equals (obj);
-	///	}
+	/// 	public static int operator + (OverloadsOperatorEquals a)
+	/// 	{
+	/// 		return 0;
+	/// 	}
+	///
+	/// 	public static int operator - (OverloadsOperatorEquals a)
+	/// 	{
+	/// 		return 0;
+	/// 	}
+	///
+	/// 	public static bool operator == (OverloadsOperatorEquals a, OverloadsOperatorEquals b)
+	/// 	{
+	/// 		return a.Equals (b);
+	/// 	}
+	///
+	/// 	public override bool Equals (object obj)
+	/// 	{
+	/// 		return base.Equals (obj);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -99,6 +99,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2231:OverloadOperatorEqualsOnOverridingValueTypeEquals")]
 	public class OperatorEqualsShouldBeOverloadedRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsInterface || type.IsDelegate ())

@@ -1,4 +1,4 @@
-// 
+﻿//
 // Shared test code / declarations for rocks
 //
 // Authors:

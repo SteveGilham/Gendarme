@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.Definitions.SimpleMethods
 //
 // Authors:
@@ -86,7 +86,7 @@ namespace Test.Rules.Definitions {
 		}
 
 		/// <value>
-		/// Gets a MethodDefinition to private instance empty method. 
+		/// Gets a MethodDefinition to private instance empty method.
 		/// </value>
 		public static MethodDefinition EmptyMethod {
 			get {
@@ -97,7 +97,7 @@ namespace Test.Rules.Definitions {
 		}
 
 		/// <value>
-		/// Gets a MethodDefinition to private instance generated method. 
+		/// Gets a MethodDefinition to private instance generated method.
 		/// </value>
 		public static MethodDefinition GeneratedCodeMethod {
 			get {

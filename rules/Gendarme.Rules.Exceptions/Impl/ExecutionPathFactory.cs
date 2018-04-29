@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -8,7 +8,7 @@ namespace Gendarme.Rules.Exceptions.Impl {
 	internal sealed class ExecutionPathFactory {
 
 		const int MaxLimit = 1000;
-	
+
 		public ExecutionPathFactory ()
 		{
 		}
@@ -26,7 +26,7 @@ namespace Gendarme.Rules.Exceptions.Impl {
 			return paths;
 		}
 
-		private void CreatePathHelper (Instruction start, Instruction end, 
+		private void CreatePathHelper (Instruction start, Instruction end,
 			ExecutionPathCollection path, List<ExecutionPathCollection> completedPaths)
 		{
 			if (completedPaths.Count >= MaxLimit)
@@ -47,14 +47,14 @@ namespace Gendarme.Rules.Exceptions.Impl {
 							if (!path.Contains (target)) {
 								curBlock.Last = cur;
 								path.Add (curBlock);
-								CreatePathHelper (target, 
-										end, 
+								CreatePathHelper (target,
+										end,
 										path.Clone (),
 										completedPaths);
 							}
 						}
 						stop = true;
-					} else if (cur.OpCode == OpCodes.Leave || 
+					} else if (cur.OpCode == OpCodes.Leave ||
 							   cur.OpCode == OpCodes.Leave_S) {
 						curBlock.Last = cur;
 						path.Add (curBlock);
@@ -66,11 +66,11 @@ namespace Gendarme.Rules.Exceptions.Impl {
 						if (!path.Contains (target)) {
 							curBlock.Last = cur;
 							path.Add (curBlock);
-							CreatePathHelper (target, 
-									end, 
+							CreatePathHelper (target,
+									end,
 									path.Clone (),
 									completedPaths);
-						} 
+						}
 						if (!path.Contains (cur.Next)) {
 							curBlock = new ExecutionBlock ();
 							curBlock.First = cur.Next;
@@ -92,7 +92,7 @@ namespace Gendarme.Rules.Exceptions.Impl {
 					cur = cur.Next;
 				else
 					stop = true;
-			} 
+			}
 			while (!stop);
 		}
 	}

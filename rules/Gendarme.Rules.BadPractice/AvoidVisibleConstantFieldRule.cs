@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.BadPractice.AvoidVisibleConstantFieldRule
 //
 // Authors:
@@ -65,6 +65,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("Use a 'static readonly' field (C# syntax) so that the field's value can be changed without forcing client assemblies to be recompiled.")]
 	public class AvoidVisibleConstantFieldRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// if the type is not visible or has no fields then the rule does not apply
@@ -86,7 +91,7 @@ namespace Gendarme.Rules.BadPractice {
 				if (!ftype.IsValueType && !ftype.IsNamed ("System", "String"))
 					continue;
 
-				string msg = string.Format (CultureInfo.InvariantCulture, "'{0}' of type {1}.", 
+				string msg = string.Format (CultureInfo.InvariantCulture, "'{0}' of type {1}.",
 					field.Name, ftype.GetFullName ());
 				Runner.Report (field, Severity.High, Confidence.High, msg);
 

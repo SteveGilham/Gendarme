@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.BadPractice.PreferSafeHandleRule
 //
 // Authors:
@@ -37,24 +37,24 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// In general it is best to interop with native code using 
-	/// <c>System.Runtime.InteropServices.SafeHandle</c> instead of 
+	/// In general it is best to interop with native code using
+	/// <c>System.Runtime.InteropServices.SafeHandle</c> instead of
 	/// <c>System.IntPtr</c> or <c>System.UIntPtr</c> because:
 	/// <list type = "bullet">
 	/// <item>
 	/// <description>SafeHandles are type safe.</description>
 	/// </item>
 	/// <item>
-	/// <description>SafeHandles are guaranteed to be disposed of during 
-	/// exceptional conditions like a thread aborting unexpectedly or a stack 
+	/// <description>SafeHandles are guaranteed to be disposed of during
+	/// exceptional conditions like a thread aborting unexpectedly or a stack
 	/// overflow.</description>
 	/// </item>
 	/// <item>
 	/// <description>SafeHandles are not vulnerable to reycle attacks.</description>
 	/// </item>
 	/// <item>
-	/// <description>You don't need to write a finalizer which can be tricky 
-	/// to do because they execute within their own thread, may execute on 
+	/// <description>You don't need to write a finalizer which can be tricky
+	/// to do because they execute within their own thread, may execute on
 	/// partially constructed objects, and normally tear down the application
 	/// if you allow an exception to escape from them.</description>
 	/// </item>
@@ -66,7 +66,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// using System.Runtime.InteropServices;
 	/// using System.Security;
 	/// using System.Security.Permissions;
-	/// 
+	///
 	/// // If cleaning up the native resource in a timely manner is important you can
 	/// // implement IDisposable.
 	/// public sealed class Database {
@@ -78,16 +78,16 @@ namespace Gendarme.Rules.BadPractice {
 	/// 			NativeMethods.sqlite3_close (m_database);
 	/// 		}
 	/// 	}
-	/// 
+	///
 	/// 	public Database (string path)
-	/// 	{		
+	/// 	{
 	/// 		NativeMethods.OpenFlags flags = NativeMethods.OpenFlags.READWRITE | NativeMethods.OpenFlags.CREATE;
 	/// 		int err = NativeMethods.sqlite3_open_v2 (path, out m_database, flags, IntPtr.Zero);
 	/// 		// handle errors
 	/// 	}
-	/// 	
+	///
 	/// 	// exec and query methods would go here
-	/// 							
+	///
 	/// 	[SuppressUnmanagedCodeSecurity]
 	/// 	private static class NativeMethods {
 	/// 		[Flags]
@@ -97,14 +97,14 @@ namespace Gendarme.Rules.BadPractice {
 	/// 			CREATE = 0x00000004,
 	/// 			// ...
 	/// 		}
-	/// 		
+	///
 	/// 		[DllImport ("sqlite3")]
 	/// 		public static extern int sqlite3_close (IntPtr db);
-	/// 					
+	///
 	/// 	   	[DllImport ("sqlite3")]
 	/// 		public static extern int sqlite3_open_v2 (string fileName, out IntPtr db, OpenFlags flags, IntPtr module);
 	/// 	}
-	/// 	
+	///
 	///     private IntPtr m_database;
 	/// }
 	/// </code>
@@ -116,7 +116,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// using System.Runtime.InteropServices;
 	/// using System.Security;
 	/// using System.Security.Permissions;
-	/// 
+	///
 	/// // If cleaning up the native resource in a timely manner is important you can
 	/// // implement IDisposable, but you do not need to implement a finalizer because
 	/// // SafeHandle will take care of the cleanup.
@@ -126,25 +126,25 @@ namespace Gendarme.Rules.BadPractice {
 	/// 		NativeMethods.OpenFlags flags = NativeMethods.OpenFlags.READWRITE | NativeMethods.OpenFlags.CREATE;
 	/// 		m_database = new SqlitePtr (path, flags);
 	/// 	}
-	/// 	
+	///
 	/// 	// exec and query methods would go here
-	/// 	
+	///
 	/// 	// This corresponds to a native sqlite3*.
 	/// 	[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 	/// 	[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 	/// 	private sealed class SqlitePtr : SafeHandle {
 	/// 		public SqlitePtr (string path, NativeMethods.OpenFlags flags) : base (IntPtr.Zero, true)
-	/// 		{		
+	/// 		{
 	/// 			int err = NativeMethods.sqlite3_open_v2 (path, out handle, flags, IntPtr.Zero);
 	/// 			// handle errors
 	/// 		}
-	/// 		
-	/// 		public override bool IsInvalid { 
+	///
+	/// 		public override bool IsInvalid {
 	/// 			get {
 	/// 				return (handle == IntPtr.Zero);
 	/// 			}
 	/// 		}
-	/// 		
+	///
 	/// 		// This will not be called if the handle is invalid. Note that this method should not throw.
 	/// 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 	/// 		protected override bool ReleaseHandle ()
@@ -153,7 +153,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// 			return true;
 	/// 		}
 	/// 	}
-	/// 
+	///
 	/// 	[SuppressUnmanagedCodeSecurity]
 	/// 	private static class NativeMethods {
 	/// 		[Flags]
@@ -163,15 +163,15 @@ namespace Gendarme.Rules.BadPractice {
 	/// 			CREATE = 0x00000004,
 	/// 			// ...
 	/// 		}
-	/// 		
+	///
 	/// 		[DllImport ("sqlite3")]
 	/// 		public static extern int sqlite3_close (SqlitePtr db);
-	/// 				
+	///
 	/// 		// Open must take an IntPtr but all other methods take a type safe SqlitePtr.
 	/// 		[DllImport ("sqlite3")]
 	/// 		public static extern int sqlite3_open_v2 (string fileName, out IntPtr db, OpenFlags flags, IntPtr module);
 	/// 	}
-	/// 
+	///
 	/// 	private SqlitePtr m_database;
 	/// }
 	/// </code>
@@ -182,7 +182,7 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("Consider changing the code to use SafeHandle.")]
 	[FxCopCompatibility ("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
 	public sealed class PreferSafeHandleRule : Rule, ITypeRule {
-	
+
 		static FieldDefinition FindIntPtr (TypeDefinition type)
 		{
 			foreach (FieldDefinition field in type.Fields) {
@@ -193,10 +193,16 @@ namespace Gendarme.Rules.BadPractice {
 						return field;
 				}
 			}
-			
+
 			return null;
 		}
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -208,6 +214,11 @@ namespace Gendarme.Rules.BadPractice {
 			};
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasFields || type.IsEnum)
@@ -216,13 +227,13 @@ namespace Gendarme.Rules.BadPractice {
 			Log.WriteLine (this);
 			Log.WriteLine (this, "----------------------------------");
 			Log.WriteLine (this, type);
-						
+
 			FieldDefinition field = FindIntPtr (type);
 			if (field != null) {
 				Confidence confidence = Confidence.Low;
-				
+
 				MethodDefinition finalizer = type.GetMethod (MethodSignatures.Finalize);
-				if (finalizer != null) 
+				if (finalizer != null)
 					confidence = (Confidence) ((int) confidence - 1);	// lower numbers have higher confidence
 
 				if (type.Implements ("System", "IDisposable"))
@@ -231,7 +242,7 @@ namespace Gendarme.Rules.BadPractice {
 				Log.WriteLine (this, "'{0}' is an IntPtr.", field.Name);
 				Runner.Report (field, Severity.Medium, confidence);
 			}
-						
+
 			return Runner.CurrentRuleResult;
 		}
 	}

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.Generic.ImplementGenericCollectionInterfacesRule
 //
 // Authors:
@@ -36,7 +36,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design.Generic {
 
 	/// <summary>
-	/// This rule checks for types which implement the non-generic <code>System.IEnumerable</code> interface but 
+	/// This rule checks for types which implement the non-generic <code>System.IEnumerable</code> interface but
 	/// not the <code>System.IEnumerable&lt;T&gt;</code> interface. Implementing the generic version
 	/// of <code>System.IEnumerable</code> avoids casts, and possibly boxing, when iterating the collection.
 	/// </summary>
@@ -54,13 +54,13 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Good example:
 	/// <code>
 	/// public class IntEnumerable : IEnumerable&lt;int&gt; {
-	///	public IEnumerator&lt;int&gt; GetEnumerator ()
-	///	{
-	///	}
-	///	
-	///	IEnumerator IEnumerable.GetEnumerator ()
-	///	{
-	///	}
+	/// 	public IEnumerator&lt;int&gt; GetEnumerator ()
+	/// 	{
+	/// 	}
+	///
+	/// 	IEnumerator IEnumerable.GetEnumerator ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -70,12 +70,17 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1010:CollectionsShouldImplementGenericInterface")]
 	public class ImplementGenericCollectionInterfacesRule : GenericsBaseRule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enums, interfaces and generated code
 			if (type.IsEnum || type.IsInterface || type.IsGeneratedCode ())
 				return RuleResult.DoesNotApply;
-			
+
 			// rule applies only to visible types
 			if (!type.IsVisible ())
 				return RuleResult.DoesNotApply;
@@ -83,7 +88,7 @@ namespace Gendarme.Rules.Design.Generic {
 			// rule only applies if the type implements IEnumerable
 			if (!type.Implements ("System.Collections", "IEnumerable"))
 				return RuleResult.DoesNotApply;
-		
+
 			// rule does not apply to the types implementing IDictionary
 			if (type.Implements ("System.Collections", "IDictionary"))
 				return RuleResult.DoesNotApply;

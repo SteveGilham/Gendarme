@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Ui.SystemWindowsFormsExecutableTargetRule
 //
 // Authors:
@@ -33,8 +33,8 @@ using Gendarme.Framework;
 namespace Gendarme.Rules.UI {
 
 	/// <summary>
-	/// An executable assembly, i.e. an .exe, refers to the System.Windows.Forms assembly 
-	/// but isn't compiled using <c>-target:winexe</c>. A console window will be created 
+	/// An executable assembly, i.e. an .exe, refers to the System.Windows.Forms assembly
+	/// but isn't compiled using <c>-target:winexe</c>. A console window will be created
 	/// and shown under Windows (MS runtime) when the application is executed which is
 	/// probably not desirable for a winforms application.
 	/// </summary>
@@ -51,10 +51,17 @@ namespace Gendarme.Rules.UI {
 	// The base class has the solution text.
 	public class SystemWindowsFormsExecutableTargetRule : ExecutableTargetRule {
 
+		/// <summary>
+		/// Get executable target assembly name
+		/// </summary>
 		protected override string AssemblyName {
 			get { return "System.Windows.Forms"; }
 		}
 
+		/// <summary>
+		/// Get executable target assembly public key token
+		/// </summary>
+		/// <returns>Executable target assembly key token</returns>
 		protected override byte[] GetAssemblyPublicKeyToken ()
 		{
 			return new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };

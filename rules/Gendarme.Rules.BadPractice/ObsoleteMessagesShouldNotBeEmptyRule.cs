@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.BadPractice.ObsoleteMessagesShouldNotBeEmptyRule
 //
 // Authors:
@@ -36,7 +36,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
-	/// This rule warns if any type (including classes, structs, enums, interfaces and 
+	/// This rule warns if any type (including classes, structs, enums, interfaces and
 	/// delegates), field, property, events, method and constructor are decorated with
 	/// an empty <c>[Obsolete]</c> attribute because the attribute is much more helpful
 	/// if it includes advice on how to deal with the situation (e.g. the new recommended
@@ -47,9 +47,9 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// [Obsolete]
 	/// public byte[] Key {
-	///	get {
-	///		return (byte[]) key.Clone ();
-	///	}
+	/// 	get {
+	/// 		return (byte[]) key.Clone ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -58,9 +58,9 @@ namespace Gendarme.Rules.BadPractice {
 	/// <code>
 	/// [Obsolete ("Use the new GetKey() method since properties should not return arrays.")]
 	/// public byte[] Key {
-	///	get {
-	///		return (byte[]) key.Clone ();
-	///	}
+	/// 	get {
+	/// 		return (byte[]) key.Clone ();
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -70,11 +70,17 @@ namespace Gendarme.Rules.BadPractice {
 	[FxCopCompatibility ("Microsoft.Design", "CA1041:ProvideObsoleteAttributeMessage")]
 	public class ObsoleteMessagesShouldNotBeEmptyRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
 
-			// if the module does not have a reference to System.ObsoleteAttribute 
+			// if the module does not have a reference to System.ObsoleteAttribute
 			// then nothing will be marked as obsolete inside it
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
@@ -106,6 +112,11 @@ namespace Gendarme.Rules.BadPractice {
 			// no System.ObsoleteAttribute found inside the collection
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// handles AttributeTargets.[Class | Struct | Enum | Interface | Delegate]

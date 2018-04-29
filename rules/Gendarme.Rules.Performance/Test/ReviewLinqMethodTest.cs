@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for ReviewLinqMethodRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -174,7 +174,7 @@ namespace Test.Rules.Performance {
 				Console.WriteLine (sequence.ElementAtOrDefault (10));
 			}
 		}
-		
+
 		private sealed class CanUseSubscript2 {
 			public void Good1 (IEnumerable<string> sequence)
 			{
@@ -196,7 +196,7 @@ namespace Test.Rules.Performance {
 				Console.WriteLine (sequence.LastOrDefault ());
 			}
 		}
-		
+
 		private sealed class CanUseSort {
 			public object Good1 (IEnumerable<string> sequence)
 			{
@@ -230,7 +230,7 @@ namespace Test.Rules.Performance {
 				return ((IEnumerable<T>) data).Count ();
 			}
 		}
-		
+
 		[Test]
 		public void DoesNotApply ()
 		{
@@ -240,28 +240,28 @@ namespace Test.Rules.Performance {
 
 		[Test]
 		public void Cases ()
-		{			
+		{
 			// CanUseProperty
 			AssertRuleSuccess<CanUseProperty> ("Good1");
 			AssertRuleSuccess<CanUseProperty> ("Good2");
 
 			AssertRuleFailure<CanUseProperty> ("Bad1");
 			AssertRuleFailure<CanUseProperty> ("Bad2");
-			
+
 			// CanUseSubscript1
 			AssertRuleSuccess<CanUseSubscript1> ("Good1");
 
 			AssertRuleFailure<CanUseSubscript1> ("Bad1");
 			AssertRuleFailure<CanUseSubscript1> ("Bad2");
 			AssertRuleFailure<CanUseSubscript1> ("Bad3");
-			
+
 			// CanUseSubscript2
 			AssertRuleSuccess<CanUseSubscript2> ("Good1");
 
 			AssertRuleFailure<CanUseSubscript2> ("Bad1");
 			AssertRuleFailure<CanUseSubscript2> ("Bad2");
 			AssertRuleFailure<CanUseSubscript2> ("Bad3");
-			
+
 			// CanUseAny
 			AssertRuleSuccess<CanUseAny> ("Good1");
 			AssertRuleSuccess<CanUseAny> ("Good2");
@@ -274,15 +274,15 @@ namespace Test.Rules.Performance {
 			AssertRuleFailure<CanUseAny> ("Bad1b");
 			AssertRuleFailure<CanUseAny> ("Bad2b");
 			AssertRuleFailure<CanUseAny> ("Bad3b");
-			
+
 			AssertRuleFailure<CanUseAny> ("Bad1c");
 			AssertRuleFailure<CanUseAny> ("Bad2c");
 			AssertRuleFailure<CanUseAny> ("Bad3c");
-			
+
 			AssertRuleFailure<CanUseAny> ("Bad1d");
 			AssertRuleFailure<CanUseAny> ("Bad2d");
 			AssertRuleFailure<CanUseAny> ("Bad3d");
-			
+
 			// CanUseSort
 			AssertRuleSuccess<CanUseSort> ("Good1");
 

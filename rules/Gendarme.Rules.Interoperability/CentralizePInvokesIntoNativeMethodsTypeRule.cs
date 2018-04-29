@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Interoperability.CentralizePInvokesIntoNativeMethodsTypeRule
 //
 // Authors:
@@ -39,23 +39,23 @@ namespace Gendarme.Rules.Interoperability {
 	/// <summary>
 	/// This rule will warn you if p/invoke declarations are found outside some
 	/// specially named types. The convention makes it easier to know which type
-	/// of security checks are done (at runtime) and how critical is a security 
-	/// audit for them. In all cases the type should not be visible (i.e. <c>internal</c> 
+	/// of security checks are done (at runtime) and how critical is a security
+	/// audit for them. In all cases the type should not be visible (i.e. <c>internal</c>
 	/// in C#) outside the assembly.
-	/// 
-	/// Note that the type naming itself has no influence on security (either with 
+	///
+	/// Note that the type naming itself has no influence on security (either with
 	/// Code Access Security or with CoreCLR for Silverlight). The naming convention
-	/// includes the presence or absence of the <c>[SuppressUnmanagedCodeSecurity]</c> 
+	/// includes the presence or absence of the <c>[SuppressUnmanagedCodeSecurity]</c>
 	/// security attribute based on the type name.
 	/// <list>
-	/// <item><description><c>NativeMethods</c> should not be decorated with a 
-	/// <c>[SuppressUnmanagedCodeSecurity]</c>. This will let CAS do a stackwalk to 
+	/// <item><description><c>NativeMethods</c> should not be decorated with a
+	/// <c>[SuppressUnmanagedCodeSecurity]</c>. This will let CAS do a stackwalk to
 	/// ensure the code can be...</description></item>
-	/// <item><description><c>SafeNativeMethods</c> should be decorated with a 
-	/// <c>[SuppressUnmanagedCodeSecurity] attribute</c>. The attribute means that no 
+	/// <item><description><c>SafeNativeMethods</c> should be decorated with a
+	/// <c>[SuppressUnmanagedCodeSecurity] attribute</c>. The attribute means that no
 	/// stackwalk will occurs.</description></item>
-	/// <item><description><c>UnsafeNativeMethods</c> should be decorated with a 
-	/// <c>[SuppressUnmanagedCodeSecurity] attribute</c>. The attribute means that no 
+	/// <item><description><c>UnsafeNativeMethods</c> should be decorated with a
+	/// <c>[SuppressUnmanagedCodeSecurity] attribute</c>. The attribute means that no
 	/// stackwalk will occurs. However since the p/invoke methods are named unsafe then
 	/// the rule will warn an audit-level defect to review the code.</description></item>
 	/// </list>
@@ -66,7 +66,7 @@ namespace Gendarme.Rules.Interoperability {
 	[FxCopCompatibility ("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass")]
 	public class CentralizePInvokesIntoNativeMethodsTypeRule : Rule, ITypeRule, IMethodRule {
 
-		// Note: you either like the rule or not (disable it). If you 
+		// Note: you either like the rule or not (disable it). If you
 		// follow it then it is important to follow it 100% since other
 		// people will expect specific behaviors from specific names
 
@@ -92,13 +92,13 @@ namespace Gendarme.Rules.Interoperability {
 		{
 			// *NativeMethods types should never be visible outside the assembly
 			if (type.IsVisible ()) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
+				string msg = String.Format (CultureInfo.InvariantCulture,
 					"'{0}' should not be visible outside the assembly.", type.GetFullName ());
 				Runner.Report (type, Severity.High, Confidence.Total, msg);
 			}
 
 			if (CanInstantiateType (type)) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
+				string msg = String.Format (CultureInfo.InvariantCulture,
 					"'{0}' should not be static or sealed with no visible constructor.", type.GetFullName ());
 				Runner.Report (type, Severity.High, Confidence.Total, msg);
 			}
@@ -120,7 +120,14 @@ namespace Gendarme.Rules.Interoperability {
 				Runner.Report (type, Severity.Critical, Confidence.Total, msg);
 		}
 
-		// if the "right" type names is used then it's very important to follow 100% of the convention
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
+		/// <remarks>
+		/// if the "right" type names is used then it's very important to follow 100% of the convention
+		/// </remarks>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			switch (type.Name) {
@@ -151,10 +158,16 @@ namespace Gendarme.Rules.Interoperability {
 			return Runner.CurrentRuleResult;
 		}
 
-		// note: all p/invokes methods should not be visible - but 
-		// this is already checked by PInvokeShouldNotBeVisibleRule, 
-		// which is important as a standalone rule for people that 
-		// do not follow this, more complete, convention
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
+		/// <remarks>
+		/// All p/invokes methods should not be visible - but this is already
+		/// checked by PInvokeShouldNotBeVisibleRule, which is important as a standalone
+		/// rule for people that do not follow this, more complete, convention
+		/// </remarks>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (!method.IsPInvokeImpl)
@@ -173,6 +186,9 @@ namespace Gendarme.Rules.Interoperability {
 			}
 		}
 
+		/// <summary>
+		/// Skip methods generated by Visual Studio (and/or other) GUI environments?
+		/// </summary>
 		public bool SkipGeneratedGuiMethods
 		{
 			get

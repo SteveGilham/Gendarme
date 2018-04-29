@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.AttributeArgumentsShouldHaveAccessorsRule
 //
 // Authors:
@@ -45,21 +45,21 @@ namespace Gendarme.Rules.Design {
 	/// <code>
 	/// [AttributeUsage (AttributeTargets.All)]
 	/// public sealed class AttributeWithRequiredProperties : Attribute {
-	///	private int storedFoo;
-	///	private string storedBar;
-	///	
-	///	// we have no corresponding property with the name 'Bar' so the rule will fail
-	///	public AttributeWithRequiredProperties (int foo, string bar)
-	///	{
-	///		storedFoo = foo;
-	///		storedBar = bar;
-	///	}
-	///	
-	///	public int Foo {
-	///		get {
-	///			return storedFoo;
-	///		}
-	///	}
+	/// 	private int storedFoo;
+	/// 	private string storedBar;
+	///
+	/// 	// we have no corresponding property with the name 'Bar' so the rule will fail
+	/// 	public AttributeWithRequiredProperties (int foo, string bar)
+	/// 	{
+	/// 		storedFoo = foo;
+	/// 		storedBar = bar;
+	/// 	}
+	///
+	/// 	public int Foo {
+	/// 		get {
+	/// 			return storedFoo;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -70,19 +70,19 @@ namespace Gendarme.Rules.Design {
 	/// public sealed class AttributeWithRequiredProperties : Attribute {
 	/// 	private int storedFoo;
 	/// 	private string storedBar;
-	/// 	
+	///
 	/// 	public AttributeWithRequiredProperties (int foo, string bar)
 	/// 	{
 	/// 		storedFoo = foo;
 	/// 		storedBar = bar;
 	/// 	}
-	/// 	
+	///
 	/// 	public int Foo {
 	/// 		get {
-	///			return storedFoo; 
+	/// 			return storedFoo;
 	/// 		}
 	/// 	}
-	/// 	
+	///
 	/// 	public string Bar {
 	/// 		get {
 	/// 			return storedBar;
@@ -99,6 +99,11 @@ namespace Gendarme.Rules.Design {
 
 		private List<string> allProperties = new List<string> ();
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to attributes
@@ -130,7 +135,7 @@ namespace Gendarme.Rules.Design {
 					string correspondingPropertyName = Char.ToUpper (param.Name [0], CultureInfo.InvariantCulture).ToString (CultureInfo.InvariantCulture) +
 						param.Name.Substring (1);
 					if (!allProperties.Contains (correspondingPropertyName)) {
-						string s = String.Format (CultureInfo.InvariantCulture, 
+						string s = String.Format (CultureInfo.InvariantCulture,
 							"Add '{0}' property to the attribute class.", correspondingPropertyName);
 						Runner.Report (param, Severity.Medium, Confidence.High, s);
 						allProperties.Add (correspondingPropertyName); // to avoid double catching same property (e.g. from different constructors)

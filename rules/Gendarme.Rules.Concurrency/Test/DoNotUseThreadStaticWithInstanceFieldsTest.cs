@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for DoNotUseThreadStaticWithInstanceFieldsRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,12 +43,12 @@ namespace Test.Rules.Concurrency {
 			[ThreadStatic]
 			public static string name;
 		}
-		
+
 		private sealed class Bad1 {
 			[ThreadStatic]
 			public string name1;
 		}
-		
+
 		private sealed class Bad2 {
 			[ThreadStatic]
 			public string name1;
@@ -59,7 +59,7 @@ namespace Test.Rules.Concurrency {
 			[ThreadStatic]
 			public string name2;
 		}
-		
+
 		[Test]
 		public void NotApplicable ()
 		{
@@ -72,7 +72,7 @@ namespace Test.Rules.Concurrency {
 		public void Cases ()
 		{
 			AssertRuleSuccess<Good1> ();
-			
+
 			AssertRuleFailure<Bad1> ();
 			AssertRuleFailure<Bad2> (2);
 		}

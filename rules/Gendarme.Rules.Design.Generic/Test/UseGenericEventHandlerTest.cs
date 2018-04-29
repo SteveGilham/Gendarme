@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for UseGenericEventHandlerRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -49,7 +49,7 @@ namespace Test.Rules.Design.Generic {
 			AssertRuleDoesNotApply (SimpleTypes.Interface);
 			AssertRuleDoesNotApply (SimpleTypes.Structure);
 		}
-		
+
 		[Test]
 		public void NotApplicableBefore2_0 ()
 		{
@@ -74,7 +74,7 @@ namespace Test.Rules.Design.Generic {
 		public delegate void Bad (object sender, EventArgs e);
 
 		public delegate void BadInherited (object sender, AssemblyLoadEventArgs e);
-		
+
 		[Test]
 		public void BadDelegates ()
 		{
@@ -86,7 +86,7 @@ namespace Test.Rules.Design.Generic {
 		public delegate void WrongSignatureNoObject (string sender, EventArgs e);
 		public delegate void WrongSignatureExtraParameter (object sender, string name, EventArgs e);
 		public delegate void WrongSignatureNoEventArgs (object sender, object e);
-		
+
 		[Test]
 		public void GenericInterfaceNotImplementedReturnsFailure ()
 		{

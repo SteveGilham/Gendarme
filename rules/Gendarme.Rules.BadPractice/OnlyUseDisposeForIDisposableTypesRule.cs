@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.BadPractice.OnlyUseDisposeForIDisposableTypesRule
 //
 // Authors:
@@ -39,7 +39,7 @@ namespace Gendarme.Rules.BadPractice {
 
 	/// <summary>
 	/// To avoid confusing developers methods named Dispose should be
-	/// reserved for types that implement IDisposable. 
+	/// reserved for types that implement IDisposable.
 	/// </summary>
 	/// <example>
 	/// Bad example:
@@ -48,7 +48,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// {
 	/// 	// This class uses one or more temporary files to do its work.
 	/// 	private List&lt;string&gt; files = new List&lt;string&gt; ();
-	/// 	
+	///
 	/// 	// This is confusing: developers will think they can do things
 	/// 	// like use the instance with a using statement.
 	/// 	public void Dispose ()
@@ -56,7 +56,7 @@ namespace Gendarme.Rules.BadPractice {
 	/// 		foreach (string path in files) {
 	/// 			File.Delete (path);
 	/// 		}
-	/// 			
+	///
 	/// 		files.Clear ();
 	/// 	}
 	/// }
@@ -69,13 +69,13 @@ namespace Gendarme.Rules.BadPractice {
 	/// {
 	/// 	// This class uses one or more temporary files to do its work.
 	/// 	private List&lt;string&gt; files = new List&lt;string&gt; ();
-	/// 	
+	///
 	/// 	public void Reset ()
 	/// 	{
 	/// 		foreach (string path in files) {
 	/// 			File.Delete (path);
 	/// 		}
-	/// 			
+	///
 	/// 		files.Clear ();
 	/// 	}
 	/// }
@@ -86,7 +86,12 @@ namespace Gendarme.Rules.BadPractice {
 	[Problem ("A type has a method named Dispose, but does not implement IDisposable.")]
 	[Solution ("Rename the method or implement IDisposable.")]
 	public sealed class OnlyUseDisposeForIDisposableTypesRule : Rule, ITypeRule {
-	
+
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasMethods || type.IsEnum || type.IsDelegate ())
@@ -95,14 +100,14 @@ namespace Gendarme.Rules.BadPractice {
 			Log.WriteLine (this);
 			Log.WriteLine (this, "----------------------------------");
 			Log.WriteLine (this, type);
-			
+
 			if (!type.Implements ("System", "IDisposable")) {
 				Log.WriteLine (this, "type does not implement IDisposable");
 
 				foreach (MethodDefinition method in type.Methods.Where (m => m.Name == "Dispose"))
 				{
 					Log.WriteLine (this, "found {0}", method);
-					
+
 					Severity severity;
 					if (method.IsVisible ())
 						severity = Severity.High;
@@ -110,13 +115,13 @@ namespace Gendarme.Rules.BadPractice {
 						severity = Severity.Medium;
 					else
 						severity = Severity.Low;
-					
-					// Confidence is not total because we may not be able to resolve 
+
+					// Confidence is not total because we may not be able to resolve
 					// every base class.
-					Runner.Report (method, severity, Confidence.High);	
+					Runner.Report (method, severity, Confidence.High);
 				}
 			}
-									
+
 			return Runner.CurrentRuleResult;
 		}
 	}

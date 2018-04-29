@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for CustomAttributeRocks
 //
 // Authors:
@@ -61,7 +61,7 @@ namespace Test.Framework.Rocks {
 			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.CustomAttributeRocksTest");
 			Assert.Throws<ArgumentNullException>(delegate { type.HasAttribute("a", null); });
 		}
-		
+
 		[Test]
 		public void HasAttribute ()
 		{

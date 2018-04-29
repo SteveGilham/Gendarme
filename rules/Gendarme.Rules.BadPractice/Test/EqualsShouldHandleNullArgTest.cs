@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for EqualsShouldHandleNullArgRule
 //
 // Authors:
@@ -52,7 +52,7 @@ namespace Test.Rules.BadPractice {
 					return this == obj;
 			}
 		}
-		
+
 		public class EqualsDoesNotReturnFalseForNullArg {
 			public override bool Equals (object obj)
 			{
@@ -62,14 +62,14 @@ namespace Test.Rules.BadPractice {
 				return this == obj;
 			}
 		}
-		
+
 		public class EqualsNotOverriddenNotCheckingNull {
 			public bool Equals (object obj)
 			{
 				return this == obj;
 			}
 		}
-		
+
 		public class EqualsNotOverriddenNotReturningFalseForNull {
 			public new bool Equals (object obj)
 			{

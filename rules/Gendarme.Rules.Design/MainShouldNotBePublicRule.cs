@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.MainShouldNotBePublicRule
 //
 // Authors:
@@ -34,7 +34,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule fires if an assembly's entry point (typically named <c>Main</c>) is visible 
+	/// This rule fires if an assembly's entry point (typically named <c>Main</c>) is visible
 	/// to other assemblies. It is better to make this method private so that only the CLR
 	/// can call the method.
 	/// </summary>
@@ -42,9 +42,9 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public class MainClass {
-	///	public void Main ()
-	///	{
-	///	}
+	/// 	public void Main ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -52,9 +52,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example (type is not externally visible):
 	/// <code>
 	/// internal class MainClass {
-	///	public void Main ()
-	///	{
-	///	}
+	/// 	public void Main ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -62,9 +62,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example (method is not externally visible):
 	/// <code>
 	/// public class MainClass {
-	///	internal void Main ()
-	///	{
-	///	}
+	/// 	internal void Main ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -75,6 +75,11 @@ namespace Gendarme.Rules.Design {
 
 		private const string VisualBasic = "Microsoft.VisualBasic";
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// assembly must have an entry point to be examined
@@ -84,7 +89,7 @@ namespace Gendarme.Rules.Design {
 
 			// RULE APPLIES
 
-			// we have to check declaringType's visibility so 
+			// we have to check declaringType's visibility so
 			// if we can't get access to it (is this possible?) we abandon
 			// also, if it is not public, we don't have to continue our work
 			// - we can't reach Main () anyways

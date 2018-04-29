@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.Rocks.CustomAttributeRocks
 //
 // Authors:
@@ -31,7 +31,7 @@ using Mono.Cecil;
 
 namespace Gendarme.Framework.Rocks {
 
-	// add CustomAttribute[Collection], ICustomAttributeProvider extensions 
+	// add CustomAttribute[Collection], ICustomAttributeProvider extensions
 	// methods here only if:
 	// * you supply minimal documentation for them (xml)
 	// * you supply unit tests for them

@@ -1,4 +1,4 @@
-//
+﻿//
 // Abstract Gendarme.Rules.BadPractice.ReturnsNullRule
 //
 // Authors:
@@ -33,7 +33,7 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.BadPractice {
 
-	// Notes: 
+	// Notes:
 	// * We don't implement IMethodRule on purpose since a rule that inherit
 	//   from us can be an ITypeRule (checking for a specific method in the type)
 
@@ -51,7 +51,7 @@ namespace Gendarme.Rules.BadPractice {
 					break;
 				}
 
-				// but CSC non-optimized code generation results in strange IL that needs a few 
+				// but CSC non-optimized code generation results in strange IL that needs a few
 				// more calls. e.g. "return null" == "nop | ldnull | stloc.0 | br.s | ldloc.0 | ret"
 				if ((previous.OpCode.FlowControl == FlowControl.Branch) || (previous.IsLoadLocal ()
 					|| previous.IsStoreLocal ())) {

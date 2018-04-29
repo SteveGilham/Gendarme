@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Serialization.ImplementISerializableCorrectlyRule
 //
 // Authors:
@@ -50,22 +50,22 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public class Bad : ISerializable {
-	///	int foo;
-	///	string bar;
-	///	
-	///	protected Bad (SerializationInfo info, StreamingContext context)
-	///	{
-	///		foo = info.GetInt32 ("foo");
-	///	}
-	///	
-	///	// extensibility is limited since GetObjectData is not virtual:
-	///	// any type inheriting won't be able to serialized additional fields
-	///	public void GetObjectData (SerializationInfo info, StreamingContext context)
-	///	{
-	///		info.AddValue ("foo", foo);
-	///		// 'bar' is not serialized, if not needed then the field should
-	///		// be decorated with [NotSerialized]
-	///	}
+	/// 	int foo;
+	/// 	string bar;
+	///
+	/// 	protected Bad (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		foo = info.GetInt32 ("foo");
+	/// 	}
+	///
+	/// 	// extensibility is limited since GetObjectData is not virtual:
+	/// 	// any type inheriting won't be able to serialized additional fields
+	/// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		info.AddValue ("foo", foo);
+	/// 		// 'bar' is not serialized, if not needed then the field should
+	/// 		// be decorated with [NotSerialized]
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -74,19 +74,19 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public class Good : ISerializable {
-	///	int foo;
-	///	[NotSerialized]
-	///	string bar;
-	///	
-	///	protected Good (SerializationInfo info, StreamingContext context)
-	///	{
-	///		foo = info.GetInt32 ("foo");
-	///	}
-	///	
-	///	public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
-	///	{
-	///		info.AddValue ("foo", foo);
-	///	}
+	/// 	int foo;
+	/// 	[NotSerialized]
+	/// 	string bar;
+	///
+	/// 	protected Good (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		foo = info.GetInt32 ("foo");
+	/// 	}
+	///
+	/// 	public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		info.AddValue ("foo", foo);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -95,19 +95,19 @@ namespace Gendarme.Rules.Serialization {
 	/// <code>
 	/// [Serializable]
 	/// public sealed class Good : ISerializable {
-	///	int foo;
-	///	string bar;
-	///	
-	///	protected Good (SerializationInfo info, StreamingContext context)
-	///	{
-	///		foo = info.GetInt32 ("foo");
-	///	}
-	///	
-	///	public void GetObjectData (SerializationInfo info, StreamingContext context)
-	///	{
-	///		info.AddValue ("foo", foo);
-	///		info.AddValue ("bar", bar);
-	///	}
+	/// 	int foo;
+	/// 	string bar;
+	///
+	/// 	protected Good (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		foo = info.GetInt32 ("foo");
+	/// 	}
+	///
+	/// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
+	/// 	{
+	/// 		info.AddValue ("foo", foo);
+	/// 		info.AddValue ("bar", bar);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -187,6 +187,11 @@ namespace Gendarme.Rules.Serialization {
 			fields.Clear ();
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsSerializable || !type.Implements ("System.Runtime.Serialization", "ISerializable"))
@@ -194,7 +199,7 @@ namespace Gendarme.Rules.Serialization {
 
 			MethodDefinition getObjectData = type.GetMethod (MethodSignatures.GetObjectData);
 			if (getObjectData == null) {
-				// no GetObjectData means that the type's ancestor does the job but 
+				// no GetObjectData means that the type's ancestor does the job but
 				// are we introducing new instance fields that need to be serialized ?
 				if (!type.HasFields)
 					return RuleResult.Success;
