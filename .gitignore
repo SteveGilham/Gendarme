@@ -16,7 +16,7 @@ mkinstalldirs
 install-sh
 
 
-# gendarme .gitignore
+# gendarme + Visual Studio .gitignore
 gendarme
 gendarme-wizard
 bin
@@ -28,3 +28,4 @@ AssemblyInfo.cs
 UpgradeLog*.htm
 UpgradeLog*.html
 Backup/
+.vs/
