@@ -41,24 +41,43 @@ namespace Gendarme.Framework {
 		/// Create an mapping between the Gendarme rule and a FxCop rule
 		/// </summary>
 		/// <param name="category">FxCop rule category</param>
-		/// <param name="checkId">FxCop rule identifier (2 letters, 4 numbers)</param>
+		/// <param name="checkId">FxCop rule identifier (and name)</param>
 		public FxCopCompatibilityAttribute (string category, string checkId)
 		{
 			Category = category;
-			CheckId = checkId;
+			int position = checkId.IndexOf(':');
+			if (position >= 0) {
+				CheckIdValue = checkId.Remove(position);
+				CheckIdName = checkId.Remove(0, position + 1);
+			} else {
+				CheckIdValue = checkId;
+				CheckIdName = null;
+			}
 		}
 
 		/// <summary>
 		/// Rule category.
 		/// e.g. "Microsoft.Usage"
 		/// </summary>
-		public string Category { get; internal set; }
+		public string Category { get; }
 
 		/// <summary>
-		/// Rule identifier. The identifier is not guaranteed to be unique without it's category.
-		/// e.g. "CA2232:MarkWindowsFormsEntryPointsWithStaThread" (recommanded) or
-		/// or simply "CA2232" (harder to maintain)
+		/// Rule identifier code. The identifier is not guaranteed to be unique without it's category.
 		/// </summary>
-		public string CheckId { get; internal set; }
+		public string CheckIdValue { get; }
+
+		/// <summary>
+		/// Rule identifier description.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Can be without spaces (camel style) or with spaces (used in Visual Studio 2017,
+		/// at least for some rules that were without spaces in previous versions of Visual Studio).
+		/// </para>
+		/// <para>
+		/// e.g.: "CA2000:DisposeObjectsBeforeLosingScope" vs. "CA2000:Dispose objects before losing scope"
+		/// </para>
+		/// </remarks>
+		public string CheckIdName { get; }
 	}
 }
