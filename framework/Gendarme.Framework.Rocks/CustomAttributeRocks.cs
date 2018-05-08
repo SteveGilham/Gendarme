@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.Rocks.CustomAttributeRocks
 //
 // Authors:
@@ -31,7 +31,7 @@ using Mono.Cecil;
 
 namespace Gendarme.Framework.Rocks {
 
-	// add CustomAttribute[Collection], ICustomAttributeProvider extensions 
+	// add CustomAttribute[Collection], ICustomAttributeProvider extensions
 	// methods here only if:
 	// * you supply minimal documentation for them (xml)
 	// * you supply unit tests for them
@@ -53,6 +53,20 @@ namespace Gendarme.Framework.Rocks {
 				TypeReference cat = ca.AttributeType;
 				if (cat.IsNamed ("System.CodeDom.Compiler", "GeneratedCodeAttribute", null) ||
 					cat.IsNamed ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute", null)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		internal static bool HasGeneratedCodeAttribute (this ICustomAttributeProvider self)
+		{
+			if ((self == null) || !self.HasCustomAttributes)
+				return false;
+
+			foreach (CustomAttribute ca in self.CustomAttributes) {
+				TypeReference cat = ca.AttributeType;
+				if (cat.IsNamed ("System.CodeDom.Compiler", "GeneratedCodeAttribute", null)) {
 					return true;
 				}
 			}

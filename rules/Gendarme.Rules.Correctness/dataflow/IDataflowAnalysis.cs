@@ -1,4 +1,4 @@
-/*
+﻿/*
  * IDataflowAnalysis.cs: the interface specific dataflow analyses must
  * implement.
  *
@@ -20,7 +20,7 @@ public interface IDataflowAnalysis {
     object NewTop();
 
     object NewEntry();
-    
+
     object NewCatch();
 
     void MeetInto(object originalFact, object newFact, bool warn);

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.DoNotLockOnThisOrTypesRule
 //
 // Authors:
@@ -52,8 +52,8 @@ namespace Gendarme.Rules.Concurrency {
 	/// public void MethodLockingOnThis ()
 	/// {
 	/// 	lock (this) {
-	///		producer++;
-	///     }	
+	/// 		producer++;
+	///     }
 	/// }
 	/// </code>
 	/// </example>
@@ -63,8 +63,8 @@ namespace Gendarme.Rules.Concurrency {
 	/// public void MethodLockingOnType ()
 	/// {
 	/// 	lock (this.GetType ()) {
-	///		producer++;
-	///	}
+	/// 		producer++;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -73,14 +73,14 @@ namespace Gendarme.Rules.Concurrency {
 	/// <code>
 	/// class ClassWithALocker {
 	/// 	object locker = new object ();
-	///	int producer = 0;
-	/// 
-	///	public void MethodLockingLocker ()
-	///	{
-	///		lock (locker) {
-	///			producer++;
-	///		}
-	///	}
+	/// 	int producer = 0;
+	///
+	/// 	public void MethodLockingLocker ()
+	/// 	{
+	/// 		lock (locker) {
+	/// 			producer++;
+	/// 		}
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -134,7 +134,7 @@ namespace Gendarme.Rules.Concurrency {
 				}
 				break;
 			default:
-				// [g]mcs commonly do a stloc.x ldloc.x just before 
+				// [g]mcs commonly do a stloc.x ldloc.x just before
 				// (a) an ldarg.0 (for instance methods); or
 				// (b) an ldtoken (for static methods)
 				// and this throws off TraceBack

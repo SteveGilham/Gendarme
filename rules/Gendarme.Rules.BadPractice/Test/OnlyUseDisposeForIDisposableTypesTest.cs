@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for OnlyUseDisposeForIDisposableTypesRule
 //
 // Authors:
@@ -116,7 +116,7 @@ namespace Test.Rules.BadPractice {
 			AssertRuleSuccess<Good1> ();
 			AssertRuleSuccess<Good2> ();
 			AssertRuleSuccess<Good3> ();
-			
+
 			AssertRuleFailure<Bad1> ();
 			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "Bad1-Severity-High");
 

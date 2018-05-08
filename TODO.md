@@ -17,14 +17,7 @@ To do list
 
     Wrong assumptions, too many false positives; rule is fired on two members with the same *prefix*, e. g. GUI form with label `userNameLabel` and text box `userNameTextBox`, that simply can not be extracted to two different classes and to create custom user control for all these *little things* is not the best idea either.
 
-* Fix unit test to be usable in Visual Studio
-
 * Test Linux/Mono support of changes
-
-* Remove dependency on .NET 2.0 libraries:
-
-  * ICSharpCode.SharpZipLib.dll
-  * nunit.framework.dll
 
 * Update from obsolete *Cecil* functions
 

@@ -364,7 +364,7 @@
     <!-- **************************************************** -->
     <!--         Gendarme.Rules.Portability.dll               -->
     <!-- **************************************************** -->
-    <rules include="*" from="Gendarme.Rules.Portability.dll" />
+    <rules include="*" exclude="MonoCompatibilityReviewRule" from="Gendarme.Rules.Portability.dll" />
     <!--
     <rules include="DoNotHardcodePathsRule" from="Gendarme.Rules.Portability.dll" /> this rule is has false positive
     <rules include="ExitCodeIsLimitedOnUnixRule" from="Gendarme.Rules.Portability.dll" />

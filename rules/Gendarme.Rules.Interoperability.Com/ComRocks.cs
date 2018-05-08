@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Interoperability.Com.ComRocks
 //
 // Authors:
@@ -72,8 +72,12 @@ namespace Gendarme.Rules.Interoperability.Com {
 			return type.DeclaringType.IsComVisible ();
 		}
 
-		// Checks whether specific type is COM visible or not
-		// considering nested types, assemblies attributes and default values
+		/// <summary>
+		/// Checks whether specific type is COM visible or not
+		/// </summary>
+		/// <param name="self">type to be checked</param>
+		/// <returns>true for visible type; othewise, false</returns>
+		/// <remarks>considering nested types, assemblies attributes and default values</remarks>
 		public static bool IsTypeComVisible (this TypeDefinition self)
 		{
 			// [ComVisible] attribute will be ignored on non-visible types

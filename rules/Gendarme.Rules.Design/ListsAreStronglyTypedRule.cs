@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.ListsAreStronglyTypedRule
 //
 // Authors:
@@ -45,11 +45,11 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// class Bad : IList {
-	///	public int Add (object value)
-	///	{
-	///		// method code
-	///	}
-	///	// other IList methods and properties without their strongly typed versions
+	/// 	public int Add (object value)
+	/// 	{
+	/// 		// method code
+	/// 	}
+	/// 	// other IList methods and properties without their strongly typed versions
 	/// }
 	/// </code>
 	/// </example>
@@ -57,20 +57,20 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// class Good : Ilist {
-	///	public int Add (object value)
-	///	{
-	///		// method code
-	///	}			
-	///	public int Add (Exception value)
-	///	{
-	///		return ((IList)this).Add ((object)value);
-	///	}
-	///	// other IList methods and properties with their strongly typed versions
+	/// 	public int Add (object value)
+	/// 	{
+	/// 		// method code
+	/// 	}
+	/// 	public int Add (Exception value)
+	/// 	{
+	/// 		return ((IList)this).Add ((object)value);
+	/// 	}
+	/// 	// other IList methods and properties with their strongly typed versions
 	/// }
 	/// </code>
 	/// </example>
 
-	
+
 	[Problem ("Types that implement IList should have strongly typed versions of IList.Item, IList.Add, IList.Contains, IList.IndexOf, IList.Insert and IList.Remove")]
 	[Solution ("Explicitly implement IList members and provide strongly typed alternatives to them.")]
 	[FxCopCompatibility ("Microsoft.Design", "CA1039:ListsAreStronglyTyped")]

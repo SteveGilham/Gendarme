@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for DoNotDeclareProtectedMembersInSealedTypeRule
 //
 // Authors:
@@ -53,7 +53,7 @@ namespace Test.Rules.Design {
 		}
 
 #pragma warning disable 628
-        public sealed class SealedClassWithProtectedField {
+		public sealed class SealedClassWithProtectedField {
 			protected int i;
 			protected double d;
 		}
@@ -65,13 +65,13 @@ namespace Test.Rules.Design {
 		}
 
 #pragma warning disable 169
-        public sealed class SealedClassWithoutProtectedFields {
+		public sealed class SealedClassWithoutProtectedFields {
 			public string s;
 			private float f;
 		}
 #pragma warning restore 169
-
-        [Test]
+		
+		[Test]
 		public void SealedClassWithoutProtectedFieldsTest ()
 		{
 			AssertRuleSuccess<SealedClassWithoutProtectedFields> ();
@@ -85,7 +85,7 @@ namespace Test.Rules.Design {
 		}
 #pragma warning restore 628
 
-        [Test]
+		[Test]
 		public void SealedClassWithProtectedMethodTest ()
 		{
 			AssertRuleFailure<SealedClassWithProtectedMethod> (1);

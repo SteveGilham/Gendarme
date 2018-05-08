@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for AvoidRefAndOutParametersRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -93,8 +93,16 @@ namespace Test.Rules.Design {
 			void Ref (string input, ref string output);
 		}
 
+		public interface InterfaceWithoutRef {
+			void Ref (string input, string output);
+		}
+
 		public interface InterfaceWithOut {
 			bool Out (int input, out long output);
+		}
+
+		public interface InterfaceWithoutOut {
+			bool Out (int input, long output);
 		}
 
 		public abstract class PoorType : InterfaceWithOut, InterfaceWithRef {
@@ -105,6 +113,50 @@ namespace Test.Rules.Design {
 			}
 
 			abstract public void Ref (string input, ref string output);
+		}
+
+		public abstract class MaskedPoorType1 : InterfaceWithoutOut, InterfaceWithoutRef {
+
+			public virtual bool Out(int input, out long output)
+			{
+				throw new NotImplementedException ();
+			}
+
+			// explicit interface implementation is only because the method search helper function can not distinguish name duplicity
+			bool InterfaceWithoutOut.Out (int input, long output)
+			{
+				throw new NotImplementedException ();
+			}
+
+			abstract public void Ref(string input, ref string output);
+
+			// explicit interface implementation is only because the method search helper function can not distinguish name duplicity
+			void InterfaceWithoutRef.Ref(string input, string output)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
+		public abstract class MaskedPoorType2 : InterfaceWithOut, InterfaceWithRef {
+
+			public virtual bool Out(int input, ref long output)
+			{
+				throw new NotImplementedException ();
+			}
+
+			// explicit interface implementation is only because the method search helper function can not distinguish name duplicity
+			bool InterfaceWithOut.Out (int input, out long output)
+			{
+				throw new NotImplementedException ();
+			}
+
+			abstract public void Ref(string input, out string output);
+
+			// explicit interface implementation is only because the method search helper function can not distinguish name duplicity
+			void InterfaceWithRef.Ref(string input, ref string output)
+			{
+				throw new NotImplementedException ();
+			}
 		}
 
 		public class InheritedButStillPoor : PoorType {
@@ -141,6 +193,16 @@ namespace Test.Rules.Design {
 			// PoorType did not had any choice (but we'll only blame the interfaces)
 			AssertRuleSuccess<PoorType> ("Ref");
 			AssertRuleSuccess<PoorType> ("Out");
+
+			// test interface implementation with methods with similar signature
+			AssertRuleFailure<MaskedPoorType1> ("Ref");
+			AssertRuleFailure<MaskedPoorType1> ("Out");
+			AssertRuleDoesNotApply<MaskedPoorType1> ("Test.Rules.Design.AvoidRefAndOutParametersTest.InterfaceWithoutRef.Ref");
+			AssertRuleDoesNotApply<MaskedPoorType1> ("Test.Rules.Design.AvoidRefAndOutParametersTest.InterfaceWithoutOut.Out");
+			AssertRuleFailure<MaskedPoorType2> ("Ref");
+			AssertRuleFailure<MaskedPoorType2> ("Out");
+			AssertRuleDoesNotApply<MaskedPoorType2> ("Test.Rules.Design.AvoidRefAndOutParametersTest.InterfaceWithRef.Ref");
+			AssertRuleDoesNotApply<MaskedPoorType2> ("Test.Rules.Design.AvoidRefAndOutParametersTest.InterfaceWithOut.Out");
 
 			// neither did InheritedButStillPoor
 			AssertRuleSuccess<InheritedButStillPoor> ("Ref");

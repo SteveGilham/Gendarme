@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.AvoidPropertiesWithoutGetAccessorRule
 //
 // Authors:
@@ -42,17 +42,17 @@ namespace Gendarme.Rules.Design {
 	/// Bad examples:
 	/// <code>
 	/// public double Seed {
-	///	// no get since there's no use case for it
-	///	set {
-	///		seed = value;
-	///	}
+	/// 	// no get since there's no use case for it
+	/// 	set {
+	/// 		seed = value;
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public sting Password {
-	///	// no get as we don't want to expose the password
-	///	set {
-	///		password = value;
-	///	}
+	/// 	// no get as we don't want to expose the password
+	/// 	set {
+	/// 		password = value;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -60,18 +60,18 @@ namespace Gendarme.Rules.Design {
 	/// Good examples:
 	/// <code>
 	/// public double Seed {
-	///	get {
-	///		return seed;
-	///	}
-	///	set {
-	///		seed = value;
-	///	}
+	/// 	get {
+	/// 		return seed;
+	/// 	}
+	/// 	set {
+	/// 		seed = value;
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public void SetPassword (string value)
 	/// {
-	///	password = value;
-	/// }	
+	/// 	password = value;
+	/// }
 	/// </code>
 	/// </example>
 
@@ -80,6 +80,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly")]
 	public class AvoidPropertiesWithoutGetAccessorRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies to type with properties

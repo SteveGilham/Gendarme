@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Portability.MonoCompatibilityReviewRule
 //
 // Authors:
@@ -45,19 +45,17 @@ using Gendarme.Framework.Rocks;
 
 using ICSharpCode.SharpZipLib.Zip;
 
-using MoMA.Analyzer.MoMAWebService;
-
 namespace Gendarme.Rules.Portability {
 
 	/// <summary>
 	/// This rule will fire if one of the assemblies being checked contains a call to a .NET
 	/// method which is either not implemented on Mono or partially implemented. It does
 	/// this by downloading a MoMA definitions file under <c>~/.local/share/Gendarme/</c> (on UNIX)
-	/// or <c>C:\Documents and Settings\{username}\Local Settings\Application Data\Gendarme</c> 
-	/// (on Windows) and checking for calls to the methods therein. The rule will work without 
+	/// or <c>C:\Documents and Settings\{username}\Local Settings\Application Data\Gendarme</c>
+	/// (on Windows) and checking for calls to the methods therein. The rule will work without
 	/// MoMA but if it does fire it may be useful to download and run MoMA.
 	///
-	/// By default the rule will use the latest local version available. This can be overriden to use a 
+	/// By default the rule will use the latest local version available. This can be overriden to use a
 	/// specific, local, version if you want to review compatibility against a specific Mono version.
 	/// You can also manually remove them, now and then, to ensure you are using the latest version.
 	/// Also upgrading Gendarme will try to download a newer version of the definitions files.
@@ -68,6 +66,8 @@ namespace Gendarme.Rules.Portability {
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class MonoCompatibilityReviewRule : Rule, IMethodRule {
 
+		private static readonly Version resourceVersion = new Version(2, 8);
+
 		private const string NotImplementedMessage = "{0} is not implemented.";
 		private const string MissingMessage = "{0} is missing from Mono.";
 		private const string TodoMessage = "{0} is marked with a [MonoTODO] attribute: {1}.";
@@ -75,7 +75,7 @@ namespace Gendarme.Rules.Portability {
 		private HashSet<string> NotImplementedInternal; //value is unused
 		private HashSet<string> MissingInternal; //value is unused
 		private Dictionary<string, string> TodoInternal; //value = TODO Description
-		
+
 		private Version version;
 		private string definitions_folder;
 
@@ -149,33 +149,24 @@ namespace Gendarme.Rules.Portability {
 			}
 		}
 
-		private string SelectDefinitionsFile ()
+		private Stream GetDefinitionsFileStream ()
 		{
-			Version def_version = version;
-
-			// nothing specified ? 
-			if (def_version == null) {
-				// then we'll use the latest local version available
-				def_version = FindLastestLocalVersion ();
-				// if Gendarme version is newer than the definitions then there's likely something new available
-				if (typeof (IRule).Assembly.GetName ().Version > def_version) {
-					// however we don't want to download a (potentially) unexisting file each time we execute 
-					// Gendarme (e.g. a development release, like 2.5.x.x) so we limit this to once per week
-					FileInfo fi = new FileInfo (GetFileName (def_version));
-					if (!fi.Exists || (fi.CreationTimeUtc < DateTime.UtcNow.AddDays (-7)))
-						def_version = DownloadLatestDefinitions ();
+			// we'll use the latest local version available
+			Version def_version = FindLastestLocalVersion ();
+			if (def_version > resourceVersion) {
+				FileInfo fi = new FileInfo (GetFileName (def_version));
+				if (fi.Exists) {
+					return fi.Open (FileMode.Open, FileAccess.Read, FileShare.Read);
 				}
 			}
 
-			return GetFileName (def_version);
+			version = resourceVersion;
+			return new MemoryStream (Properties.Resources.definitions_2_8);
 		}
 
-		private void LoadDefinitions (string filename)
+		private void LoadDefinitions ()
 		{
-			if (!File.Exists (filename))
-				return;
-
-			using (FileStream fs = File.OpenRead (filename)) 
+			using (Stream fs = GetDefinitionsFileStream ())
 			using (ZipInputStream zs = new ZipInputStream (fs))
 			using (StreamLineReader sr = new StreamLineReader (zs)) {
 				ZipEntry ze;
@@ -231,8 +222,8 @@ namespace Gendarme.Rules.Portability {
 				// candidate for b03f5f7f11d50a3a which is the 'msfinal' key
 				return ComparePublicKeyToken (msfinal_key, pkt);
 			case 0x31:
-				// candidate for 31bf3856ad364e35 which is 'winfx' key - 
-				// but some Silverlight assemblies, Microsoft.VisualBasic.dll and 
+				// candidate for 31bf3856ad364e35 which is 'winfx' key -
+				// but some Silverlight assemblies, Microsoft.VisualBasic.dll and
 				// System.ServiceModel.dll, use it too
 				return (ComparePublicKeyToken (winfx_key, pkt) && (anr.Version != coreclr_runtime));
 			case 0x7c:
@@ -244,13 +235,19 @@ namespace Gendarme.Rules.Portability {
 			}
 		}
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
 
 			// get the specified or latest definition file available locally *or*
 			// download it if none is present or if gendarme is more recent than the file
-			LoadDefinitions (SelectDefinitionsFile ());
+			LoadDefinitions ();
 
 			// rule is active only if we have, at least one of, the MoMA files
 			Active = ((NotImplemented != null) || (Missing != null) || (ToDo != null));
@@ -265,32 +262,6 @@ namespace Gendarme.Rules.Portability {
 				}
 				Active = false;
 			};
-		}
-
-		private Version DownloadLatestDefinitions ()
-		{
-			Version v = null;
-			// try to download files from the net
-			try {
-				string definitionsUri;
-				using (MoMASubmit ws = new MoMASubmit ()) {
-					string lastest_def = ws.GetLatestDefinitionsVersion ();
-					int s = lastest_def.LastIndexOf ('/') + 1;
-					int e = lastest_def.IndexOf ('-', s);
-					v = new Version (lastest_def.Substring (s, e - s));
-					definitionsUri = lastest_def.Split ('|') [2];
-				}
-
-				using (WebClient wc = new WebClient ()) {
-					string filename = GetFileName (v);
-					wc.DownloadFile (new Uri (definitionsUri), filename);
-				}
-			}
-			catch (WebException e) {
-				if (Runner.VerbosityLevel > 0)
-					Console.Error.WriteLine (e);
-			}
-			return v;
 		}
 
 		static char [] buffer = new char [4096];
@@ -321,7 +292,12 @@ namespace Gendarme.Rules.Portability {
 
 		// this correspond to Call, Callvirt, Newobj, Initobj, Ldftn, Ldvirtftn
 		private static OpCodeBitmask mask = new OpCodeBitmask (0x8000000000, 0x4400000000000, 0x0, 0x40060);
-		
+
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// rule doesn't apply if method has no IL
@@ -373,6 +349,9 @@ namespace Gendarme.Rules.Portability {
 			return Runner.CurrentRuleResult;
 		}
 
+		/// <summary>
+		/// Skip methods generated by Visual Studio (and/or other) GUI environments?
+		/// </summary>
 		public bool SkipGeneratedGuiMethods
 		{
 			get

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * NullDerefAnalysis.cs: dataflow analysis details for null-pointer
  * dereference detection.
  *
@@ -44,7 +44,7 @@ namespace Gendarme.Rules.Correctness {
 			this.nnaCollector = nnaCollector;
 			this.runner = runner;
 		}
-		
+
 		public bool Verbose { get; set; }
 
 		[NonNull]
@@ -104,7 +104,7 @@ namespace Gendarme.Rules.Correctness {
 		// For example, code that compares a local to null will not work
 		// correctly (we want the local to be null along one branch and non-
 		// null along the other). But this is tricky to do with the textbook
-		// algorithm (note that meet must be commutative). One fix is to 
+		// algorithm (note that meet must be commutative). One fix is to
 		// splice in synthetic blocks and fix the code so that it can handle
 		// zero length blocks.
 		public void Transfer([NonNull] Node node, [NonNull] object inFact,
@@ -164,7 +164,7 @@ namespace Gendarme.Rules.Correctness {
 				outFrame.PushStack (outFrame.GetArgNullity ((int) insn.Operand));
 				} else if (insn.Operand is ParameterDefinition) {
 				ParameterDefinition pd = (insn.Operand as ParameterDefinition);
-				outFrame.PushStack ((pd.HasConstant && pd.Constant == null) ? 
+				outFrame.PushStack ((pd.HasConstant && pd.Constant == null) ?
 					Nullity.Null : Nullity.NonNull);
 				} else {
 				outFrame.PushStack(Nullity.NonNull);
@@ -405,7 +405,7 @@ namespace Gendarme.Rules.Correctness {
 			case Code.Isinst:
 				break;
 
-			/* Exception handling */	
+			/* Exception handling */
 			case Code.Rethrow:
 			case Code.Endfinally:
 				break;
@@ -689,7 +689,7 @@ namespace Gendarme.Rules.Correctness {
 				if(warn && nnaCollector.HasNonNullAttribute(method, param)) {
 					if (Verbose)
 						Trace.WriteLine (string.Format ("FAILURE6: null deref at {0:X2}", insn.Offset));
-					if(n == Nullity.Null) 
+					if(n == Nullity.Null)
 						runner.Report (method, insn, Severity.High, Confidence.Low, "passing null value as argument declared non-null");
 					else if(n == Nullity.Unknown)
 						runner.Report (method, insn, Severity.High, Confidence.Low, "passing possibly null value as argument declared non-null");

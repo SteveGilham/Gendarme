@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.ConsiderAddingInterfaceRule
 //
 // Authors:
@@ -49,13 +49,13 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// public interface IDoable {
-	///	public void Do ();
+	/// 	public void Do ();
 	/// }
-	/// 
+	///
 	/// public class MyClass {
-	///	public void Do ()
-	///	{
-	///	}
+	/// 	public void Do ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -63,13 +63,13 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// public interface IDoable {
-	///	public void Do ();
+	/// 	public void Do ();
 	/// }
-	/// 
+	///
 	/// public class MyClass : IDoable {
-	///	public void Do ()
-	///	{
-	///	}
+	/// 	public void Do ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -86,6 +86,11 @@ namespace Gendarme.Rules.Design {
 			set { reference_only = value; }
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			//type does not apply if not an interface or is an empty interface
@@ -182,7 +187,7 @@ namespace Gendarme.Rules.Design {
 					return false;
 
 				//ok interesting candidate! let's check if it matches the signature
-				if (!m.CompareSignature (candidate))
+				if (!m.SignatureEquals (candidate))
 					return false;
 				// FIXME: ignore methods with generic constraints
 				if (HasConstraints (candidate))

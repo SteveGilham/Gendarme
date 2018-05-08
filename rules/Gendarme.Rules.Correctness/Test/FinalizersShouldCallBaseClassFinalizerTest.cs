@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for FinalizersShouldCallBaseClassFinalizerRule
 //
 // Authors:
@@ -49,15 +49,15 @@ namespace Test.Rules.Correctness {
 			// compiler generates here base.Finalize () call that looks like this:
 
 			// call System.Void System.Object::Finalize()
-			// endfinally 
-			// ret 
+			// endfinally
+			// ret
 		}
 	}
 
 	[TestFixture]
 	public class FinalizersShouldCallBaseClassFinalizerTest : TypeRuleTestFixture<FinalizersShouldCallBaseClassFinalizerRule> {
 
-		TypeDefinition finalizer_not_calling_base_class; 
+		TypeDefinition finalizer_not_calling_base_class;
 
 		[OneTimeSetUp]
 		public void FixtureSetUp ()

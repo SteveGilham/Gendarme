@@ -1,5 +1,5 @@
-﻿// 
-// Tests.Rules.Gendarme.DefectsMustBeReportedTest
+﻿//
+// Test.Rules.Gendarme.DefectsMustBeReportedTest
 //
 // Authors:
 //	Yuri Stuken <stuken.yuri@gmail.com>

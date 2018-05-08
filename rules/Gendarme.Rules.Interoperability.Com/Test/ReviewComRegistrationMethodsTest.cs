@@ -1,5 +1,5 @@
-﻿// 
-// Tests.Rules.Interoperability.Com.ReviewComRegistrationMethodsTest
+﻿//
+// Test.Rules.Interoperability.Com.ReviewComRegistrationMethodsTest
 //
 // Authors:
 //	Yuri Stuken <stuken.yuri@gmail.com>

@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit test for AvoidCodeWithSideEffectsInConditionalCodeRule
 //
 // Authors:
@@ -107,14 +107,14 @@ namespace Test.Rules.Correctness {
 			public void NonConditionalCall (object data)
 			{
 			}
-
+			
 #pragma warning disable 414
-            private int instance_data;
+			private int instance_data;
 			private static int class_data;
 #pragma warning restore 414
-        }
-
-        [Test]
+		}
+		
+		[Test]
 		public void DoesNotApply ()
 		{
 			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);

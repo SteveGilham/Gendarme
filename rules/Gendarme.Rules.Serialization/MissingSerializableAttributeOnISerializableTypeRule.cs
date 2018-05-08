@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Serialization.MissingSerializableAttributeOnISerializableTypeRule
 //
 // Authors:
@@ -64,6 +64,11 @@ namespace Gendarme.Rules.Serialization {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable")]
 	public class MissingSerializableAttributeOnISerializableTypeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface (since [Serializable] is not applicable to interfaces)

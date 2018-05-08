@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Confidence
 //
 // Authors:
@@ -29,13 +29,13 @@ using System;
 namespace Gendarme.Framework {
 
 	/// <summary>
-	/// The level of confidence about the rule results. The more 
+	/// The level of confidence about the rule results. The more
 	/// confidence the less likely the rule will return false positives.
 	/// </summary>
 	[Serializable]
 	public enum Confidence {
 		/// <summary>
-		/// The rule is 100% certain of its result. 
+		/// The rule is 100% certain of its result.
 		/// There should never be false positives for Total.
 		/// </summary>
 		Total,
@@ -51,7 +51,7 @@ namespace Gendarme.Framework {
 		Normal,
 		/// <summary>
 		/// The rule doesn't have enough information to be certain about the defect.
-		/// Many of the results are likely to be false positives. 
+		/// Many of the results are likely to be false positives.
 		/// By default some runners wont display results if the confidence on the defect is low.
 		/// </summary>
 		Low

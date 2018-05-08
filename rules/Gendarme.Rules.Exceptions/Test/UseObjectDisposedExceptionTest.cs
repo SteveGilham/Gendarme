@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for UseObjectDisposedExceptionRule
 //
 // Authors:
@@ -68,31 +68,31 @@ namespace Test.Rules.Exceptions {
 			{
 				DoSomething ();
 			}
-
+			
 //#pragma warning disable 67 -- counts as DNA/Compiler generated now
 //            public event EventHandler Closed;
 //#pragma warning restore 67
 
-            // These are not public.
-            internal void Write2 (string message)
+			// These are not public.
+			internal void Write2 (string message)
 			{
 				DoSomething ();
 			}
-
+			
 #pragma warning disable 628
-            protected void Write3 (string message)
+			protected void Write3 (string message)
 			{
 				DoSomething ();
 			}
 #pragma warning restore 628
-
-            private void Write4 (string message)
+			
+			private void Write4 (string message)
 			{
 				DoSomething ();
 			}
-
+			
 #pragma warning disable 649
-            internal bool disposed;
+			internal bool disposed;
 			
 			private void DoSomething ()
 			{

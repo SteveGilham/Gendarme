@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for AvoidUnusedPrivateFieldsRule
 //
 // Authors:
@@ -52,7 +52,7 @@ namespace Test.Rules.Performance {
 		}
 
 #pragma warning disable 169
-        class ClassUnusedStaticPrivateField {
+		class ClassUnusedStaticPrivateField {
 			private static int x;
 
 			[DllImport ("libc.so")]
@@ -60,14 +60,14 @@ namespace Test.Rules.Performance {
 		}
 #pragma warning restore 169
 
-        [Test]
+		[Test]
 		public void Class ()
 		{
 			AssertRuleFailure<ClassUnusedStaticPrivateField> (1);
 		}
 
 #pragma warning disable 169
-        class ClassUnusedPrivateField {
+		class ClassUnusedPrivateField {
 			private int x;
 			public int X {
 				get { return 0; }
@@ -76,7 +76,7 @@ namespace Test.Rules.Performance {
 		}
 #pragma warning restore 169
 
-        class ClassPrivateField {
+		class ClassPrivateField {
 			private int x;
 			public int X {
 				get { return x; }
@@ -146,12 +146,12 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<ClassConstSmallerInt> ();
 		}
 #pragma warning disable 169
-        class GenericUnused<T> {
+		class GenericUnused<T> {
 			IList<T> list;
 		}
 #pragma warning restore 169
 #pragma warning disable 649
-        class GenericUsed<T> {
+		class GenericUsed<T> {
 			IList<T> list;
 
 			public void Show ()
@@ -161,7 +161,7 @@ namespace Test.Rules.Performance {
 			}
 		}
 #pragma warning restore 649
-        [Test]
+		[Test]
 		public void GenericsFields ()
 		{
 			AssertRuleFailure<GenericUnused<int>> (1);
@@ -169,7 +169,7 @@ namespace Test.Rules.Performance {
 		}
 
 #pragma warning disable 414
-        class FieldsUsedInNested {
+		class FieldsUsedInNested {
 			private bool field;
 
 			private static string staticField;
@@ -184,7 +184,7 @@ namespace Test.Rules.Performance {
 		}
 #pragma warning restore 414
 
-        [Test]
+		[Test]
 		public void FieldsUsedInNestedType ()
 		{
 			AssertRuleSuccess<FieldsUsedInNested> ();
@@ -199,15 +199,15 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleSuccess<CompilerGenerated> ();
 		}
-
+		
 #pragma warning disable 169
-        class CompilerGeneratedAndUnused {
+		class CompilerGeneratedAndUnused {
 			private int number;
 			public string Name { get; set; }
 		}
 #pragma warning restore 169
-
-        [Test]
+		
+		[Test]
 		public void ClassWithCompilerGeneratedFieldsAndUnusedPrivate ()
 		{
 			AssertRuleFailure<CompilerGeneratedAndUnused> (1);

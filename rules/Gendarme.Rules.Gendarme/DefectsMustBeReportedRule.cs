@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.DefectsMustBeReportedRule
 //
 // Authors:
@@ -43,36 +43,41 @@ namespace Gendarme.Rules.Gendarme {
 	/// <example>
 	/// Bad example:
 	/// <code>
-	/// public class BadRule : Rule, ITypeRule 
+	/// public class BadRule : Rule, ITypeRule
 	/// {
-	///	public RuleResult CheckType (TypeDefinition type) 
-	///	{
-	///		return RuleResult.Failure;
-	///	}
+	/// 	public RuleResult CheckType (TypeDefinition type)
+	/// 	{
+	/// 		return RuleResult.Failure;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
-	/// public class BadRule : Rule, ITypeRule 
+	/// public class BadRule : Rule, ITypeRule
 	/// {
-	///	public RuleResult CheckType (TypeDefinition type) 
-	///	{
-	///		Runner.Report(type, Severity.Low, Confidence.Total);
-	///		return RuleResult.Failure;
-	///	}
+	/// 	public RuleResult CheckType (TypeDefinition type)
+	/// 	{
+	/// 		Runner.Report(type, Severity.Low, Confidence.Total);
+	/// 		return RuleResult.Failure;
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
 	/// <remarks>
-	/// This rule checks if Runner.Report is called directly anywhere in rules' methods but it does not 
+	/// This rule checks if Runner.Report is called directly anywhere in rules' methods but it does not
 	/// check if it being called in the base type or somewhere else, so some false positives are possible.</remarks>
 
 	[Problem ("Gendarme rule does not call Runner.Report, so found failures will not appear in Gendarme report.")]
 	[Solution ("Add Runner.Report call")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DefectsMustBeReportedRule : GendarmeRule, ITypeRule {
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsAbstract || !type.HasMethods || !type.Implements ("Gendarme.Framework", "IRule", null))
@@ -85,16 +90,16 @@ namespace Gendarme.Rules.Gendarme {
 				foreach (Instruction instruction in method.Body.Instructions) {
 					if (instruction.OpCode.FlowControl != FlowControl.Call)
 						continue;
-					
+
 					MethodReference m = (instruction.Operand as MethodReference);
 					if (m == null || (m.Name != "Report"))
 						continue;
 					if (m.DeclaringType.IsNamed ("Gendarme.Framework", "IRunner", null))
 						return RuleResult.Success;
 				}
-				
+
 			}
-			
+
 			// we have not found a call, so report failure
 			Runner.Report (type, Severity.High, Confidence.Normal);
 			return RuleResult.Failure;

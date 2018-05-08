@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.ProblemAttribute class
 //
 // Authors:
@@ -31,8 +31,8 @@ using System;
 namespace Gendarme.Framework {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public sealed class ProblemAttribute : Attribute {
-		
-		public ProblemAttribute (string problem) 
+
+		public ProblemAttribute (string problem)
 		{
 			Problem = problem;
 		}

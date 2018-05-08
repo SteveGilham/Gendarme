@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.Cas.DoNotReduceTypeSecurityOnMethodsRule
 //
 // Authors:
@@ -55,10 +55,10 @@ namespace Gendarme.Rules.Security.Cas {
 	/// <code>
 	/// [SecurityPermission (SecurityAction.Assert, ControlThread = true)]
 	/// public class Subset {
-	///	[SecurityPermission (SecurityAction.Assert, Unrestricted = true)]
-	///	public void Method ()
-	///	{
-	///	}
+	/// 	[SecurityPermission (SecurityAction.Assert, Unrestricted = true)]
+	/// 	public void Method ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -111,6 +111,11 @@ namespace Gendarme.Rules.Security.Cas {
 			return apply;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only if type has security declarations

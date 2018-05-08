@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for CallBaseMethodsOnISerializableTypesRule
 //
 // Authors:
@@ -36,7 +36,7 @@ using Test.Rules.Definitions;
 namespace Test.Rules.Serialization {
 	[TestFixture]
 	public class CallBaseMethodsOnISerializableTypesTest : TypeRuleTestFixture<CallBaseMethodsOnISerializableTypesRule> {
-	
+
 		[Serializable]
 		class Base : ISerializable {
 			int myValue;
@@ -59,12 +59,12 @@ namespace Test.Rules.Serialization {
 		[Serializable]
 		class BadDerived : Base {
 			int otherValue;
-	
+
 			protected BadDerived (SerializationInfo info, StreamingContext context)
 			{
 				otherValue = info.GetInt32 ("otherValue");
 			}
-	
+
 			public override void GetObjectData (SerializationInfo info, StreamingContext context)
 			{
 				info.AddValue ("otherValue", otherValue);
@@ -74,7 +74,7 @@ namespace Test.Rules.Serialization {
 		[Serializable]
 		class GoodDerived : Base {
 			int otherValue;
-	
+
 			protected GoodDerived (SerializationInfo info, StreamingContext context) : base (info, context)
 			{
 				otherValue = info.GetInt32 ("otherValue");
@@ -106,7 +106,7 @@ namespace Test.Rules.Serialization {
 		class GoodDerivedOnlyInGetObjectData : Base {
 			int otherValue;
 
-			protected GoodDerivedOnlyInGetObjectData (SerializationInfo info, StreamingContext context) 
+			protected GoodDerivedOnlyInGetObjectData (SerializationInfo info, StreamingContext context)
 			{
 				otherValue = info.GetInt32 ("otherValue");
 			}
@@ -126,7 +126,7 @@ namespace Test.Rules.Serialization {
 
 		[Serializable]
 		class Derived : Base {
-			protected Derived (SerializationInfo info, StreamingContext context) : base (info, context) 
+			protected Derived (SerializationInfo info, StreamingContext context) : base (info, context)
 			{
 			}
 		}

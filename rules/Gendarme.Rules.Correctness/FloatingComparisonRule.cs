@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.FloatingComparisonRule
 //
 // Authors:
@@ -41,6 +41,12 @@ namespace Gendarme.Rules.Correctness {
 	[EngineDependency (typeof (OpCodeEngine))]
 	abstract public class FloatingComparisonRule : Rule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);

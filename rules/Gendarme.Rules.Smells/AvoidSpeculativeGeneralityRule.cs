@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.AvoidSpeculativeGeneralityRule class
 //
 // Authors:
@@ -50,18 +50,21 @@ namespace Gendarme.Rules.Smells {
 	// is very confusing.
 	
 	/// <summary>
+	/// <para>
 	/// This rule allows developers to avoid the Speculative Generality smell. 
 	/// Be careful if you are developing a new framework or a new library, 
 	/// because this rule only inspects the assembly, then if you provide an 
 	/// abstract base class for extend by third party people, then the rule
 	/// can warn you. You can ignore the message in this special case.
-	/// 
+	/// </para>
+	/// <para>
 	/// We detect this smell by looking for:
 	/// <list type="bullet">
     	/// <item><description>Abstract classes without responsibility</description></item>
     	/// <item><description>Unnecessary delegation.</description></item>
 	/// <item><description>Unused parameters.</description></item>
     	/// </list>
+	/// </para>
 	/// </summary>
 	/// <example>
 	/// Bad example:
@@ -208,6 +211,12 @@ namespace Gendarme.Rules.Smells {
 
 		private AvoidUnusedParametersRule avoidUnusedParameters;
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -224,6 +233,11 @@ namespace Gendarme.Rules.Smells {
 			}
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsGeneratedCode ())

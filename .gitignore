@@ -2,8 +2,6 @@
 Makefile
 Makefile.in
 Makefile.in.in
-*.exe
-*.dll
 *.mdb
 config.guess
 config.log
@@ -18,7 +16,7 @@ mkinstalldirs
 install-sh
 
 
-# gendarme .gitignore
+# gendarme + Visual Studio .gitignore
 gendarme
 gendarme-wizard
 bin

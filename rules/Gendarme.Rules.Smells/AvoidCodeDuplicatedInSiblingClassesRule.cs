@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.AvoidCodeDuplicatedInSiblingClassesRule class
 //
 // Authors:
@@ -42,27 +42,27 @@ namespace Gendarme.Rules.Smells {
 	/// Bad example:
 	/// <code>
 	/// public class BaseClassWithCodeDuplicated {
-	///	protected IList list;
+	/// 	protected IList list;
 	/// }
 	///
 	/// public class OverriderClassWithCodeDuplicated : BaseClassWithCodeDuplicated {
 	/// 	public void CodeDuplicated ()
 	/// 	{
-	///		foreach (int i in list) {
-	///			Console.WriteLine (i);
-	///		}
+	/// 		foreach (int i in list) {
+	/// 			Console.WriteLine (i);
+	/// 		}
 	/// 		list.Add (1);
 	/// 	}
 	/// }
-	/// 
+	///
 	/// public class OtherOverriderWithCodeDuplicated : BaseClassWithCodeDuplicated {
-	///	public void OtherMethod ()
-	///	{
-	///		foreach (int i in list) {
-	///			Console.WriteLine (i);
-	///		}
-	///		list.Remove (1);
-	///	}
+	/// 	public void OtherMethod ()
+	/// 	{
+	/// 		foreach (int i in list) {
+	/// 			Console.WriteLine (i);
+	/// 		}
+	/// 		list.Remove (1);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -70,31 +70,31 @@ namespace Gendarme.Rules.Smells {
 	/// Good example:
 	/// <code>
 	/// public class BaseClassWithoutCodeDuplicated {
-	///	protected IList list;
-	/// 
-	///	protected void PrintValuesInList ()
-	///	{
-	///		foreach (int i in list) {
-	///			Console.WriteLine (i);
-	///		}
-	///	}
+	/// 	protected IList list;
+	///
+	/// 	protected void PrintValuesInList ()
+	/// 	{
+	/// 		foreach (int i in list) {
+	/// 			Console.WriteLine (i);
+	/// 		}
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public class OverriderClassWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
 	/// 	public void SomeCode ()
-	///	{
-	///		PrintValuesInList ();
-	///		list.Add (1);
-	///	}
+	/// 	{
+	/// 		PrintValuesInList ();
+	/// 		list.Add (1);
+	/// 	}
 	/// }
-	/// 
+	///
 	/// public class OtherOverriderWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
 	/// 	public void MoreCode ()
-	///	{
-	///		PrintValuesInList ();
-	///		list.Remove (1);
-	///	}
-	/// }	
+	/// 	{
+	/// 		PrintValuesInList ();
+	/// 		list.Remove (1);
+	/// 	}
+	/// }
 	/// </code>
 	/// </example>
 
@@ -118,6 +118,11 @@ namespace Gendarme.Rules.Smells {
 					codeDuplicatedLocator.CompareMethodAgainstTypeMethods (method, sibling);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// don't analyze cases where no methods (or body) are available

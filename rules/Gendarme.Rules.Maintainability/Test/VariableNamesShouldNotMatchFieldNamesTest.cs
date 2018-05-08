@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Tests for VariableNamesShouldNotMatchFieldNamesRule
 //
 // Authors:
@@ -45,7 +45,7 @@ namespace Test.Rules.Maintainability {
 	public class VariableNamesShouldNotMatchFieldNamesTest : TypeRuleTestFixture<VariableNamesShouldNotMatchFieldNamesRule> {
 
 #pragma warning disable 169
-        private class GoodClass {
+		private class GoodClass {
 			int Value;
 			void DoSomething(int OtherValue)
 			{
@@ -62,14 +62,70 @@ namespace Test.Rules.Maintainability {
 		}
 
 		// We ignore this, as we need .pdb access to resolve local variable names.
-		private class BadIgnore {
 #pragma warning disable 414
-            int Value = 0, Value1 = 1;
+		private class BadMethodBody {
+			int Value = 0, Value1 = 1;
 #pragma warning restore 414
-            void DoSomething(int Value)
+			void DoSomething(int Value)
 			{
 				int Value1;
 				Value1 = Value + this.Value;
+			}
+		}
+
+		private class GoodConstructorClass {
+			readonly int number;
+			readonly string text;
+			public GoodConstructorClass (int number, string text)
+			{
+				this.number = number;
+				this.text = text;
+			}
+			public override string ToString ()
+			{
+				return (number.ToString () + text);
+			}
+		}
+
+		private class BadConstructorClass1 {
+			readonly int number;
+			readonly string text;
+			public BadConstructorClass1 (int text, string number)
+			{
+				this.number = text;
+				this.text = number;
+			}
+			public override string ToString ()
+			{
+				return (number.ToString () + text);
+			}
+		}
+
+		private class BadConstructorClass2 {
+			readonly int number;
+			readonly string text;
+			public BadConstructorClass2 (int number, string text)
+			{
+				number++;
+				text += "+";
+				this.number = number;
+				this.text = text;
+			}
+			public override string ToString ()
+			{
+				return (number.ToString () + text);
+			}
+		}
+
+		private class NotSupportedConstructorClass {
+			readonly string text;
+			public NotSupportedConstructorClass (string text)
+			{
+				this.text = (string)text.Clone ();
+			}
+			public override string ToString ()
+			{
+				return (text);
 			}
 		}
 
@@ -115,11 +171,32 @@ namespace Test.Rules.Maintainability {
 		}
 
 		[Test]
-		public void Ignores ()
+		public void MethodBody ()
 		{
-			AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition<BadIgnore> ();
+			AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition<BadMethodBody> ();
 			int expected = assembly.MainModule.HasSymbols ? 2 : 1;
-			AssertRuleFailure<BadIgnore> (expected);
+			AssertRuleFailure<BadMethodBody> (expected);
+			if (expected < 2)
+				Assert.Ignore ("Debug information not present; can not test body variables!");
+		}
+
+		[Test]
+		public void ConstructorGood ()
+		{
+			AssertRuleSuccess<GoodConstructorClass> ();
+		}
+
+		[Test]
+		public void ConstructorBad ()
+		{
+			AssertRuleFailure<BadConstructorClass1> (2);
+			AssertRuleFailure<BadConstructorClass2> (2);
+		}
+
+		[Test, Ignore ("Processing constructor parameters is not yet supported.")]
+		public void ConstructorCloneValue ()
+		{
+			AssertRuleSuccess<NotSupportedConstructorClass> ();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.PreferConstantOverStaticFieldsRule
 //
 // Authors:
@@ -36,6 +36,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Globalization;
 
 namespace Gendarme.Rules.Performance {
 
@@ -43,7 +44,7 @@ namespace Gendarme.Rules.Performance {
 	/// This rule looks for <c>InitOnly</c> fields (<c>readonly</c> in C#) that could be
 	/// turned into <c>Literal</c> (<c>const</c> in C#) because their value is known at
 	/// compile time. <c>Literal</c> fields don't need to be initialized (i.e. they don't
-	/// force the compiler to add a static constructor to the type) resulting in less code and the 
+	/// force the compiler to add a static constructor to the type) resulting in less code and the
 	/// value (not a reference to the field) will be directly used in the IL (which is OK
 	/// if the field has internal visibility, but is often problematic if the field is visible outside
 	/// the assembly).
@@ -52,7 +53,7 @@ namespace Gendarme.Rules.Performance {
 	/// Bad example:
 	/// <code>
 	/// public class ClassWithReadOnly {
-	///	static readonly int One = 1;
+	/// 	static readonly int One = 1;
 	/// }
 	/// </code>
 	/// </example>
@@ -61,7 +62,7 @@ namespace Gendarme.Rules.Performance {
 	/// <code>
 	/// public class ClassWithConst
 	/// {
-	///	const int One = 1;
+	/// 	const int One = 1;
 	/// }
 	/// </code>
 	/// </example>
@@ -76,6 +77,11 @@ namespace Gendarme.Rules.Performance {
 		static OpCodeBitmask Constant = new OpCodeBitmask (0xFFFE00000, 0x2000000000000, 0x0, 0x0);
 		static OpCodeBitmask Convert = new OpCodeBitmask (0x0, 0x80203FC000000000, 0x400F87F8000001FF, 0x0);
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsInterface || type.IsDelegate ())
@@ -115,12 +121,28 @@ namespace Gendarme.Rules.Performance {
 					// adjust severity based on the field visibility and it's type
 					Severity s = (field.FieldType.IsNamed ("System", "String",null) || !field.IsVisible ()) ?
 						Severity.High : Severity.Medium;
-					Runner.Report (field, s, Confidence.Normal);
+					IMetadataTokenProvider cause = field.GetGeneratedCodeSource ();
+					string message = GenerateMessage (field, cause);
+					if (ReferenceEquals (cause, null))
+						cause = field;
+					Runner.Report (cause, s, Confidence.Normal, message);
 				}
 			}
 
 			return Runner.CurrentRuleResult;
 		}
+
+		private static string GenerateMessage (FieldDefinition field, IMetadataTokenProvider cause)
+		{
+			if (ReferenceEquals (field, cause) || ReferenceEquals (cause, null))
+				return (string.Empty);
+			PropertyDefinition property = (cause as PropertyDefinition);
+			if (property != null)
+				return (string.Format (CultureInfo.InvariantCulture, "The read-only property '{0}' can be converted to literal (const).",
+					property.Name));
+			return (string.Empty);
+		}
+
 #if false
 		public void Bitmask ()
 		{

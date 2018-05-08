@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Helpers.Log
 //
 // Authors:
@@ -61,7 +61,7 @@ namespace Gendarme.Framework.Helpers {
 			if (IsEnabled (name))
 				Debug.Write (string.Format (format, args));
 		}
-		
+
 		// Write (string)
 		[Conditional ("DEBUG")]
 		public static void Write (string category, string format, params object[] args)
@@ -76,19 +76,19 @@ namespace Gendarme.Framework.Helpers {
 		{
 			WriteLine (typeof (T).Name);
 		}
-	
+
 		[Conditional ("DEBUG")]
 		public static void WriteLine<T> (T category, string format, params object[] args)
 		{
 			WriteLine (typeof (T).Name, format, args);
 		}
-		
+
 		[Conditional ("DEBUG")]
 		public static void WriteLine<T> (T category, MemberReference member)
 		{
 			WriteLine (typeof (T).Name, member);
 		}
-		
+
 		// WriteLine (string)
 		[Conditional ("DEBUG")]
 		public static void WriteLine (string category)
@@ -96,14 +96,14 @@ namespace Gendarme.Framework.Helpers {
 			if (IsEnabled (category))
 				Debug.WriteLine (string.Empty);
 		}
-	
+
 		[Conditional ("DEBUG")]
 		public static void WriteLine (string category, string format, params object[] args)
 		{
 			if (IsEnabled (category))
 				Debug.WriteLine (string.Format (format, args));
 		}
-		
+
 		[Conditional ("DEBUG")]
 		public static void WriteLine (string category, MemberReference member)
 		{
@@ -115,29 +115,29 @@ namespace Gendarme.Framework.Helpers {
 					Debug.WriteLine (member.GetFullName ());
 			}
 		}
-		
+
 		// Misc
 		[Conditional ("DEBUG")]
 		public static void Indent ()
 		{
 			Debug.Indent ();
 		}
-		
+
 		[Conditional ("DEBUG")]
 		public static void Unindent ()
 		{
 			Debug.Unindent ();
 		}
-				
+
 		public static bool IsEnabled (string category)
 		{
 			bool enable;
-						
+
 			if (!enabled.TryGetValue (category, out enable)) {
 				enable = new BooleanSwitch (category, string.Empty).Enabled;
 				enabled.Add (category, enable);
 			}
-						
+
 			return enable;
 		}
 	}

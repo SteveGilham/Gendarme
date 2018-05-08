@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for AvoidAlwaysNullFieldRule
 //
 // Authors:
@@ -54,7 +54,7 @@ namespace Test.Rules.Maintainability {
 		}
 
 #pragma warning disable 649,169
-        private class Good2 {
+		private class Good2 {
 			protected string name;	// not private
 			
 			public void Write ()
@@ -152,9 +152,9 @@ namespace Test.Rules.Maintainability {
 
 		private class Bad4 {
 #pragma warning disable 414
-            private string name1;
+			private string name1;	
 #pragma warning restore 414
-            private string name2;	
+			private string name2;	
 			
 			public Bad4 ()
 			{

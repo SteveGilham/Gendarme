@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.ReviewAttributesOnRulesRule
 //
 // Authors:
@@ -39,11 +39,11 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Gendarme {
 
 	/// <summary>
-	/// This rule checks if attribute usage match the following rules:	
+	/// This rule checks if attribute usage match the following rules:
 	/// <list>
 	/// <item>
 	/// <term>[Problem] and [Solution] attributes</term>
-	/// <description>should be used on rules only, every concrete rule must have both 
+	/// <description>should be used on rules only, every concrete rule must have both
 	/// attributes (or inherit them), and their arguments cannot be null or empty
 	/// </description>
 	/// </item>
@@ -77,6 +77,9 @@ namespace Gendarme.Rules.Gendarme {
 
 		Dictionary<string, bool> typeIsRule = new Dictionary<string, bool> ();
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public ReviewAttributesOnRulesRule ()
 		{
 			attributes = new Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>>
@@ -91,6 +94,11 @@ namespace Gendarme.Rules.Gendarme {
 			};
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			CheckAttributes (type);
@@ -189,10 +197,10 @@ namespace Gendarme.Rules.Gendarme {
 			var attributeTypeName = attribute.AttributeType.GetFullName ();
 			var argumentValue = attribute.ConstructorArguments [1].Value.ToString ();
 			var length = argumentValue.Length;
-			if (!((length == 6 || (length > 8 && argumentValue [6] == ':')) && 
-				Char.IsLetter (argumentValue [0]) && Char.IsLetter(argumentValue[1]) && 
-				Char.IsDigit(argumentValue[2]) && Char.IsDigit(argumentValue[3]) && 
-				Char.IsDigit(argumentValue[4])  && Char.IsDigit(argumentValue[5]))) 
+			if (!((length == 6 || (length > 8 && argumentValue [6] == ':')) &&
+				Char.IsLetter (argumentValue [0]) && Char.IsLetter(argumentValue[1]) &&
+				Char.IsDigit(argumentValue[2]) && Char.IsDigit(argumentValue[3]) &&
+				Char.IsDigit(argumentValue[4])  && Char.IsDigit(argumentValue[5])))
 				Runner.Report (provider, Severity.Medium, Confidence.High,
 					attributeTypeName + " second argument should match the followint format: XX9999:Name");
 			else if (length == 6)
@@ -239,7 +247,7 @@ namespace Gendarme.Rules.Gendarme {
 		private void CheckIfAttributeUsedOnRulesProperty (ICustomAttribute attribute, ICustomAttributeProvider provider)
 		{
 			PropertyDefinition property = (provider as PropertyDefinition);
-			if (property == null || !IsRule (property.DeclaringType) || 
+			if (property == null || !IsRule (property.DeclaringType) ||
 				!property.GetMethod.IsPublic || !property.SetMethod.IsPublic)
 				Runner.Report (provider, Severity.High, Confidence.High,
 					attribute.AttributeType.GetFullName () + " should be used only on rules' public properties");

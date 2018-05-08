@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Ui.GtkSharpExecutableTargetRule
 //
 // Authors:
@@ -33,8 +33,8 @@ using Gendarme.Framework;
 namespace Gendarme.Rules.UI {
 
 	/// <summary>
-	/// An executable assembly, i.e. an .exe, refers to the gtk-sharp assembly but isn't 
-	/// compiled using <c>-target:winexe</c>. A console window will be created and shown 
+	/// An executable assembly, i.e. an .exe, refers to the gtk-sharp assembly but isn't
+	/// compiled using <c>-target:winexe</c>. A console window will be created and shown
 	/// under Windows (MS runtime) when the application is executed.
 	/// </summary>
 	/// <example>
@@ -50,10 +50,17 @@ namespace Gendarme.Rules.UI {
 	// The base class has the solution text.
 	public class GtkSharpExecutableTargetRule: ExecutableTargetRule {
 
+		/// <summary>
+		/// Get executable target assembly name
+		/// </summary>
 		protected override string AssemblyName {
 			get { return "gtk-sharp"; }
 		}
 
+		/// <summary>
+		/// Get executable target assembly public key token
+		/// </summary>
+		/// <returns>Executable target assembly key token</returns>
 		protected override byte[] GetAssemblyPublicKeyToken ()
 		{
 			return new byte[] { 0x35, 0xe1, 0x01, 0x95, 0xda, 0xb3, 0xc9, 0x9f };

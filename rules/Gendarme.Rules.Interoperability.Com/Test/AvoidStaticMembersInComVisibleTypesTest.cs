@@ -1,5 +1,5 @@
-// 
-// Tests.Rules.Interoperability.Com.AvoidStaticMembersInComVisibleTypesTest
+﻿//
+// Test.Rules.Interoperability.Com.AvoidStaticMembersInComVisibleTypesTest
 //
 // Authors:
 //	Yuri Stuken <stuken.yuri@gmail.com>

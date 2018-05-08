@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.Rocks.ModuleRocks
 //
 // Authors:
@@ -64,7 +64,7 @@ namespace Gendarme.Framework.Rocks {
 
 		/// <summary>
 		/// Load, if available, the debugging symbols associated with the module. This first
-		/// try to load a MDB file (symbols from the Mono:: runtime) and then, if not present 
+		/// try to load a MDB file (symbols from the Mono:: runtime) and then, if not present
 		/// and running on MS.NET, try to load a PDB file (symbols from MS runtime).
 		/// </summary>
 		/// <param name="self"></param>
@@ -89,7 +89,7 @@ namespace Gendarme.Framework.Rocks {
 				// load the assembly from the current folder if
 				// it is here, or fallback to the gac
 			}
-			
+
 			// if we could not load Mono's symbols then we try, if not running on Mono,
 			// to load MS symbols (PDB files)
 			if ((reader_type == null) && !RunningOnMono) {
@@ -109,7 +109,7 @@ namespace Gendarme.Framework.Rocks {
 				self.ReadSymbols (provider.GetSymbolReader (self, image_name));
 			}
 			catch (FileNotFoundException) {
-				// this happens if a MDB file is missing 	 
+				// this happens if a MDB file is missing
 			}
 			catch (TypeLoadException) {
 				// this happens if a Mono.Cecil.Mdb.dll is not found

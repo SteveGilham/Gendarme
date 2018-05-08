@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for ImplementGenericCollectionInterfacesRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -42,13 +42,13 @@ namespace Test.Rules.Design.Generic {
 
 	[TestFixture]
 	public class ImplementGenericCollectionInterfacesTest : TypeRuleTestFixture<ImplementGenericCollectionInterfacesRule> {
-		
+
 		public class PublicIDictionary : IDictionary {
 			bool ICollection.IsSynchronized { get { throw new NotImplementedException (); } }
 			object ICollection.SyncRoot { get { throw new NotImplementedException (); } }
 			bool IDictionary.IsFixedSize { get { throw new NotImplementedException (); } }
 			bool IDictionary.IsReadOnly { get { throw new NotImplementedException (); } }
-			
+
 			object IDictionary.this [object key] {
 				get { throw new NotImplementedException (); }
 				set { throw new NotImplementedException (); }
@@ -56,33 +56,33 @@ namespace Test.Rules.Design.Generic {
 
 			void IDictionary.Add (object key, object value) { throw new NotImplementedException (); }
 			bool IDictionary.Contains (object key) { throw new NotImplementedException (); }
-			
+
 			ICollection IDictionary.Keys { get { throw new NotImplementedException (); } }
 			ICollection IDictionary.Values { get { throw new NotImplementedException (); } }
 			IDictionaryEnumerator IDictionary.GetEnumerator () { throw new NotImplementedException (); }
-			
+
 			void IDictionary.Remove (object key) { throw new NotImplementedException (); }
 			void ICollection.CopyTo (Array dest, int index) { throw new NotImplementedException (); }
 			IEnumerator IEnumerable.GetEnumerator () { throw new NotImplementedException (); }
 
 			public void Clear () { throw new NotImplementedException (); }
 			public int Count { get { throw new NotImplementedException (); } }
-		
+
 		}
-		
-		internal class InternalNoUseOfGenerics : IEnumerable {	
-			public IEnumerator GetEnumerator () { throw new NotImplementedException (); }			
+
+		internal class InternalNoUseOfGenerics : IEnumerable {
+			public IEnumerator GetEnumerator () { throw new NotImplementedException (); }
 		}
-		
+
 		public class NoUseOfGenerics : IEnumerable {
-			public IEnumerator GetEnumerator () { throw new NotImplementedException (); }			
+			public IEnumerator GetEnumerator () { throw new NotImplementedException (); }
 		}
-		
+
 		public class GenericsAreUsed : IEnumerable<object> {
 			public IEnumerator<object> GetEnumerator () { throw new NotImplementedException (); }
 			IEnumerator IEnumerable.GetEnumerator () { throw new NotImplementedException (); }
 		}
-		
+
 		[Test]
 		public void NotApplicable ()
 		{
@@ -90,9 +90,9 @@ namespace Test.Rules.Design.Generic {
 			// * interfaces and enums
 			AssertRuleDoesNotApply (SimpleTypes.Enum);
 			AssertRuleDoesNotApply (SimpleTypes.Interface);
-			
+
 			// TODO: add SimpleType for compiler-generated code and corresponding check?
-			
+
 			// * classes not implementing IEnumerable
 			AssertRuleDoesNotApply<ImplementGenericCollectionInterfacesTest> ();
 			// * classes implementing IDictionary
@@ -100,7 +100,7 @@ namespace Test.Rules.Design.Generic {
 			//  * non-public types
 			AssertRuleDoesNotApply<InternalNoUseOfGenerics> ();
 		}
-		
+
 		[Test]
 		public void NotApplicableBefore2_0 ()
 		{
@@ -121,13 +121,13 @@ namespace Test.Rules.Design.Generic {
 				Rule.Active = true;
 			}
 		}
-		
+
 		[Test]
 		public void GenericInterfaceImplementedReturnsSuccess ()
 		{
 			AssertRuleSuccess<GenericsAreUsed> ();
 		}
-		
+
 		[Test]
 		public void GenericInterfaceNotImplementedReturnsFailure ()
 		{

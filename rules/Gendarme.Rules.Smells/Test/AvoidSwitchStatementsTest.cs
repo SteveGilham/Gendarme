@@ -1,4 +1,4 @@
-// Unit Test for AvoidSwitchStatements Rule.
+﻿// Unit Test for AvoidSwitchStatements Rule.
 //
 // Authors:
 //      Néstor Salceda <nestor.salceda@gmail.com>
@@ -12,10 +12,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,14 +37,14 @@ using Gendarme.Rules.Smells;
 
 using NUnit.Framework;
 
-namespace Test.Rules.Smells { 
+namespace Test.Rules.Smells {
 	[TestFixture]
 	public class AvoidSwitchStatementsTest : MethodRuleTestFixture<AvoidSwitchStatementsRule> {
-		
+
 		[Test]
-		public void SkipOnBodylessMethodsTest () 
+		public void SkipOnBodylessMethodsTest ()
 		{
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);	
+			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
 		}
 
 		[Test]
@@ -53,7 +53,7 @@ namespace Test.Rules.Smells {
 			AssertRuleSuccess (SimpleMethods.EmptyMethod);
 		}
 
-		void MethodWithSwitch (Severity severity) 
+		void MethodWithSwitch (Severity severity)
 		{
 			switch (severity) {
 			case Severity.High:
@@ -62,28 +62,28 @@ namespace Test.Rules.Smells {
 				break;
 			}
 		}
-		
+
 		[Test]
 		public void FailOnMethodWithSwitchTest ()
 		{
 			AssertRuleFailure <AvoidSwitchStatementsTest> ("MethodWithSwitch", 1);
 		}
 
-		void MethodWithoutSwitch (Severity severity) 
+		void MethodWithoutSwitch (Severity severity)
 		{
 			if (severity == Severity.High || severity == Severity.Low)
 				return;
 		}
 
 		[Test]
-		public void SuccessOnMethodWithoutSwitch () 
+		public void SuccessOnMethodWithoutSwitch ()
 		{
 			AssertRuleSuccess <AvoidSwitchStatementsTest> ("MethodWithoutSwitch");
 		}
 
 		IEnumerable<string> MethodWithoutSwitchAndGenerator (IEnumerable<string> enumerable)
 		{
-			foreach (string value in enumerable) 
+			foreach (string value in enumerable)
 				yield return value;
 
 			yield return null;
@@ -112,7 +112,7 @@ namespace Test.Rules.Smells {
 				return;
 			case "Baz":
 			case "Bad":
-				throw new ArgumentException ("sample");	
+				throw new ArgumentException ("sample");
 			case "Zoo":
 			case "Yoo":
 				throw new FormatException ("sample");

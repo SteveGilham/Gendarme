@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for CloneMethodShouldNotReturnNullRule
 //
 // Authors:
@@ -96,7 +96,7 @@ namespace Test.Rules.BadPractice {
 			{
 				return this.MemberwiseClone ();
 			}
-			
+
 			public object Clone (int j)
 			{
 				return null;
@@ -119,7 +119,7 @@ namespace Test.Rules.BadPractice {
 				else
 					return false;
 			}
-			
+
 			public object Clone()
 			{
 				if (test (11))
@@ -128,7 +128,7 @@ namespace Test.Rules.BadPractice {
 					return null;
 			}
 		}
-			
+
 		[Test]
 		public void CloneReturningNullInSomeConditionsTest ()
 		{

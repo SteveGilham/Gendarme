@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Performance.AvoidUninstantiatedInternalClassesRule
 //
 // Authors:
@@ -207,6 +207,11 @@ namespace Gendarme.Rules.Performance {
 			return (constructor.IsPrivate && !constructor.HasParameters);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply to internal (non-visible) types

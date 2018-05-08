@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest
 //
 // Authors:
@@ -42,7 +42,7 @@ using Test.Rules.Fixtures;
 namespace Test.Rules.Interoperability {
 
 #pragma warning disable 219,169
-    [TestFixture]
+	[TestFixture]
 	public class DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest
 	{
 
@@ -139,9 +139,9 @@ namespace Test.Rules.Interoperability {
 		{
 			Console.WriteLine ();
 		}
-
+		
 #pragma warning disable 168
-        private void CallbackFailNoCatch ()
+		private void CallbackFailNoCatch ()
 		{
 			try {
 				Console.WriteLine ();
@@ -721,8 +721,8 @@ namespace Test.Rules.Interoperability {
 			method = DefinitionLoader.GetMethodDefinition <DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest> (name);
 			result = runner.CheckMethod (method);
 			
-			Assert.AreEqual (expected, result);
-			Assert.AreEqual (expectedCount, runner.Defects.Count, "DefectCount");
+			Assert.AreEqual (expected, result, "For test method: " + name);
+			Assert.AreEqual (expectedCount, runner.Defects.Count, "Defect count for test method: " + name);
 		}
 		
 		private void AssertClass<T> ()

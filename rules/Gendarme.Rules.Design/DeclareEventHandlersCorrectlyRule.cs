@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.DeclareEventHandlersCorrectlyRule
 //
 // Authors:
@@ -142,6 +142,11 @@ namespace Gendarme.Rules.Design {
 			return false;
 		}
 		
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasEvents)
@@ -204,6 +209,9 @@ namespace Gendarme.Rules.Design {
 			return false;
 		}
 
+		/// <summary>
+		/// Release all resources, free memory, e.t.c.
+		/// </summary>
 		public override void TearDown ()
 		{
 			valid_event_handler_types.Clear ();

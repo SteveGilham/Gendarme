@@ -131,7 +131,7 @@ namespace Test.Rules.Correctness {
 			// ldarg.1 conv.i8 ldarg.2 conv.i8 mul
  			return (long) a * b;
  		}
- 
+
 		[Test]
 		public void CastIntoInt64 ()
 		{
@@ -143,7 +143,7 @@ namespace Test.Rules.Correctness {
 				AssertRuleFailure<ReviewCastOnIntegerMultiplicationTest> ("BadMulUInt16", 1);
 				Assert.AreEqual (4294836225, GoodMulUInt16 (UInt16.MaxValue, UInt16.MaxValue), "GoodMulInt16");
 				AssertRuleSuccess<ReviewCastOnIntegerMultiplicationTest> ("GoodMulUInt16");
-	
+
 				// since Int32 * Int32 is not garanteed to fit in a [U]Int32...
 				Assert.IsTrue ((long) Int32.MaxValue * Int32.MaxValue <= Int64.MaxValue, "Int32*Int32");
 				// ... people will *very* often cast the result into an Int64
@@ -151,7 +151,7 @@ namespace Test.Rules.Correctness {
 				AssertRuleFailure<ReviewCastOnIntegerMultiplicationTest> ("BadMulInt32", 1);
 				Assert.AreEqual (4611686014132420609, GoodMulInt32 (Int32.MaxValue, Int32.MaxValue), "GoodMulInt32");
 				AssertRuleSuccess<ReviewCastOnIntegerMultiplicationTest> ("GoodMulInt32");
- 
+
 				AssertRuleFailure<ReviewCastOnIntegerMultiplicationTest> ("CheckedBadMulInt32", 1);
 				AssertRuleSuccess<ReviewCastOnIntegerMultiplicationTest> ("CheckedGoodMulInt32");
 			}
@@ -180,7 +180,7 @@ namespace Test.Rules.Correctness {
 			// ldarg.1 conv.u8 ldarg.2 conv.u8 mul
  			return (ulong) a * b;
  		}
- 
+
 		[Test]
 		public void CastIntoUInt64 ()
 		{
@@ -238,16 +238,16 @@ namespace Test.Rules.Correctness {
 			unchecked {
 				Assert.AreEqual (1, MulInt64 (Int64.MaxValue, Int64.MaxValue), "Int64*Int64");
 				AssertRuleSuccess<ReviewCastOnIntegerMultiplicationTest> ("MulInt64");
-	
+
 				// note: casting a long into ulong would not solve the issue either
 				Assert.AreEqual (1, MulUInt64 ((ulong)Int64.MaxValue, (ulong)Int64.MaxValue), "UInt64*Int64");
 				Assert.AreEqual (1, MulUInt64 (UInt64.MaxValue, UInt64.MaxValue), "UInt64*UInt64");
 				AssertRuleSuccess<ReviewCastOnIntegerMultiplicationTest> ("MulUInt64");
-	
+
 				bool exception = false;
 				Assert.AreEqual (0, CheckedMulInt64 (Int64.MaxValue, Int64.MaxValue, ref exception), "Checked-Int64*Int64");
 				Assert.IsTrue (exception, "Exception-Int64*Int64");
-	
+
 				exception = false;
 				Assert.AreEqual (0, CheckedUMulInt64 (UInt64.MaxValue, UInt64.MaxValue, ref exception), "Checked-UInt64*UInt64");
 				Assert.IsTrue (exception, "Exception-UInt64*UInt64");

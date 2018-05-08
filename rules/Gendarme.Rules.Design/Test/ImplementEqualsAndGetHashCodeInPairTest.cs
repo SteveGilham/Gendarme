@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for ImplementEqualsAndGetHashCodeInPairRule
 //
 // Authors:
@@ -35,7 +35,7 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
 namespace Test.Rules.Design {
-	
+
 	[TestFixture]
 	public class ImplementEqualsAndGetHashCodeInPairTest : TypeRuleTestFixture<ImplementEqualsAndGetHashCodeInPairRule> {
 
@@ -60,7 +60,7 @@ namespace Test.Rules.Design {
 		{
 			AssertRuleFailure<ImplementsEqualsButNotGetHashCode> (1);
 		}
-			
+
 		public class ImplementsGetHashCodeButNotEquals {
 			public override int GetHashCode ()
 			{
@@ -73,7 +73,7 @@ namespace Test.Rules.Design {
 		{
 			AssertRuleFailure<ImplementsGetHashCodeButNotEquals> (1);
 		}
-		
+
 		public class ImplementsNoneOfThem {
 			public void test ()
 			{

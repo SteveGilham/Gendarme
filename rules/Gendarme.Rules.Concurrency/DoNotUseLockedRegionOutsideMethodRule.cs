@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.DoNotUseLockedRegionOutsideMethodRule.cs: 
 //	looks for methods that enter an exclusive region but do not exit
 //	(this can imply deadlocks, or just a bad practice).
@@ -41,26 +41,35 @@ using Mono.Cecil.Cil;
 namespace Gendarme.Rules.Concurrency {
 
 	/// <summary>
+	/// <para>
 	/// This rule will fire if a method calls <c>System.Threading.Monitor.Enter</c>, 
-	/// but not <c>System.Threading.Monitor.Exit</c>. This is a bad idea for public
+	/// but not <c>System.Threading.Monitor.Exit</c>, or vice versa. This is a bad idea for public
 	/// methods because the callers must (indirectly) manage a lock which they do not
 	/// own. This increases the potential for problems such as dead locks because 
 	/// locking/unlocking may not be done together, the callers must do the unlocking
 	/// even in the presence of exceptions, and it may not be completely clear that
 	/// the public method is acquiring a lock without releasing it.
+	/// </para>
 	///
+	/// <para>
 	/// This is less of a problem for private methods because the lock is managed by
 	/// code that owns the lock. So, it's relatively easy to analyze the class to ensure
 	/// that the lock is locked and unlocked correctly and that any invariants are 
 	/// preserved when the lock is acquired and after it is released. However it is
-	/// usually simpler and more maintainable if methods unlock whatever they lock.
+	/// usually simpler and more maintainable if methods unlock whatever they lock.</para>
+	///
+	/// <para>
+	/// However this type of lock should be avoided even for private methods.
+	/// Prefer to use 'lock' keyword and use only <c>System.Threading.Monitor.TryEnter</c>
+	/// and <c>System.Threading.Monitor.Exit</c> combination in necessary cases.
+	/// </para>
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// class BadExample {
 	/// 	int producer = 0;
-	/// 	object lock = new object();
+	/// 	object mutex = new object();
 	///
 	/// 	// This class is meant to be thread safe, but in the interests of
 	/// 	// performance it requires clients to manage its lock. This allows
@@ -70,7 +79,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// 	// if this object is shared across threads.
 	/// 	public void BeginEdits ()
 	/// 	{
-	///		Monitor.Enter (lock);
+	/// 		Monitor.Enter (mutex);
 	///	}
 	///
 	/// 	public void AddProducer ()
@@ -81,7 +90,7 @@ namespace Gendarme.Rules.Concurrency {
 	///
 	/// 	public void EndEdits ()
 	/// 	{
-	///		Monitor.Exit (lock);
+	/// 		Monitor.Exit (mutex);
 	///	}
 	/// }
 	/// </code>
@@ -117,13 +126,19 @@ namespace Gendarme.Rules.Concurrency {
 	/// </code>
 	/// </example>
 
-	// TODO: do a rule that checks if Monitor.Enter is used *before* Exit (dumb code, I know)
+	// TODO: test whether the Enter and Exit function use the same lock value
 	// TODO: do a more complex rule that checks that you have used Thread.Monitor.Exit in a finally block
-	[Problem ("This method uses Thread.Monitor.Enter() but doesn't use Thread.Monitor.Exit().")]
-	[Solution ("Prefer the lock{} statement when using C# or redesign the code so that Monitor.Enter and Exit are called together.")]
+	[Problem ("(Potentially) Incorrect use of Thread.Monitor.Enter() and Thread.Monitor.Exit().")]
+	[Solution ("Use 'lock' keyword or only a single Thread.Monitor.Enter() on start of function and Thread.Monitor.Exit() in a finally block.")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DoNotUseLockedRegionOutsideMethodRule : Rule, IMethodRule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -139,10 +154,15 @@ namespace Gendarme.Rules.Concurrency {
 			};
 		}
 		
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			// rule doesn't apply if the method has no IL
-			if (!method.HasBody)
+			// rule doesn't apply if the method has no IL and it has no meaning to test generated methods
+			if (method.IsGeneratedMethodBody () || !method.HasBody)
 				return RuleResult.DoesNotApply;
 
 			// avoid looping if we're sure there's no call in the method
@@ -150,7 +170,11 @@ namespace Gendarme.Rules.Concurrency {
 				return RuleResult.DoesNotApply;
 
 			int enter = 0;
+			int tryEnter = 0;
 			int exit = 0;
+			int currentSatate = 0;
+			bool underflow = false;
+			bool overflow = false;
 			
 			foreach (Instruction ins in method.Body.Instructions) {
 				if (ins.OpCode.FlowControl != FlowControl.Call)
@@ -162,18 +186,78 @@ namespace Gendarme.Rules.Concurrency {
 
 				if (m.IsNamed ("System.Threading", "Monitor", "Enter", null)) {
 					enter++;
+					currentSatate++;
+					overflow = (overflow || (currentSatate > 1));
+				} else if (m.IsNamed ("System.Threading", "Monitor", "TryEnter", null)) {
+					tryEnter++;
+					currentSatate++;
+					overflow = (overflow || (currentSatate > 1));
 				} else if (m.IsNamed ("System.Threading", "Monitor", "Exit", null)) {
 					exit++;
+					currentSatate--;
+					underflow = (underflow || (currentSatate < 0));
 				}
 			}
 			
-			if (enter == exit)
+			Severity severity;
+
+			if (underflow) {
+				if (((enter + tryEnter) < 1) && (exit > 0))
+					Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.Exit used, but no Monitor.Enter or Monitor.TryEnter was found.");
+				else
+					Runner.Report (method, Severity.High, Confidence.High, "Monitor.Exit used before Monitor.Enter or Monitor.TryEnter");
+				return RuleResult.Failure;
+			}
+
+			if (overflow) {
+				if ((enter + tryEnter) != exit)
+					severity = Severity.High;
+				else
+					severity = Severity.Medium;
+				Runner.Report (method, severity, Confidence.High, "Seems like multiple nested lock's (Monitor.Enter) were used.");
+				return RuleResult.Failure;
+			}
+
+			if ((enter + tryEnter == exit) && (exit <= 1))
 				return RuleResult.Success;
 
-			Runner.Report (method, Severity.High, Confidence.Normal);
+			if ((enter > 0) && (exit < 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.Enter used, but no Monitor.Exit was found.");
+				return RuleResult.Failure;
+			}
+
+			if ((tryEnter > 0) && (exit < 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.TryEnter used, but no Monitor.Exit was found.");
+				return RuleResult.Failure;
+			}
+
+			if (((enter + tryEnter) > 0) && (exit < 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Only Monitor.Enter or Monitor.TryEnter used, but no Monitor.Exit was found.");
+				return RuleResult.Failure;
+			}
+
+			if (((enter + tryEnter) == 1) && (exit > 1)) {
+				Runner.Report (method, Severity.High, Confidence.High, "Multiple Monitor.Exit were found. Prefer to use one Monitor.Exit in finally block.");
+				return RuleResult.Failure;
+			}
+
+			if ((enter + tryEnter) > exit) {
+				Runner.Report (method, Severity.High, Confidence.High, "More Monitor.Enter or Monitor.TryEnter than Monitor.Exit calls were found.");
+				return RuleResult.Failure;
+			}
+
+			if ((enter == exit) && (tryEnter == 0))
+				severity = Severity.Medium;
+			else
+				severity = Severity.High;
+
+			Runner.Report (method, severity, Confidence.Normal, "Prefer use of only one lock (Monitor.Enter, Monitor.Exit) block in a single function.");
 			return RuleResult.Failure;
 		}
 
+		/// <summary>
+		/// Skip methods generated by Visual Studio (and/or other) GUI environments?
+		/// </summary>
 		public bool SkipGeneratedGuiMethods
 		{
 			get

@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Runner
 //
 // Authors:
@@ -64,7 +64,7 @@ namespace Gendarme.Framework {
 		public event EventHandler<RunnerEventArgs> AnalyzeModule;
 		public event EventHandler<RunnerEventArgs> AnalyzeType;
 		public event EventHandler<RunnerEventArgs> AnalyzeMethod;
-		
+
 		protected IRule CurrentRule {
 			get { return currentRule; }
 			set { currentRule = value; }
@@ -87,7 +87,7 @@ namespace Gendarme.Framework {
 		public Collection<IRule> Rules {
 			get { return rules; }
 		}
- 
+
 		public Collection<AssemblyDefinition> Assemblies {
 			get { return assemblies; }
 		}
@@ -119,7 +119,7 @@ namespace Gendarme.Framework {
 		}
 
 		private EngineController ec;
-		public EngineController Engines { 
+		public EngineController Engines {
 			get {
 				if (ec == null)
 					ec = new EngineController (this);
@@ -168,7 +168,7 @@ namespace Gendarme.Framework {
 					Engines.Subscribe (eda.EngineType);
 				}
 			}
-		
+
 			Engines.Build (assemblies);
 
 			assembly_rules = rules.OfType<IAssemblyRule> ();
@@ -192,7 +192,7 @@ namespace Gendarme.Framework {
 
 			if (!Filter (defect.Severity, defect.Confidence, defect.Location))
 				return;
-				
+
 			if (IgnoreList.IsIgnored (defect.Rule, defect.Target))
 				return;
 
@@ -301,9 +301,9 @@ namespace Gendarme.Framework {
 		{
 			OnEvent (AnalyzeModule, e);
 
-			// Since it has never been used in the previous years 
-			// this version of the Gendarme framework doesn't 
-			// support IModuleRule. Nor do we support ignore on 
+			// Since it has never been used in the previous years
+			// this version of the Gendarme framework doesn't
+			// support IModuleRule. Nor do we support ignore on
 			// modules.
 		}
 
@@ -317,7 +317,7 @@ namespace Gendarme.Framework {
 				if (defectCountBeforeCheck >= DefectsLimit)
 					break;
 
-				// ignore if the visibility does not match user selection 
+				// ignore if the visibility does not match user selection
 				ApplicabilityScope scope = rule.ApplicabilityScope;
 				if ((scope != ApplicabilityScope.All) && !VisibilityCheck (scope, e.CurrentType.IsVisible ()))
 					continue;
@@ -341,7 +341,7 @@ namespace Gendarme.Framework {
 				if (defectCountBeforeCheck >= DefectsLimit)
 					break;
 
-				// ignore if the visibility does not match user selection 
+				// ignore if the visibility does not match user selection
 				ApplicabilityScope scope = rule.ApplicabilityScope;
 				if ((scope != ApplicabilityScope.All) && !VisibilityCheck (scope, e.CurrentMethod.IsVisible ()))
 					continue;
@@ -356,9 +356,9 @@ namespace Gendarme.Framework {
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
-		/// <returns>Return RuleResult.Failure is the number of defects has grown since 
+		/// <returns>Return RuleResult.Failure is the number of defects has grown since
 		/// the rule Check* method was called or RuleResult.Success otherwise</returns>
 		public RuleResult CurrentRuleResult {
 			get {
@@ -368,7 +368,7 @@ namespace Gendarme.Framework {
 		}
 
 		/// <summary>
-		/// For all assemblies, every modules in each assembly, every 
+		/// For all assemblies, every modules in each assembly, every
 		/// type in each module, every methods in each type call all
 		/// applicable rules.
 		/// </summary>

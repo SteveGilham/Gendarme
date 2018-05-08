@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Smells.Pattern class
 //
 // Authors:
@@ -57,7 +57,7 @@ namespace Gendarme.Rules.Smells {
 
 		// look for:
 		//	callvirt System.Void System.IDisposable::Dispose()
-		//	endfinally 
+		//	endfinally
 		static bool IsIDisposableDisposePattern (Instruction ins)
 		{
 			if (ins.OpCode.Code != Code.Callvirt)
@@ -100,7 +100,7 @@ namespace Gendarme.Rules.Smells {
 			}
 			return false;
 		}
-		
+
 		internal bool IsCompilerGeneratedBlock {
 			get {
 				if (compilerGeneratedBlock == null)
@@ -114,7 +114,7 @@ namespace Gendarme.Rules.Smells {
 				return ((Count == 4 &&
 					instructions[0].OpCode.StackBehaviourPush == StackBehaviour.Push1 &&
 					(instructions [1].OpCode.Code == Code.Brtrue || instructions [1].OpCode.Code == Code.Brtrue_S) &&
-					instructions[2].OpCode.StackBehaviourPush == StackBehaviour.Pushi && 
+					instructions[2].OpCode.StackBehaviourPush == StackBehaviour.Pushi &&
 					instructions[3].OpCode.Code == Code.Ret)
 					||
 					(Count > 1 &&
@@ -125,12 +125,12 @@ namespace Gendarme.Rules.Smells {
 
 		internal bool IsExtractableToMethodBlock {
 			get {
-				if (extractableToMethodBlock == null) 
+				if (extractableToMethodBlock == null)
 					extractableToMethodBlock = !IsReturningCode;
 				return (bool) extractableToMethodBlock;
 			}
 		}
-			
+
 		internal void ComputePrefixes (MethodDefinition method)
 		{
 			MethodDefinition target = InstructionMatcher.Target;
@@ -161,7 +161,7 @@ namespace Gendarme.Rules.Smells {
 				return instructions.Length;
 			}
 		}
-		
+
 		internal Instruction this[int index] {
 			get {
 				return instructions[index];

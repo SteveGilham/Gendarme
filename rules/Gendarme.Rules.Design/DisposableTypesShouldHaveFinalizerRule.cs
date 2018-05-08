@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.DisposableTypesShouldHaveFinalizerRule
 //
 // Authors:
@@ -43,7 +43,7 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// class NoFinalizer {
-	///	IntPtr field;
+	/// 	IntPtr field;
 	/// }
 	/// </code>
 	/// </example>
@@ -51,12 +51,12 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// class HasFinalizer {
-	///	IntPtr field;
-	///	
-	///	~HasFinalizer ()
-	///	{
-	///		UnmanagedFree (field);
-	///	}
+	/// 	IntPtr field;
+	///
+	/// 	~HasFinalizer ()
+	/// 	{
+	/// 		UnmanagedFree (field);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Design {
 
 		const string Struct = "Consider using a class since a struct cannot define a finalizer.";
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to types, interfaces and structures (value types)

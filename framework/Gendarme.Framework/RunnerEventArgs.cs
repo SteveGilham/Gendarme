@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.RunnerEventArgs
 //
 // Authors:

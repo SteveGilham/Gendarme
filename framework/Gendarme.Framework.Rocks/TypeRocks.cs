@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.Rocks.TypeRocks
 //
 // Authors:
@@ -244,6 +244,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the interface to be matched</param>
 		/// <returns>True if we found that the type implements the interface, False otherwise (either it
 		/// does not implement it, or we could not find where it does).</returns>
+        /// <remarks>Use this extension to get included interface in current interface type.</remarks>
 		public static bool Implements (this TypeReference self, string nameSpace, string name, TypeReference fallback)
 		{
 			if (nameSpace == null)
@@ -293,6 +294,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the interface to be matched</param>
 		/// <returns>True if we found that the type implements the interface, False otherwise (either it
 		/// does not implement it, or we could not find where it does).</returns>
+		/// <remarks>Use this extension to get included interface in current interface type.</remarks>
 		public static bool Implements (this TypeReference self, string interfaceFullName)
 		{
 			if (string.IsNullOrEmpty(interfaceFullName))
@@ -324,10 +326,27 @@ namespace Gendarme.Framework.Rocks {
 							return true;
 					}
 				}
+				if (type.HasGenericParameters) {
+					foreach (TypeReference generic in type.GenericParameters) {
+						if (ImplementsGeneric (type, generic, interfaceFullName))
+							return true;
+					}
+				}
 
 				type = type.BaseType != null ? type.BaseType.Resolve () : null;
 			}
 			return false;
+		}
+
+		private static bool ImplementsGeneric(TypeDefinition type, TypeReference generic, string interfaceFullName)
+		{
+			string typeName = generic.DeclaringType.FullName;
+			int length = typeName.Length;
+			if ((interfaceFullName.Length < length + 3) || (interfaceFullName[length] != '<'))
+				return false;
+			if (interfaceFullName[interfaceFullName.Length - 1] != '>')
+				return false;
+			return (string.CompareOrdinal (interfaceFullName, 0, typeName, 0, length) == 0);
 		}
 
 		/// <summary>
@@ -339,6 +358,7 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="nameSpace">The namespace of the base class to be matched</param>
 		/// <param name="name">The name of the base class to be matched</param>
 		/// <returns>True if the type inherits from specified class, False otherwise</returns>
+        /// <remarks>This type only check class hierarchy. To get interface hierarchy use Inmplements extension.</remarks>
 		public static bool Inherits (this TypeReference self, string nameSpace, string name, TypeReference fallback)
 		{
 			if (nameSpace == null)
@@ -351,6 +371,37 @@ namespace Gendarme.Framework.Rocks {
 			TypeReference current = self.Resolve ();
 			while (current != null) {
 				if (current.IsNamed (nameSpace, name, fallback))
+					return true;
+				if (current.IsNamed ("System", "Object", null))
+					return false;
+
+				TypeDefinition td = current.Resolve ();
+				if (td == null)
+					return false;		// could not resolve type
+				current = td.BaseType;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Check if the type inherits from the specified type. Note that it is possible that
+		/// we might not be able to know the complete inheritance chain since the assembly
+		/// where the information resides could be unavailable.
+		/// </summary>
+		/// <param name="self">The TypeReference on which the extension method can be called.</param>
+		/// <param name="fullName">The full name of the base class to be matched</param>
+		/// <returns>True if the type inherits from specified class, False otherwise</returns>
+		/// <remarks>This type only check class hierarchy. To get interface hierarchy use Inmplements extension.</remarks>
+		public static bool Inherits (this TypeReference self, string fullName)
+		{
+			if (fullName == null)
+				throw new ArgumentNullException ("fullName");
+			if (self == null)
+				return false;
+
+			TypeReference current = self.Resolve ();
+			while (current != null) {
+				if (current.IsNamed (fullName))
 					return true;
 				if (current.IsNamed ("System", "Object", null))
 					return false;
@@ -383,11 +434,33 @@ namespace Gendarme.Framework.Rocks {
 			if (self.IsNested) {
                 if (String.IsNullOrEmpty(nameSpace) && fallback != null && fallback.IsNested)
                     return (fallback.GetFullName() == self.GetFullName());
-                // GetFullName could be optimized away but it's a fairly uncommon case
-                return (nameSpace + "." + name == self.GetFullName ());
+				return IsNamed (self, nameSpace + "." + name);
 			}
 
-			return ((self.Namespace == nameSpace) && (self.Name == name));
+			if (self.Namespace != nameSpace)
+				return false;
+
+			string myName = self.Name;
+			int myNameLength = myName.Length;
+			int otherNameLength = name.Length;
+			if (self.IsByReference) {
+				myNameLength--;
+				if ((otherNameLength > 1) && (name [otherNameLength - 1] == '&'))
+					otherNameLength--;
+			}
+			if ((self.HasGenericParameters || self.IsGenericInstance) && (otherNameLength != myNameLength))
+			{
+				int pos = myName.IndexOf ('<', 1);
+				if (pos > 0)
+					myNameLength = pos;
+				else if ((otherNameLength > myNameLength) && (name[myNameLength] == '<'))
+					otherNameLength = myNameLength;
+			}
+
+			if ((myNameLength != otherNameLength) || (otherNameLength == 0))
+				return false;
+
+			return (string.CompareOrdinal (myName, 0, name, 0, myNameLength) == 0);
 		}
 
 		/// <summary>
@@ -404,26 +477,29 @@ namespace Gendarme.Framework.Rocks {
 			if (self == null)
 				return false;
 
-			if (self.IsNested) {
-				int spos = fullName.LastIndexOf ('/');
-				if (spos == -1)
-					return false;
-				// FIXME: GetFullName could be optimized away but it's a fairly uncommon case
-				return (fullName == self.GetFullName ());
+			string myFullName = self.FullName;
+			int myNameLength = myFullName.Length;
+			int otherNameLength = fullName.Length;
+			if (self.IsByReference) {
+				myNameLength--;
+				if ((otherNameLength > 1) && (fullName [otherNameLength - 1] == '&'))
+					otherNameLength--;
+			}
+			if ((self.HasGenericParameters || self.IsGenericInstance) && (otherNameLength != myNameLength))
+			{
+				int pos = myFullName.IndexOf ('<', 1);
+				if (pos > 0) {
+					myNameLength = pos;
+					if (self.HasGenericParameters && !self.Name.Contains ("<"))
+						otherNameLength = pos;
+				} else if ((otherNameLength > myNameLength) && (fullName[myNameLength] == '<'))
+					otherNameLength = myNameLength;
 			}
 
-			int dpos = fullName.LastIndexOf ('.');
-			string nspace = self.Namespace;
-			if (dpos != nspace.Length)
+			if ((myNameLength != otherNameLength) || (otherNameLength == 0))
 				return false;
 
-			if (String.CompareOrdinal (nspace, 0, fullName, 0, dpos) != 0)
-				return false;
-
-			string name = self.Name;
-			if (fullName.Length - dpos - 1 != name.Length)
-				return false;
-			return (String.CompareOrdinal (name, 0, fullName, dpos + 1, fullName.Length - dpos - 1) == 0);
+			return (string.CompareOrdinal (myFullName, 0, fullName, 0, myNameLength) == 0);
 		}
 
 		/// <summary>
@@ -603,6 +679,64 @@ namespace Gendarme.Framework.Rocks {
 				typeDefinition = typeDefinition.BaseType?.Resolve();
 			}
 			return (false);
+		}
+
+		/// <summary>
+		/// Try get the field, method or type, that 'generated' the code.
+		/// </summary>
+		/// <param name="self">Compiler generated code field.</param>
+		/// <returns>Source item that caused the generation of the field.</returns>
+		public static IMetadataTokenProvider GetGeneratedCodeSource (this TypeReference self)
+		{
+			if (!IsGeneratedCode (self))
+				return null;
+
+			string name = self.Name;
+			int pos = name.IndexOf ('>', 2);
+			if ((pos < 2) || (name[0] != '<'))
+				return self.DeclaringType.GetGeneratedCodeSource ();
+			return (GetElementByGeneratedName (self, self.Name));
+		}
+
+		/// <summary>
+		/// Get element (method or property) by generated name.
+		/// </summary>
+		/// <param name="self">Current type</param>
+		/// <param name="generatedName">Name of generated code</param>
+		/// <returns>Retrieved element from generated name.</returns>
+		public static IMetadataTokenProvider GetElementByGeneratedName (this TypeReference self, string generatedName)
+		{
+			if ((self == null) || string.IsNullOrEmpty (generatedName) || (generatedName.Length < 3))
+				return null;
+
+			int pos = generatedName.LastIndexOf ('>');
+			if (pos < 3 || pos > generatedName.Length - 3)
+				return null;
+			string name = generatedName.Substring (1, pos -1).Replace ('-', '.');
+			char type = generatedName [pos + 1];
+			if (type == 'd')
+				return GetMethod (self.DeclaringType, name);
+			if (type == 'k')
+				return GetProperty(self, name);
+			return null;
+		}
+
+		/// <summary>
+		/// Get property by name.
+		/// </summary>
+		/// <param name="self">Current type</param>
+		/// <param name="name">Name of property</param>
+		/// <returns>Property (or null when not found).</returns>
+		private static IMetadataTokenProvider GetProperty(TypeReference self, string name)
+		{
+			TypeDefinition type = self?.Resolve ();
+			if ((type == null) || !type.HasProperties)
+				return null;
+			foreach (PropertyDefinition property in type.Properties) {
+				if (property.Name == name)
+					return property;
+			}
+			return null;
 		}
 	}
 }

@@ -342,7 +342,7 @@ namespace Test.Rules.Correctness {
 			using (StringWriter sw = new StringWriter ()) {
 				// while analyzing 'FluentTestCase' we cannot know what's inside
 				// 'NestedFluentCall[Two|Three]' except that they _looks_like_ fluent APIs
-				return NestedFluentCall (sw).ToString () + 
+				return NestedFluentCall (sw).ToString () +
 					NestedFluentCallTwo (sw).ToString () +
 					NestedFluentCallThree (sw).ToString ();
 			}

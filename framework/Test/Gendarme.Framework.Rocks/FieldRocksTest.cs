@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for FieldRocks
 //
 // Authors:
@@ -44,9 +44,9 @@ namespace Test.Framework.Rocks {
 
 		[System.Runtime.CompilerServices.CompilerGeneratedAttribute]
 #pragma warning disable 414
-        private static int cga = 1;
+		private static int cga = 1;
 #pragma warning restore 414
-        [System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
+		[System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
 		protected double gca = 1.0;
 
 		internal IntPtr ptr = IntPtr.Zero;
@@ -121,24 +121,24 @@ namespace Test.Framework.Rocks {
 		[Test]
 		public void IsVisible ()
 		{
-			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType");
+			TypeDefinition type = assembly.MainModule.GetType (TestTypeNames.PublicType);
 			Assert.IsTrue (GetField (type, "PublicField").IsVisible (), "PublicType.PublicField");
 			Assert.IsTrue (GetField (type, "ProtectedField").IsVisible (), "PublicType.ProtectedField");
 			Assert.IsFalse (GetField (type, "InternalField").IsVisible (), "PublicType.InternalField");
 			Assert.IsFalse (GetField (type, "PrivateField").IsVisible (), "PublicType.PrivateField");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPublicType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedPublicType);
 			Assert.IsTrue (GetField (type, "PublicField").IsVisible (), "NestedPublicType.PublicField");
 			Assert.IsTrue (GetField (type, "ProtectedField").IsVisible (), "NestedPublicType.ProtectedField");
 			Assert.IsFalse (GetField (type, "PrivateField").IsVisible (), "NestedPublicType.PrivateField");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedProtectedType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedProtectedType);
 			Assert.IsTrue (GetField (type, "PublicField").IsVisible (), "NestedProtectedType.PublicField");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPrivateType");
+			type = assembly.MainModule.GetType (TestTypeNames.NestedPrivateType);
 			Assert.IsFalse (GetField (type, "PublicField").IsVisible (), "NestedPrivateType.PublicField");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.InternalType");
+			type = assembly.MainModule.GetType (TestTypeNames.InternalType);
 			Assert.IsFalse (GetField (type, "PublicField").IsVisible (), "InternalType.PublicField");
 		}
 

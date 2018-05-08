@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.UseCorrectDisposeSignaturesRule
 //
 // Authors:
@@ -135,6 +135,11 @@ namespace Gendarme.Rules.Design {
 	[Solution ("Fix the signature of the methods or add the Dispose (bool) overload.")]
 	public sealed class UseCorrectDisposeSignaturesRule : Rule, ITypeRule {
 	
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsInterface || type.IsEnum || type.IsDelegate ())

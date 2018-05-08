@@ -1,4 +1,4 @@
-//
+﻿//
 // Test.Rules.Fixtures.TypeRuleTestFixture<T>
 // Base class for type rule test fixtures that simplifies writing unit tests for Gendarme.
 //
@@ -36,14 +36,14 @@ using Test.Rules.Helpers;
 using Mono.Cecil;
 
 namespace Test.Rules.Fixtures {
-	
+
 	/// <summary>
 	/// This class should be inherited by type rule testing fixtures.
 	/// </summary>
 	/// <typeparam name="TTypeRule">Type of rule to be tested.</typeparam>
 	public abstract class TypeRuleTestFixture<TTypeRule> : RuleTestFixture<TTypeRule, TypeDefinition>
 		where TTypeRule : ITypeRule, new () {
-		
+
 		/// <summary>
 		/// Asserts that the rule does not apply to the type.
 		/// </summary>
@@ -52,18 +52,18 @@ namespace Test.Rules.Fixtures {
 		{
 			base.AssertRuleDoesNotApply (DefinitionLoader.GetTypeDefinition<T> ());
 		}
-	
+
 		/// <summary>
-		/// Asserts that the rule has been executed successfully. 
+		/// Asserts that the rule has been executed successfully.
 		/// </summary>
 		/// <typeparam name="T">Type to check.</typeparam>
 		protected void AssertRuleSuccess<T> ()
 		{
 			base.AssertRuleSuccess (DefinitionLoader.GetTypeDefinition<T> ());
 		}
-		
+
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <typeparam name="T">Type to check.</typeparam>
 		protected void AssertRuleFailure<T> ()
@@ -72,7 +72,7 @@ namespace Test.Rules.Fixtures {
 		}
 
 		/// <summary>
-		/// Asserts that the rule has failed to execute successfully. 
+		/// Asserts that the rule has failed to execute successfully.
 		/// </summary>
 		/// <param name="expectedCount">Expected defects count.</param>
 		/// <typeparam name="T">Type to check.</typeparam>

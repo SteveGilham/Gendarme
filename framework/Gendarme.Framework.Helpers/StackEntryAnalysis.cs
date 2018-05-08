@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.StackEntryAnalysis
 //
 // Authors:
@@ -308,7 +308,7 @@ namespace Gendarme.Framework.Helpers {
 				int pop = ins.GetPopCount (this.Method);
 				int push = ins.GetPushCount ();
 
-				if (pop > stackEntryDistance)  //does this instruction pop the stack entry 
+				if (pop > stackEntryDistance)  //does this instruction pop the stack entry
 					return new KeyValuePair<InstructionWithLeave, int> (startInstruction.Copy (ins), stackEntryDistance);
 
 				stackEntryDistance -= pop;
@@ -324,7 +324,7 @@ namespace Gendarme.Framework.Helpers {
 				if (nextInstruction.OpCode.Code == Code.Leave || nextInstruction.OpCode.Code == Code.Leave_S)
 					return new KeyValuePair<InstructionWithLeave, int> (); //leave clears the stack, the entry is gone.
 
-				if (alternativeNext != null) { //branch / switch					
+				if (alternativeNext != null) { //branch / switch
 					Instruction oneTarget = alternativeNext as Instruction;
 					if (oneTarget != null) { //branch
 						AlternativePaths.AddIfNew (new KeyValuePair<InstructionWithLeave, int> (startInstruction.Copy (oneTarget), stackEntryDistance));

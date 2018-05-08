@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.TypesWithNativeFieldsShouldBeDisposableRule
 //
 // Authors:
@@ -39,21 +39,21 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Correctness {
 
 	/// <summary>
-	/// This rule will fire if a type contains <c>IntPtr</c>, <c>UIntPtr</c>, or 
+	/// This rule will fire if a type contains <c>IntPtr</c>, <c>UIntPtr</c>, or
 	/// <c>HandleRef</c> fields but does not implement <c>System.IDisposable</c>.
 	/// </summary>
 	/// <example>
 	/// Bad examples:
 	/// <code>
 	/// public class DoesNotImplementIDisposable {
-	///	IntPtr field;
+	/// 	IntPtr field;
 	/// }
-	/// 
+	///
 	/// abstract public class AbstractDispose : IDisposable {
-	///	IntPtr field;
-	///	
-	///	// the field should be disposed in the type that declares it
-	///	public abstract void Dispose ();
+	/// 	IntPtr field;
+	///
+	/// 	// the field should be disposed in the type that declares it
+	/// 	public abstract void Dispose ();
 	/// }
 	/// </code>
 	/// </example>
@@ -61,12 +61,12 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// public class Dispose : IDisposable {
-	///	IDisposable field;
-	///	
-	///	public void Dispose ()
-	///	{
-	///		UnmanagedFree (field);
-	///	}
+	/// 	IDisposable field;
+	///
+	/// 	public void Dispose ()
+	/// 	{
+	/// 		UnmanagedFree (field);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -79,15 +79,15 @@ namespace Gendarme.Rules.Correctness {
 
 		static OpCodeBitmask StoreFieldBitmask = new OpCodeBitmask (0x0, 0x400000000000000, 0x80000000, 0x0);
 
-		protected override string AbstractTypeMessage { 
+		protected override string AbstractTypeMessage {
 			get { return "Field is native. Type should implement a non-abstract Dispose() method"; }
 		}
 
-		protected override string TypeMessage { 
+		protected override string TypeMessage {
 			get { return "Field is native. Type should implement a Dispose() method";  }
 		}
 
-		protected override string AbstractDisposeMessage { 
+		protected override string AbstractDisposeMessage {
 			get { return "Some fields are native pointers. Making this method abstract shifts the reponsability of disposing those fields to the inheritors of this class."; }
 		}
 

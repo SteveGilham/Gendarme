@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.MarkAssemblyWithAttributeRule abstract rule
 //
 // Authors:
@@ -44,6 +44,11 @@ namespace Gendarme.Rules.Design {
 
 		abstract protected Severity Severity { get; }
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			if (!assembly.HasCustomAttributes)

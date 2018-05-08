@@ -1,4 +1,4 @@
-//
+﻿//
 // ComVisibleShouldInheritFromComVisibleRule.cs
 //
 // Authors:
@@ -38,8 +38,8 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Interoperability.Com {
 
 	/// <summary>
-	/// This rule checks that the base type of COM visible types is also 
-	/// visible from COM. This is needed reduce the chance of breaking 
+	/// This rule checks that the base type of COM visible types is also
+	/// visible from COM. This is needed reduce the chance of breaking
 	/// COM clients as COM invisible types do not have to follow COM versioning rules.
 	/// </summary>
 	/// <example>
@@ -47,13 +47,13 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assemply: ComVisible(false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (false)]
-	///	public class Base {
-	///	}
-	///	
-	///	[ComVisible (true)]
-	///	public class Derived : Base {
-	///	}
+	/// 	[ComVisible (false)]
+	/// 	public class Base {
+	/// 	}
+	///
+	/// 	[ComVisible (true)]
+	/// 	public class Derived : Base {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -62,13 +62,13 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assemply: ComVisible(false)]
 	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public class Base {
-	///	}
-	///	
-	///	[ComVisible (true)]
-	///	public class Derived : Base {
-	///	}
+	/// 	[ComVisible (true)]
+	/// 	public class Base {
+	/// 	}
+	///
+	/// 	[ComVisible (true)]
+	/// 	public class Derived : Base {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -77,11 +77,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <code>
 	/// [assemply: ComVisible(false)]
 	/// namespace InteropLibrary {
-	///	public class Base {
-	///	}
-	///	
-	///	public class Derived : Base {
-	///	}
+	/// 	public class Base {
+	/// 	}
+	///
+	/// 	public class Derived : Base {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -90,6 +90,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1405:ComVisibleTypeBaseTypesShouldBeComVisible")]
 	public class ComVisibleShouldInheritFromComVisibleRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.BaseType == null)
@@ -102,7 +107,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 			TypeDefinition baseType = type.BaseType.Resolve ();
 			if ((baseType != null) && !baseType.IsTypeComVisible ()) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
+				string msg = String.Format (CultureInfo.InvariantCulture,
 					"Type is derived from invisible from COM type {0}", baseType.GetFullName ());
 				Runner.Report (type, Severity.High, Confidence.Total, msg);
 			}

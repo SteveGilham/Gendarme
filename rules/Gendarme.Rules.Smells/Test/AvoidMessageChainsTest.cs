@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Tests for AvoidMessageChains Rule
 //
 // Authors:
@@ -192,7 +192,7 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleSuccess<AvoidMessageChainsTest> ("Compare");
 		}
-		
+
 		private static One Start {get; set;}
 
 		public void StaticProperty ()
@@ -201,7 +201,7 @@ namespace Test.Rules.Smells {
 
 			// 1 222 333                 11111 222 333
 			beta.Two.Tag = ((PlatformID) Start.Two.Tag);	// because Start is static there's no load instruction between these two lines
-			
+
 			//                11111 222 333
 			Console.WriteLine(Start.Two.Tag);
 		}
@@ -211,7 +211,7 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleSuccess<AvoidMessageChainsTest> ("StaticProperty");
 		}
-		
+
 		public object Linq ()
 		{
 			var query = from n in Runner.Defects
@@ -227,7 +227,7 @@ namespace Test.Rules.Smells {
 							    Value = r
 						    }
 				    };
-				
+
 			return query;
 		}
 

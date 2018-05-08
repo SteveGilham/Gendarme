@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Exceptions.ExceptionShouldBeVisibleRule
 //
 // Authors:
@@ -40,7 +40,7 @@ namespace Gendarme.Rules.Exceptions {
 	/// <summary>
 	/// This rule checks for non-visible exceptions which derive directly from
 	/// the most basic exceptions: <c>System.Exception</c>, <c>System.ApplicationException</c>
-	/// or <c>System.SystemException</c>. Those basic exceptions, being visible, will be the 
+	/// or <c>System.SystemException</c>. Those basic exceptions, being visible, will be the
 	/// only information available to the API consumer - but do not contain enough data to be
 	/// useful.
 	/// </summary>
@@ -72,6 +72,11 @@ namespace Gendarme.Rules.Exceptions {
 	[FxCopCompatibility ("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
 	public class ExceptionShouldBeVisibleRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			TypeReference btype = type.BaseType;

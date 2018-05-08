@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for StackEntryAnalysis
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -574,7 +574,7 @@ namespace Test.Framework {
 			il.Emit (OpCodes.Ldc_I4_0);
 			il.Emit (OpCodes.Switch, new Instruction [] { switch1, switch2 });
 
-			//default	
+			//default
 			il.Emit (OpCodes.Ret);
 
 			//switch 1 and 2
@@ -688,7 +688,7 @@ namespace Test.Framework {
 		}
 
 /*	Cecil doesn't support Calli instructions atm.
-		[Test] 
+		[Test]
 		public void TestCalli ()
 		{
 			//ldftn Calli
@@ -698,7 +698,7 @@ namespace Test.Framework {
 			MethodDefinition m = new MethodDefinition ("Calli", Mono.Cecil.MethodAttributes.Public, this.type);
 
 			m.Body.CilWorker.Emit (OpCodes.Ldftn, m);
-		
+
 			m.Body.CilWorker.Create (OpCodes.Calli, new CallSite (false, false, MethodCallingConvention.Default, GetTest ("TestCalli").ReturnType));
 			m.Body.CilWorker.Emit (OpCodes.Ret);
 

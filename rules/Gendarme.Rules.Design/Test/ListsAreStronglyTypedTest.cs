@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.Design.ListsAreStronglyTypedTest
 //
 // Authors:

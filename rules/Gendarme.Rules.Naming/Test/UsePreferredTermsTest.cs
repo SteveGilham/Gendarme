@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for UsePreferredTermsRule
 //
 // Authors:
@@ -63,18 +63,18 @@ namespace Cancelled.ComPlus.Indices.ShouldntBe.Writeable {
 	abstract public class CouldntLogInOrSignOn {
 
 #pragma warning disable 169
-        WouldntLogOutOrSignOff DoesntMatterAnymore;
+		WouldntLogOutOrSignOff DoesntMatterAnymore;
 #pragma warning restore 169
 
-        abstract public bool WasntHere { get; }
+		abstract public bool WasntHere { get; }
 
 		internal void DontTryThisAtHome ()
 		{
 		}
 #pragma warning disable 67
-        public event EventHandler<EventArgs> HaventVoted;
+		public event EventHandler<EventArgs> HaventVoted;
 #pragma warning restore 67
-    }
+	}
 }
 
 namespace Test.Rules.Naming {
@@ -84,7 +84,7 @@ namespace Test.Rules.Naming {
 
 		AssemblyDefinition assembly;
 #pragma warning disable 169
-        bool parentMatches;
+		bool parentMatches;
 #pragma warning restore 169
 
         [OneTimeSetUp]

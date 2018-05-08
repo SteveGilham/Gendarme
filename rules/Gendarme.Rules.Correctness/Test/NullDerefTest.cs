@@ -57,79 +57,79 @@ namespace Test.Rules.Correctness {
 		public class GoodCases {
 			public List<int> CreateListAll (int c)
 			{
-				List<int> result = null;         
-				
+				List<int> result = null;
+
 				if (c == 0)
 					result = new List<int> ();
-				else 
+				else
 					result = new List<int> (c);
-			
+
 				result.Add (1);
-				
+
 				return result;
 			}
-	
+
 			public List<int> CreateListIf (int c)	// this was a false positive with FAILURE4
 			{
-				List<int> result = null;         
-				
+				List<int> result = null;
+
 				if (c == 0)
 					result = new List<int> ();
 				else if (c > 0)
 					result = new List<int> (c);
-			
-				if (result != null)	
+
+				if (result != null)
 					result.Add (1);
-				
+
 				return result;
 			}
-	
+
 			public List<int> CreateListIf2 (int c)
 			{
-				List<int> result = null;         
-				
+				List<int> result = null;
+
 				if (c == 0)
 					result = new List<int> ();
 				else if (c > 0)
 					result = new List<int> (c);
-			
-				if (null != result)	
+
+				if (null != result)
 					result.Add (1);
-				
+
 				return result;
 			}
-	
+
 			public List<int> CreateListThrow (int c)
 			{
-				List<int> result = null;         
-				
+				List<int> result = null;
+
 				if (c == 0)
 					result = new List<int> ();
 				else if (c > 0)
 					result = new List<int> (c);
-			
-				if (result == null)	
+
+				if (result == null)
 					throw new ArgumentException ("c can't be negative!");
-				
+
 				result.Add (1);
-				
+
 				return result;
 			}
-	
+
 			public List<int> CreateListThrow2 (int c)
 			{
-				List<int> result = null;         
-				
+				List<int> result = null;
+
 				if (c == 0)
 					result = new List<int> ();
 				else if (c > 0)
 					result = new List<int> (c);
-			
-				if (null == result)	
+
+				if (null == result)
 					throw new ArgumentException ("c can't be negative!");
-				
+
 				result.Add (1);
-				
+
 				return result;
 			}
 
@@ -137,7 +137,7 @@ namespace Test.Rules.Correctness {
 			{
 				if (String.IsNullOrEmpty (name))
 					return 0;
-	
+
 				if (name.StartsWith ("@", StringComparison.OrdinalIgnoreCase)) {
 					// note: recursive (can contains @, masks and filenames)
 					using (StreamReader sr = File.OpenText (name.Substring (1))) {
@@ -171,7 +171,7 @@ namespace Test.Rules.Correctness {
 					}
 				}
 			}
-			
+
 			void TryGetValue (Dictionary<string, object> d)
 			{
 				object o;
@@ -179,28 +179,28 @@ namespace Test.Rules.Correctness {
 					Console.WriteLine (o.ToString ());
 			}
 		}
-		
+
 		public class BadCases {
 			public List<int> CreateList (int c)
 			{
-				List<int> result = null;         
-				
+				List<int> result = null;
+
 				if (c == 0)
 					result = new List<int> ();
 				else if (c > 0)
 					Console.WriteLine ("len = {0}", result.Count);
-			
-				result.Add (1);		
-				
+
+				result.Add (1);
+
 				return result;
 			}
 		}
-		
+
 		[Test]
 		public void Test ()
 		{
 //			Runner.VerbosityLevel = 3;
-			
+
 //			AssertRuleSuccess<GoodCases> ("AddFiles");
 			AssertRuleSuccess<GoodCases> ();
 			AssertRuleFailure<BadCases> ("CreateList");

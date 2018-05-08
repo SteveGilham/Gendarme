@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.DeclareEventsExplicitlyRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -41,7 +41,7 @@ namespace Gendarme.Rules.Correctness {
 	/// Bad example:
 	/// <code>
 	/// public class EventLess {
-	///	public static EventHandler&lt;EventArgs&gt; MyEvent;
+	/// 	public static EventHandler&lt;EventArgs&gt; MyEvent;
 	/// }
 	/// </code>
 	/// </example>
@@ -49,7 +49,7 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// public class Event {
-	///	public static event EventHandler&lt;EventArgs&gt; MyEvent;
+	/// 	public static event EventHandler&lt;EventArgs&gt; MyEvent;
 	/// }
 	/// </code>
 	/// </example>
@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Correctness {
 			return false;
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.HasFields || type.IsEnum)

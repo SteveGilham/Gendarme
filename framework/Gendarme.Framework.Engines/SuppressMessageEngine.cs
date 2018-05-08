@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Engines.SuppressMessageEngine
 //
 // Authors:
@@ -57,10 +57,11 @@ namespace Gendarme.Framework.Engines {
 				// one Gendarme rule can be mapped to several FxCop rules
 				// one FxCop rules can be split across several Gendarme rules
 				foreach (FxCopCompatibilityAttribute attr in attrs) {
-					HashSet<string> grules = null;
-					if (!mapper.TryGetValue (attr.CheckId, out grules)) {
+					HashSet<string> grules;
+					string mappedRuleName = (attr.Category + "." + attr.CheckIdValue);
+					if (!mapper.TryGetValue (mappedRuleName, out grules)) {
 						grules = new HashSet<string> ();
-						mapper.Add (attr.CheckId, grules);
+						mapper.Add (mappedRuleName, grules);
 					}
 					grules.Add (rule.FullName);
 				}
@@ -108,16 +109,17 @@ namespace Gendarme.Framework.Engines {
 
 				var arguments = ca.ConstructorArguments;
 				string category = (string) arguments [0].Value;
-				string checkId = (string) arguments [1].Value;
-				if (String.IsNullOrEmpty (category) || String.IsNullOrEmpty (checkId))
+				string checkIdName = (string) arguments [1].Value;
+				if (String.IsNullOrEmpty (category) || String.IsNullOrEmpty (checkIdName))
 					continue;
 
 				IMetadataTokenProvider token = (sender as IMetadataTokenProvider);
 				// map from FxCop - otherwise keep the Gendarme syntax
 				HashSet<string> mapped_names = null;
-				if (!mapper.TryGetValue (checkId, out mapped_names)) {
+				string fullCheckId = category + "." + GetCheckIdOrName(checkIdName);
+				if (!mapper.TryGetValue (fullCheckId, out mapped_names)) {
 					mapped_names = new HashSet<string> ();
-					mapped_names.Add (category + "." + checkId);
+					mapped_names.Add (fullCheckId);
 				}
 
 				// FIXME: Scope ? "member", "resource", "module", "type", "method", or "namespace"
@@ -135,6 +137,14 @@ namespace Gendarme.Framework.Engines {
 			}
 
 			ResolveTargets ();
+		}
+
+		private static string GetCheckIdOrName(string checkIdFull)
+		{
+			int position = checkIdFull.IndexOf(':');
+			if (position < 0)
+				return (checkIdFull); // name
+			return (checkIdFull.Remove(position)); // ID only
 		}
 
 		private void AddIgnore (IMetadataTokenProvider token, IEnumerable<string> mapped_names)

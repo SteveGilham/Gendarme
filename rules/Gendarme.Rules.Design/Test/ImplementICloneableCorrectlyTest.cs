@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for ImplementICloneableCorrectlyRule
 //
 // Authors:
@@ -46,8 +46,8 @@ namespace Test.Rules.Design{
 				return this.MemberwiseClone ();
 			}
 		}
-		
-		public class UsingCloneWithoutImplementingICloneable 
+
+		public class UsingCloneWithoutImplementingICloneable
 		{
 			public object Clone ()
 			{
@@ -61,7 +61,7 @@ namespace Test.Rules.Design{
 			AssertRuleDoesNotApply<UsingCloneAndImplementingICloneable> ();
 			AssertRuleFailure<UsingCloneWithoutImplementingICloneable> (1);
 		}
-		
+
 		public class NeitherUsingCloneNorImplementingICloneable
 		{
 			public object clone ()
@@ -69,7 +69,7 @@ namespace Test.Rules.Design{
 				return this;
 			}
 		}
-		
+
 		public class AnotherExampleOfNotUsingBoth
 		{
 			public int Clone ()
@@ -77,7 +77,7 @@ namespace Test.Rules.Design{
 				return 1;
 			}
 		}
-		
+
 		public class OneMoreExample
 		{
 			public object Clone (int i)

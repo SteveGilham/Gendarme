@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.IRunner interface
 //
 // Authors:
@@ -48,7 +48,7 @@ namespace Gendarme.Framework {
 		Collection<IRule> Rules { get; }
 
 		/// <summary>
-		/// This expose the list of assemblies so rules can act on them as "a set". 
+		/// This expose the list of assemblies so rules can act on them as "a set".
 		/// E.g. applying a rule based on data outside the current assembly
 		/// </summary>
 		Collection<AssemblyDefinition> Assemblies { get; }
@@ -65,7 +65,7 @@ namespace Gendarme.Framework {
 		EngineController Engines { get; }
 
 		/// <summary>
-		/// Helper property to avoid each rule having it's own state/logic about 
+		/// Helper property to avoid each rule having it's own state/logic about
 		/// the result (RuleResult.Success or RuleResult.Failure) of its analysis
 		/// </summary>
 		RuleResult CurrentRuleResult { get; }

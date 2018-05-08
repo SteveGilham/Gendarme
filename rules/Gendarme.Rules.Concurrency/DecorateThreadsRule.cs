@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Concurrency.DecorateThreadsRule
 //
 // Authors:
@@ -41,7 +41,7 @@ using System.Globalization;
 using System.Linq;
 
 namespace Gendarme.Rules.Concurrency {
-	
+
 	/// <summary>
 	/// This rule is designed to help you precisely specify the threading semantics supported
 	/// by your code. This is valuable because it forces you to think clearly about the semantics
@@ -56,17 +56,17 @@ namespace Gendarme.Rules.Concurrency {
 	/// The rule enforces the following constraints:
 	/// <list>
 	/// <item>Thread entry points cannot be main thread.</item>
-	/// <item>MainThread code can call everything, AllowEveryCaller code can be called by 
+	/// <item>MainThread code can call everything, AllowEveryCaller code can be called by
 	/// everything, SingleThread can call SingleThread/Serializable/Concurrent, and Serializable/
 	/// Concurrent can call Serializable/Concurrent.</item>
 	/// <item>Delegates must be able to call the methods they are bound to.</item>
-	/// <item>An override of a base method or an implementation of an interface method must 
+	/// <item>An override of a base method or an implementation of an interface method must
 	/// use the same threading model as the original method.</item>
-	/// <item>A delegate used with a threaded event must use the same threading model as the 
+	/// <item>A delegate used with a threaded event must use the same threading model as the
 	/// event.</item>
-	/// <item>Serializable cannot be applied to static methods and static methods of serializeable 
-	/// types do not inherit it from their types. (The rationale here is that there is normally nothing 
-	/// that can be used to serialize access to static methods other  than the type which is a bad 
+	/// <item>Serializable cannot be applied to static methods and static methods of serializeable
+	/// types do not inherit it from their types. (The rationale here is that there is normally nothing
+	/// that can be used to serialize access to static methods other  than the type which is a bad
 	/// idea, see [http://bytes.com/groups/net-c/249277-dont-lock-type-objects]).</item>
 	/// </list>
 	///
@@ -86,20 +86,20 @@ namespace Gendarme.Rules.Concurrency {
 	/// 	{
 	/// 		Dispose (false);
 	/// 	}
-	/// 	
+	///
 	/// 	public void Dispose ()
 	/// 	{
 	/// 		Dispose (true);
 	/// 		GC.SuppressFinalize (this);
 	/// 	}
-	/// 	
+	///
 	/// 	private void Dispose (bool disposing)
 	/// 	{
 	/// 		if (!Disposed) {
 	/// 			Disposed = true;
 	/// 		}
 	/// 	}
-	/// 	
+	///
 	/// 	private bool Disposed { get; set; }
 	/// }
 	/// </code>
@@ -108,32 +108,32 @@ namespace Gendarme.Rules.Concurrency {
 	/// Good example:
 	/// <code>
 	/// public enum ThreadModel {
-	/// 	// The code may run safely only under the main thread (this is the 
+	/// 	// The code may run safely only under the main thread (this is the
 	/// 	// default for code in the assemblies being checked).
 	/// 	MainThread = 0x0000,
-	/// 	
+	///
 	/// 	// The code may run under a single arbitrary thread.
 	/// 	SingleThread = 0x0001,
-	/// 	
-	/// 	// The code may run under multiple threads, but only if the 
+	///
+	/// 	// The code may run under multiple threads, but only if the
 	/// 	// execution is serialized (e.g. by user level locking).
 	/// 	Serializable = 0x0002,
-	/// 	
-	/// 	// The code may run under multiple threads concurrently without user 
+	///
+	/// 	// The code may run under multiple threads concurrently without user
 	/// 	// locking (this is the default for code in the System/Mono namespaces).
 	/// 	Concurrent = 0x0003,
-	/// 	
+	///
 	/// 	// Or this with the above for the rare cases where the code cannot be
 	/// 	// shown to be correct using a static analysis.
 	/// 	AllowEveryCaller = 0x0008,
 	/// }
-	/// 
-	/// // This is used to precisely specify the threading semantics of code. Note 
-	/// // that Gendarme&apos;s DecorateThreadsRule will catch problematic code which 
+	///
+	/// // This is used to precisely specify the threading semantics of code. Note
+	/// // that Gendarme&apos;s DecorateThreadsRule will catch problematic code which
 	/// // uses these attributes (such as concurrent code calling main thread code).
 	/// [Serializable]
-	/// [AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | 
-	/// AttributeTargets.Interface | AttributeTargets.Delegate | 
+	/// [AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct |
+	/// AttributeTargets.Interface | AttributeTargets.Delegate |
 	/// AttributeTargets.Method | AttributeTargets.Event | AttributeTargets.Property,
 	/// AllowMultiple = false, Inherited = false)]
 	/// public sealed class ThreadModelAttribute : Attribute {
@@ -141,7 +141,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// 	{
 	/// 		Model = model;
 	/// 	}
-	/// 	
+	///
 	/// 	public ThreadModel Model { get; set; }
 	/// }
 	///
@@ -152,13 +152,13 @@ namespace Gendarme.Rules.Concurrency {
 	/// 	{
 	/// 		Dispose (false);
 	/// 	}
-	/// 	
+	///
 	/// 	public void Dispose ()
 	/// 	{
 	/// 		Dispose (true);
 	/// 		GC.SuppressFinalize (this);
 	/// 	}
-	/// 	
+	///
 	/// 	// This is called from both the finalizer thread and the main thread
 	/// 	// so it must be decorated. But it only executes under one thread
 	/// 	// at a time so we can use SingleThread instead of Concurrent.
@@ -169,7 +169,7 @@ namespace Gendarme.Rules.Concurrency {
 	/// 			Disposed = true;
 	/// 		}
 	/// 	}
-	/// 	
+	///
 	/// 	// This is called from a threaded method so it must also be
 	/// 	// threaded.
 	/// 	[ThreadModel (ThreadModel.SingleThread)]
@@ -182,12 +182,18 @@ namespace Gendarme.Rules.Concurrency {
 	[EngineDependency (typeof (OpCodeEngine))]
 	public sealed class DecorateThreadsRule : Rule, IMethodRule {
 
+		/// <summary>
+		/// Initialize the rule. This is where rule can do it's heavy initialization
+		/// since the assemblies to be analyzed are already known (and accessible thru
+		/// the runner parameter).
+		/// </summary>
+		/// <param name="runner">The runner that will execute this rule.</param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
-			
+
 			runner.AnalyzeAssembly += this.OnAssembly;
-			
+
 			DefectCount = 0;
 			checked_entry_points.Clear ();
 			anonymous_entry_points.Clear ();
@@ -218,28 +224,33 @@ namespace Gendarme.Rules.Concurrency {
 					return;
 				}
 			}
-			
+
 			// If the assembly does not define ThreadModelAttribute then we don't
 			// want to check methods but we do want to report (one) defect to inform
 			// people about the rule.
 			Active = false;
-			
+
 			if (!displayed_no_attribute_defect) {
 				string mesg = "The assembly does not use ThreadModelAttribute (this defect will be reported only once).";
 				Log.WriteLine (this, mesg);
 				ReportDefect (e.CurrentAssembly, Severity.Medium, Confidence.Low, mesg);
-				
+
 				displayed_no_attribute_defect = true;
 			}
 		}
-		
+
 		public int DefectCount { get; private set; }
 
+		/// <summary>
+		/// Check method
+		/// </summary>
+		/// <param name="method">Method to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (ThreadRocks.ThreadedNamespace (method.DeclaringType.Namespace))
 				return RuleResult.DoesNotApply;
-			
+
 			Log.WriteLine (this);
 			Log.WriteLine (this, "---------------------------------------");
 			Log.WriteLine (this, method);
@@ -255,13 +266,13 @@ namespace Gendarme.Rules.Concurrency {
 					ReportDefect (method, Severity.High, Confidence.High, mesg);
 				}
 			}
-			
+
 			// Make sure all of the thread entry points are properly decorated and
 			// that all calls are legit.
 			if (method.HasBody && opcodes_mask.Intersect (OpCodeEngine.GetBitmask (method)))
 				CheckMethodBody (method);
-			
-			// A delegate used with a threaded event must use the same threading model 
+
+			// A delegate used with a threaded event must use the same threading model
 			// as the event.
 			if (method.IsAddOn) {
 				ParameterDefinition p = pdc [0];
@@ -269,7 +280,7 @@ namespace Gendarme.Rules.Concurrency {
 				if (delegateType != null && !ThreadRocks.ThreadedNamespace (delegateType.Namespace)) {
 					ThreadModel delegateModel = delegateType.ThreadingModel ();
 					if (model != delegateModel && !delegateModel.AllowsEveryCaller ()) {
-						string mesg = String.Format (CultureInfo.InvariantCulture, 
+						string mesg = String.Format (CultureInfo.InvariantCulture,
 							"{0} event must match {1} delegate.", model, delegateModel);
 						ReportDefect (method, Severity.High, Confidence.High, mesg);
 					}
@@ -292,7 +303,7 @@ namespace Gendarme.Rules.Concurrency {
 					if (superMethod != null && !ThreadRocks.ThreadedNamespace (superMethod.DeclaringType.Namespace)) {
 						ThreadModel superModel = superMethod.ThreadingModel ();
 						if (model != superModel) {
-							string mesg = String.Format (CultureInfo.InvariantCulture, 
+							string mesg = String.Format (CultureInfo.InvariantCulture,
 								"{0} {1} must match {2} {3} method.", model, name, superModel,
 								new_slot ? "interface" : "base");
 							ReportDefect (method, Severity.High, Confidence.High, mesg);
@@ -300,17 +311,20 @@ namespace Gendarme.Rules.Concurrency {
 					}
 				}
 			}
-			
+
 			// Serializable cannot be applied to static methods, but can be applied to
 			// operators because they're just sugar for normal calls.
 			if (method.IsStatic && model.Is (ThreadModel.Serializable) && !name.StartsWith ("op_", StringComparison.Ordinal)) {
 				string mesg = "Static members cannot be decorated with Serializable.";
 				ReportDefect (method, Severity.High, Confidence.High, mesg);
 			}
-			
+
 			return Runner.CurrentRuleResult;
 		}
 
+		/// <summary>
+		/// Skip methods generated by Visual Studio (and/or other) GUI environments?
+		/// </summary>
 		public bool SkipGeneratedGuiMethods
 		{
 			get
@@ -318,7 +332,10 @@ namespace Gendarme.Rules.Concurrency {
 				return true;
 			}
 		}
-		
+
+		/// <summary>
+		/// Release all resources, free memory, e.t.c.
+		/// </summary>
 		public override void TearDown ()
 		{
 			// We don't always know that an anonymous method was used as a thread
@@ -333,10 +350,10 @@ namespace Gendarme.Rules.Concurrency {
 						if (target != null) {
 							ThreadModel targetModel = target.ThreadingModel ();
 							if (targetModel == ThreadModel.MainThread) {
-								string mesg = String.Format (CultureInfo.InvariantCulture, 
-									"An anonymous thread entry point cannot call MainThread {0}.", 
+								string mesg = String.Format (CultureInfo.InvariantCulture,
+									"An anonymous thread entry point cannot call MainThread {0}.",
 									target.Name);
-								
+
 								++DefectCount;
 								Log.WriteLine (this, "Defect: {0}", mesg);
 								Defect defect = new Defect (this, caller, caller, ins, Severity.High, Confidence.High, mesg);
@@ -347,19 +364,19 @@ namespace Gendarme.Rules.Concurrency {
 					}
 				}
 			}
-			
+
 			base.TearDown ();
 		}
-		
+
 		#region Private Methods
 		private void CheckMethodBody (MethodDefinition method)
 		{
 			var synchronizedEvents = new Dictionary<MethodReference, List<MethodReference>> ();
 			var thisSynchronized = new List<TypeReference> ();
-			
+
 			foreach (Instruction ins in method.Body.Instructions) {
 				MethodReference candidate = null;
-				
+
 				switch (ins.OpCode.Code) {
 				case Code.Newobj:
 					if (ins.Previous != null && ins.Previous.OpCode.Code == Code.Ldftn) {
@@ -379,7 +396,7 @@ namespace Gendarme.Rules.Concurrency {
 									name == "TimerCallback") {
 										candidate = (MethodReference) ins.Previous.Operand;
 								}
-							
+
 							// ldftn entry-point
 							// newobj System.Void System.AsyncCallback::.ctor (System.Object,System.IntPtr)
 							// i.e. creation of a async delegate
@@ -387,7 +404,7 @@ namespace Gendarme.Rules.Concurrency {
 								if (type.Name == "AsyncCallback") {
 									candidate = (MethodReference) ins.Previous.Operand;
 								}
-							
+
 							// ldftn entry-point
 							// newobj System.Void ThreadedDelegate::.ctor (System.Object,System.IntPtr)
 							// i.e. creation of a delegate which is decorated with a threading attribute
@@ -396,18 +413,18 @@ namespace Gendarme.Rules.Concurrency {
 								MethodDefinition target = ((MethodReference) ins.Previous.Operand).Resolve ();
 								if (target != null) {
 									ThreadModel callerModel = type.ThreadingModel ();
-									if (!target.IsGeneratedCode () || target.IsProperty ()) {
+									if (!target.IsGeneratedMethodOrType () || target.IsProperty ()) {
 										ThreadModel targetModel = target.ThreadingModel ();
 										if (!IsValidCall (callerModel, targetModel)) {
 											string mesg = String.Format (CultureInfo.InvariantCulture,
-												"{0} delegate cannot be bound to {1} {2} method.", 
+												"{0} delegate cannot be bound to {1} {2} method.",
 												callerModel, targetModel, target.Name);
 											++DefectCount;
 											Log.WriteLine (this, "Defect: {0}", mesg);
 											Defect defect = new Defect (this, method, method, ins, Severity.High, Confidence.High, mesg);
 											Runner.Report (defect);
 										}
-										
+
 									} else if (!callerModel.Is (ThreadModel.MainThread)) {
 										anonymous_entry_points.Add (target);
 									}
@@ -416,15 +433,15 @@ namespace Gendarme.Rules.Concurrency {
 						}
 					}
 					break;
-				
+
 				case Code.Call:
 				case Code.Callvirt:
-					if (!method.IsGeneratedCode () || method.IsProperty ())
+					if (!method.IsGeneratedMethodOrType () || method.IsProperty ())
 						CheckForLegalCall (method, ins);
-					
+
 					// ldftn entry-point
 					// newobj XXX
-					// callvirt System.Void SynchronizedType::add_Name (XXX)	
+					// callvirt System.Void SynchronizedType::add_Name (XXX)
 					// i.e. adding a delegate to an event in a type which uses SynchronizingObject
 					MethodReference call = (MethodReference) ins.Operand;
 					TypeReference call_type = call.DeclaringType;
@@ -433,7 +450,7 @@ namespace Gendarme.Rules.Concurrency {
 						// are therefore always threaded.
 						if (IsNonSynchronizedSetter (call)) {
 							candidate = (MethodReference) ins.Previous.Previous.Operand;
-						
+
 						// But most events do use SynchronizingObject and therefore their threading
 						// depends on whether and how SynchronizingObject is initialized.
 						} else if (HasSynchronizingObject (call_type)) {
@@ -442,16 +459,16 @@ namespace Gendarme.Rules.Concurrency {
 								methods = new List<MethodReference> ();
 								synchronizedEvents.Add (call, methods);
 							}
-							
+
 							methods.AddIfNew ((MethodReference) ins.Previous.Previous.Operand);
-						
+
 						// Misc threaded events.
 						} else if (call_type.IsNamed ("System.ComponentModel", "BackgroundWorker", null)) {
 							if (call.Name == "add_DoWork") {
 								candidate = (MethodReference) ins.Previous.Previous.Operand;
 							}
 						}
-					
+
 					// callvirt System.Void System.Diagnostics.Process::set_SynchronizingObject (System.ComponentModel.ISynchronizeInvoke)
 					} else if (SetSynchronizingObject.Matches (call)) {
 						if (ins.Previous.OpCode.Code == Code.Ldarg_0) {
@@ -460,13 +477,13 @@ namespace Gendarme.Rules.Concurrency {
 					}
 					break;
 				}
-				
+
 				if (candidate != null) {
 					Log.WriteLine (this, "{0} is a thread entry point", candidate);
 					CheckEntryPoint (candidate);
 				}
 			}
-			
+
 			// For every method added to a threaded event,
 			ThreadModel? method_model = null;
 			foreach (KeyValuePair<MethodReference, List<MethodReference>> entry in synchronizedEvents) {
@@ -480,14 +497,14 @@ namespace Gendarme.Rules.Concurrency {
 						if (target != null) {
 							ThreadModel targetModel = target.ThreadingModel ();
 							if (!IsValidCall (method_model.Value, targetModel)) {
-								string mesg = String.Format (CultureInfo.InvariantCulture, 
-									"{0} {1} cannot be bound to {2} {3} method.", 
+								string mesg = String.Format (CultureInfo.InvariantCulture,
+									"{0} {1} cannot be bound to {2} {3} method.",
 									method_model, entry.Key, targetModel, target.Name);
 								ReportDefect (method, Severity.High, Confidence.High, mesg);
 							}
 						}
 					}
-				
+
 				// otherwise the method has to be treated as a thread entry point.
 				} else {
 					foreach (MethodReference mr in entry.Value) {
@@ -513,40 +530,40 @@ namespace Gendarme.Rules.Concurrency {
 			}
 			return false;
 		}
-		
+
 		static bool HasSynchronizingObject (TypeReference tr)
 		{
 			foreach (TypeDefinition type in tr.AllSuperTypes ()) {
 				if (type.GetMethod (SetSynchronizingObject) != null)
 					return true;
 			}
-			
+
 			return false;
 		}
-		
+
 		// Thread entry points cannot be main thread or an anonymous
 		// method (but not an auto-property).
 		private void CheckEntryPoint (MethodReference mr)
 		{
 			if (!checked_entry_points.Contains (mr)) {
 				checked_entry_points.Add (mr);
-				
+
 				MethodDefinition method = mr.Resolve ();
 				if (method != null) {
 					ThreadModel model = method.ThreadingModel ();
-					
-					if (method.IsGeneratedCode () && !method.IsProperty ()) {
+
+					if (method.IsGeneratedMethodOrType () && !method.IsProperty ()) {
 						anonymous_entry_points.Add (method);
-					
+
 					} else if (model == ThreadModel.MainThread) {
-						string mesg = String.Format (CultureInfo.InvariantCulture, 
+						string mesg = String.Format (CultureInfo.InvariantCulture,
 							"{0} is a thread entry point and so cannot be MainThread.", method.Name);
 						ReportDefect (method, Severity.High, Confidence.High, mesg);
 					}
 				}
 			}
 		}
-		
+
 		private void CheckForLegalCall (MethodDefinition caller, Instruction ins)
 		{
 			MethodDefinition target = ((MethodReference) ins.Operand).Resolve ();
@@ -554,9 +571,9 @@ namespace Gendarme.Rules.Concurrency {
 				ThreadModel callerModel = caller.ThreadingModel ();
 				ThreadModel targetModel = target.ThreadingModel ();
 				if (!IsValidCall (callerModel, targetModel)) {
-					string mesg = String.Format (CultureInfo.InvariantCulture, "{0} {1} cannot call {2} {3}.", 
+					string mesg = String.Format (CultureInfo.InvariantCulture, "{0} {1} cannot call {2} {3}.",
 						callerModel, caller.Name, targetModel, target.Name);
-					
+
 					++DefectCount;
 					Log.WriteLine (this, "Defect: {0}", mesg);
 					Defect defect = new Defect (this, caller, caller, ins, Severity.High, Confidence.High, mesg);
@@ -564,8 +581,8 @@ namespace Gendarme.Rules.Concurrency {
 				}
 			}
 		}
-		
-		// MainThread code can call everything, AllowEveryCaller code can be called by 
+
+		// MainThread code can call everything, AllowEveryCaller code can be called by
 		// everything, SingleThread can call SingleThread/Serializable/Concurrent, and Serializable/
 		// Concurrent can call Serializable/Concurrent.
 		static bool IsValidCall (ThreadModel caller, ThreadModel target)
@@ -587,10 +604,10 @@ namespace Gendarme.Rules.Concurrency {
 			else if ((caller.Is (ThreadModel.Serializable) || caller.Is (ThreadModel.Concurrent)) &&
 				(target.Is (ThreadModel.Serializable) || target.Is (ThreadModel.Concurrent)))
 				return true;
-			
+
 			return false;
 		}
-		
+
 		// We use this little helper so that we can report a better defect count to the test.
 		// (The test itself can't quite manage this because it can't tell what happened
 		// inside TearDown if CheckType or CheckMethod failed).
@@ -598,35 +615,35 @@ namespace Gendarme.Rules.Concurrency {
 		{
 			++DefectCount;
 			Log.WriteLine (this, "Defect: {0}", mesg);
-			
+
 			// We need to use the Defect Report overload because the runner's current
 			// target won't be set if we land here via TearDown.
 			Defect defect = new Defect (this, metadata, metadata, severity, confidence, mesg);
 			Runner.Report (defect);
 		}
 		#endregion
-	
+
 #if false
 		private void Bitmask ()
 		{
 			OpCodeBitmask opcodes_mask = new OpCodeBitmask ();
-			
+
 			opcodes_mask.Set (Code.Ldftn);
 			opcodes_mask.Set (Code.Call);
 			opcodes_mask.Set (Code.Callvirt);
-			
+
 			Console.WriteLine (opcodes_mask);
 		}
 #endif
-		
+
 		#region Fields
 		private HashSet<MethodReference> checked_entry_points = new HashSet<MethodReference> ();
 		private HashSet<MethodDefinition> anonymous_entry_points = new HashSet<MethodDefinition> ();
 		private bool displayed_no_attribute_defect;
-		
+
 		private static readonly OpCodeBitmask opcodes_mask = new OpCodeBitmask (0x8000000000, 0x400000000000, 0x0, 0x20);
 		private static readonly MethodSignature SetSynchronizingObject = new MethodSignature ("set_SynchronizingObject", "System.Void", new string [] { "System.ComponentModel.ISynchronizeInvoke" });
-		
+
 		#endregion
 	}
 }

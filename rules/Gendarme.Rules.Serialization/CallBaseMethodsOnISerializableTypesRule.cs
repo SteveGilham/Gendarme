@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Serialization.CallBaseMethodsOnISerializableTypesRule
 //
 // Authors:
@@ -133,6 +133,11 @@ namespace Gendarme.Rules.Serialization {
 			Runner.Report (method, Severity.High, Confidence.High);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!InheritsFromISerializableImplementation (type))

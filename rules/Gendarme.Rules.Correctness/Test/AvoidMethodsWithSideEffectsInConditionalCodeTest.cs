@@ -1,4 +1,4 @@
-#define CONTRACTS_FULL
+﻿#define CONTRACTS_FULL
 #define SOME_DEFINE
 
 //
@@ -82,17 +82,17 @@ namespace Test.Rules.Correctness {
 			{
 				ConditionalCall (x + y);
 			}
-
+			
 #pragma warning disable 436
-            // All Contract methods can be used with conditional code.
-            public void Good5 (bool data)
+			// All Contract methods can be used with conditional code.
+			public void Good5 (bool data)
 			{
 				ConditionalCall (Contract.Foo (data));
 			}
 #pragma warning restore 436
-
-            // All System.String methods can be used with conditional code.
-            public void Good6 (string data)
+			
+			// All System.String methods can be used with conditional code.
+			public void Good6 (string data)
 			{
 				ConditionalCall (data.GetHashCode ());
 			}
@@ -173,12 +173,12 @@ namespace Test.Rules.Correctness {
 			public void NonConditionalCall (object data)
 			{
 			}
-
+			
 #pragma warning disable 436
-            [Pure]
+			[Pure]
 			public delegate bool PureDelegate (bool data);
-
-            public delegate bool NonPureDelegate (bool data);
+			
+			public delegate bool NonPureDelegate (bool data);
 			
 			[Pure]
 			private object PureIdentity (object data)

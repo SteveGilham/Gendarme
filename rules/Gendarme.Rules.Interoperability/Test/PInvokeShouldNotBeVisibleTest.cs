@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for PInvokeShouldNotBeVisibleRule
 //
 // Authors:
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -42,28 +42,28 @@ namespace Test.Rules.Interoperability {
 	internal class PInvokeInternal {
 		[DllImport ("User32.dll")]
 		internal static extern Boolean MessageBeepInternal (UInt32 beepType); //ok
-		
+
 		[DllImport ("User32.dll")]
 		public static extern Boolean MessageBeepPublic (UInt32 beepType); //ok
-		
+
 		public class Public {
 			[DllImport ("User32.dll")]
 			public static extern Boolean MessageBeepPublic (UInt32 beepType); //ok
 		}
 	}
-	
+
 	public class PInvokePublic {
 		[DllImport ("User32.dll")]
 		internal static extern Boolean MessageBeepInternal (UInt32 beepType); //ok
-		
+
 		[DllImport ("User32.dll")]
 		public static extern Boolean MessageBeepPublic (UInt32 beepType); //warn
-		
+
 		public class Public {
 			[DllImport ("User32.dll")]
 			public static extern Boolean MessageBeepPublic (UInt32 beepType); //warn
 		}
-		
+
 		internal class Internal {
 			[DllImport ("User32.dll")]
 			public static extern Boolean MessageBeepPublic (UInt32 beepType); //ok
@@ -73,11 +73,11 @@ namespace Test.Rules.Interoperability {
 
 		[DllImport ("User32.dll")]
 		internal static extern Boolean InstanceInternal (UInt32 beepType); //bad1
-		
+
 		[DllImport ("User32.dll")]
 		public static extern Boolean InstancePublic (UInt32 beepType); //bad2
 	}
-	
+
 	[TestFixture]
 	public class PInvokeShouldNotBeVisibleTest : MethodRuleTestFixture<PInvokeShouldNotBeVisibleRule> {
 
@@ -102,15 +102,15 @@ namespace Test.Rules.Interoperability {
 		public void NonVisibleType_VisibleMethod ()
 		{
 			AssertRuleSuccess<PInvokeInternal> ("MessageBeepPublic");
-		}		
-		
+		}
+
 		[Test]
 		public void NonVisibleNestedType_VisibleMethod ()
 		{
 			AssertRuleSuccess<PInvokeInternal.Public> ("MessageBeepPublic");
 			AssertRuleSuccess<PInvokePublic.Internal> ("MessageBeepPublic");
 		}
-		
+
 		[Test]
 		public void VisibleType_NonVisibleMethod ()
 		{
@@ -121,8 +121,8 @@ namespace Test.Rules.Interoperability {
 		public void VisibleType_VisibleMethod ()
 		{
 			AssertRuleFailure<PInvokePublic> ("MessageBeepPublic", 1);
-		}		
-		
+		}
+
 		[Test]
 		public void VisibleNestedType_VisibleMethod ()
 		{

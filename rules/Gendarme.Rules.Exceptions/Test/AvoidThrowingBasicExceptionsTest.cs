@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for AvoidThrowingBasicExceptionsRule
 //
 // Authors:
@@ -69,9 +69,9 @@ namespace Test.Rules.Exceptions {
 			{
 				throw new SystemException ("zhazha");
 			}
-
+			
 #pragma warning disable 618
-            public void ThrowSpecificExceptions ()
+			public void ThrowSpecificExceptions ()
 			{
 				Random r = new Random ();
 				// to avoid compiler optimizations that remove everything after throw
@@ -94,9 +94,9 @@ namespace Test.Rules.Exceptions {
 			}
 		}
 #pragma warning restore 618
-
-
-        [Test]
+		
+		
+		[Test]
 		public void DoesNotApply ()
 		{
 			// no IL

@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for DoNotUseThreadStaticWithInstanceFieldsRule
 //
 // Authors:
@@ -40,7 +40,7 @@ namespace Test.Rules.Concurrency {
 	public sealed class DoNotUseThreadStaticWithInstanceFieldsTest : TypeRuleTestFixture<DoNotUseThreadStaticWithInstanceFieldsRule> {
 
 #pragma warning disable 649
-        private sealed class Good1 {
+		private sealed class Good1 {
 			[ThreadStatic]
 			public static string name;
 		}
@@ -61,8 +61,8 @@ namespace Test.Rules.Concurrency {
 			public string name2;
 		}
 #pragma warning restore 649
-
-        [Test]
+		
+		[Test]
 		public void NotApplicable ()
 		{
 			AssertRuleDoesNotApply (SimpleTypes.Delegate);

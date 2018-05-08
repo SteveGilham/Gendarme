@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.UseCorrectSuffixRule class
 //
 // Authors:
@@ -270,6 +270,11 @@ namespace Gendarme.Rules.Naming {
 			return (String.Compare (suffix, 0, typeName, gpos - suffix.Length, suffix.Length, StringComparison.OrdinalIgnoreCase) == 0);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to generated code (outside developer's control)

@@ -70,6 +70,19 @@ namespace Gendarme.Framework {
 			return asm;
 		}
 
+		public void CacheAssembly (System.Reflection.Assembly assembly)
+		{
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+
+			AssemblyDefinition definition = AssemblyDefinition.ReadAssembly (assembly.Location);
+			if (definition != null && !assemblies.ContainsKey (definition.Name.Name)) {
+				assemblies.Add (definition.Name.Name, definition);
+				string location = Path.GetDirectoryName (assembly.Location);
+				AddSearchDirectory (location);
+			}
+		}
+
 		public void CacheAssembly (AssemblyDefinition assembly)
 		{
 			if (assembly == null)

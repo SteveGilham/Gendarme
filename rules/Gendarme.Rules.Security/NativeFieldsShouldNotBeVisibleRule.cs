@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.NativeFieldsShouldNotBeVisibleRule
 //
 // Authors:
@@ -42,7 +42,7 @@ namespace Gendarme.Rules.Security {
 	/// Bad example:
 	/// <code>
 	/// public class HasPublicNativeField {
-	///	public IntPtr NativeField;
+	/// 	public IntPtr NativeField;
 	/// }
 	/// </code>
 	/// </example>
@@ -50,8 +50,8 @@ namespace Gendarme.Rules.Security {
 	/// Good example (hide):
 	/// <code>
 	/// class HasPrivateNativeField {
-	///	private IntPtr NativeField;
-	///	public void DoSomethingWithNativeField ();
+	/// 	private IntPtr NativeField;
+	/// 	public void DoSomethingWithNativeField ();
 	/// }
 	/// </code>
 	/// </example>
@@ -59,7 +59,7 @@ namespace Gendarme.Rules.Security {
 	/// Good example (read-only):
 	/// <code>
 	/// class HasReadOnlyNativeField {
-	///	public readonly IntPtr NativeField;
+	/// 	public readonly IntPtr NativeField;
 	/// }
 	/// </code>
 	/// </example>
@@ -69,6 +69,11 @@ namespace Gendarme.Rules.Security {
 	[FxCopCompatibility ("Microsoft.Security", "CA2111:PointersShouldNotBeVisible")]
 	public class NativeFieldsShouldNotBeVisibleRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to interface, enumerations and delegates or to types without fields
@@ -80,7 +85,7 @@ namespace Gendarme.Rules.Security {
 					continue;
 
 				//not readonly native fields or arrays of native fields
-				if ((field.FieldType.IsNative () && !field.IsInitOnly) || 
+				if ((field.FieldType.IsNative () && !field.IsInitOnly) ||
 					(field.FieldType.IsArray && field.FieldType.GetElementType ().IsNative ())) {
 
 					Runner.Report (field, Severity.Medium, Confidence.Total);

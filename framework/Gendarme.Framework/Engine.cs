@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Framework.Engine
 //
 // Authors:
@@ -49,7 +49,7 @@ namespace Gendarme.Framework {
 		}
 
 		/// <summary>
-		/// Note: TearDown can be called without a call to Engine.Register or 
+		/// Note: TearDown can be called without a call to Engine.Register or
 		/// Engine.Initialize
 		/// </summary>
 		public virtual void TearDown ()

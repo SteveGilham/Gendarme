@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for UsePluralNameInEnumFlags Rule.
 //
 // Authors:

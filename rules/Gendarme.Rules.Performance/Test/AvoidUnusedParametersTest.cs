@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidUnusedParameters Rule.
 //
 // Authors:
@@ -63,9 +63,9 @@ namespace Test.Rules.Performance {
 		{
 		}
 	}
-
+	
 #pragma warning disable 659,660,661
-    [TestFixture]
+	[TestFixture]
 	public class AvoidUnusedParametersTest : MethodRuleTestFixture<AvoidUnusedParametersRule> {
 
 		[OneTimeSetUp]
@@ -206,42 +206,25 @@ namespace Test.Rules.Performance {
 		[Test]
 		public void AnonymousMethodTest ()
 		{
-			MethodDefinition method = null;
-			// compiler generated code is compiler dependant, check for [g]mcs (inner type)
-			TypeDefinition type = DefinitionLoader.GetTypeDefinition (typeof (AvoidUnusedParametersTest).Assembly, "AvoidUnusedParametersTest/<>c__CompilerGenerated0");
-			if (type != null)
-				method = DefinitionLoader .GetMethodDefinition (type, "<AnonymousMethodWithUnusedParameters>c__2", null);
-			// otherwise try for csc (inside same class)
-			if (method == null) {
-				type = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest> ();
-				foreach (MethodDefinition md in type.Methods) {
+			TypeDefinition type = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest> ();
+			Assert.IsNotNull (type, "type not found!");
+			foreach (TypeDefinition nestedType in type.NestedTypes) {
+				if (!nestedType.Name.StartsWith("<>c", StringComparison.Ordinal))
+					continue;
+				foreach (MethodDefinition md in nestedType.Methods) {
 					if (md.Name.StartsWith ("<AnonymousMethodWithUnusedParameters>")) {
-						method = md;
-						break;
+						AssertRuleDoesNotApply (md);
+						Assert.Pass();
 					}
 				}
 			}
-
-            // Fix for VS 15.6 default C# compilation
-            if (method == null)
-            {
-                method = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest>()
-                    .NestedTypes
-                    .Where(t => t.Name.StartsWith("<"))
-                    .SelectMany(t => t.Methods)
-                    .Where(m => m.Name.StartsWith("<AnonymousMethodWithUnusedParameters>"))
-                    .FirstOrDefault();
-            }
-
-			Assert.IsNotNull (method, "method not found!");
-			AssertRuleDoesNotApply (method);
 		}
 
 		public delegate void SimpleEventHandler (int x);
 #pragma warning disable 67
-        public event SimpleEventHandler SimpleEvent;
+		public event SimpleEventHandler SimpleEvent;
 #pragma warning restore 67
-        public void OnSimpleEvent (int x) 
+		public void OnSimpleEvent (int x) 
 		{
 		}
 

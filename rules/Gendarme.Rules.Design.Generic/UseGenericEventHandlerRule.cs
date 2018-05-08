@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.Generic.UseGenericEventHandlerRule
 //
 // Authors:
@@ -45,7 +45,7 @@ namespace Gendarme.Rules.Design.Generic {
 	/// Bad example:
 	/// <code>
 	/// public delegate void AuthenticityHandler (object sender, AuthenticityEventArgs e);
-	/// 
+	///
 	/// public event AuthenticityHandler CheckingAuthenticity;
 	/// public event AuthenticityHandler CheckedAuthenticity;
 	/// </code>
@@ -63,6 +63,11 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1003:UseGenericEventHandlerInstances")]
 	public class UseGenericEventHandlerRule : GenericsBaseRule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule only apply to (non generated) delegates

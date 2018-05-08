@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Ui.ExecutableTargetRule
 //
 // Authors:
@@ -32,6 +32,9 @@ using Gendarme.Framework;
 
 namespace Gendarme.Rules.UI {
 
+	/// <summary>
+	/// Base class for 'GUI compiled with console' rules
+	/// </summary>
 	[Solution ("Recompile the assembly using '/target:winexe' (gmcs syntax).")]
 	abstract public class ExecutableTargetRule : Rule, IAssemblyRule {
 
@@ -55,10 +58,22 @@ namespace Gendarme.Rules.UI {
 			return false;
 		}
 
+		/// <summary>
+		/// Get executable target assembly name
+		/// </summary>
 		abstract protected string AssemblyName { get; }
 
+		/// <summary>
+		/// Get executable target assembly public key token
+		/// </summary>
+		/// <returns>Executable target assembly key token</returns>
 		abstract protected byte[] GetAssemblyPublicKeyToken ();
 
+		/// <summary>
+		/// Check assembly
+		/// </summary>
+		/// <param name="assembly">Assembly to be chcecked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// 1. Check entry point, if no entry point then it's not an executable

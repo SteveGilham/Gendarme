@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for UseCorrectSuffix Rule
 //
 // Authors:
@@ -17,10 +17,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -53,21 +53,21 @@ namespace Test.Rules.Naming {
 
 	public class OtherAttribute : CorrectAttribute {
 	}
-	
+
 	public class OtherAttr : CorrectAttribute {
 	}
-	
+
 	public class CorrectContextStaticAttribute : ContextStaticAttribute {
 	}
-	
+
 	public class OtherClass {
 	}
-	
+
 	public class YetAnotherClass : Random {
 	}
-	
+
 	public class InterfaceImplementer : ICollection {
-		
+
 		public int Count {
 			get { throw new NotImplementedException(); }
 		}
@@ -90,17 +90,17 @@ namespace Test.Rules.Naming {
 			throw new NotImplementedException();
 		}
 	}
-	
+
 	public class CorrectICollectionCollection : InterfaceImplementer {
 	}
-	
+
 	public class IncorrectICollectionCol : InterfaceImplementer {
 	}
 
 	public class IncorrectICollectionColDerived : IncorrectICollectionCol {
 	}
-	
-	public class MultipleInterfaceImplementer : IEnumerable, IPermission {		
+
+	public class MultipleInterfaceImplementer : IEnumerable, IPermission {
 		public IEnumerator GetEnumerator ()
 		{
 			throw new NotImplementedException();
@@ -141,13 +141,13 @@ namespace Test.Rules.Naming {
 			throw new NotImplementedException();
 		}
 	}
-	
+
 	public class CorrectMultipleInterfaceImplementerPermission : MultipleInterfaceImplementer {
 	}
 
 	public class CorrectMultipleInterfaceImplementerCollection : MultipleInterfaceImplementer {
 	}
-	
+
 	public class IncorrectMultipleInterfaceImplementer : MultipleInterfaceImplementer {
 	}
 
@@ -178,8 +178,8 @@ namespace Test.Rules.Naming {
 		}
 	}
 
-	public class DerivingClassImplementingInterfaces : EventArgs, IPermission {		 
-		
+	public class DerivingClassImplementingInterfaces : EventArgs, IPermission {
+
 		public void FromXml (SecurityElement e)
 		{
 			throw new NotImplementedException();
@@ -215,14 +215,14 @@ namespace Test.Rules.Naming {
 			throw new NotImplementedException();
 		}
 	}
-	
+
 	public class CorrectDerivingClassImplementingInterfacesEventArgs : DerivingClassImplementingInterfaces {
 	}
-	
-	public class IncorrectDerivingClassImplementingInterfacesCollection : DerivingClassImplementingInterfaces { 
+
+	public class IncorrectDerivingClassImplementingInterfacesCollection : DerivingClassImplementingInterfaces {
 	}
-	
-	public class IncorrectDerivingClassImplementingInterfaces : DerivingClassImplementingInterfaces { 
+
+	public class IncorrectDerivingClassImplementingInterfaces : DerivingClassImplementingInterfaces {
 	}
 
 	public class CorrectCollection<T> : Collection<T> {
@@ -276,37 +276,37 @@ namespace Test.Rules.Naming {
 		}
 
 		[Test]
-		public void TestOneLevelInheritanceIncorrectName () 
+		public void TestOneLevelInheritanceIncorrectName ()
 		{
 			AssertRuleFailureWithHighConfidence<IncorrectAttr> (1);
 		}
-		
+
 		[Test]
-		public void TestOneLevelInheritanceCorrectName () 
+		public void TestOneLevelInheritanceCorrectName ()
 		{
 			AssertRuleSuccess<CorrectAttribute> ();
 		}
-		
+
 		[Test]
-		public void TestVariousLevelInheritanceCorrectName () 
+		public void TestVariousLevelInheritanceCorrectName ()
 		{
 			AssertRuleSuccess<OtherAttribute> ();
 		}
-		
+
 		[Test]
-		public void TestVariousLevelInheritanceIncorrectName () 
+		public void TestVariousLevelInheritanceIncorrectName ()
 		{
 			AssertRuleFailureWithHighConfidence<OtherAttr> (1);
 		}
-		
+
 		[Test]
-		public void NeedToBeResolvedTypes () 
+		public void NeedToBeResolvedTypes ()
 		{
 			AssertRuleSuccess<CorrectContextStaticAttribute> ();
 			AssertRuleSuccess<OtherClass> ();
 			AssertRuleSuccess<YetAnotherClass> ();
 		}
-		
+
 		[Test]
 		public void TestInterfaceImplementerCorrectName ()
 		{
@@ -314,25 +314,25 @@ namespace Test.Rules.Naming {
 		}
 
  		[Test]
-		public void TestInterfaceImplementerIncorrectName () 
+		public void TestInterfaceImplementerIncorrectName ()
 		{
 			AssertRuleFailureWithLowConfidence<IncorrectICollectionCol> ();
-		}			       
-		
+		}
+
 		[Test]
 		public void TestMultipleInterfaceImplementerCorrectName ()
 		{
 			AssertRuleSuccess<CorrectMultipleInterfaceImplementerPermission> ();
-		}     
+		}
 
 		[Test]
 		public void TestMultipleInterfaceImplementerAnotherCorrectName ()
 		{
 			AssertRuleSuccess<CorrectMultipleInterfaceImplementerCollection> ();
-		}				     
-		
+		}
+
        		[Test]
-		public void TestMultipleInterfaceImplementerIncorrectName () 
+		public void TestMultipleInterfaceImplementerIncorrectName ()
 		{
 			AssertRuleFailureWithHighConfidence<MultipleInterfaceImplementer> (1);
 		}
@@ -352,19 +352,19 @@ namespace Test.Rules.Naming {
 			//hence it has high confidence
 			AssertRuleFailureWithHighConfidence<IncorrectICollectionImplementer> (1);
 		}
-		
+
 		[Test]
 		public void TestDerivingClassImplementingInterfacesCorrectName ()
 		{
 			AssertRuleSuccess<CorrectDerivingClassImplementingInterfacesEventArgs> ();
-		}      
-		
+		}
+
 		[Test]
 		public void TestDerivingClassImplementingInterfacesIncorrectName ()
 		{
 			AssertRuleFailureWithLowConfidence<IncorrectDerivingClassImplementingInterfaces> ();
-		}      
-		
+		}
+
 		[Test]
 		public void TestDerivingClassImplementingInterfacesAnotherIncorrectName ()
 		{

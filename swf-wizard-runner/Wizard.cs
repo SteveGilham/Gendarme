@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.cs: A SWF-based Wizard Runner for Gendarme
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -154,7 +154,7 @@ namespace Gendarme {
 				Current = Page.SelectRules;
 				break;
 			case Page.Analyze:
-				// then ask confirmation before aborting 
+				// then ask confirmation before aborting
 				// and move back one step
 				if (ConfirmAnalyzeAbort (false))
 					Current = Page.Options;
@@ -289,7 +289,7 @@ namespace Gendarme {
 
 		private void RemoveFileButtonClick (object sender, EventArgs e)
 		{
-			// remove from the last one to the first one 
+			// remove from the last one to the first one
 			// so the indices are still valid during the removal operation
 			for (int i = file_list_box.SelectedIndices.Count - 1; i >= 0; i--) {
 				int remove = file_list_box.SelectedIndices [i];
@@ -345,7 +345,7 @@ namespace Gendarme {
 			// asynchronously load assemblies (or the one that changed)
 			assemblies_loading = assembly_loader.BeginInvoke (EndCallback, assembly_loader);
 
-			rules_count_label.Text = String.Format (CultureInfo.CurrentCulture, 
+			rules_count_label.Text = String.Format (CultureInfo.CurrentCulture,
 				"{0} rules are available.", Runner.Rules.Count);
 			if (rules_loading == null)
 				throw new InvalidOperationException ("rules_loading");
@@ -581,7 +581,7 @@ namespace Gendarme {
 			// wizard limits this as a "global" (all rule) setting
 			ApplicabilityScope scope = (ApplicabilityScope) Settings.Default.Scope;
 			foreach (IRule rule in Runner.Rules) {
-				rule.ApplicabilityScope = scope; 
+				rule.ApplicabilityScope = scope;
 			}
 
 			// activate rules based on user selection
@@ -626,7 +626,7 @@ namespace Gendarme {
 		/// <param name="e">RunnerEventArgs that contains the Assembly being analyzed and the Runner</param>
 		internal void PostTypeUpdate (RunnerEventArgs e)
 		{
-			analyze_defect_label.Text = String.Format (CultureInfo.CurrentCulture, 
+			analyze_defect_label.Text = String.Format (CultureInfo.CurrentCulture,
 				"Defects Found: {0}", e.Runner.Defects.Count);
 		}
 
@@ -674,7 +674,7 @@ namespace Gendarme {
 
 		private static bool CouldCopyReport (ref string currentName, string fileName)
 		{
-			// if possible avoid re-creating the report (as it can 
+			// if possible avoid re-creating the report (as it can
 			// be a long operation) and simply copy the file
 			bool copy = (currentName != null);
 			if (copy) {

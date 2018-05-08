@@ -123,17 +123,17 @@ namespace Test.Rules.Correctness {
 			public struct Section {
 				private short mask;
 				private short offset;
-				
+
 				internal Section (short mask, short offset)
 				{
 					this.mask = mask;
 					this.offset = offset;
 				}
-				
+
 				public short Mask {
 					get { return mask; }
 				}
-				
+
 				public short Offset {
 					get { return offset; }
 				}
@@ -160,7 +160,7 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleSuccess<Item> ("set_UsesValue");
 		}
-		
+
 		[Test]
 		public void TestDoesNotUseValue()
 		{

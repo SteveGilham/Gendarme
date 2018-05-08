@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidSpeculativeGenerality Rule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,16 +39,16 @@ using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
 namespace Test.Rules.Smells {
-	
+
 	//
 	public abstract class AbstractClass {
 		public abstract void MakeStuff ();
 	}
 
 	public class OverriderClass : AbstractClass {
-		public override void MakeStuff () 
+		public override void MakeStuff ()
 		{
-		
+
 		}
 	}
 
@@ -58,13 +58,13 @@ namespace Test.Rules.Smells {
 	}
 
 	public class OtherOverriderClass : OtherAbstractClass {
-		public override void MakeStuff () 
+		public override void MakeStuff ()
 		{
 		}
 	}
 
 	public class YetAnotherOverriderClass : OtherAbstractClass {
-		public override void MakeStuff () 
+		public override void MakeStuff ()
 		{
 		}
 	}
@@ -72,29 +72,29 @@ namespace Test.Rules.Smells {
 	//
 
 	public class ClassWithUnusedParameter {
-		public void Foo (int x) 
+		public void Foo (int x)
 		{
 		}
 	}
 
 	public class ClassWithFourUnusedParameters {
-		public void Foo (int x) 
+		public void Foo (int x)
 		{
 		}
 
-		public void Bar (int x, char f) 
+		public void Bar (int x, char f)
 		{
 		}
 
-		public void Baz (float f) 
+		public void Baz (float f)
 		{
 		}
 
 	}
-	
+
 	//
 	public class UnnecessaryDelegatedClass {
-		public void WriteLine (string message) 
+		public void WriteLine (string message)
 		{
 			Console.WriteLine (message);
 		}
@@ -130,7 +130,7 @@ namespace Test.Rules.Smells {
 	public class AvoidSpeculativeGeneralityTest : TypeRuleTestFixture<AvoidSpeculativeGeneralityRule> {
 
 		[Test]
-		public void AbstractClassesWithoutResponsabilityTest () 
+		public void AbstractClassesWithoutResponsabilityTest ()
 		{
 			AssertRuleFailure<AbstractClass> (1);
 		}
@@ -142,13 +142,13 @@ namespace Test.Rules.Smells {
 		}
 
 		[Test]
-		public void ClassWithUnusedParameterTest () 
+		public void ClassWithUnusedParameterTest ()
 		{
 			AssertRuleFailure<ClassWithUnusedParameter> (1);
 		}
-		
+
 		[Test]
-		public void ClassWithFourUnusedParametersTest () 
+		public void ClassWithFourUnusedParametersTest ()
 		{
 			AssertRuleFailure<ClassWithFourUnusedParameters> (4);
 		}

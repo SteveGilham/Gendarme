@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.TypesShouldBeInsideNamespacesRule
 //
 // Authors:
@@ -43,7 +43,7 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// using System;
-	/// 
+	///
 	/// public class Configuration {
 	/// }
 	/// </code>
@@ -52,10 +52,10 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// using System;
-	/// 
+	///
 	/// namespace My.Stuff {
-	///	public class Configuration {
-	///	}
+	/// 	public class Configuration {
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -65,12 +65,17 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1050:DeclareTypesInNamespaces")]
 	public class TypesShouldBeInsideNamespacesRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule doesn't apply to nested types, since the declaring type will already be reported
 			if (type.IsNested)
 				return RuleResult.DoesNotApply;
-			
+
 			// rule applies to only to types visible outside the assembly
 			if (!type.IsVisible ())
 				return RuleResult.DoesNotApply;

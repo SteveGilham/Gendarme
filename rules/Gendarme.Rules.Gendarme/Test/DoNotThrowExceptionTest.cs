@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.Gendarme.DoNotThrowExceptionTest
 //
 // Authors:
@@ -167,7 +167,7 @@ namespace Test.Rules.Gendarme {
 		{
 			AssertRuleSuccess<GoodRule1> ("CheckMethod");
 			AssertRuleSuccess<GoodRule2> ("set_RuleProperty"); // such properties setters will be called in a runner
-			
+
 		}
 
 		[Test]

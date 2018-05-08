@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Security.Cas.AddMissingTypeInheritanceDemandRule
 //
 // Authors:
@@ -38,7 +38,7 @@ namespace Gendarme.Rules.Security.Cas {
 
 	/// <summary>
 	/// The rule checks for types that are not <c>sealed</c> but have a <c>LinkDemand</c>.
-	/// In this case the type should also have an <c>InheritanceDemand</c> for the same 
+	/// In this case the type should also have an <c>InheritanceDemand</c> for the same
 	/// permissions. An alternative is to seal the type.
 	/// </summary>
 	/// <example>
@@ -73,6 +73,11 @@ namespace Gendarme.Rules.Security.Cas {
 	[FxCopCompatibility ("Microsoft.Security", "CA2126:TypeLinkDemandsRequireInheritanceDemands")]
 	public class AddMissingTypeInheritanceDemandRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only to types that

@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.MissingAttributeUsageOnCustomAttributeRule
 //
 // Authors:
@@ -34,8 +34,8 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design {
 
 	/// <summary>
-	/// This rule verifies that every custom attribute (i.e. types that inherit from 
-	/// <c>System.Attribute</c>) is decorated with an <c>[AttributeUsage]</c> 
+	/// This rule verifies that every custom attribute (i.e. types that inherit from
+	/// <c>System.Attribute</c>) is decorated with an <c>[AttributeUsage]</c>
 	/// attribute to specify which kind of code instances of that custom attribute can be applied to.
 	/// </summary>
 	/// <example>
@@ -53,7 +53,7 @@ namespace Gendarme.Rules.Design {
 	/// [AttributeUsage (AttributeTargets.All)]
 	/// public sealed class AttributeApplyingToAnything : Attribute {
 	/// }
-	/// 
+	///
 	/// // while this applies only to fields
 	/// [AttributeUsage (AttributeTargets.Field)]
 	/// public sealed class AttributeApplyingToFields : Attribute {
@@ -66,6 +66,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1018:MarkAttributesWithAttributeUsage")]
 	public class MissingAttributeUsageOnCustomAttributeRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to attributes

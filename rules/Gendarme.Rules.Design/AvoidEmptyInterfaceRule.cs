@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.AvoidEmptyInterfaceRule
 //
 // Authors:
@@ -34,7 +34,7 @@ namespace Gendarme.Rules.Design {
 
 	/// <summary>
 	/// This rule fires if an interface declares no members. Empty interfaces are generally
-	/// not useful except as markers to categorize types and attributes are the preferred 
+	/// not useful except as markers to categorize types and attributes are the preferred
 	/// way to handle that.
 	/// </summary>
 	/// <example>
@@ -42,7 +42,7 @@ namespace Gendarme.Rules.Design {
 	/// <code>
 	/// public interface IMarker {
 	/// }
-	/// 
+	///
 	/// public class MyClass : IMarker {
 	/// }
 	/// </code>
@@ -61,6 +61,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
 	public class AvoidEmptyInterfaceRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule only applies to interfaces

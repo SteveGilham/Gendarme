@@ -1,9 +1,9 @@
-//
+﻿//
 // Gendarme.Rules.Interoperability.Com.AvoidOverloadsInComVisibleInterfacesRule
 //
 // Authors:
 //	N Lum <nol888@gmail.com>
-// 
+//
 // Copyright (C) 2010 N Lum
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -41,21 +41,21 @@ namespace Gendarme.Rules.Interoperability.Com {
 	/// <example>
 	/// Bad example:
 	/// <code>
-	///	[ComVisible(true)]
-	///	public interface Bad {
-	///		void SomeMethod();
-	///		void SomeMethod(int SomeValue);
-	///	}
+	/// 	[ComVisible(true)]
+	/// 	public interface Bad {
+	/// 		void SomeMethod();
+	/// 		void SomeMethod(int SomeValue);
+	/// 	}
 	/// </code>
 	/// </example>
 	/// <example>
 	/// Good example:
 	/// <code>
 	/// [ComVisible(true)]
-	///	public interface Good {
-	///		void SomeMethod();
-	///		void SomeMethodWithValue(int SomeValue);
-	///	}
+	/// 	public interface Good {
+	/// 		void SomeMethod();
+	/// 		void SomeMethodWithValue(int SomeValue);
+	/// 	}
 	/// </code>
 	/// </example>
 
@@ -66,11 +66,19 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 		private HashSet<string> methods;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public AvoidOverloadsInComVisibleInterfacesRule()
 		{
 			methods = new HashSet<string> ();
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType(TypeDefinition type)
 		{
 			// This rule only applies to public interfaces with methods and explicit ComVisible.

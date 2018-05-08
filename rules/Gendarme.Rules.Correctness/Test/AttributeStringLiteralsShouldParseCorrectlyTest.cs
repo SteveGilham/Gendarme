@@ -64,7 +64,7 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleSuccess (SimpleMethods.EmptyMethod);
 		}
-		
+
 		[ValidSince ("1.0.0.0")]
 		[Reference ("http://www.mono-project.com/Gendarme")]
 		[Uses ("00000101-0000-0000-c000-000000000046")]
@@ -168,13 +168,13 @@ namespace Test.Rules.Correctness {
 
 	[TestFixture]
 	public class AttributeStringLiteralsShouldParseCorrectlyTypeTest : TypeRuleTestFixture<AttributeStringLiteralsShouldParseCorrectlyRule> {
-		
+
 		[Test]
 		public void SkipOnAttributelessTypesTest ()
 		{
 			AssertRuleSuccess (SimpleTypes.Class);
 		}
-		
+
 		[ValidSince ("1.0.0.0")]
 		[Reference ("http://www.mono-project.com/Gendarme")]
 		[Uses ("00000101-0000-0000-c000-000000000046")]
@@ -190,7 +190,7 @@ namespace Test.Rules.Correctness {
 
 		[ValidSince ("foo")]
 		[Reference ("bar")]
-		[Uses ("0")]	
+		[Uses ("0")]
 		class BadAttributedClass {
 		}
 
@@ -217,7 +217,7 @@ namespace Test.Rules.Correctness {
 		class BadAttributedClassWithFields {
 			[ValidSince ("foo")]
 			[Reference ("bar")]
-			[Uses ("0")]	
+			[Uses ("0")]
 			int foo;
 		}
 
@@ -241,7 +241,7 @@ namespace Test.Rules.Correctness {
 		[Test]
 		public void SuccessOnClassWithWellAttributedPropertyTest ()
 		{
-			AssertRuleSuccess<ClassWithWellAttributedProperty> ();	
+			AssertRuleSuccess<ClassWithWellAttributedProperty> ();
 		}
 
 		class ClassWithBadAttributedProperty {
@@ -359,13 +359,13 @@ namespace Test.Rules.Correctness {
 		public void TearDown ()
 		{
 			AssemblyDefinition definition = DefinitionLoader.GetAssemblyDefinition (this.GetType ());
-			
+
 			foreach (CustomAttribute attribute in new ArrayList (definition.CustomAttributes)) {
 				//We only revert our changes on assembly.
 				if (String.Compare (attribute.AttributeType.FullName, "System.Runtime.CompilerServices.RuntimeCompatibilityAttribute") != 0)
 					definition.CustomAttributes.Remove (attribute);
 			}
-			
+
 			for (int index = 0; index < definition.Modules.Count; index++) {
 				if (String.Compare (definition.Modules[index].Name, "test") == 0)
 					definition.Modules.Remove (definition.Modules[index]);

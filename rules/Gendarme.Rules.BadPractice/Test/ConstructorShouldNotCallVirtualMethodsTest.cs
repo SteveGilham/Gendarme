@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for ConstructorShouldNotCallVirtualMethodsRule
 //
 // Authors:
@@ -83,7 +83,7 @@ namespace Test.Rules.BadPractice {
 			this.NormalMethod ();
 		}
 
-		private void NormalMethod () 
+		private void NormalMethod ()
 		{
 		}
 
@@ -153,7 +153,7 @@ namespace Test.Rules.BadPractice {
 			this.NormalMethod ();
 		}
 
-		protected virtual void VirtualMethod () 
+		protected virtual void VirtualMethod ()
 		{
 		}
 

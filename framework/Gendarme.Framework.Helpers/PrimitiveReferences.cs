@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.Helpers.PrimitiveReferences
 //
 // Authors:

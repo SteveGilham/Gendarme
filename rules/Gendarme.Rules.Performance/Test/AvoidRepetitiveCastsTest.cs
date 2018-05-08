@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for AvoidRepetitiveCastsRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -118,12 +118,12 @@ namespace Test.Rules.Performance {
 		}
 
 		/*
-		This rule now checks subscripts to ensure that they match so code like 
-		GoodLoadElement2 below no longer fails. However the rule currently is 
-		only able to match constant integer subscript expressions. This means 
-		the GoodLoadElement2 will no longer be reported as an error. In order 
+		This rule now checks subscripts to ensure that they match so code like
+		GoodLoadElement2 below no longer fails. However the rule currently is
+		only able to match constant integer subscript expressions. This means
+		the GoodLoadElement2 will no longer be reported as an error. In order
 		to get this to work we'd have to:
-		1) Compare expressions for equality which probably would not be too 
+		1) Compare expressions for equality which probably would not be too
 		hard for simple cases like the one below.
 		2) Compare locals and arguments used in the expression. This would be
 		pretty difficult and would likely require a custom dataflow analysis
@@ -308,13 +308,13 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<IndexerResultCastTest> ("Methods");
 			AssertRuleFailure<IndexerResultCastTest> ("BadMethods");
 		}
-		
+
 		private sealed class MyInstruction {
 			public object Operand {
 				get { return null; }
 			}
 		}
-		
+
 		private object ReuseLocal (MyInstruction o)
 		{
 			MyInstruction i = (MyInstruction)  (o.Operand);
@@ -326,7 +326,7 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleSuccess<AvoidRepetitiveCastsTest> ("ReuseLocal");
 		}
-		
+
 		private string GoodLoadElement1 (object[] a1, object[] a2)
 		{
 			string s = (string) a1 [7];
@@ -355,7 +355,7 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<AvoidRepetitiveCastsTest> ("GoodLoadElement2");
 			AssertRuleFailure<AvoidRepetitiveCastsTest> ("BadLoadElement");
 		}
-		
+
 		private object Compute (int x)
 		{
 			return null;

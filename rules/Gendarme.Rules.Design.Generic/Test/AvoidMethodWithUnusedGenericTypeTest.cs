@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Tests for AvoidMethodWithUnusedGenericTypeRule
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -89,11 +89,11 @@ namespace Test.Rules.Design.Generic {
 		{
 			AssertRuleFailure<BadCases> ("Single", 1);
 			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "1");
-			
+
 			AssertRuleFailure<BadCases> ("Double", 2);
 			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "2a");
 			Assert.AreEqual (Severity.Medium, Runner.Defects [1].Severity, "2b");
-			
+
 			AssertRuleFailure<BadCases> ("Triple", 3);
 			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "3a");
 			Assert.AreEqual (Severity.Medium, Runner.Defects [1].Severity, "3b");

@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Design.Generic.AvoidDeclaringCustomDelegatesRule
 //
 // Authors:
@@ -38,7 +38,7 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Design.Generic {
 
 	/// <summary>
-	/// This rule will fire if custom delegates are defined when either pre-defined <code>System.Action</code>, 
+	/// This rule will fire if custom delegates are defined when either pre-defined <code>System.Action</code>,
 	/// <code>Action&lt;T[,...]&gt;</code> or <code>Func&lt;[Tx,...]TResult&gt;</code> could have been used.
 	/// </summary>
 	/// <example>
@@ -114,6 +114,11 @@ namespace Gendarme.Rules.Design.Generic {
 			"Replace with Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,TResult>",
 		};
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule only apply to (non generated) delegates

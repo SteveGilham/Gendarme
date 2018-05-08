@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for InstantiateArgumentExceptionsCorrectlyRule
 //
 // Authors:
@@ -108,8 +108,8 @@ namespace Test.Rules.Exceptions {
 		public void SuccessOnArgumentOutOfRangeExceptionWithTwoParametersInGoodOrderTest ()
 		{
 			AssertRuleSuccess<InstantiateArgumentExceptionCorrectlyTest> ("ArgumentOutOfRangeExceptionWithTwoParametersInGoodOrder");
-		}	
-		
+		}
+
 		public void ArgumentOutOfRangeExceptionWithTwoParametersInBadOrder (int parameter)
 		{
 			throw new ArgumentOutOfRangeException ("This parameter is out of order", "parameter");
@@ -256,7 +256,7 @@ namespace Test.Rules.Exceptions {
 				throw new IndexOutOfRangeException ("Index was outside the bounds of the array.");
 			if (index > array.Length)
 				throw new IndexOutOfRangeException ("Index was outside the bounds of the array.");
-		
+
 			IEnumerator it = null;
 			int i = index;
 			while (it.MoveNext ()) {
@@ -285,23 +285,23 @@ namespace Test.Rules.Exceptions {
 				throw new ArgumentOutOfRangeException("versionRequiredToExtract");
 			}
 		}
-		
+
 		[Test]
 		public void FailOnMixedArgumentExceptionsAndConditionalsTest ()
 		{
 			AssertRuleFailure<InstantiateArgumentExceptionCorrectlyTest> ("MixedArgumentExceptionsAndConditionals", 1);
 		}
-		
+
 		private string GetString (string message)
 		{
 			return message;
 		}
-	
+
 		public void ArgumentExceptionsWithTranslatedMessage (int parameter)
 		{
 			throw new ArgumentException (GetString("Error"), "parameter");
 		}
-		
+
 		[Test]
 		public void SuccessOnArgumentExceptionsWithTranslatedMessageTest ()
 		{
@@ -663,7 +663,7 @@ namespace Test.Rules.Exceptions {
 			AssertRuleSuccess<InstantiateArgumentExceptionCorrectlyTest> ("StringFormatForMessage");
 		}
 
-		// adapted from NamespaceEngine.cs 
+		// adapted from NamespaceEngine.cs
 		// gmcs creates an inner type with fields and the exception can be thrown from there (without parameter)
 		class CompilerGeneratedInnerIterator {
 #pragma warning disable 649

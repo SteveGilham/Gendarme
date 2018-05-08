@@ -1,4 +1,4 @@
-// 
+﻿//
 // Gendarme.Rules.Design.AbstractTypesShouldNotHavePublicConstructorsRule
 //
 // Authors:
@@ -43,9 +43,9 @@ namespace Gendarme.Rules.Design {
 	/// Bad example:
 	/// <code>
 	/// abstract public class MyClass {
-	///	public MyClass ()
-	///	{
-	///	}
+	/// 	public MyClass ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -53,9 +53,9 @@ namespace Gendarme.Rules.Design {
 	/// Good example:
 	/// <code>
 	/// abstract public class MyClass {
-	///	protected MyClass ()
-	///	{
-	///	}
+	/// 	protected MyClass ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -65,6 +65,11 @@ namespace Gendarme.Rules.Design {
 	[FxCopCompatibility ("Microsoft.Design", "CA1012:AbstractTypesShouldNotHaveConstructors")]
 	public class AbstractTypesShouldNotHavePublicConstructorsRule : Rule, ITypeRule {
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only on abstract types

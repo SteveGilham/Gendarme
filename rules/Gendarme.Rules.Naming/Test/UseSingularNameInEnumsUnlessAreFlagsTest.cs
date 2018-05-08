@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for UseSingularNameInEnumsUnlessAreFlags Rule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,7 +39,7 @@ using NUnit.Framework;
 using Test.Rules.Helpers;
 
 namespace Test.Rules.Naming {
-	
+
 	public enum DayOfWeek {
 		Sunday,
 		Monday,
@@ -49,22 +49,22 @@ namespace Test.Rules.Naming {
 		Friday,
 		Saturday
 	}
-	
+
 	public enum DateTimeKinds {
-		Local, 
+		Local,
 		Unspecified,
 		Utc
 	}
-	
+
 	[Flags]
 	public enum StringSplitOptions {
 		None,
 		RemoveEmptyEntries
 	}
-	
+
 	[TestFixture]
 	public class UseSingularNameInEnumsUnlessAreFlagsTest {
-		
+
 		private ITypeRule rule;
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
@@ -78,25 +78,25 @@ namespace Test.Rules.Naming {
 			rule = new UseSingularNameInEnumsUnlessAreFlagsRule ();
 			runner = new TestRunner (rule);
 		}
-		
+
 		[Test]
-		public void TestEnumHasSingularName () 
+		public void TestEnumHasSingularName ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Naming.DayOfWeek");
 			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
 			Assert.AreEqual (0, runner.Defects.Count, "Count");
 		}
-		
+
 		[Test]
-		public void TestEnumHasPluralName () 
+		public void TestEnumHasPluralName ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Naming.DateTimeKinds");
 			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
 			Assert.AreEqual (1, runner.Defects.Count, "Count");
 		}
-		
+
 		[Test]
-		public void TestFlagsAllowedToHavePluralNames () 
+		public void TestFlagsAllowedToHavePluralNames ()
 		{
 			type = assembly.MainModule.GetType ("Test.Rules.Naming.StringSplitOptions");
 			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckType (type), "RuleResult");

@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit Test for AvoidCodeDuplicatedInSameClass Rule.
 //
 // Authors:
@@ -43,7 +43,7 @@ using Test.Rules.Fixtures;
 namespace Test.Rules.Smells
 {
 
-    [TestFixture]
+	[TestFixture]
 	public class AvoidCodeDuplicatedInSameClassTest : TypeRuleTestFixture<AvoidCodeDuplicatedInSameClassRule> { 
 		static IList myList;
 
@@ -279,7 +279,7 @@ namespace Test.Rules.Smells
 		}
 
 #pragma warning disable 414
-        class NonDuplicatedInSwitchs {
+		class NonDuplicatedInSwitchs {
 			Severity severity = Severity.Low;
 			Confidence confidence = Confidence.Normal;
 
@@ -348,14 +348,14 @@ namespace Test.Rules.Smells
 		}
 #pragma warning restore 414
 
-        [Test]
+		[Test]
 		public void SuccessOnNonDuplicatedInSwitchsTest () 
 		{
 			AssertRuleSuccess<NonDuplicatedInSwitchs> ();
 		}
 
 #pragma warning disable 414
-        class DuplicatedInSwitchsLoadingByFields {
+		class DuplicatedInSwitchsLoadingByFields {
 			string option = "LOW";
 			Severity severity = Severity.Low;
 
@@ -428,14 +428,14 @@ namespace Test.Rules.Smells
 		}
 #pragma warning restore 414
 
-        [Test]
+		[Test]
 		public void FailOnDuplicatedInSwitchsLoadingByFieldsTest ()
 		{
 			AssertRuleFailure<DuplicatedInSwitchsLoadingByFields> (1);
 		}
 #pragma warning disable 414
-
-        class NonDuplicatedInSwitchsLoadingByFields {
+		
+		class NonDuplicatedInSwitchsLoadingByFields {
 			string option = "LOW";
 			Severity severity = Severity.Low;
 			Confidence confidence = Confidence.Normal;
@@ -504,15 +504,15 @@ namespace Test.Rules.Smells
 			}
 		}
 #pragma warning restore 414
-
-        [Test]
+		
+		[Test]
 		public void SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest () 
 		{
 			AssertRuleSuccess<NonDuplicatedInSwitchsLoadingByFields> ();	
 		}
 
 #pragma warning disable 219
-        class NonDuplicatedCodeInParameterChecking {
+		class NonDuplicatedCodeInParameterChecking {
 			void MethodWithParameters (string x, string y) 
 			{
 				if ((x == null) || (y == null))
@@ -531,7 +531,7 @@ namespace Test.Rules.Smells
 		}
 #pragma warning restore 219
 
-        [Test]
+		[Test]
 		public void SuccessOnNonDuplicatedCodeInParameterChecking () 
 		{
 			AssertRuleSuccess<NonDuplicatedCodeInParameterChecking> ();
@@ -564,7 +564,7 @@ namespace Test.Rules.Smells
 		}
 
 #pragma warning disable 649
-        class FalsePositiveInConsoleRunner {
+		class FalsePositiveInConsoleRunner {
 			Runner runner;
 
 			static string GetAttribute (XmlNode node, string name, string defaultValue)
@@ -604,7 +604,7 @@ namespace Test.Rules.Smells
 			}
 		}
 #pragma warning restore 649
-        [Test]
+		[Test]
 		public void SuccessOnFalsePositiveInConsoleRunnerTest () 
 		{
 			AssertRuleSuccess<FalsePositiveInConsoleRunner> ();
@@ -639,7 +639,7 @@ namespace Test.Rules.Smells
 		}
 
 #pragma warning disable 649
-        class NonDuplicatedCheckingAndReturningDifferentOperations {
+		class NonDuplicatedCheckingAndReturningDifferentOperations {
 			ulong mask;
 
 			bool IsSubsetOf (string bitmask) 
@@ -658,14 +658,14 @@ namespace Test.Rules.Smells
 		}
 #pragma warning restore 649
 
-        [Test]
+		[Test]
 		public void SuccessOnNonDuplicatedCheckingAndReturningDifferentOperationsTest () 
 		{
 			AssertRuleSuccess<NonDuplicatedCheckingAndReturningDifferentOperations> ();	
 		}
 
 #pragma warning disable 649
-        class CheckingIntegersAndStrings {
+		class CheckingIntegersAndStrings {
 			private IRunner Runner;
 
 			bool CheckParameters (TypeReference eventType, MethodReference invoke) 
@@ -688,7 +688,7 @@ namespace Test.Rules.Smells
 			}
 		}
 #pragma warning restore 649
-        [Test]
+		[Test]
 		public void SuccessOnCheckingIntegersAndStringsTest () 
 		{
 			AssertRuleSuccess<CheckingIntegersAndStrings> ();

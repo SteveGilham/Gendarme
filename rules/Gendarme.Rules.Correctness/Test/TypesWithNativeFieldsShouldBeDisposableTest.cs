@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for TypesWithNativeFieldsShouldBeDisposableRule
 //
 // Authors:
@@ -37,10 +37,10 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Design {
 #pragma warning disable 169
+namespace Test.Rules.Correctness {
 
-    class NoNativeFields {
+	class NoNativeFields {
 		int A;
 		object b;
 	}
@@ -160,7 +160,7 @@ namespace Test.Rules.Design {
 	}
 
 #pragma warning disable 649
-    class NativeFieldsHandleRefAssigned : ICloneable {
+	class NativeFieldsHandleRefAssigned : ICloneable {
 		object A;
 		HandleRef B;
 

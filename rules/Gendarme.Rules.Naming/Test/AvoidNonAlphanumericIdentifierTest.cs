@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for AvoidNonAlphanumericIdentifierRule
 //
 // Authors:
@@ -45,7 +45,7 @@ namespace Test_Rules_Naming {
 
 		public void Method_With_Underscore (string param_with_underscore)
 		{
-			Event_With_Underscore += delegate { 
+			Event_With_Underscore += delegate {
 				Console.WriteLine ("hello");
 			};
 		}

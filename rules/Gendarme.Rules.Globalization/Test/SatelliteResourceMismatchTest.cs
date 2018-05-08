@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,7 +35,7 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Mono.Cecil;
 
-namespace Tests.Rules.Globalization {
+namespace Test.Rules.Globalization {
 
 	[TestFixture]
 	public sealed class SatelliteResourceMismatchTest : AssemblyRuleTestFixture<SatelliteResourceMismatchRule> {
@@ -46,9 +46,8 @@ namespace Tests.Rules.Globalization {
 		public void FixtureSetUp ()
 		{
 			// We use CodeBase insteed of Location to find the satellites assemblies
-			string asmUri = Assembly.GetExecutingAssembly ().CodeBase;
-			Uri uri = new Uri (asmUri);
-			assembly = AssemblyDefinition.ReadAssembly (uri.AbsolutePath);
+			string location = Assembly.GetExecutingAssembly ().Location;
+			assembly = AssemblyDefinition.ReadAssembly (location);
 		}
 
 		[Test]

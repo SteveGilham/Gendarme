@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Naming.UseSingularNameInEnumsUnlessAreFlagsRule class
 //
 // Authors:
@@ -37,15 +37,15 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Naming {
 
 	/// <summary>
-	/// The rule is used for ensure that the name of enumerations are in singular form unless 
+	/// The rule is used for ensure that the name of enumerations are in singular form unless
 	/// the enumeration is used as flags, i.e. decorated with the <c>[Flags]</c> attribute.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
 	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar
+	/// 	Foo,
+	/// 	Bar
 	/// }
 	/// </code>
 	/// </example>
@@ -53,8 +53,8 @@ namespace Gendarme.Rules.Naming {
 	/// Good example (singular):
 	/// <code>
 	/// public enum MyCustomValue {
-	///	Foo,
-	///	Bar 
+	/// 	Foo,
+	/// 	Bar
 	/// }
 	/// </code>
 	/// </example>
@@ -63,9 +63,9 @@ namespace Gendarme.Rules.Naming {
 	/// <code>
 	/// [Flags]
 	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar,
-	///	AllValues = Foo | Bar
+	/// 	Foo,
+	/// 	Bar,
+	/// 	AllValues = Foo | Bar
 	/// }
 	/// </code>
 	/// </example>
@@ -79,6 +79,11 @@ namespace Gendarme.Rules.Naming {
 			return (String.Compare (typeName, typeName.Length - 1, "s", 0, 1, true, CultureInfo.CurrentCulture) == 0);
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to enums - but not enums marked with [Flags] attribute

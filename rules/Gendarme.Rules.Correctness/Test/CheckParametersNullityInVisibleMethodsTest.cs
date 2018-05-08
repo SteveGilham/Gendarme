@@ -1,4 +1,4 @@
-//
+﻿//
 // Unit tests for CheckParametersNullityInVisibleMethodsRule.
 //
 // Authors:
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -41,7 +41,7 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Correctness {
+namespace Test.Rules.Correctness {
 
 	[TestFixture]
 	public class CheckParametersNullityInVisibleMethodsTest : MethodRuleTestFixture<CheckParametersNullityInVisibleMethodsRule> {
@@ -275,7 +275,7 @@ namespace Tests.Rules.Correctness {
 
 		public object ObjectGood {
 			get { return obj; }
-			set { 
+			set {
 				obj = value;
 				// value is checked against null before being used
 				code = (value == null) ? 0 : value.GetHashCode ();
@@ -284,7 +284,7 @@ namespace Tests.Rules.Correctness {
 
 		public object ObjectGoodInverted {
 			get { return obj; }
-			set { 
+			set {
 				obj = value;
 				// value is checked against null before being used
 				code = (null == value) ? 0 : value.GetHashCode ();
@@ -566,7 +566,7 @@ namespace Tests.Rules.Correctness {
 		{
 			Console.WriteLine (s.Length);
 			if (s != null)
-				Console.WriteLine (s.GetHashCode ());	
+				Console.WriteLine (s.GetHashCode ());
 		}
 
 		public void LateCheckInverted (string s)
@@ -754,7 +754,7 @@ namespace Tests.Rules.Correctness {
 		[Test]
 		public void StaticWithParameter ()
 		{
-			AssertRuleSuccess<CheckParametersNullityInVisibleMethodsTest> ("ChecksObjectAndMember");                        
+			AssertRuleSuccess<CheckParametersNullityInVisibleMethodsTest> ("ChecksObjectAndMember");
 		}
 
 		// test case from Iristyle
@@ -767,7 +767,7 @@ namespace Tests.Rules.Correctness {
 			//follow this general pattern because of FxCop false positive on CA1062
 			//http://connect.microsoft.com/VisualStudio/feedback/details/560099/ca1062-false-positive-with-byref-arguments
 			object testCopy = test;
-			
+
 			if (null == testCopy)
 				throw new ArgumentNullException ("test");
 			test = testCopy;
@@ -787,7 +787,7 @@ namespace Tests.Rules.Correctness {
 			//only non-nulls may pass
 			if (ex is ArgumentException) {
 				ex.ToString ();
-			}            
+			}
 		}
 
 		[Test]

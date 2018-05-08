@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Rules.Correctness.AvoidConstructorsInStaticTypesRule
 //
 // Authors:
@@ -36,27 +36,27 @@ using Gendarme.Framework.Rocks;
 namespace Gendarme.Rules.Correctness {
 
 	// note: this rule is similar to Gendarme.Rules.Design.ConsiderUsingStaticTypeRule
-	// but is also applicable to the 1.x runtime (hidding the default ctor was still 
-	// the correct way of handling this back then). The goal is to make this ctor 
+	// but is also applicable to the 1.x runtime (hidding the default ctor was still
+	// the correct way of handling this back then). The goal is to make this ctor
 	// non-visible so people can't instantiate it (e.g. by mistake)
 
 	/// <summary>
 	/// This rule checks for types that contain only static members and fires if the type
 	/// contains a visible
 	/// instance constructor. This was a common mistake in the 1.x framework
-	/// because C# adds a default, public, constructor if no other constructors are provided. 
+	/// because C# adds a default, public, constructor if no other constructors are provided.
 	/// Code using the framework 2.0 (and later) should change this type, if possible, into a
 	/// static type.
 	/// </summary>
 	/// <example>
 	/// Bad example:
 	/// <code>
-	/// // it is possible to instantiate this class since the 
+	/// // it is possible to instantiate this class since the
 	/// // C# compiler adds a default, public, constructor
 	/// public class Class {
-	///	public static void Method ()
-	///	{
-	///	}
+	/// 	public static void Method ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -64,14 +64,14 @@ namespace Gendarme.Rules.Correctness {
 	/// Good example:
 	/// <code>
 	/// public class Class {
-	///	// this class cannot be instantiated
-	///	private Class ()
-	///	{
-	///	}
-	///	
-	///	public static void Method ()
-	///	{
-	///	}
+	/// 	// this class cannot be instantiated
+	/// 	private Class ()
+	/// 	{
+	/// 	}
+	///
+	/// 	public static void Method ()
+	/// 	{
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -112,6 +112,11 @@ namespace Gendarme.Rules.Correctness {
 			return IsAllStatic (type.BaseType.Resolve ());
 		}
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only if the type isn't: an enum, an interface, a struct, a delegate or compiler generated

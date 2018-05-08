@@ -1,4 +1,4 @@
-// 
+﻿//
 // Unit tests for CompareWithEmptyStringEfficientlyRule
 //
 // Authors:
@@ -133,7 +133,7 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleFailure<UsingStringEquals> ("Main");
 			AssertRuleFailure<UsingStringEqualsEmpty> ("Main");
-			
+
 			AssertRuleSuccess<UsingStringLength> ("Main");
 			AssertRuleSuccess<UsingEqualsWithNonStringArg> ("Main");
 

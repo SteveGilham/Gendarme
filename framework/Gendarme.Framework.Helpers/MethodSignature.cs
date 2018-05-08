@@ -1,4 +1,4 @@
-//
+﻿//
 // Gendarme.Framework.MethodSignature
 //
 // Authors:
@@ -45,7 +45,7 @@ namespace Gendarme.Framework.Helpers {
 	/// <code>
 	/// MethodDefinition method = ...
 	/// MethodSignature sig = new MethodSignature ("Dispose");
-	/// if (sig.Match (method)) { 
+	/// if (sig.Match (method)) {
 	///     //matches any method named "Dispose" with any (or no) return value and any number of parameters
 	/// }
 	/// </code>
@@ -146,7 +146,7 @@ namespace Gendarme.Framework.Helpers {
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString ()

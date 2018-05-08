@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.UnitTestsMissingTestFixtureRule
 //
 // Authors:
@@ -45,11 +45,11 @@ namespace Gendarme.Rules.NUnit {
 	/// Bad example:
 	/// <code>
 	/// class Test {
-	///	[Test]
-	///	public void TestMethod ()
-	///	{
-	///		Assert.AreEqual (0, 0);
-	///	}
+	/// 	[Test]
+	/// 	public void TestMethod ()
+	/// 	{
+	/// 		Assert.AreEqual (0, 0);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -58,11 +58,11 @@ namespace Gendarme.Rules.NUnit {
 	/// <code>
 	/// [TestFixture]
 	/// class Test {
-	///	[Test]
-	///	public void TestMethod ()
-	///	{
-	///		Assert.AreEqual (0, 0);
-	///	}
+	/// 	[Test]
+	/// 	public void TestMethod ()
+	/// 	{
+	/// 		Assert.AreEqual (0, 0);
+	/// 	}
 	/// }
 	/// </code>
 	/// </example>
@@ -73,6 +73,11 @@ namespace Gendarme.Rules.NUnit {
 
 		private Version Version25 = new Version (2, 5);
 
+		/// <summary>
+		/// Check type
+		/// </summary>
+		/// <param name="type">Type to be checked</param>
+		/// <returns>Result of the check</returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || type.IsAbstract || !type.HasMethods)
