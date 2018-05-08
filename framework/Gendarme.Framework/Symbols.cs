@@ -41,16 +41,16 @@ namespace Gendarme.Framework {
 
 		private const string AlmostEqualTo = "\u2248";
 
-		private static Instruction ExtractFirst (TypeDefinition type)
+		private static (MethodDefinition, Instruction) ExtractFirst (TypeDefinition type)
 		{
 			if (type == null)
-				return null;
+				return (null, null);
 			foreach (MethodDefinition method in type.Methods) {
 				Instruction ins = ExtractFirst (method);
 				if (ins != null)
-					return ins;
+					return (method, ins);
 			}
-			return null;
+			return (null, null);
 		}
 
 		private static Instruction ExtractFirst (MethodDefinition method)
@@ -192,9 +192,9 @@ namespace Gendarme.Framework {
 			//	return the type source file (based on the first ctor)
 			if (type == null)
 				type = FindTypeFromLocation (defect.Location);
-			candidate = ExtractFirst (type);
-			if (candidate != null)
-				return FormatSource (candidate, method.DebugInformation);
+			var (m, c) = ExtractFirst (type);
+			if (c != null)
+				return FormatSource (c, m.DebugInformation);
 
 			return String.Empty;
 		}
