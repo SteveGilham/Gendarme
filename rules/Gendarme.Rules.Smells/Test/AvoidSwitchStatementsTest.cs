@@ -96,7 +96,7 @@ namespace Test.Rules.Smells {
 			Type type = Type.GetType ("Test.Rules.Smells.AvoidSwitchStatementsTest+<MethodWithoutSwitchAndGenerator>c__Iterator0");
 			if (type == null) {
 				// if not found try the output of MS csc
-				type = Type.GetType ("Test.Rules.Smells.AvoidSwitchStatementsTest+<MethodWithoutSwitchAndGenerator>d__0");
+				type = Type.GetType ("Test.Rules.Smells.AvoidSwitchStatementsTest+<MethodWithoutSwitchAndGenerator>d__6");
 			}
 			Assert.IsNotNull (type, "compiler generated type name");
 			AssertRuleDoesNotApply (type, "MoveNext");
