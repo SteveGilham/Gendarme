@@ -103,7 +103,12 @@ namespace Gendarme.Framework {
 		public string Source {
 			get {
 				if (source == null)
-					source = Symbols.GetSource (this);
+                {
+                    MethodDebugInformation dbg = (Location is MethodDefinition) ? 
+                                                 (Location as MethodDefinition).DebugInformation : 
+                                                 null;
+					source = Symbols.GetSource (this, dbg);
+                }
 				return source;
 			}
 		}

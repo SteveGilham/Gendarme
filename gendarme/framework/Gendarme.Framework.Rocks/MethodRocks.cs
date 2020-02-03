@@ -34,6 +34,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Cecil;
 
@@ -240,7 +241,7 @@ namespace Gendarme.Framework.Rocks {
 				return type.Inherits ("System", "EventArgs");
 
 			if (gp.HasConstraints) {
-				IList<TypeReference> cc = gp.Constraints;
+                IList<TypeReference> cc = gp.Constraints.Select(co => co.ConstraintType).ToList();
 				return ((cc.Count == 1) && cc [0].IsNamed ("System", "EventArgs"));
 			}
 

@@ -73,6 +73,11 @@ namespace Gendarme.Rules.NUnit {
 
 		private Version Version25 = new Version (2, 5);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || type.IsAbstract || !type.HasMethods)

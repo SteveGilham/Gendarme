@@ -70,6 +70,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 		private const string ComVisible = "System.Runtime.InteropServices.ComVisibleAttribute";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// Only check for value types and types with fields.

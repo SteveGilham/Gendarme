@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 using Mono.Cecil;
 using Gendarme.Framework;
@@ -148,7 +149,8 @@ namespace Gendarme.Rules.Naming {
 			if (!type.HasInterfaces)
 				return null;
 
-			foreach (TypeReference interfaceReference in type.Interfaces) {
+            foreach (TypeReference interfaceReference in type.Interfaces.Select(x => x.InterfaceType))
+            {
 				TypeDefinition interfaceCandidate = interfaceReference.Resolve ();
 				if ((interfaceCandidate == null) || !interfaceCandidate.HasMethods)
 					continue;

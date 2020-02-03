@@ -36,8 +36,15 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Gendarme {
 
+    /// <summary>
+    /// 
+    /// </summary>
 	abstract public class GendarmeRule : Rule {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runner"></param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);

@@ -75,6 +75,11 @@ namespace Gendarme.Rules.Globalization {
 			return false;
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// check if the the rule applies to this method
@@ -91,6 +96,9 @@ namespace Gendarme.Rules.Globalization {
 
 		#region FIXME (following code is a copy of AvoidUncalledPrivateCodeRule)
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public override void TearDown ()
 		{
 			// reusing the cache (e.g. the wizard) is not a good thing if an exception

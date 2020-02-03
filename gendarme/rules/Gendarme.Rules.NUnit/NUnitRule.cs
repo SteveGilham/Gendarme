@@ -36,10 +36,20 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.NUnit {
 
+    /// <summary>
+    /// 
+    /// </summary>
 	abstract public class NUnitRule : Rule {
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public Version NUnitVersion { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runner"></param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);

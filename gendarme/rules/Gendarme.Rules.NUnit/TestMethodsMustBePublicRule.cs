@@ -64,6 +64,11 @@ namespace Gendarme.Rules.NUnit {
 	[Problem ("Test method is not marked as public, which means it will not be executed by most test runners.")]
 	[Solution ("Change method visibility to public.")]
 	public class TestMethodsMustBePublicRule : NUnitRule, IMethodRule {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (!method.IsTest ())

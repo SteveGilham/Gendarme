@@ -66,11 +66,19 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 		private HashSet<string> methods;
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public AvoidOverloadsInComVisibleInterfacesRule()
 		{
 			methods = new HashSet<string> ();
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType(TypeDefinition type)
 		{
 			// This rule only applies to public interfaces with methods and explicit ComVisible.

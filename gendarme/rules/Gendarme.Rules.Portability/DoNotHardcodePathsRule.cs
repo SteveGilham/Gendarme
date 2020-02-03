@@ -338,7 +338,7 @@ namespace Gendarme.Rules.Portability {
 				break;
 			default:
 				if (afterLdstr.IsStoreLocal ())
-					CheckIdentifier (afterLdstr.GetVariable (method_body.Method).Name);
+                    CheckIdentifier(afterLdstr.GetVariable(method_body.Method).MaybeGetName(method_body.Method.DebugInformation));
 				else
 					return false;
 				break;

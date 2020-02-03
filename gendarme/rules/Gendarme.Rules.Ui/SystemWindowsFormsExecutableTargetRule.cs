@@ -51,10 +51,17 @@ namespace Gendarme.Rules.UI {
 	// The base class has the solution text.
 	public class SystemWindowsFormsExecutableTargetRule : ExecutableTargetRule {
 
+        /// <summary>
+        /// 
+        /// </summary>
 		protected override string AssemblyName {
 			get { return "System.Windows.Forms"; }
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
 		protected override byte[] GetAssemblyPublicKeyToken ()
 		{
 			return new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };

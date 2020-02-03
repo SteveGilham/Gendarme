@@ -80,6 +80,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1403:AutoLayoutTypesShouldNotBeComVisible")]
 	public class AutoLayoutTypesShouldNotBeComVisibleRule : Rule, ITypeRule {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsEnum || !type.IsValueType || !type.HasCustomAttributes || 

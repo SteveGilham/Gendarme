@@ -171,7 +171,12 @@ namespace Gendarme.Rules.Concurrency {
 					// look for the variable, if it's not then stop analysis
 					VariableDefinition load = caller.GetVariable (method);
 					if ((load != null) && !CheckVariable (method, caller, load)) {
-						string msg = String.Format (CultureInfo.InvariantCulture, "Variable '{0}' does not seems to be checked against null.", load.Name);
+                        string name = String.Empty;
+                        if  (method.DebugInformation != null)
+                        {
+                            method.DebugInformation.TryGetName(load, out name);
+                        }
+						string msg = String.Format (CultureInfo.InvariantCulture, "Variable '{0}' does not seems to be checked against null.", name);
 						Runner.Report (method, ins, Severity.High, Confidence.Normal, msg);
 					}
 				}

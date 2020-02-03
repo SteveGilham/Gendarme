@@ -50,10 +50,17 @@ namespace Gendarme.Rules.UI {
 	// The base class has the solution text.
 	public class GtkSharpExecutableTargetRule: ExecutableTargetRule {
 
+        /// <summary>
+        /// 
+        /// </summary>
 		protected override string AssemblyName {
 			get { return "gtk-sharp"; }
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
 		protected override byte[] GetAssemblyPublicKeyToken ()
 		{
 			return new byte[] { 0x35, 0xe1, 0x01, 0x95, 0xda, 0xb3, 0xc9, 0x9f };

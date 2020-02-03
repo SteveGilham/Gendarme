@@ -80,6 +80,11 @@ namespace Gendarme.Rules.NUnit {
 		private int reportCounter = 0;
 		private Defect defectDelayed;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			reportCounter = 0;

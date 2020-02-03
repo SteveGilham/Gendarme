@@ -119,6 +119,10 @@ namespace Gendarme.Rules.Interoperability.Com {
 				CheckInterface (td);
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runner"></param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -127,6 +131,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 			FindInterfaces ();
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || !type.HasCustomAttributes)

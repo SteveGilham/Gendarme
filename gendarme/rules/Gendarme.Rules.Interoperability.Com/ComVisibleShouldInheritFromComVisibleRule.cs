@@ -90,6 +90,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1405:ComVisibleTypeBaseTypesShouldBeComVisible")]
 	public class ComVisibleShouldInheritFromComVisibleRule : Rule, ITypeRule {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.BaseType == null)

@@ -95,6 +95,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1406:AvoidInt64ArgumentsForVB6Clients")]
 	public class AvoidInt64ArgumentsInComVisibleMethodsRule : Rule, IMethodRule {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (!method.HasParameters)

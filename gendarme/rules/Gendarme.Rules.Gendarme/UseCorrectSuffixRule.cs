@@ -68,6 +68,11 @@ namespace Gendarme.Rules.Gendarme {
 	[Problem ("Types implementing IRule should have the 'Rule' suffix. Other types should not have this suffix.")]
 	[Solution ("Change type name to follow this rule.")]
 	public class UseCorrectSuffixRule : GendarmeRule, ITypeRule {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			bool endsWithRule = type.Name.EndsWith ("Rule", StringComparison.Ordinal);

@@ -79,6 +79,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[Solution ("Add [ComVisible (false)] attribute to the method, or make static method an instance method.")]
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1407:AvoidStaticMembersInComVisibleTypes")]
 	public class AvoidStaticMembersInComVisibleTypesRule : Rule, IMethodRule {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (!IsApplicableMethod (method))

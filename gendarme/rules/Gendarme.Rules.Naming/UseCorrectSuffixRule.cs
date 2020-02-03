@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 using Mono.Cecil;
@@ -210,7 +211,8 @@ namespace Gendarme.Rules.Naming {
 						currentTypeSuffix = true;
 				} else {
 					// if no suffix for base type is found, we start looking through interfaces
-					foreach (TypeReference iface in current.Interfaces) {
+                    foreach (TypeReference iface in current.Interfaces.Select(x => x.InterfaceType))
+                    {
 						if (TryGetCandidates (iface, out candidates)) {
 							suffixes.AddRangeIfNew (candidates);
 							if (current == type)

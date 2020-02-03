@@ -92,6 +92,11 @@ namespace Gendarme.Rules.UI {
 
 		private const string SystemWindowsForms = "System.Windows.Forms";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			MethodDefinition entry_point = assembly.EntryPoint;

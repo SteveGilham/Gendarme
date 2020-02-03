@@ -79,6 +79,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1408:DoNotUseAutoDualClassInterfaceType")]
 	public class DoNotUseAutoDualClassInterfaceTypeRule : Rule, ITypeRule {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsTypeComVisible ())

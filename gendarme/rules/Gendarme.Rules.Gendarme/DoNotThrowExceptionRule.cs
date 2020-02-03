@@ -68,6 +68,10 @@ namespace Gendarme.Rules.Gendarme {
 	[Solution ("Change the code so that it catches exceptions or does not throw them at all.")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DoNotThrowExceptionRule : GendarmeRule, IMethodRule {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runner"></param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -78,7 +82,11 @@ namespace Gendarme.Rules.Gendarme {
 			};
 		}
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (!method.HasBody)

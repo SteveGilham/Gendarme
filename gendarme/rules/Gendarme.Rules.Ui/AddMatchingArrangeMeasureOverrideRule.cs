@@ -74,6 +74,10 @@ namespace Gendarme.Rules.UI {
 		private static MethodSignature measureSignature = new MethodSignature ("MeasureOverride",
 									Size, parameters, checkOverride);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="runner"></param>
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -90,6 +94,11 @@ namespace Gendarme.Rules.UI {
 			};
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (!type.IsClass || !type.HasMethods || !type.Inherits ("System.Windows", "FrameworkElement"))

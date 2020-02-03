@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -233,7 +234,8 @@ namespace Gendarme.Rules.Performance {
 			// check if this method is needed to satisfy an interface
 			TypeDefinition type = (method.DeclaringType as TypeDefinition);
 			if (type.HasInterfaces) {
-				foreach (TypeReference tr in type.Interfaces) {
+                foreach (TypeReference tr in type.Interfaces.Select(x => x.InterfaceType))
+                {
 					TypeDefinition intf = tr.Resolve ();
 					if (intf != null) {
 						foreach (MethodReference member in intf.Methods) {

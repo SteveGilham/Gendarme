@@ -68,11 +68,15 @@ namespace Gendarme.Rules.Gendarme {
 	/// <remarks>
 	/// This rule checks if Runner.Report is called directly anywhere in rules' methods but it does not 
 	/// check if it being called in the base type or somewhere else, so some false positives are possible.</remarks>
-
 	[Problem ("Gendarme rule does not call Runner.Report, so found failures will not appear in Gendarme report.")]
 	[Solution ("Add Runner.Report call")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DefectsMustBeReportedRule : GendarmeRule, ITypeRule {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsAbstract || !type.HasMethods || !type.Implements ("Gendarme.Framework", "IRule"))

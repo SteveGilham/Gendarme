@@ -59,6 +59,11 @@ namespace Gendarme.Rules.Globalization {
 		private const string resXResourcesExtension = ".resources";
 		private AssemblyResourceCache mainAssemblyResourceCache;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// If the analyzed assembly is a satellite assembly, does not apply
@@ -185,7 +190,7 @@ namespace Gendarme.Rules.Globalization {
 			string satellitesName = mainAssembly.Name.Name + ".resources.dll";
 
 			DirectoryInfo directory = new DirectoryInfo (Path.GetDirectoryName (
-				mainAssembly.MainModule.FullyQualifiedName));
+				mainAssembly.MainModule.FileName));
 			DirectoryInfo [] subDirectories = directory.GetDirectories ();
 			foreach (DirectoryInfo dir in subDirectories) {
 				FileInfo [] files;

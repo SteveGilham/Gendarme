@@ -32,9 +32,17 @@ using Gendarme.Framework;
 
 namespace Gendarme.Rules.UI {
 
+    /// <summary>
+    /// 
+    /// </summary>
 	[Solution ("Recompile the assembly using '/target:winexe' (gmcs syntax).")]
 	abstract public class ExecutableTargetRule : Rule, IAssemblyRule {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
 		private bool CheckReferences (AssemblyDefinition assembly)
 		{
 			byte[] publicKeyToken = GetAssemblyPublicKeyToken ();
@@ -55,10 +63,22 @@ namespace Gendarme.Rules.UI {
 			return false;
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
 		abstract protected string AssemblyName { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
 		abstract protected byte[] GetAssemblyPublicKeyToken ();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			// 1. Check entry point, if no entry point then it's not an executable

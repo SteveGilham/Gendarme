@@ -77,6 +77,9 @@ namespace Gendarme.Rules.Gendarme {
 
 		Dictionary<string, bool> typeIsRule = new Dictionary<string, bool> ();
 
+        /// <summary>
+        /// 
+        /// </summary>
 		public ReviewAttributesOnRulesRule ()
 		{
 			attributes = new Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>>
@@ -91,6 +94,11 @@ namespace Gendarme.Rules.Gendarme {
 			};
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			CheckAttributes (type);
