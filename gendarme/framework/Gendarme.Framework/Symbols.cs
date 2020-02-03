@@ -53,6 +53,20 @@ namespace Gendarme.Framework {
 			return null;
 		}
 
+        private static MethodDefinition ExtractFirstMethod(TypeDefinition type)
+        {
+            if (type == null)
+                return null;
+            foreach (MethodDefinition method in type.Methods)
+            {
+                Instruction ins = ExtractFirst(method);
+                if (ins != null)
+                    return method;
+            }
+            return null;
+        }
+
+
 		private static Instruction ExtractFirst (MethodDefinition method)
 		{
 			if ((method == null) || !method.HasBody || method.Body.Instructions.Count == 0)
@@ -177,7 +191,7 @@ namespace Gendarme.Framework {
 			if (method != null) {
 				candidate = ExtractFirst (method);
 				if (candidate != null) 
-					return FormatSource (candidate, dbg);
+					return FormatSource (candidate, method.DebugInformation);
 
 				// we may still be lucky to find the (a) source file for the type itself
 				type = method.DeclaringType;
@@ -187,9 +201,10 @@ namespace Gendarme.Framework {
 			//	return the type source file (based on the first ctor)
 			if (type == null)
 				type = FindTypeFromLocation (defect.Location);
+            var m = ExtractFirstMethod(type);
 			candidate = ExtractFirst (type);
 			if (candidate != null)
-				return FormatSource (candidate, dbg);
+				return FormatSource (candidate, m.DebugInformation);
 
 			return String.Empty;
 		}
