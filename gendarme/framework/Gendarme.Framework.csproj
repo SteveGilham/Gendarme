@@ -1,26 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFramework>net40</TargetFramework>
-    <PublishUrl>http://localhost/Gendarme.Framework/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <StartupObject />
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\bin\</OutputPath>
@@ -39,20 +20,6 @@
     <None Include="ChangeLog" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Test\GlobalSuppressions.cs" />
-    <Compile Remove="Test\Gendarme.Framework\BitmaskTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework\ThreadModelAttributeTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Engines\SuppressMessageAttributeTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Helpers\MethodSignatureTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\AssemblyRocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\CustomAttributeRocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\FieldRocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\InstructionRocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\MethodRocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\ParameterRocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\RocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\TypeRocksTest.cs" />
-    <Compile Remove="Test\Gendarme.Framework.Rocks\VariableDefinitionRocksTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>
