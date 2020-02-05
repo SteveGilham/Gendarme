@@ -1,20 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CC7BB0B5-094F-42F9-9CE7-1C33EF2B8A20}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Gendarme.Rules.Smells</RootNamespace>
-    <AssemblyName>Gendarme.Rules.Smells</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFramework>net40</TargetFramework>
+    <FileUpgradeFlags />
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -31,119 +19,33 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\console\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <NoWarn>1591</NoWarn>
+    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
     <WarningsAsErrors>1570</WarningsAsErrors>
-    <DocumentationFile>..\..\console\bin\Debug\Gendarme.Rules.Smells.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.Smells.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\console\bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>1591</NoWarn>
-    <WarningsAsErrors>1570</WarningsAsErrors>
-    <DocumentationFile>..\..\console\bin\Release\Gendarme.Rules.Smells.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Cecil, Version=0.11.1.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb, Version=0.11.1.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb, Version=0.11.1.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks, Version=0.11.1.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <PackageReference Include="Mono.Cecil" Version="0.11.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\AssemblyStaticInfo.cs">
-      <Link>AssemblyStaticInfo.cs</Link>
-    </Compile>
-    <Compile Include="AvoidCodeDuplicatedInSameClassRule.cs" />
-    <Compile Include="AvoidCodeDuplicatedInSiblingClassesRule.cs" />
-    <Compile Include="AvoidLargeClassesRule.cs" />
-    <Compile Include="AvoidLongMethodsRule.cs" />
-    <Compile Include="AvoidLongParameterListsRule.cs" />
-    <Compile Include="AvoidMessageChainsRule.cs" />
-    <Compile Include="AvoidSpeculativeGeneralityRule.cs" />
-    <Compile Include="AvoidSwitchStatementsRule.cs" />
-    <Compile Include="CodeDuplicatedLocator.cs" />
-    <Compile Include="InstructionMatcher.cs" />
-    <Compile Include="Pattern.cs" />
+    <Compile Include="..\..\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\framework\Gendarme.Framework.csproj">
-      <Project>{CD6818D5-B398-486C-B180-92A07B143AFD}</Project>
-      <Name>Gendarme.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Performance\Gendarme.Rules.Performance.csproj">
-      <Project>{7A8D4AE7-66FA-42E0-BDCB-400D8E0ECFA6}</Project>
-      <Name>Gendarme.Rules.Performance</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\framework\Gendarme.Framework.csproj" />
+    <ProjectReference Include="..\Gendarme.Rules.Performance\Gendarme.Rules.Performance.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <Compile Remove="Test\AvoidCodeDuplicatedInSameClassTest.cs" />
+    <Compile Remove="Test\AvoidCodeDuplicatedInSiblingClassesTest.cs" />
+    <Compile Remove="Test\AvoidLargeClassesTest.cs" />
+    <Compile Remove="Test\AvoidLongMethodsTest.cs" />
+    <Compile Remove="Test\AvoidLongParameterListsTest.cs" />
+    <Compile Remove="Test\AvoidMessageChainsTest.cs" />
+    <Compile Remove="Test\AvoidSpeculativeGeneralityTest.cs" />
+    <Compile Remove="Test\AvoidSwitchStatementsTest.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am" IsAutotoolsProject="true" RelativeConfigureInPath="../../..">
-          <BuildFilesVar Sync="true" Name="rules_sources" />
-          <DeployFilesVar />
-          <ResourcesVar />
-          <OthersVar />
-          <GacRefVar />
-          <AsmRefVar />
-          <ProjectRefVar />
-        </MonoDevelop.Autotools.MakefileInfo>
-      </Properties>
-    </MonoDevelop>
-    <VisualStudio />
-  </ProjectExtensions>
 </Project>
