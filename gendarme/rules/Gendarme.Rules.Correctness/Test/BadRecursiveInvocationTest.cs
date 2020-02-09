@@ -163,7 +163,7 @@ namespace Test.Rules.Correctness
         rec.AnotherInstance();
       }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
       public void Assert()

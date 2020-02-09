@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for FieldRocks
 //
 // Authors:
@@ -37,121 +37,123 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
+namespace Test.Framework.Rocks
+{
+  [TestFixture]
+  public class FieldRocksTest
+  {
+    [System.Runtime.CompilerServices.CompilerGeneratedAttribute]
+    private static int cga = 1;
 
-	[TestFixture]
-	public class FieldRocksTest {
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("unit test", "1.0")]
+    protected double gca = 1.0;
 
-		[System.Runtime.CompilerServices.CompilerGeneratedAttribute]
-		private static int cga = 1;
+    internal IntPtr ptr = IntPtr.Zero;
 
-		[System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
-		protected double gca = 1.0;
+    private AssemblyDefinition assembly;
 
-		internal IntPtr ptr = IntPtr.Zero;
+    private TypeDefinition type;
 
-		private AssemblyDefinition assembly;
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.FieldRocksTest");
+    }
 
-		private TypeDefinition type;
+    private FieldDefinition GetField(string fieldName)
+    {
+      foreach (FieldDefinition field in type.Fields)
+      {
+        if (field.Name == fieldName)
+          return field;
+      }
+      Assert.Fail("Field {0} was not found.", fieldName);
+      return null;
+    }
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.FieldRocksTest");
-		}
+    [Test]
+    public void HasAttribute_Namespace_Null()
+    {
+      Assert.Throws<ArgumentNullException>(() => GetField("assembly").HasAttribute(null, "a"));
+    }
 
-		private FieldDefinition GetField (string fieldName)
-		{
-			foreach (FieldDefinition field in type.Fields) {
-				if (field.Name == fieldName)
-					return field;
-			}
-			Assert.Fail ("Field {0} was not found.", fieldName);
-			return null;
-		}
+    [Test]
+    public void HasAttribute_Name_Null()
+    {
+      Assert.Throws<ArgumentNullException>(() => GetField("assembly").HasAttribute("a", null));
+    }
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void HasAttribute_Namespace_Null ()
-		{
-			GetField ("assembly").HasAttribute (null, "a");
-		}
+    [Test]
+    public void HasAttribute()
+    {
+      Assert.IsTrue(GetField("cga").HasAttribute("System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), "CompilerGeneratedAttribute");
+      Assert.IsFalse(GetField("cga").HasAttribute("NUnit.Framework", "TestFixtureAttribute"), "TestFixtureAttribute");
+    }
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void HasAttribute_Name_Null ()
-		{
-			GetField ("assembly").HasAttribute ("a", null);
-		}
+    [Test]
+    public void IsGeneratedCode_CompilerGenerated()
+    {
+      Assert.IsTrue(GetField("cga").IsGeneratedCode(), "IsCompilerGenerated");
+      Assert.IsFalse(GetField("assembly").IsGeneratedCode(), "FixtureSetUp");
+    }
 
-		[Test]
-		public void HasAttribute ()
-		{
-			Assert.IsTrue (GetField ("cga").HasAttribute ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), "CompilerGeneratedAttribute");
-			Assert.IsFalse (GetField ("cga").HasAttribute ("NUnit.Framework", "TestFixtureAttribute"), "TestFixtureAttribute");
-		}
+    [Test]
+    public void IsGeneratedCode_GeneratedCode()
+    {
+      Assert.IsTrue(GetField("gca").IsGeneratedCode(), "IsCompilerGenerated");
+      Assert.IsFalse(GetField("assembly").IsGeneratedCode(), "FixtureSetUp");
+    }
 
-		[Test]
-		public void IsGeneratedCode_CompilerGenerated ()
-		{
-			Assert.IsTrue (GetField ("cga").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetField ("assembly").IsGeneratedCode (), "FixtureSetUp");
-		}
+    private static FieldDefinition GetField(TypeDefinition type, string name)
+    {
+      foreach (FieldDefinition field in type.Fields)
+      {
+        if (field.Name == name)
+          return field;
+      }
+      Assert.Fail("Field '{0}' not found!", name);
+      return null;
+    }
 
-		[Test]
-		public void IsGeneratedCode_GeneratedCode ()
-		{
-			Assert.IsTrue (GetField ("gca").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetField ("assembly").IsGeneratedCode (), "FixtureSetUp");
-		}
+    [Test]
+    public void IsVisible()
+    {
+      TypeDefinition type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType");
+      Assert.IsTrue(GetField(type, "PublicField").IsVisible(), "PublicType.PublicField");
+      Assert.IsTrue(GetField(type, "ProtectedField").IsVisible(), "PublicType.ProtectedField");
+      Assert.IsFalse(GetField(type, "InternalField").IsVisible(), "PublicType.InternalField");
+      Assert.IsFalse(GetField(type, "PrivateField").IsVisible(), "PublicType.PrivateField");
 
-		static FieldDefinition GetField (TypeDefinition type, string name)
-		{
-			foreach (FieldDefinition field in type.Fields) {
-				if (field.Name == name)
-					return field;
-			}
-			Assert.Fail ("Field '{0}' not found!", name);
-			return null;
-		}
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedPublicType");
+      Assert.IsTrue(GetField(type, "PublicField").IsVisible(), "NestedPublicType.PublicField");
+      Assert.IsTrue(GetField(type, "ProtectedField").IsVisible(), "NestedPublicType.ProtectedField");
+      Assert.IsFalse(GetField(type, "PrivateField").IsVisible(), "NestedPublicType.PrivateField");
 
-		[Test]
-		public void IsVisible ()
-		{
-			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType");
-			Assert.IsTrue (GetField (type, "PublicField").IsVisible (), "PublicType.PublicField");
-			Assert.IsTrue (GetField (type, "ProtectedField").IsVisible (), "PublicType.ProtectedField");
-			Assert.IsFalse (GetField (type, "InternalField").IsVisible (), "PublicType.InternalField");
-			Assert.IsFalse (GetField (type, "PrivateField").IsVisible (), "PublicType.PrivateField");
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedProtectedType");
+      Assert.IsTrue(GetField(type, "PublicField").IsVisible(), "NestedProtectedType.PublicField");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPublicType");
-			Assert.IsTrue (GetField (type, "PublicField").IsVisible (), "NestedPublicType.PublicField");
-			Assert.IsTrue (GetField (type, "ProtectedField").IsVisible (), "NestedPublicType.ProtectedField");
-			Assert.IsFalse (GetField (type, "PrivateField").IsVisible (), "NestedPublicType.PrivateField");
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedPrivateType");
+      Assert.IsFalse(GetField(type, "PublicField").IsVisible(), "NestedPrivateType.PublicField");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedProtectedType");
-			Assert.IsTrue (GetField (type, "PublicField").IsVisible (), "NestedProtectedType.PublicField");
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.InternalType");
+      Assert.IsFalse(GetField(type, "PublicField").IsVisible(), "InternalType.PublicField");
+    }
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPrivateType");
-			Assert.IsFalse (GetField (type, "PublicField").IsVisible (), "NestedPrivateType.PublicField");
-
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.InternalType");
-			Assert.IsFalse (GetField (type, "PublicField").IsVisible (), "InternalType.PublicField");
-		}
-
-		[Test]
-		public void Resolve ()
-		{
-			foreach (Instruction ins in type.Methods [0].Body.Instructions) {
-				FieldReference field = (ins.Operand as FieldReference);
-				if ((field != null) && !(field is FieldDefinition)) {
-					FieldDefinition fd = field.Resolve ();
-					Assert.AreEqual (field.Name, fd.Name, "Name");
-					Assert.AreEqual (field.FieldType.FullName, fd.FieldType.FullName, "FieldType");
-				}
-			}
-		}
-	}
+    [Test]
+    public void Resolve()
+    {
+      foreach (Instruction ins in type.Methods[0].Body.Instructions)
+      {
+        FieldReference field = (ins.Operand as FieldReference);
+        if ((field != null) && !(field is FieldDefinition))
+        {
+          FieldDefinition fd = field.Resolve();
+          Assert.AreEqual(field.Name, fd.Name, "Name");
+          Assert.AreEqual(field.FieldType.FullName, fd.FieldType.FullName, "FieldType");
+        }
+      }
+    }
+  }
 }

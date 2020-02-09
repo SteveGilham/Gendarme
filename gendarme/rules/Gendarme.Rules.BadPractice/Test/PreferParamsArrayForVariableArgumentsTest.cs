@@ -46,7 +46,7 @@ namespace Test.Rules.BadPractice
     // special case, this return false for HasParameters
     private void ShowItems_NoParameter(__arglist)
     {
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 			ArgIterator args = new ArgIterator (__arglist);
 			for (int i = 0; i < args.GetRemainingCount (); i++) {
@@ -60,7 +60,7 @@ namespace Test.Rules.BadPractice
 
     public void ShowItems_Bad(string header, __arglist)
     {
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
       Console.WriteLine(header);
       ArgIterator args = new ArgIterator(__arglist);

@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for AssemblyRocks
 //
 // Authors:
@@ -33,39 +33,37 @@ using Gendarme.Framework.Rocks;
 using Mono.Cecil;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
+namespace Test.Framework.Rocks
+{
+  [TestFixture]
+  public class AssemblyRocksTest
+  {
+    private AssemblyDefinition assembly;
 
-	[TestFixture]
-	public class AssemblyRocksTest {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
 
-		private AssemblyDefinition assembly;
+    [Test]
+    public void HasAttribute_Namespace_Null()
+    {
+      Assert.Throws<ArgumentNullException>(() => assembly.HasAttribute(null, "a"));
+    }
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
+    [Test]
+    public void HasAttribute_Name_Null()
+    {
+      Assert.Throws<ArgumentNullException>(() => assembly.HasAttribute("a", null));
+    }
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void HasAttribute_Namespace_Null ()
-		{
-			assembly.HasAttribute (null, "a");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void HasAttribute_Name_Null ()
-		{
-			assembly.HasAttribute ("a", null);
-		}
-
-		[Test]
-		public void HasAttribute ()
-		{
-			Assert.IsTrue (assembly.HasAttribute ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute"), "System.Runtime.CompilerServices.RuntimeCompatibilityAttribute");
-			Assert.IsFalse (assembly.HasAttribute ("NUnit.Framework", "TestFixtureAttribute"), "TestFixtureAttribute");
-		}
-	}
+    [Test]
+    public void HasAttribute()
+    {
+      Assert.IsTrue(assembly.HasAttribute("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute"), "System.Runtime.CompilerServices.RuntimeCompatibilityAttribute");
+      Assert.IsFalse(assembly.HasAttribute("NUnit.Framework", "TestFixtureAttribute"), "TestFixtureAttribute");
+    }
+  }
 }

@@ -31,7 +31,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 using System.Windows.Forms;
@@ -1001,7 +1001,7 @@ namespace Test.Rules.Smells
     }
   }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 	public class MainForm : Form {
@@ -1477,7 +1477,7 @@ namespace Test.Rules.Smells
       AssertRuleFailure<AvoidLongMethodsTest>("InitializeComponent", 1);
     }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 		[Test]
@@ -1542,7 +1542,7 @@ namespace Test.Rules.Smells
       Rule.UseIlApproximation = false;
     }
 
-    [TestFixtureSetUp]
+    [OneTimeSetUp]
     public void FixtureSetUp()
     {
       AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition<AvoidLongMethodsTest>();

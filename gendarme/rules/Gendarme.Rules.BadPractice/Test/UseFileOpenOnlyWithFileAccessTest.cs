@@ -86,7 +86,7 @@ namespace Test.Rules.BadPractice
       ls.Clear();
 
       var i = new FileStream("HelloWorld.cs", FileMode.Open,
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
         FileAccess.Read,
 #else
 				FileSystemRights.Read,

@@ -51,7 +51,7 @@ namespace Test.Rules.Security
       AssertRuleDoesNotApply<DoNotShortCircuitCertificateCheckTest>("NonBoolReturnValue");
     }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 		// e.g. an application where the local time source cannot be trusted
@@ -127,7 +127,7 @@ namespace Test.Rules.Security
       }
     }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 		public class ImplementICertificatePolicy : ICertificatePolicy {

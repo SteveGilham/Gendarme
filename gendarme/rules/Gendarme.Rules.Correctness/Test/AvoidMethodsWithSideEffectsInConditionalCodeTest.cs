@@ -75,7 +75,7 @@ namespace Test.Rules.Correctness {
 				ConditionalCall (PureIdentity (data));
 			}
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 			// Getters can be used with conditional code.

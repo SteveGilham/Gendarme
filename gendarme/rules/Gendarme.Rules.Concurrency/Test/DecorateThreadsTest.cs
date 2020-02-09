@@ -779,7 +779,7 @@ namespace Test.Rules.Concurrency
       private byte[] buffer = new byte[256];
     }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 		// EventLog.EntryWritten is threaded.
@@ -884,7 +884,7 @@ namespace Test.Rules.Concurrency
       AssertFailureCount<Bad12>(2);
       AssertFailureCount<Bad13>(1);
       AssertFailureCount<Bad14>(1);
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 			AssertFailureCount<Bad15> (1);
 #endif

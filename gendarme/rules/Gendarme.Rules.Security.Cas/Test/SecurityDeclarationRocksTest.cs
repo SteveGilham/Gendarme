@@ -51,7 +51,7 @@ namespace Tests.Rules.Security.Cas
   [TestFixture]
   public class SecurityDeclarationRocksTest
   {
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 		[Test]

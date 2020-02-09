@@ -69,7 +69,7 @@ namespace Tests.Rules.Globalization {
             }
         }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
     internal static System.Drawing.Bitmap ImageUnused {
             get {

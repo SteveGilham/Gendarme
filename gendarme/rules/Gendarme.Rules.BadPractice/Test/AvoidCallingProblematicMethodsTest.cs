@@ -167,7 +167,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFromCall()
     {
       Assembly.LoadFrom("myAssembly.dll");
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
       Assembly.LoadFrom("myAssembly.dll", new Evidence());
       Assembly.LoadFrom("myAssembly.dll", new Evidence(), null, AssemblyHashAlgorithm.None);
@@ -183,7 +183,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFileCall()
     {
       Assembly.LoadFile("myAssembly.dll");
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
       Assembly.LoadFile("myAssembly.dll", new Evidence());
 #endif
@@ -198,7 +198,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadWithPartialNameCall()
     {
       Assembly.LoadWithPartialName("MyAssembly");
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
        Assembly.LoadWithPartialName("MyAssembly", new Evidence());
 #endif

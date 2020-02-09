@@ -54,7 +54,7 @@ namespace System.Windows {
 
 namespace Test.Rules.Ui
 {
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
   public class BasicFrameworkElement : FrameworkElement
@@ -105,14 +105,14 @@ namespace Test.Rules.Ui
       AssertRuleDoesNotApply(SimpleTypes.Delegate);
       AssertRuleDoesNotApply(SimpleTypes.Enum);
       AssertRuleDoesNotApply(SimpleTypes.Interface);
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
       // Doesn't implement either method.
       AssertRuleDoesNotApply<BasicFrameworkElement>();
 #endif
     }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
     [Test]

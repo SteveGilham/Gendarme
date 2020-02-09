@@ -62,7 +62,7 @@ namespace Tests.Rules.Globalization {
 
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else        /// </summary>
         internal static System.Drawing.Bitmap ImageInBothCultures {
             get {

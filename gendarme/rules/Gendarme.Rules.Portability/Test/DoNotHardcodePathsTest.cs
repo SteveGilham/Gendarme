@@ -159,7 +159,7 @@ namespace Test.Rules.Portability
       return "a elbereth gilthoniel.txt";
     }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
     private void DontReportRegistryKeys()

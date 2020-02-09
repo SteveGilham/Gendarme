@@ -28,7 +28,7 @@
 
 using System;
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
 using System.Runtime.Remoting.Contexts;
@@ -157,7 +157,7 @@ namespace Test.Rules.Performance
       AssertRuleSuccess<GoodThreadLocalStorage>("GetKeyCopy");
     }
 
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 
     private class BadContextLocalStorage
@@ -244,7 +244,7 @@ namespace Test.Rules.Performance
     [Test]
     public void ContextLocalStorage()
     {
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
 			AssertRuleFailure<BadContextLocalStorage> (".ctor");
 			AssertRuleFailure<BadContextLocalStorage> ("get_Key");
@@ -272,7 +272,7 @@ namespace Test.Rules.Performance
 
     private void UsingContext()
     {
-#if NETCOREAPP2_0
+#if NETCOREAPP2_1
 #else
       Console.WriteLine(Context.DefaultContext.ContextID);
 #endif

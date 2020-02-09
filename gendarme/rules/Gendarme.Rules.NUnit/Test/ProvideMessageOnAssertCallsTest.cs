@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.NUnit.ProvideMessageOnAssertCallsTest
 //
 // Authors:
@@ -36,112 +36,111 @@ using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 using System.Runtime.InteropServices;
 
-namespace Test.Rules.NUnit {
+namespace Test.Rules.NUnit
+{
+  [TestFixture]
+  public class ProvideMessageOnAssertCallsTest : MethodRuleTestFixture<ProvideMessageOnAssertCallsRule>
+  {
+    private void DoesNotApplyNoAttributes()
+    {
+      Assert.AreEqual(10, 20);
+      Assert.AreNotEqual(20, 30);
+    }
 
-	[TestFixture]
-	public class ProvideMessageOnAssertCallsTest : MethodRuleTestFixture<ProvideMessageOnAssertCallsRule> {
+    // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+    private void BadTestAttribute()
+    {
+      Assert.AreEqual(10, 20);
+      Assert.AreNotEqual(20, 30);
+    }
 
-		private void DoesNotApplyNoAttributes ()
-		{
-			Assert.AreEqual (10, 20);
-			Assert.AreNotEqual (20, 30);
-		}
+    // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+    private void FourBadAsserts()
+    {
+      Assert.AreEqual(10, 15);
+      Assert.AreEqual(10, 15, "message string");
 
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
-		private void BadTestAttribute ()
-		{
-			Assert.AreEqual (10, 20);
-			Assert.AreNotEqual (20, 30);
-		}
+      // unrelated code
+      System.Collections.Generic.List<string> ls = new System.Collections.Generic.List<string> { "a", "b" };
+      ls.Clear();
 
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
-		private void FourBadAsserts ()
-		{
-			Assert.AreEqual (10, 15);
-			Assert.AreEqual (10, 15, "message string");
+      Assert.That(new object(), Is.InstanceOf<System.Reflection.Assembly>());
+      Assert.IsNull(null);
+      Assert.IsNotNull(null, "message string");
+      Assert.ReferenceEquals(new object(), new object()); // should be ignored
+      Assert.Fail();
+    }
 
-			// unrelated code
-			System.Collections.Generic.List<string> ls = new System.Collections.Generic.List<string> { "a", "b" };
-			ls.Clear ();
+    // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+    private void GoodOneBadAssert()
+    {
+      Assert.LessOrEqual(10, 20);
+    }
 
-			Assert.IsInstanceOfType (typeof (System.Reflection.Assembly), new object ());
-			Assert.IsNull (null);
-			Assert.IsNotNull (null, "message string");
-			Assert.ReferenceEquals (new object (), new object ()); // should be ignored
-			Assert.Fail ();
-		}
+    // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+    private void GoodExceptions()
+    {
+      Assert.ReferenceEquals(1, 2);
+      Assert.Equals(3, 4);
+    }
 
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
-		private void GoodOneBadAssert ()
-		{
-			Assert.LessOrEqual (10, 20);
-		}
+    // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+    private void GoodWithMessages()
+    {
+      Assert.IsNull(new object(), "Test to check whether new object is null");
+      Assert.IsFalse(true, "Test to check whether true is false");
+      Assert.Fail("Failing the test");
+    }
 
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
-		private void GoodExceptions ()
-		{
-			Assert.ReferenceEquals (1, 2);
-			Assert.Equals (3, 4);
-		}
+    // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+    [DllImport("libc.so")]
+    private static extern void DoesNotApplyExternal();
 
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
-		private void GoodWithMessages ()
-		{
-			Assert.IsNull (new object (), "Test to check whether new object is null");
-			Assert.IsFalse (true, "Test to check whether true is false");
-			Assert.Fail ("Failing the test");
-		}
+    // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+    private void DoesNotApplyEmpty()
+    {
+    }
 
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
-		[DllImport ("libc.so")]
-		private static extern void DoesNotApplyExternal ();
+    [Test]
+    public void DoesNotApply()
+    {
+      MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("DoesNotApplyExternal");
+      m.AddTestAttribute();
+      AssertRuleDoesNotApply(m);
 
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
-		private void DoesNotApplyEmpty ()
-		{
-		}
+      m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("DoesNotApplyEmpty");
+      m.AddTestAttribute();
+      AssertRuleDoesNotApply(m);
 
+      AssertRuleDoesNotApply<ProvideMessageOnAssertCallsTest>("DoesNotApplyNoAttributes");
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest> ("DoesNotApplyExternal");
-			m.AddTestAttribute ();
-			AssertRuleDoesNotApply (m);
+    [Test]
+    public void Good()
+    {
+      MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("GoodOneBadAssert");
+      m.AddTestAttribute();
+      AssertRuleSuccess(m);
 
-			m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest> ("DoesNotApplyEmpty");
-			m.AddTestAttribute ();
-			AssertRuleDoesNotApply (m);
+      m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("GoodExceptions");
+      m.AddTestAttribute();
+      AssertRuleSuccess(m);
 
-			AssertRuleDoesNotApply<ProvideMessageOnAssertCallsTest> ("DoesNotApplyNoAttributes");
-		}
+      m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("GoodWithMessages");
+      m.AddTestAttribute();
+      AssertRuleSuccess(m);
+    }
 
-		[Test]
-		public void Good ()
-		{
-			MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest> ("GoodOneBadAssert");
-			m.AddTestAttribute ();
-			AssertRuleSuccess (m);
+    [Test]
+    public void Bad()
+    {
+      MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("BadTestAttribute");
+      m.AddTestAttribute();
+      AssertRuleFailure(m, 2);
 
-			m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest> ("GoodExceptions");
-			m.AddTestAttribute ();
-			AssertRuleSuccess (m);
-
-			m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest> ("GoodWithMessages");
-			m.AddTestAttribute ();
-			AssertRuleSuccess (m);
-		}
-
-		[Test]
-		public void Bad ()
-		{
-			MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest> ("BadTestAttribute");
-			m.AddTestAttribute ();
-			AssertRuleFailure (m, 2);
-
-			m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest> ("FourBadAsserts");
-			m.AddTestAttribute ();
-			AssertRuleFailure (m, 4);
-		}
-	}
+      m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("FourBadAsserts");
+      m.AddTestAttribute();
+      AssertRuleFailure(m, 4);
+    }
+  }
 }
