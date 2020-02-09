@@ -1,32 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFramework>net40</TargetFramework>
-    <PublishUrl>http://localhost/Gendarme.Rules.Performance/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NoWarn>1591</NoWarn>
-    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
-    <WarningsAsErrors>1570</WarningsAsErrors>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.Performance.xml</DocumentationFile>
-    <PreBuildEvent />
-    <PreBuildEvent />
-    <PreBuildEvent />
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -47,41 +22,6 @@
     <None Include="ChangeLog" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Test\AvoidConcatenatingCharsTest.cs" />
-    <Compile Remove="Test\AvoidLargeNumberOfLocalVariablesTest.cs" />
-    <Compile Remove="Test\AvoidLargeStructureTest.cs" />
-    <Compile Remove="Test\AvoidLocalDataStoreSlotTest.cs" />
-    <Compile Remove="Test\AvoidMethodWithLargeMaximumStackSizeTest.cs" />
-    <Compile Remove="Test\AvoidRepetitiveCallsToPropertiesTest.cs" />
-    <Compile Remove="Test\AvoidRepetitiveCastsTest.cs" />
-    <Compile Remove="Test\AvoidReturningArraysOnPropertiesTest.cs" />
-    <Compile Remove="Test\AvoidTypeGetTypeForConstantStringsTest.cs" />
-    <Compile Remove="Test\AvoidUncalledPrivateCodeTest.cs" />
-    <Compile Remove="Test\AvoidUninstantiatedInternalClassesTest.cs" />
-    <Compile Remove="Test\AvoidUnnecessaryOverridesTest.cs" />
-    <Compile Remove="Test\AvoidUnneededCallsOnStringTest.cs" />
-    <Compile Remove="Test\AvoidUnneededFieldInitializationTest.cs" />
-    <Compile Remove="Test\AvoidUnneededUnboxingTest.cs" />
-    <Compile Remove="Test\AvoidUnsealedConcreteAttributesTest.cs" />
-    <Compile Remove="Test\AvoidUnsealedUninheritedInternalClassesTest.cs" />
-    <Compile Remove="Test\AvoidUnusedParametersTest.cs" />
-    <Compile Remove="Test\AvoidUnusedPrivateFieldsTest.cs" />
-    <Compile Remove="Test\CompareWithStringEmptyEfficientlyTest.cs" />
-    <Compile Remove="Test\ConsiderCustomAccessorsForNonVisibleEventsTest.cs" />
-    <Compile Remove="Test\DontIgnoreMethodResultTest.cs" />
-    <Compile Remove="Test\EmptyDestructorTest.cs" />
-    <Compile Remove="Test\GlobalSuppressions.cs" />
-    <Compile Remove="Test\IDisposableWithDestructorWithoutSuppressFinalizeTest.cs" />
-    <Compile Remove="Test\ImplementEqualsTypeTest.cs" />
-    <Compile Remove="Test\MathMinMaxCandidateTest.cs" />
-    <Compile Remove="Test\OverrideValueTypeDefaultsTest.cs" />
-    <Compile Remove="Test\PreferCharOverloadTest.cs" />
-    <Compile Remove="Test\PreferInterfaceConstraintOnGenericParameterForPrimitiveInterfaceTest.cs" />
-    <Compile Remove="Test\PreferLiteralOverInitOnlyFieldsTest.cs" />
-    <Compile Remove="Test\RemoveUnusedLocalVariablesTest.cs" />
-    <Compile Remove="Test\ReviewLinqMethodTest.cs" />
-    <Compile Remove="Test\UseIsOperatorTest.cs" />
-    <Compile Remove="Test\UseStringEmptyTest.cs" />
-    <Compile Remove="Test\UseTypeEmptyTypesTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

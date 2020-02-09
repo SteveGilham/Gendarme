@@ -1,29 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <TargetFramework>net40</TargetFramework>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NoWarn>1591</NoWarn>
-    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
-    <WarningsAsErrors>1570</WarningsAsErrors>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.BadPractice.xml</DocumentationFile>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -40,29 +18,6 @@
   <ItemGroup>
     <Compile Remove="AvoidNullCheckWithAsOperatorRule.cs" />
     <Compile Remove="DoNotDecreaseVisibilityRule.cs" />
-    <Compile Remove="Test\AvoidAssemblyVersionMismatchTest.cs" />
-    <Compile Remove="Test\AvoidCallingProblematicMethodsTest.cs" />
-    <Compile Remove="Test\AvoidNullCheckWithAsOperatorTest.cs" />
-    <Compile Remove="Test\AvoidVisibleConstantFieldTest.cs" />
-    <Compile Remove="Test\CheckNewExceptionWithoutThrowingTest.cs" />
-    <Compile Remove="Test\CheckNewThreadWithoutStartTest.cs" />
-    <Compile Remove="Test\CloneMethodShouldNotReturnNullTest.cs" />
-    <Compile Remove="Test\ConstructorShouldNotCallVirtualMethodsTest.cs" />
-    <Compile Remove="Test\DisableDebuggingCodeTest.cs" />
-    <Compile Remove="Test\DoNotDecreaseVisibilityTest.cs" />
-    <Compile Remove="Test\DoNotForgetNotImplementedMethodsTest.cs" />
-    <Compile Remove="Test\DoNotUseEnumIsAssignableFromTest.cs" />
-    <Compile Remove="Test\DoNotUseGetInterfaceToCheckAssignabilityTest.cs" />
-    <Compile Remove="Test\EqualShouldHandleNullArgTest.cs" />
-    <Compile Remove="Test\GetEntryAssemblyMayReturnNullTest.cs" />
-    <Compile Remove="Test\ObsoleteMessagesShouldNotBeEmptyTest.cs" />
-    <Compile Remove="Test\OnlyUseDisposeForIDisposableTypesTest.cs" />
-    <Compile Remove="Test\PreferEmptyInstanceOverNullTest.cs" />
-    <Compile Remove="Test\PreferParamsArrayForVariableArgumentsTest.cs" />
-    <Compile Remove="Test\PreferSafeHandleTest.cs" />
-    <Compile Remove="Test\PreferTryParseTest.cs" />
-    <Compile Remove="Test\ReplaceIncompleteOddnessCheckTest.cs" />
-    <Compile Remove="Test\ToStringReturnsNullTest.cs" />
-    <Compile Remove="Test\UseFileOpenOnlyWithFileAccessTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

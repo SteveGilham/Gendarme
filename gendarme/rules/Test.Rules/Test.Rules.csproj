@@ -3,6 +3,9 @@
     <TargetFrameworks>net40;netcoreapp2.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+  <PropertyGroup>
+    <NoWarn>1701;1702;649</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.11.1" />
     <PackageReference Include="NUnit" Version="2.7.1" />

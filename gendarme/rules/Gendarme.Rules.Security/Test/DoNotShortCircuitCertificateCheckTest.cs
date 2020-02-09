@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for DoNotShortCircuitCertificateCheckRule
 //
 // Authors:
@@ -35,21 +35,24 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Security {
+namespace Test.Rules.Security
+{
+  [TestFixture]
+  public class DoNotShortCircuitCertificateCheckTest : MethodRuleTestFixture<DoNotShortCircuitCertificateCheckRule>
+  {
+    public void NonBoolReturnValue(int a, int b, int c, int d)
+    {
+    }
 
-	[TestFixture]
-	public class DoNotShortCircuitCertificateCheckTest : MethodRuleTestFixture<DoNotShortCircuitCertificateCheckRule> {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      AssertRuleDoesNotApply<DoNotShortCircuitCertificateCheckTest>("NonBoolReturnValue");
+    }
 
-		public void NonBoolReturnValue (int a, int b, int c, int d)
-		{
-		}
-
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			AssertRuleDoesNotApply<DoNotShortCircuitCertificateCheckTest> ("NonBoolReturnValue");
-		}
+#if NETCOREAPP2_0
+#else
 
 		// e.g. an application where the local time source cannot be trusted
 		public class AllowExpiredCertificatePolicy : ICertificatePolicy {
@@ -98,7 +101,7 @@ namespace Test.Rules.Security {
 			{
 				return true;
 			}
-		
+
 			bool ICertificatePolicy.CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
 			{
 				return (request != null);
@@ -114,13 +117,18 @@ namespace Test.Rules.Security {
 			AssertRuleFailure<DualCertificatePolicy> ("System.Net.ICertificatePolicy.CheckValidationResult", 1);
 		}
 
-		public class DoesNotImplementICertificatePolicy {
+#endif
 
-			public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return true;
-			}
-		}
+    public class DoesNotImplementICertificatePolicy
+    {
+      public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return true;
+      }
+    }
+
+#if NETCOREAPP2_0
+#else
 
 		public class ImplementICertificatePolicy : ICertificatePolicy {
 
@@ -146,9 +154,9 @@ namespace Test.Rules.Security {
 			string Name { get; }
 		}
 
-		abstract public class AbstractIndirectPolicy : IMyPolicy {
-
-			bool result;
+		abstract public class AbstractIndirectPolicy : IMyPolicy
+		{
+			private bool result;
 
 			public AbstractIndirectPolicy (bool value)
 			{
@@ -186,55 +194,57 @@ namespace Test.Rules.Security {
 			AssertRuleFailure<IndirectPolicy> ("CheckValidationResult", 1);
 		}
 
-		public bool AllowAnyNameRemoteCertificateValidation (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-		{
-			return (sslPolicyErrors == SslPolicyErrors.RemoteCertificateNameMismatch);
-		}
+#endif
 
-		public bool AllowExpiredRemoteCertificateValidation (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-		{
-			return (chain.ChainStatus [0].Status == X509ChainStatusFlags.NotTimeValid); 
-		}
+    public bool AllowAnyNameRemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+      return (sslPolicyErrors == SslPolicyErrors.RemoteCertificateNameMismatch);
+    }
 
-		public bool AllowSpecificCertificateValidation (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-		{
-			return (certificate.GetCertHashString () == "D62F48D013EE7FB58B79074512670D9C5B3A5DA9");
-		}
+    public bool AllowExpiredRemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+      return (chain.ChainStatus[0].Status == X509ChainStatusFlags.NotTimeValid);
+    }
 
-		[Test]
-		public void CallbackSuccess ()
-		{
-			AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest> ("AllowAnyNameRemoteCertificateValidation");
-			AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest> ("AllowExpiredRemoteCertificateValidation");
-			AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest> ("AllowSpecificCertificateValidation");
-		}
+    public bool AllowSpecificCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+      return (certificate.GetCertHashString() == "D62F48D013EE7FB58B79074512670D9C5B3A5DA9");
+    }
 
-		public bool NotImplementedRemoteCertificateValidation (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-		{
-			throw new NotImplementedException ();
-		}
+    [Test]
+    public void CallbackSuccess()
+    {
+      AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest>("AllowAnyNameRemoteCertificateValidation");
+      AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest>("AllowExpiredRemoteCertificateValidation");
+      AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest>("AllowSpecificCertificateValidation");
+    }
 
-		public bool NullRemoteCertificateValidation (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-		{
-			return true;
-		}
+    public bool NotImplementedRemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+      throw new NotImplementedException();
+    }
 
-		[Test]
-		public void CallbackFailure ()
-		{
-			AssertRuleFailure<DoNotShortCircuitCertificateCheckTest> ("NotImplementedRemoteCertificateValidation", 1);
-			AssertRuleFailure<DoNotShortCircuitCertificateCheckTest> ("NullRemoteCertificateValidation", 1);
-		}
+    public bool NullRemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+      return true;
+    }
 
-		public bool BoolReturnValue (int a, int b, int c, int d)
-		{
-			return false;
-		}
+    [Test]
+    public void CallbackFailure()
+    {
+      AssertRuleFailure<DoNotShortCircuitCertificateCheckTest>("NotImplementedRemoteCertificateValidation", 1);
+      AssertRuleFailure<DoNotShortCircuitCertificateCheckTest>("NullRemoteCertificateValidation", 1);
+    }
 
-		[Test]
-		public void NoneSuccess ()
-		{
-			AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest> ("BoolReturnValue");
-		}
-	}
+    public bool BoolReturnValue(int a, int b, int c, int d)
+    {
+      return false;
+    }
+
+    [Test]
+    public void NoneSuccess()
+    {
+      AssertRuleSuccess<DoNotShortCircuitCertificateCheckTest>("BoolReturnValue");
+    }
+  }
 }

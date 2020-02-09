@@ -33,143 +33,161 @@ using SSP = System.Security.Permissions;
 using Mono.Cecil;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Security.Cas {
+namespace Gendarme.Rules.Security.Cas
+{
+  static public class SecurityDeclarationRocks
+  {
+#if NETSTANDARD2_0
+#else
 
-	static public class SecurityDeclarationRocks {
+    public static PermissionSet ToPermissionSet(this SecurityDeclaration self)
+    {
+      if (self == null)
+        throw new ArgumentNullException("self");
 
-		public static PermissionSet ToPermissionSet (this SecurityDeclaration self)
-		{
-			if (self == null)
-				throw new ArgumentNullException ("self");
+      PermissionSet set;
+      if (TryProcessPermissionSetAttribute(self, out set))
+        return set;
 
-			PermissionSet set;
-			if (TryProcessPermissionSetAttribute (self, out set))
-				return set;
+      return CreatePermissionSet(self);
+    }
 
-			return CreatePermissionSet (self);
-		}
+    private static bool TryProcessPermissionSetAttribute(SecurityDeclaration declaration, out PermissionSet set)
+    {
+      set = null;
 
-		static bool TryProcessPermissionSetAttribute (SecurityDeclaration declaration, out PermissionSet set)
-		{
-			set = null;
+      if (!declaration.HasSecurityAttributes)
+        return false;
 
-			if (!declaration.HasSecurityAttributes)
-				return false;
+      var attributes = declaration.SecurityAttributes;
+      if (attributes.Count != 1)
+        return false;
 
-			var attributes = declaration.SecurityAttributes;
-			if (attributes.Count != 1)
-				return false;
+      var security_attribute = attributes[0];
+      var attribute_type = security_attribute.AttributeType;
+      if (attribute_type.Name != "PermissionSetAttribute" || attribute_type.Namespace != "System.Security.Permissions")
+        return false;
 
-			var security_attribute = attributes [0];
-			var attribute_type = security_attribute.AttributeType;
-			if (attribute_type.Name != "PermissionSetAttribute" || attribute_type.Namespace != "System.Security.Permissions")
-				return false;
+      var attribute = new SSP.PermissionSetAttribute((SSP.SecurityAction)declaration.Action);
 
-			var attribute = new SSP.PermissionSetAttribute ((SSP.SecurityAction) declaration.Action);
+      foreach (var named_argument in security_attribute.Properties)
+      {
+        object value = named_argument.Argument.Value;
+        switch (named_argument.Name)
+        {
+          case "Unrestricted":
+            attribute.Unrestricted = (bool)value;
+            break;
 
-			foreach (var named_argument in security_attribute.Properties) {
-				object value = named_argument.Argument.Value;
-				switch (named_argument.Name) {
-				case "Unrestricted":
-					attribute.Unrestricted = (bool) value;
-					break;
-				case "UnicodeEncoded":
-					attribute.UnicodeEncoded = (bool) value;
-					break;
-				case "XML":
-					attribute.XML = (string) value;
-					break;
-				case "Name":
-					attribute.Name = (string) value;
-					break;
-				case "File":
-					attribute.File = (string) value;
-					break;
-				case "Hex":
-					attribute.Hex = (string) value;
-					break;
-				default:
-					throw new NotImplementedException (named_argument.Name);
-				}
-			}
+          case "UnicodeEncoded":
+            attribute.UnicodeEncoded = (bool)value;
+            break;
 
-			set = attribute.CreatePermissionSet ();
-			return true;
-		}
+          case "XML":
+            attribute.XML = (string)value;
+            break;
 
-		static PermissionSet CreatePermissionSet (SecurityDeclaration declaration)
-		{
-			var set = new PermissionSet (SSP.PermissionState.None);
+          case "Name":
+            attribute.Name = (string)value;
+            break;
 
-			foreach (var attribute in declaration.SecurityAttributes) {
-				var permission = CreatePermission (declaration, attribute);
-				set.AddPermission (permission);
-			}
+          case "File":
+            attribute.File = (string)value;
+            break;
 
-			return set;
-		}
+          case "Hex":
+            attribute.Hex = (string)value;
+            break;
 
-		static IPermission CreatePermission (SecurityDeclaration declaration, SecurityAttribute attribute)
-		{
-			TypeReference atype = attribute.AttributeType;
-			string name = atype.FullName;
+          default:
+            throw new NotImplementedException(named_argument.Name);
+        }
+      }
 
-			// most of the permissions resides inside mscorlib.dll
-			Type attribute_type = Type.GetType (name);
-			if (attribute_type == null) {
-				// but not all of them, so we need to try harder :-)
-				TypeDefinition rtype = atype.Resolve ();
-				AssemblyDefinition ad = rtype == null ? atype.Module.Assembly : rtype.Module.Assembly;
-				attribute_type = Type.GetType (name + ", " + ad.FullName);
-			}
-			if (attribute_type == null)
-				throw new ArgumentException ("attribute");
+      set = attribute.CreatePermissionSet();
+      return true;
+    }
 
-			var security_attribute = CreateSecurityAttribute (attribute_type, declaration);
-			if (security_attribute == null)
-				throw new InvalidOperationException ();
+    private static PermissionSet CreatePermissionSet(SecurityDeclaration declaration)
+    {
+      var set = new PermissionSet(SSP.PermissionState.None);
 
-			CompleteSecurityAttribute (security_attribute, attribute);
+      foreach (var attribute in declaration.SecurityAttributes)
+      {
+        var permission = CreatePermission(declaration, attribute);
+        set.AddPermission(permission);
+      }
 
-			return security_attribute.CreatePermission ();
-		}
+      return set;
+    }
 
-		static void CompleteSecurityAttribute (SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
-		{
-			if (attribute.HasFields)
-				CompleteSecurityAttributeFields (security_attribute, attribute);
+#endif
 
-			if (attribute.HasProperties)
-				CompleteSecurityAttributeProperties (security_attribute, attribute);
-		}
+    private static IPermission CreatePermission(SecurityDeclaration declaration, SecurityAttribute attribute)
+    {
+      TypeReference atype = attribute.AttributeType;
+      string name = atype.FullName;
 
-		static void CompleteSecurityAttributeFields (SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
-		{
-			var type = security_attribute.GetType ();
+      // most of the permissions resides inside mscorlib.dll
+      Type attribute_type = Type.GetType(name);
+      if (attribute_type == null)
+      {
+        // but not all of them, so we need to try harder :-)
+        TypeDefinition rtype = atype.Resolve();
+        AssemblyDefinition ad = rtype == null ? atype.Module.Assembly : rtype.Module.Assembly;
+        attribute_type = Type.GetType(name + ", " + ad.FullName);
+      }
+      if (attribute_type == null)
+        throw new ArgumentException("attribute");
 
-			foreach (var named_argument in attribute.Fields)
-				type.GetField (named_argument.Name).SetValue (security_attribute, named_argument.Argument.Value);
-		}
+      var security_attribute = CreateSecurityAttribute(attribute_type, declaration);
+      if (security_attribute == null)
+        throw new InvalidOperationException();
 
-		static void CompleteSecurityAttributeProperties (SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
-		{
-			var type = security_attribute.GetType ();
+      CompleteSecurityAttribute(security_attribute, attribute);
 
-			foreach (var named_argument in attribute.Properties)
-				type.GetProperty (named_argument.Name).SetValue (security_attribute, named_argument.Argument.Value, null);
-		}
+      return security_attribute.CreatePermission();
+    }
 
-		static SSP.SecurityAttribute CreateSecurityAttribute (Type attribute_type, SecurityDeclaration declaration)
-		{
-			SSP.SecurityAttribute security_attribute;
-			try {
-				security_attribute = (SSP.SecurityAttribute) Activator.CreateInstance (
-					attribute_type, new object [] { (SSP.SecurityAction) declaration.Action });
-			} catch (MissingMethodException) {
-				security_attribute = (SSP.SecurityAttribute) Activator.CreateInstance (attribute_type, new object [0]);
-			}
+    private static void CompleteSecurityAttribute(SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
+    {
+      if (attribute.HasFields)
+        CompleteSecurityAttributeFields(security_attribute, attribute);
 
-			return security_attribute;
-		}
-	}
+      if (attribute.HasProperties)
+        CompleteSecurityAttributeProperties(security_attribute, attribute);
+    }
+
+    private static void CompleteSecurityAttributeFields(SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
+    {
+      var type = security_attribute.GetType();
+
+      foreach (var named_argument in attribute.Fields)
+        type.GetField(named_argument.Name).SetValue(security_attribute, named_argument.Argument.Value);
+    }
+
+    private static void CompleteSecurityAttributeProperties(SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
+    {
+      var type = security_attribute.GetType();
+
+      foreach (var named_argument in attribute.Properties)
+        type.GetProperty(named_argument.Name).SetValue(security_attribute, named_argument.Argument.Value, null);
+    }
+
+    private static SSP.SecurityAttribute CreateSecurityAttribute(Type attribute_type, SecurityDeclaration declaration)
+    {
+      SSP.SecurityAttribute security_attribute;
+      try
+      {
+        security_attribute = (SSP.SecurityAttribute)Activator.CreateInstance(
+          attribute_type, new object[] { (SSP.SecurityAction)declaration.Action });
+      }
+      catch (MissingMethodException)
+      {
+        security_attribute = (SSP.SecurityAttribute)Activator.CreateInstance(attribute_type, new object[0]);
+      }
+
+      return security_attribute;
+    }
+  }
 }

@@ -38,121 +38,134 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Security.Cas {
+namespace Gendarme.Rules.Security.Cas
+{
+  /// <summary>
+  /// This rule checks for visible methods that are less protected (i.e. lower security
+  /// requirements) than the method they call. If the called methods are protected by a
+  /// <c>LinkDemand</c> then the caller can be used to bypass security checks.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class BaseClass {
+  ///	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
+  /// 	public virtual void VirtualMethod ()
+  /// 	{
+  /// 	}
+  /// }
+  ///
+  /// public class Class : BaseClass  {
+  ///	// bad since a caller with only ControlAppDomain will be able to call the base method
+  /// 	[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+  ///	public override void VirtualMethod ()
+  ///	{
+  ///		base.VirtualMethod ();
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (InheritanceDemand):
+  /// <code>
+  /// public class BaseClass {
+  /// 	[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+  /// 	public virtual void VirtualMethod ()
+  /// 	{
+  /// 	}
+  /// }
+  ///
+  /// public class Class : BaseClass  {
+  ///	// ok since this permission cover the base class permission
+  ///	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
+  ///	public override void VirtualMethod ()
+  ///	{
+  ///		base.VirtualMethod ();
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>Before Gendarme 2.2 this rule was part of Gendarme.Rules.Security and named MethodCallWithSubsetLinkDemandRule.</remarks>
 
-	/// <summary>
-	/// This rule checks for visible methods that are less protected (i.e. lower security 
-	/// requirements) than the method they call. If the called methods are protected by a 
-	/// <c>LinkDemand</c> then the caller can be used to bypass security checks.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class BaseClass {
-	///	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
-	/// 	public virtual void VirtualMethod ()
-	/// 	{
-	/// 	}
-	/// }
-	/// 
-	/// public class Class : BaseClass  {
-	///	// bad since a caller with only ControlAppDomain will be able to call the base method
-	/// 	[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
-	///	public override void VirtualMethod ()
-	///	{
-	///		base.VirtualMethod ();
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (InheritanceDemand):
-	/// <code>
-	/// public class BaseClass {
-	/// 	[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
-	/// 	public virtual void VirtualMethod ()
-	/// 	{
-	/// 	}
-	/// }
-	/// 
-	/// public class Class : BaseClass  {
-	///	// ok since this permission cover the base class permission
-	///	[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
-	///	public override void VirtualMethod ()
-	///	{
-	///		base.VirtualMethod ();
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>Before Gendarme 2.2 this rule was part of Gendarme.Rules.Security and named MethodCallWithSubsetLinkDemandRule.</remarks>
+  [Problem("This method is less protected than some of the methods it calls.")]
+  [Solution("Ensure that the LinkDemand on this method is a superset of any LinkDemand present on called methods.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  [FxCopCompatibility("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
+  public class DoNotExposeMethodsProtectedByLinkDemandRule : Rule, IMethodRule
+  {
+#if NETSTANDARD2_0
+    private static bool Check(ISecurityDeclarationProvider caller, ISecurityDeclarationProvider callee)
+    {
+      return true;
+    }
+#else
+    private static PermissionSet Empty = new PermissionSet(PermissionState.None);
 
-	[Problem ("This method is less protected than some of the methods it calls.")]
-	[Solution ("Ensure that the LinkDemand on this method is a superset of any LinkDemand present on called methods.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	[FxCopCompatibility ("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
-	public class DoNotExposeMethodsProtectedByLinkDemandRule : Rule, IMethodRule {
+    private static PermissionSet GetLinkDemand(ISecurityDeclarationProvider method)
+    {
+      foreach (SecurityDeclaration declsec in method.SecurityDeclarations)
+      {
+        switch (declsec.Action)
+        {
+          case Mono.Cecil.SecurityAction.LinkDemand:
+          case Mono.Cecil.SecurityAction.NonCasLinkDemand:
+            return declsec.ToPermissionSet();
+        }
+      }
+      return Empty;
+    }
 
-		static PermissionSet Empty = new PermissionSet (PermissionState.None);
+    private static bool Check(ISecurityDeclarationProvider caller, ISecurityDeclarationProvider callee)
+    {
+      // 1 - look if the callee has a LinkDemand
+      PermissionSet calleeLinkDemand = GetLinkDemand(callee);
+      if (calleeLinkDemand.Count == 0)
+        return true;
 
-		private static PermissionSet GetLinkDemand (ISecurityDeclarationProvider method)
-		{
-			foreach (SecurityDeclaration declsec in method.SecurityDeclarations) {
-				switch (declsec.Action) {
-				case Mono.Cecil.SecurityAction.LinkDemand:
-				case Mono.Cecil.SecurityAction.NonCasLinkDemand:
-					return declsec.ToPermissionSet ();
-				}
-			}
-			return Empty;
-		}
+      // 2 - Ensure the caller requires a superset (or the same) permissions
+      return calleeLinkDemand.IsSubsetOf(GetLinkDemand(caller));
+    }
 
-		private static bool Check (ISecurityDeclarationProvider caller, ISecurityDeclarationProvider callee)
-		{
-			// 1 - look if the callee has a LinkDemand
-			PermissionSet calleeLinkDemand = GetLinkDemand (callee);
-			if (calleeLinkDemand.Count == 0)
-				return true;
+#endif
 
-			// 2 - Ensure the caller requires a superset (or the same) permissions
-			return calleeLinkDemand.IsSubsetOf (GetLinkDemand (caller));
-		}
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // #1 - rule apply only if the method has a body (e.g. p/invokes, icalls don't)
+      //	otherwise we don't know what it's calling
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// #1 - rule apply only if the method has a body (e.g. p/invokes, icalls don't)
-			//	otherwise we don't know what it's calling
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
-			
-			// #2 - rule apply to methods are publicly accessible
-			//	note that the type doesn't have to be public (indirect access)
-			if (!method.IsVisible ())
-				return RuleResult.DoesNotApply;
+      // #2 - rule apply to methods are publicly accessible
+      //	note that the type doesn't have to be public (indirect access)
+      if (!method.IsVisible())
+        return RuleResult.DoesNotApply;
 
-			// #3 - avoid looping if we're sure there's no call in the method
-			if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+      // #3 - avoid looping if we're sure there's no call in the method
+      if (!OpCodeBitmask.Calls.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
 
-			// *** ok, the rule applies! ***
+      // *** ok, the rule applies! ***
 
-			// #4 - look for every method we call
-			foreach (Instruction ins in method.Body.Instructions) {
-				switch (ins.OpCode.Code) {
-				case Code.Call:
-				case Code.Callvirt:
-					MethodDefinition callee = (ins.Operand as MethodDefinition);
-					if (callee == null)
-						continue;
+      // #4 - look for every method we call
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        switch (ins.OpCode.Code)
+        {
+          case Code.Call:
+          case Code.Callvirt:
+            MethodDefinition callee = (ins.Operand as MethodDefinition);
+            if (callee == null)
+              continue;
 
-					// 4 - and if it has security, ensure we don't reduce it's strength
-					if (callee.HasSecurityDeclarations && !Check (method, callee)) {
-						Runner.Report (method, ins, Severity.High, Confidence.High);
-					}
-					break;
-				}
-			}
-			return Runner.CurrentRuleResult;
-		}
-	}
+            // 4 - and if it has security, ensure we don't reduce it's strength
+            if (callee.HasSecurityDeclarations && !Check(method, callee))
+            {
+              Runner.Report(method, ins, Severity.High, Confidence.High);
+            }
+            break;
+        }
+      }
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

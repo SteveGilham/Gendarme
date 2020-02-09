@@ -1,29 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFramework>net40</TargetFramework>
-    <PublishUrl>http://localhost/Gendarme.Rules.Concurrency/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NoWarn>1591</NoWarn>
-    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
-    <WarningsAsErrors>1570</WarningsAsErrors>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.Concurrency.xml</DocumentationFile>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -41,16 +19,6 @@
     <None Include="ChangeLog" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Test\DecorateThreadsTest.cs" />
-    <Compile Remove="Test\DoNotLockOnThisOrTypesTest.cs" />
-    <Compile Remove="Test\DoNotLockOnWeakIdentityObjectsTest.cs" />
-    <Compile Remove="Test\DoNotUseMethodImplOptionsSynchronizedTest.cs" />
-    <Compile Remove="Test\DoNotUseThreadStaticWithInstanceFieldsTest.cs" />
-    <Compile Remove="Test\DontUseLockedRegionOutsideMethodTest.cs" />
-    <Compile Remove="Test\DoubleCheckLockingTest.cs" />
-    <Compile Remove="Test\NonConstantStaticFieldsShouldNotBeVisibleTest.cs" />
-    <Compile Remove="Test\ProtectCallToEventDelegatesTest.cs" />
-    <Compile Remove="Test\ReviewLockUsedOnlyForOperationsOnVariablesTest.cs" />
-    <Compile Remove="Test\WriteStaticFieldFromInstanceMethodTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

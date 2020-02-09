@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for DoNotHardcodePathsRule
 //
 // Authors:
@@ -38,261 +38,265 @@ using Test.Rules.Fixtures;
 
 using NUnit.Framework;
 
-namespace Test.Rules.Portability {
-
+namespace Test.Rules.Portability
+{
 #pragma warning disable 169, 219, 414
 
-	[TestFixture]
-	public class DoNotHardcodePathsTest : MethodRuleTestFixture<DoNotHardcodePathsRule> {
+  [TestFixture]
+  public class DoNotHardcodePathsTest : MethodRuleTestFixture<DoNotHardcodePathsRule>
+  {
+    private string pagefile;  // as a field otherwise the name can lost
 
-		string pagefile;	// as a field otherwise the name can lost
+    private void TotalConfidence1() // more than 13 points
+    {
+      // C:\directory\file.sys
 
-		void TotalConfidence1 () // more than 13 points
-		{
-			// C:\directory\file.sys
+      // drive letter			5
+      // no slashes			2
+      // 3-char extension		4
+      // var name contains 'file'	4
+      // TOTAL: 			15 points
+      pagefile = @"C:\directory\file.sys";
+    }
 
-			// drive letter			5
-			// no slashes			2
-			// 3-char extension		4
-			// var name contains 'file'	4
-			// TOTAL: 			15 points
-			pagefile = @"C:\directory\file.sys";
-		}
+    private void TotalConfidence2() // more than 13 points
+    {
+      // /home/ex/.aMule/Incoming/Blues_Brothers.avi
 
-		void TotalConfidence2 () // more than 13 points
-		{
-			// /home/ex/.aMule/Incoming/Blues_Brothers.avi
+      // starts with a slash		2
+      // starts with /home/ 		4
+      // no backslashes		2
+      // 4 slashes			3
+      // 3-char extension		4
+      // param name contains 'file'	4
+      // TOTAL: 			19 points
+      OpenFile(42, "/home/ex/.aMule/Incoming/Blues_Brothers.avi", "yarr!");
+    }
 
-			// starts with a slash		2
-			// starts with /home/ 		4
-			// no backslashes		2
-			// 4 slashes			3
-			// 3-char extension		4
-			// param name contains 'file'	4
-			// TOTAL: 			19 points
-			OpenFile (42, "/home/ex/.aMule/Incoming/Blues_Brothers.avi", "yarr!");
-		}
+    private void OpenFile(int something, string fileName, string somethingElse)
+    { }
 
-		void OpenFile (int something, string fileName, string somethingElse) { }
+    private void TotalConfidence3() // more than 13 points
+    {
+      // /opt/mono/bin/mono
 
-		void TotalConfidence3 () // more than 13 points
-		{
-			// /opt/mono/bin/mono
+      // starts with a slash		2
+      // starts with /opt/		4
+      // no backslashes		2
+      // 3 slashes			2
+      // 'file' in param		4
+      // TOTAL:			14 points
+      System.Diagnostics.Process.Start("/opt/mono/bin/mono");
+    }
 
-			// starts with a slash		2
-			// starts with /opt/		4
-			// no backslashes		2
-			// 3 slashes			2
-			// 'file' in param		4
-			// TOTAL:			14 points
-			System.Diagnostics.Process.Start ("/opt/mono/bin/mono");
-		}
+    private void HighConfidence1() // 10 to 13 points
+    {
+      // parser/data/English.nbin
 
-		void HighConfidence1 () // 10 to 13 points
-		{
-			// parser/data/English.nbin
+      // no backslashes		2
+      // 4-char extension		3
+      // 2 slashes			2
+      // setter name contains 'path'	4
+      // TOTAL:			11 points
+      SomePath = "parser/data/English.nbin";
+    }
 
-			// no backslashes		2
-			// 4-char extension		3
-			// 2 slashes			2
-			// setter name contains 'path'	4
-			// TOTAL:			11 points
-			SomePath = "parser/data/English.nbin";
-		}
+    private void HighConfidence2() // 10 to 13 points
+    {
+      // \\SHARED\Music\Donovan\Mellow_Yellow.mp3
 
+      // starts with \\ (UNC)		4
+      // no slashes			2
+      // 3 backslashes (except \\)	3
+      // 3-char extension		4
+      // TOTAL:			13 points
+      string music = @"\\SHARED\Music\Donovan\Mellow_Yellow.mp3";
+      throw new NotSupportedException(music);
+    }
 
-		void HighConfidence2 () // 10 to 13 points
-		{
-			// \\SHARED\Music\Donovan\Mellow_Yellow.mp3
+    private string SomePath
+    {
+      set { }
+    }
 
-			// starts with \\ (UNC)		4
-			// no slashes			2
-			// 3 backslashes (except \\)	3
-			// 3-char extension		4
-			// TOTAL:			13 points
-			string music = @"\\SHARED\Music\Donovan\Mellow_Yellow.mp3";
-			throw new NotSupportedException (music);
-		}
+    private Stream NormalConfidence1() // 8 to 9 points
+    {
+      // bin\Debug\framework.dll
 
-		string SomePath
-		{
-			set { }
-		}
+      // no slashes			2
+      // two backslashes		3
+      // 3-char extension		4
+      // TOTAL:			9 points
 
-		Stream NormalConfidence1 () // 8 to 9 points
-		{
+      string output = @"bin\Debug\framework.dll";
+      return File.OpenWrite(output);
+    }
 
-			// bin\Debug\framework.dll
+    private void NormalConfidence2() // 8 to 9 points
+    {
+      // gendarme/bin/
 
-			// no slashes			2
-			// two backslashes		3
-			// 3-char extension		4
-			// TOTAL:			9 points
+      // no backslashes		2
+      // two slashes			2
+      // field name contains 'dir'	4
+      // TOTAL:			8 points
 
-			string output = @"bin\Debug\framework.dll";
-			return File.OpenWrite (output);
-		}
+      gendarmeDirectory = @"gendarme/bin/";
+    }
 
-		void NormalConfidence2 () // 8 to 9 points
-		{
+    private string gendarmeDirectory;
 
-			// gendarme/bin/
+    private string DontReportUris()
+    {
+      string something = "http://somewhere.com/index.php";
+      return something;
+    }
 
-			// no backslashes		2
-			// two slashes			2
-			// field name contains 'dir'	4
-			// TOTAL:			8 points
+    private string DontReportSlashlessStrings()
+    {
+      // we do not check strings that contain no (back)slashes
+      // since they can cause no portability problems
+      return "a elbereth gilthoniel.txt";
+    }
 
-			gendarmeDirectory = @"gendarme/bin/";
-		}
+#if NETCOREAPP2_0
+#else
 
-		private string gendarmeDirectory;
+    private void DontReportRegistryKeys()
+    {
+      // they look like paths but they aren't
+      Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine
+        .OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", true);
+    }
 
+#endif
 
-		string DontReportUris ()
-		{
-			string something = "http://somewhere.com/index.php";
-			return something;
-		}
+    private string DontReportXML()
+    {
+      string someXml = "<a><b /><c></c><b /></a>";
+      return someXml;
+    }
 
-		string DontReportSlashlessStrings ()
-		{
-			// we do not check strings that contain no (back)slashes
-			// since they can cause no portability problems
-			return "a elbereth gilthoniel.txt";
-		}
+    private string DontReportShortStrings()
+    {
+      string someFile = "/";
+      return someFile;
+    }
 
-		void DontReportRegistryKeys ()
-		{
-			// they look like paths but they aren't
-			Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine
-				.OpenSubKey (@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", true);
-		}
+    private string DontReportStringsWithManyDots()
+    {
+      string mimeType = "application/vnd.oasis-open.relax-ng.rnc";
+      return mimeType;
+    }
 
-		string DontReportXML ()
-		{
-			string someXml = "<a><b /><c></c><b /></a>";
-			return someXml;
-		}
+    private void DontReportXPath()
+    {
+      System.Xml.XmlDocument doc = null;
+      System.Xml.XmlNode node = doc.SelectSingleNode("/root/element/anotherelement");
+    }
 
-		string DontReportShortStrings ()
-		{
-			string someFile = "/";
-			return someFile;
-		}
+    private void DontReportRegexes()
+    {
+      System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(
+          @"^\s*"
+          + @"(((?<ORIGIN>(((\d+>)?[a-zA-Z]?:[^:]*)|([^:]*))):)"
+          + "|())"
+          + "(?<SUBCATEGORY>(()|([^:]*? )))"
+          + "(?<CATEGORY>(error|warning)) "
+          + "(?<CODE>[^:]*):"
+          + "(?<TEXT>.*)$",
+          System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    }
 
-		string DontReportStringsWithManyDots ()
-		{
-			string mimeType = "application/vnd.oasis-open.relax-ng.rnc";
-			return mimeType;
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no LDSTR instruction
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-		void DontReportXPath ()
-		{
-			System.Xml.XmlDocument doc = null;
-			System.Xml.XmlNode node = doc.SelectSingleNode ("/root/element/anotherelement");
-		}
+    [Test]
+    public void FailureTotalConfidence()
+    {
+      AssertRuleFailure<DoNotHardcodePathsTest>("TotalConfidence1", 1);
+      Assert.AreEqual(Confidence.Total, Runner.Defects[0].Confidence, "1");
+      AssertRuleFailure<DoNotHardcodePathsTest>("TotalConfidence2", 1);
+      Assert.AreEqual(Confidence.Total, Runner.Defects[0].Confidence, "2");
+      AssertRuleFailure<DoNotHardcodePathsTest>("TotalConfidence3", 1);
+      Assert.AreEqual(Confidence.Total, Runner.Defects[0].Confidence, "3");
+    }
 
-		void DontReportRegexes ()
-		{
-			System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex (
-					@"^\s*"
-					+ @"(((?<ORIGIN>(((\d+>)?[a-zA-Z]?:[^:]*)|([^:]*))):)"
-					+ "|())"
-					+ "(?<SUBCATEGORY>(()|([^:]*? )))"
-					+ "(?<CATEGORY>(error|warning)) "
-					+ "(?<CODE>[^:]*):"
-					+ "(?<TEXT>.*)$",
-					System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-		}
+    [Test]
+    public void FailureHighConfidence()
+    {
+      AssertRuleFailure<DoNotHardcodePathsTest>("HighConfidence1", 1);
+      Assert.AreEqual(Confidence.High, Runner.Defects[0].Confidence, "1");
+      AssertRuleFailure<DoNotHardcodePathsTest>("HighConfidence2", 1);
+      Assert.AreEqual(Confidence.High, Runner.Defects[0].Confidence, "2");
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no LDSTR instruction
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    [Test]
+    public void FailureNormalConfidence()
+    {
+      AssertRuleFailure<DoNotHardcodePathsTest>("NormalConfidence1", 1);
+      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
+      AssertRuleFailure<DoNotHardcodePathsTest>("NormalConfidence2", 1);
+      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "2");
+    }
 
-		[Test]
-		public void FailureTotalConfidence ()
-		{
-			AssertRuleFailure<DoNotHardcodePathsTest> ("TotalConfidence1", 1);
-			Assert.AreEqual (Confidence.Total, Runner.Defects [0].Confidence, "1");
-			AssertRuleFailure<DoNotHardcodePathsTest> ("TotalConfidence2", 1);
-			Assert.AreEqual (Confidence.Total, Runner.Defects [0].Confidence, "2");
-			AssertRuleFailure<DoNotHardcodePathsTest> ("TotalConfidence3", 1);
-			Assert.AreEqual (Confidence.Total, Runner.Defects [0].Confidence, "3");
-		}
+    [Test]
+    public void IgnoreSomeCases()
+    {
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportUris");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportSlashlessStrings");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportRegistryKeys");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportXML");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportShortStrings");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportStringsWithManyDots");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportXPath");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportRegexes");
+    }
 
-		[Test]
-		public void FailureHighConfidence ()
-		{
-			AssertRuleFailure<DoNotHardcodePathsTest> ("HighConfidence1", 1);
-			Assert.AreEqual (Confidence.High, Runner.Defects [0].Confidence, "1");
-			AssertRuleFailure<DoNotHardcodePathsTest> ("HighConfidence2", 1);
-			Assert.AreEqual (Confidence.High, Runner.Defects [0].Confidence, "2");
-		}
+    // test case provided by Richard Birkby
+    internal sealed class FalsePositive5
+    {
+      public void Run()
+      {
+        GetType();
 
-		[Test]
-		public void FailureNormalConfidence ()
-		{
-			AssertRuleFailure<DoNotHardcodePathsTest> ("NormalConfidence1", 1);
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "1");
-			AssertRuleFailure<DoNotHardcodePathsTest> ("NormalConfidence2", 1);
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "2");
-		}
+        XmlDocument doc = new XmlDocument();
+        doc.LoadXml("<a><b><c/></b></a>");
 
-		[Test]
-		public void IgnoreSomeCases ()
-		{
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportUris");
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportSlashlessStrings");
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportRegistryKeys");
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportXML");
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportShortStrings");
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportStringsWithManyDots");
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportXPath");
-			AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportRegexes");
-		}
+        AddVariable("a/b/c", doc);
+      }
 
-		// test case provided by Richard Birkby
-		internal sealed class FalsePositive5 {
-			public void Run ()
-			{
-				GetType ();
+      private static void AddVariable(string xpath, XmlNode node)
+      {
+        node.SelectSingleNode(xpath);
+      }
+    }
 
-				XmlDocument doc = new XmlDocument ();
-				doc.LoadXml ("<a><b><c/></b></a>");
+    internal sealed class Fixed5
+    {
+      public void Run()
+      {
+        GetType();
 
-				AddVariable ("a/b/c", doc);
-			}
+        XmlDocument doc = new XmlDocument();
+        doc.LoadXml("<a><b><c/></b></a>");
 
-			private static void AddVariable (string xpath, XmlNode node)
-			{
-				node.SelectSingleNode (xpath);
-			}
-		}
+        doc.SelectSingleNode("b/c/d");
+      }
+    }
 
-		internal sealed class Fixed5 {
-			public void Run ()
-			{
-				GetType ();
-
-				XmlDocument doc = new XmlDocument ();
-				doc.LoadXml ("<a><b><c/></b></a>");
-
-				doc.SelectSingleNode ("b/c/d");
-			}
-		}
-
-		[Test]
-		public void XPath ()
-		{
-			AssertRuleFailure<FalsePositive5> ("Run", 1);
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "1");
-			AssertRuleSuccess<Fixed5> ("Run");
-		}
-	}
+    [Test]
+    public void XPath()
+    {
+      AssertRuleFailure<FalsePositive5>("Run", 1);
+      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
+      AssertRuleSuccess<Fixed5>("Run");
+    }
+  }
 }

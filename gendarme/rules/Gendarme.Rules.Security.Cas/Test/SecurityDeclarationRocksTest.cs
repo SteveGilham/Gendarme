@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,18 +36,23 @@ using Test.Rules.Helpers;
 using Mono.Cecil;
 using Gendarme.Rules.Security.Cas;
 
-namespace Tests.Rules.Security.Cas {
+namespace Tests.Rules.Security.Cas
+{
+  [SSP.PermissionSet(SSP.SecurityAction.InheritanceDemand, Unrestricted = true, UnicodeEncoded = true)]
+  public abstract class UnrestrictedTrue
+  {
+  }
 
-	[SSP.PermissionSet (SSP.SecurityAction.InheritanceDemand, Unrestricted = true, UnicodeEncoded = true)]
-	public abstract class UnrestrictedTrue {
-	}
+  [SSP.PermissionSet(SSP.SecurityAction.InheritanceDemand, Unrestricted = false)]
+  public abstract class UnrestrictedFalse
+  {
+  }
 
-	[SSP.PermissionSet (SSP.SecurityAction.InheritanceDemand, Unrestricted = false)]
-	public abstract class UnrestrictedFalse {
-	}
-
-	[TestFixture]
-	public class SecurityDeclarationRocksTest {
+  [TestFixture]
+  public class SecurityDeclarationRocksTest
+  {
+#if NETCOREAPP2_0
+#else
 
 		[Test]
 		public void Unrestricted_Boolean ()
@@ -60,6 +65,7 @@ namespace Tests.Rules.Security.Cas {
 			ps = t.SecurityDeclarations [0].ToPermissionSet ();
 			Assert.IsFalse (ps.IsUnrestricted (), "!IsUnrestricted");
 		}
-	}
-}
 
+#endif
+  }
+}

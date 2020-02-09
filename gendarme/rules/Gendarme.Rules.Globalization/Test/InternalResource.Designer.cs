@@ -68,8 +68,10 @@ namespace Tests.Rules.Globalization {
                 return ResourceManager.GetString("CalledString", resourceCulture);
             }
         }
-        
-        internal static System.Drawing.Bitmap ImageUnused {
+
+#if NETCOREAPP2_0
+#else
+    internal static System.Drawing.Bitmap ImageUnused {
             get {
                 object obj = ResourceManager.GetObject("ImageUnused", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -82,11 +84,11 @@ namespace Tests.Rules.Globalization {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Uncalled.
-        /// </summary>
-        internal static string UncalledString {
+#endif        
+    /// <summary>
+    ///   Looks up a localized string similar to Uncalled.
+    /// </summary>
+    internal static string UncalledString {
             get {
                 return ResourceManager.GetString("UncalledString", resourceCulture);
             }

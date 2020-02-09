@@ -1,27 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFramework>net40</TargetFramework>
-    <PublishUrl>http://localhost/Gendarme.Rules.Ui/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.Ui.xml</DocumentationFile>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <NoWarn>1590</NoWarn>
@@ -42,10 +22,6 @@
     <ProjectReference Include="..\..\framework\Gendarme.Framework.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Test\AddMatchingArrangeMeasureOverrideTest.cs" />
-    <Compile Remove="Test\ExecutableTargetTest.cs" />
-    <Compile Remove="Test\GtkSharpExecutableTargetTest.cs" />
-    <Compile Remove="Test\SystemWindowsFormsExecutableTargetTest.cs" />
-    <Compile Remove="Test\UseSTAThreadAttributeOnSWFEntryPointsTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

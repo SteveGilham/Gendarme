@@ -1,27 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <TargetFramework>net40</TargetFramework>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.Globalization.xml</DocumentationFile>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -39,12 +19,6 @@
     <Compile Remove="PreferIFormatProviderOverrideRule.cs" />
     <Compile Remove="PreferOverrideBaseRule.cs" />
     <Compile Remove="PreferStringComparisonOverrideRule.cs" />
-    <Compile Remove="Test\AvoidUnusedInternalResourceTest.cs" />
-    <Compile Remove="Test\InternalResource.Designer.cs" />
-    <Compile Remove="Test\PreferIFormatProviderOverrideTest.cs" />
-    <Compile Remove="Test\PreferStringComparisonOverrideTest.cs" />
-    <Compile Remove="Test\PublicResource.Designer.cs" />
-    <Compile Remove="Test\Resource.Designer.cs" />
-    <Compile Remove="Test\SatelliteResourceMismatchTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

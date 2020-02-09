@@ -1,4 +1,4 @@
-// 
+//
 // Test.Rules.Ui.AddMatchingArrangeMeasureOverrideTest
 //
 // Authors:
@@ -52,64 +52,85 @@ namespace System.Windows {
 }
 #endif
 
-namespace Test.Rules.Ui {
+namespace Test.Rules.Ui
+{
+#if NETCOREAPP2_0
+#else
 
-	public class BasicFrameworkElement : FrameworkElement {
-	}
-	public class GoodFrameworkElement : FrameworkElement {
-		protected override Size ArrangeOverride (Size finalSize)
-		{
-			return base.ArrangeOverride (finalSize);
-		}
-		protected override Size MeasureOverride (Size availableSize)
-		{
-			return base.MeasureOverride (availableSize);
-		}
-	}
-	public class BadArrangeOnlyElement : FrameworkElement {
-		protected override Size ArrangeOverride (Size finalSize)
-		{
-			return base.ArrangeOverride (finalSize);
-		}
-	}
-	public class BadMeasureOnlyElement : FrameworkElement {
-		protected override Size MeasureOverride (Size availableSize)
-		{
-			return base.MeasureOverride (availableSize);
-		}
-	}
+  public class BasicFrameworkElement : FrameworkElement
+  {
+  }
 
-	[TestFixture]
-	public class AddMatchingArrangeMeasureOverrideTest : TypeRuleTestFixture<AddMatchingArrangeMeasureOverrideRule> {
-		[Test]
-		public void DoesNotApply ()
-		{
-			// Doesn't inhert from FrameworkElement
-			AssertRuleDoesNotApply (SimpleTypes.Class);
+  public class GoodFrameworkElement : FrameworkElement
+  {
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+      return base.ArrangeOverride(finalSize);
+    }
 
-			// Aren't classes
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
+    protected override Size MeasureOverride(Size availableSize)
+    {
+      return base.MeasureOverride(availableSize);
+    }
+  }
 
-			// Doesn't implement either method.
-			AssertRuleDoesNotApply<BasicFrameworkElement> ();
-		}
+  public class BadArrangeOnlyElement : FrameworkElement
+  {
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+      return base.ArrangeOverride(finalSize);
+    }
+  }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<GoodFrameworkElement> ();
-		}
+  public class BadMeasureOnlyElement : FrameworkElement
+  {
+    protected override Size MeasureOverride(Size availableSize)
+    {
+      return base.MeasureOverride(availableSize);
+    }
+  }
 
-		[Test]
-		public void Bad ()
-		{
-			// Only overrides ArrangeOverride method.
-			AssertRuleFailure<BadArrangeOnlyElement> (1);
+#endif
 
-			// Only overrides MeasureOverride method.
-			AssertRuleFailure<BadMeasureOnlyElement> (1);
-		}
-	}
+  [TestFixture]
+  public class AddMatchingArrangeMeasureOverrideTest : TypeRuleTestFixture<AddMatchingArrangeMeasureOverrideRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // Doesn't inhert from FrameworkElement
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+
+      // Aren't classes
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+#if NETCOREAPP2_0
+#else
+      // Doesn't implement either method.
+      AssertRuleDoesNotApply<BasicFrameworkElement>();
+#endif
+    }
+
+#if NETCOREAPP2_0
+#else
+
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<GoodFrameworkElement>();
+    }
+
+    [Test]
+    public void Bad()
+    {
+      // Only overrides ArrangeOverride method.
+      AssertRuleFailure<BadArrangeOnlyElement>(1);
+
+      // Only overrides MeasureOverride method.
+      AssertRuleFailure<BadMeasureOnlyElement>(1);
+    }
+
+#endif
+  }
 }

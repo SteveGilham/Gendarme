@@ -1,29 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <TargetFramework>net40</TargetFramework>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NoWarn>1591</NoWarn>
-    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
-    <WarningsAsErrors>1570</WarningsAsErrors>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.Security.Cas.xml</DocumentationFile>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -38,14 +16,6 @@
     <ProjectReference Include="..\..\framework\Gendarme.Framework.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Test\AddMissingTypeInheritanceDemandTest.cs" />
-    <Compile Remove="Test\DoNotExposeFieldsInSecuredTypeTest.cs" />
-    <Compile Remove="Test\DoNotExposeMethodsProtectedByLinkDemandTest.cs" />
-    <Compile Remove="Test\DoNotReduceTypeSecurityOnMethodsTest.cs" />
-    <Compile Remove="Test\ReviewNonVirtualMethodWithInheritanceDemandTest.cs" />
-    <Compile Remove="Test\ReviewSealedTypeWithInheritanceDemandTest.cs" />
-    <Compile Remove="Test\ReviewSuppressUnmanagedCodeSecurityUsageTest.cs" />
-    <Compile Remove="Test\SecureGetObjectDataOverridesTest.cs" />
-    <Compile Remove="Test\SecurityDeclarationRocksTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

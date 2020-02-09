@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 using System;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -37,73 +36,76 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
 
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class UseFileOpenOnlyWithFileAccessTest : MethodRuleTestFixture<UseFileOpenOnlyWithFileAccessRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no CALL[VIRT] instruction
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-namespace Test.Rules.BadPractice {
+    public void BadMethod1()
+    {
+      var f = File.Open("HelloWorld.cs", FileMode.Open);
+    }
 
-	[TestFixture]
-	public class UseFileOpenOnlyWithFileAccessTest : MethodRuleTestFixture<UseFileOpenOnlyWithFileAccessRule> {
+    public void BadMethod2()
+    {
+      var f = File.Open("HelloWorld.cs", FileMode.Append);
+      // unrelated call
+      string a = f.ToString();
+      var g = new FileStream("HelloWorld.cs", FileMode.Truncate);
+      // unrelated code
+      if (a.Length == 42)
+        return;
+      else
+        return;
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no CALL[VIRT] instruction
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    public void BadMethod3()
+    {
+      var f = File.Open("HelloWorld.cs", FileMode.CreateNew);
+      var g = new FileStream("HelloWorld.cs", FileMode.OpenOrCreate);
+      var h = new IsolatedStorageFileStream("HelloWorld.cs", FileMode.Create);
+    }
 
-		public void BadMethod1 ()
-		{
-			var f = File.Open ("HelloWorld.cs", FileMode.Open);
-		}
+    public void GoodMethod()
+    {
+      var f = File.Open("HelloWorld.cs", FileMode.Open, FileAccess.Read);
+      var g = new FileStream("HelloWorld.cs", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+      var h = new IsolatedStorageFileStream("HelloWorld.cs", FileMode.Create, FileAccess.Write);
 
-		public void BadMethod2 ()
-		{
-			var f = File.Open ("HelloWorld.cs", FileMode.Append);
-			// unrelated call
-			string a = f.ToString ();
-			var g = new FileStream ("HelloWorld.cs", FileMode.Truncate);
-			// unrelated code
-			if (a.Length == 42)
-				return;
-			else
-				return;
+      // unrelated code
+      List<string> ls = new List<string> { "a", "b" };
+      ls.Clear();
 
-		}
+      var i = new FileStream("HelloWorld.cs", FileMode.Open,
+#if NETCOREAPP2_0
+        FileAccess.Read,
+#else
+				FileSystemRights.Read,
+#endif
+          FileShare.Read, 8, FileOptions.None);
+    }
 
-		public void BadMethod3()
-		{
-			var f = File.Open ("HelloWorld.cs", FileMode.CreateNew);
-			var g = new FileStream ("HelloWorld.cs", FileMode.OpenOrCreate);
-			var h = new IsolatedStorageFileStream ("HelloWorld.cs", FileMode.Create);
-		}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<UseFileOpenOnlyWithFileAccessTest>("BadMethod1", 1);
+      AssertRuleFailure<UseFileOpenOnlyWithFileAccessTest>("BadMethod2", 2);
+      AssertRuleFailure<UseFileOpenOnlyWithFileAccessTest>("BadMethod3", 3);
+    }
 
-		public void GoodMethod ()
-		{
-			var f = File.Open ("HelloWorld.cs", FileMode.Open, FileAccess.Read);
-			var g = new FileStream ("HelloWorld.cs", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-			var h = new IsolatedStorageFileStream ("HelloWorld.cs", FileMode.Create, FileAccess.Write);
-			
-			// unrelated code
-			List<string> ls = new List<string> { "a", "b" };
-			ls.Clear ();
-
-			var i = new FileStream ("HelloWorld.cs", FileMode.Open, FileSystemRights.Read,
-					FileShare.Read, 8, FileOptions.None);
-		}
-
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<UseFileOpenOnlyWithFileAccessTest> ("BadMethod1", 1);
-			AssertRuleFailure<UseFileOpenOnlyWithFileAccessTest> ("BadMethod2", 2);
-			AssertRuleFailure<UseFileOpenOnlyWithFileAccessTest> ("BadMethod3", 3);
-		}
-
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<UseFileOpenOnlyWithFileAccessTest> ("GoodMethod");
-		}
-	}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<UseFileOpenOnlyWithFileAccessTest>("GoodMethod");
+    }
+  }
 }

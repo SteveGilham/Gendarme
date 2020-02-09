@@ -1,29 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <TargetFramework>net40</TargetFramework>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NoWarn>1591</NoWarn>
-    <OutputPath>..\..\console\bin\$(Configuration)\</OutputPath>
-    <WarningsAsErrors>1570</WarningsAsErrors>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>..\..\console\bin\$(Configuration)\Gendarme.Rules.Design.xml</DocumentationFile>
+    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -39,52 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DoNotDeclareSettersOnCollectionPropertiesRule.cs" />
-    <Compile Remove="Test\AbstractTypesShouldNotHavePublicConstructorsTest.cs" />
-    <Compile Remove="Test\AttributeArgumentsShouldHaveAccessorsTest.cs" />
-    <Compile Remove="Test\AvoidEmptyInterfaceTest.cs" />
-    <Compile Remove="Test\AvoidMultidimensionalIndexerTest.cs" />
-    <Compile Remove="Test\AvoidPropertiesWithoutGetAccessorTest.cs" />
-    <Compile Remove="Test\AvoidPublicInstanceFieldsTest.cs" />
-    <Compile Remove="Test\AvoidRefAndOutParametersTest.cs" />
-    <Compile Remove="Test\AvoidSmallNamespaceTest.cs" />
-    <Compile Remove="Test\AvoidVisibleNestedTypesTest.cs" />
-    <Compile Remove="Test\ConsiderAddingInterfaceTest.cs" />
-    <Compile Remove="Test\ConsiderConvertingFieldToNullableTest.cs" />
-    <Compile Remove="Test\ConsiderConvertingMethodToPropertyTest.cs" />
-    <Compile Remove="Test\ConsiderUsingStaticTypeTest.cs" />
-    <Compile Remove="Test\DeclareEventHandlersCorrectlyTest.cs" />
-    <Compile Remove="Test\DisposableTypesShouldHaveFinalizerTest.cs" />
-    <Compile Remove="Test\DoNotDeclareSettersOnCollectionPropertiesTest.cs" />
-    <Compile Remove="Test\DoNotDeclareVirtualMethodsInSealedTypeTest.cs" />
-    <Compile Remove="Test\DontDeclareProtectedFieldsInSealedClassTest.cs" />
-    <Compile Remove="Test\EnsureSymmetryForOverloadedOperatorsTest.cs" />
-    <Compile Remove="Test\EnumeratorsShouldBeStronglyTypedTest.cs" />
-    <Compile Remove="Test\EnumsShouldDefineAZeroValueTest.cs" />
-    <Compile Remove="Test\EnumsShouldUseInt32Test.cs" />
-    <Compile Remove="Test\FinalizersShouldBeProtectedTest.cs" />
-    <Compile Remove="Test\FlagsShouldNotDefineAZeroValueTest.cs" />
-    <Compile Remove="Test\GlobalSuppressions.cs" />
-    <Compile Remove="Test\ImplementEqualsAndGetHashCodeInPairTest.cs" />
-    <Compile Remove="Test\ImplementIComparableCorreclyTest.cs" />
-    <Compile Remove="Test\InternalNamespacesShouldNotExposeTypesTest.cs" />
-    <Compile Remove="Test\ListsAreStronglyTypedTest.cs" />
-    <Compile Remove="Test\MainShouldNotBePublicTest.cs" />
-    <Compile Remove="Test\MarkAssemblyWithAssemblyVersionTest.cs" />
-    <Compile Remove="Test\MarkAssemblyWithCLSCompliantTest.cs" />
-    <Compile Remove="Test\MarkAssemblyWithComVisibleTest.cs" />
-    <Compile Remove="Test\MissingAttributeUsageOnCustomAttributeTest.cs" />
-    <Compile Remove="Test\OperatorEqualsShouldBeOverloadedTest.cs" />
-    <Compile Remove="Test\OverrideEqualsMethodTest.cs" />
-    <Compile Remove="Test\PreferEventsOverMethodsTest.cs" />
-    <Compile Remove="Test\PreferIntegerOrStringForIndexersTest.cs" />
-    <Compile Remove="Test\PreferUriOverStringTest.cs" />
-    <Compile Remove="Test\PreferXmlAbstractionsTest.cs" />
-    <Compile Remove="Test\ProvideAlternativeNamesForOperatorOverloadsTest.cs" />
-    <Compile Remove="Test\ProvideTryParseAlternativeTest.cs" />
-    <Compile Remove="Test\StronglyTypeICollectionMembersTest.cs" />
-    <Compile Remove="Test\TypesShouldBeInsideNamespacesTest.cs" />
-    <Compile Remove="Test\UseCorrectDisposeSignaturesTest.cs" />
-    <Compile Remove="Test\UseFlagsAttributeTest.cs" />
-    <Compile Remove="Test\UsingCloneWithoutImplementingICloneableTest.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>
