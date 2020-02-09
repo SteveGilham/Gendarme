@@ -7,8 +7,6 @@
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
     <NoWarn>1701;1702;618;219;169;649;414;67</NoWarn>
   </PropertyGroup>
   <ItemGroup>
