@@ -7,6 +7,8 @@ $version = $now.Year.ToString() + "." + $now.Month.ToString() + "." + $now.Day.T
 $newfile = $file.Replace("2011", $now.Year.ToString()).Replace("2.11.0.0", $version)
 [System.Io.File]::WriteAllText("./gendarme/AssemblyStaticInfo.cs", $newfile)
 
+$releaseNotes = [System.Io.File]::ReadAllText("./ReleaseNotes.md")
 $nuspec = [Xml](Get-Content "./altcode.gendarme.xml")
 $nuspec.package.metadata.version = $version + "-pre-release"
+$nuspec.package.metadata.releaseNotes = $releaseNotes
 $nuspec.Save("./altcode.gendarme.nuspec")

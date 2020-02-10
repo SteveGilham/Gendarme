@@ -16,3 +16,5 @@ missing
 mkinstalldirs
 install-sh
 packages/
+altcode.gendarme.nuspec
+gendarme/AssemblyStaticInfo.cs

@@ -1,4 +1,0 @@
-NuGet restore .\packages.config -PackagesDirectory .\packages
-powershell .\set-version.ps1
-msbuild .\gendarme\gendarme-win.sln /p:Configuration=Release
-NuGet.exe pack altcode.gendarme.nuspec           
