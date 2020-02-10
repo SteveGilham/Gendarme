@@ -1,6 +1,14 @@
 version: 1.0.{build}
+pull_requests:
+  do_not_increment_build_number: true
+skip_tags: true
 image: Visual Studio 2013
 configuration: Release
+clone_depth: 2
+install:
+- cmd: appveyor DownloadFile https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+nuget:
+  disable_publish_on_pr: true
 before_build:
 - cmd: >-
     NuGet restore .\packages.config -PackagesDirectory .\packages
