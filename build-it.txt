@@ -1,0 +1,2 @@
+NuGet restore .\packages.config -PackagesDirectory .\packages
+msbuild .\gendarme\gendarme-win.sln /p:Configuration=Release
