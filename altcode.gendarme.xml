@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>altcode.gendarme</id>
+    <version>0</version>
+    <title>AltCode.Gendarme</title>
+    <authors>Steve Gilham</authors>
+    <owners>Steve Gilham</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="file">LICENSE</license>
+    <projectUrl>https://github.com/SteveGilham/Gendarme</projectUrl>
+    <iconUrl>https://cdn.jsdelivr.net/gh/SteveGilham/altcover/Mushi-2F8D.png</iconUrl>
+    <icon>Mushi-2F8D.png</icon>
+    <description>A somewhat updated build of the Mono.Gendarme static analysis tool.</description>
+    <summary></summary>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Copyright (c) 2020 by Steve Gilham &lt;SteveGilham@users.noreply.github.com&gt;</copyright>
+    <tags>gendarme static-analysis</tags>
+    <repository type="git" url="https://github.com/SteveGilham/Gendarme" />
+  </metadata>
+    <files>
+        <file src=".\gendarme\console\bin\Release\**" target="tools" />
+        <file src=".\Mushi-2F8D.*" target="" />
+        <file src=".\LICENS*" target="" />
+    </files>  
+</package>
