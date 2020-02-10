@@ -1,4 +1,4 @@
-# 2020.2.10.xxx-pre-release
+# 2020.2.10.17202-pre-release
 * Build the code as of commit b45416d516b18e77c1e73be31649bb298b1c6652 (24-Oct-2016) against Cecil 0.11.1 and NUnit 2.7.1 using VS2013 (pre-Roslyn compiler)
 * Unit test failures for rules
   * Gendarme.Rules.Performance\Test\AvoidUnnecessaryOverridesTest
