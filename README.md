@@ -3,7 +3,7 @@
 A Mono.Gendarme fork built against the most recent Mono.Cecil that can load assemblies built with current compilers.
 
 ### Badges
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme) Command-line tool](https://www.nuget.org/packages/altcode.gendarme)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Command-line tool](https://www.nuget.org/packages/altcode.gendarme)
 * [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme)
 * ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme)
 
@@ -11,9 +11,9 @@ A Mono.Gendarme fork built against the most recent Mono.Cecil that can load asse
 
 * Assumes latest NuGet (5.4.0) and VS2013 build environment
 
-NuGet restore .\packages.config -PackagesDirectory .\packages
-powershell .\set-version.ps1
-msbuild .\gendarme\gendarme-win.sln /p:Configuration=Release
+NuGet restore .\packages.config -PackagesDirectory .\packages  
+powershell .\set-version.ps1  
+msbuild .\gendarme\gendarme-win.sln /p:Configuration=Release  
 NuGet pack altcode.gendarme.nuspec
 
 * the `msbuild` stage can be done in Visual Studio with the Debug configuration to run the unit tests
