@@ -161,6 +161,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CecilExtensions\CecilExtensions.fsproj">
+      <Project>{cb71ef37-f4a1-49a5-8258-e8a71a8206a9}</Project>
+      <Name>CecilExtensions</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

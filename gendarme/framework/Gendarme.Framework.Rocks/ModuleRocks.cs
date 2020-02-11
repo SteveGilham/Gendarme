@@ -51,17 +51,6 @@ namespace Gendarme.Framework.Rocks {
 	/// </summary>
 	public static class ModuleRocks {
 
-		static bool running_on_mono;
-
-		static ModuleRocks ()
-		{
-			running_on_mono = typeof (object).Assembly.GetType ("System.MonoType", false) != null;
-		}
-
-		static bool RunningOnMono {
-			get { return running_on_mono; }
-		}
-
 		/// <summary>
 		/// Load, if available, the debugging symbols associated with the module. This first
 		/// try to load a MDB file (symbols from the Mono:: runtime) and then, if not present 
@@ -77,37 +66,10 @@ namespace Gendarme.Framework.Rocks {
 			if (self.HasSymbols)
 				return;
 
-			string image_name = self.FileName;
-			string symbol_name = image_name + ".mdb";
-			Type reader_type = null;
-
-			// we can always load Mono symbols (whatever the runtime we're using)
-			// so we start by looking for it's debugging symbol file
-			if (File.Exists (symbol_name)) {
-				// "always" if we can find Mono.Cecil.Mdb
-				reader_type = Type.GetType ("Mono.Cecil.Mdb.MdbReaderProvider, Mono.Cecil.Mdb, Version=0.9.4.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
-				// load the assembly from the current folder if
-				// it is here, or fallback to the gac
-			}
-			
-			// if we could not load Mono's symbols then we try, if not running on Mono,
-			// to load MS symbols (PDB files)
-			if ((reader_type == null) && !RunningOnMono) {
-				// assume we're running on MS.NET
-				symbol_name = Path.ChangeExtension (image_name, ".pdb");
-				if (File.Exists (symbol_name)) {
-					reader_type = Type.GetType ("Mono.Cecil.Pdb.PdbReaderProvider, Mono.Cecil.Pdb");
-				}
-			}
-
-			// no symbols are available to load
-			if (reader_type == null)
-				return;
-
-			ISymbolReaderProvider provider = (ISymbolReaderProvider) Activator.CreateInstance (reader_type);
-			try {
-				self.ReadSymbols (provider.GetSymbolReader (self, image_name));
-			}
+            try {
+                // delegate to modern reader
+                AltCode.CecilExtensions.ProgramDatabase.ReadSymbols(self.Assembly);
+            }
 			catch (FileNotFoundException) {
 				// this happens if a MDB file is missing 	 
 			}
