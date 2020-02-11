@@ -3,9 +3,9 @@
 A Mono.Gendarme fork built against the most recent Mono.Cecil that can load assemblies built with current compilers.
 
 ### Badges
-* [[Nuget](https://buildstats.info/nuget/altcode.gendarme) Command-line tool](https://www.nuget.org/packages/altcode.gendarme)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme) Command-line tool](https://www.nuget.org/packages/altcode.gendarme)
 * [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme)
-[Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme)
+* ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme)
 
 ## Build process from trunk as per `appveyor.yml`
 
