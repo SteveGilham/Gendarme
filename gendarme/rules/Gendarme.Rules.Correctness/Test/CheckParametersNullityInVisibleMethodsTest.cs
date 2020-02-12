@@ -794,5 +794,12 @@ namespace Tests.Rules.Correctness {
 		{
 			AssertRuleSuccess<CheckParametersNullityInVisibleMethodsTest> ("ChecksIsType");
 		}
+
+        [Test]
+        public void FSharpIgnoreGenerated()
+        {
+            Type[] args = new Type[] { typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs) };
+            this.AssertRuleDoesNotApply<AvoidMultidimensionalIndexer.DotNet.CLIArgs>("Equals", args);
+        }
 	}
 }

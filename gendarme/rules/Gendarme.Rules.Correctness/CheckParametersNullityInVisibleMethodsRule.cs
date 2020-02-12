@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -213,6 +214,10 @@ namespace Gendarme.Rules.Correctness {
 			// p/invoke, abstract methods and method without parameters
 			if (!method.HasBody || !method.HasParameters || !method.IsVisible ())
 				return RuleResult.DoesNotApply;
+
+            // skip compiler generated method
+            if (method.CustomAttributes.Any(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute"))
+                return RuleResult.DoesNotApply;
 
 			has_null_check.ClearAll ();
 			int parameters = method.Parameters.Count;
