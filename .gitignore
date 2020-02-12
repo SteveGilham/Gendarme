@@ -19,3 +19,5 @@ packages/
 altcode.gendarme.nuspec
 gendarme/AssemblyStaticInfo.cs
 gendarme/AssemblyStaticInfo.fs
+*.mdf
+*.ldf

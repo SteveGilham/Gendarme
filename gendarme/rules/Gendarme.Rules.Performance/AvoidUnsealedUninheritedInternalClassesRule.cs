@@ -70,7 +70,8 @@ namespace Gendarme.Rules.Performance {
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			if (type.IsAbstract || type.IsSealed || type.IsVisible () || type.IsGeneratedCode ())
+			if (type.IsAbstract || type.IsSealed || type.IsVisible () || type.IsGeneratedCode ()
+                || type.Name.Contains("@"))  // F# uses '@' e.g in <Type>@DebugTypeProxy
 				return RuleResult.Success;
 
 			ModuleDefinition module = type.Module;

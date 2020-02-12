@@ -7,3 +7,7 @@ module DotNet =
     | FailFast of bool
     | ShowSummary of string
     | Many of CLIArgs seq
+
+[<assembly:System.Runtime.InteropServices.ComVisible(false)>]
+[<assembly:System.CLSCompliantAttribute(true)>]
+()

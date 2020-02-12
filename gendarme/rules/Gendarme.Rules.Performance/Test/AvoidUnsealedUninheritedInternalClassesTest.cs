@@ -24,8 +24,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
+
 using Gendarme.Rules.Performance;
 
+using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
@@ -106,5 +109,14 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleFailure<Unsealed> (1);
 		}
+
+        [Test]
+        public void FSharpDebugProxy()
+        {
+            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/CLIArgs/Many@DebugTypeProxy");
+            AssertRuleSuccess(type);
+        }
 	}
 }
