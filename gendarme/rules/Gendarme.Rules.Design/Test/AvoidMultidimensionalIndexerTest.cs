@@ -108,5 +108,11 @@ namespace Test.Rules.Design {
 			AssertRuleSuccess<VisibleType> ("get_Item", intint);
 			AssertRuleSuccess<VisibleType> ("get_Item", stringstring);
 		}
+
+        [Test]
+        public void AvoidMultidimensionalIndexerFSharp()
+        {
+            AssertRuleSuccess<AvoidMultidimensionalIndexer.DotNet.CLIArgs.Force>("get_Item", Type.EmptyTypes);
+        }
 	}
 }
