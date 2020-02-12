@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System.Globalization;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -70,6 +71,16 @@ namespace Gendarme.Rules.BadPractice {
 			// if the type is not visible or has no fields then the rule does not apply
 			if (!type.HasFields || type.IsEnum || !type.IsVisible ())
 				return RuleResult.DoesNotApply;
+
+            // F# Tags type exposes static ints.  Naughty!  But nothing we can do about it.
+            if (type.IsStatic() &&
+                type.Name == "Tags" && // the compiler ensures that you can't have a "Tags" member
+                (!type.HasMethods) && 
+                type.DeclaringType != null &&
+                type.DeclaringType.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
+                                                             a.ConstructorArguments.Count == 1 &&
+                                                             (int)a.ConstructorArguments[0].Value == 1)) // Sum type
+                return RuleResult.DoesNotApply;
 
 			foreach (FieldDefinition field in type.Fields) {
 				// look for 'const' fields

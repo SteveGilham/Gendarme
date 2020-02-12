@@ -28,6 +28,7 @@ using System;
 
 using Gendarme.Rules.BadPractice;
 
+using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
@@ -116,5 +117,13 @@ namespace Test.Rules.BadPractice {
 		{
 			AssertRuleDoesNotApply (SimpleTypes.Enum);
 		}
-	}
+
+        [Test]
+        public void FSharpTagsAreIgnored()
+        {
+            string unit = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs).Assembly.Location;
+            var type = AssemblyDefinition.ReadAssembly(unit).MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/CLIArgs/Tags");
+            AssertRuleDoesNotApply(type);
+        }
+    }
 }
