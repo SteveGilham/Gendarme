@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -90,11 +91,14 @@ namespace Gendarme.Rules.Maintainability {
 				return RuleResult.DoesNotApply;
 
 			fields.Clear ();
-			foreach (FieldDefinition field in type.Fields)
+            foreach (FieldDefinition field in type.Fields.Where(f => !f.CustomAttributes.Any(a => a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")))
 				fields.Add (field.Name);
 
 			// Iterate through all the methods. Check parameter names then method bodies.
 			foreach (MethodDefinition method in type.Methods) {
+                // skip compiler generated method
+                if (method.CustomAttributes.Any(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute"))
+                    continue;
 				if (method.HasParameters) {
 					foreach (ParameterDefinition param in method.Parameters) {
 						if (fields.Contains (param.Name))

@@ -118,5 +118,11 @@ namespace Test.Rules.Maintainability {
 			int expected = assembly.MainModule.HasSymbols ? 2 : 1;
 			AssertRuleFailure<BadIgnore> (expected);
 		}
+
+        [Test]
+        public void FSharpIgnoreGenerated()
+        {
+            AssertRuleSuccess<AvoidMultidimensionalIndexer.DotNet.CLIArgs.Many>();
+        }
 	}
 }

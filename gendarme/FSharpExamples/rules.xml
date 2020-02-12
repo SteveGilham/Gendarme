@@ -6,6 +6,7 @@
     <rules include="*"
            from="Gendarme.Rules.Correctness.dll" />
     <rules include="*"
+           exclude="AvoidSmallNamespaceRule"
            from="Gendarme.Rules.Design.dll" />
     <rules include="*"
            from="Gendarme.Rules.Design.Generic.dll" />
