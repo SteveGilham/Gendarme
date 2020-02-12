@@ -25,6 +25,7 @@
     <rules include="*" from="Gendarme.Rules.Security.dll" />
     <rules include="*" from="Gendarme.Rules.Security.Cas.dll" />
     <rules include="*"
+           exclude="MarkAllNonSerializableFieldsRule"
            from="Gendarme.Rules.Serialization.dll" />
     <rules include="*"
            from="Gendarme.Rules.Smells.dll" />
