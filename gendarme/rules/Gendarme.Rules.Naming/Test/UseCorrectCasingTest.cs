@@ -62,7 +62,14 @@ namespace Test.Rules.Naming {
 			string unit = Assembly.GetExecutingAssembly ().Location;
 			AssertRuleFailure (AssemblyDefinition.ReadAssembly (unit), 5);
 		}
-	}
+
+        [Test]
+        public void FSharpStartUpNamespaces()
+        {
+            string unit = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs).Assembly.Location;
+            AssertRuleSuccess(AssemblyDefinition.ReadAssembly(unit));
+        }
+    }
 
 	[TestFixture]
 	public class UseCorrectCasingTypeTest : TypeRuleTestFixture<UseCorrectCasingRule> {

@@ -141,7 +141,7 @@ namespace Gendarme.Rules.Naming {
 			if (String.IsNullOrEmpty (nspace))
 				return;
 
-            // Skip F# names.  Not easy to unit test this one
+            // Skip F# names.
             if (nspace.StartsWith("<StartupCode$", StringComparison.Ordinal))
                 return;
 
