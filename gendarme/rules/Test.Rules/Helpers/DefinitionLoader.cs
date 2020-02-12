@@ -79,7 +79,7 @@ namespace Test.Rules.Helpers {
 				return false;
 
 			for (int i = 0; i < method.Parameters.Count; i++) {
-				if (parameters [i].FullName != method.Parameters [i].ParameterType.FullName)
+				if (parameters [i].FullName.Replace("+","/") != method.Parameters [i].ParameterType.FullName)
 					return false;
 			}
 			return true;
