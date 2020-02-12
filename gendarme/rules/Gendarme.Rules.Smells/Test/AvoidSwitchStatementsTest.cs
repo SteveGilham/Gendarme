@@ -126,5 +126,13 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleFailure<AvoidSwitchStatementsTest> ("SwitchWithStrings", 1);
 		}
+
+        [Test]
+        public void FSharpIgnoreGenerated()
+        {
+            Type[] args = new Type[] { typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs) };
+            this.AssertRuleDoesNotApply<AvoidMultidimensionalIndexer.DotNet.CLIArgs>("Equals", args);
+        }
+
 	}
 }

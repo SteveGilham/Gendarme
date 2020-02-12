@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Linq;
+
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -125,6 +127,10 @@ namespace Gendarme.Rules.Smells {
 			//yield statement
 			if (method.DeclaringType.IsGeneratedCode ())
 				return RuleResult.DoesNotApply;
+
+            // skip compiler generated method
+            if (method.CustomAttributes.Any(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute"))
+                return RuleResult.DoesNotApply;
 				
 			foreach (Instruction instruction in method.Body.Instructions) {
 				if (instruction.OpCode == OpCodes.Switch) {
