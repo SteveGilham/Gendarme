@@ -6,7 +6,7 @@ F# niggles first pass
 * Ignore [CompilerGenerated] fields and methods for `VariableNamesShouldNotMatchFieldNamesRule`
 * Ignore `<StartupCode$` names in `UseCorrectCasingRule`
 * Ignore generated types containg `@` in their names for `AvoidUnsealedUninheritedInternalTypesRule`
-* Ignore the `Tags` generted type inside union types for `AvoidVisibleConstantFieldRule`
+* Ignore the `Tags` generated type inside union types for `AvoidVisibleConstantFieldRule`
 
 # 2020.2.11.15383-pre-release
 * Replace the symbol reader extension with the more modern and general one from AltCover
