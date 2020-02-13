@@ -2,6 +2,8 @@
 # altcode.gendarme
 A Mono.Gendarme fork built against the most recent Mono.Cecil that can load assemblies built with current compilers.
 
+Since this is a fork, issues should be reported at my related repo](https://github.com/SteveGilham/altcode.fake/issues) that contains a Fake driver for the Gendarme tool, but noted as being against the forked Gendarme tool itself.
+
 ### Badges
 * [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Command-line tool](https://www.nuget.org/packages/altcode.gendarme)
 * [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme)
