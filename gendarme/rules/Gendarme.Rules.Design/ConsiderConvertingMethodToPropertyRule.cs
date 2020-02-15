@@ -98,7 +98,8 @@ namespace Gendarme.Rules.Design {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// rules do not apply to constructors, methods returning an array, properties
-			if (method.IsConstructor || method.IsSpecialName)
+			if (method.IsConstructor || method.IsSpecialName
+                 || method.IsGetter || method.IsSetter) // why wasn't this done already??
 				return RuleResult.DoesNotApply;
 
 			// we don't apply the rule to overrides since the base method can be

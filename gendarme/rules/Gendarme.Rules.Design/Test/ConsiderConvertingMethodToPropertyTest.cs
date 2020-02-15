@@ -165,7 +165,7 @@ namespace Test.Rules.Design {
 		private void SetObject (object value)
 		{
 			// no getter so it should be ignored
-			// otherwise by fixing this th euser would only trigger another rule
+			// otherwise by fixing this the user would only trigger another rule
 		}
 
 		[Test]
@@ -173,5 +173,11 @@ namespace Test.Rules.Design {
 		{
 			AssertRuleSuccess<ConsiderConvertingMethodToPropertyTest> ("SetObject");
 		}
+
+        [Test]
+        public void FSharpUnionCaseAcessors()
+        {
+            AssertRuleDoesNotApply<AvoidNonAlphanumericIdentifier.ArgType>("get_ImportModule");
+        }
 	}
 }
