@@ -51,6 +51,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AvoidMultidimensionalIndexerRule.fs" />
+    <Compile Include="AvoidNonAlphanumericIdentifierRule.fs" />
     <Compile Include="..\AssemblyStaticInfo.fs">
       <Link>AssemblyStaticInfo.fs</Link>
     </Compile>

@@ -171,8 +171,13 @@ namespace Gendarme.Rules.Naming {
 			if (UsedForComInterop (method.DeclaringType as TypeDefinition))
 				return RuleResult.DoesNotApply;
 
+            // Strip get_ and set_ prefixes out of property names
+            var name = method.Name;
+            if (method.IsSetter || method.IsGetter)
+                name = name.Substring(4);
+
 			// check the method name
-			if (!CheckName (method.Name, method.IsSpecialName))
+			if (!CheckName (name, method.IsSpecialName))
 				Runner.Report (method, Severity.Medium, Confidence.High);
 
 			if (method.HasParameters) {

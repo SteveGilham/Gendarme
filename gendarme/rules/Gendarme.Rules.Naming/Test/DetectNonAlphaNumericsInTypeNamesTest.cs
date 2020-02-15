@@ -257,5 +257,12 @@ namespace Test.Rules.Naming {
 		{
 			AssertRuleDoesNotApply<IMetaDataDispenser> ("DefineScope_Placeholder");
 		}
+
+        [Test]
+        public void FSharpRecordAccessors()
+        {
+            AssertRuleSuccess<AvoidNonAlphanumericIdentifier.ArgType>("get_ImportModule");
+        }
+
 	}
 }
