@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="AvoidMultidimensionalIndexerRule.fs" />
     <Compile Include="AvoidNonAlphanumericIdentifierRule.fs" />
+    <Compile Include="RemoveDependenceOnObsoleteCodeRule.fs" />
     <Compile Include="..\AssemblyStaticInfo.fs">
       <Link>AssemblyStaticInfo.fs</Link>
     </Compile>

@@ -138,6 +138,13 @@ namespace Tests.Rules.Maintainability {
 	[TestFixture]
 	public class RemoveDependenceOnObsoleteCodeTypeTest : TypeRuleTestFixture<RemoveDependenceOnObsoleteCodeRule> {
 
+        [Test]
+        public void FSharpIgnoreCasesOfObsoleteUnion()
+        {
+            AssertRuleDoesNotApply<RemoveDependenceOnObsoleteCode.ToolType.Mono>();
+        }
+
+
 		[Test]
 		public void NonObsolete ()
 		{
@@ -304,6 +311,12 @@ namespace Tests.Rules.Maintainability {
 			// method in obsolete type calls some obsolete code
 			AssertRuleDoesNotApply<ObsoleteType> ("Show");
 		}
-	}
+
+        [Test]
+        public void FSharpIgnoreCaseConstructorsOfObsoleteUnion()
+        {
+            AssertRuleDoesNotApply<RemoveDependenceOnObsoleteCode.ToolType.Mono>(".ctor");
+        }
+    }
 }
 

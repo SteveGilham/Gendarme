@@ -223,6 +223,15 @@ namespace Gendarme.Rules.Maintainability {
 			if (type.HasAttribute ("System", "ObsoleteAttribute"))
 				return RuleResult.DoesNotApply;
 
+            // F# union type cases can't be annotated
+            if (type.IsNested && 
+                type.BaseType == type.DeclaringType)
+            {
+                var resolved = type.BaseType.Resolve();
+                if (resolved != null && resolved.IsSumType())
+                    return RuleResult.DoesNotApply;
+            }
+
 			// check if we inherit from an [Obsolete] class / struct / enum
 			CheckBaseType (type);
 
@@ -341,6 +350,13 @@ namespace Gendarme.Rules.Maintainability {
 			// if the method is obsolete (directly or because it's type is)
 			if (method.HasAttribute ("System", "ObsoleteAttribute") || method.DeclaringType.HasAttribute ("System", "ObsoleteAttribute"))
 				return RuleResult.DoesNotApply;
+
+            // Union case constructors can be ignored
+            if (method.IsConstructor &&
+                method.DeclaringType.IsNested &&
+                method.DeclaringType.BaseType == method.DeclaringType.DeclaringType
+                && method.DeclaringType.DeclaringType.IsSumType())
+                return RuleResult.DoesNotApply;
 
 			// check method signature (parameters, return value)
 			if (method.HasParameters)
