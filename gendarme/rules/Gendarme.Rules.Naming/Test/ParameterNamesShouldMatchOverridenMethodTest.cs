@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Reflection;
 
 using Gendarme.Framework.Helpers;
 using Gendarme.Rules.Naming;
@@ -163,5 +164,13 @@ namespace Test.Rules.Naming {
 			AssertRuleSuccess<OpCodeBitmask> ("Equals", new Type [] { typeof (OpCodeBitmask) });
 			AssertRuleFailure<TestCase> ("Equals", 1);
 		}
+
+        [Test]
+        public void FSharpAllowFSharpFunc()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var type = probe.Assembly.GetType("UseCorrectPrefix.FSApi+doTool@22");
+            AssertRuleDoesNotApply(type, "Invoke");
+        }
 	}
 }

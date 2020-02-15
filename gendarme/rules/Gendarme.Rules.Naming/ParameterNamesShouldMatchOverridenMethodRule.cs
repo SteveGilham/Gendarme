@@ -165,7 +165,8 @@ namespace Gendarme.Rules.Naming {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedCode ())
+			if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedCode () ||
+                method.DeclaringType.Name.Contains("@"))
 				return RuleResult.DoesNotApply;
 
 			MethodDefinition baseMethod = null;
