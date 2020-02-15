@@ -60,4 +60,9 @@ Also, local functions `name@line-number::Invoke()`all trip `ParameterNamesShould
 * Ignore [CompilerGenerated] fields and methods for `VariableNamesShouldNotMatchFieldNamesRule`
 * Ignore `<StartupCode$` names in `UseCorrectCasingRule`
 * Ignore generated types containg `@` in their names for `AvoidUnsealedUninheritedInternalTypesRule`
-* Ignore the `Tags` generted type inside union types for `AvoidVisibleConstantFieldRule`
+* Ignore the `Tags` generated type inside union types for `AvoidVisibleConstantFieldRule`
+* Explicitly exempt the `get_` and `set_` prefixes of getter and setter methods from the `AvoidNonAlphanumericIdentifierRule` since that was not already a thing.
+* Make `AvoidUnneededUnboxingRule` not applicable to `[CompilerGenerated]` functions (e.g. Union case `CompareTo`)
+* Exempt debugger-related generated types related to union types from `AvoidUnsealedUninheritedInternalTypeRule` and `UseCorrectCasingRule`
+* Exempt getter and setter methods from `ConsiderConvertingMethodToPropertyRule` (well, duh!)
+* Exempt types with only fully `[CompilerGenerated]` `Equals` and `CompareTo` methods from `ImplementIComparableCorrectlyRule`; also explicitly exempt record types
