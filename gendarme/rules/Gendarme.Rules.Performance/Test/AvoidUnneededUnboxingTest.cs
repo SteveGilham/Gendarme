@@ -203,5 +203,13 @@ namespace Test.Rules.Performance {
 			AssertRuleDoesNotApply<Message> ("EqualsNone");
 			AssertRuleDoesNotApply<AvoidUnneededUnboxingTest> ("GetMessage");
 		}
+
+        [Test]
+        public void FSharpGeneratedCode()
+        {
+            var args = new Type[] { typeof(System.Object), typeof(System.Collections.IComparer) };
+            AssertRuleDoesNotApply <AvoidNonAlphanumericIdentifier.Primitive.CollectParams> ("CompareTo", args);
+        }
+
 	}
 }

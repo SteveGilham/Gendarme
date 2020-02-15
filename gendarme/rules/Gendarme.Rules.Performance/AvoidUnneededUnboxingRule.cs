@@ -160,7 +160,7 @@ namespace Gendarme.Rules.Performance {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.HasBody)
+			if (!method.HasBody || method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
 				return RuleResult.DoesNotApply;
 
 			// is there any Unbox or Unbox_Any instructions in the method ?
