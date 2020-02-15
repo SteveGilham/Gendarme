@@ -129,7 +129,7 @@ namespace Gendarme.Rules.Smells {
 				return RuleResult.DoesNotApply;
 
             // skip compiler generated method
-            if (method.CustomAttributes.Any(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute"))
+            if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
                 return RuleResult.DoesNotApply;
 				
 			foreach (Instruction instruction in method.Body.Instructions) {

@@ -216,7 +216,7 @@ namespace Gendarme.Rules.Correctness {
 				return RuleResult.DoesNotApply;
 
             // skip compiler generated method
-            if (method.CustomAttributes.Any(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute"))
+            if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
                 return RuleResult.DoesNotApply;
 
 			has_null_check.ClearAll ();

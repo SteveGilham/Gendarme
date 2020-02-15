@@ -84,5 +84,18 @@ namespace Gendarme.Framework.Rocks {
 			}
 			return false;
 		}
+
+        public static bool HasAttribute<T>(this ICustomAttributeProvider self)
+        {
+            if ((self == null) || !self.HasCustomAttributes)
+                return false;
+
+            foreach (CustomAttribute ca in self.CustomAttributes)
+            {
+                if (ca.AttributeType.FullName == typeof(T).FullName)
+                    return true;
+            }
+            return false;
+        }
 	}
 }
