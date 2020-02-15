@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Linq;
 
 using Mono.Cecil;
 
@@ -71,7 +72,10 @@ namespace Gendarme.Rules.Performance {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			if (type.IsAbstract || type.IsSealed || type.IsVisible () || type.IsGeneratedCode ()
-                || type.Name.Contains("@"))  // F# uses '@' e.g in <Type>@DebugTypeProxy
+                || type.Name.Contains("@")// F# uses '@' e.g in <Type>@DebugTypeProxy
+                  // Debugger related methods in F# with just a [CompilerGenerated ] constructor
+                || (type.Methods.Any() && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+                )  
 				return RuleResult.Success;
 
 			ModuleDefinition module = type.Module;

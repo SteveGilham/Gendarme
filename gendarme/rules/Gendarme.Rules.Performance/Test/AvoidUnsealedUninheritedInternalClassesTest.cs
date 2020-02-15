@@ -118,5 +118,15 @@ namespace Test.Rules.Performance {
             var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/CLIArgs/Many@DebugTypeProxy");
             AssertRuleSuccess(type);
         }
+
+        [Test]
+        public void FSharpDebugProxy2()
+        {
+            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("AvoidNonAlphanumericIdentifier.TypeSafe/DirectoryPath/_NoDirectory");
+            AssertRuleSuccess(type);
+        }
+
 	}
 }
