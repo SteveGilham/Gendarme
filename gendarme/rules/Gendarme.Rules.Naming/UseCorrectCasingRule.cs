@@ -194,6 +194,10 @@ namespace Gendarme.Rules.Naming {
 			if (type.IsGeneratedCode ())
 				return RuleResult.DoesNotApply;
 
+            // Debugger related methods in F# with just a [CompilerGenerated] constructor
+            if(type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+                return RuleResult.DoesNotApply;
+
 			// types should all be PascalCased
 			string name = type.Name;
 			if (!IsPascalCase (name)) {

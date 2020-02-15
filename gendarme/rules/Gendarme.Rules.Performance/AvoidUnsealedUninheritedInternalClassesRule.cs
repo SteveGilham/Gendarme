@@ -73,8 +73,8 @@ namespace Gendarme.Rules.Performance {
 		{
 			if (type.IsAbstract || type.IsSealed || type.IsVisible () || type.IsGeneratedCode ()
                 || type.Name.Contains("@")// F# uses '@' e.g in <Type>@DebugTypeProxy
-                  // Debugger related methods in F# with just a [CompilerGenerated ] constructor
-                || (type.Methods.Any() && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+                  // Debugger related methods in F# with just a [CompilerGenerated] constructor
+                || (type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
                 )  
 				return RuleResult.Success;
 

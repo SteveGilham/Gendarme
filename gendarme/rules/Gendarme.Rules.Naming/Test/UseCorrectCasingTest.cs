@@ -92,6 +92,16 @@ namespace Test.Rules.Naming {
 			AssertRuleSuccess<CorrectCasing> ();
 			AssertRuleFailure<incorrectCasing> (1);
 		}
+
+
+        [Test]
+        public void FSharpDebugProxyTypesAreIgnored()
+        {
+            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("AvoidNonAlphanumericIdentifier.TypeSafe/DirectoryPath/_NoDirectory");
+            AssertRuleDoesNotApply(type);
+        }
 	}
 
 	public class CasingMethods {
