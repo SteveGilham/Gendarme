@@ -17,7 +17,6 @@ module CreateProcess =
 
 
 module FSApi =
-
     let createProcess (parameters:Params)  =
       let doTool() =
         parameters.ToolPath
@@ -25,9 +24,11 @@ module FSApi =
       let withWorkingDirectory c =
         c
         |> if String.IsNullOrWhiteSpace parameters.WorkingDirectory
-           then id
-           else (fun s -> sprintf "(%s)%s" parameters.WorkingDirectory c)
+            then id
+            else (fun s -> sprintf "(%s)%s" parameters.WorkingDirectory c)
 
       doTool()
       |> withWorkingDirectory
       |> CreateProcess.ensureExitCode
+
+    let transform<'a> (x:'a) = x.ToString()

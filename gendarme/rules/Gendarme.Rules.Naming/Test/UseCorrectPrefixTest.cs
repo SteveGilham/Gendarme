@@ -30,6 +30,7 @@
 
 using Gendarme.Rules.Naming;
 
+using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
@@ -133,5 +134,14 @@ namespace Test.Rules.Naming {
 			AssertRuleFailure<BadCapsGenericType<int, int>> (2);
 			AssertRuleFailure<BadPrefixGenericType<int>> (1);
 		}
+
+        [Test]
+        public void FSharpAllowSingleLowercaseTypes()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("UseCorrectPrefix.CreateProcess/ensureExitCode@16");
+            AssertRuleSuccess(type);
+        }
 	}
 }

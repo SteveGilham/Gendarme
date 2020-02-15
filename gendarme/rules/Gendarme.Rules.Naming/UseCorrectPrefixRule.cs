@@ -30,6 +30,7 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 
 using Mono.Cecil;
 using Gendarme.Framework;
@@ -105,9 +106,9 @@ namespace Gendarme.Rules.Naming {
 			return ((name [0] == 'I') && Char.IsUpper (name [1]));
 		}
 
-		private static bool IsCorrectGenericParameterName (string name)
+		private static bool IsCorrectGenericParameterName (string name, bool fsharp)
 		{
-			return (((name.Length > 1) && (name [0] != 'T')) || Char.IsLower (name [0]));
+			return (((name.Length > 1) && (name [0] != 'T')) || (!fsharp && Char.IsLower (name [0])));
 		}
 
 		public RuleResult CheckType (TypeDefinition type)
@@ -135,12 +136,14 @@ namespace Gendarme.Rules.Naming {
 			}
 
 			if (type.HasGenericParameters) {
+                var fsharp = type.GetAssembly().MainModule.AssemblyReferences.Any(n => n.Name == "FSharp.Core");
+
 				// check generic parameters. They are commonly a single letter T, V, K (ok)
 				// but if they are longer (than one char) they should start with a 'T'
 				// e.g. EventHandler<TEventArgs>
 				foreach (GenericParameter parameter in type.GenericParameters) {
 					string param_name = parameter.Name;
-					if (IsCorrectGenericParameterName (param_name)) {
+					if (IsCorrectGenericParameterName (param_name, fsharp)) {
 						string s = String.Format (CultureInfo.InvariantCulture,
 							"The generic parameter '{0}' should be prefixed with 'T' or be a single, uppercased letter.", 
 							param_name);
