@@ -400,5 +400,11 @@ namespace Test.Rules.Design {
 			// complete
 			AssertRuleSuccess<GenericComparableStructComplete> ();
 		}
+
+        [Test]
+        public void FSharpRecordTypesAreIgnored()
+        {
+            AssertRuleDoesNotApply<AvoidNonAlphanumericIdentifier.Primitive.CollectParams>();
+        }
 	}
 }

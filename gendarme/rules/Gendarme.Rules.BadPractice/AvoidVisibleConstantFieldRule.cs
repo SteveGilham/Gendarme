@@ -77,9 +77,7 @@ namespace Gendarme.Rules.BadPractice {
                 type.Name == "Tags" && // the compiler ensures that you can't have a "Tags" member
                 (!type.HasMethods) && 
                 type.DeclaringType != null &&
-                type.DeclaringType.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
-                                                             a.ConstructorArguments.Count == 1 &&
-                                                             (int)a.ConstructorArguments[0].Value == 1)) // Sum type
+                type.DeclaringType.IsSumType()) // Sum type
                 return RuleResult.DoesNotApply;
 
 			foreach (FieldDefinition field in type.Fields) {

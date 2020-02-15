@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Cecil;
 
@@ -96,6 +97,26 @@ namespace Gendarme.Framework.Rocks {
                     return true;
             }
             return false;
+        }
+
+        public static bool IsSumType(this ICustomAttributeProvider self)
+        {
+            if ((self == null) || !self.HasCustomAttributes)
+                return false;
+
+            return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
+                                                  a.ConstructorArguments.Count == 1 &&
+                                                  (int)a.ConstructorArguments[0].Value == 1); // Sum type
+        }
+
+        public static bool IsRecordType(this ICustomAttributeProvider self)
+        {
+            if ((self == null) || !self.HasCustomAttributes)
+                return false;
+
+            return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
+                                                  a.ConstructorArguments.Count == 1 &&
+                                                  (int)a.ConstructorArguments[0].Value == 2); // Record type
         }
 	}
 }

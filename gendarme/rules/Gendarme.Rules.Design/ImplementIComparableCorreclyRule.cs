@@ -104,7 +104,8 @@ namespace Gendarme.Rules.Design {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to enums, interfaces and to generated code
-			if (type.IsEnum || type.IsInterface || type.IsGeneratedCode ())
+			if (type.IsEnum || type.IsInterface || type.IsGeneratedCode ()
+                || type.IsRecordType())
 				return RuleResult.DoesNotApply;
 
 			// rule only applies if the type implements IComparable or IComparable<T>
@@ -121,6 +122,11 @@ namespace Gendarme.Rules.Design {
 				}
 			}
 			if (!icomparable)
+				return RuleResult.DoesNotApply;
+
+            // Ignore types when the Equals and CompareTo methods are all compiler generated
+            if(type.Methods.Where(m => m.Name == "CompareTo" || m.Name == "Equals").
+                All(m => m.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>()))
 				return RuleResult.DoesNotApply;
 
 			// type should override Equals(object)
