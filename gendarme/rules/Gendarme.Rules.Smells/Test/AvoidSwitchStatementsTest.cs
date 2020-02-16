@@ -134,5 +134,10 @@ namespace Test.Rules.Smells {
             this.AssertRuleDoesNotApply<AvoidMultidimensionalIndexer.DotNet.CLIArgs>("Equals", args);
         }
 
-	}
+        [Test]
+        public void FSharpIgnoreTagMatch()
+        {
+            this.AssertRuleSuccess<AvoidMultidimensionalIndexer.DotNet.CLIArgs>("get_ForceDelete");
+        }
+    }
 }

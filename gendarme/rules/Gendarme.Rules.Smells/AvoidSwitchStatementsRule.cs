@@ -134,6 +134,17 @@ namespace Gendarme.Rules.Smells {
 				
 			foreach (Instruction instruction in method.Body.Instructions) {
 				if (instruction.OpCode == OpCodes.Switch) {
+
+                    // F# match on Union cases is OK
+                    if (instruction.Previous != null && instruction.Previous.OpCode == OpCodes.Call)
+                    {
+                        var prev = instruction.Previous;
+                        var func = prev.Operand as MethodDefinition;
+                        if (func.Name == "get_Tag" &&
+                            func.DeclaringType.IsSumType())
+                            continue;
+                    }
+
 					Runner.Report (method, instruction, Severity.Low, Confidence.Total);
 					return RuleResult.Failure;
 				}
