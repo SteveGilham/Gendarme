@@ -1,5 +1,6 @@
 # 2020.2.xx.xxx-pre-release
 F# niggles part 3
+* For the purposes of generic parameter names, having the F# [CompilationMapping] attribute on the type is taken to detect F# code
 * Even if a union type is [Obsolete] don't bother telling us its cases and case constructors depend on it.
 * In F# code (assumes FSharp.Core referenced) then allow single lower-case letter generic types
 * Exempt methods of F# generated types with `@` in the name from ` ParameterNamesShouldMatchOverriddenMethodRule`
