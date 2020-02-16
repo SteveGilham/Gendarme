@@ -72,6 +72,14 @@ namespace Gendarme.Rules.Naming {
 	/// </code>
 	/// </example>
 
+    // F# conventions @ https://docs.microsoft.com/en-us/dotnet/fsharp/style-guide/formatting#naming-conventions
+    // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
+    // Use camelCase for module-bound public functions
+    // Use camelCase for internal and private module-bound values and functions
+    // Use camelCase for parameters
+    // Use PascalCase for modules, type declarations, members, and labels
+    // Use PascalCase for constructs intrinsic to .NET
+
 	[Problem ("This identifier (namespace, type, or method) violates the .NET naming conventions.")]
 	[Solution ("Change the namespace, type, or method name to be pascal-cased (like MyClass) and parameter names to be camel-cased (like myParameter).")]
 	[EngineDependency (typeof (NamespaceEngine))]
@@ -232,13 +240,31 @@ namespace Gendarme.Rules.Naming {
 				return RuleResult.Success;
 			}
 
-			// like types, methods/props should all be PascalCased, too
-			if (!IsPascalCase (name)) {
-				string errorMessage = String.Format (CultureInfo.InvariantCulture,
-					"By existing naming conventions, all the method and property names should all be pascal-cased (e.g. MyOperation). Rename '{0}' to '{1}'.",
-					name, PascalCase (name));
-				Runner.Report (method, Severity.Medium, Confidence.High, errorMessage);
-			}
+            // F# convention
+            // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
+            // Use camelCase for module-bound public functions
+            // Use camelCase for internal and private module-bound values and functions
+            if (method.DeclaringType.IsModuleType())
+            {
+                if (!IsCamelCase(name))
+                {
+                    string errorMessage = String.Format(CultureInfo.InvariantCulture,
+                        "By existing naming conventions, module-bound function names should all be camel-cased (e.g. myOperation). Rename '{0}' to '{1}'.",
+                        name, CamelCase(name));
+                    Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
+                }
+            }
+            else
+            {
+                // like types, methods/props should all be PascalCased, too
+                if (!IsPascalCase(name))
+                {
+                    string errorMessage = String.Format(CultureInfo.InvariantCulture,
+                        "By existing naming conventions, all the method and property names should all be pascal-cased (e.g. MyOperation). Rename '{0}' to '{1}'.",
+                        name, PascalCase(name));
+                    Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
+                }
+            }
 
 			// check parameters
 			if (method.HasParameters) {

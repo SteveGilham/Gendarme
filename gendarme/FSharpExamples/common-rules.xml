@@ -20,12 +20,16 @@
            from="Gendarme.Rules.Exceptions.dll" />
     <rules include="*" from="Gendarme.Rules.Interoperability.dll" />
     <rules include="*" from="Gendarme.Rules.Interoperability.Com.dll" />
+    <!-- AltCover has too much history.  Maybe for Genbu? -->
     <rules include="*"
+           exclude="UseCorrectCasingRule"
            from="Gendarme.Rules.Naming.dll" />
     <rules include="*"
            from="Gendarme.Rules.Performance.dll" />
+    <!-- AltCover is operationally tested on Mono; System.Xml.Schema.Extensions::Validate seems to be there now -->
     <rules include="*"
-      from="Gendarme.Rules.Portability.dll" />
+           exclude="MonoCompatibilityReviewRule"
+           from="Gendarme.Rules.Portability.dll" />
     <rules include="*" from="Gendarme.Rules.Security.dll" />
     <rules include="*" from="Gendarme.Rules.Security.Cas.dll" />
     <!-- I have no real use for serialization -->

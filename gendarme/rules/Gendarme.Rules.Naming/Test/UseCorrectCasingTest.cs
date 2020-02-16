@@ -242,6 +242,15 @@ namespace Test.Rules.Naming {
 			AssertRuleSuccess<MoreComplexCasing> ("op_Addition");
 		}
 
+        [Test]
+        public void FSharpCamelCaseModules()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var type = probe.Assembly.GetType("UseCorrectPrefix.CreateProcess");
+            AssertRuleSuccess(type, "ensureExitCode");
+        }
+
+
 		public class AnonymousMethod {
 			private void MethodWithAnonymousMethod ()
 			{

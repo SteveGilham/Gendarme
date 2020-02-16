@@ -197,7 +197,8 @@ namespace Gendarme.Rules.Smells {
 				return CheckDelegate (type);
 
 			if (type.HasMethods) {
-				CheckConstructor (GetSmallestConstructorFrom (type));
+                if(!type.IsRecordType() && !type.Name.Contains("@"))
+				    CheckConstructor (GetSmallestConstructorFrom (type));
 
 				foreach (MethodDefinition method in GetSmallestOverloaded (type)) 
 					CheckMethod (method);

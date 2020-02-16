@@ -128,5 +128,15 @@ namespace Gendarme.Framework.Rocks {
                                                   a.ConstructorArguments.Count == 1 &&
                                                   (int)a.ConstructorArguments[0].Value == 6); // Closure type
         }
+
+        public static bool IsModuleType(this ICustomAttributeProvider self)
+        {
+            if ((self == null) || !self.HasCustomAttributes)
+                return false;
+
+            return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
+                                                  a.ConstructorArguments.Count == 1 &&
+                                                  (int)a.ConstructorArguments[0].Value == 7); // Module type
+        }
 	}
 }

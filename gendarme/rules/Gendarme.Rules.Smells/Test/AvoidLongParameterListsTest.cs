@@ -181,5 +181,11 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleSuccess<MulticastDelegate> ();
 		}
+
+        [Test]
+        public void FSharpRecordConstructorsAreOK()
+        {
+            AssertRuleSuccess<AvoidLongParameterLists.SeqPnt>();
+        }
 	}
 }

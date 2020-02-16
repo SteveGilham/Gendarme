@@ -50,6 +50,7 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <Compile Include="AvoidLongParameterListsRule .fs" />
     <Compile Include="AvoidMultidimensionalIndexerRule.fs" />
     <Compile Include="AvoidNonAlphanumericIdentifierRule.fs" />
     <Compile Include="RemoveDependenceOnObsoleteCodeRule.fs" />
