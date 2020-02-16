@@ -3,6 +3,7 @@
 * In F# code (assumes FSharp.Core referenced) then allow single lower-case letter generic types
 * Exempt methods of F# generated types with `@` in the name from ` ParameterNamesShouldMatchOverriddenMethodRule`
 * Exempt match on union types from `AvoidSwitchStatementsRule`
+* Exempt F# generated types with `@` in the name from `VariableNamesShouldNotMatchFieldNamesRule`
 
 For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/master/ReleaseNotes%20-%20Previously.md
 Since this is a release from a fork, [issues should be reported at my related repo](https://github.com/SteveGilham/altcode.fake/issues) that contains a Fake driver for the Gendarme tool, but noted as being against the forked Gendarme tool itself.
