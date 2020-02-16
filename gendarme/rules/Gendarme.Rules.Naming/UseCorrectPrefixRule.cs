@@ -106,10 +106,12 @@ namespace Gendarme.Rules.Naming {
 			return ((name [0] == 'I') && Char.IsUpper (name [1]));
 		}
 
-		private static bool IsCorrectGenericParameterName (string name, bool fsharp)
+		private static bool IsNotCorrectGenericParameterName (string name, bool fsharp)
 		{
-			return (((name.Length > 1) && (name [0] != 'T')) || (!fsharp && Char.IsLower (name [0])));
-		}
+            if (fsharp && name.Length == 1 && Char.IsLower(name[0]))
+                return false;
+            return (((name.Length > 1) && (name[0] != 'T')) || Char.IsLower(name[0]));
+        }
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
@@ -143,7 +145,7 @@ namespace Gendarme.Rules.Naming {
 				// e.g. EventHandler<TEventArgs>
 				foreach (GenericParameter parameter in type.GenericParameters) {
 					string param_name = parameter.Name;
-					if (IsCorrectGenericParameterName (param_name, fsharp)) {
+					if (IsNotCorrectGenericParameterName (param_name, fsharp)) {
 						string s = String.Format (CultureInfo.InvariantCulture,
 							"The generic parameter '{0}' should be prefixed with 'T' or be a single, uppercased letter.", 
 							param_name);
