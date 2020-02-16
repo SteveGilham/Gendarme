@@ -17,6 +17,10 @@ module CreateProcess =
 
 
 module FSApi =
+    let CSharpContainingMethod x =
+      x
+      |> Seq.filter (fun x -> x <> null)
+
     let createProcess (parameters:Params)  =
       let doTool() =
         parameters.ToolPath

@@ -169,7 +169,7 @@ namespace Test.Rules.Naming {
         public void FSharpAllowFSharpFunc()
         {
             var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var type = probe.Assembly.GetType("UseCorrectPrefix.FSApi+doTool@22");
+            var type = probe.Assembly.GetType("UseCorrectPrefix.FSApi+doTool@26");
             AssertRuleDoesNotApply(type, "Invoke");
         }
 	}

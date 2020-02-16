@@ -136,11 +136,20 @@ namespace Test.Rules.Naming {
 		}
 
         [Test]
-        public void FSharpAllowSingleLowercaseTypes()
+        public void FSharpAllowSingleLowercaseGenericParameterTypes()
         {
             var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
             var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
             var type = def.MainModule.GetType("UseCorrectPrefix.CreateProcess/ensureExitCode@16");
+            AssertRuleSuccess(type);
+        }
+
+        [Test]
+        public void FSharpIgnoreGeneratedFunctionNames()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("UseCorrectPrefix.FSApi/CSharpContainingMethod@22");
             AssertRuleSuccess(type);
         }
 	}

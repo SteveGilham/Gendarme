@@ -125,7 +125,7 @@ namespace Test.Rules.Maintainability {
             AssertRuleSuccess<AvoidMultidimensionalIndexer.DotNet.CLIArgs.Many>();
             var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
             var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("UseCorrectPrefix.FSApi/doTool@22");
+            var type = def.MainModule.GetType("UseCorrectPrefix.FSApi/doTool@26");
             AssertRuleDoesNotApply(type);
         }
 	}

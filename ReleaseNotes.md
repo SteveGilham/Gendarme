@@ -4,7 +4,7 @@ F# niggles part 3
 * In F# code (assumes FSharp.Core referenced) then allow single lower-case letter generic types
 * Exempt methods of F# generated types with `@` in the name from ` ParameterNamesShouldMatchOverriddenMethodRule`
 * Exempt match on union types from `AvoidSwitchStatementsRule`
-* Exempt F# generated types with `@` in the name from `VariableNamesShouldNotMatchFieldNamesRule` and `UseCorrectCasingRule`
+* Exempt F# generated types with `@` in the name from `UseCorrectPrefixRule`,`VariableNamesShouldNotMatchFieldNamesRule` and `UseCorrectCasingRule`
 * Exempt generated abstract closure types from `AbstractTypesShouldNotHavePublicConstructorsRule`
 
 For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/master/ReleaseNotes%20-%20Previously.md
