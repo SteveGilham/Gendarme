@@ -1,4 +1,4 @@
-# 2020.2.xx.xxx-pre-release
+# 2020.2.16.160xx-pre-release
 F# niggles part 3
 * For the purposes of generic parameter names, having the F# [CompilationMapping] attribute on the type is taken to detect F# code
 * Even if a union type is [Obsolete] don't bother telling us its cases and case constructors depend on it.
