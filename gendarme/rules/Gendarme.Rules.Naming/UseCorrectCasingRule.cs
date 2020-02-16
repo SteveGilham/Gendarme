@@ -191,7 +191,7 @@ namespace Gendarme.Rules.Naming {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule does not apply to generated code (outside developer's control)
-			if (type.IsGeneratedCode ())
+			if (type.IsGeneratedCode () || type.Name.Contains("@"))
 				return RuleResult.DoesNotApply;
 
             // Debugger related methods in F# with just a [CompilerGenerated] constructor

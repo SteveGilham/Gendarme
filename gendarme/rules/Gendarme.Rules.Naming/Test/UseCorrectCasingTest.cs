@@ -102,6 +102,16 @@ namespace Test.Rules.Naming {
             var type = def.MainModule.GetType("AvoidNonAlphanumericIdentifier.TypeSafe/DirectoryPath/_NoDirectory");
             AssertRuleDoesNotApply(type);
         }
+
+        [Test]
+        public void FSharpIgnoreGenerated()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/get_ForceDelete@16");
+            AssertRuleDoesNotApply(type);
+        }
+
 	}
 
 	public class CasingMethods {
