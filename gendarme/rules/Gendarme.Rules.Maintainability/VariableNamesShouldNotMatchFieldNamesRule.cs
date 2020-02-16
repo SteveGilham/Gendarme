@@ -87,7 +87,8 @@ namespace Gendarme.Rules.Maintainability {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// We only like types with fields AND methods.
-			if (!type.HasFields || !type.HasMethods || type.IsGeneratedCode ())
+			if (!type.HasFields || !type.HasMethods || type.IsGeneratedCode () ||
+                 type.Name.Contains("@"))
 				return RuleResult.DoesNotApply;
 
 			fields.Clear ();
