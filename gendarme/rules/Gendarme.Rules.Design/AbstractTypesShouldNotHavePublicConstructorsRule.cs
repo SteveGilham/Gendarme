@@ -71,6 +71,13 @@ namespace Gendarme.Rules.Design {
 			if (!type.IsAbstract)
 				return RuleResult.DoesNotApply;
 
+            // Obscure F# closure types -- TODO find a simple case for unit test
+            // may be compiler version dependent
+            // see e.g. AltCover.Cobertura/ProcessMethod@46$contract::.ctor()
+            if (type.Name.EndsWith("$contract") &&
+                type.IsClosureType())
+                return RuleResult.DoesNotApply;
+
 			// rule applies!
 
 			foreach (MethodDefinition method in type.Methods) {
