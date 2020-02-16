@@ -140,7 +140,8 @@ namespace Gendarme.Rules.Smells {
                     {
                         var prev = instruction.Previous;
                         var func = prev.Operand as MethodDefinition;
-                        if (func.Name == "get_Tag" &&
+                        if (func != null && 
+                            func.Name == "get_Tag" &&
                             func.DeclaringType.IsSumType())
                             continue;
                     }
