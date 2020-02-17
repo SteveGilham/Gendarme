@@ -452,7 +452,9 @@ namespace Gendarme.Rules.Maintainability {
 			// we cannot change parameter types if:
 			// - we're overriding a base virtual method; or
 			// - they were specified by an interface
-			if (IsSignatureDictated (method))
+            // or this is an F# local lambda
+			if (IsSignatureDictated (method) || 
+                method.DeclaringType.Name.Contains("@"))
 				return RuleResult.DoesNotApply;
 
 			int pcount = method.Parameters.Count;
