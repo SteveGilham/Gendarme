@@ -135,6 +135,20 @@ namespace Gendarme.Rules.Smells {
 			foreach (Instruction instruction in method.Body.Instructions) {
 				if (instruction.OpCode == OpCodes.Switch) {
 
+                    // if effectively a single branch, might as well be an `if` statement
+                    var fsharp = method.DeclaringType.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute") ||
+                                 (method.DeclaringType.DeclaringType != null &&
+                                  method.DeclaringType.DeclaringType.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute"));
+                    if (fsharp && (instruction.Operand as Instruction[]).Select(i => i.Offset).Distinct().Count() < 2)
+                      continue;
+
+                    // In F# module-based code is OK
+                    if (method.DeclaringType.IsModuleType() ||
+                       (method.DeclaringType.Name.Contains("@") && method.DeclaringType.DeclaringType.IsModuleType()))
+                    {
+                        continue;
+                    }
+
                     // F# match on Union cases is OK
                     if (instruction.Previous != null && instruction.Previous.OpCode == OpCodes.Call)
                     {

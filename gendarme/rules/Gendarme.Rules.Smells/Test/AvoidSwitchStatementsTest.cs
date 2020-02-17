@@ -139,5 +139,11 @@ namespace Test.Rules.Smells {
         {
             this.AssertRuleSuccess<AvoidMultidimensionalIndexer.DotNet.CLIArgs>("get_ForceDelete");
         }
+
+        [Test]
+        public void FSharpIgnoreInModules()
+        {
+            this.AssertRuleSuccess(typeof(AvoidSwitchStatements.Counter), "updateReport");
+        }
     }
 }

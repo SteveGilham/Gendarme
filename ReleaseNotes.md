@@ -5,6 +5,7 @@ F# niggles part 4
 * Exempt module-bound functions from `ConsiderConvertingMethodToPropertyRule`
 * Exempt fields and constructors of records from `RemoveDependenceOnObsoleteCodeRule`; accessors will still be caught but can be `[SuppressMessage]`d as needed
 * Take account of F#'s habit of making a virtual call to the base type constructor in object types constructors.
+* Exempt F# code in modules, or where a `match` could equally be an `if` from `AvoidSwitchStatementsRule`, `match` being idiomatic and occasionally just happening to be on an explicit integral type
 
 
 

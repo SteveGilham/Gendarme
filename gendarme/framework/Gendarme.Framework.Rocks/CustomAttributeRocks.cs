@@ -106,7 +106,7 @@ namespace Gendarme.Framework.Rocks {
 
             return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
                                                   a.ConstructorArguments.Count == 1 &&
-                                                  (int)a.ConstructorArguments[0].Value == 1); // Sum type
+                                                  (0x1f & (int)a.ConstructorArguments[0].Value) == 1); // Sum type
         }
 
         public static bool IsRecordType(this ICustomAttributeProvider self)
@@ -116,7 +116,7 @@ namespace Gendarme.Framework.Rocks {
 
             return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
                                                   a.ConstructorArguments.Count == 1 &&
-                                                  (int)a.ConstructorArguments[0].Value == 2); // Record type
+                                                  (0x1f & (int)a.ConstructorArguments[0].Value) == 2); // Record type
         }
 
         public static bool IsObjectType(this ICustomAttributeProvider self)
@@ -126,7 +126,7 @@ namespace Gendarme.Framework.Rocks {
 
             return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
                                                   a.ConstructorArguments.Count == 1 &&
-                                                  (int)a.ConstructorArguments[0].Value == 3); // Object type
+                                                  (0x1f & (int)a.ConstructorArguments[0].Value) == 3); // Object type
         }
 
         public static bool IsClosureType(this ICustomAttributeProvider self)
@@ -136,7 +136,7 @@ namespace Gendarme.Framework.Rocks {
 
             return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
                                                   a.ConstructorArguments.Count == 1 &&
-                                                  (int)a.ConstructorArguments[0].Value == 6); // Closure type
+                                                  (0x1f & (int)a.ConstructorArguments[0].Value) == 6); // Closure type
         }
 
         public static bool IsModuleType(this ICustomAttributeProvider self)
@@ -146,7 +146,7 @@ namespace Gendarme.Framework.Rocks {
 
             return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
                                                   a.ConstructorArguments.Count == 1 &&
-                                                  (int)a.ConstructorArguments[0].Value == 7); // Module type
+                                                  (0x1f & (int)a.ConstructorArguments[0].Value) == 7); // Module type
         }
 	}
 }
