@@ -185,7 +185,14 @@ namespace Tests.Rules.Maintainability {
 			AssertRuleFailure<TypeWithObsoletePropertiesType> (6); // 3 properties + 3 backing fields
 			AssertRuleFailure<StructWithObsoleteEventsType> (2);
 		}
-	}
+
+        [Test]
+        public void FSharpIgnoreRecordFields()
+        {
+            AssertRuleDoesNotApply<RemoveDependenceOnObsoleteCode.Params>();
+        }
+   
+    }
 
 	class TypeWithObsoleteFields {
 
@@ -316,6 +323,12 @@ namespace Tests.Rules.Maintainability {
         public void FSharpIgnoreCaseConstructorsOfObsoleteUnion()
         {
             AssertRuleDoesNotApply<RemoveDependenceOnObsoleteCode.ToolType.Mono>(".ctor");
+        }
+
+        [Test]
+        public void FSharpIgnoreRecordConstructors()
+        {
+            AssertRuleDoesNotApply<RemoveDependenceOnObsoleteCode.Params>(".ctor");
         }
     }
 }

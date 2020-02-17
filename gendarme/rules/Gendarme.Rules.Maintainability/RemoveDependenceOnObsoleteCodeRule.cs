@@ -240,8 +240,12 @@ namespace Gendarme.Rules.Maintainability {
 				CheckInterfaces (type);
 
 			// check fields types
-			if (type.HasFields)
-				CheckFields (type);
+            if (type.HasFields)
+            {
+                if (type.IsRecordType())
+                    return RuleResult.DoesNotApply;
+                CheckFields(type);
+            }
 
 			// check properties (not the getter / setter)
 			if (type.HasProperties)
@@ -356,6 +360,11 @@ namespace Gendarme.Rules.Maintainability {
                 method.DeclaringType.IsNested &&
                 method.DeclaringType.BaseType == method.DeclaringType.DeclaringType
                 && method.DeclaringType.DeclaringType.IsSumType())
+                return RuleResult.DoesNotApply;
+
+            // Record constructors too
+            if (method.IsConstructor &&
+                method.DeclaringType.IsRecordType())
                 return RuleResult.DoesNotApply;
 
 			// check method signature (parameters, return value)
