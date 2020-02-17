@@ -2,6 +2,8 @@
 
 open System
 
+#nowarn "44"
+
 [<NoComparison; Obsolete("Use Fake.DotNet.ToolType instead")>]
 type ToolType =
   | DotNet of string option // can't attribute this type and constructor for Gendarme
