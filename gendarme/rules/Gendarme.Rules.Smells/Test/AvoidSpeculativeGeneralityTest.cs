@@ -164,5 +164,14 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleSuccess<NotUnnecessaryDelegatedClass> ();
 		}
+
+        [Test]
+        public void FSharpFunctionValuesAreIgnored()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("MethodCanBeMadeStatic.Instrument/hookResolveHandler@16");
+            AssertRuleDoesNotApply(type);
+        }
 	}
 }
