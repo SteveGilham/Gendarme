@@ -1,13 +1,5 @@
-# 2020.2.17.170xx-pre-release
-F# niggles part 4
-* Exempt generated types with `@` in their names from `AvoidUnnecessarySpecializationRule`, `AvoidSpeculativeGeneralityRule` and `MethodCanBeMadeStaticRule`
-* Exempt F# placeholder arguments `_` (compiled to `_arg...`) from `UseCorrectCasingRule`
-* Exempt module-bound functions from `ConsiderConvertingMethodToPropertyRule`
-* Exempt fields and constructors of records from `RemoveDependenceOnObsoleteCodeRule`; accessors will still be caught but can be `[SuppressMessage]`d as needed
-* Take account of F#'s habit of making a virtual call to the base type constructor in object types constructors.
-* Exempt F# code in modules, or where a `match` could equally be an `if` from `AvoidSwitchStatementsRule`, `match` being idiomatic and occasionally just happening to be on an explicit integral type
-* Exempt property backing fields for code like `member val LocalSource = false with get, set` from `AvoidUnneededFieldInitializationRule`
-* Exempt union cases (unsealed but not likely to be inherited) from `AvoidUnsealedUninheritedInternalTypeRule`
+# 2020.2.xx.xxxxx-pre-release
+F# niggles part 5
 
 
 
