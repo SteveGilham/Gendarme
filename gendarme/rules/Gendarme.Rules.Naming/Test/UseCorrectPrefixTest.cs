@@ -140,7 +140,7 @@ namespace Test.Rules.Naming {
         {
             var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
             var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("UseCorrectPrefix.CreateProcess/ensureExitCode@16");
+            var type = def.MainModule.GetType("UseCorrectPrefix.CreateProcess/ensureExitCode@17");
             AssertRuleSuccess(type);
         }
 
@@ -149,7 +149,7 @@ namespace Test.Rules.Naming {
         {
             var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
             var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("UseCorrectPrefix.FSApi/CSharpContainingMethod@22");
+            var type = def.MainModule.GetType("UseCorrectPrefix.FSApi/CSharpContainingMethod@25");
             AssertRuleSuccess(type);
         }
 	}

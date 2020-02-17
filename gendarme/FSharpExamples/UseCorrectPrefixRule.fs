@@ -13,11 +13,14 @@ type Params =
       WorkingDirectory = String.Empty }
 
 module CreateProcess =
+  [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Design.Generic", "AvoidMethodWithUnusedGenericTypeRule")>]
   let ensureExitCode = id
 
 
+[<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Smells", "AvoidSpeculativeGeneralityRule")>]
 module FSApi =
-    let CSharpContainingMethod x =
+    [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Naming", "UseCorrectCasingRule")>]
+    let CSharpContainingMethod x =  // makes classes beginning with "C" happen
       x
       |> Seq.filter (fun x -> x <> null)
 
