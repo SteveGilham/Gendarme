@@ -54,6 +54,7 @@
     <Compile Include="AvoidMultidimensionalIndexerRule.fs" />
     <Compile Include="AvoidNonAlphanumericIdentifierRule.fs" />
     <Compile Include="AvoidSwitchStatementsRule.fs" />
+    <Compile Include="AvoidUnneededFieldInitializationRule.fs" />
     <Compile Include="BadRecursiveInvocationRule.fs" />
     <Compile Include="ConsiderConvertingMethodToPropertyRule.fs" />
     <Compile Include="MethodCanBeMadeStaticRule.fs" />

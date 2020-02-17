@@ -154,5 +154,11 @@ namespace Test.Rules.Performance {
 			AssertRuleSuccess<StructWithBadStaticCtor> (".ctor");
 			AssertRuleSuccess<Struct> (".ctor");
 		}
+
+		[Test]
+		public void FSharpIgnorePropertyInitializations ()
+        {
+            AssertRuleSuccess<AvoidUnneededFieldInitialization.Prepare>(".ctor");
+        }
 	}
 }
