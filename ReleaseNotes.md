@@ -1,6 +1,7 @@
 # 2020.2.xx.xxxxx-pre-release
 F# niggles part 4
-* Exempt generated types with "@" in their names from `AvoidSpeculativeGeneralityRule` and `MethodCanBeMadeStaticRule`
+* Exempt generated types with `@` in their names from `AvoidSpeculativeGeneralityRule` and `MethodCanBeMadeStaticRule`
+* Exempt F# placeholder arguments `_` (compiled to `_arg...`) from `UseCorrectCasingRule`
 
 
 For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/master/ReleaseNotes%20-%20Previously.md

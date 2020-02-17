@@ -250,6 +250,13 @@ namespace Test.Rules.Naming {
             AssertRuleSuccess(type, "ensureExitCode");
         }
 
+        [Test]
+        public void FSharpPlaceholders()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var type = probe.Assembly.GetType("MethodCanBeMadeStatic.Instrument");
+            AssertRuleSuccess(type, "resolveFromNugetCache");
+        }
 
 		public class AnonymousMethod {
 			private void MethodWithAnonymousMethod ()

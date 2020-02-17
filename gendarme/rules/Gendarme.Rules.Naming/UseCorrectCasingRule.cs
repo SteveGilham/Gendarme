@@ -268,7 +268,13 @@ namespace Gendarme.Rules.Naming {
 
 			// check parameters
 			if (method.HasParameters) {
+                var fsharp = method.DeclaringType.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute");
+
 				foreach (ParameterDefinition param in method.Parameters) {
+                    // ignore F# placeholder ("_") arguments
+                    if (fsharp && param.Name.StartsWith("_arg", StringComparison.Ordinal))
+                        continue;
+
 					// params should all be camelCased
 					if (!IsCamelCase (param.Name)) {
 						string errorMessage = String.Format (CultureInfo.InvariantCulture,
