@@ -138,8 +138,7 @@ namespace Gendarme.Rules.Naming {
 			}
 
 			if (type.HasGenericParameters) {
-                var fsharp = type.Name.Contains("@") ||
-                             type.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute");
+                var fsharp = type.IsFSharpType();
 
 				// check generic parameters. They are commonly a single letter T, V, K (ok)
 				// but if they are longer (than one char) they should start with a 'T'

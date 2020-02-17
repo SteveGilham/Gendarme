@@ -316,6 +316,23 @@ namespace Gendarme.Framework.Rocks {
 			return false;
 		}
 
+        /// <summary>
+        /// Check if the type is in F# code
+        /// </summary>
+        /// <param name="self">The type on which the extension method can be called.</param>
+        /// <returns>True if the method is in F# code, False otherwise.</returns>
+        public static bool IsFSharpType(this TypeReference self)
+        {
+            if (self == null)
+                return false;
+
+            var def = (self is TypeDefinition) ? (self as TypeDefinition) : self.Resolve();
+
+            return def != null &&
+                   (def.Name.Contains("@")
+                    || def.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute"));
+        }
+
 		/// <summary>
 		/// Check if the type and its namespace are named like the provided parameters.
 		/// This is preferred to checking the FullName property since the later can allocate (string) memory.

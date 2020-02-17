@@ -268,7 +268,7 @@ namespace Gendarme.Rules.Naming {
 
 			// check parameters
 			if (method.HasParameters) {
-                var fsharp = method.DeclaringType.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute");
+                var fsharp = method.IsFSharpCode();
 
 				foreach (ParameterDefinition param in method.Parameters) {
                     // ignore F# placeholder ("_") arguments

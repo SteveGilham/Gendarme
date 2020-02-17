@@ -136,9 +136,7 @@ namespace Gendarme.Rules.Smells {
 				if (instruction.OpCode == OpCodes.Switch) {
 
                     // if effectively a single branch, might as well be an `if` statement
-                    var fsharp = method.DeclaringType.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute") ||
-                                 (method.DeclaringType.DeclaringType != null &&
-                                  method.DeclaringType.DeclaringType.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute"));
+                    var fsharp = method.IsFSharpCode();
                     if (fsharp && (instruction.Operand as Instruction[]).Select(i => i.Offset).Distinct().Count() < 2)
                       continue;
 
