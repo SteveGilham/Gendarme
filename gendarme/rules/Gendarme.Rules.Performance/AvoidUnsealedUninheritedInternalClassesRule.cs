@@ -78,6 +78,11 @@ namespace Gendarme.Rules.Performance {
                 )  
 				return RuleResult.Success;
 
+            // Union cases are unsealed and not usually inherited
+            if (type.DeclaringType != null &&
+                type.DeclaringType.IsSumType())
+                return RuleResult.Success;
+
 			ModuleDefinition module = type.Module;
 			string name = type.Name;
 			string nspace = type.Namespace;

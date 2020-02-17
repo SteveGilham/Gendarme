@@ -128,5 +128,13 @@ namespace Test.Rules.Performance {
             AssertRuleSuccess(type);
         }
 
+        [Test]
+        public void FSharpUnionCases()
+        {
+            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+            var type = def.MainModule.GetType("AvoidUnsealedUninheritedInternalType.Track/Time");
+            AssertRuleSuccess(type);
+        }
 	}
 }
