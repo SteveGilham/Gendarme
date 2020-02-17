@@ -2,6 +2,7 @@
 F# niggles part 4
 * Exempt generated types with `@` in their names from `AvoidSpeculativeGeneralityRule` and `MethodCanBeMadeStaticRule`
 * Exempt F# placeholder arguments `_` (compiled to `_arg...`) from `UseCorrectCasingRule`
+* Exempt module-bound functions from `ConsiderConvertingMethodToPropertyRule`
 
 
 For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/master/ReleaseNotes%20-%20Previously.md

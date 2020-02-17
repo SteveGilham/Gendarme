@@ -179,5 +179,11 @@ namespace Test.Rules.Design {
         {
             AssertRuleDoesNotApply<AvoidNonAlphanumericIdentifier.ArgType>("get_ImportModule");
         }
+
+        [Test]
+        public void FSharpModuleBoundFunctions()
+        {
+            AssertRuleDoesNotApply(typeof(ConsiderConvertingMethodToProperty.Instance), "isOpenCoverRunner");
+        }
 	}
 }
