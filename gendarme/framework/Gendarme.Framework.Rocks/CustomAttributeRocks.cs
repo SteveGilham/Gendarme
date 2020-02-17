@@ -119,6 +119,16 @@ namespace Gendarme.Framework.Rocks {
                                                   (int)a.ConstructorArguments[0].Value == 2); // Record type
         }
 
+        public static bool IsObjectType(this ICustomAttributeProvider self)
+        {
+            if ((self == null) || !self.HasCustomAttributes)
+                return false;
+
+            return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
+                                                  a.ConstructorArguments.Count == 1 &&
+                                                  (int)a.ConstructorArguments[0].Value == 3); // Object type
+        }
+
         public static bool IsClosureType(this ICustomAttributeProvider self)
         {
             if ((self == null) || !self.HasCustomAttributes)

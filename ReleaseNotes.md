@@ -4,6 +4,7 @@ F# niggles part 4
 * Exempt F# placeholder arguments `_` (compiled to `_arg...`) from `UseCorrectCasingRule`
 * Exempt module-bound functions from `ConsiderConvertingMethodToPropertyRule`
 * Exempt fields and constructors of records from `RemoveDependenceOnObsoleteCodeRule`; accessors will still be caught but can be `[SuppressMessage]`d as needed
+* Take account of F#'s habit of making a virtual call to the base type constructor in object types constructors.
 
 
 

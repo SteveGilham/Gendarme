@@ -187,6 +187,12 @@ namespace Gendarme.Rules.Correctness {
 					if (!CompareMethods (method, callee, virtual_call))
 						break;
 
+                    // F# constructors virtual-call the base type constructor
+                    if (method.DeclaringType.IsObjectType() && method.IsConstructor
+                          && virtual_call
+                          && method.DeclaringType.BaseType == callee.DeclaringType)
+                        break;
+
 					// recursion detected! check if there a way out of it
 					if (CheckForEndlessRecursion (method, i)) {
 						Runner.Report (method, ins, Severity.Critical, Confidence.High);

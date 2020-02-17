@@ -393,5 +393,12 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleSuccess<Array> ("SetProperty", new Type [] { typeof (string), typeof (object[]) });
 		}
+
+        [Test]
+        public void FSharpObjectConstruction()
+        {
+            AssertRuleSuccess<BadRecursiveInvocation.Handler>(".ctor");
+        }
+
 	}
 }
