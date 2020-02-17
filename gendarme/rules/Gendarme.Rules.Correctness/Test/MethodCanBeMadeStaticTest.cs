@@ -28,10 +28,12 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 using Gendarme.Framework;
 using Gendarme.Rules.Correctness;
 
+using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
@@ -97,5 +99,13 @@ namespace Test.Rules.Correctness {
 		{
 			AssertRuleDoesNotApply<MethodCanBeMadeStaticTest> ("WriteLine");
 		}
+
+        [Test]
+        public void FSharpClosuresAreIgnored()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var type = probe.Assembly.GetTypes().First(t => t.Name.Contains("hookResolveHandler"));
+            AssertRuleDoesNotApply(type, "Invoke");
+        }
 	}
 }

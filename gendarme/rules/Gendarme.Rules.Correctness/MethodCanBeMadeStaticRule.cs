@@ -96,7 +96,8 @@ namespace Gendarme.Rules.Correctness {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// we only check non static, non virtual methods and not constructors
-			if (method.IsStatic || method.IsVirtual || method.IsConstructor)
+			if (method.IsStatic || method.IsVirtual || method.IsConstructor || 
+                method.DeclaringType.Name.Contains("@"))
 				return RuleResult.DoesNotApply;
 
 			// we only check methods with a body
