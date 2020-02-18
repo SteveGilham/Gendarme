@@ -872,5 +872,15 @@ namespace Test.Rules.Performance {
 		{
 			AssertRuleDoesNotApply<AvoidUncalledPrivateCodeTest> ("WriteLine");
 		}
+
+        [Test]
+        public void FSharpRecordAccessorsAreIgnored()
+        {
+            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+            var t = probe.Assembly.GetType("AvoidUncalledPrivateCode.PointVisit"); 
+            AssertRuleDoesNotApply(t, "get_Count");
+            AssertRuleDoesNotApply(t, "set_Count");
+        }
+
 	}
 }

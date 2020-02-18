@@ -666,7 +666,7 @@ namespace Test.Rules.Maintainability {
         public void FSharpIgnoreClosures()
         {
             var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var type = probe.Assembly.GetType(" AvoidUnnecessarySpecialization.Main+prepareTargetFiles@22-3");
+            var type = probe.Assembly.GetType("AvoidUnnecessarySpecialization.Main+prepareTargetFiles@22-3");
             AssertRuleDoesNotApply(type, "Invoke");
         }
 	}

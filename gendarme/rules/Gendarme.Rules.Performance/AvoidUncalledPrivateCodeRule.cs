@@ -142,6 +142,13 @@ namespace Gendarme.Rules.Performance {
 			if (!Applicable (method))
 				return RuleResult.DoesNotApply;
 
+            if (method.DeclaringType.IsRecordType() && (method.IsSetter || method.IsGetter))
+            {
+                var property = method.GetPropertyByAccessor();
+                if (property.IsFieldType())
+                    return RuleResult.DoesNotApply;
+            }
+
 			// we can't be sure if this code won't be reached indirectly
 			if (method.IsVirtual && !method.IsFinal)
 				return RuleResult.Success;

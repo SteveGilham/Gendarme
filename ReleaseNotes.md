@@ -1,5 +1,7 @@
 # 2020.2.xx.xxxxx-pre-release
 F# niggles part 5
+* Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
+* Exempt the field accessors of records (usually bypassed by the compiler that goes direct to the backing field) from `AvoidUncalledPrivateCodeRule`
 
 
 
