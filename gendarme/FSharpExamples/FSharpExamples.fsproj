@@ -54,6 +54,7 @@
     <Compile Include="AvoidMultidimensionalIndexerRule.fs" />
     <Compile Include="AvoidNonAlphanumericIdentifierRule.fs" />
     <Compile Include="AvoidSwitchStatementsRule.fs" />
+    <Compile Include="AvoidUncalledPrivateCodeRule.fs" />
     <Compile Include="AvoidUnnecessarySpecializationRule.fs" />
     <Compile Include="AvoidUnneededFieldInitializationRule.fs" />
     <Compile Include="AvoidUnsealedUninheritedInternalTypeRule.fs" />
