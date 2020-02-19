@@ -229,7 +229,28 @@ namespace Gendarme.Rules.Naming {
 			if ((method.IsAddOn || method.IsRemoveOn) && method.IsPrivate)
 				return RuleResult.DoesNotApply;
 
-			string name = method.Name;
+            var fsharp = method.IsFSharpCode();
+            string name = method.Name;
+            var fsharpModule = method.DeclaringType.IsModuleType();
+
+            // extension methods
+            if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
+            {
+                var typename = method.Parameters[0].ParameterType.Name;
+                var isExtension = method.Name.StartsWith(typename + ".", StringComparison.Ordinal);
+                name = name.Substring(typename.Length + 1);
+                if (isExtension)
+                {
+                    fsharpModule = false; // class-bound
+                    // extension properties
+                    if (name.StartsWith("get_", StringComparison.Ordinal) ||
+                        name.StartsWith("get_", StringComparison.Ordinal))
+                    {
+                        name = name.Substring(4);
+                    }
+                }
+            }
+
 			MethodSemanticsAttributes attrs = method.SemanticsAttributes;
 			if ((attrs & mask) != 0) {
 				// it's something special
@@ -244,7 +265,7 @@ namespace Gendarme.Rules.Naming {
             // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
             // Use camelCase for module-bound public functions
             // Use camelCase for internal and private module-bound values and functions
-            if (method.DeclaringType.IsModuleType())
+            if (fsharpModule)
             {
                 if (!IsCamelCase(name))
                 {
@@ -268,8 +289,6 @@ namespace Gendarme.Rules.Naming {
 
 			// check parameters
 			if (method.HasParameters) {
-                var fsharp = method.IsFSharpCode();
-
 				foreach (ParameterDefinition param in method.Parameters) {
                     // ignore F# placeholder ("_") arguments
                     if (fsharp && param.Name.StartsWith("_arg", StringComparison.Ordinal))

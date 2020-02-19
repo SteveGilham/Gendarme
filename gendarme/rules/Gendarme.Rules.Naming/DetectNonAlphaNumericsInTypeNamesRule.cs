@@ -171,10 +171,20 @@ namespace Gendarme.Rules.Naming {
 			if (UsedForComInterop (method.DeclaringType as TypeDefinition))
 				return RuleResult.DoesNotApply;
 
+            var fsharp = method.IsFSharpCode();
+
             // Strip get_ and set_ prefixes out of property names
             var name = method.Name;
             if (method.IsSetter || method.IsGetter)
                 name = name.Substring(4);
+            else
+            if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
+            {
+                var typename = method.Parameters[0].ParameterType.Name;
+                if (method.Name.StartsWith(typename + ".get_", StringComparison.Ordinal) ||
+                    method.Name.StartsWith(typename + ".set_", StringComparison.Ordinal))
+                    name = name.Substring(typename.Length + 5);
+            }
 
 			// check the method name
 			if (!CheckName (name, method.IsSpecialName))
@@ -182,7 +192,10 @@ namespace Gendarme.Rules.Naming {
 
 			if (method.HasParameters) {
 				foreach (ParameterDefinition parameter in method.Parameters) {
-					if (!CheckName (parameter.Name, false))
+                    var pname = parameter.Name;
+                    if (fsharp && pname.StartsWith("_arg", StringComparison.Ordinal))
+                        continue;
+					if (!CheckName (pname, false))
 						Runner.Report (parameter, Severity.Medium, Confidence.High);
 				}
 			}

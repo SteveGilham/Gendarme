@@ -258,6 +258,12 @@ namespace Test.Rules.Naming {
             AssertRuleSuccess(type, "resolveFromNugetCache");
         }
 
+        [Test]
+        public void FSharpExtensionProperties()
+        {
+            AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "Object.get_IsNotNull");
+        }
+
 		public class AnonymousMethod {
 			private void MethodWithAnonymousMethod ()
 			{

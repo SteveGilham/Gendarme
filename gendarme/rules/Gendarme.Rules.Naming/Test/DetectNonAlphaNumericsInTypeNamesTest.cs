@@ -264,5 +264,16 @@ namespace Test.Rules.Naming {
             AssertRuleSuccess<AvoidNonAlphanumericIdentifier.ArgType>("get_ImportModule");
         }
 
+        [Test]
+        public void FSharpActivePattern()
+        {
+            AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "|Right|Left|");
+        }
+
+        [Test]
+        public void FSharpExtensionProperties()
+        {
+            AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "Object.get_IsNotNull");
+        }
 	}
 }

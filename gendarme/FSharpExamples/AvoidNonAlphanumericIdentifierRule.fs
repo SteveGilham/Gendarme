@@ -48,3 +48,12 @@ type ArgType =
   | Prepare of PrepareParams
   | ImportModule
   | GetVersion
+
+module Augment =
+  let (|Right|Left|) =
+    function
+    | Choice1Of2 x -> Choice1Of2 x
+    | Choice2Of2 x -> Choice2Of2 x
+
+  type System.Object with
+    member self.IsNotNull with get() = self <> null
