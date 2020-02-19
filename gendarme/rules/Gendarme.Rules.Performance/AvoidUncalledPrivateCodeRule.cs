@@ -142,7 +142,7 @@ namespace Gendarme.Rules.Performance {
 			if (!Applicable (method))
 				return RuleResult.DoesNotApply;
 
-            if (method.DeclaringType.IsRecordType() && (method.IsSetter || method.IsGetter))
+            if (method.IsFSharpCode() && (method.IsSetter || method.IsGetter))
             {
                 var property = method.GetPropertyByAccessor();
                 if (property.IsFieldType())

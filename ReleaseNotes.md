@@ -1,7 +1,7 @@
 # 2020.2.xx.xxxxx-pre-release
 F# niggles part 5
 * Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
-* Exempt the field accessors of records (usually bypassed by the compiler that goes direct to the backing field) from `AvoidUncalledPrivateCodeRule`
+* Exempt the field accessors of F# types (usually bypassed by the compiler by code that goes direct to the backing field) from `AvoidUncalledPrivateCodeRule`
 * Allow for F# extension properties (`TypeName.get_...` and `TypeName.set_...`) and for generated parameter names of the form `_arg...` in `AvoidNonAlphanumericIdentifierRule`
 * Consider F# extension methods/properties to be object-bound rather than module bound for `UseCorrectCasingRule`
 
