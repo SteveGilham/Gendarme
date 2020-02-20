@@ -1,3 +1,12 @@
+# 2020.2.20.18134-pre-release
+F# niggles part 5
+* Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
+* Exempt the field accessors of F# types (usually bypassed by the compiler by code that goes direct to the backing field) from `AvoidUncalledPrivateCodeRule`
+* Allow for F# extension properties (`TypeName.get_...` and `TypeName.set_...`) and for generated parameter names of the form `_arg...` in `AvoidNonAlphanumericIdentifierRule`
+* Consider F# extension methods/properties to be object-bound rather than module bound for `UseCorrectCasingRule`
+* Add a heuristic to recognise F# compiler generated disposal after a `use` in `EnsureLocalDisposalRule`
+* Add a `RelaxedAvoidCodeDuplicatedInSameClassRule`, which looks for patterns aligning with visible sequence points, and excludes patterns containing `throw new ArgumentNullException(...)`
+
 # 2020.2.17.17051-pre-release
 F# niggles part 4
 * Exempt generated types with `@` in their names from `AvoidUnnecessarySpecializationRule`, `AvoidSpeculativeGeneralityRule` and `MethodCanBeMadeStaticRule`
