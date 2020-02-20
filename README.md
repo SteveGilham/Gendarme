@@ -41,7 +41,10 @@ There is also a unit test failure for `Gendarme.Framework.Helpers\StackEntryAnal
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork is to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning. 
 
-### Progress to date
+### Progress to date 
+
+For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
+
 * Fix `AvoidMultidimensionalIndexerRule` for F# generated parameterless methods called `get_Item`
 * Fix comparison of nested type names in parameters against supplied types
 * Ignore [CompilerGenerated] methods for `AvoidSwitchStatementsRule` and `CheckParametersNullityInVisibleMethodsRule`
@@ -54,8 +57,8 @@ After having achieved the first objective, of being able to analyze code from th
 * Exempt debugger-related generated types related to union types from `AvoidUnsealedUninheritedInternalTypeRule` and `UseCorrectCasingRule`
 * Exempt getter and setter methods from `ConsiderConvertingMethodToPropertyRule` (well, duh!)
 * Exempt types with only fully `[CompilerGenerated]` `Equals` and `CompareTo` methods from `ImplementIComparableCorrectlyRule`; also explicitly exempt record types
-* Even if a union type is [Obsolete] don't bother telling us its cases and case constructors depend on it.
-* In F# code (type with F# [CompilationMapping] attribute) then allow single lower-case letter generic types
+* Even if a union type is `[Obsolete]` don't bother telling us its cases and case constructors depend on it.
+* In F# code (type with F# `[CompilationMapping]` attribute) then allow single lower-case letter generic types
 * Exempt methods of F# generated types with `@` in the name from ` ParameterNamesShouldMatchOverriddenMethodRule`
 * Exempt match on union types from `AvoidSwitchStatementsRule`
 * Exempt F# generated types with `@` in the name from `UseCorrectPrefixRule`,`VariableNamesShouldNotMatchFieldNamesRule` and `UseCorrectCasingRule`
@@ -68,7 +71,8 @@ After having achieved the first objective, of being able to analyze code from th
 * Take account of F#'s habit of making a virtual call to the base type constructor in object types constructors.
 * Exempt F# code in modules, or where a `match` could equally be an `if` from `AvoidSwitchStatementsRule`, `match` being idiomatic and occasionally just happening to be on an explicit integral type
 * Exempt property backing fields for code like `member val LocalSource = false with get, set` from `AvoidUnneededFieldInitializationRule`
-* Exempt union cases (unsealed but not likely to be inherited) from `AvoidUnsealedUninheritedInternalTypeRule`* Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
+* Exempt union cases (unsealed but not likely to be inherited) from `AvoidUnsealedUninheritedInternalTypeRule`
+* Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
 * Exempt the field accessors of F# types (usually bypassed by the compiler by code that goes direct to the backing field) from `AvoidUncalledPrivateCodeRule`
 * Allow for F# extension properties (`TypeName.get_...` and `TypeName.set_...`) and for generated parameter names of the form `_arg...` in `AvoidNonAlphanumericIdentifierRule`
 * Consider F# extension methods/properties to be object-bound rather than module bound for `UseCorrectCasingRule`
