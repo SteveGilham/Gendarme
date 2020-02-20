@@ -255,6 +255,7 @@ namespace Gendarme.Rules.Correctness {
 			bool return_idisposable = DoesReturnDisposable (method);
 
 			locals.ClearAll ();
+            var fsharp = method.IsFSharpCode();
 
 			foreach (Instruction ins in method.Body.Instructions) {
 				Code code = ins.OpCode.Code;
@@ -266,6 +267,29 @@ namespace Gendarme.Rules.Correctness {
 				case Code.Stind_Ref:
 					CheckForOutParameters (method, ins);
 					continue;
+                case Code.Isinst:
+                    if (fsharp && IsInsideFinallyBlock(method, ins))
+                    {
+                        var prev = ins.Previous;
+                        var next = ins.Next;
+                        if (prev != null && prev.IsLoadLocal()
+                            && next != null && next.IsStoreLocal()
+                            && (ins.Operand as TypeReference).FullName == "System.IDisposable")
+                        {
+                            VariableDefinition vp = prev.GetVariable(method);
+                            ulong pindex = (ulong)vp.Index;
+                            if (locals.Get(pindex))
+                            {
+                                CheckReassignment(method, next);
+                                locals.Clear(pindex);
+                                continue;
+                            }
+                            else continue;
+                        }
+                        else continue;
+                    }
+                    else continue;
+                    break;
 				default:
 					if (!callsAndNewobjBitmask.Get (code))
 						continue;

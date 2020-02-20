@@ -439,5 +439,12 @@ namespace Test.Rules.Correctness {
 #endif
 			AssertRuleSuccess<EnsureLocalDisposalTest> ("ReturnIDisposable2");
 		}
+
+        [Test]
+        public void FSharpUseStatement()
+        {
+            AssertRuleSuccess<EnsureLocalDisposal.StrongNameKeyData>("Make");
+        }
+
 	}
 }

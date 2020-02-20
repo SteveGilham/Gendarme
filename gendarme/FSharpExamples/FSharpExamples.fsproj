@@ -60,6 +60,7 @@
     <Compile Include="AvoidUnsealedUninheritedInternalTypeRule.fs" />
     <Compile Include="BadRecursiveInvocationRule.fs" />
     <Compile Include="ConsiderConvertingMethodToPropertyRule.fs" />
+    <Compile Include="EnsureLocalDisposalRule.fs" />
     <Compile Include="MethodCanBeMadeStaticRule.fs" />
     <Compile Include="RemoveDependenceOnObsoleteCodeRule.fs" />
     <Compile Include="UseCorrectPrefixRule.fs" />
