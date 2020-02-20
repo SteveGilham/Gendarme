@@ -1,4 +1,4 @@
-# 2020.2.xx.xxxxx-pre-release
+# 2020.2.20.181xx-pre-release
 F# niggles part 5
 * Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
 * Exempt the field accessors of F# types (usually bypassed by the compiler by code that goes direct to the backing field) from `AvoidUncalledPrivateCodeRule`
