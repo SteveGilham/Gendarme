@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Gendarme.Framework.Rocks;
@@ -39,13 +40,38 @@ namespace Gendarme.Rules.Smells {
 		int[] prefixes;
 		bool? compilerGeneratedBlock;
 		bool? extractableToMethodBlock;
+        MethodDefinition method;
 
-		internal Pattern (Instruction[] block)
+		internal Pattern (Instruction[] block, MethodDefinition source)
 		{
 			if (block == null)
 				throw new ArgumentNullException ("block");
-			this.instructions = block;
+            if (source == null)
+                throw new ArgumentNullException("source");
+            this.instructions = block;
+            this.method = source;
 		}
+
+        public override string ToString()
+        {
+            var where = instructions[0].GetMethod();
+            var extra = String.Empty;
+
+            var dbg = method.DebugInformation;
+            if (dbg != null)
+            {
+                extra = string.Join(Environment.NewLine, instructions.Select(i =>
+                {
+                    var sp = dbg.GetSequencePoint(i);
+                    return (sp == null) ? "." : String.Format("sl={0} sc={1} - el={2} ec={3} : {4}",
+                                                sp.StartLine, sp.StartColumn, 
+                                                sp.EndLine, sp.EndColumn, sp.Document.Url);
+                }));
+            }
+            else extra = "No Debug Information";
+
+            return extra + Environment.NewLine + String.Join(Environment.NewLine, instructions.Select(i => i.ToString()));
+        }
 
 		// look for: isinst System.IDisposable
 		static bool IsInstanceOfIDisposable (Instruction ins)

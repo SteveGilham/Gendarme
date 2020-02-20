@@ -107,7 +107,7 @@ namespace Gendarme.Rules.Smells {
 
 		public AvoidCodeDuplicatedInSiblingClassesRule ()
 		{
-			codeDuplicatedLocator = new CodeDuplicatedLocator (this);
+			codeDuplicatedLocator = new CodeDuplicatedLocator (this, DetectionMode.Classic);
 			siblingClasses = new List<TypeDefinition> ();
 		}
 
