@@ -68,4 +68,9 @@ After having achieved the first objective, of being able to analyze code from th
 * Take account of F#'s habit of making a virtual call to the base type constructor in object types constructors.
 * Exempt F# code in modules, or where a `match` could equally be an `if` from `AvoidSwitchStatementsRule`, `match` being idiomatic and occasionally just happening to be on an explicit integral type
 * Exempt property backing fields for code like `member val LocalSource = false with get, set` from `AvoidUnneededFieldInitializationRule`
-* Exempt union cases (unsealed but not likely to be inherited) from `AvoidUnsealedUninheritedInternalTypeRule`
+* Exempt union cases (unsealed but not likely to be inherited) from `AvoidUnsealedUninheritedInternalTypeRule`* Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
+* Exempt the field accessors of F# types (usually bypassed by the compiler by code that goes direct to the backing field) from `AvoidUncalledPrivateCodeRule`
+* Allow for F# extension properties (`TypeName.get_...` and `TypeName.set_...`) and for generated parameter names of the form `_arg...` in `AvoidNonAlphanumericIdentifierRule`
+* Consider F# extension methods/properties to be object-bound rather than module bound for `UseCorrectCasingRule`
+* Add a heuristic to recognise F# compiler generated disposal after a `use` in `EnsureLocalDisposalRule`
+* Add a `RelaxedAvoidCodeDuplicatedInSameClassRule`, which looks for patterns aligning with visible sequence points, and excludes patterns containing `throw new ArgumentNullException(...)`
