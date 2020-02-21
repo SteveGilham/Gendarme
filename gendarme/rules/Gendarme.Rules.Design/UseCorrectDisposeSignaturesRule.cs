@@ -135,13 +135,18 @@ namespace Gendarme.Rules.Design {
 	[Problem ("An IDisposable type does not conform to the guidelines for its Dispose methods.")]
 	[Solution ("Fix the signature of the methods or add the Dispose (bool) overload.")]
 	public sealed class UseCorrectDisposeSignaturesRule : Rule, ITypeRule {
-	
-		public RuleResult CheckType (TypeDefinition type)
+
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			if (type.IsInterface || type.IsEnum || type.IsDelegate ())
 				return RuleResult.DoesNotApply;
 			
-			if (type.Implements ("System", "IDisposable")) {
+			if (type.Implements (idisposable)) {
 				Log.WriteLine (this);
 				Log.WriteLine (this, "----------------------------------");
 				Log.WriteLine (this, type);
@@ -237,7 +242,7 @@ namespace Gendarme.Rules.Design {
 			if (type.HasInterfaces) {
                 foreach (TypeReference candidate in type.Interfaces.Select(x => x.InterfaceType))
                 {
-					if (candidate.IsNamed ("System", "IDisposable"))
+					if (candidate.IsNamed (idisposable))
 						return true;
 				}
 			}

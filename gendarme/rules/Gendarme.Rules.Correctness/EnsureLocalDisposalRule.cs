@@ -127,7 +127,12 @@ namespace Gendarme.Rules.Correctness {
 			return MethodSignatures.Dispose.Matches (call) || MethodSignatures.DisposeExplicit.Matches (call);
 		}
 
-		static bool DoesReturnDisposable (MethodReference call)
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+        static bool DoesReturnDisposable(MethodReference call)
 		{
 			//ignore properties (likely not the place where the IDisposable is *created*)
 			MethodDefinition method = call.Resolve ();
@@ -137,10 +142,10 @@ namespace Gendarme.Rules.Correctness {
 			if (method.IsConstructor) {
 				if (method.DeclaringType.IsGeneratedCode ())
 					return false; //eg. generators
-				return method.DeclaringType.Implements ("System", "IDisposable");
+				return method.DeclaringType.Implements (idisposable);
 			}
 
-			return method.ReturnType.Implements ("System", "IDisposable");
+			return method.ReturnType.Implements (idisposable);
 		}
 
 		static bool IsSetter (MethodReference m)
@@ -346,12 +351,11 @@ namespace Gendarme.Rules.Correctness {
 		static bool IsFluentLike (MethodReference method)
 		{
 			TypeReference rtype = method.ReturnType;
-			string nspace = rtype.Namespace;
-			string name = rtype.Name;
+			var name = rtype.GetTypeName();
 			// StringBuilder StringBuilder.Append (...)
-			if (method.DeclaringType.IsNamed (nspace, name))
+			if (method.DeclaringType.IsNamed (name))
 				return true;
-			return (method.HasParameters && method.Parameters [0].ParameterType.IsNamed (nspace, name));
+			return (method.HasParameters && method.Parameters [0].ParameterType.IsNamed (name));
 		}
 
 		void ReportCall (MethodDefinition method, Instruction ins, MethodReference call)

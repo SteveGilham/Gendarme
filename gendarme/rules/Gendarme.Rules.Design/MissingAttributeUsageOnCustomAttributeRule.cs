@@ -72,11 +72,16 @@ namespace Gendarme.Rules.Design {
 			if (!type.IsAttribute ())
 				return RuleResult.DoesNotApply;
 
-			if (type.HasAttribute ("System", "AttributeUsageAttribute")) // it's ok
+			if (type.HasAttribute (usage)) // it's ok
 				return RuleResult.Success;
 
 			Runner.Report (type, Severity.High, Confidence.Total);
 			return RuleResult.Failure;
 		}
-	}
+        private readonly static TypeName usage = new TypeName
+        {
+            Namespace = "System",
+            Name = "AttributeUsageAttribute"
+        };
+    }
 }

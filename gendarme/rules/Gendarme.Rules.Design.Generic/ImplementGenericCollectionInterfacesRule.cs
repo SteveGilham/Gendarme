@@ -70,7 +70,22 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1010:CollectionsShouldImplementGenericInterface")]
 	public class ImplementGenericCollectionInterfacesRule : GenericsBaseRule, ITypeRule {
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName ienumerable = new TypeName
+        {
+            Namespace = "System.Collections",
+            Name = "IEnumerable"
+        };
+        private readonly static TypeName idictionary = new TypeName
+        {
+            Namespace = "System.Collections",
+            Name = "IDictionary"
+        };
+        private readonly static TypeName ienumerable1 = new TypeName
+        {
+            Namespace = "System.Collections.Generic",
+            Name = "IEnumerable`1"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			// rule does not apply to enums, interfaces and generated code
 			if (type.IsEnum || type.IsInterface || type.IsGeneratedCode ())
@@ -81,15 +96,15 @@ namespace Gendarme.Rules.Design.Generic {
 				return RuleResult.DoesNotApply;
 
 			// rule only applies if the type implements IEnumerable
-			if (!type.Implements ("System.Collections", "IEnumerable"))
+			if (!type.Implements (ienumerable))
 				return RuleResult.DoesNotApply;
 		
 			// rule does not apply to the types implementing IDictionary
-			if (type.Implements ("System.Collections", "IDictionary"))
+			if (type.Implements (idictionary))
 				return RuleResult.DoesNotApply;
 
 			// the type should implement IEnumerable<T> too
-			if (!type.Implements ("System.Collections.Generic", "IEnumerable`1"))
+			if (!type.Implements (ienumerable1))
 				Runner.Report (type, Severity.Medium, Confidence.High);
 
 			return Runner.CurrentRuleResult;

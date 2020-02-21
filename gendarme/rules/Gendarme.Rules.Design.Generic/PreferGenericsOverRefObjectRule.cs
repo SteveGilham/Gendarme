@@ -67,18 +67,29 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate")]
 	public class PreferGenericsOverRefObjectRule : GenericsBaseRule, IMethodRule {
 
-		public RuleResult CheckMethod (MethodDefinition method)
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object&" // yes, &
+        };
+        private readonly static TypeName systemBoolean = new TypeName
+        {
+            Namespace = "System",
+            Name = "Boolean"
+        };
+
+        public RuleResult CheckMethod(MethodDefinition method)
 		{
 			// rule does not apply to properties, events, without parameters or for generated code
 			if (method.IsSpecialName || !method.HasParameters || method.IsGeneratedCode ())
 				return RuleResult.DoesNotApply;
 
 			// exclude the "bool Try* (ref)" pattern from the rule
-			if (method.Name.StartsWith ("Try", StringComparison.Ordinal) && method.ReturnType.IsNamed ("System", "Boolean"))
+			if (method.Name.StartsWith ("Try", StringComparison.Ordinal) && method.ReturnType.IsNamed (systemBoolean))
 				return RuleResult.DoesNotApply;
 
 			foreach (ParameterDefinition parameter in method.Parameters) {
-				if (!parameter.ParameterType.IsNamed ("System", "Object&"))
+				if (!parameter.ParameterType.IsNamed (systemObject))
 					continue;
 
 				// suggest using generics

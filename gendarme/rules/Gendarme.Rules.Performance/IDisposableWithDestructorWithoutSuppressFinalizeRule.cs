@@ -128,7 +128,7 @@ namespace Gendarme.Rules.Performance {
 				case Code.Callvirt:
 					// are we calling GC.SuppressFinalize ?
 					MethodReference callee = (ins.Operand as MethodReference);
-					if (callee.IsNamed ("System", "GC", "SuppressFinalize")) {
+					if (callee.IsNamed (gc, "SuppressFinalize")) {
 						return true;
 					} else if (level < 3) {
 						if (Recurse (callee.Resolve (), level + 1))
@@ -139,6 +139,11 @@ namespace Gendarme.Rules.Performance {
 			}
 			return false;
 		}
+        private readonly static TypeName gc = new TypeName
+        {
+            Namespace = "System",
+            Name = "GC"
+        };
 
 		private void CheckDispose (MethodDefinition dispose)
 		{
@@ -154,7 +159,7 @@ namespace Gendarme.Rules.Performance {
 				return RuleResult.DoesNotApply;
 
 			// rule applies to types that implements System.IDisposable
-			if (!type.Implements ("System", "IDisposable"))
+			if (!type.Implements (idisposable))
 				return RuleResult.DoesNotApply;
 
 			// and provide a finalizer
@@ -171,5 +176,10 @@ namespace Gendarme.Rules.Performance {
 
 			return Runner.CurrentRuleResult;
 		}
-	}
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+    }
 }

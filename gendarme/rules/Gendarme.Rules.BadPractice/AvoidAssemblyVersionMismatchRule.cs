@@ -62,7 +62,12 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("This situation can be confusing once deployed. Make sure both version are identical.")]
 	public class AvoidAssemblyVersionMismatchRule : Rule, IAssemblyRule {
 
-		public RuleResult CheckAssembly (AssemblyDefinition assembly)
+        private readonly static TypeName afva = new TypeName
+        {
+            Namespace = "System.Reflection",
+            Name = "AssemblyFileVersionAttribute"
+        };
+        public RuleResult CheckAssembly(AssemblyDefinition assembly)
 		{
 			if (!assembly.HasCustomAttributes)
 				return RuleResult.DoesNotApply;
@@ -81,7 +86,7 @@ namespace Gendarme.Rules.BadPractice {
 				// any attribute without arguments can be skipped
 				if (!ca.HasConstructorArguments)
 					continue;
-				if (!ca.AttributeType.IsNamed ("System.Reflection", "AssemblyFileVersionAttribute"))
+				if (!ca.AttributeType.IsNamed (afva))
 					continue;
 
 				Version.TryParse (ca.ConstructorArguments [0].Value as string, out file_version);

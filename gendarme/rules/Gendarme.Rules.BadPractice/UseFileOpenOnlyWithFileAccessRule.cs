@@ -68,6 +68,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("Add FileAccess parameter to your call")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class UseFileOpenOnlyWithFileAccessRule : Rule, IMethodRule {
+        private readonly static TypeName mode = new TypeName
+        {
+            Namespace = "System.IO",
+            Name = "FileMode"
+        };
 
 		public override void Initialize (IRunner runner)
 		{
@@ -78,7 +83,7 @@ namespace Gendarme.Rules.BadPractice {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.IO", "FileMode");
+						return tr.IsNamed (mode);
 					}));
 			};
 		}
@@ -127,9 +132,9 @@ namespace Gendarme.Rules.BadPractice {
 				bool foundFileAccess = false;
 				foreach (ParameterDefinition parameter in m.Parameters) {
 					TypeReference ptype = parameter.ParameterType;
-					if (!foundFileMode && ptype.IsNamed ("System.IO", "FileMode"))
+					if (!foundFileMode && ptype.IsNamed (mode))
 						foundFileMode = true;
-					if (!foundFileAccess && (ptype.IsNamed ("System.IO", "FileAccess") || ptype.IsNamed ("System.Security.AccessControl", "FileSystemRights")))
+					if (!foundFileAccess && (ptype.IsNamed (access) || ptype.IsNamed ("System.Security.AccessControl", "FileSystemRights")))
 						foundFileAccess = true;
 				}
 				if (foundFileMode && !foundFileAccess) {
@@ -141,5 +146,15 @@ namespace Gendarme.Rules.BadPractice {
 			}
 			return Runner.CurrentRuleResult;
 		}
-	}
+        private readonly static TypeName access = new TypeName
+        {
+            Namespace = "System.IO",
+            Name = "FileAccess"
+        };
+        private readonly static TypeName rights = new TypeName
+        {
+            Namespace = "System.Security.AccessControl",
+            Name = "FileSystemRights"
+        };
+    }
 }

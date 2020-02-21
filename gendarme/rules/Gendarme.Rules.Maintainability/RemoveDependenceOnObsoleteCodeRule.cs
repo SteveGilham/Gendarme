@@ -106,6 +106,11 @@ namespace Gendarme.Rules.Maintainability {
 		static Dictionary<TypeReference, bool> types = new Dictionary<TypeReference, bool> ();
 		static Dictionary<MethodReference, bool> methods = new Dictionary<MethodReference, bool> ();
 		static Dictionary<FieldReference, bool> fields = new Dictionary<FieldReference, bool> ();
+        private readonly static TypeName obsoleteA = new TypeName
+        {
+            Namespace = "System",
+            Name = "ObsoleteAttribute"
+        };
 
 		static bool IsObsolete (TypeReference type)
 		{
@@ -115,7 +120,7 @@ namespace Gendarme.Rules.Maintainability {
 			bool obsolete = false;
 			if (!types.TryGetValue (type, out obsolete)) {
 				TypeDefinition t = type.Resolve ();
-				obsolete = t.HasAttribute ("System", "ObsoleteAttribute");
+                obsolete = t.HasAttribute(obsoleteA);
 				types.Add (type, obsolete);
 			}
 			return obsolete;
@@ -129,7 +134,7 @@ namespace Gendarme.Rules.Maintainability {
 			bool obsolete = false;
 			if (!methods.TryGetValue (method, out obsolete)) {
 				MethodDefinition md = method.Resolve ();
-				obsolete = md.HasAttribute ("System", "ObsoleteAttribute");
+                obsolete = md.HasAttribute(obsoleteA);
 				methods.Add (method, obsolete);
 			}
 			return obsolete;
@@ -143,7 +148,7 @@ namespace Gendarme.Rules.Maintainability {
 			bool obsolete = false;
 			if (!fields.TryGetValue (field, out obsolete)) {
 				FieldDefinition fd = field.Resolve ();
-				obsolete = fd.HasAttribute ("System", "ObsoleteAttribute");
+                obsolete = fd.HasAttribute(obsoleteA);
 				fields.Add (field, obsolete);
 			}
 			return obsolete;
@@ -220,7 +225,7 @@ namespace Gendarme.Rules.Maintainability {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// we're not interested in the details of [Obsolete] types
-			if (type.HasAttribute ("System", "ObsoleteAttribute"))
+            if (type.HasAttribute(obsoleteA))
 				return RuleResult.DoesNotApply;
 
             // F# union type cases can't be annotated
@@ -352,7 +357,7 @@ namespace Gendarme.Rules.Maintainability {
 				return RuleResult.DoesNotApply;
 
 			// if the method is obsolete (directly or because it's type is)
-			if (method.HasAttribute ("System", "ObsoleteAttribute") || method.DeclaringType.HasAttribute ("System", "ObsoleteAttribute"))
+            if (method.HasAttribute(obsoleteA) || method.DeclaringType.HasAttribute(obsoleteA))
 				return RuleResult.DoesNotApply;
 
             // Union case constructors can be ignored

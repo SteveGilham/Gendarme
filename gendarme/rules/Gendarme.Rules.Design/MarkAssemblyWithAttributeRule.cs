@@ -48,7 +48,12 @@ namespace Gendarme.Rules.Design {
 			if (!assembly.HasCustomAttributes)
 				return RuleResult.DoesNotApply;
 
-			if (assembly.HasAttribute (AttributeNamespace, AttributeName))
+            var name = new TypeName
+            {
+                Namespace = AttributeNamespace,
+                Name = AttributeName
+            };
+			if (assembly.HasAttribute (name))
 				return RuleResult.Success;
 
 			Runner.Report (assembly, Severity, Confidence.Total);

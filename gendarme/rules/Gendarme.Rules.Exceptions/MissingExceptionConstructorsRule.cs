@@ -89,21 +89,31 @@ namespace Gendarme.Rules.Exceptions {
 
 		// localizable
 		private const string MissingConstructor = "Exception is missing '{0} {1}{2}' constructor.";
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
 
 		private static bool CheckForStringConstructor (MethodDefinition ctor)
 		{
 			if (!ctor.IsPublic)
 				return false;
 
-			return (ctor.Parameters [0].ParameterType.IsNamed ("System", "String"));
+			return (ctor.Parameters [0].ParameterType.IsNamed (systemString));
 		}
 
-		private static bool CheckForInnerExceptionConstructor (IMethodSignature ctor)
+        private readonly static TypeName exception = new TypeName
+        {
+            Namespace = "System",
+            Name = "Exception"
+        };
+        private static bool CheckForInnerExceptionConstructor(IMethodSignature ctor)
 		{
 			IList<ParameterDefinition> pdc = ctor.Parameters;
-			if (!pdc [0].ParameterType.IsNamed ("System", "String"))
+			if (!pdc [0].ParameterType.IsNamed (systemString))
 				return false;
-			return pdc [pdc.Count - 1].ParameterType.IsNamed ("System", "Exception");
+			return pdc [pdc.Count - 1].ParameterType.IsNamed (exception);
 		}
 
 		private static bool CheckForSerializationConstructor (MethodDefinition ctor)
@@ -117,7 +127,7 @@ namespace Gendarme.Rules.Exceptions {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule apply only to type that inherits from System.Exception
-			if (!type.Inherits ("System", "Exception"))
+			if (!type.Inherits (exception))
 				return RuleResult.DoesNotApply;
 
 			// rule applies, only Success or Failure from the point on

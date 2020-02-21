@@ -91,11 +91,16 @@ namespace Gendarme.Rules.Concurrency {
 			// skip fields decorated with [ThreadStatic] (the runtime will use
 			// thread local storage for these so they are thread safe)
 			if (fd.HasCustomAttributes) {
-				if (fd.HasAttribute ("System", "ThreadStaticAttribute"))
+				if (fd.HasAttribute (tsa))
 					return false;
 			}
 			return true;
 		}
+        private readonly static TypeName tsa = new TypeName
+        {
+            Namespace = "System",
+            Name = "ThreadStaticAttribute"
+        };
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{

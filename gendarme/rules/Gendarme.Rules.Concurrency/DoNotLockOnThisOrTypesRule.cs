@@ -123,7 +123,7 @@ namespace Gendarme.Rules.Concurrency {
 			case Code.Call:
 			case Code.Callvirt:
 				MethodReference mr = (ins.Operand as MethodReference);
-				if (!mr.ReturnType.IsNamed ("System", "Type"))
+				if (!mr.ReturnType.IsNamed (type))
 					return String.Empty;
 
 				if ((mr.Name == "GetTypeFromHandle") && (mr.DeclaringType.Name == "Type")) {
@@ -146,6 +146,11 @@ namespace Gendarme.Rules.Concurrency {
 			}
 			return msg;
 		}
+        private readonly static TypeName type = new TypeName
+        {
+            Namespace = "System",
+            Name = "type"
+        };
 
 		private static Instruction StoreLoadLocal (MethodDefinition method, Instruction ins)
 		{

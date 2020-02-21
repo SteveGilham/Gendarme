@@ -92,7 +92,18 @@ namespace Gendarme.Rules.Correctness {
 
 		static OpCodeBitmask callsAndNewobjBitmask = BuildCallsAndNewobjOpCodeBitmask ();
 
-		public override void Initialize (IRunner runner)
+        private readonly static TypeName regex = new TypeName
+        {
+            Namespace = "System.Text.RegularExpressions",
+            Name = "Regex"
+        };
+        private readonly static TypeName validator = new TypeName
+        {
+            Namespace = "System.Configuration",
+            Name = "RegexStringValidator"
+        };
+
+        public override void Initialize(IRunner runner)
 		{
 			base.Initialize (runner);
 
@@ -103,8 +114,8 @@ namespace Gendarme.Rules.Correctness {
 				// if we're not analyzing System.dll or System.Configuration.dll then check if we're using them
 				if (!usingRegexClass && !usingValidatorClass) {
 					Active = e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Text.RegularExpressions", "Regex") ||
-							tr.IsNamed ("System.Configuration", "RegexStringValidator");
+						return tr.IsNamed (regex) ||
+							tr.IsNamed (validator);
 					});
 				} else {
 					Active = true;
@@ -123,6 +134,11 @@ namespace Gendarme.Rules.Correctness {
 				}
 			}
 		}
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
 
 		bool CheckLoadInstruction (MethodDefinition method, Instruction ins, Instruction ld, Confidence confidence)
 		{
@@ -131,7 +147,7 @@ namespace Gendarme.Rules.Correctness {
 				return CheckPattern (method, ins, (string) ld.Operand, confidence);
 			case Code.Ldsfld:
 				FieldReference f = (FieldReference) ld.Operand;
-				if (f.Name != "Empty" || !f.DeclaringType.IsNamed ("System", "String"))
+				if (f.Name != "Empty" || !f.DeclaringType.IsNamed (systemString))
 					return false;
 				return CheckPattern (method, ins, null, confidence);
 			case Code.Ldnull:
@@ -168,7 +184,7 @@ namespace Gendarme.Rules.Correctness {
 				return;
 
 			TypeReference type = call.DeclaringType;
-			if (!type.IsNamed ("System.Text.RegularExpressions", "Regex") && !type.IsNamed ("System.Configuration", "RegexStringValidator"))
+			if (!type.IsNamed (regex) && !type.IsNamed (validator))
 				return;
 
 			MethodDefinition mdef = call.Resolve ();
@@ -180,7 +196,7 @@ namespace Gendarme.Rules.Correctness {
 
 			foreach (ParameterDefinition p in mdef.Parameters) {
 				string pname = p.Name;
-				if ((pname == "pattern" || pname == "regex") && p.ParameterType.IsNamed ("System", "String")) {
+				if ((pname == "pattern" || pname == "regex") && p.ParameterType.IsNamed (systemString)) {
 					Instruction ld = ins.TraceBack (method, -(call.HasThis ? 0 : p.Index));
 					if (ld != null)
 						CheckArguments (method, ins, ld);

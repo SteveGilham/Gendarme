@@ -71,7 +71,12 @@ namespace Gendarme.Rules.Performance {
 	[FxCopCompatibility ("Microsoft.Performance", "CA1820:TestForEmptyStringsUsingStringLength")]
 	public class CompareWithEmptyStringEfficientlyRule : Rule, IMethodRule {
 
-		public RuleResult CheckMethod (MethodDefinition method)
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        public RuleResult CheckMethod(MethodDefinition method)
 		{
 			// rule apply only if the method has a body (e.g. p/invokes, icalls don't)
 			if (!method.HasBody || method.IsGeneratedCode ())
@@ -103,7 +108,7 @@ namespace Gendarme.Rules.Performance {
 					break;
 				case "op_Equality":
 				case "op_Inequality":
-					if (!mref.DeclaringType.IsNamed ("System", "String"))
+					if (!mref.DeclaringType.IsNamed (systemString))
 						continue;
 					break;
 				default:
@@ -118,7 +123,7 @@ namespace Gendarme.Rules.Performance {
 					break;
 				case Code.Ldsfld:
 					FieldReference field = (prev.Operand as FieldReference);
-					if (!field.DeclaringType.IsNamed ("System", "String"))
+					if (!field.DeclaringType.IsNamed (systemString))
 						continue;
 					// unlikely to be anything else (at least with released fx)
 					if (field.Name != "Empty")

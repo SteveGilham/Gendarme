@@ -98,6 +98,11 @@ namespace Gendarme.Rules.Design {
 	public class AttributeArgumentsShouldHaveAccessorsRule : Rule, ITypeRule {
 
 		private List<string> allProperties = new List<string> ();
+        private readonly static TypeName attr = new TypeName
+        {
+            Namespace = "System",
+            Name = "Attribute"
+        };
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
@@ -118,7 +123,7 @@ namespace Gendarme.Rules.Design {
 					}
 				}
 				t = t.BaseType != null ? t.BaseType.Resolve () : null;
-			} while (t != null  && !t.IsNamed ("System", "Attribute"));
+			} while (t != null  && !t.IsNamed (attr));
 
 			// look through parameters
 			foreach (MethodDefinition constructor in type.Methods) {

@@ -124,7 +124,12 @@ namespace Gendarme.Rules.Concurrency {
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DoNotUseLockedRegionOutsideMethodRule : Rule, IMethodRule {
 
-		public override void Initialize (IRunner runner)
+        private readonly static TypeName monitor = new TypeName
+        {
+            Namespace = "System.Threading",
+            Name = "Monitor"
+        };
+        public override void Initialize(IRunner runner)
 		{
 			base.Initialize (runner);
 
@@ -134,7 +139,7 @@ namespace Gendarme.Rules.Concurrency {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Threading", "Monitor");
+						return tr.IsNamed (monitor);
 					}));
 			};
 		}

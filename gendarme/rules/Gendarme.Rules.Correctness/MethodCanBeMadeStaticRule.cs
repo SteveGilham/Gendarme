@@ -93,7 +93,13 @@ namespace Gendarme.Rules.Correctness {
 	[FxCopCompatibility ("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 	public class MethodCanBeMadeStaticRule : Rule, IMethodRule {
 
-		public RuleResult CheckMethod (MethodDefinition method)
+        private readonly static TypeName conditional = new TypeName
+        {
+            Namespace = "System.Diagnostics",
+            Name = "ConditionalAttribute"
+        };
+
+        public RuleResult CheckMethod(MethodDefinition method)
 		{
 			// we only check non static, non virtual methods and not constructors
 			if (method.IsStatic || method.IsVirtual || method.IsConstructor || 
@@ -115,7 +121,7 @@ namespace Gendarme.Rules.Correctness {
 
 			// methods with [Conditional] can be empty (not using 'this') IL-wise but not source-wise, ignore them
 			if (method.HasCustomAttributes) {
-				if (method.HasAttribute ("System.Diagnostics", "ConditionalAttribute"))
+				if (method.HasAttribute (conditional))
 					return RuleResult.DoesNotApply;
 			}
 

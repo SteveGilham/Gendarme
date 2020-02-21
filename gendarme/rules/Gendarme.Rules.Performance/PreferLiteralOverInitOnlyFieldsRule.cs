@@ -113,7 +113,7 @@ namespace Gendarme.Rules.Performance {
 				// and report constant stuff
 				if (Constant.Get (previous.OpCode.Code)) {
 					// adjust severity based on the field visibility and it's type
-					Severity s = (field.FieldType.IsNamed ("System", "String") || !field.IsVisible ()) ?
+					Severity s = (field.FieldType.IsNamed (systemString) || !field.IsVisible ()) ?
 						Severity.High : Severity.Medium;
 					Runner.Report (field, s, Confidence.Normal);
 				}
@@ -121,6 +121,13 @@ namespace Gendarme.Rules.Performance {
 
 			return Runner.CurrentRuleResult;
 		}
+
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+
 #if false
 		public void Bitmask ()
 		{

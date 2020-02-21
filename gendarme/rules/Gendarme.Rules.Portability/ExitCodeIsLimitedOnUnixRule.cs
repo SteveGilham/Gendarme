@@ -94,6 +94,11 @@ namespace Gendarme.Rules.Portability {
 			Bad,
 			Unsure
 		}
+        private readonly static TypeName env = new TypeName
+        {
+            Namespace = "System",
+            Name = "Environment"
+        };
 
 		public override void Initialize (IRunner runner)
 		{
@@ -108,7 +113,7 @@ namespace Gendarme.Rules.Portability {
 			// isn't referenced in a module (big performance difference)
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-					return tr.IsNamed ("System", "Environment");
+					return tr.IsNamed (env);
 				});
 			};
 		}
@@ -130,7 +135,12 @@ namespace Gendarme.Rules.Portability {
 			}
 		}
 
-		public RuleResult CheckAssembly (AssemblyDefinition assembly)
+        private readonly static TypeName i32 = new TypeName
+        {
+            Namespace = "System",
+            Name = "Int32"
+        };
+        public RuleResult CheckAssembly(AssemblyDefinition assembly)
 		{
 			MethodDefinition entry_point = assembly.EntryPoint;
 
@@ -143,7 +153,7 @@ namespace Gendarme.Rules.Portability {
 			// FIXME: entryPoint.ReturnType should not be null with void Main ()
 			// either bad unit tests or bug in cecil
 			TypeReference rt = entry_point.ReturnType;
-			if (!rt.IsNamed ("System", "Int32"))
+			if (!rt.IsNamed (i32))
 				return RuleResult.DoesNotApply;
 
 			Instruction previous = null;
@@ -166,7 +176,12 @@ namespace Gendarme.Rules.Portability {
 			return Runner.CurrentRuleResult;
 		}
 
-		private static InspectionResult CheckInstruction (Instruction instruction)
+        private readonly static TypeName ubyte = new TypeName
+        {
+            Namespace = "System",
+            Name = "Byte"
+        };
+        private static InspectionResult CheckInstruction(Instruction instruction)
 		{
 			// checks if an instruction loads an inapproriate value onto the stack			
 			switch (instruction.OpCode.Code) {
@@ -190,7 +205,7 @@ namespace Gendarme.Rules.Portability {
 				return (a >= 0 && a <= 255) ? InspectionResult.Good : InspectionResult.Bad;
 			case Code.Call:
 			case Code.Callvirt:
-				if ((instruction.Operand as MethodReference).ReturnType.IsNamed ("System", "Byte"))
+				if ((instruction.Operand as MethodReference).ReturnType.IsNamed (ubyte))
 					return InspectionResult.Good;
 				else
 					return InspectionResult.Unsure; // could be within 0-255 or not
@@ -219,7 +234,7 @@ namespace Gendarme.Rules.Portability {
 					string name = calledMethod.Name;
 					if ((name != "set_ExitCode") && (name != "Exit"))
 						break;
-					if (!calledMethod.DeclaringType.IsNamed ("System", "Environment"))
+					if (!calledMethod.DeclaringType.IsNamed (env))
 						break;
 
 					InspectionResult result = CheckInstruction (previous);

@@ -176,8 +176,13 @@ namespace Gendarme.Rules.Maintainability {
 			for (int i = 0; i < mc.Count && nullFields.Count > 0; ++i)
 				CheckMethod (mc [i]);
 		}
-		
-		public RuleResult CheckType (TypeDefinition type)
+
+        private readonly static TypeName control = new TypeName
+        {
+            Namespace = "System.Windows.Forms",
+            Name = "Control"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			if (type.IsEnum || type.IsInterface || !type.HasFields)
 				return RuleResult.DoesNotApply;
@@ -185,7 +190,7 @@ namespace Gendarme.Rules.Maintainability {
 			Log.WriteLine (this);
 			Log.WriteLine (this, "----------------------------------");
 			
-			bool isWinFormControl = usesWinForms && type.Inherits ("System.Windows.Forms", "Control");
+			bool isWinFormControl = usesWinForms && type.Inherits (control);
 
 			// All fields start out as always null and unused.
 			foreach (FieldDefinition field in type.Fields) {

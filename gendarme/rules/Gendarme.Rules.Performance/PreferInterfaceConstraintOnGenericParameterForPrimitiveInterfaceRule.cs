@@ -64,6 +64,18 @@ namespace Gendarme.Rules.Performance {
 	[Solution("Replace the interface parameter with interface constraint on generic type parameter.")]
 	public class PreferInterfaceConstraintOnGenericParameterForPrimitiveInterfaceRule : Rule, IMethodRule {
 
+
+        private readonly static TypeName t = new TypeName
+        {
+            Namespace = string.Empty,
+            Name = "T"
+        };
+        private readonly static TypeName systemDecimal = new TypeName
+        {
+            Namespace = "System",
+            Name = "Decimal"
+        };
+
 		static bool CheckGenericArgument (GenericInstanceType git)
 		{
 			if ((git == null) || !git.HasGenericArguments)
@@ -72,9 +84,9 @@ namespace Gendarme.Rules.Performance {
 			TypeReference arg = git.GenericArguments [0];
 			switch (arg.MetadataType) {
 			case MetadataType.MVar:
-				return (arg.IsGenericParameter && arg.IsNamed (String.Empty, "T"));
+				return (arg.IsGenericParameter && arg.IsNamed (t));
 			case MetadataType.ValueType:
-				return arg.IsNamed ("System", "Decimal");
+                return arg.IsNamed(systemDecimal);
 			case MetadataType.Boolean:
 			case MetadataType.Byte:
 			case MetadataType.Char:

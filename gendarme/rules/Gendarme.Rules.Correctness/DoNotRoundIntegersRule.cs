@@ -108,8 +108,8 @@ namespace Gendarme.Rules.Correctness {
 				if (rv.IsFloatingPoint ())
 					return null;
 				// but convertion into decimals are not...
-				if (rv.IsNamed ("System", "Decimal")) {
-					if (!mr.DeclaringType.IsNamed ("System", "Decimal"))
+				if (rv.IsNamed (systemDecimal)) {
+					if (!mr.DeclaringType.IsNamed (systemDecimal))
 						return null;
 
 					// ... unless it's a convertion from a FP value
@@ -134,6 +134,16 @@ namespace Gendarme.Rules.Correctness {
 			TypeReference type = GetType (ins.Previous, method);
 			return (type == null || type.IsFloatingPoint ()) ? null : type;
 		}
+        private readonly static TypeName systemDecimal = new TypeName
+        {
+            Namespace = "System",
+            Name = "Decimal"
+        };
+        private readonly static TypeName math = new TypeName
+        {
+            Namespace = "System",
+            Name = "Math"
+        };
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
@@ -146,7 +156,7 @@ namespace Gendarme.Rules.Correctness {
 
 			foreach (Instruction ins in method.Body.Instructions) {
 				MethodReference mr = ins.GetMethod ();
-				if ((mr == null) || !mr.DeclaringType.IsNamed ("System", "Math"))
+				if ((mr == null) || !mr.DeclaringType.IsNamed (math))
 					continue;
 
 				Instruction value = null;

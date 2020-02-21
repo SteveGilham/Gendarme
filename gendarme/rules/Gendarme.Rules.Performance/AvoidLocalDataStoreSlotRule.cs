@@ -89,6 +89,12 @@ namespace Gendarme.Rules.Performance {
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class AvoidLocalDataStoreSlotRule : Rule, IMethodRule {
 
+        private readonly static TypeName localDataStoreSlot = new TypeName
+        {
+            Namespace = "System",
+            Name = "LocalDataStoreSlot"
+        };
+
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
@@ -98,7 +104,7 @@ namespace Gendarme.Rules.Performance {
 				// then no method inside it will be using it
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "LocalDataStoreSlot");
+						return tr.IsNamed (localDataStoreSlot);
 					}));
 			};
 		}

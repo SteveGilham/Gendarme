@@ -84,6 +84,11 @@ namespace Gendarme.Rules.Concurrency {
 
 		private static OpCodeBitmask interlockedFriendlyOpCodeBitmask = BuildInterlockedFriendlyOpCodeBitmask ();
 
+        private readonly static TypeName monitor = new TypeName
+        {
+            Namespace = "System.Threading",
+            Name = "Monitor"
+        };
 
 		public override void Initialize (IRunner runner)
 		{
@@ -95,7 +100,7 @@ namespace Gendarme.Rules.Concurrency {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Threading", "Monitor");
+						return tr.IsNamed (monitor);
 					}));
 			};
 		}
@@ -156,10 +161,15 @@ namespace Gendarme.Rules.Concurrency {
 				return false;
 
 			MethodReference method = (ins.Operand as MethodReference);
-			if (!method.IsNamed ("System.Threading", "Monitor", "Enter"))
+			if (!method.IsNamed (monitor, "Enter"))
 				return false;
 			return (parametersCount == method.Parameters.Count);
 		}
+        private readonly static TypeName monitor = new TypeName
+        {
+            Namespace = "System.Threading",
+            Name = "Monitor"
+        };
 
 		private static OpCodeBitmask BuildInterlockedFriendlyOpCodeBitmask ()
 		{

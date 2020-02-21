@@ -92,10 +92,15 @@ namespace Gendarme.Rules.Design {
 	[Solution ("Use a better return type or implement the ICloneable interface.")]
 	public class ImplementICloneableCorrectlyRule: Rule, ITypeRule {
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName icloneable = new TypeName
+        {
+            Namespace = "System",
+            Name = "ICloneable"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			// rule applies to type that doesn't implement System.IClonable
-			if (type.Implements ("System", "ICloneable"))
+			if (type.Implements (icloneable))
 				return RuleResult.DoesNotApply;
 
 			foreach (MethodDefinition method in type.Methods) {
@@ -110,11 +115,16 @@ namespace Gendarme.Rules.Design {
 
 				// that return System.Object, e.g. public object Clone()
 				// or the current type, e.g. public <type> Clone()
-				if (method.ReturnType.IsNamed ("System", "Object"))
+				if (method.ReturnType.IsNamed (systemObject))
 					Runner.Report (method, Severity.Low, Confidence.High);
 			}
 
 			return Runner.CurrentRuleResult;
 		}
-	}
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
+    }
 }

@@ -84,10 +84,15 @@ namespace Gendarme.Rules.Design {
 	public class DeclareEventHandlersCorrectlyRule : Rule, ITypeRule {
 		static IList<TypeReference> valid_event_handler_types = new List<TypeReference> ();
 
-		private bool CheckReturnVoid (IMetadataTokenProvider eventType, IMethodSignature invoke)
+        private readonly static TypeName systemVoid = new TypeName
+        {
+            Namespace = "System",
+            Name = "Void"
+        };
+        private bool CheckReturnVoid(IMetadataTokenProvider eventType, IMethodSignature invoke)
 		{
 			TypeReference rtype = invoke.ReturnType;
-			if (rtype.IsNamed ("System", "Void"))
+			if (rtype.IsNamed (systemVoid))
 				return true;
 
 			string msg = String.Format (CultureInfo.InvariantCulture, 
@@ -105,7 +110,17 @@ namespace Gendarme.Rules.Design {
 			return false;
 		}
 
-		private bool CheckParameterTypes (IMetadataTokenProvider eventType, IMethodSignature invoke)
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
+        private readonly static TypeName eventArgs = new TypeName
+        {
+            Namespace = "System",
+            Name = "EventArgs"
+        };
+        private bool CheckParameterTypes(IMetadataTokenProvider eventType, IMethodSignature invoke)
 		{
 			bool ok = true;
 			if (!invoke.HasParameters)
@@ -115,7 +130,7 @@ namespace Gendarme.Rules.Design {
 			int count = pdc.Count;
 			if (count >= 1) {
 				TypeReference ptype = pdc [0].ParameterType;
-				if (!ptype.IsNamed ("System", "Object")) {
+				if (!ptype.IsNamed (systemObject)) {
 					string msg = String.Format (CultureInfo.InvariantCulture, 
 						"The first parameter should have an object, not {0}", ptype.GetFullName ());
 					Runner.Report (eventType, Severity.Medium, Confidence.High, msg);
@@ -123,7 +138,7 @@ namespace Gendarme.Rules.Design {
 				}
 			}
 			if (count >= 2) {
-				if (!pdc [1].ParameterType.Inherits ("System", "EventArgs")) {
+				if (!pdc [1].ParameterType.Inherits (eventArgs)) {
 					Runner.Report (eventType, Severity.Medium, Confidence.High, "The second parameter should be a subclass of System.EventArgs");
 					ok = false;
 				}
@@ -195,9 +210,14 @@ namespace Gendarme.Rules.Design {
 			return valid;
 		}
 
-		private bool CheckGenericDelegate (TypeReference type)
+        private readonly static TypeName handler = new TypeName
+        {
+            Namespace = "System",
+            Name = "EventHandler`1"
+        };
+        private bool CheckGenericDelegate(TypeReference type)
 		{
-			if (type.IsNamed ("System", "EventHandler`1"))
+			if (type.IsNamed (handler))
 				return true;
 
 			Runner.Report (type, Severity.Medium, Confidence.High, "Generic delegates should use EventHandler<TEventArgs>");

@@ -229,7 +229,17 @@ namespace Gendarme.Rules.Correctness {
 			return true;
 		}
 
-		private void CheckCallToFormatter (Instruction call, MethodDefinition method)
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        private void CheckCallToFormatter(Instruction call, MethodDefinition method)
 		{
 			MethodReference mr = (call.Operand as MethodReference);
 
@@ -243,13 +253,13 @@ namespace Gendarme.Rules.Correctness {
 			// String.Format (string, object, object, object) -> elementsPushed = 3
 			// String.Format (string, object[]) -> compute
 			// String.Format (IFormatProvider, string, object[]) -> compute
-			if (!pdc [nbParameters - 1].ParameterType.IsNamed ("System", "Object")) {
+			if (!pdc [nbParameters - 1].ParameterType.IsNamed (systemObject)) {
 				// If we cannot determine the array size, we succeed (well we don't fail/report)
 				if (!TryComputeArraySize (call, method, nbParameters - 1, out elementsPushed))
 					return;
 
 				// String.Format (IFormatProvider, string, object[]) -> formatPosition = 1
-				if (!pdc [0].ParameterType.IsNamed ("System", "String"))
+				if (!pdc [0].ParameterType.IsNamed (systemString))
 					formatPosition = 1;
 			}
 
@@ -297,7 +307,7 @@ namespace Gendarme.Rules.Correctness {
 					continue;
 
 				MethodReference mr = (instruction.Operand as MethodReference);
-				if (formatSignature.Matches (mr) && mr.DeclaringType.IsNamed ("System", "String"))
+				if (formatSignature.Matches (mr) && mr.DeclaringType.IsNamed (systemString))
 					CheckCallToFormatter (instruction, method);
 			}
 

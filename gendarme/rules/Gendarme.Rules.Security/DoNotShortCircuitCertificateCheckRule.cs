@@ -124,11 +124,18 @@ namespace Gendarme.Rules.Security {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Net", "ICertificatePolicy");
+						return tr.IsNamed (icertificatePolicy);
 					})
 				);
 			};
 		}
+
+        private readonly static TypeName icertificatePolicy = new TypeName
+        {
+            Namespace = "System.Net",
+            Name = "ICertificatePolicy"
+        };
+
 
 		private RuleResult CheckArguments (MethodDefinition method, bool third)
 		{
@@ -163,7 +170,7 @@ namespace Gendarme.Rules.Security {
 			// since ICertificatePolicy is an interface we need to check its name
 			string name = method.Name;
 			if (name == "CheckValidationResult") {
-				if (!method.DeclaringType.Implements ("System.Net", "ICertificatePolicy"))
+				if (!method.DeclaringType.Implements (certificatePolicy))
 					return RuleResult.Success;
 			} else if (name != "System.Net.ICertificatePolicy.CheckValidationResult")
 				return RuleResult.Success;
@@ -174,6 +181,13 @@ namespace Gendarme.Rules.Security {
 			return CheckArguments (method, false);
 		}
 
+        private readonly static TypeName certificatePolicy = new TypeName
+        {
+            Namespace = "System.Net",
+            Name = "ICertificatePolicy"
+        };
+
+
 		private RuleResult CheckCallback (MethodDefinition method)
 		{
 			// the policy is suspect if it does not touch 
@@ -183,6 +197,12 @@ namespace Gendarme.Rules.Security {
 			return CheckArguments (method, true);
 		}
 
+        private readonly static TypeName systemBoolean = new TypeName
+        {
+            Namespace = "System",
+            Name = "Boolean"
+        };
+
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			if (method.IsAbstract || !method.HasParameters)
@@ -190,7 +210,7 @@ namespace Gendarme.Rules.Security {
 
 			IList<ParameterDefinition> pdc = method.Parameters;
 			int count = pdc.Count;
-			if ((count != 4) || !method.ReturnType.IsNamed ("System", "Boolean"))
+			if ((count != 4) || !method.ReturnType.IsNamed (systemBoolean))
 				return RuleResult.DoesNotApply;
 
 			// this method could be a candidate for both policy or callback

@@ -65,6 +65,11 @@ namespace Gendarme.Rules.Performance {
 
 		// the rule idea came from
 		// http://lists.ximian.com/archives/public/mono-patches/2008-June/121564.html
+        private readonly static TypeName systemType = new TypeName
+        {
+            Namespace = "System",
+            Name = "Type"
+        };
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
@@ -88,7 +93,7 @@ namespace Gendarme.Rules.Performance {
 				MethodReference mr = (ins.Operand as MethodReference);
 				if ((mr == null) || !mr.HasParameters)
 					continue;
-				if (!mr.IsNamed ("System", "Type", "GetType"))
+				if (!mr.IsNamed (systemType, "GetType"))
 					continue;
 
 				if (ins.Previous.OpCode.Code != Code.Ldstr)

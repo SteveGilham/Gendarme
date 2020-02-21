@@ -41,6 +41,12 @@ using Gendarme.Framework.Helpers;
 
 namespace Gendarme.Framework.Rocks {
 
+    public struct TypeName
+    {
+        public string Namespace;
+        public string Name;
+    }
+
 	// add Type[Definition|Reference] extensions methods here
 	// only if:
 	// * you supply minimal documentation for them (xml)
@@ -244,11 +250,11 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the interface to be matched</param>
 		/// <returns>True if we found that the type implements the interface, False otherwise (either it
 		/// does not implement it, or we could not find where it does).</returns>
-		public static bool Implements (this TypeReference self, string nameSpace, string name)
+		public static bool Implements (this TypeReference self, TypeName typename)
 		{
-			if (nameSpace == null)
+			if (typename.Namespace == null)
 				throw new ArgumentNullException ("nameSpace");
-			if (name == null)
+			if (typename.Name == null)
 				throw new ArgumentNullException ("name");
 			if (self == null)
 				return false;
@@ -258,22 +264,22 @@ namespace Gendarme.Framework.Rocks {
 				return false;	// not enough information available
 
 			// special case, check if we implement ourselves
-			if (type.IsInterface && type.IsNamed (nameSpace, name))
+			if (type.IsInterface && type.IsNamed (typename))
 				return true;
 
-			return Implements (type, nameSpace, name);
+            return Implements(type, typename);
 		}
 
-		private static bool Implements (TypeDefinition type, string nameSpace, string iname)
+		private static bool Implements (TypeDefinition type, TypeName typename)
 		{
 			while (type != null) {
 				// does the type implements it itself
 				if (type.HasInterfaces) {
 					foreach (TypeReference iface in type.Interfaces.Select(x => x.InterfaceType)) {
-						if (iface.IsNamed (nameSpace, iname))
+						if (iface.IsNamed (typename))
 							return true;
 						//if not, then maybe one of its parent interfaces does
-						if (Implements (iface.Resolve (), nameSpace, iname))
+						if (Implements (iface.Resolve (), typename))
 							return true;
 					}
 				}
@@ -292,20 +298,20 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="nameSpace">The namespace of the base class to be matched</param>
 		/// <param name="name">The name of the base class to be matched</param>
 		/// <returns>True if the type inherits from specified class, False otherwise</returns>
-		public static bool Inherits (this TypeReference self, string nameSpace, string name)
+		public static bool Inherits (this TypeReference self, TypeName typename)
 		{
-			if (nameSpace == null)
+			if (typename.Namespace == null)
 				throw new ArgumentNullException ("nameSpace");
-			if (name == null)
+			if (typename.Name == null)
 				throw new ArgumentNullException ("name");
 			if (self == null)
 				return false;
 
 			TypeReference current = self.Resolve ();
 			while (current != null) {
-				if (current.IsNamed (nameSpace, name))
+				if (current.IsNamed (typename))
 					return true;
-				if (current.IsNamed ("System", "Object"))
+                if (current.IsNamed(systemObject))
 					return false;
 
 				TypeDefinition td = current.Resolve ();
@@ -315,6 +321,13 @@ namespace Gendarme.Framework.Rocks {
 			}
 			return false;
 		}
+
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
+
 
         /// <summary>
         /// Check if the type is in F# code
@@ -330,8 +343,15 @@ namespace Gendarme.Framework.Rocks {
 
             return def != null &&
                    (def.Name.Contains("@")
-                    || def.HasAttribute("Microsoft.FSharp.Core", "CompilationMappingAttribute"));
+                    || def.HasAttribute(compilationMapping));
         }
+
+        private readonly static TypeName compilationMapping = new TypeName
+        {
+            Namespace = "Microsoft.FSharp.Core",
+            Name = "CompilationMappingAttribute"
+        };
+
 
 		/// <summary>
 		/// Check if the type and its namespace are named like the provided parameters.
@@ -341,25 +361,52 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="nameSpace">The namespace to be matched</param>
 		/// <param name="name">The type name to be matched</param>
 		/// <returns>True if the type is namespace and name match the arguments, False otherwise</returns>
-		public static bool IsNamed (this TypeReference self, string nameSpace, string name)
+		public static bool IsNamed (this TypeReference self, TypeName typename)
 		{
-			if (nameSpace == null)
+			if (typename.Namespace == null)
 				throw new ArgumentNullException ("nameSpace");
-			if (name == null)
+			if (typename.Name == null)
 				throw new ArgumentNullException ("name");
 			if (self == null)
 				return false;
 
 			if (self.IsNested) {
-				int spos = name.LastIndexOf ('/');
+                int spos = typename.Name.LastIndexOf('/');
 				if (spos == -1)
 					return false;
 				// GetFullName could be optimized away but it's a fairly uncommon case
-				return (nameSpace + "." + name == self.GetFullName ());
+                return typename.Namespace + "." + typename.Name == self.GetFullName().Replace("/", ".").Replace("+", ".");
 			}
 
-			return ((self.Namespace == nameSpace) && (self.Name == name));
+            return self.GetTypeName().EqualTo(typename);
 		}
+
+        public static bool EqualTo(this TypeName self, TypeName other)
+        {
+            return (self.Namespace == other.Namespace) &&
+                   (self.Name == other.Name);
+        }
+
+        public static TypeName GetTypeName(this TypeReference self)
+        {
+            if (self.IsNested)
+            {
+                var parent = self.DeclaringType.GetTypeName();
+                return new TypeName
+                {
+                    Namespace = parent.Namespace,
+                    Name = parent.Name + "/" + self.Name
+                };
+            }
+            else
+            {
+                return new TypeName
+                {
+                    Namespace = self.Namespace,
+                    Name = self.Name
+                };
+            }
+        }
 
 		/// <summary>
 		/// Check if the type full name match the provided parameter.
@@ -376,11 +423,11 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			if (self.IsNested) {
-				int spos = fullName.LastIndexOf ('/');
+				int spos = fullName.LastIndexOf ('/'); // TODO ??
 				if (spos == -1)
 					return false;
 				// FIXME: GetFullName could be optimized away but it's a fairly uncommon case
-				return (fullName == self.GetFullName ());
+				return (fullName == self.GetFullName ()); // TODO???
 			}
 
 			int dpos = fullName.LastIndexOf ('.');
@@ -409,9 +456,15 @@ namespace Gendarme.Framework.Rocks {
 		{
 			if (self == null)
 				return false;
-
-			return self.Inherits ("System", "Attribute");
+ 
+			return self.Inherits (systemAttribute);
 		}
+
+        private readonly static TypeName systemAttribute = new TypeName
+        {
+            Namespace = "System",
+            Name = "Attribute"
+        };
 
 		/// <summary>
 		/// Check if the type is a delegate.
@@ -449,8 +502,14 @@ namespace Gendarme.Framework.Rocks {
 			if ((type == null) || !type.IsEnum || !type.HasCustomAttributes)
 				return false;
 
-			return type.HasAttribute ("System", "FlagsAttribute");
+			return type.HasAttribute (flags);
 		}
+
+        private readonly static TypeName flags = new TypeName
+        {
+            Namespace = "System",
+            Name = "FlagsAttribute"
+        };
 
 		/// <summary>
 		/// Check if the type represent a floating-point type.
@@ -516,8 +575,16 @@ namespace Gendarme.Framework.Rocks {
 				string name = self.Name;
 				return ((name == "IntPtr") || (name == "UIntPtr"));
 			}
-			return self.IsNamed ("System.Runtime.InteropServices", "HandleRef");
+
+			return self.IsNamed (handleRef);
 		}
+
+        private readonly static TypeName handleRef = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "HandleRef"
+        };
+
 
 		/// <summary>
 		/// Check if the type is static (2.0+)

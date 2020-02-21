@@ -105,7 +105,7 @@ namespace Gendarme.Rules.Correctness {
 				break;
 			case Code.Ldsfld:
 				FieldReference f = (FieldReference) ld.Operand;
-				if (f.Name == "Empty" && f.DeclaringType.IsNamed ("System", "String"))
+				if (f.Name == "Empty" && f.DeclaringType.IsNamed (systemString))
 					CheckString (method, ins, null);
 				break;
 			case Code.Ldnull:
@@ -130,20 +130,40 @@ namespace Gendarme.Rules.Correctness {
 			}
 		}
 
-		void CheckCall (MethodDefinition method, Instruction ins, MethodReference mref)
+        private readonly static TypeName xpn = new TypeName
+        {
+            Namespace = "System.Xml.XPath",
+            Name = "XPathNavigator"
+        };
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        private readonly static TypeName node = new TypeName
+        {
+            Namespace = "System.Xml",
+            Name = "XmlNode"
+        };
+        private readonly static TypeName document = new TypeName
+        {
+            Namespace = "System.Xml",
+            Name = "XmlDocument"
+        };
+        void CheckCall(MethodDefinition method, Instruction ins, MethodReference mref)
 		{
 			if (null == mref || !mref.HasParameters)
 				return;
 
 			switch (mref.Name) {
 			case "LoadXml":
-				if (mref.DeclaringType.IsNamed ("System.Xml", "XmlDocument"))
+				if (mref.DeclaringType.IsNamed (document))
 					CheckString (method, ins, -1);
 				break;
 			case "set_InnerXml":
 			case "set_OuterXml":
 				TypeReference tr = mref.DeclaringType;
-				if (tr.Inherits ("System.Xml", "XmlNode") || tr.Inherits ("System.Xml.XPath", "XPathNavigator"))
+				if (tr.Inherits (node) || tr.Inherits (xpn))
 					CheckString (method, ins, -1);
 				break;
 			case "AppendChild":
@@ -152,8 +172,8 @@ namespace Gendarme.Rules.Correctness {
 			case "InsertBefore":
 				IList<ParameterDefinition> pdc = mref.Parameters;
 				if (pdc.Count == 1
-					&& pdc [0].ParameterType.IsNamed ("System", "String")
-					&& mref.DeclaringType.Inherits ("System.Xml.XPath", "XPathNavigator"))
+					&& pdc [0].ParameterType.IsNamed (systemString)
+					&& mref.DeclaringType.Inherits (xpn))
 					CheckString (method, ins, -1);
 				break;
 			}

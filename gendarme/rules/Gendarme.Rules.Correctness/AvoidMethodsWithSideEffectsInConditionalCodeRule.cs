@@ -195,6 +195,11 @@ namespace Gendarme.Rules.Correctness {
 			
 			return confidence;
 		}
+        private readonly static TypeName conditional = new TypeName
+        {
+            Namespace = "System.Diagnostics",
+            Name = "ConditionalAttribute"
+        };
 		
 		internal static string ConditionalOn (MethodReference mr)
 		{
@@ -209,7 +214,7 @@ namespace Gendarme.Rules.Correctness {
 				if (!attr.HasConstructorArguments)
 					continue;
 				if (StringConstructor.Matches (attr.Constructor)) {
-					if (attr.AttributeType.IsNamed ("System.Diagnostics", "ConditionalAttribute")) {
+					if (attr.AttributeType.IsNamed (conditional)) {
 						return (string) attr.ConstructorArguments [0].Value;
 					}
 				}

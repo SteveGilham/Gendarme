@@ -111,7 +111,12 @@ namespace Gendarme.Rules.Performance {
 			return false;
 		}
 
-		public RuleResult CheckMethod (MethodDefinition method)
+        private readonly static TypeName conditional = new TypeName
+        {
+            Namespace = "System.Diagnostics",
+            Name = "ConditionalAttribute"
+        };
+        public RuleResult CheckMethod(MethodDefinition method)
 		{
 			// catch abstract, pinvoke and icalls - where rule does not apply
 			if (!method.HasBody)
@@ -133,7 +138,7 @@ namespace Gendarme.Rules.Performance {
 				return RuleResult.DoesNotApply;
 
 			// methods with [Conditional] can be empty (not using any parameter) IL-wise but not source-wise, ignore them
-			if (method.HasAttribute ("System.Diagnostics", "ConditionalAttribute"))
+			if (method.HasAttribute (conditional))
 				return RuleResult.DoesNotApply;
 
 			// rule applies

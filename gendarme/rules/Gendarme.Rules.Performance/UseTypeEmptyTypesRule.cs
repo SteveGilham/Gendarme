@@ -83,7 +83,7 @@ namespace Gendarme.Rules.Performance {
 				if (ins.OpCode != OpCodes.Newarr)
 					continue;
 
-				if (!(ins.Operand as TypeReference).IsNamed ("System", "Type"))
+				if (!(ins.Operand as TypeReference).IsNamed (systemType))
 					continue;
 
 				if (ins.Previous.IsOperandZero ())
@@ -92,6 +92,13 @@ namespace Gendarme.Rules.Performance {
 
 			return Runner.CurrentRuleResult;
 		}
+
+        private readonly static TypeName systemType = new TypeName
+        {
+            Namespace = "System",
+            Name = "Type"
+        };
+
 #if false
 		public void Bitmask ()
 		{

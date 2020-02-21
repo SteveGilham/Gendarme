@@ -52,13 +52,26 @@ namespace Gendarme.Framework.Rocks {
 
 			foreach (CustomAttribute ca in self.CustomAttributes) {
 				TypeReference cat = ca.AttributeType;
-				if (cat.IsNamed ("System.CodeDom.Compiler", "GeneratedCodeAttribute") ||
-					cat.IsNamed ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute")) {
+				if (cat.IsNamed (generatedCode) ||
+					cat.IsNamed (compilerGenerated)) {
 					return true;
 				}
 			}
 			return false;
 		}
+
+        private readonly static TypeName generatedCode = new TypeName
+        {
+            Namespace = "System.CodeDom.Compiler",
+            Name = "GeneratedCodeAttribute"
+        };
+
+        private readonly static TypeName compilerGenerated = new TypeName
+        {
+            Namespace = "System.Runtime.CompilerServices",
+            Name = "CompilerGeneratedAttribute"
+        };
+
 
 		/// <summary>
 		/// Check if the type contains an attribute of a specified type.
@@ -69,18 +82,18 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="name">The name of the attribute to be matched</param>
 		/// <returns>True if the provider contains an attribute of the same name,
 		/// False otherwise.</returns>
-		public static bool HasAttribute (this ICustomAttributeProvider self, string nameSpace, string name)
+		public static bool HasAttribute (this ICustomAttributeProvider self, TypeName typename)
 		{
-			if (nameSpace == null)
+			if (typename.Namespace == null)
 				throw new ArgumentNullException ("nameSpace");
-			if (name == null)
+			if (typename.Name == null)
 				throw new ArgumentNullException ("name");
 
 			if ((self == null) || !self.HasCustomAttributes)
 				return false;
 
 			foreach (CustomAttribute ca in self.CustomAttributes) {
-				if (ca.AttributeType.IsNamed (nameSpace, name))
+				if (ca.AttributeType.IsNamed (typename))
 					return true;
 			}
 			return false;

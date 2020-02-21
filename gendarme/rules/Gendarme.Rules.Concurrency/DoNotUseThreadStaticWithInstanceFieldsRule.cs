@@ -84,13 +84,18 @@ namespace Gendarme.Rules.Concurrency {
 	[Solution ("ThreadStaticAttribute will only make static fields thread safe. To make an instance field thread safe you need to use techniques like locking or System.Threading.Thread.Thread::AllocateNamedDataSlot.")]
 	public sealed class DoNotUseThreadStaticWithInstanceFieldsRule : Rule, ITypeRule {
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName tsa = new TypeName
+        {
+            Namespace = "System",
+            Name = "ThreadStaticAttribute"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			if (!type.HasFields || type.IsEnum)
 				return RuleResult.DoesNotApply;
 			
 			foreach (FieldDefinition field in type.Fields) {
-				if (!field.IsStatic && field.HasAttribute ("System", "ThreadStaticAttribute")) {
+				if (!field.IsStatic && field.HasAttribute (tsa)) {
 					Runner.Report (field, Severity.Critical, Confidence.Total);
 				}
 			}

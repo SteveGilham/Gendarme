@@ -240,7 +240,7 @@ namespace Gendarme.Rules.Performance {
 			// if we can't find the non-public type being used in the assembly then the rule fails
 			if (typeset == null || !typeset.Contains (type)) {
 				// base confidence on whether the internals are visible or not
-				Confidence c = assembly.HasAttribute ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute") ? 
+				Confidence c = assembly.HasAttribute (visible) ? 
 					Confidence.Low : Confidence.Normal;
 				Runner.Report (type, Severity.High, c);
 				return RuleResult.Failure;
@@ -248,5 +248,10 @@ namespace Gendarme.Rules.Performance {
 
 			return RuleResult.Success;
 		}
-	}
+        private readonly static TypeName visible = new TypeName
+        {
+            Namespace = "System.Runtime.CompilerServices",
+            Name = "InternalsVisibleToAttribute"
+        };
+    }
 }

@@ -68,14 +68,19 @@ namespace Gendarme.Rules.Design {
 
 		const string Struct = "Consider using a class since a struct cannot define a finalizer.";
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			// rule applies only to types, interfaces and structures (value types)
 			if (type.IsEnum || type.IsDelegate () || type.IsGeneratedCode ())
 				return RuleResult.DoesNotApply;
 
 			// rule onyly applies to type that implements IDisposable
-			if (!type.Implements ("System", "IDisposable"))
+			if (!type.Implements (idisposable))
 				return RuleResult.DoesNotApply;
 
 			// no problem is a finalizer is found

@@ -94,10 +94,16 @@ namespace Gendarme.Rules.Serialization {
 		private const string CtorSealedTypeText = "The serialization constructor should be private since this type is sealed.";
 		private const string CtorUnsealedTypeText = "The serialization constructor should be protected (family) since this type is not sealed.";
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName iserializable = new TypeName
+        {
+            Namespace = "System.Runtime.Serialization",
+            Name = "ISerializable"
+        };
+        
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			// rule does not apply to interfaces, delegates or types that does not implement ISerializable
-			if (type.IsInterface || type.IsDelegate () || !type.Implements ("System.Runtime.Serialization", "ISerializable"))
+			if (type.IsInterface || type.IsDelegate () || !type.Implements (iserializable))
 				return RuleResult.DoesNotApply;
 
 			// rule applies, only Success or Failure from the point on

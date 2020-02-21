@@ -393,7 +393,7 @@ namespace Gendarme.Rules.Portability {
 				// this is a constructor call
 				MethodReference ctor = (MethodReference) ins.Operand;
 				// avoid catching regular expressions
-				if (ctor.DeclaringType.IsNamed ("System.Text.RegularExpressions", "Regex"))
+				if (ctor.DeclaringType.IsNamed (regex))
 					AddPoints (-42);
 
 				break;
@@ -404,6 +404,12 @@ namespace Gendarme.Rules.Portability {
 
 			return true; // handled
 		}
+        private readonly static TypeName regex = new TypeName
+        {
+            Namespace = "System.Text.RegularExpressions",
+            Name = "Regex"
+        };
+
 
 		void CheckMethodParameterName (MethodReference methodReference, int parameterOffset)
 		{

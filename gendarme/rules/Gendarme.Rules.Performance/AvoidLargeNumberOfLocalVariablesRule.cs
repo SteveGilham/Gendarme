@@ -62,6 +62,12 @@ namespace Gendarme.Rules.Performance {
 			set { max_variables = value; }
 		}
 
+        private readonly static TypeName form = new TypeName
+        {
+            Namespace = "System.Windows.Forms",
+            Name = "Form"
+        };
+
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// ingore methods without body and generated code
@@ -71,7 +77,7 @@ namespace Gendarme.Rules.Performance {
 			// special case for System.Windows.Forms since it's designer does not
 			// mark this code as generated :-(
 			if (method.Name == "InitializeComponent") {
-				if (method.DeclaringType.Inherits ("System.Windows.Forms", "Form"))
+				if (method.DeclaringType.Inherits (form))
 					return RuleResult.DoesNotApply;
 			}
 

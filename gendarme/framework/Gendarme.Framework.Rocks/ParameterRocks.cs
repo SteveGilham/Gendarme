@@ -39,7 +39,13 @@ namespace Gendarme.Framework.Rocks {
 		/// <returns>True if the parameter represents a list of parameters, false otherwise.</returns>
 		public static bool IsParams (this ParameterDefinition self)
 		{
-			return self.HasAttribute ("System", "ParamArrayAttribute");
+			return self.HasAttribute (paramArray);
 		}
-	}
+
+        private readonly static TypeName paramArray = new TypeName
+        {
+            Namespace = "System",
+            Name = "ParamArrayAttribute"
+        };
+    }
 }

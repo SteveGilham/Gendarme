@@ -106,11 +106,16 @@ namespace Gendarme.Rules.Correctness {
 				}
 			}
 
-			if (type.BaseType.IsNamed ("System", "Object"))
+			if (type.BaseType.IsNamed (systemObject))
 				return true;
 
 			return IsAllStatic (type.BaseType.Resolve ());
 		}
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
 
 		public RuleResult CheckType (TypeDefinition type)
 		{

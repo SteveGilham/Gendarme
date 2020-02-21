@@ -69,7 +69,12 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
 	public class DoNotExposeNestedGenericSignaturesRule : GenericsBaseRule, IMethodRule {
 
-		static Severity? Check (TypeReference type)
+        private readonly static TypeName nullable = new TypeName
+        {
+            Namespace = "System",
+            Name = "Nullable`1"
+        };
+        static Severity? Check(TypeReference type)
 		{
 			GenericInstanceType git = (type as GenericInstanceType);
 			if ((git != null) && git.HasGenericArguments) {
@@ -79,7 +84,7 @@ namespace Gendarme.Rules.Design.Generic {
 						// nullable are an exception because there is syntaxic sugar (at 
 						// least in some language like C#) to make them easier to use
 						// note: FxCop does not ignore them
-						if (git.ElementType.IsNamed ("System", "Nullable`1"))
+						if (git.ElementType.IsNamed (nullable))
 							return null;
 						// FIXME: we should look at ignoring LINQ queries too, because it
 						// too pretty much hides the complexity of nested generics

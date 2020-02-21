@@ -438,7 +438,7 @@ namespace Gendarme.Rules.Concurrency {
 							methods.AddIfNew ((MethodReference) ins.Previous.Previous.Operand);
 						
 						// Misc threaded events.
-						} else if (call_type.IsNamed ("System.ComponentModel", "BackgroundWorker")) {
+						} else if (call_type.IsNamed (backgroundWorker)) {
 							if (call.Name == "add_DoWork") {
 								candidate = (MethodReference) ins.Previous.Previous.Operand;
 							}
@@ -489,6 +489,16 @@ namespace Gendarme.Rules.Concurrency {
 				}
 			}
 		}
+        private readonly static TypeName backgroundWorker = new TypeName
+        {
+            Namespace = "System.ComponentModel",
+            Name = "BackgroundWorker"
+        };
+        private readonly static TypeName process = new TypeName
+        {
+            Namespace = "System.Diagnostics",
+            Name = "Process"
+        };
 
 		static bool IsNonSynchronizedSetter (MemberReference method)
 		{
@@ -499,7 +509,7 @@ namespace Gendarme.Rules.Concurrency {
 			// but mono doesn't.
 			case "add_ErrorDataReceived":
 			case "add_OutputDataReceived":
-				if (method.DeclaringType.IsNamed ("System.Diagnostics", "Process"))
+				if (method.DeclaringType.IsNamed (process))
 					return true;
 				break;
 			}

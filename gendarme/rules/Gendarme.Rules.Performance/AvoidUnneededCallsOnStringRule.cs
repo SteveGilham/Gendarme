@@ -122,12 +122,17 @@ namespace Gendarme.Rules.Performance {
 			return Runner.CurrentRuleResult;
 		}
 
-		private static string CheckClone (MethodReference call, Instruction ins, MethodDefinition method)
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        private static string CheckClone(MethodReference call, Instruction ins, MethodDefinition method)
 		{
 			if (call.HasParameters)
 				return String.Empty;
 
-			if (!ins.Previous.GetOperandType (method).IsNamed ("System", "String"))
+			if (!ins.Previous.GetOperandType (method).IsNamed (systemString))
 				return  String.Empty;
 
 			return String.Format (CultureInfo.InvariantCulture, MessageString, call.Name, String.Empty);
@@ -135,7 +140,7 @@ namespace Gendarme.Rules.Performance {
 
 		private static string CheckSubstring (MethodReference call, Instruction ins)
 		{
-			if (!call.DeclaringType.IsNamed ("System", "String"))
+			if (!call.DeclaringType.IsNamed (systemString))
 				return String.Empty;
 
 			// ensure it's System.String::Substring(System.Int32) and that it's given 0 as a parameter
@@ -149,7 +154,7 @@ namespace Gendarme.Rules.Performance {
 
 		private static string CheckToString (MethodReference call, Instruction ins, MethodDefinition method)
 		{
-			if (call.DeclaringType.IsNamed ("System", "String")) {
+			if (call.DeclaringType.IsNamed (systemString)) {
 				// most probably ToString(IFormatProvider), possibly ToString()
 				return String.Format (CultureInfo.InvariantCulture, MessageString, call.Name, 
 					(call.HasParameters && (call.Parameters.Count > 1)) ? "IFormatProvider" : String.Empty);

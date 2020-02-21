@@ -43,6 +43,18 @@ namespace Gendarme.Rules.Design {
 		abstract protected string [] GetProperties ();
 		abstract protected string InterfaceName { get; }
 		abstract protected string InterfaceNamespace { get; }
+        private Func<TypeName> builder()
+        {
+            return () => new TypeName 
+            {
+                Name = InterfaceName,
+                Namespace = InterfaceNamespace
+            };
+        }
+        private Lazy<TypeName> lazyTypeName = null;
+        protected TypeName InterfaceTypeName { get {
+            lazyTypeName = new Lazy<TypeName>(builder());
+            return lazyTypeName.Value;  } }
 
 		MethodSignature [] signatures;
 		string [] propertyNames;
@@ -50,7 +62,7 @@ namespace Gendarme.Rules.Design {
 
 		virtual public RuleResult CheckType (TypeDefinition type)
 		{
-			if (type.IsAbstract || type.IsGeneratedCode () || !type.Implements (InterfaceNamespace, InterfaceName))
+            if (type.IsAbstract || type.IsGeneratedCode() || !type.Implements(this.InterfaceTypeName))
 				return RuleResult.DoesNotApply;
 
 			signatures = GetMethods ();

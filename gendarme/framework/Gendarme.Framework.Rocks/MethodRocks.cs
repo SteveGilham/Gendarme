@@ -56,13 +56,13 @@ namespace Gendarme.Framework.Rocks {
 	/// </summary>
 	public static class MethodRocks {
 
-		public static bool IsNamed (this MemberReference self, string nameSpace, string typeName, string methodName)
+		public static bool IsNamed (this MemberReference self, TypeName typeName, string methodName)
 		{
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 			if (self == null)
 				return false;
-			return ((self.Name == methodName) && self.DeclaringType.IsNamed (nameSpace, typeName));
+			return ((self.Name == methodName) && self.DeclaringType.IsNamed (typeName));
 		}
 
 		/// <summary>
@@ -86,8 +86,15 @@ namespace Gendarme.Framework.Rocks {
 				return false;
 
 			return (self.HasThis && !self.HasParameters && (self.Name == "Finalize") &&
-				self.ReturnType.IsNamed ("System", "Void"));
+				self.ReturnType.IsNamed (systemVoid));
 		}
+
+        private readonly static TypeName systemVoid = new TypeName
+        {
+            Namespace = "System",
+            Name = "Void"
+        };
+
 
         /// <summary>
         /// Check if the MethodReference is in F# code
@@ -252,15 +259,22 @@ namespace Gendarme.Framework.Rocks {
 			TypeReference type = parameters [1].ParameterType;
 			GenericParameter gp = (type as GenericParameter);
 			if (gp == null)
-				return type.Inherits ("System", "EventArgs");
+				return type.Inherits (eventArgs);
 
 			if (gp.HasConstraints) {
                 IList<TypeReference> cc = gp.Constraints.Select(co => co.ConstraintType).ToList();
-				return ((cc.Count == 1) && cc [0].IsNamed ("System", "EventArgs"));
+				return ((cc.Count == 1) && cc [0].IsNamed (eventArgs));
 			}
 
 			return false;
 		}
+
+        private readonly static TypeName eventArgs = new TypeName
+        {
+            Namespace = "System",
+            Name = "EventArgs"
+        };
+
 
 		/// <summary>
 		/// Returns a property using supplied MethodReference of 
@@ -289,7 +303,7 @@ namespace Gendarme.Framework.Rocks {
 
 		private static bool AreSameElementTypes (TypeReference a, TypeReference b)
 		{
-			return a.IsGenericParameter || b.IsGenericParameter || b.IsNamed (a.Namespace, a.Name);
+			return a.IsGenericParameter || b.IsGenericParameter || b.IsNamed (a.GetTypeName());
 		}
 
 		/// <summary>

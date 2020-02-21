@@ -110,11 +110,16 @@ namespace Gendarme.Rules.Exceptions {
 				}
 
 				if (name.EndsWith ("Exception", StringComparison.Ordinal)) {
-					if (type.Inherits ("System", "ArgumentException"))
+					if (type.Inherits (argumentException))
 						Runner.Report (method, ins, Severity.Medium, Confidence.Total, type.GetFullName ());
 				}
 			}
 			return Runner.CurrentRuleResult;
 		}
-	}
+        private readonly static TypeName argumentException = new TypeName
+        {
+            Namespace = "System",
+            Name = "ArgumentException"
+        };
+    }
 }

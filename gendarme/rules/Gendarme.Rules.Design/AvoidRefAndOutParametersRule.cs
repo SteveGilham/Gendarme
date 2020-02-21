@@ -131,7 +131,12 @@ namespace Gendarme.Rules.Design {
 			return IsSignatureDictatedByInterface (method, type);
 		}
 
-		public RuleResult CheckMethod (MethodDefinition method)
+        private readonly static TypeName systemBoolean = new TypeName
+        {
+            Namespace = "System",
+            Name = "Boolean"
+        };
+        public RuleResult CheckMethod(MethodDefinition method)
 		{
 			// rule only applies to visible methods with parameters
 			// we also exclude all p/invokes since we have a rule for them not to be visible
@@ -142,7 +147,7 @@ namespace Gendarme.Rules.Design {
 				string how = null;
 				if (parameter.IsOut) {
 					// out is permitted for the "bool Try* (...)" pattern
-					if (method.ReturnType.IsNamed ("System", "Boolean") && 
+					if (method.ReturnType.IsNamed (systemBoolean) && 
 						method.Name.StartsWith ("Try", StringComparison.Ordinal)) {
 						continue;
 					}

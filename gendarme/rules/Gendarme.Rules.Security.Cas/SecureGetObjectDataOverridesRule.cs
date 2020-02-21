@@ -84,11 +84,16 @@ namespace Gendarme.Rules.Security.Cas {
 				return _ruleSet;
 			}
 		}
+        private readonly static TypeName iserializable = new TypeName
+        {
+            Namespace = "System.Runtime.Serialization",
+            Name = "ISerializable"
+        };
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only to types that implements ISerializable
-			if (!type.Implements ("System.Runtime.Serialization", "ISerializable"))
+			if (!type.Implements (iserializable))
 				return RuleResult.DoesNotApply;
 
 			MethodDefinition method = type.GetMethod (MethodSignatures.GetObjectData);

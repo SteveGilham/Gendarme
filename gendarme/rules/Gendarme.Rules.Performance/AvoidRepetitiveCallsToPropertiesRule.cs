@@ -154,15 +154,25 @@ namespace Gendarme.Rules.Performance {
 
 			return Severity.Critical;
 		}
+        private readonly static TypeName stopwatch = new TypeName
+        {
+            Namespace = "System.Diagnostics",
+            Name = "Stopwatch"
+        };
+        private readonly static TypeName dateTime = new TypeName
+        {
+            Namespace = "System",
+            Name = "DateTime"
+        };
 
 		static bool Filter (MethodDefinition method)
 		{
 			TypeReference type = method.DeclaringType;
 			// Elapsed* and IsRunning
-			if (type.IsNamed ("System.Diagnostics", "Stopwatch"))
+			if (type.IsNamed (stopwatch))
 				return true;
 			// Now and UtcNow
-			else if (type.IsNamed ("System", "DateTime"))
+			else if (type.IsNamed (dateTime))
 				return method.IsStatic;
 
 			return false;

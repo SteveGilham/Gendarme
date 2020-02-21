@@ -156,11 +156,16 @@ namespace Gendarme.Rules.Design {
 			}
 		}
 
-		private void CheckParameters (MethodDefinition method)
+        private readonly static TypeName attr = new TypeName
+        {
+            Namespace = "System",
+            Name = "Attribute"
+        };
+        private void CheckParameters(MethodDefinition method)
 		{
 			// attributes are a special case where Uri cannot be used and has it's own
 			// rule to cover this: Gendarme.Rules.Correctness.AttributeStringLiteralShouldParseCorrectlyRule
-			if (method.IsConstructor && method.DeclaringType.Inherits ("System", "Attribute"))
+			if (method.IsConstructor && method.DeclaringType.Inherits (attr))
 				return;
 
 			var methodParams = method.Parameters;

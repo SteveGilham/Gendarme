@@ -105,7 +105,12 @@ namespace Gendarme.Rules.Correctness {
 			return method;
 		}
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			// rule applies only to types and structures (value types)
 			if (type.IsEnum || type.IsInterface || type.IsDelegate ())
@@ -117,7 +122,7 @@ namespace Gendarme.Rules.Correctness {
 
 			// note: other rule will complain if there are disposable or native fields
 			// in a type that doesn't implement IDisposable, so we don't bother here
-			if (!type.Implements ("System", "IDisposable"))
+			if (!type.Implements (idisposable))
 				return RuleResult.DoesNotApply;
 
 			MethodDefinition implicitDisposeMethod = GetNonAbstractMethod (type, MethodSignatures.Dispose);
@@ -149,7 +154,7 @@ namespace Gendarme.Rules.Correctness {
 				TypeDefinition fieldType = field.FieldType.Resolve ();
 				if (fieldType == null)
 					continue;
-				if (fieldType.Implements ("System", "IDisposable"))
+				if (fieldType.Implements (idisposable))
 					disposeableFields.Add (field);
 			}
 
@@ -174,14 +179,19 @@ namespace Gendarme.Rules.Correctness {
 
 			return Runner.CurrentRuleResult;
 		}
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
 
 		private void CheckBaseDispose (TypeDefinition type, MethodDefinition implicitDisposeMethod, MethodDefinition explicitDisposeMethod)
 		{
 			TypeDefinition baseType = type;
-			while (!baseType.BaseType.IsNamed ("System", "Object")) {
+			while (!baseType.BaseType.IsNamed (systemObject)) {
 				baseType = baseType.BaseType.Resolve ();
 				// also checks parents, so no need to search further
-				if ((baseType == null) || !baseType.Implements ("System", "IDisposable"))
+				if ((baseType == null) || !baseType.Implements (idisposable))
 					break;
 
 				//we just check for Dispose() here

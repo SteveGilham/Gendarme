@@ -51,11 +51,16 @@ namespace Gendarme.Rules.Concurrency {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Threading", "Monitor");
+						return tr.IsNamed (monitor);
 					}));
 			};
 		}
 
+        private readonly static TypeName monitor = new TypeName
+        {
+            Namespace = "System.Threading",
+            Name = "Monitor"
+        };
 
 		abstract public void Analyze (MethodDefinition method, MethodReference enter, Instruction ins);
 
@@ -70,7 +75,7 @@ namespace Gendarme.Rules.Concurrency {
 
 			foreach (Instruction ins in method.Body.Instructions) {
 				MethodReference mr = ins.GetMethod ();
-				if (mr.IsNamed ("System.Threading", "Monitor", "Enter"))
+				if (mr.IsNamed (monitor, "Enter"))
 					Analyze (method, mr, ins);
 			}
 			return Runner.CurrentRuleResult;

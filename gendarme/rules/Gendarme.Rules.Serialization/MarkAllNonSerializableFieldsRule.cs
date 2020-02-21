@@ -73,10 +73,16 @@ namespace Gendarme.Rules.Serialization {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2235:MarkAllNonSerializableFields")]
 	public class MarkAllNonSerializableFieldsRule : Rule, ITypeRule {
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName iserializable = new TypeName
+        {
+            Namespace = "System.Runtime.Serialization",
+            Name = "ISerializable"
+        };
+        
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			// if type is not serializable or has not any fields or does not implements a custom serialization
-			if (!type.IsSerializable || !type.HasFields || type.Implements ("System.Runtime.Serialization", "ISerializable"))
+			if (!type.IsSerializable || !type.HasFields || type.Implements (iserializable))
 				return RuleResult.DoesNotApply;
 
 			foreach (FieldDefinition field in type.Fields) {

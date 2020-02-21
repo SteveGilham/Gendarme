@@ -65,12 +65,17 @@ namespace Gendarme.Rules.Security.Cas {
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Security", "SuppressUnmanagedCodeSecurityAttribute");
+						return tr.IsNamed (suppressUnmanagedCodeSecurityAttribute);
 					}));
 			};
 		}
 
-		// The [SuppressUnmanagedCodeSecurity] attribute applies to
+        private readonly static TypeName suppressUnmanagedCodeSecurityAttribute = new TypeName
+        {
+            Namespace = "System.Security",
+            Name = "SuppressUnmanagedCodeSecurityAttribute"
+        };
+        // The [SuppressUnmanagedCodeSecurity] attribute applies to
 		// Classes, Interfaces, Delegates (ITypeRule) and Methods (IMethodRule)
 
 		public RuleResult CheckType (TypeDefinition type)
@@ -78,7 +83,7 @@ namespace Gendarme.Rules.Security.Cas {
 			if (type.IsEnum)
 				return RuleResult.DoesNotApply;
 
-			if (!type.HasAttribute ("System.Security", "SuppressUnmanagedCodeSecurityAttribute"))
+			if (!type.HasAttribute (suppressUnmanagedCodeSecurityAttribute))
 				return RuleResult.Success;
 
 			Runner.Report (type, Severity.Audit, Confidence.Total);
@@ -87,7 +92,7 @@ namespace Gendarme.Rules.Security.Cas {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (!method.HasAttribute ("System.Security", "SuppressUnmanagedCodeSecurityAttribute"))
+			if (!method.HasAttribute (suppressUnmanagedCodeSecurityAttribute))
 				return RuleResult.Success;
 
 			Runner.Report (method, Severity.Audit, Confidence.Total);

@@ -127,11 +127,16 @@ namespace Gendarme.Rules.Serialization {
 				if (ins.OpCode.OperandType != OperandType.InlineField)
 					continue;
 				FieldDefinition field = (ins.Operand as FieldDefinition);
-				if ((field != null) && field.FieldType.IsNamed (return_type.Namespace, return_type.Name))
+				if ((field != null) && field.FieldType.IsNamed (return_type.GetTypeName()))
 					return field;
 			}
 			return null;
 		}
+        private readonly static TypeName serializationInfo = new TypeName
+        {
+            Namespace = "System.Runtime.Serialization",
+            Name = "SerializationInfo"
+        };
 
 		private void CheckSerializedFields (MethodDefinition method)
 		{
@@ -143,7 +148,7 @@ namespace Gendarme.Rules.Serialization {
 					if (!mr.HasParameters || (mr.Name != "AddValue") || (mr.Parameters.Count < 2))
 						continue;
 					// type is sealed so this check is ok
-					if (!mr.DeclaringType.IsNamed ("System.Runtime.Serialization", "SerializationInfo"))
+					if (!mr.DeclaringType.IsNamed (serializationInfo))
 						continue;
 
 					// look at the second parameter, which should be (or return) the field
@@ -187,9 +192,15 @@ namespace Gendarme.Rules.Serialization {
 			fields.Clear ();
 		}
 
+        private readonly static TypeName iserializable = new TypeName
+        {
+            Namespace = "System.Runtime.Serialization",
+            Name = "ISerializable"
+        };
+
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			if (!type.IsSerializable || !type.Implements ("System.Runtime.Serialization", "ISerializable"))
+			if (!type.IsSerializable || !type.Implements (iserializable))
 				return RuleResult.DoesNotApply;
 
 			MethodDefinition getObjectData = type.GetMethod (MethodSignatures.GetObjectData);

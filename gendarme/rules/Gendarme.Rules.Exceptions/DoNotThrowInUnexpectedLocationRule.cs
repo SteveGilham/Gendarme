@@ -163,26 +163,26 @@ namespace Gendarme.Rules.Exceptions {
 		private static readonly OpCodeBitmask OverflowThrowers = new OpCodeBitmask (0x0, 0x8000000000000000, 0x3FC07F8000001FF, 0x0);
 		private static readonly OpCodeBitmask Casts = new OpCodeBitmask (0x0, 0x48000000000000, 0x400000000, 0x0);
 
-		private static readonly string [][] GetterExceptions = new string [][] {
-			new string [] { "System", "InvalidOperationException" },
-			new string [] { "System", "NotSupportedException"}
+        private static readonly TypeName[] GetterExceptions = new TypeName[] {
+			new TypeName { Namespace = "System", Name = "InvalidOperationException" },
+			new TypeName { Namespace = "System", Name = "NotSupportedException"}
 		};
 
-		private static readonly string [][] IndexerExceptions = new string [][] {
-			new string [] { "System", "InvalidOperationException" }, 
-			new string [] { "System", "NotSupportedException" }, 
-			new string [] { "System", "ArgumentException" }, 
-			new string [] { "System.Collections.Generic", "KeyNotFoundException" }
+        private static readonly TypeName[] IndexerExceptions = new TypeName[] {
+			new TypeName { Namespace = "System", Name = "InvalidOperationException" }, 
+			new TypeName { Namespace = "System", Name = "NotSupportedException" }, 
+			new TypeName { Namespace = "System", Name = "ArgumentException" }, 
+			new TypeName { Namespace = "System.Collections.Generic", Name = "KeyNotFoundException" }
 		};
 
-		private static readonly string [][] EventExceptions = new string [][] {
-			new string [] { "System", "InvalidOperationException" }, 
-			new string [] { "System", "NotSupportedException" }, 
-			new string [] { "System", "ArgumentException" }
+        private static readonly TypeName[] EventExceptions = new TypeName[] {
+			new TypeName { Namespace = "System", Name = "InvalidOperationException" }, 
+			new TypeName { Namespace = "System", Name = "NotSupportedException" }, 
+			new TypeName { Namespace = "System", Name = "ArgumentException" }
 		};
 
-		private static readonly string [][] HashCodeExceptions = new string [][] {
-			new string [] { "System", "ArgumentException" }
+        private static readonly TypeName[] HashCodeExceptions = new TypeName[] {
+			new TypeName { Namespace = "System", Name = "ArgumentException" }
 		};
 
 		private static bool CheckAttributes (MethodReference method, MethodAttributes attrs)
@@ -200,16 +200,21 @@ namespace Gendarme.Rules.Exceptions {
 		
 		private MethodSignature equals_signature;
 		private MethodSignature hashcode_signature;
-		private string [][] allowedExceptions;
+		private TypeName[] allowedExceptions;
 		private Severity severity;
 		private bool is_equals;
+        private readonly static TypeName comparer = new TypeName
+        {
+            Namespace = "System.Collections.Generic",
+            Name = "IEqualityComparer`1"
+        };
 
 		public override void Initialize (IRunner runner)
 		{
 			base.Initialize (runner);
 
 			Runner.AnalyzeType += delegate (object sender, RunnerEventArgs e) {
-				if (e.CurrentType.Implements ("System.Collections.Generic", "IEqualityComparer`1")) {
+				if (e.CurrentType.Implements (comparer)) {
 					equals_signature = EqualityComparer_Equals;
 					hashcode_signature = EqualityComparer_GetHashCode;
 				} else {
@@ -232,7 +237,12 @@ namespace Gendarme.Rules.Exceptions {
 			return false;
 		}
 
-		private string PreflightMethod (MethodDefinition method)
+        private readonly static TypeName systemBoolean = new TypeName
+        {
+            Namespace = "System",
+            Name = "Boolean"
+        };
+        private string PreflightMethod(MethodDefinition method)
 		{
 			if (method.IsSpecialName) {
 				return PreflightSpecialNameMethod (method);
@@ -240,7 +250,7 @@ namespace Gendarme.Rules.Exceptions {
 				return PreflightVirtualMethod (method);
 			} else if (method.HasParameters && (method.Name == "Dispose")) {
 				IList<ParameterDefinition> pdc = method.Parameters;
-				if ((pdc.Count == 1) && pdc [0].ParameterType.IsNamed ("System", "Boolean"))
+				if ((pdc.Count == 1) && pdc [0].ParameterType.IsNamed (systemBoolean))
 					return "Dispose (bool)";
 			} else if (MethodSignatures.TryParse.Matches (method)) {
 				return "TryParse";
@@ -276,6 +286,11 @@ namespace Gendarme.Rules.Exceptions {
 			} 
 			return String.Empty;
 		}
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
 
 		private string PreflightVirtualMethod (MethodDefinition method)
 		{
@@ -289,7 +304,7 @@ namespace Gendarme.Rules.Exceptions {
 			} else if (MethodSignatures.Finalize.Matches (method)) {
 				return "Finalizers";
 			} else if (MethodSignatures.Dispose.Matches (method) || MethodSignatures.DisposeExplicit.Matches (method)) {
-				if (method.DeclaringType.Implements ("System", "IDisposable"))
+				if (method.DeclaringType.Implements (idisposable))
 					return "IDisposable.Dispose";
 			} else if (equals_signature != null && equals_signature.Matches (method)) {
 				return "IEqualityComparer<T>.Equals";
@@ -382,7 +397,7 @@ namespace Gendarme.Rules.Exceptions {
 						if (ins.Previous.Is (Code.Newobj)) {
 							MethodReference mr = (MethodReference) ins.Previous.Operand;
 							TypeReference tr = mr.DeclaringType;
-							if (tr.IsNamed ("System", "NotImplementedException") || tr.Inherits ("System", "NotImplementedException"))
+							if (tr.IsNamed (nie) || tr.Inherits (nie))
 								continue;
 						}	
 					
@@ -396,13 +411,13 @@ namespace Gendarme.Rules.Exceptions {
 						else if (ins.Previous.Is (Code.Newobj)) {
 							TypeReference type = (ins.Previous.Operand as MethodReference ).DeclaringType;
 							bool allowed = false;
-							foreach (string[] entry in allowedExceptions) {
-								if (type.IsNamed (entry [0], entry [1]))
+							foreach (TypeName entry in allowedExceptions) {
+								if (type.IsNamed (entry))
 									allowed = true;
 							}
 							if (!allowed) {
-								foreach (string [] entry in allowedExceptions) {
-									if (type.Inherits (entry [0], entry [1])) {
+								foreach (TypeName entry in allowedExceptions) {
+									if (type.Inherits (entry)) {
 										allowed = true;
 										break;
 									}
@@ -415,6 +430,11 @@ namespace Gendarme.Rules.Exceptions {
 				}
 			}
 		}
+        private readonly static TypeName nie = new TypeName
+        {
+            Namespace = "System",
+            Name = "NotImplementedException"
+        };
 
 		private void Report (MethodDefinition method, Instruction ins, string methodLabel)
 		{
@@ -426,8 +446,8 @@ namespace Gendarme.Rules.Exceptions {
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (methodLabel).Append (" should only throw ");
 				for (int i = 0; i < allowedExceptions.Length; i++) {
-					string [] entry = allowedExceptions [i];
-					sb.Append (entry [0]).Append ('.').Append (entry [1]);
+					TypeName entry = allowedExceptions [i];
+					sb.Append (entry.Namespace).Append ('.').Append (entry.Name);
 					if (i < allowedExceptions.Length - 1)
 						sb.Append (", ");
 				}

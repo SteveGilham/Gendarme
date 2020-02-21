@@ -89,10 +89,15 @@ namespace Gendarme.Rules.Correctness {
 				);
 			};
 		}
+        private readonly static TypeName bc = new TypeName
+        {
+            Namespace = "System",
+            Name = "BitConverter"
+        };
 
 		static bool IsInt64BitsToDouble (MemberReference method)
 		{
-			return method.IsNamed ("System", "BitConverter", "Int64BitsToDouble");
+			return method.IsNamed (bc, "Int64BitsToDouble");
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)

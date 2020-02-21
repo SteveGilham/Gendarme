@@ -86,9 +86,14 @@ namespace Gendarme.Rules.Correctness {
 			};
 		}
 
-		static bool IsGetCallingAssembly (MemberReference method)
+        private readonly static TypeName assembly = new TypeName
+        {
+            Namespace = "System.Reflection",
+            Name = "Assembly"
+        };
+        static bool IsGetCallingAssembly(MemberReference method)
 		{
-			return method.IsNamed ("System.Reflection", "Assembly", "GetCallingAssembly");
+			return method.IsNamed (assembly, "GetCallingAssembly");
 		}
 
 		static bool IsCallToGetCallingAssembly (Instruction instruction)

@@ -151,8 +151,7 @@ namespace Gendarme.Rules.Exceptions {
 		private void CheckBody (MethodDefinition method)
 		{
 			TypeReference type = method.DeclaringType;
-			string nspace = type.Namespace;
-			string name = type.Name;
+			var name = type.GetTypeName();
 			foreach (Instruction ins in method.Body.Instructions) {
 				switch (ins.OpCode.Code) {
 				case Code.Call:
@@ -162,7 +161,7 @@ namespace Gendarme.Rules.Exceptions {
 						MethodDefinition callee = target.Resolve ();
 						if (callee != null) {
 							if (!callee.IsPublic && !callee.IsStatic) {
-								if (callee.DeclaringType.IsNamed (nspace, name)) {
+								if (callee.DeclaringType.IsNamed (name)) {
 									Instruction instance = ins.TraceBack (method);
 									if (instance != null && instance.OpCode.Code == Code.Ldarg_0) {
 										Log.WriteLine (this, "found non-public this call at {0:X4}", ins.Offset);
@@ -189,7 +188,7 @@ namespace Gendarme.Rules.Exceptions {
 				case Code.Ldflda:
 					if (!field_access_using_this) {
 						FieldReference field = (FieldReference) ins.Operand;
-						if (field.DeclaringType.IsNamed (nspace, name)) {
+						if (field.DeclaringType.IsNamed (name)) {
 							Instruction instance = ins.TraceBack (method);
 							if (instance != null && instance.OpCode.Code == Code.Ldarg_0) {
 								Log.WriteLine (this, "found field access at {0:X4}", ins.Offset);
@@ -202,7 +201,7 @@ namespace Gendarme.Rules.Exceptions {
 				case Code.Newobj:
 					if (!creates_exception) {
 						MethodReference ctor = (MethodReference) ins.Operand;
-						if (ctor.DeclaringType.IsNamed ("System", "ObjectDisposedException")) {
+						if (ctor.DeclaringType.IsNamed (ode)) {
 							Log.WriteLine (this, "creates exception at {0:X4}", ins.Offset);
 							creates_exception = true;
 						}
@@ -211,6 +210,16 @@ namespace Gendarme.Rules.Exceptions {
 				}
 			}
 		}
+        private readonly static TypeName ode = new TypeName
+        {
+            Namespace = "System",
+            Name = "ObjectDisposedException"
+        };
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
 		
 		// Skip methods which we don't want to examine in detail. Note that this
 		// will skip methods which don't call a method or touch a field. This is done 
@@ -222,7 +231,7 @@ namespace Gendarme.Rules.Exceptions {
 			
 			if (method.IsPublic) {
 				if (OpCodeEngine.GetBitmask (method).Intersect (CallsAndFields)) {
-					if (method.DeclaringType.Implements ("System", "IDisposable")) {
+					if (method.DeclaringType.Implements (idisposable)) {
 						if (AllowedToThrow (method)) {
 							needs = true;
 						}

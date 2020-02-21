@@ -77,14 +77,19 @@ namespace Gendarme.Rules.BadPractice {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2230:UseParamsForVariableArguments")]
 	public class PreferParamsArrayForVariableArgumentsRule : Rule, IMethodRule {
 
-		public override void Initialize (IRunner runner)
+        private readonly static TypeName args = new TypeName
+        {
+            Namespace = "System",
+            Name = "ArgIterator"
+        };
+        public override void Initialize(IRunner runner)
 		{
 			base.Initialize (runner);
 
 			Runner.AnalyzeModule += (object o, RunnerEventArgs e) => {
 				Active = (e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "ArgIterator");
+						return tr.IsNamed (args);
 					}));
 			};
 		}

@@ -99,12 +99,23 @@ namespace Gendarme.Rules.Serialization {
 	[FxCopCompatibility ("Microsoft.Usage", "CA2236:CallBaseClassMethodsOnISerializableTypes")]
 	public class CallBaseMethodsOnISerializableTypesRule : Rule, ITypeRule {
 
-		private static bool InheritsFromISerializableImplementation (TypeDefinition type)
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
+        private readonly static TypeName iserializable = new TypeName
+        {
+            Namespace = "System.Runtime.Serialization",
+            Name = "ISerializable"
+        };
+
+        private static bool InheritsFromISerializableImplementation (TypeDefinition type)
 		{
 			TypeDefinition current = type.BaseType != null ? type.BaseType.Resolve () : null;
-			if (current == null || current.IsNamed ("System", "Object"))
+			if (current == null || current.IsNamed (systemObject))
 				return false;
-			if (current.IsSerializable && current.Implements ("System.Runtime.Serialization", "ISerializable"))
+			if (current.IsSerializable && current.Implements (iserializable))
 				return true;
 
 			return InheritsFromISerializableImplementation (current);
@@ -125,7 +136,7 @@ namespace Gendarme.Rules.Serialization {
 
 					MethodReference operand = (MethodReference) instruction.Operand;
 					TypeReference tr = operand.DeclaringType;
-					if (methodSignature.Matches (operand) && type.Inherits (tr.Namespace, tr.Name))
+					if (methodSignature.Matches (operand) && type.Inherits (tr.GetTypeName()))
 						return;
 				}
 			}

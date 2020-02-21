@@ -63,6 +63,22 @@ namespace Gendarme.Rules.Design.Generic {
 	[FxCopCompatibility ("Microsoft.Design", "CA1003:UseGenericEventHandlerInstances")]
 	public class UseGenericEventHandlerRule : GenericsBaseRule, ITypeRule {
 
+        private readonly static TypeName systemVoid = new TypeName
+        {
+            Namespace = "System",
+            Name = "Void"
+        };
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
+        private readonly static TypeName eventArgs = new TypeName
+        {
+            Namespace = "System",
+            Name = "EventArgs"
+        };
+
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule only apply to (non generated) delegates
@@ -74,7 +90,7 @@ namespace Gendarme.Rules.Design.Generic {
 			if (invoke == null)
 				return RuleResult.DoesNotApply;
 
-			if (!invoke.ReturnType.IsNamed ("System", "Void"))
+			if (!invoke.ReturnType.IsNamed (systemVoid))
 				return RuleResult.Success;
 
 			if (!invoke.HasParameters)
@@ -83,9 +99,9 @@ namespace Gendarme.Rules.Design.Generic {
 			IList<ParameterDefinition> pdc = invoke.Parameters;
 			if (pdc.Count != 2)
 				return RuleResult.Success;
-			if (!pdc [0].ParameterType.IsNamed ("System", "Object"))
+			if (!pdc [0].ParameterType.IsNamed (systemObject))
 				return RuleResult.Success;
-			if (!pdc [1].ParameterType.Inherits ("System", "EventArgs"))
+			if (!pdc [1].ParameterType.Inherits (eventArgs))
 				return RuleResult.Success;
 
 			Runner.Report (type, Severity.Medium, Confidence.High);

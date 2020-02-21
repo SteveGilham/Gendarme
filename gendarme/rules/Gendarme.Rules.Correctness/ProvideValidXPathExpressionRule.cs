@@ -102,7 +102,7 @@ namespace Gendarme.Rules.Correctness {
 				break;
 			case Code.Ldsfld:
 				FieldReference f = (FieldReference) ld.Operand;
-				if (f.Name == "Empty" && f.DeclaringType.IsNamed ("System", "String"))
+				if (f.Name == "Empty" && f.DeclaringType.IsNamed (systemString))
 					CheckString (method, ins, null);
 				break;
 			case Code.Ldnull:
@@ -110,6 +110,11 @@ namespace Gendarme.Rules.Correctness {
 				break;
 			}
 		}
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
 
 		void CheckString (MethodDefinition method, Instruction ins, string expression)
 		{
@@ -126,6 +131,21 @@ namespace Gendarme.Rules.Correctness {
 				Runner.Report (method, ins, Severity.High, Confidence.High, msg);
 			}
 		}
+        private readonly static TypeName xpe = new TypeName
+        {
+            Namespace = "System.Xml.XPath",
+            Name = "XPathExpression"
+        };
+        private readonly static TypeName xpn = new TypeName
+        {
+            Namespace = "System.Xml.XPath",
+            Name = "XPathNavigator"
+        };
+        private readonly static TypeName node = new TypeName
+        {
+            Namespace = "System.Xml",
+            Name = "XmlNode"
+        };
 
 		void CheckCall (MethodDefinition method, Instruction ins, MethodReference mref)
 		{
@@ -135,11 +155,11 @@ namespace Gendarme.Rules.Correctness {
 			switch (mref.Name) {
 			case "Compile":
 				TypeReference tr = mref.DeclaringType;
-				if (tr.IsNamed ("System.Xml.XPath", "XPathExpression") || tr.Inherits ("System.Xml.XPath", "XPathNavigator"))
+				if (tr.IsNamed (xpe) || tr.Inherits (xpn))
 					CheckString (method, ins, GetFirstArgumentOffset (mref));
 				break;
 			case "SelectNodes":
-				if (mref.DeclaringType.IsNamed ("System.Xml", "XmlNode"))
+				if (mref.DeclaringType.IsNamed (node))
 					CheckString (method, ins, -1);
 				break;
 			case "Evaluate":
@@ -148,7 +168,7 @@ namespace Gendarme.Rules.Correctness {
 				break;
 			case "SelectSingleNode":
 				CheckXPathNavigatorString (method, ins, mref);
-				if (mref.DeclaringType.IsNamed ("System.Xml", "XmlNode"))
+				if (mref.DeclaringType.IsNamed (node))
 					CheckString (method, ins, -1);
 				break;
 			}
@@ -156,8 +176,8 @@ namespace Gendarme.Rules.Correctness {
 
 		void CheckXPathNavigatorString (MethodDefinition method, Instruction ins, MethodReference mref)
 		{
-			if (mref.Parameters [0].ParameterType.IsNamed ("System", "String")) {
-				if (mref.DeclaringType.Inherits ("System.Xml.XPath", "XPathNavigator"))
+			if (mref.Parameters [0].ParameterType.IsNamed (systemString)) {
+				if (mref.DeclaringType.Inherits (xpn))
 					CheckString (method, ins, -1);
 			}
 		}

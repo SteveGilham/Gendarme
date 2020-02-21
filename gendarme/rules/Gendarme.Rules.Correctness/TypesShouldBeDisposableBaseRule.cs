@@ -60,7 +60,12 @@ namespace Gendarme.Rules.Correctness {
 
 		protected abstract bool FieldTypeIsCandidate (TypeDefinition type);
 
-		public RuleResult CheckType (TypeDefinition type)
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+        public RuleResult CheckType(TypeDefinition type)
 		{
 			// that will cover interfaces, delegates too
 			if (!type.HasFields)
@@ -75,7 +80,7 @@ namespace Gendarme.Rules.Correctness {
 
 			bool abstractWarning = false;
 
-			if (type.Implements ("System", "IDisposable")) {
+			if (type.Implements (idisposable)) {
 				implicitDisposeMethod = type.GetMethod (MethodSignatures.Dispose);
 				explicitDisposeMethod = type.GetMethod (MethodSignatures.DisposeExplicit);
 

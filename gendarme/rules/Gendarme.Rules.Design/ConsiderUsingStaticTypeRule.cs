@@ -98,12 +98,17 @@ namespace Gendarme.Rules.Design {
 			}
 			return true;
 		}
+        private readonly static TypeName systemObject = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			// rule applies only if the type isn't: an enum, an interface, a struct, a delegate or compiler generated
 			if (type.IsEnum || type.IsInterface || type.IsValueType || type.IsDelegate () || type.IsGeneratedCode () 
-				|| type.BaseType != null && !type.BaseType.IsNamed ("System", "Object"))
+				|| type.BaseType != null && !type.BaseType.IsNamed (systemObject))
 				return RuleResult.DoesNotApply;
 			
 			// success if the type is already static or, before 2.0, is it's sealed

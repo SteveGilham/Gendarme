@@ -73,12 +73,17 @@ namespace Gendarme.Rules.Smells {
             return extra + Environment.NewLine + String.Join(Environment.NewLine, instructions.Select(i => i.ToString()));
         }
 
-		// look for: isinst System.IDisposable
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+        // look for: isinst System.IDisposable
 		static bool IsInstanceOfIDisposable (Instruction ins)
 		{
 			if (ins.OpCode.Code != Code.Isinst)
 				return false;
-			return (ins.Operand as TypeReference).IsNamed ("System", "IDisposable");
+			return (ins.Operand as TypeReference).IsNamed (idisposable);
 		}
 
 		// look for:
@@ -88,7 +93,7 @@ namespace Gendarme.Rules.Smells {
 		{
 			if (ins.OpCode.Code != Code.Callvirt)
 				return false;
-			if (!(ins.Operand as MethodReference).IsNamed ("System", "IDisposable", "Dispose"))
+			if (!(ins.Operand as MethodReference).IsNamed (idisposable, "Dispose"))
 				return false;
 			return ins.Next.Is (Code.Endfinally);
 		}
@@ -110,9 +115,9 @@ namespace Gendarme.Rules.Smells {
 				// foreach
 				if (ins.OpCode.Code == Code.Callvirt) {
 					MethodReference mr = (ins.Operand as MethodReference);
-					if (mr.IsNamed ("System.Collections", "IEnumerator", "get_Current"))
+					if (mr.IsNamed (ienum, "get_Current"))
 						return true;
-					if (mr.IsNamed ("System.Collections", "IEnumerator", "MoveNext"))
+					if (mr.IsNamed (ienum, "MoveNext"))
 						return !call;
 				}
 				// if there's a unknown call then it's likely not (totally) compiler generated
@@ -126,8 +131,15 @@ namespace Gendarme.Rules.Smells {
 			}
 			return false;
 		}
-		
-		internal bool IsCompilerGeneratedBlock {
+
+        private readonly static TypeName ienum = new TypeName
+        {
+            Namespace = "System",
+            Name = "IEnumerator"
+        };
+
+        internal bool IsCompilerGeneratedBlock
+        {
 			get {
 				if (compilerGeneratedBlock == null)
 					compilerGeneratedBlock = ComputeUnlikelyUserPatterns () || IsDoubleReturn;

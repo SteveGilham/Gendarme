@@ -80,12 +80,17 @@ namespace Gendarme.Rules.Correctness {
 		{
 			return original.IndexOf (value, 0, StringComparison.OrdinalIgnoreCase) != -1;
 		}
-		
-		void CheckParametersAndValues (IMetadataTokenProvider provider, IMethodSignature constructor, IList<CustomAttributeArgument> arguments)
+
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        void CheckParametersAndValues(IMetadataTokenProvider provider, IMethodSignature constructor, IList<CustomAttributeArgument> arguments)
 		{
 			for (int index = 0; index < arguments.Count; index++) {
 				ParameterDefinition parameter = constructor.Parameters[index];
-				if (parameter.ParameterType.IsNamed ("System", "String")) {
+				if (parameter.ParameterType.IsNamed (systemString)) {
 					string value = (string) arguments [index].Value;
 					if (Contains (parameter.Name, "version")) {
 						Version v = null;

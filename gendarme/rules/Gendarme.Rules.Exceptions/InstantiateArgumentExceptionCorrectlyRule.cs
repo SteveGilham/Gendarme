@@ -130,7 +130,7 @@ namespace Gendarme.Rules.Exceptions {
 				return;
 
 			// OK		public ArgumentException (string message, Exception innerException)
-			if (!pdc [1].ParameterType.IsNamed ("System", "String"))
+			if (!pdc [1].ParameterType.IsNamed (systemString))
 				return;
 
 			// CHECK	public ArgumentException (string message, string paramName)
@@ -142,6 +142,11 @@ namespace Gendarme.Rules.Exceptions {
 
 			Report (method, ins, name);
 		}
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
 
 		// ctors are identical for ArgumentNullException, ArgumentOutOfRangeException and DuplicateWaitObjectException
 		private void CheckOtherExceptions (IMethodSignature constructor, Instruction ins, MethodDefinition method)
@@ -153,7 +158,7 @@ namespace Gendarme.Rules.Exceptions {
 			// OK		protected ArgumentNullException (SerializationInfo info, StreamingContext context)
 			// OK		public ArgumentNullException (string message, Exception innerException)
 			IList<ParameterDefinition> pdc = constructor.Parameters;
-			if ((pdc.Count == 2) && !pdc [1].ParameterType.IsNamed ("System", "String"))
+			if ((pdc.Count == 2) && !pdc [1].ParameterType.IsNamed (systemString))
 				return;
 
 			// CHECK	public ArgumentNullException (string paramName)

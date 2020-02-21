@@ -74,9 +74,14 @@ namespace Gendarme.Rules.Design {
 			};
 		}
 
-		static bool IsHasField (FieldReference fd, ref string prefix, ref string suffix)
+        private readonly static TypeName systemBoolean = new TypeName
+        {
+            Namespace = "System",
+            Name = "Boolean"
+        };
+        static bool IsHasField(FieldReference fd, ref string prefix, ref string suffix)
 		{
-			if (!fd.FieldType.IsNamed ("System", "Boolean"))
+			if (!fd.FieldType.IsNamed (systemBoolean))
 				return false;
 
 			string name = fd.Name;
@@ -139,11 +144,16 @@ namespace Gendarme.Rules.Design {
 			return (null != GetValueTypeField (type, name));
 		}
 
-		private static FieldDefinition GetValueTypeField (TypeDefinition type, string name)
+        private readonly static TypeName nullable = new TypeName
+        {
+            Namespace = "System",
+            Name = "Nullable`1"
+        };
+        private static FieldDefinition GetValueTypeField(TypeDefinition type, string name)
 		{
 			foreach (FieldDefinition field in type.Fields) {
 				if (field.FieldType.IsValueType
-					&& !field.FieldType.GetElementType ().IsNamed ("System", "Nullable`1")
+					&& !field.FieldType.GetElementType ().IsNamed (nullable)
 					&& 0 == string.Compare(name, field.Name, StringComparison.OrdinalIgnoreCase))
 					return field;
 			}

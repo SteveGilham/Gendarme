@@ -138,6 +138,11 @@ namespace Gendarme.Rules.Concurrency {
 
 		Stack<int> monitorOffsetList = new Stack<int> ();
 		List<Instruction> comparisons = new List<Instruction> ();
+        private readonly static TypeName monitor = new TypeName
+        {
+            Namespace = "System.Threading",
+            Name = "Monitor"
+        };
 
 		public override void Initialize (IRunner runner)
 		{
@@ -155,7 +160,7 @@ namespace Gendarme.Rules.Concurrency {
 					// note: mscorlib.dll is an exception since it defines, not refer, System.Threading.Monitor
 					(e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System.Threading", "Monitor");
+						return tr.IsNamed (monitor);
 					}));
 			};
 		}
@@ -215,7 +220,7 @@ namespace Gendarme.Rules.Concurrency {
 		{
 			if (method.Name != methodName)
 				return false;
-			if (!method.DeclaringType.IsNamed ("System.Threading", "Monitor"))
+			if (!method.DeclaringType.IsNamed (monitor))
 				return false;
 			// exclude Monitor.Enter(object, ref bool) since the comparison would be made
 			// againt the 'lockTaken' parameter and would report failures for every cases.

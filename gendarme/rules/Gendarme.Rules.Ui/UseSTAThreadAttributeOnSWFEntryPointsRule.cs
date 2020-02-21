@@ -91,6 +91,16 @@ namespace Gendarme.Rules.UI {
 	public class UseSTAThreadAttributeOnSWFEntryPointsRule : Rule, IAssemblyRule {
 
 		private const string SystemWindowsForms = "System.Windows.Forms";
+        private readonly static TypeName sta = new TypeName
+        {
+            Namespace = "System",
+            Name = "STAThreadAttribute"
+        };
+        private readonly static TypeName mta = new TypeName
+        {
+            Namespace = "System",
+            Name = "MTAThreadAttribute"
+        };
 
         /// <summary>
         /// 
@@ -117,8 +127,8 @@ namespace Gendarme.Rules.UI {
 			if (!referencesSWF)
 				return RuleResult.DoesNotApply;
 
-			bool hasSTA = entry_point.HasAttribute ("System", "STAThreadAttribute");
-			bool hasMTA = entry_point.HasAttribute ("System", "MTAThreadAttribute");
+			bool hasSTA = entry_point.HasAttribute (sta);
+			bool hasMTA = entry_point.HasAttribute (mta);
 
 			// success if only [STAThread] attribute is present
 			if (hasSTA && !hasMTA)

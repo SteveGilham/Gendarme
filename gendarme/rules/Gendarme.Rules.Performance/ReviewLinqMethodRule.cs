@@ -231,6 +231,11 @@ namespace Gendarme.Rules.Performance {
 
 			return assembly.References ("System.Core");
 		}
+        private readonly static TypeName linq = new TypeName
+        {
+            Namespace = "System.Linq",
+            Name = "Enumerable"
+        };
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
@@ -252,7 +257,7 @@ namespace Gendarme.Rules.Performance {
 				
 				// and the method is a System.Linq.Enumerable method then,
 				var target = ins.Operand as MethodReference;
-				if (!target.DeclaringType.IsNamed ("System.Linq", "Enumerable"))
+				if (!target.DeclaringType.IsNamed (linq))
 					continue;
 
 				string tname = target.Name;

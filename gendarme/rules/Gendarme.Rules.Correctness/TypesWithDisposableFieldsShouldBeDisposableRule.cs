@@ -122,6 +122,11 @@ namespace Gendarme.Rules.Correctness {
 				}
 			}
 		}
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
 
 		protected override bool FieldTypeIsCandidate (TypeDefinition type)
 		{
@@ -129,7 +134,7 @@ namespace Gendarme.Rules.Correctness {
 			if ((type == null) || type.IsEnum || type.IsPrimitive)
 				return false;
 
-			return type.Implements ("System", "IDisposable");
+			return type.Implements (idisposable);
 		}
 	}
 }

@@ -101,7 +101,7 @@ namespace Gendarme.Rules.Correctness {
 
 			// we're calling into an interface and this could be us!
 			foreach (MethodReference mr in method1.Resolve ().Overrides) {
-				if (mr.DeclaringType.IsNamed (t2.Namespace, t2.Name))
+				if (mr.DeclaringType.IsNamed (t2.GetTypeName()))
 					return true;
 			}
 			return false;
