@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+using System.Linq;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
@@ -90,20 +92,13 @@ namespace Gendarme.Rules.Performance {
 
 		static bool CompareCustomAttributes (ICustomAttributeProvider a, ICustomAttributeProvider b)
 		{
-			bool ha = a.HasCustomAttributes;
-			bool hb = b.HasCustomAttributes;
-			// if only one of them has custom attributes
-			if (ha != hb)
-				return false;
-			// if both do not have custom attributes
-			if (!ha && !hb)
-				return true;
-			// compare attributes
-			foreach (CustomAttribute attr in a.CustomAttributes) {
-				if (!b.CustomAttributes.Contains (attr))
-					return false;
-			}
-			return true;
+            // System.Object has this mysterious attribute, so do this by brute force
+            var aattr = new HashSet<CustomAttribute>(a.CustomAttributes
+                .Where(x => x.AttributeType.FullName != "__DynamicallyInvokableAttribute"));
+            var battr = new HashSet<CustomAttribute>(b.CustomAttributes
+                .Where(x => x.AttributeType.FullName != "__DynamicallyInvokableAttribute"));
+
+            return battr.IsSupersetOf(aattr);
 		}
 
 		static bool CompareSecurityDeclarations (ISecurityDeclarationProvider a, ISecurityDeclarationProvider b)
