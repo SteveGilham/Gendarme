@@ -29,20 +29,31 @@ NuGet pack altcode.gendarme.nuspec
 ## Known Issues
 The following rules (Test name follows rule name) have some unit test failures, so should not be relied upon
 
-* Gendarme.Rules.Performance\Test\AvoidUnnecessaryOverridesTest
-* Gendarme.Rules.Design\Test\ProvideTryParseAlternativeTest
-* Gendarme.Rules.Serialization\Test\CallBaseMethodsOnISerializableTypesTest
-* Gendarme.Rules.Correctness\Test\ProvideCorrectRegexPatternTest
-* Gendarme.Rules.Concurrency\Test\ProtectCallToEventDelegatesTest
-* Gendarme.Rules.Exceptions\Test\UseObjectDisposedExceptionTest
+* Gendarme.Rules.Correctness\Test\ProvideCorrectRegexPatternTest -- it misses the second pattern in ternary expressions like `new Regex (good ? "good" : "bad\\");`
 
 There is also a unit test failure for `Gendarme.Framework.Helpers\StackEntryAnalysisTest` which may affect any rules relating to `try`/`catch`/`finally` behaviour.
 
+### Now Fixed
+* Gendarme.Rules.Concurrency\Test\ProtectCallToEventDelegatesTest
+* Gendarme.Rules.Design\Test\ProvideTryParseAlternativeTest
+* Gendarme.Rules.Performance\Test\AvoidUnnecessaryOverridesTest
+* Gendarme.Rules.Serialization\Test\CallBaseMethodsOnISerializableTypesTest
+* Gendarme.Rules.Exceptions\Test\UseObjectDisposedExceptionTest
+
 ## Direction
-After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork is to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning. 
+After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork is to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
+
+The next stage will be to fix the unit tests
+
+Following that, updating NUnit
+
+Then updating to the Roslyn compiler
+
+And the last big step will be porting to .net core
 
 ### Progress to date 
 
+#### F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
 
 * Fix `AvoidMultidimensionalIndexerRule` for F# generated parameterless methods called `get_Item`
@@ -78,3 +89,8 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * Consider F# extension methods/properties to be object-bound rather than module bound for `UseCorrectCasingRule`
 * Add a heuristic to recognise F# compiler generated disposal after a `use` in `EnsureLocalDisposalRule`
 * Add a `RelaxedAvoidCodeDuplicatedInSameClassRule`, which looks for patterns aligning with visible sequence points, and excludes patterns containing `throw new ArgumentNullException(...)`
+
+#### Unit test fixing
+
+Many issues stemmed from a cecil change to what the name and namespace properties of a nested type returned.
+

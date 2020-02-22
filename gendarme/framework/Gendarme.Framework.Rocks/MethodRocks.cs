@@ -261,6 +261,22 @@ namespace Gendarme.Framework.Rocks {
 			if (gp == null)
 				return type.Inherits (eventArgs);
 
+            if (gp.Owner == method.DeclaringType)
+            {
+                int index = 0;
+                var gps = method.DeclaringType.GenericParameters;
+
+                for (; index < gps.Count; index++)
+                {
+                    if (gps[index].FullName == gp.FullName)
+                    {
+                        var gtype = (self.DeclaringType as Mono.Cecil.GenericInstanceType);
+                        if (gtype.GenericArguments[index].Inherits(eventArgs))
+                            return true;
+                    }
+                }
+
+            }
 			if (gp.HasConstraints) {
                 IList<TypeReference> cc = gp.Constraints.Select(co => co.ConstraintType).ToList();
 				return ((cc.Count == 1) && cc [0].IsNamed (eventArgs));
