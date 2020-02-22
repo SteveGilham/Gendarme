@@ -41,7 +41,7 @@ namespace Test.Framework.Rocks {
 		
 		private TypeDefinition type_def;
 		
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;

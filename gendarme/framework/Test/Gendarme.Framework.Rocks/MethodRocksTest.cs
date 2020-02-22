@@ -87,7 +87,7 @@ namespace Test.Framework.Rocks {
 
 		private AssemblyDefinition assembly;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = Assembly.GetExecutingAssembly ().Location;
@@ -136,6 +136,7 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
+        [Ignore("TestFixtureSetUp is obsolete")]
 		public void HasAttribute ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");

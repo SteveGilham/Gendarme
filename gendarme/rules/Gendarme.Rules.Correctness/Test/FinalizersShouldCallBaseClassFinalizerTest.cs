@@ -57,9 +57,9 @@ namespace Test.Rules.Correctness {
 	[TestFixture]
 	public class FinalizersShouldCallBaseClassFinalizerTest : TypeRuleTestFixture<FinalizersShouldCallBaseClassFinalizerRule> {
 
-		TypeDefinition finalizer_not_calling_base_class; 
+		TypeDefinition finalizer_not_calling_base_class;
 
-		[TestFixtureSetUp]
+        [OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
