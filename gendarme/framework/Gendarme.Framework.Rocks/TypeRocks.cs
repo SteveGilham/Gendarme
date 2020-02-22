@@ -375,7 +375,7 @@ namespace Gendarme.Framework.Rocks {
 				if (spos == -1)
 					return false;
 				// GetFullName could be optimized away but it's a fairly uncommon case
-                return typename.Namespace + "." + typename.Name == self.GetFullName().Replace("/", ".").Replace("+", ".");
+                return typename.Namespace + "." + typename.Name == self.GetFullName();
 			}
 
             return self.GetTypeName().EqualTo(typename);
