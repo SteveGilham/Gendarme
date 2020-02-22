@@ -94,7 +94,7 @@ namespace Gendarme.Rules.Portability {
         private readonly static TypeName process = new TypeName
         {
             Namespace = "System.Diagnostics",
-            Name = "Void"
+            Name = "Process"
         };
 
 		public override void Initialize (IRunner runner)
