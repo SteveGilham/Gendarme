@@ -108,9 +108,19 @@ namespace Gendarme.Rules.Naming {
 
 		private static bool UsedForComInterop (TypeDefinition type)
 		{
-			return (type.IsInterface && type.HasAttribute ("System.Runtime.InteropServices", "GuidAttribute") &&
-				type.HasAttribute ("System.Runtime.InteropServices", "InterfaceTypeAttribute"));
+			return (type.IsInterface && type.HasAttribute (ga) &&
+				type.HasAttribute (ita));
 		}
+        private readonly static TypeName ga = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "GuidAttribute"
+        };
+        private readonly static TypeName ita = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "InterfaceTypeAttribute"
+        };
 
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{

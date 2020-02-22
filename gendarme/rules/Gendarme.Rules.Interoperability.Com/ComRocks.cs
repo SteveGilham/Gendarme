@@ -58,7 +58,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 					// any attribute without arguments can be skipped
 					if (!attribute.HasConstructorArguments)
 						continue;
-					if (!attribute.Constructor.DeclaringType.IsNamed ("System.Runtime.InteropServices", "ComVisibleAttribute"))
+					if (!attribute.Constructor.DeclaringType.IsNamed (cva))
 						continue;
 					return (bool) attribute.ConstructorArguments[0].Value;
 				}
@@ -71,6 +71,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 
 			return type.DeclaringType.IsComVisible ();
 		}
+        private readonly static TypeName cva = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "ComVisibleAttribute"
+        };
 
 		// Checks whether specific type is COM visible or not
 		// considering nested types, assemblies attributes and default values

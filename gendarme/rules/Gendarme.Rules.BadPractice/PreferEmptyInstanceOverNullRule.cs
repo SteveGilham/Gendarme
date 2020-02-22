@@ -147,15 +147,25 @@ namespace Gendarme.Rules.BadPractice {
 
 			//only apply to methods returning string, array, or IEnumerable-impl
 			return_type = method.ReturnType;
-			string_return_type = return_type.IsNamed ("System", "String");
+			string_return_type = return_type.IsNamed (str);
 			array_return_type = return_type.IsArray;
-			ienumerable_return_type = return_type.Implements ("System.Collections", "IEnumerable");
+			ienumerable_return_type = return_type.Implements (ienumerable);
 
 			if (!string_return_type && !array_return_type && !ienumerable_return_type)
 				return RuleResult.DoesNotApply;
 
 			return base.CheckMethod (method);
 		}
+        private readonly static TypeName str = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        private readonly static TypeName ienumerable = new TypeName
+        {
+            Namespace = "System.Collections",
+            Name = "IEnumerable"
+        };
 
 		protected override void Report (MethodDefinition method, Instruction ins)
 		{

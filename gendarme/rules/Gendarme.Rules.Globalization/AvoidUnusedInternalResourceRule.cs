@@ -65,15 +65,31 @@ namespace Gendarme.Rules.Globalization {
 			if (!typeDefinition.HasCustomAttributes)
 				return false;
 
-			if (typeDefinition.HasAttribute ("System.CodeDom.Compiler", "GeneratedCodeAttribute"))
+			if (typeDefinition.HasAttribute (gca))
 				return true;
-			if (typeDefinition.HasAttribute ("System.Diagnostics", "DebuggerNonUserCodeAttribute"))
+			if (typeDefinition.HasAttribute (dnuca))
 				return true;
-			if (typeDefinition.HasAttribute ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute"))
+			if (typeDefinition.HasAttribute (cga))
 				return true;
 
 			return false;
 		}
+        private readonly static TypeName gca = new TypeName
+        {
+            Namespace = "System.CodeDom.Compiler",
+            Name = "GeneratedCodeAttribute"
+        };
+        private readonly static TypeName dnuca = new TypeName
+        {
+            Namespace = "System.Diagnostics",
+            Name = "DebuggerNonUserCodeAttribute"
+        };
+        private readonly static TypeName cga = new TypeName
+        {
+            Namespace = "System.Runtime.CompilerServices",
+            Name = "CompilerGeneratedAttribute"
+        };
+
 
         /// <summary>
         /// 

@@ -165,12 +165,6 @@ namespace Gendarme.Rules.Concurrency {
 				return false;
 			return (parametersCount == method.Parameters.Count);
 		}
-        private readonly static TypeName monitor = new TypeName
-        {
-            Namespace = "System.Threading",
-            Name = "Monitor"
-        };
-
 		private static OpCodeBitmask BuildInterlockedFriendlyOpCodeBitmask ()
 		{
 #if true

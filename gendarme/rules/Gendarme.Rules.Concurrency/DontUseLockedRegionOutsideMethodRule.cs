@@ -165,9 +165,9 @@ namespace Gendarme.Rules.Concurrency {
 				if (m == null)
 					continue;
 
-				if (m.IsNamed ("System.Threading", "Monitor", "Enter")) {
+				if (m.IsNamed (monitor, "Enter")) {
 					enter++;
-				} else if (m.IsNamed ("System.Threading", "Monitor", "Exit")) {
+				} else if (m.IsNamed (monitor, "Exit")) {
 					exit++;
 				}
 			}

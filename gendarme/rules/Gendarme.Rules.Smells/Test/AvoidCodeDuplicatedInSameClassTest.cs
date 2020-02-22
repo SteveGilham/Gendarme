@@ -683,23 +683,32 @@ namespace Test.Rules.Smells {
 			AssertRuleSuccess<CheckingIntegersAndStrings> ();
 		}
 
+        private static TypeName TN(string ns, string name)
+        {
+            return new TypeName
+            {
+                Namespace = ns,
+                Name = name
+            };
+        }
+
 		class NonDuplicatedComparingAndReturningNull {
 			string CheckTwoOptions (TypeReference type) 
 			{
-				if (type.Implements ("System.Collections", "IDictionary") || type.Implements ("System.Collections.Generic", "IDictionary`2"))
+				if (type.Implements (TN ("System.Collections", "IDictionary")) || type.Implements (TN ("System.Collections.Generic", "IDictionary`2")))
 					return null;
 				return "'Dictionary' should only be used for types implementing IDictionary and IDictionary<TKey,TValue>.";
 			}
 
 			string CheckThreeOptions (TypeReference type)
 			{
-				if (type.Implements ("System.Collections", "ICollection") ||
-					type.Implements ("System.Collections", "IEnumerable") ||
-					type.Implements ("System.Collections.Generic", "ICollection`1"))
+				if (type.Implements (TN ("System.Collections", "ICollection")) ||
+					type.Implements (TN ("System.Collections", "IEnumerable")) ||
+					type.Implements (TN ("System.Collections.Generic", "ICollection`1")))
 					return null;
 
-				if (type.Inherits ("System.Collections", "Queue") || type.Inherits ("System.Collections", "Stack") || 
-					type.Inherits ("System.Data", "DataSet") || type.Inherits ("System.Data", "DataTable"))
+				if (type.Inherits (TN ("System.Collections", "Queue")) || type.Inherits (TN ("System.Collections", "Stack")) || 
+					type.Inherits (TN ("System.Data", "DataSet")) || type.Inherits (TN ("System.Data", "DataTable")))
 					return null;
 
 				return "'Collection' should only be used for implementing ICollection or IEnumerable or inheriting from Queue, Stack, DataSet and DataTable.";

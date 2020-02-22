@@ -499,7 +499,7 @@ namespace Gendarme.Rules.Interoperability {
 					
 					// check for catch all clauses
 					TypeReference ctype = eh.CatchType;
-					if (!(ctype == null || ctype.IsNamed ("System", "Object") || ctype.IsNamed ("System", "Exception")))
+					if (!(ctype == null || ctype.IsNamed (obj) || ctype.IsNamed (exception)))
 						continue;
 					
 					// Mark the code this exception handler handles as safe.
@@ -555,7 +555,19 @@ namespace Gendarme.Rules.Interoperability {
 			}
 #endif
 		}
-		
+
+
+        private readonly static TypeName obj = new TypeName
+        {
+            Namespace = "System",
+            Name = "Object"
+        };
+        private readonly static TypeName exception = new TypeName
+        {
+            Namespace = "System",
+            Name = "Exception"
+        };
+
 		// Parses the ILRange and return all delegate pointers that could end up on the stack as a result of executing that code.
 		private List<MethodDefinition> GetDelegatePointers (ILRange range)
 		{

@@ -113,17 +113,28 @@ namespace Gendarme.Rules.Interoperability.Com {
 				return RuleResult.Success;
 		}
 
-		private static ClassInterfaceType? GetClassInterfaceAttributeValue (ICustomAttributeProvider obj)
+        private readonly static TypeName cia = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "ClassInterfaceAttribute"
+        };
+        private readonly static TypeName i16 = new TypeName
+        {
+            Namespace = "System",
+            Name = "Int16"
+        };
+
+        private static ClassInterfaceType? GetClassInterfaceAttributeValue(ICustomAttributeProvider obj)
 		{
 			foreach (CustomAttribute attribute in obj.CustomAttributes) {
 				// http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.classinterfaceattribute.aspx
 				// any attribute without arguments can be skipped
 				if (!attribute.HasConstructorArguments)
 					continue;
-				if (!attribute.AttributeType.IsNamed ("System.Runtime.InteropServices", "ClassInterfaceAttribute"))
+				if (!attribute.AttributeType.IsNamed (cia))
 					continue;
 				var ctorArgs = attribute.ConstructorArguments;
-				if (ctorArgs [0].Type.IsNamed ("System", "Int16"))
+				if (ctorArgs [0].Type.IsNamed (i16))
 					return (ClassInterfaceType)(short)ctorArgs [0].Value;
 				return (ClassInterfaceType)(int)ctorArgs [0].Value;
 			}

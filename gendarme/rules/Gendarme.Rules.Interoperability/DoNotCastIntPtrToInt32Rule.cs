@@ -199,11 +199,17 @@ namespace Gendarme.Rules.Interoperability {
 					bool uintptr = (name == "UIntPtr");
 					if (intptr || uintptr)
 						CheckCastOnIntPtr (method, ins, mr, intptr, uintptr);
-				} else if (type.IsNamed ("System.Runtime.InteropServices", "Marshal")) {
+				} else if (type.IsNamed (marshal)) {
 					CheckCastOnMarshal (method, ins, mr);
 				}
 			}
 			return Runner.CurrentRuleResult;
 		}
+        private readonly static TypeName marshal = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "Marshal"
+        };
+
 	}
 }

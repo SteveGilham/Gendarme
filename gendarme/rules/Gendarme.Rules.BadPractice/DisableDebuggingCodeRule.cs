@@ -88,6 +88,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("If this code is used for debugging then either use the Debug or Trace types or disable the code manually (e.g. using the preprocessor).")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DisableDebuggingCodeRule : Rule, IMethodRule {
+        private readonly static TypeName conditional = new TypeName
+        {
+            Namespace = "System.Diagnostics",
+            Name = "ConditionalAttribute"
+        };
 
 		// note: there can be multiple [Conditional] attribute on a method
 		private static bool HasConditionalAttributeForDebugging (IList<CustomAttribute> cac)
@@ -98,7 +103,7 @@ namespace Gendarme.Rules.BadPractice {
 				// any attribute without arguments can be skipped
 				if (!ca.HasConstructorArguments)
 					continue;
-				if (ca.AttributeType.IsNamed ("System.Diagnostics", "ConditionalAttribute")) {
+				if (ca.AttributeType.IsNamed (conditional)) {
 					switch (ca.ConstructorArguments [0].Value as string) {
 					case "DEBUG":
 					case "TRACE":
@@ -124,10 +129,15 @@ namespace Gendarme.Rules.BadPractice {
 					// method inside it will be calling any Console.write* methods
 					(e.CurrentAssembly.Name.Name == "mscorlib" ||
 					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed ("System", "Console");
+						return tr.IsNamed (console);
 					}));
 			};
 		}
+        private readonly static TypeName console = new TypeName
+        {
+            Namespace = "System",
+            Name = "Console"
+        };
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
@@ -156,7 +166,7 @@ namespace Gendarme.Rules.BadPractice {
 		                if (mr == null)
                				continue;
 
-				if (!mr.DeclaringType.IsNamed ("System", "Console"))
+				if (!mr.DeclaringType.IsNamed (console))
 					continue;
 
 				// ... Write* methods

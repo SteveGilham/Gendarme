@@ -173,11 +173,16 @@ namespace Gendarme.Rules.Gendarme {
 			var typeName = type.GetFullName ();
 			bool result;
 			if (!typeIsRule.TryGetValue (typeName, out result)) {
-				result = type.Implements ("Gendarme.Framework", "IRule");
+				result = type.Implements (irule);
 				typeIsRule [typeName] = result;
 			}
 			return result;
 		}
+        private readonly static TypeName irule = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "IRule"
+        };
 
 		private void CheckProblemAndSolutionAttributes (CustomAttribute attribute, ICustomAttributeProvider provider)
 		{
@@ -208,10 +213,26 @@ namespace Gendarme.Rules.Gendarme {
 					attributeTypeName + " second argument should contain both rule ID and name");
 		}
 
-		private void CheckEngineDependencyAttribute (CustomAttribute attribute, ICustomAttributeProvider provider)
+        private readonly static TypeName irunner = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "IRunner"
+        };
+        private readonly static TypeName engine = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "Engine"
+        };
+        private readonly static TypeName type = new TypeName
+        {
+            Namespace = "System",
+            Name = "Type"
+        };
+
+        private void CheckEngineDependencyAttribute(CustomAttribute attribute, ICustomAttributeProvider provider)
 		{
 			TypeDefinition td = (provider as TypeDefinition);
-			if (td == null || !(IsRule (td) || td.Implements ("Gendarme.Framework", "IRunner")))
+			if (td == null || !(IsRule (td) || td.Implements (irunner)))
 				Runner.Report (td, Severity.Medium, Confidence.High, "[EngineDependency] can only be used on rules and runners");
 
 			CheckIfStringArgumentsAreNotNullOrEmpty (attribute, provider);
@@ -221,9 +242,9 @@ namespace Gendarme.Rules.Gendarme {
 			var argument = attribute.ConstructorArguments [0];
 
 			// if possible, check if argument type implements IEngine
-			if (argument.Type.IsNamed ("System", "Type")) {
+			if (argument.Type.IsNamed (type)) {
 				TypeReference tr = (argument.Value as TypeReference);
-				if (tr == null || !tr.Inherits ("Gendarme.Framework", "Engine")) // IEngine does not exist yet
+				if (tr == null || !tr.Inherits (engine)) // IEngine does not exist yet
 					Runner.Report (provider, Severity.Medium, Confidence.High,
 						"EngineDependency attribute argument should implement IEngine interface");
 
@@ -253,13 +274,18 @@ namespace Gendarme.Rules.Gendarme {
 					attribute.AttributeType.GetFullName () + " should be used only on rules' public properties");
 		}
 
-		// returns true when all arguments are fine, false otherwise
+        private readonly static TypeName str = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        // returns true when all arguments are fine, false otherwise
 		private bool CheckIfStringArgumentsAreNotNullOrEmpty (CustomAttribute attribute, ICustomAttributeProvider provider)
 		{
 			if (!attribute.HasConstructorArguments)
 				return true;
 			foreach (CustomAttributeArgument argument in attribute.ConstructorArguments) {
-				if (!argument.Type.IsNamed ("System", "String"))
+				if (!argument.Type.IsNamed (str))
 					continue;
 				if (String.IsNullOrEmpty ((string) argument.Value)) {
 					Runner.Report (provider, Severity.Medium, Confidence.High,

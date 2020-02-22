@@ -86,6 +86,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Problem ("A type has a method named Dispose, but does not implement IDisposable.")]
 	[Solution ("Rename the method or implement IDisposable.")]
 	public sealed class OnlyUseDisposeForIDisposableTypesRule : Rule, ITypeRule {
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
 	
 		public RuleResult CheckType (TypeDefinition type)
 		{
@@ -95,8 +100,9 @@ namespace Gendarme.Rules.BadPractice {
 			Log.WriteLine (this);
 			Log.WriteLine (this, "----------------------------------");
 			Log.WriteLine (this, type);
-			
-			if (!type.Implements ("System", "IDisposable")) {
+
+            if (!type.Implements(idisposable))
+            {
 				Log.WriteLine (this, "type does not implement IDisposable");
 
 				foreach (MethodDefinition method in type.Methods.Where (m => m.Name == "Dispose"))

@@ -72,6 +72,11 @@ namespace Gendarme.Rules.NUnit {
 	public class UnitTestsMissingTestFixtureRule : NUnitRule, ITypeRule {
 
 		private Version Version25 = new Version (2, 5);
+        private readonly static TypeName tfa = new TypeName
+        {
+            Namespace = "NUnit.Framework",
+            Name = "TestFixtureAttribute"
+        };
 
         /// <summary>
         /// 
@@ -86,7 +91,7 @@ namespace Gendarme.Rules.NUnit {
 			// check if TestFixture is applied to any type in the hierarchy
 			TypeDefinition testingType = type;
 			while (testingType != null) {
-				if (testingType.HasAttribute ("NUnit.Framework", "TestFixtureAttribute"))
+				if (testingType.HasAttribute ( tfa ))
 					return RuleResult.Success;
 				if (testingType.BaseType != null)
 					testingType = testingType.BaseType.Resolve ();

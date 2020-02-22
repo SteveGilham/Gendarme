@@ -184,9 +184,15 @@ namespace Gendarme.Rules.Naming {
 			return suggestion;
 		}
 
+        private readonly static TypeName systemVoid = new TypeName
+        {
+            Namespace = "System",
+            Name = "Void"
+        };
+
 		private static string GetSuggestionMemberKind (IMethodSignature method)
 		{
-			if (method.Parameters.Count == 1 && !method.ReturnType.IsNamed ("System", "Void"))
+			if (method.Parameters.Count == 1 && !method.ReturnType.IsNamed (systemVoid))
 				return "property";
 			return "method";
 		}

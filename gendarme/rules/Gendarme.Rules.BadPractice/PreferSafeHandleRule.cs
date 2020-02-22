@@ -225,7 +225,7 @@ namespace Gendarme.Rules.BadPractice {
 				if (finalizer != null) 
 					confidence = (Confidence) ((int) confidence - 1);	// lower numbers have higher confidence
 
-				if (type.Implements ("System", "IDisposable"))
+				if (type.Implements (idisposable))
 					confidence = (Confidence) ((int) confidence - 1);
 
 				Log.WriteLine (this, "'{0}' is an IntPtr.", field.Name);
@@ -234,5 +234,10 @@ namespace Gendarme.Rules.BadPractice {
 						
 			return Runner.CurrentRuleResult;
 		}
-	}
+        private readonly static TypeName idisposable = new TypeName
+        {
+            Namespace = "System",
+            Name = "IDisposable"
+        };
+    }
 }

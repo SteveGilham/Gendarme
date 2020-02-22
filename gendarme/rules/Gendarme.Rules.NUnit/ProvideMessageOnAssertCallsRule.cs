@@ -100,7 +100,7 @@ namespace Gendarme.Rules.NUnit {
 					continue;
 
 				MethodReference m = (instruction.Operand as MethodReference);
-				if (m == null || !m.DeclaringType.IsNamed ("NUnit.Framework", "Assert") ||
+				if (m == null || !m.DeclaringType.IsNamed ( nassert ) ||
 					exceptions.Contains (m.Name))
 					continue;
 
@@ -110,7 +110,7 @@ namespace Gendarme.Rules.NUnit {
 					if (resolvedMethod == null)
 						continue;
 					foreach (ParameterDefinition parameter in resolvedMethod.Parameters) {
-						if (parameter.ParameterType.IsNamed ("System", "String") &&
+						if (parameter.ParameterType.IsNamed (str) &&
 							parameter.Name == "message") {
 							foundMessage = true;
 							break;
@@ -122,6 +122,16 @@ namespace Gendarme.Rules.NUnit {
 			}
 			return Runner.CurrentRuleResult;
 		}
+        private readonly static TypeName nassert = new TypeName
+        {
+            Namespace = "NUnit.Framework",
+            Name = "Assert"
+        };
+        private readonly static TypeName str = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
 
 		// reports only if it was called more than one time
 		private void DelayedReport (Defect defect)

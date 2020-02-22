@@ -89,10 +89,15 @@ namespace Gendarme.Rules.Naming {
 			//check if this is a Boo assembly using macros
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				IsBooAssemblyUsingMacro = (e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-					return tr.IsNamed ("Boo.Lang.Compiler.Ast", "MacroStatement");
+					return tr.IsNamed (macro);
 				}));
 			};
 		}
+        private readonly static TypeName macro = new TypeName
+        {
+            Namespace = "Boo.Lang.Compiler.Ast",
+            Name = "MacroStatement"
+        };
 
 		private static bool SignatureMatches (MethodReference method, MethodReference baseMethod, bool explicitInterfaceCheck)
 		{
@@ -198,7 +203,7 @@ namespace Gendarme.Rules.Naming {
 
 		private static bool IsBooMacroParameter (ParameterReference p)
 		{
-			return p.Name == "macro" && p.ParameterType.IsNamed ("Boo.Lang.Compiler.Ast", "MacroStatement");
+			return p.Name == "macro" && p.ParameterType.IsNamed (macro);
 		}
 	}
 }

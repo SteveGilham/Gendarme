@@ -69,6 +69,12 @@ namespace Gendarme.Rules.BadPractice {
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class DoNotUseGetInterfaceToCheckAssignabilityRule : Rule, IMethodRule {
 
+        private readonly static TypeName type = new TypeName
+        {
+            Namespace = "System",
+            Name = "Type"
+        };
+
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
 			// rule does not apply if there's no IL code
@@ -86,7 +92,7 @@ namespace Gendarme.Rules.BadPractice {
 				MethodReference call = (ins.Operand as MethodReference);
 				if (call.Name != "GetInterface")
 					continue;
-				if (!call.DeclaringType.Inherits ("System", "Type")) // not a sealed type
+				if (!call.DeclaringType.Inherits (type)) // not a sealed type
 					continue;
 
 				// check for a null compare

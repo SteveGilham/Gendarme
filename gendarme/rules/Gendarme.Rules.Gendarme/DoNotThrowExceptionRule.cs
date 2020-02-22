@@ -78,9 +78,25 @@ namespace Gendarme.Rules.Gendarme {
 
 			Runner.AnalyzeType += (object sender, RunnerEventArgs e) =>
 			{
-				Active = e.CurrentType.Implements ("Gendarme.Framework", "IRule");
+				Active = e.CurrentType.Implements (irule);
 			};
 		}
+        private readonly static TypeName irule = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "IRule"
+        };
+        private readonly static TypeName exception = new TypeName
+        {
+            Namespace = "System",
+            Name = "Exception"
+        };
+        private readonly static TypeName scmda = new TypeName
+        {
+            Namespace = "System.ComponentModel",
+            Name = "DescriptionAttribute"
+        };
+
 
         /// <summary>
         /// 
@@ -97,7 +113,7 @@ namespace Gendarme.Rules.Gendarme {
 
 			if (method.IsSetter && method.IsPublic) {
 				PropertyDefinition property = method.GetPropertyByAccessor ();
-				if (property.HasAttribute ("System.ComponentModel", "DescriptionAttribute"))
+				if (property.HasAttribute ( scmda ))
 					return RuleResult.Success;
 			}
 
@@ -113,7 +129,7 @@ namespace Gendarme.Rules.Gendarme {
 					continue;
 
 				TypeReference type = m.DeclaringType;
-				if (type.Inherits ("System", "Exception"))
+				if (type.Inherits (exception))
 					Runner.Report (method, instruction, Severity.Medium, Confidence.High);
 			}
 

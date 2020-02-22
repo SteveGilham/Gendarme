@@ -69,10 +69,22 @@ namespace Gendarme.Rules.Interoperability {
 	[FxCopCompatibility ("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments")]
 	public class MarshalStringsInPInvokeDeclarationsRule : Rule, IMethodRule {
 
+
+        private readonly static TypeName systemString = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+        private readonly static TypeName stringBuilder = new TypeName
+        {
+            Namespace = "System.Text",
+            Name = "StringBuilder"
+        };
+
 		private static bool IsStringOrSBuilder (TypeReference reference)
 		{
 			TypeReference type = reference.GetElementType ();
-			return (type.IsNamed ("System", "String") || type.IsNamed ("System.Text", "StringBuilder"));
+			return (type.IsNamed (systemString) || type.IsNamed (stringBuilder));
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)

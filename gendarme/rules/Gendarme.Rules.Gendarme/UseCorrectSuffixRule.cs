@@ -76,7 +76,7 @@ namespace Gendarme.Rules.Gendarme {
 		public RuleResult CheckType (TypeDefinition type)
 		{
 			bool endsWithRule = type.Name.EndsWith ("Rule", StringComparison.Ordinal);
-			bool implementsIRule = type.Implements ("Gendarme.Framework", "IRule");
+			bool implementsIRule = type.Implements (irule);
 
 			if (implementsIRule && !endsWithRule)
 				Runner.Report (type, Severity.Medium, Confidence.High, "Type implements IRule but does not end with the 'Rule'");
@@ -85,5 +85,10 @@ namespace Gendarme.Rules.Gendarme {
 			
 			return Runner.CurrentRuleResult;
 		}
-	}
+        private readonly static TypeName irule = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "IRule"
+        };
+    }
 }

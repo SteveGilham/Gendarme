@@ -87,10 +87,15 @@ namespace Gendarme.Rules.BadPractice {
 					}));
 			};
 		}
+        private readonly static TypeName assembly = new TypeName
+        {
+            Namespace = "System.Reflection",
+            Name = "Assembly"
+        };
 
 		static bool IsGetEntryAssembly (MemberReference method)
 		{
-			return method.IsNamed ("System.Reflection", "Assembly", "GetEntryAssembly");
+			return method.IsNamed (assembly, "GetEntryAssembly");
 		}
 
 		public RuleResult CheckMethod (MethodDefinition method)

@@ -96,7 +96,12 @@ namespace Gendarme.Rules.Naming {
 			TypeDefinition candidate = type.Module.GetType (nspace, name.Substring (1));
 			if (candidate != null) {
 				// does Foo implement IFoo ?
-				if (!candidate.Implements (nspace, name)) {
+                var tn = new TypeName
+                {
+                    Namespace = nspace,
+                    Name = name
+                };
+				if (!candidate.Implements (tn)) {
 					Runner.Report (candidate, Severity.High, Confidence.High);
 				}
 			}

@@ -178,7 +178,7 @@ namespace Gendarme.Rules.BadPractice {
 						if (mr.HasThis)
 							parameters++;
 						parameters += mr.Parameters.Count;
-						if (!mr.ReturnType.IsNamed ("System", "Void"))
+						if (!mr.ReturnType.IsNamed (systemVoid))
 							parameters--;
 					}
 					break;
@@ -187,6 +187,13 @@ namespace Gendarme.Rules.BadPractice {
 			}
 			return false;
 		}
+
+        private readonly static TypeName systemVoid = new TypeName
+        {
+            Namespace = "System",
+            Name = "Void"
+        };
+
 
 		private void CheckMethod (MethodDefinition method)
 		{

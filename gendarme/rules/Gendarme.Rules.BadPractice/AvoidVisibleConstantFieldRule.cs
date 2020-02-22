@@ -92,7 +92,7 @@ namespace Gendarme.Rules.BadPractice {
 				// we let null constant for all reference types (since they can't be changed to anything else)
 				// except for strings (which can be modified later)
 				TypeReference ftype = field.FieldType;
-				if (!ftype.IsValueType && !ftype.IsNamed ("System", "String"))
+				if (!ftype.IsValueType && !ftype.IsNamed (str))
 					continue;
 
 				string msg = string.Format (CultureInfo.InvariantCulture, "'{0}' of type {1}.", 
@@ -102,5 +102,11 @@ namespace Gendarme.Rules.BadPractice {
 			}
 			return Runner.CurrentRuleResult;
 		}
+        private readonly static TypeName str = new TypeName
+        {
+            Namespace = "System",
+            Name = "String"
+        };
+
 	}
 }

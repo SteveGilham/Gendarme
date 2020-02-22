@@ -78,6 +78,11 @@ namespace Gendarme.Rules.BadPractice {
 	[Solution ("Make sure the exception is required, throw it (if it is) or remove it (if not).")]
 	[EngineDependency (typeof (OpCodeEngine))]
 	public class CheckNewExceptionWithoutThrowingRule : Rule, IMethodRule {
+        private readonly static TypeName exception = new TypeName
+        {
+            Namespace = "System",
+            Name = "Exception"
+        };
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
@@ -96,7 +101,7 @@ namespace Gendarme.Rules.BadPractice {
 
 				MethodReference constructor = (MethodReference) ins.Operand;
 
-				if (!constructor.DeclaringType.Inherits ("System", "Exception"))
+				if (!constructor.DeclaringType.Inherits (exception))
 					continue;
 
 				// quick check to save resources

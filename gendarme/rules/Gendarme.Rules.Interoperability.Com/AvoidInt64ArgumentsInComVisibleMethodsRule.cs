@@ -111,12 +111,18 @@ namespace Gendarme.Rules.Interoperability.Com {
 				return RuleResult.DoesNotApply;
 
 			foreach (ParameterDefinition parameter in method.Parameters) {
-				if (parameter.ParameterType.IsNamed ("System", "Int64"))
+				if (parameter.ParameterType.IsNamed (i64))
 					Runner.Report (parameter, Severity.Medium, Confidence.Total);
 			}
 
 			return Runner.CurrentRuleResult;
 
 		}
+        private readonly static TypeName i64 = new TypeName
+        {
+            Namespace = "System",
+            Name = "Int64"
+        };
+
 	}
 }

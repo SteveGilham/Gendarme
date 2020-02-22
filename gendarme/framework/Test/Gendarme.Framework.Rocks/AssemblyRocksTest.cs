@@ -47,25 +47,34 @@ namespace Test.Framework.Rocks {
 			assembly = AssemblyDefinition.ReadAssembly (unit);
 		}
 
+        private static TypeName TN(string ns, string name)
+        {
+            return new TypeName
+            {
+                Namespace = ns,
+                Name = name
+            };
+        }
+
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Namespace_Null ()
 		{
-			assembly.HasAttribute (null, "a");
+			Assert.Throws<ArgumentNullException>(() => 
+			    assembly.HasAttribute (TN (null, "a")));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Name_Null ()
 		{
-			assembly.HasAttribute ("a", null);
+			Assert.Throws<ArgumentNullException>(() => 
+			    assembly.HasAttribute (TN ("a", null)));
 		}
 
 		[Test]
 		public void HasAttribute ()
 		{
-			Assert.IsTrue (assembly.HasAttribute ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute"), "System.Runtime.CompilerServices.RuntimeCompatibilityAttribute");
-			Assert.IsFalse (assembly.HasAttribute ("NUnit.Framework", "TestFixtureAttribute"), "TestFixtureAttribute");
+			Assert.IsTrue (assembly.HasAttribute (TN ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute")), "System.Runtime.CompilerServices.RuntimeCompatibilityAttribute");
+			Assert.IsFalse (assembly.HasAttribute (TN ("NUnit.Framework", "TestFixtureAttribute")), "TestFixtureAttribute");
 		}
 	}
 }

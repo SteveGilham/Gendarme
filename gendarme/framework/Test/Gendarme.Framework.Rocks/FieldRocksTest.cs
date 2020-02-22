@@ -72,25 +72,34 @@ namespace Test.Framework.Rocks {
 			return null;
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+        private static TypeName TN(string ns, string name)
+        {
+            return new TypeName
+            {
+                Namespace = ns,
+                Name = name
+            };
+        }
+        
+        [Test]
 		public void HasAttribute_Namespace_Null ()
 		{
-			GetField ("assembly").HasAttribute (null, "a");
+			Assert.Throws<ArgumentNullException>(() => 
+			    GetField ("assembly").HasAttribute (TN (null, "a")));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Name_Null ()
 		{
-			GetField ("assembly").HasAttribute ("a", null);
+			Assert.Throws<ArgumentNullException>(() => 
+			    GetField ("assembly").HasAttribute (TN ("a", null)));
 		}
 
 		[Test]
 		public void HasAttribute ()
 		{
-			Assert.IsTrue (GetField ("cga").HasAttribute ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute"), "CompilerGeneratedAttribute");
-			Assert.IsFalse (GetField ("cga").HasAttribute ("NUnit.Framework", "TestFixtureAttribute"), "TestFixtureAttribute");
+			Assert.IsTrue (GetField ("cga").HasAttribute (TN ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute")), "CompilerGeneratedAttribute");
+			Assert.IsFalse (GetField ("cga").HasAttribute (TN ("NUnit.Framework", "TestFixtureAttribute")), "TestFixtureAttribute");
 		}
 
 		[Test]

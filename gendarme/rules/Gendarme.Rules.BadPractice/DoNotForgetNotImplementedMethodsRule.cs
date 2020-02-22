@@ -93,7 +93,7 @@ namespace Gendarme.Rules.BadPractice {
 				if (inst.OpCode.Code != Code.Newobj)
 					continue;
 				MethodReference ctor = (MethodReference) inst.Operand;
-				if (!ctor.DeclaringType.IsNamed ("System", "NotImplementedException"))
+				if (!ctor.DeclaringType.IsNamed (nie))
 					continue;
 				if (inst.Next.OpCode.Code != Code.Throw)
 					continue;
@@ -106,6 +106,12 @@ namespace Gendarme.Rules.BadPractice {
 
 			return RuleResult.Success;
 		}
+        private readonly static TypeName nie = new TypeName
+        {
+            Namespace = "System",
+            Name = "NotImplementedException"
+        };
+
 #if false
 		public void GenerateBitmask ()
 		{

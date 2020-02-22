@@ -88,27 +88,36 @@ namespace Gendarme.Rules.Naming {
 		static Dictionary<string, string> namespaces = new Dictionary<string, string> ();
 		static SortedDictionary<string, Func<TypeDefinition, string>> reservedSuffixes = new SortedDictionary<string, Func<TypeDefinition, string>> ();
 
+        private static TypeName TN (string ns, string name)
+        {
+            return new TypeName
+            {
+                Namespace = ns,
+                Name = name
+            };
+        }
+
 		static UseCorrectSuffixRule ()
 		{
-			Add ("Attribute", "System", "Attribute", true);
-			Add ("Collection", "System.Collections", "ICollection", false);
-			Add ("Collection", "System.Collections", "IEnumerable", false);
-			Add ("Collection", "System.Collections", "Queue", false);
-			Add ("Collection", "System.Collections", "Stack", false);
-			Add ("Collection", "System.Collections.Generic", "ICollection`1", false);
-			Add ("Collection", "System.Data", "DataSet", false);
-			Add ("Collection", "System.Data", "DataTable", false);
-			Add ("Condition", "System.Security.Policy", "IMembershipCondition", true);
-			Add ("DataSet", "System.Data", "DataSet", true);
-			Add ("DataTable", "System.Data", "DataTable", true);
-			Add ("Dictionary", "System.Collections", "IDictionary", false);
-			Add ("Dictionary", "System.Collections", "IDictionary`2", false);
-			Add ("EventArgs", "System", "EventArgs", true);
-			Add ("Exception", "System", "Exception", true);
-			Add ("Permission", "System.Security", "IPermission", true);
-			Add ("Queue", "System.Collections", "Queue", true);
-			Add ("Stack", "System.Collections", "Stack", true);
-			Add ("Stream", "System.IO", "Stream", true);
+			Add ("Attribute", TN("System", "Attribute"), true);
+			Add ("Collection", TN("System.Collections", "ICollection"), false);
+			Add ("Collection", TN("System.Collections", "IEnumerable"), false);
+			Add ("Collection", TN("System.Collections", "Queue"), false);
+			Add ("Collection", TN("System.Collections", "Stack"), false);
+			Add ("Collection", TN("System.Collections.Generic", "ICollection`1"), false);
+			Add ("Collection", TN("System.Data", "DataSet"), false);
+			Add ("Collection", TN("System.Data", "DataTable"), false);
+			Add ("Condition", TN("System.Security.Policy", "IMembershipCondition"), true);
+			Add ("DataSet", TN("System.Data", "DataSet"), true);
+			Add ("DataTable", TN("System.Data", "DataTable"), true);
+			Add ("Dictionary", TN("System.Collections", "IDictionary"), false);
+			Add ("Dictionary", TN("System.Collections.Generic", "IDictionary`2"), false);
+			Add ("EventArgs", TN("System", "EventArgs"), true);
+			Add ("Exception", TN("System", "Exception"), true);
+			Add ("Permission", TN("System.Security", "IPermission"), true);
+			Add ("Queue", TN("System.Collections", "Queue"), true);
+			Add ("Stack", TN("System.Collections", "Stack"), true);
+			Add ("Stream", TN("System.IO", "Stream"), true);
 
 			// special cases
 			reservedSuffixes.Add ("Collection", message => CheckCollection (message));
@@ -122,48 +131,59 @@ namespace Gendarme.Rules.Naming {
 			reservedSuffixes.Add ("Impl", message => "Use the 'Core' prefix instead of 'Impl'.");
 		}
 
-		static void Add (string suffix, string nameSpace, string name, bool reserved)
+		static void Add (string suffix, TypeName name, bool reserved)
 		{
 			if (reserved) {
-				reservedSuffixes.Add (suffix, message => InheritsOrImplements (message, nameSpace, name));
+				reservedSuffixes.Add (suffix, message => InheritsOrImplements (message, name));
 			}
 
 			HashSet<string> set;
-			if (!definedSuffixes.TryGetValue (name, out set)) {
+			if (!definedSuffixes.TryGetValue (name.Name, out set)) {
 				set = new HashSet<string> ();
-				definedSuffixes.Add (name, set);
-				namespaces.Add (name, nameSpace);
+				definedSuffixes.Add (name.Name, set);
+				namespaces.Add (name.Name, name.Namespace);
 			}
 			set.Add (suffix);
 		}
 
-		static string InheritsOrImplements (TypeReference type, string nameSpace, string name)
+		static string InheritsOrImplements (TypeReference type, TypeName name)
 		{
-			if (type.Inherits (nameSpace, name) || type.Implements (nameSpace, name))
+			if (type.Inherits (name) || type.Implements (name))
 				return String.Empty;
 
 			return String.Format (CultureInfo.InvariantCulture,
 				"'{0}' should only be used for types that inherits or implements '{1}.{2}'.", 
-				type.Name, nameSpace, name);
+				type.Name, name.Namespace, name.Name);
 		}
+
+        private static readonly TypeName icollection = TN("System.Collections", "ICollection");
+        private static readonly TypeName ienumerable = TN("System.Collections", "IEnumerable");
+        private static readonly TypeName icollection1 = TN("System.Collections.Generic", "ICollection`1");
+
+        private static readonly TypeName queue = TN("System.Collections", "Queue");
+        private static readonly TypeName stack = TN("System.Collections", "Stack");
+        private static readonly TypeName dataset = TN("System.Data", "DataSet");
+        private static readonly TypeName table = TN("System.Data", "DataTable");
 
 		static string CheckCollection (TypeReference type)
 		{
-			if (type.Implements ("System.Collections", "ICollection") ||
-				type.Implements ("System.Collections", "IEnumerable") ||
-				type.Implements ("System.Collections.Generic", "ICollection`1"))
+			if (type.Implements (icollection) ||
+				type.Implements (ienumerable) ||
+				type.Implements (icollection1))
 				return String.Empty;
 
-			if (type.Inherits ("System.Collections", "Queue") || type.Inherits ("System.Collections", "Stack") || 
-				type.Inherits ("System.Data", "DataSet") || type.Inherits ("System.Data", "DataTable"))
+			if (type.Inherits(queue)  || type.Inherits(stack)  || 
+				type.Inherits (dataset) || type.Inherits(table) )
 				return String.Empty;
 
 			return "'Collection' should only be used for implementing ICollection or IEnumerable or inheriting from Queue, Stack, DataSet and DataTable.";
 		}
 
-		static string CheckDictionary (TypeReference type)
+        private static readonly TypeName idictionary = TN("System.Collections", "IDictionary");
+        private static readonly TypeName idictionary2 = TN("System.Collections.Generic", "IDictionary`2");
+        static string CheckDictionary(TypeReference type)
 		{
-			if (type.Implements ("System.Collections", "IDictionary") || type.Implements ("System.Collections.Generic", "IDictionary`2"))
+			if (type.Implements (idictionary) || type.Implements(idictionary2) )
 				return String.Empty;
 			return "'Dictionary' should only be used for types implementing IDictionary and IDictionary<TKey,TValue>.";
 		}

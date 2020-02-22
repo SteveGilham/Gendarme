@@ -103,11 +103,16 @@ namespace Gendarme.Rules.Interoperability {
 				Runner.Report (type, Severity.High, Confidence.Total, msg);
 			}
 		}
+        private readonly static TypeName sucs = new TypeName
+        {
+            Namespace = "System.Security",
+            Name = "SuppressUnmanagedCodeSecurityAttribute"
+        };
 
 		private void CheckSuppressUnmanagedCodeSecurity (ICustomAttributeProvider type, bool required)
 		{
 			string msg = null;
-			if (type.HasAttribute ("System.Security", "SuppressUnmanagedCodeSecurityAttribute")) {
+			if (type.HasAttribute (sucs)) {
 				if (!required)
 					 msg = "Remove [SuppressUnmanagedCodeSecurity] attribute on the type declaration.";
 			} else {

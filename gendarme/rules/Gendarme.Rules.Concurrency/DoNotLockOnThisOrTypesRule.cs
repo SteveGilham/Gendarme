@@ -149,7 +149,7 @@ namespace Gendarme.Rules.Concurrency {
         private readonly static TypeName type = new TypeName
         {
             Namespace = "System",
-            Name = "type"
+            Name = "Type"
         };
 
 		private static Instruction StoreLoadLocal (MethodDefinition method, Instruction ins)

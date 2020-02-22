@@ -94,6 +94,17 @@ namespace Gendarme.Rules.Interoperability.Com {
 	[FxCopCompatibility ("Microsoft.Interoperability", "CA1411:ComRegistrationMethodsShouldNotBeVisible")]
 	public class ReviewComRegistrationMethodsRule : Rule, ITypeRule {
 
+        private readonly static TypeName comreg = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "ComRegisterFunctionAttribute"
+        };
+        private readonly static TypeName comunreg = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "ComUnregisterFunctionAttribute"
+        };
+
         /// <summary>
         /// 
         /// </summary>
@@ -114,11 +125,11 @@ namespace Gendarme.Rules.Interoperability.Com {
 				bool foundRegisterUnregisterMethod = false; // method level variable
 				foreach (CustomAttribute attribute in method.CustomAttributes) {
 					TypeReference atype = attribute.AttributeType;
-					if (!foundRegister && atype.IsNamed ("System.Runtime.InteropServices", "ComRegisterFunctionAttribute")) {
+					if (!foundRegister && atype.IsNamed ( comreg )) {
 						foundRegister = true;
 						foundRegisterUnregisterMethod = true;
 					}
-					if (!foundUnregister && atype.IsNamed ("System.Runtime.InteropServices", "ComUnregisterFunctionAttribute")) {
+					if (!foundUnregister && atype.IsNamed ( comunreg )) {
 						foundUnregister = true;
 						foundRegisterUnregisterMethod = true;
 					}

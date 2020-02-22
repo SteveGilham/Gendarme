@@ -96,26 +96,53 @@ namespace Gendarme.Rules.BadPractice {
 	public class AvoidCallingProblematicMethodsRule : Rule, IMethodRule {
 
 		SortedDictionary<string, Func<MethodReference, Instruction, Severity?>> problematicMethods = 
-			new SortedDictionary<string, Func<MethodReference, Instruction, Severity?>> (); 
+			new SortedDictionary<string, Func<MethodReference, Instruction, Severity?>> ();
+
+        private readonly static TypeName gc = new TypeName
+        {
+            Namespace = "System",
+            Name = "GC"
+        };
+        private readonly static TypeName thread = new TypeName
+        {
+            Namespace = "System.Threading",
+            Name = "Thread"
+        };
+        private readonly static TypeName safehandle = new TypeName
+        {
+            Namespace = "System.Runtime.InteropServices",
+            Name = "SafeHandle"
+        };
+        private readonly static TypeName assembly = new TypeName
+        {
+            Namespace = "System.Reflection",
+            Name = "Assembly"
+        };
+        private readonly static TypeName type = new TypeName
+        {
+            Namespace = "System",
+            Name = "Type"
+        };
+
 
 		public AvoidCallingProblematicMethodsRule ()
 		{
 			problematicMethods.Add ("Collect", (m, i) => 
-				m.DeclaringType.IsNamed ("System", "GC") ? Severity.Critical : (Severity?) null);
+				m.DeclaringType.IsNamed (gc) ? Severity.Critical : (Severity?) null);
 			problematicMethods.Add ("Suspend", (m, i) => 
-				m.DeclaringType.IsNamed ("System.Threading", "Thread") ? Severity.Medium : (Severity?) null);
+				m.DeclaringType.IsNamed (thread) ? Severity.Medium : (Severity?) null);
 			problematicMethods.Add ("Resume", (m, i) => 
-				m.DeclaringType.IsNamed ("System.Threading", "Thread") ? Severity.Medium : (Severity?) null);
+				m.DeclaringType.IsNamed (thread) ? Severity.Medium : (Severity?) null);
 			problematicMethods.Add ("DangerousGetHandle", (m, i) => 
-				m.DeclaringType.IsNamed ("System.Runtime.InteropServices", "SafeHandle") ? Severity.Critical : (Severity?) null);
+				m.DeclaringType.IsNamed (safehandle) ? Severity.Critical : (Severity?) null);
 			problematicMethods.Add ("LoadFrom", (m, i) => 
-				m.DeclaringType.IsNamed ("System.Reflection", "Assembly") ? Severity.High : (Severity?) null);
+				m.DeclaringType.IsNamed (assembly) ? Severity.High : (Severity?) null);
 			problematicMethods.Add ("LoadFile", (m, i) => 
-				m.DeclaringType.IsNamed ("System.Reflection", "Assembly") ? Severity.High : (Severity?) null);
+				m.DeclaringType.IsNamed (assembly) ? Severity.High : (Severity?) null);
 			problematicMethods.Add ("LoadWithPartialName", (m, i) => 
-				m.DeclaringType.IsNamed ("System.Reflection", "Assembly") ? Severity.High : (Severity?) null);
+				m.DeclaringType.IsNamed (assembly) ? Severity.High : (Severity?) null);
 			problematicMethods.Add ("InvokeMember", (m, i) => 
-				!m.DeclaringType.IsNamed ("System", "Type") ? (Severity?) null :
+				!m.DeclaringType.IsNamed (type) ? (Severity?) null :
 					IsAccessingWithNonPublicModifiers (i) ? Severity.Critical : (Severity?) null);
 		}
 

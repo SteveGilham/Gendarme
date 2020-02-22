@@ -119,6 +119,11 @@ namespace Gendarme.Rules.Gendarme {
 
 			return Runner.CurrentRuleResult;
 		}
+        private readonly static TypeName eda = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "EngineDependencyAttribute"
+        };
 
 		private void GetEngineDependencyValue (TypeDefinition type)
 		{
@@ -128,7 +133,7 @@ namespace Gendarme.Rules.Gendarme {
 				if (td.HasCustomAttributes)
 					foreach (CustomAttribute attribute in td.CustomAttributes) {
 						if (!attribute.HasConstructorArguments ||
-							!attribute.AttributeType.IsNamed ("Gendarme.Framework", "EngineDependencyAttribute"))
+							!attribute.AttributeType.IsNamed (eda))
 							continue;
 
 						object value = attribute.ConstructorArguments [0].Value;

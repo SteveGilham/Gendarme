@@ -79,7 +79,7 @@ namespace Gendarme.Rules.Gendarme {
         /// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			if (type.IsAbstract || !type.HasMethods || !type.Implements ("Gendarme.Framework", "IRule"))
+			if (type.IsAbstract || !type.HasMethods || !type.Implements (irule))
 				return RuleResult.DoesNotApply;
 
 			foreach (MethodDefinition method in type.Methods) {
@@ -93,7 +93,7 @@ namespace Gendarme.Rules.Gendarme {
 					MethodReference m = (instruction.Operand as MethodReference);
 					if (m == null || (m.Name != "Report"))
 						continue;
-					if (m.DeclaringType.IsNamed ("Gendarme.Framework", "IRunner"))
+					if (m.DeclaringType.IsNamed (irunner))
 						return RuleResult.Success;
 				}
 				
@@ -103,5 +103,15 @@ namespace Gendarme.Rules.Gendarme {
 			Runner.Report (type, Severity.High, Confidence.Normal);
 			return RuleResult.Failure;
 		}
-	}
+        private readonly static TypeName irule = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "IRule"
+        };
+        private readonly static TypeName irunner = new TypeName
+        {
+            Namespace = "Gendarme.Framework",
+            Name = "IRunner"
+        };
+    }
 }

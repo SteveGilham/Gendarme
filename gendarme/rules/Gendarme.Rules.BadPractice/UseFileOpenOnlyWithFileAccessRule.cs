@@ -134,7 +134,7 @@ namespace Gendarme.Rules.BadPractice {
 					TypeReference ptype = parameter.ParameterType;
 					if (!foundFileMode && ptype.IsNamed (mode))
 						foundFileMode = true;
-					if (!foundFileAccess && (ptype.IsNamed (access) || ptype.IsNamed ("System.Security.AccessControl", "FileSystemRights")))
+					if (!foundFileAccess && (ptype.IsNamed (access) || ptype.IsNamed (rights)))
 						foundFileAccess = true;
 				}
 				if (foundFileMode && !foundFileAccess) {

@@ -94,6 +94,15 @@ namespace Test.Framework.Rocks {
 			assembly = AssemblyDefinition.ReadAssembly (unit);
 		}
 
+        private static TypeName TN(string ns, string name)
+        {
+            return new TypeName
+            {
+                Namespace = ns,
+                Name = name
+            };
+        }
+
 		private MethodDefinition GetMethod (string typeName, string methodName)
 		{
 			TypeDefinition type = assembly.MainModule.GetType (typeName);
@@ -111,27 +120,27 @@ namespace Test.Framework.Rocks {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Namespace_Null ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-			method.HasAttribute (null, "a");
+			Assert.Throws<ArgumentNullException>(() => 
+			    method.HasAttribute (TN (null, "a")));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void HasAttribute_Name_Null ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-			method.HasAttribute ("a", null);
+			Assert.Throws<ArgumentNullException>(() => 
+			    method.HasAttribute (TN ("a", null)));
 		}
 
 		[Test]
 		public void HasAttribute ()
 		{
 			MethodDefinition method = GetMethod ("FixtureSetUp");
-			Assert.IsTrue (method.HasAttribute ("NUnit.Framework", "TestFixtureSetUpAttribute"), "NUnit.Framework.TestFixtureSetUpAttribute");
-			Assert.IsFalse (method.HasAttribute ("NUnit.Framework", "TestFixtureSetUp"), "NUnit.Framework.TestFixtureSetUp");
+			Assert.IsTrue (method.HasAttribute (TN ("NUnit.Framework", "TestFixtureSetUpAttribute")), "NUnit.Framework.TestFixtureSetUpAttribute");
+			Assert.IsFalse (method.HasAttribute (TN ("NUnit.Framework", "TestFixtureSetUp")), "NUnit.Framework.TestFixtureSetUp");
 		}
 
 		[Test]
