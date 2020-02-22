@@ -38,30 +38,37 @@ using Test.Rules.Helpers;
 
 namespace Test.Rules.Design.Generic {
 
+    [TestFixture]
+    public class AvoidDeclaringCustomDelegatesBefore2_0Test : TypeRuleTestFixture<AvoidDeclaringCustomDelegatesRule>
+    {
+
+        [Test]
+        public void NotApplicableBefore2_0()
+        {
+            // ensure that the rule does not apply for types defined in 1.x assemblies
+            TypeDefinition violator = DefinitionLoader.GetTypeDefinition<AvoidDeclaringCustomDelegatesRule>();
+            TargetRuntime realRuntime = violator.Module.Runtime;
+            try
+            {
+
+                // fake assembly runtime version and do the check
+                violator.Module.Runtime = TargetRuntime.Net_1_1;
+                Rule.Active = true;
+                Rule.Initialize(Runner);
+                (Runner as TestRunner).OnModule(violator.Module);
+                Assert.IsFalse(Rule.Active, "Active");
+            }
+            catch
+            {
+                // rollback
+                violator.Module.Runtime = realRuntime;
+                Rule.Active = true;
+            }
+        }
+    }
+
 	[TestFixture]
 	public class AvoidDeclaringCustomDelegatesTest : TypeRuleTestFixture<AvoidDeclaringCustomDelegatesRule> {
-
-		[Test]
-		public void NotApplicableBefore2_0 ()
-		{
-			// ensure that the rule does not apply for types defined in 1.x assemblies
-			TypeDefinition violator = DefinitionLoader.GetTypeDefinition<AvoidDeclaringCustomDelegatesRule> ();
-			TargetRuntime realRuntime = violator.Module.Runtime;
-			try {
-
-				// fake assembly runtime version and do the check
-				violator.Module.Runtime = TargetRuntime.Net_1_1;
-				Rule.Active = true;
-				Rule.Initialize (Runner);
-				Assert.IsFalse (Rule.Active, "Active");
-			}
-			catch {
-				// rollback
-				violator.Module.Runtime = realRuntime;
-				Rule.Active = true;
-			}
-		}
-
 		[Test]
 		public void NotApplicable ()
 		{

@@ -62,7 +62,8 @@ namespace Test.Rules.Design.Generic {
 				violator.Module.Runtime = TargetRuntime.Net_1_1;
 				Rule.Active = true;
 				Rule.Initialize (Runner);
-				Assert.IsFalse (Rule.Active, "Active");
+                (Runner as TestRunner).OnModule(violator.Module);
+                Assert.IsFalse(Rule.Active, "Active");
 			}
 			catch {
 				// rollback

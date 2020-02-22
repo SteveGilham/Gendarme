@@ -190,29 +190,37 @@ namespace Test.Rules.Maintainability {
 	#pragma warning restore 169
 
 
+    [TestFixture]
+    public class ConsiderUsingStopwatchTestInit : MethodRuleTestFixture<ConsiderUsingStopwatchRule>
+    {
+
+        [Test]
+        public void Initialize()
+        {
+            // ensure that the rule does not apply for types defined in 1.x assemblies
+            TypeDefinition violator = DefinitionLoader.GetTypeDefinition<ConsiderUsingStopwatchTest>();
+            TargetRuntime realRuntime = violator.Module.Runtime;
+            try
+            {
+
+                // fake assembly runtime version and do the check
+                violator.Module.Runtime = TargetRuntime.Net_1_1;
+                Rule.Active = true;
+                Rule.Initialize(Runner);
+                (Runner as TestRunner).OnModule(violator.Module);
+                Assert.IsFalse(Rule.Active, "Active");
+            }
+            catch
+            {
+                // rollback
+                violator.Module.Runtime = realRuntime;
+                Rule.Active = true;
+            }
+        }
+    }
+
 	[TestFixture]
 	public class ConsiderUsingStopwatchTest : MethodRuleTestFixture<ConsiderUsingStopwatchRule> {
-
-		[Test]
-		public void Initialize ()
-		{
-			// ensure that the rule does not apply for types defined in 1.x assemblies
-			TypeDefinition violator = DefinitionLoader.GetTypeDefinition<ConsiderUsingStopwatchTest> ();
-			TargetRuntime realRuntime = violator.Module.Runtime;
-			try {
-
-				// fake assembly runtime version and do the check
-				violator.Module.Runtime = TargetRuntime.Net_1_1;
-				Rule.Active = true;
-				Rule.Initialize (Runner);
-				Assert.IsFalse (Rule.Active, "Active");
-			}
-			catch {
-				// rollback
-				violator.Module.Runtime = realRuntime;
-				Rule.Active = true;
-			}
-		}
 
 		[Test]
 		public void NotApplicable ()
