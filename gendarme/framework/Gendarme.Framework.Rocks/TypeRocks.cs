@@ -413,7 +413,7 @@ namespace Gendarme.Framework.Rocks {
                 return new TypeName
                 {
                     Namespace = fn.Substring(0, index),
-                    Name = fn.Substring(index)
+                    Name = fn.Substring(index + 1)
                 };
 
             }
