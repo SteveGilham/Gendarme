@@ -40,6 +40,12 @@ namespace Test.Rules.Gendarme {
 
 	[TestFixture]
 	public class DefectsMustBeReportedTest : TypeRuleTestFixture<DefectsMustBeReportedRule> {
+        [OneTimeSetUp]
+        public void FixtureSetUp()
+        {
+            var def = AssemblyDefinition.ReadAssembly(typeof(Rule).Assembly.Location);
+            AssemblyResolver.Resolver.CacheAssembly(def);
+        }
 
 		class GoodRule : Rule {
 			public void Test ()

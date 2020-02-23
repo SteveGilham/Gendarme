@@ -41,6 +41,13 @@ namespace Test.Rules.Gendarme {
 	[TestFixture]
 	public class UseCorrectSuffixTest : TypeRuleTestFixture<UseCorrectSuffixRule> {
 
+        [OneTimeSetUp]
+        public void FixtureSetUp()
+        {
+            var def = AssemblyDefinition.ReadAssembly(typeof(Rule).Assembly.Location);
+            AssemblyResolver.Resolver.CacheAssembly(def);
+        }
+
 		class GoodRule : Rule {
 		}
 

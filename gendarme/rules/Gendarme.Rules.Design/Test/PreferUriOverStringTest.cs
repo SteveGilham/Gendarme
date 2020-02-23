@@ -107,43 +107,46 @@ namespace Test.Rules.Design {
 		}
 	}
 
-	[TestFixture]
+    [TestFixture]
 	public class PreferUriOverStringTest : MethodRuleTestFixture<PreferUriOverStringRule> {
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// The rule doesn't apply to setters if a getter is present.
-			AssertRuleDoesNotApply<BadUris> ("set_SomeUri");
-		}
+        [Test]
+        public void DoesNotApply()
+        {
+            // The rule doesn't apply to setters if a getter is present.
+            AssertRuleDoesNotApply<BadUris>("set_SomeUri");
+        }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess (SimpleMethods.EmptyMethod);
-			AssertRuleSuccess<GoodUris> ("GetUri");
-			AssertRuleSuccess<GoodUris>("get_CUR");
-			AssertRuleSuccess<GoodUris> ("GetNewLink");
-			AssertRuleSuccess<GoodUris> ("OverloadedMethod", new Type [] { typeof (string) });
-		}
+        [Test]
+        public void Good()
+        {
+            AssertRuleSuccess(SimpleMethods.EmptyMethod);
+            AssertRuleSuccess<GoodUris>("GetUri");
+            AssertRuleSuccess<GoodUris>("get_CUR");
+            AssertRuleSuccess<GoodUris>("GetNewLink");
+            AssertRuleSuccess<GoodUris>("OverloadedMethod", new Type[] { typeof(string) });
+        }
 
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<BadUris> ("get_SomeUri", 1);
-			AssertRuleFailure<BadUris> ("BadUrnMethod", 2);
-		}
+        [Test]
+        public void Bad()
+        {
+            AssertRuleFailure<BadUris>("get_SomeUri", 1);
+            AssertRuleFailure<BadUris>("BadUrnMethod", 2);
+        }
 
-		[Test]
-		public void Attribute ()
-		{
-			AssertRuleSuccess<UriAttribute> (".ctor");
-			AssertRuleFailure<UriAttribute> ("get_Uri", 1);
-		}
+        [Test]
+        public void Attribute()
+        {
+            AssertRuleSuccess<UriAttribute>(".ctor");
+            AssertRuleFailure<UriAttribute>("get_Uri", 1);
+        }
 
 		[Test]
 		public void GeneratedCode ()
 		{
+            var m = Test.Rules.Helpers.DefinitionLoader.GetMethodDefinition<WebService>("IsLocalFileSystemWebService");
+            var t = m.DeclaringType.Resolve();
+            t.Module.Runtime = Mono.Cecil.TargetRuntime.Net_4_0;
 			AssertRuleDoesNotApply<WebService> ("IsLocalFileSystemWebService");
 		}
 	}
