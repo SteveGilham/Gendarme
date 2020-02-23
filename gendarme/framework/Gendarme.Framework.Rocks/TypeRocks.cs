@@ -398,6 +398,25 @@ namespace Gendarme.Framework.Rocks {
                     Name = parent.Name + "/" + self.Name
                 };
             }
+            else if (self.IsByReference)
+            {
+                // Hopefully not a common case
+                var fn = self.FullName;
+                var index = fn.LastIndexOf(".");
+                if (index < 0)
+                    return new TypeName
+                    {
+                        Namespace = String.Empty,
+                        Name = fn
+                    };
+
+                return new TypeName
+                {
+                    Namespace = fn.Substring(0, index),
+                    Name = fn.Substring(index)
+                };
+
+            }
             else
             {
                 return new TypeName
