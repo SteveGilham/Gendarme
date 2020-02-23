@@ -40,6 +40,12 @@ namespace Test.Rules.Concurrency {
 
 	[TestFixture]
 	public class DecorateThreadsTest {
+        [OneTimeSetUp]
+        public void FixtureSetUp()
+        {
+            var def = AssemblyDefinition.ReadAssembly(typeof(ThreadModel).Assembly.Location);
+            AssemblyResolver.Resolver.CacheAssembly(def);
+        }
 		
 		#region Test Cases
 		// No threaded code.
@@ -54,31 +60,31 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 		
-		// Thread entry points cannot be main thread.
+    // Thread entry points cannot be main thread.
 		internal sealed class Good2 {
-			public void Spawn ()
-			{
-				new Thread (this.Thread1).Start ();
-				new Thread (this.Thread2).Start ();
-				new Thread (this.Thread3).Start ();
-			}
-			
-			[ThreadModel (ThreadModel.SingleThread)]
-			private void Thread1 ()
-			{
-			}
-			
-			[ThreadModel (ThreadModel.Serializable)]
-			private void Thread2 ()
-			{
-			}
-			
-			[ThreadModel (ThreadModel.Concurrent)]
-			private void Thread3 ()
-			{
-			}
-		}
-		
+        public void Spawn()
+        {
+            new Thread(this.Thread1).Start();
+            new Thread(this.Thread2).Start();
+            new Thread(this.Thread3).Start();
+        }
+
+        [ThreadModel(ThreadModel.SingleThread)]
+        private void Thread1()
+        {
+        }
+
+        [ThreadModel(ThreadModel.Serializable)]
+        private void Thread2()
+        {
+        }
+
+        [ThreadModel(ThreadModel.Concurrent)]
+        private void Thread3()
+        {
+        }
+    }
+
 		// MainThread code can call everything, AllowEveryCaller code can be called by 
 		// everything, SingleThread can call SingleThread/Serializable/Concurrent, and Serializable/
 		// Concurrent can call Serializable/Concurrent.
