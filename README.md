@@ -27,17 +27,34 @@ NuGet pack altcode.gendarme.nuspec
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 
 ## Known Issues
+The AvoidSwitchStatements rule needs some serious decompiler code to recognise Roslyn's mangled switch as multiple conditional branches, so some tests have just been set to `[Ignore]`
+
 The following rule suites have unit test failures
 
-* 7 Smells
-* 5 Performance
-* 1 Maintainability
-* 17 Interoperability
-* 2 Correctness
-* 6 Concurrency
-* 2 Framework
+1 Smells (+ 2 `[Ignore]`d switch related tests)
+  AvoidCodeDuplicatedInSameClassRule failed on Test.Rules.Smells.AvoidCodeDuplicatedInSameClassTest/NonDuplicatedCodeIntoForeachLoop: result should be Success but got Failure.
+      Expected: Success
+      But was:  Failure
 
-The AvoidSwitchStatements rule needs some serious decompiler code to recognise Roslyn's mangled switch as multiple conditional branches, so some test have just been set tot `[Ignore]`
+5 Performance
+
+1 Maintainability
+  GenericMethod
+   Source: AvoidUnnecessarySpecializationTest.cs line 437 (Stack entry analysis)
+
+17 Interoperability
+   Source: DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs (stack related)
+
+2 Correctness
+
+6 Concurrency
+
+2 Framework
+Test FullName:	Test.Framework.StackEntryAnalysisTest.TestMultipleCatch
+Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 421
+
+Test FullName:	Test.Framework.StackEntryAnalysisTest.TestTryCatchFinally
+Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 381
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.

@@ -11,6 +11,7 @@ With Roslyn
    Source: AvoidUnnecessarySpecializationTest.cs line 437 (Stack entry analysis)
 
 17 Interoperability
+   Source: DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs
 
 2 Correctness
 
