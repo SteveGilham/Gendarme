@@ -27,29 +27,20 @@ NuGet pack altcode.gendarme.nuspec
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 
 ## Known Issues
-The following rules (Test name follows rule name) have some unit test failures, so should not be relied upon
+The following rule suites have unit test failures
 
-* Gendarme.Rules.Correctness\Test\ProvideCorrectRegexPatternTest -- it misses the second pattern in ternary expressions like `new Regex (good ? "good" : "bad\\");`
+* 7 Smells
+* 5 Performance
+* 1 Maintainability
+* 17 Interoperability
+* 2 Correctness
+* 6 Concurrency
+* 2 Framework
 
-There is also a unit test failure for `Gendarme.Framework.Helpers\StackEntryAnalysisTest` which may affect any rules relating to `try`/`catch`/`finally` behaviour.
-
-### Now Fixed
-* Gendarme.Rules.Concurrency\Test\ProtectCallToEventDelegatesTest
-* Gendarme.Rules.Design\Test\ProvideTryParseAlternativeTest
-* Gendarme.Rules.Performance\Test\AvoidUnnecessaryOverridesTest
-* Gendarme.Rules.Serialization\Test\CallBaseMethodsOnISerializableTypesTest
-* Gendarme.Rules.Exceptions\Test\UseObjectDisposedExceptionTest
+The AvoidSwitchStatements rule needs some serious decompiler code to recognise Roslyn's mangled switch as multiple conditional branches, so some test have just been set tot `[Ignore]`
 
 ## Direction
-After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork is to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
-
-The next stage will be to fix the unit tests
-
-Following that, updating NUnit
-
-Then updating to the Roslyn compiler
-
-And the last big step will be porting to .net core
+After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
 
 ### Progress to date 
 
