@@ -35,32 +35,36 @@ using Gendarme.Framework.Rocks;
 using Mono.Cecil;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
-
+namespace Test.Framework.Rocks
+{
 	[TestFixture]
-	public class MethodRocksTest {
-
-		class MainClassVoidVoid {
-			static void Main ()
+  public class MethodRocksTest
+  {
+    private class MainClassVoidVoid
+    {
+      private static void Main()
 			{
 			}
 		}
 
-		class MainClassIntVoid {
-			static int Main ()
+    private class MainClassIntVoid
+    {
+      private static int Main()
 			{
 				return 42;
 			}
 		}
 
-		class MainClassVoidStrings {
-			static void Main (string[] args)
+    private class MainClassVoidStrings
+    {
+      private static void Main(string[] args)
 			{
 			}
 		}
 
-		class MainClassIntStrings {
-			static int Main (string [] args)
+    private class MainClassIntStrings
+    {
+      private static int Main(string[] args)
 			{
 				return 42;
 			}
@@ -70,7 +74,8 @@ namespace Test.Framework.Rocks {
 			}
 		}
 
-		public int Value {
+    public int Value
+    {
 			get { return 42; }
 			set { throw new NotSupportedException (); }
 		}
@@ -106,7 +111,8 @@ namespace Test.Framework.Rocks {
 		private MethodDefinition GetMethod (string typeName, string methodName)
 		{
 			TypeDefinition type = assembly.MainModule.GetType (typeName);
-			foreach (MethodDefinition method in type.Methods) {
+      foreach (MethodDefinition method in type.Methods)
+      {
 				if (method.Name == methodName)
 					return method;
 			}

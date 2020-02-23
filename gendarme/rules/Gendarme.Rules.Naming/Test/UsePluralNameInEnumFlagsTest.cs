@@ -60,7 +60,7 @@ namespace Test.Rules.Naming {
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
 		private TestRunner runner;
-
+	
         [OneTimeSetUp]
 		public void FixtureSetUp ()
 		{

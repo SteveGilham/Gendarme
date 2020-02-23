@@ -34,11 +34,11 @@ using Mono.Cecil;
 using Mono.Collections.Generic;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
-
+namespace Test.Framework.Rocks
+{
 	[TestFixture]
-	public class CustomAttributeRocksTest {
-
+  public class CustomAttributeRocksTest
+  {
 		private AssemblyDefinition assembly;
 
 		[OneTimeSetUp]

@@ -35,54 +35,64 @@ using Gendarme.Rules.Naming;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace One {
+namespace One
+{
 	public interface I1 { }
 }
 
-namespace One.Two {
+namespace One.Two
+{
 	public interface I2 { }
 }
 
-namespace One.Two.Three {
+namespace One.Two.Three
+{
 	public interface I3 { }
 }
 
-namespace One.Two.Three.Four {
+namespace One.Two.Three.Four
+{
 	public interface I4 { }
 }
 
 // bad
-namespace One.Two.Three.Four.Five {
+namespace One.Two.Three.Four.Five
+{
 	public interface I5 { }
 }
 
 // exceptions
-namespace One.Two.Three.Four.Design {
+namespace One.Two.Three.Four.Design
+{
 	public interface IDesign { }
 }
 
-namespace One.Two.Three.Four.Interop {
+namespace One.Two.Three.Four.Interop
+{
 	public interface IInterop { }
 }
 
-namespace One.Two.Three.Four.Permissions {
+namespace One.Two.Three.Four.Permissions
+{
 	public interface IPermissions { }
 }
 
-namespace One.Two.Three.Four.Impl {
+namespace One.Two.Three.Four.Impl
+{
 	internal interface IImpl { }
 }
 
-namespace One.Two.Three.Four.Internal {
+namespace One.Two.Three.Four.Internal
+{
 	internal interface Internal { }
 }
 
-namespace Test.Rules.Naming {
-
+namespace Test.Rules.Naming
+{
 	[TestFixture]
-	public class AvoidDeepNamespaceHierarchyTest : AssemblyRuleTestFixture<AvoidDeepNamespaceHierarchyRule> {
-
-		AssemblyDefinition assembly;
+  public class AvoidDeepNamespaceHierarchyTest : AssemblyRuleTestFixture<AvoidDeepNamespaceHierarchyRule>
+  {
+    private AssemblyDefinition assembly;
 
         [OneTimeSetUp]
 		public void FixtureSetUp ()
@@ -110,11 +120,13 @@ namespace Test.Rules.Naming {
 		public void Max ()
 		{
 			int depth = Rule.MaxDepth;
-			try {
+      try
+      {
 				Rule.MaxDepth = Int32.MaxValue;
 				AssertRuleSuccess (assembly);
 			}
-			finally {
+      finally
+      {
 				Rule.MaxDepth = depth;
 			}
 		}

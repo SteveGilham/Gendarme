@@ -1,192 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0C697291-D955-43C8-994E-A03B6A77A21A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests.Rules.Performance</RootNamespace>
-    <AssemblyName>Tests.Rules.Performance</AssemblyName>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <PublishUrl>http://localhost/Tests.Rules.Performance/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>net40;netcoreapp2.1</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\..\..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\..\..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\..\..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\..\..\..\packages\Mono.Cecil.0.11.1\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\packages\NUnit.3.12.0\lib\net40\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <PackageReference Include="Mono.Cecil" Version="0.11.1" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\..\..\framework\Gendarme.Framework.csproj" />
+    <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
+    <ProjectReference Include="..\Gendarme.Rules.Performance.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AvoidConcatenatingCharsTest.cs" />
-    <Compile Include="AvoidLargeNumberOfLocalVariablesTest.cs" />
-    <Compile Include="AvoidLocalDataStoreSlotTest.cs" />
-    <Compile Include="AvoidMethodWithLargeMaximumStackSizeTest.cs" />
-    <Compile Include="AvoidRepetitiveCallsToPropertiesTest.cs" />
-    <Compile Include="AvoidRepetitiveCastsTest.cs" />
-    <Compile Include="AvoidTypeGetTypeForConstantStringsTest.cs" />
-    <Compile Include="AvoidUnnecessaryOverridesTest.cs" />
-    <Compile Include="AvoidUnneededFieldInitializationTest.cs" />
-    <Compile Include="AvoidUnneededUnboxingTest.cs" />
-    <Compile Include="AvoidLargeStructureTest.cs" />
-    <Compile Include="AvoidReturningArraysOnPropertiesTest.cs" />
-    <Compile Include="AvoidUncalledPrivateCodeTest.cs" />
-    <Compile Include="AvoidUninstantiatedInternalClassesTest.cs" />
-    <Compile Include="AvoidUnneededCallsOnStringTest.cs" />
-    <Compile Include="AvoidUnsealedConcreteAttributesTest.cs" />
-    <Compile Include="AvoidUnsealedUninheritedInternalClassesTest.cs" />
-    <Compile Include="AvoidUnusedParametersTest.cs" />
-    <Compile Include="AvoidUnusedPrivateFieldsTest.cs" />
-    <Compile Include="CompareWithStringEmptyEfficientlyTest.cs" />
-    <Compile Include="ConsiderCustomAccessorsForNonVisibleEventsTest.cs" />
-    <Compile Include="DontIgnoreMethodResultTest.cs" />
-    <Compile Include="EmptyDestructorTest.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="IDisposableWithDestructorWithoutSuppressFinalizeTest.cs" />
-    <Compile Include="ImplementEqualsTypeTest.cs" />
-    <Compile Include="MathMinMaxCandidateTest.cs" />
-    <Compile Include="OverrideValueTypeDefaultsTest.cs" />
-    <Compile Include="PreferCharOverloadTest.cs" />
-    <Compile Include="PreferInterfaceConstraintOnGenericParameterForPrimitiveInterfaceTest.cs" />
-    <Compile Include="PreferLiteralOverInitOnlyFieldsTest.cs" />
-    <Compile Include="RemoveUnusedLocalVariablesTest.cs" />
-    <Compile Include="ReviewLinqMethodTest.cs" />
-    <Compile Include="UseIsOperatorTest.cs" />
-    <Compile Include="UseStringEmptyTest.cs" />
-    <Compile Include="UseTypeEmptyTypesTest.cs" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+    <PackageReference Include="System.Security.Permissions">
+      <Version>4.7.0</Version>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\framework\Gendarme.Framework.csproj">
-      <Project>{CD6818D5-B398-486C-B180-92A07B143AFD}</Project>
-      <Name>Gendarme.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj">
-      <Project>{ee3693fe-3a8a-4078-9248-88a4fca39cfb}</Project>
-      <Name>FSharpExamples</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj">
-      <Project>{069148AF-86AB-4EE3-BFB9-429AE722461F}</Project>
-      <Name>Test.Rules</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Gendarme.Rules.Performance.csproj">
-      <Project>{7A8D4AE7-66FA-42E0-BDCB-400D8E0ECFA6}</Project>
-      <Name>Gendarme.Rules.Performance</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>
-      </ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>
-      </ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>
-      </ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am" ExecuteTargetName="run-test" IsAutotoolsProject="true" RelativeConfigureInPath="../../../..">
-          <BuildFilesVar />
-          <DeployFilesVar />
-          <ResourcesVar />
-          <OthersVar />
-          <GacRefVar />
-          <AsmRefVar />
-          <ProjectRefVar />
-        </MonoDevelop.Autotools.MakefileInfo>
-      </Properties>
-    </MonoDevelop>
-    <VisualStudio />
-  </ProjectExtensions>
 </Project>

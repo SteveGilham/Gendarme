@@ -30,7 +30,13 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+
+#if NETCOREAPP2_1
+#else
+
 using System.Windows.Forms;
+
+#endif
 
 using Mono.Cecil;
 using Gendarme.Framework;
@@ -43,24 +49,31 @@ using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
 //Stubs for the Gtk testing.
-namespace Gtk {
-	public class Bin {
+namespace Gtk
+{
+  public class Bin
+  {
 	}
 
-	public class Dialog {
+  public class Dialog
+  {
 	}
 
-	public class Window {
+  public class Window
+  {
 	}
 }
 
-namespace Test.Rules.Smells {
-	public class LongStaticConstructorWithFields {
-		static readonly int foo;
-		static string bar;
-		static object baz;
+namespace Test.Rules.Smells
+{
+  public class LongStaticConstructorWithFields
+  {
+    private static readonly int foo;
+    private static string bar;
+    private static object baz;
 
-		static LongStaticConstructorWithFields () {
+    static LongStaticConstructorWithFields()
+    {
 			foo = 5;
 			bar = "MyString";
 			baz = new object ();
@@ -73,16 +86,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -95,46 +111,55 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 		}
 	}
 
-	public class LongStaticConstructorWithoutFields {
-		static LongStaticConstructorWithoutFields () {
+  public class LongStaticConstructorWithoutFields
+  {
+    static LongStaticConstructorWithoutFields()
+    {
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
 			list.Add ("Foo");
@@ -145,16 +170,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -167,129 +195,59 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 		}
 	}
 	
-	public class LongConstructorWithReadonlyFields {
-		readonly int foo;
-		readonly string bar, bar1, bar2, bar3;
-		readonly object baz, baz1, baz2, baz3;
+  public class LongConstructorWithReadonlyFields
+  {
+    private readonly int foo;
+    private readonly string bar, bar1, bar2, bar3;
+    private readonly object baz, baz1, baz2, baz3;
 
-		public LongConstructorWithReadonlyFields () {
-			foo = 5;
-			bar = "MyString";
-			baz = new object ();
-			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
-			IList list = new ArrayList ();
-			list.Add ("Foo");
-			list.Add (4);
-			list.Add (6);
-
-			IEnumerator listEnumerator = list.GetEnumerator ();
-			while (listEnumerator.MoveNext ())
-				Console.WriteLine (listEnumerator.Current);
-
-			try {
-				list.Add ("Bar");
-				list.Add ('a');
-			}
-			catch (NotSupportedException exception) {
-				Console.WriteLine (exception.Message);
-				Console.WriteLine (exception);
-			}
-
-			foreach (object value in list) {
-				Console.Write (value);
-				Console.Write (Environment.NewLine);
-			}
-			
-			int x = 0;
-
-			for (int i = 0; i < 100; i++)
-				x++;
-			Console.WriteLine (x);
-	
-			string useless = "Useless String";
-
-			if (useless.Equals ("Other useless")) {
-				useless = String.Empty;
-				Console.WriteLine ("Other useless string");
-			}
-			
-			useless = String.Concat (useless," 1");
-			
-			for (int j = 0; j < useless.Length; j++) {
-				if (useless[j] == 'u')
-					Console.WriteLine ("I have detected an u char");
-				else
-					Console.WriteLine ("I have detected an useless char");
-			}
-			
-			try {
-				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
-					Console.WriteLine (environmentVariable);
-			}
-			catch (System.Security.SecurityException exception) {
-				Console.WriteLine (exception.Message);
-				Console.WriteLine (exception);
-			}
-
-			Console.WriteLine ("I will add more useless code !!");
-			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
-					File.Create ("foo.txt");	
-					File.Delete ("foo.txt");
-				}
-			}
-			catch (IOException exception) {
-				Console.WriteLine (exception.Message);
-				Console.WriteLine (exception);
-			}
-		}
-	}
-
-	public class LongConstructorWithFields {
-		readonly int foo;
-		string bar, bar1, bar2, bar3;
-		object baz, baz1, baz2, baz3;
-
-		public LongConstructorWithFields () {
+    public LongConstructorWithReadonlyFields()
+    {
 			foo = 5;
 			bar = "MyString";
 			baz = new object ();
@@ -303,16 +261,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -325,46 +286,62 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 		}
 	}
 
-	public class LongConstructorWithoutFields {
-		public LongConstructorWithoutFields () {
+  public class LongConstructorWithFields
+  {
+    private readonly int foo;
+    private string bar, bar1, bar2, bar3;
+    private object baz, baz1, baz2, baz3;
+
+    public LongConstructorWithFields()
+    {
+			foo = 5;
+			bar = "MyString";
+			baz = new object ();
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
 			IList list = new ArrayList ();
 			list.Add ("Foo");
@@ -375,16 +352,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -397,46 +377,137 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 		}
 	}
 
+  public class LongConstructorWithoutFields
+  {
+    public LongConstructorWithoutFields()
+    {
+			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
+			IList list = new ArrayList ();
+			list.Add ("Foo");
+			list.Add (4);
+			list.Add (6);
 
-	public class MainWidget : Gtk.Bin {
+			IEnumerator listEnumerator = list.GetEnumerator ();
+			while (listEnumerator.MoveNext ())
+				Console.WriteLine (listEnumerator.Current);
+
+      try
+      {
+				list.Add ("Bar");
+				list.Add ('a');
+			}
+      catch (NotSupportedException exception)
+      {
+				Console.WriteLine (exception.Message);
+				Console.WriteLine (exception);
+			}
+
+      foreach (object value in list)
+      {
+				Console.Write (value);
+				Console.Write (Environment.NewLine);
+			}
+			
+			int x = 0;
+
+			for (int i = 0; i < 100; i++)
+				x++;
+			Console.WriteLine (x);
+	
+			string useless = "Useless String";
+
+      if (useless.Equals("Other useless"))
+      {
+				useless = String.Empty;
+				Console.WriteLine ("Other useless string");
+			}
+			
+			useless = String.Concat (useless," 1");
+			
+      for (int j = 0; j < useless.Length; j++)
+      {
+				if (useless[j] == 'u')
+					Console.WriteLine ("I have detected an u char");
+				else
+					Console.WriteLine ("I have detected an useless char");
+			}
+			
+      try
+      {
+				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
+					Console.WriteLine (environmentVariable);
+			}
+      catch (System.Security.SecurityException exception)
+      {
+				Console.WriteLine (exception.Message);
+				Console.WriteLine (exception);
+			}
+
+			Console.WriteLine ("I will add more useless code !!");
+			
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
+					File.Create ("foo.txt");	
+					File.Delete ("foo.txt");
+				}
+			}
+      catch (IOException exception)
+      {
+				Console.WriteLine (exception.Message);
+				Console.WriteLine (exception);
+			}
+		}
+	}
+
+  public class MainWidget : Gtk.Bin
+  {
 		protected virtual void Build () 
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
@@ -449,16 +520,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -471,38 +545,45 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
@@ -520,16 +601,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -542,45 +626,53 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 		}
 	}
 
-	public class MainDialog : Gtk.Dialog {
+  public class MainDialog : Gtk.Dialog
+  {
 		protected virtual void Build () 
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
@@ -593,16 +685,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -615,38 +710,45 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
@@ -664,16 +766,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -686,46 +791,53 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 		}
 	}
 
-	public class MainWindow : Gtk.Window {
-
+  public class MainWindow : Gtk.Window
+  {
 		protected virtual void Build () 
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
@@ -738,16 +850,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -760,38 +875,45 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
@@ -809,16 +931,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -831,46 +956,56 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 		}
+  }
 
-	}
+#if NETCOREAPP2_1
+#else
 
 	public class MainForm : Form {
+
 		public void InitializeComponent () 
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
@@ -1014,9 +1149,11 @@ namespace Test.Rules.Smells {
 		}
 	}
 
-	[TestFixture]
-	public class AvoidLongMethodsTest : MethodRuleTestFixture<AvoidLongMethodsRule> {
+#endif
 
+	[TestFixture]
+  public class AvoidLongMethodsTest : MethodRuleTestFixture<AvoidLongMethodsRule>
+  {
 		public void LongMethod () 
 		{
 			Console.WriteLine ("I'm writting a test, and I will fill a screen with some useless code");
@@ -1029,16 +1166,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -1051,38 +1191,45 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
@@ -1090,11 +1237,13 @@ namespace Test.Rules.Smells {
 
 		public void ShortMethod ()
 		{
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
@@ -1112,16 +1261,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -1134,38 +1286,45 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
@@ -1183,16 +1342,19 @@ namespace Test.Rules.Smells {
 			while (listEnumerator.MoveNext ())
 				Console.WriteLine (listEnumerator.Current);
 
-			try {
+      try
+      {
 				list.Add ("Bar");
 				list.Add ('a');
 			}
-			catch (NotSupportedException exception) {
+      catch (NotSupportedException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
-			foreach (object value in list) {
+      foreach (object value in list)
+      {
 				Console.Write (value);
 				Console.Write (Environment.NewLine);
 			}
@@ -1205,38 +1367,45 @@ namespace Test.Rules.Smells {
 	
 			string useless = "Useless String";
 
-			if (useless.Equals ("Other useless")) {
+      if (useless.Equals("Other useless"))
+      {
 				useless = String.Empty;
 				Console.WriteLine ("Other useless string");
 			}
 			
 			useless = String.Concat (useless," 1");
 			
-			for (int j = 0; j < useless.Length; j++) {
+      for (int j = 0; j < useless.Length; j++)
+      {
 				if (useless[j] == 'u')
 					Console.WriteLine ("I have detected an u char");
 				else
 					Console.WriteLine ("I have detected an useless char");
 			}
 			
-			try {
+      try
+      {
 				foreach (string environmentVariable in Environment.GetEnvironmentVariables ().Keys)
 					Console.WriteLine (environmentVariable);
 			}
-			catch (System.Security.SecurityException exception) {
+      catch (System.Security.SecurityException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
 
 			Console.WriteLine ("I will add more useless code !!");
 			
-			try {
-				if (!(File.Exists ("foo.txt"))) {
+      try
+      {
+        if (!(File.Exists("foo.txt")))
+        {
 					File.Create ("foo.txt");	
 					File.Delete ("foo.txt");
 				}
 			}
-			catch (IOException exception) {
+      catch (IOException exception)
+      {
 				Console.WriteLine (exception.Message);
 				Console.WriteLine (exception);
 			}
@@ -1308,6 +1477,9 @@ namespace Test.Rules.Smells {
 			AssertRuleFailure<AvoidLongMethodsTest> ("InitializeComponent", 1);
 		}
 
+#if NETCOREAPP2_1
+#else
+
 		[Test]
 		public void FormInitializeComponentTest () 
 		{
@@ -1319,6 +1491,8 @@ namespace Test.Rules.Smells {
 		{
 			AssertRuleFailure<MainForm> ("Build", 1);
 		}
+
+#endif
 
 		[Test]
 		public void LongStaticConstructorWithoutFieldsTest () 
@@ -1352,8 +1526,8 @@ namespace Test.Rules.Smells {
 	}
 
 	[TestFixture]
-	public class AvoidLongMethods_IlTest : AvoidLongMethodsTest {
-
+  public class AvoidLongMethods_IlTest : AvoidLongMethodsTest
+  {
 		public AvoidLongMethods_IlTest ()
 		{
 			Rule.UseIlApproximation = true;
@@ -1361,8 +1535,8 @@ namespace Test.Rules.Smells {
 	}
 
 	[TestFixture]
-	public class AvoidLongMethods_SlocTest : AvoidLongMethodsTest {
-
+  public class AvoidLongMethods_SlocTest : AvoidLongMethodsTest
+  {
 		public AvoidLongMethods_SlocTest ()
 		{
 			Rule.UseIlApproximation = false;

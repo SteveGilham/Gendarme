@@ -36,8 +36,8 @@ using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 using System.Runtime.InteropServices;
 
-namespace Test.Rules.NUnit {
-
+namespace Test.Rules.NUnit
+{
 	[TestFixture]
 	public class ProvideMessageOnAssertCallsTest : MethodRuleTestFixture<ProvideMessageOnAssertCallsRule> {
 
@@ -107,7 +107,6 @@ namespace Test.Rules.NUnit {
 		private void DoesNotApplyEmpty ()
 		{
 		}
-
 
 		[Test]
 		public void DoesNotApply ()

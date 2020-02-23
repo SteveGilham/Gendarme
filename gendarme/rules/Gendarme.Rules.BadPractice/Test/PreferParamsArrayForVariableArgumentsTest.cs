@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for PreferParamsArrayForVariableArgumentsRule
 //
 // Authors:
@@ -38,67 +38,74 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.BadPractice {
-
-	[TestFixture]
-	public class PreferParamsArrayForVariableArgumentsTest : MethodRuleTestFixture<PreferParamsArrayForVariableArgumentsRule> {
-
-		// special case, this return false for HasParameters
-		private void ShowItems_NoParameter (__arglist)
-		{
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class PreferParamsArrayForVariableArgumentsTest : MethodRuleTestFixture<PreferParamsArrayForVariableArgumentsRule>
+  {
+    // special case, this return false for HasParameters
+    private void ShowItems_NoParameter(__arglist)
+    {
+#if NETCOREAPP2_1
+#else
 			ArgIterator args = new ArgIterator (__arglist);
 			for (int i = 0; i < args.GetRemainingCount (); i++) {
 // gmcs cannot compile __refvalue correctly - bnc 569539
 #if !__MonoCS__
 				Console.WriteLine (__refvalue (args.GetNextArg (), string));
 #endif
-			}
-		}
-
-		public void ShowItems_Bad (string header, __arglist)
-		{
-			Console.WriteLine (header);
-			ArgIterator args = new ArgIterator (__arglist);
-			for (int i = 0; i < args.GetRemainingCount (); i++) {
-// gmcs cannot compile __refvalue correctly - bnc 569539
-#if !__MonoCS__
-				Console.WriteLine (__refvalue (args.GetNextArg (), string));
+      }
 #endif
-			}
-		}
+    }
 
-		[Test]
-		public void ArgIterator ()
-		{
-			AssertRuleFailure<PreferParamsArrayForVariableArgumentsTest> ("ShowItems_NoParameter", 1);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "private");
+    public void ShowItems_Bad(string header, __arglist)
+    {
+#if NETCOREAPP2_1
+#else
+      Console.WriteLine(header);
+      ArgIterator args = new ArgIterator(__arglist);
+      for (int i = 0; i < args.GetRemainingCount(); i++)
+      {
+        // gmcs cannot compile __refvalue correctly - bnc 569539
+#if !__MonoCS__
+        Console.WriteLine(__refvalue(args.GetNextArg(), string));
+#endif
+      }
+#endif
+    }
 
-			AssertRuleFailure<PreferParamsArrayForVariableArgumentsTest> ("ShowItems_Bad", 1);
-			Assert.AreEqual (Severity.Critical, Runner.Defects [0].Severity, "public");
-		}
+    [Test]
+    public void ArgIterator()
+    {
+      AssertRuleFailure<PreferParamsArrayForVariableArgumentsTest>("ShowItems_NoParameter", 1);
+      Assert.AreEqual(Severity.High, Runner.Defects[0].Severity, "private");
 
-		[DllImport ("libc.dll")]
-		static extern int printf (string format, __arglist);
+      AssertRuleFailure<PreferParamsArrayForVariableArgumentsTest>("ShowItems_Bad", 1);
+      Assert.AreEqual(Severity.Critical, Runner.Defects[0].Severity, "public");
+    }
 
-		[Test]
-		public void Interop ()
-		{
-			AssertRuleSuccess<PreferParamsArrayForVariableArgumentsTest> ("printf");
-		}
+    [DllImport("libc.dll")]
+    static extern int printf(string format, __arglist);
 
-		public void ShowItems_Params (string header, params string [] items)
-		{
-			Console.WriteLine (header);
-			for (int i = 0; i < items.Length; i++) {
-				Console.WriteLine (items [i]);
-			}
-		}
+    [Test]
+    public void Interop()
+    {
+      AssertRuleSuccess<PreferParamsArrayForVariableArgumentsTest>("printf");
+    }
 
-		[Test]
-		public void Params ()
-		{
-			AssertRuleSuccess<PreferParamsArrayForVariableArgumentsTest> ("ShowItems_Params");
-		}
-	}
+    public void ShowItems_Params(string header, params string[] items)
+    {
+      Console.WriteLine(header);
+      for (int i = 0; i < items.Length; i++)
+      {
+        Console.WriteLine(items[i]);
+      }
+    }
+
+    [Test]
+    public void Params()
+    {
+      AssertRuleSuccess<PreferParamsArrayForVariableArgumentsTest>("ShowItems_Params");
+    }
+  }
 }
-

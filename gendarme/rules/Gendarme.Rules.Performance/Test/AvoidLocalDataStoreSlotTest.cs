@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,7 +27,14 @@
 //
 
 using System;
+
+#if NETCOREAPP2_1
+#else
+
 using System.Runtime.Remoting.Contexts;
+
+#endif
+
 using System.Threading;
 
 using Gendarme.Rules.Performance;
@@ -36,188 +43,209 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Performance {
+namespace Test.Rules.Performance
+{
+  [TestFixture]
+  public class AvoidLocalDataStoreSlotTest : MethodRuleTestFixture<AvoidLocalDataStoreSlotRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no body
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no calls to other methods
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class AvoidLocalDataStoreSlotTest : MethodRuleTestFixture<AvoidLocalDataStoreSlotRule> {
+    private class BadThreadLocalStorage
+    {
+      private LocalDataStoreSlot lds;
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no body
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no calls to other methods
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+      public BadThreadLocalStorage()
+      {
+        lds = Thread.AllocateDataSlot();
+      }
 
-		class BadThreadLocalStorage {
+      private byte[] Key
+      {
+        get
+        {
+          return (byte[])Thread.GetData(lds);
+        }
+        set
+        {
+          Thread.SetData(lds, value);
+        }
+      }
 
-			LocalDataStoreSlot lds;
+      private byte[] GetKeyCopy()
+      {
+        return (byte[])(Thread.GetData(lds) as byte[]).Clone();
+      }
+    }
 
-			public BadThreadLocalStorage ()
-			{
-				lds = Thread.AllocateDataSlot ();
-			}
+    private class BadNamedThreadLocalStorage
+    {
+      public BadNamedThreadLocalStorage()
+      {
+        Thread.AllocateNamedDataSlot("bad");
+      }
 
-			private byte [] Key {
-				get {
-					return (byte []) Thread.GetData (lds);
-				}
-				set {
-					Thread.SetData (lds, value);
-				}
-			}
+      ~BadNamedThreadLocalStorage()
+      {
+        Thread.FreeNamedDataSlot("bad");
+      }
 
-			private byte [] GetKeyCopy ()
-			{
-				return (byte []) (Thread.GetData (lds) as byte []).Clone ();
-			}
-		}
+      private LocalDataStoreSlot GetLocalDataStoreSlot()
+      {
+        return Thread.GetNamedDataSlot("bad");
+      }
 
-		class BadNamedThreadLocalStorage {
+      private byte[] Key
+      {
+        get
+        {
+          return (byte[])Thread.GetData(GetLocalDataStoreSlot());
+        }
+        set
+        {
+          Thread.SetData(GetLocalDataStoreSlot(), value);
+        }
+      }
 
-			public BadNamedThreadLocalStorage ()
-			{
-				Thread.AllocateNamedDataSlot ("bad");
-			}
+      private byte[] GetKeyCopy()
+      {
+        return (byte[])(Thread.GetData(GetLocalDataStoreSlot()) as byte[]).Clone();
+      }
+    }
 
-			~BadNamedThreadLocalStorage ()
-			{
-				Thread.FreeNamedDataSlot ("bad");
-			}
+    private class GoodThreadLocalStorage
+    {
+      [ThreadStatic]
+      private static byte[] key;
 
-			LocalDataStoreSlot GetLocalDataStoreSlot ()
-			{
-				return Thread.GetNamedDataSlot ("bad");
-			}
+      private byte[] Key
+      {
+        get { return key; }
+        set { key = (byte[])value.Clone(); }
+      }
 
-			private byte [] Key {
-				get {
-					return (byte []) Thread.GetData (GetLocalDataStoreSlot ());
-				}
-				set {
-					Thread.SetData (GetLocalDataStoreSlot (), value);
-				}
-			}
+      private byte[] GetKeyCopy()
+      {
+        return (byte[])key.Clone();
+      }
+    }
 
-			private byte [] GetKeyCopy ()
-			{
-				return (byte []) (Thread.GetData (GetLocalDataStoreSlot ()) as byte []).Clone ();
-			}
-		}
+    [Test]
+    public void ThreadLocalStorage()
+    {
+      AssertRuleFailure<BadThreadLocalStorage>(".ctor");
+      AssertRuleFailure<BadThreadLocalStorage>("get_Key");
+      AssertRuleFailure<BadThreadLocalStorage>("set_Key");
+      AssertRuleFailure<BadThreadLocalStorage>("GetKeyCopy");
 
-		class GoodThreadLocalStorage {
+      AssertRuleFailure<BadNamedThreadLocalStorage>(".ctor");
+      AssertRuleFailure<BadNamedThreadLocalStorage>("Finalize");
+      AssertRuleFailure<BadNamedThreadLocalStorage>("GetLocalDataStoreSlot");
+      AssertRuleFailure<BadNamedThreadLocalStorage>("get_Key");
+      AssertRuleFailure<BadNamedThreadLocalStorage>("set_Key");
+      AssertRuleFailure<BadNamedThreadLocalStorage>("GetKeyCopy");
 
-			[ThreadStatic]
-			static byte[] key;
+      // no call
+      AssertRuleDoesNotApply<GoodThreadLocalStorage>("get_Key");
+      AssertRuleSuccess<GoodThreadLocalStorage>("set_Key");
+      AssertRuleSuccess<GoodThreadLocalStorage>("GetKeyCopy");
+    }
 
-			private byte [] Key {
-				get { return key; }
-				set { key = (byte[]) value.Clone (); }
-			}
+#if NETCOREAPP2_1
+#else
 
-			private byte [] GetKeyCopy ()
-			{
-				return (byte[]) key.Clone ();
-			}
-		}
+    private class BadContextLocalStorage
+    {
+      private LocalDataStoreSlot lds;
 
-		[Test]
-		public void ThreadLocalStorage ()
-		{
-			AssertRuleFailure<BadThreadLocalStorage> (".ctor");
-			AssertRuleFailure<BadThreadLocalStorage> ("get_Key");
-			AssertRuleFailure<BadThreadLocalStorage> ("set_Key");
-			AssertRuleFailure<BadThreadLocalStorage> ("GetKeyCopy");
+      public BadContextLocalStorage()
+      {
+        lds = Context.AllocateDataSlot();
+      }
 
-			AssertRuleFailure<BadNamedThreadLocalStorage> (".ctor");
-			AssertRuleFailure<BadNamedThreadLocalStorage> ("Finalize");
-			AssertRuleFailure<BadNamedThreadLocalStorage> ("GetLocalDataStoreSlot");
-			AssertRuleFailure<BadNamedThreadLocalStorage> ("get_Key");
-			AssertRuleFailure<BadNamedThreadLocalStorage> ("set_Key");
-			AssertRuleFailure<BadNamedThreadLocalStorage> ("GetKeyCopy");
+      private byte[] Key
+      {
+        get
+        {
+          return (byte[])Context.GetData(lds);
+        }
+        set
+        {
+          Context.SetData(lds, value);
+        }
+      }
 
-			// no call
-			AssertRuleDoesNotApply<GoodThreadLocalStorage> ("get_Key");
-			AssertRuleSuccess<GoodThreadLocalStorage> ("set_Key");
-			AssertRuleSuccess<GoodThreadLocalStorage> ("GetKeyCopy");
-		}
+      private byte[] GetKeyCopy()
+      {
+        return (byte[])(Context.GetData(lds) as byte[]).Clone();
+      }
+    }
 
-		class BadContextLocalStorage {
+    private class BadNamedContextLocalStorage
+    {
+      public BadNamedContextLocalStorage()
+      {
+        Context.AllocateNamedDataSlot("bad");
+      }
 
-			LocalDataStoreSlot lds;
+      ~BadNamedContextLocalStorage()
+      {
+        Context.FreeNamedDataSlot("bad");
+      }
 
-			public BadContextLocalStorage ()
-			{
-				lds = Context.AllocateDataSlot ();
-			}
+      private LocalDataStoreSlot GetLocalDataStoreSlot()
+      {
+        return Context.GetNamedDataSlot("bad");
+      }
 
-			private byte [] Key {
-				get { 
-					return (byte[]) Context.GetData (lds);
-				}
-				set {
-					Context.SetData (lds, value);
-				}
-			}
+      private byte[] Key
+      {
+        get
+        {
+          return (byte[])Context.GetData(GetLocalDataStoreSlot());
+        }
+        set
+        {
+          Context.SetData(GetLocalDataStoreSlot(), value);
+        }
+      }
 
-			private byte [] GetKeyCopy ()
-			{
-				return (byte []) (Context.GetData (lds) as byte []).Clone ();
-			}
-		}
+      private byte[] GetKeyCopy()
+      {
+        return (byte[])(Context.GetData(GetLocalDataStoreSlot()) as byte[]).Clone();
+      }
+    }
 
-		class BadNamedContextLocalStorage {
+#endif
 
-			public BadNamedContextLocalStorage ()
-			{
-				Context.AllocateNamedDataSlot ("bad");
-			}
+    private class GoodContextLocalStorage
+    {
+      [ContextStatic]
+      private static byte[] key;
 
-			~BadNamedContextLocalStorage ()
-			{
-				Context.FreeNamedDataSlot ("bad");
-			}
+      private byte[] Key
+      {
+        get { return key; }
+        set { key = (byte[])value.Clone(); }
+      }
 
-			LocalDataStoreSlot GetLocalDataStoreSlot ()
-			{
-				return Context.GetNamedDataSlot ("bad");
-			}
+      private byte[] GetKeyCopy()
+      {
+        return (byte[])key.Clone();
+      }
+    }
 
-			private byte [] Key {
-				get { 
-					return (byte[]) Context.GetData (GetLocalDataStoreSlot ());
-				}
-				set {
-					Context.SetData (GetLocalDataStoreSlot (), value);
-				}
-			}
-
-			private byte [] GetKeyCopy ()
-			{
-				return (byte []) (Context.GetData (GetLocalDataStoreSlot ()) as byte []).Clone ();
-			}
-		}
-
-		class GoodContextLocalStorage {
-
-			[ContextStatic]
-			static byte [] key;
-
-			private byte [] Key {
-				get { return key; }
-				set { key = (byte[]) value.Clone (); }
-			}
-
-			private byte [] GetKeyCopy ()
-			{
-				return (byte []) key.Clone ();
-			}
-		}
-
-		[Test]
-		public void ContextLocalStorage ()
-		{
+    [Test]
+    public void ContextLocalStorage()
+    {
+#if NETCOREAPP2_1
+#else
 			AssertRuleFailure<BadContextLocalStorage> (".ctor");
 			AssertRuleFailure<BadContextLocalStorage> ("get_Key");
 			AssertRuleFailure<BadContextLocalStorage> ("set_Key");
@@ -229,29 +257,32 @@ namespace Test.Rules.Performance {
 			AssertRuleFailure<BadNamedContextLocalStorage> ("get_Key");
 			AssertRuleFailure<BadNamedContextLocalStorage> ("set_Key");
 			AssertRuleFailure<BadNamedContextLocalStorage> ("GetKeyCopy");
+#endif
 
-			// no call
-			AssertRuleDoesNotApply<GoodContextLocalStorage> ("get_Key");
-			AssertRuleSuccess<GoodContextLocalStorage> ("set_Key");
-			AssertRuleSuccess<GoodContextLocalStorage> ("GetKeyCopy");
-		}
+      // no call
+      AssertRuleDoesNotApply<GoodContextLocalStorage>("get_Key");
+      AssertRuleSuccess<GoodContextLocalStorage>("set_Key");
+      AssertRuleSuccess<GoodContextLocalStorage>("GetKeyCopy");
+    }
 
-		void UsingThread ()
-		{
-			Console.WriteLine (Thread.GetDomainID ());
-		}
+    private void UsingThread()
+    {
+      Console.WriteLine(Thread.GetDomainID());
+    }
 
-		void UsingContext ()
-		{
-			Console.WriteLine (Context.DefaultContext.ContextID);
-		}
+    private void UsingContext()
+    {
+#if NETCOREAPP2_1
+#else
+      Console.WriteLine(Context.DefaultContext.ContextID);
+#endif
+    }
 
-		[Test]
-		public void OtherUsage ()
-		{
-			AssertRuleSuccess<AvoidLocalDataStoreSlotTest> ("UsingThread");
-			AssertRuleSuccess<AvoidLocalDataStoreSlotTest> ("UsingContext");
-		}
-	}
+    [Test]
+    public void OtherUsage()
+    {
+      AssertRuleSuccess<AvoidLocalDataStoreSlotTest>("UsingThread");
+      AssertRuleSuccess<AvoidLocalDataStoreSlotTest>("UsingContext");
+    }
+  }
 }
-

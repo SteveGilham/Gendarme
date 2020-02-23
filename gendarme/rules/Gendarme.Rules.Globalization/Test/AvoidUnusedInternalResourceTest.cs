@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,43 +35,45 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Mono.Cecil;
 
-namespace Tests.Rules.Globalization {
-
-	[TestFixture]
-	public sealed class AvoidUnusedInternalResourceTest : MethodRuleTestFixture<AvoidUnusedInternalResourceRule> {
-
-		public class CallingClass {
-			private void Call ()
-			{
-				Console.WriteLine (InternalResource.CalledString);
-				Console.WriteLine (PublicResource.CalledString);
-
+namespace Tests.Rules.Globalization
+{
+  [TestFixture]
+  public sealed class AvoidUnusedInternalResourceTest : MethodRuleTestFixture<AvoidUnusedInternalResourceRule>
+  {
+    public class CallingClass
+    {
+      private void Call()
+      {
+        Console.WriteLine(InternalResource.CalledString);
+        Console.WriteLine(PublicResource.CalledString);
+#if NETCOREAPP2_1
+#else
 				Console.WriteLine (InternalResource.ImageUsed.Size);
-			}
-		}
+#endif
+      }
+    }
 
-		[Test]
-		public void InternalResources ()
-		{
-			AssertRuleSuccess<InternalResource> ("get_CalledString");
-			AssertRuleFailure<InternalResource> ("get_UncalledString");
+    [Test]
+    public void InternalResources()
+    {
+      AssertRuleSuccess<InternalResource>("get_CalledString");
+      AssertRuleFailure<InternalResource>("get_UncalledString");
 
-			AssertRuleSuccess<InternalResource> ("get_ImageUsed");
-			AssertRuleFailure<InternalResource> ("get_ImageUnused");
-		}
+      AssertRuleSuccess<InternalResource>("get_ImageUsed");
+      AssertRuleFailure<InternalResource>("get_ImageUnused");
+    }
 
-		[Test]
-		public void PublicResources ()
-		{
-			AssertRuleDoesNotApply<PublicResource> ("get_CalledString");
-			AssertRuleDoesNotApply<PublicResource> ("get_UncalledString");
-		}
+    [Test]
+    public void PublicResources()
+    {
+      AssertRuleDoesNotApply<PublicResource>("get_CalledString");
+      AssertRuleDoesNotApply<PublicResource>("get_UncalledString");
+    }
 
-		[Test]
-		public void NotResources ()
-		{
-			AssertRuleDoesNotApply<CallingClass> ("Call");
-		}
-	}
-
+    [Test]
+    public void NotResources()
+    {
+      AssertRuleDoesNotApply<CallingClass>("Call");
+    }
+  }
 }

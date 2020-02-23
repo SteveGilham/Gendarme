@@ -41,10 +41,10 @@ using Test.Rules.Helpers;
 // test on module using a FxCop-like rule syntax (which gets remapped to Gendarme)
 [module: SuppressMessage ("Unit.Test", "CA9999:TestingMapping")]
 
-namespace Test.Framework {
-
-	public class SuppressAssemblyRule : Rule, IAssemblyRule {
-
+namespace Test.Framework
+{
+  public class SuppressAssemblyRule : Rule, IAssemblyRule
+  {
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			return RuleResult.Success;
@@ -52,8 +52,8 @@ namespace Test.Framework {
 	}
 
 	[TestFixture]
-	public class SuppressMessageAttribute_AssemblyTest : AssemblyRuleTestFixture<SuppressAssemblyRule> {
-
+  public class SuppressMessageAttribute_AssemblyTest : AssemblyRuleTestFixture<SuppressAssemblyRule>
+  {
         [OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
@@ -78,8 +78,8 @@ namespace Test.Framework {
 
 	// we need to be able to distinguish between Assembly and Module
 	[FxCopCompatibility ("Unit.Test", "CA9999:TestingMapping")]
-	public class SuppressModuleRule : Rule, IAssemblyRule {
-
+  public class SuppressModuleRule : Rule, IAssemblyRule
+  {
 		public RuleResult CheckAssembly (AssemblyDefinition assembly)
 		{
 			Runner.Report (assembly.MainModule, Severity.Audit, Confidence.Low);
@@ -88,8 +88,8 @@ namespace Test.Framework {
 	}
 
 	[TestFixture]
-	public class SuppressMessageAttribute_ModuleTest : AssemblyRuleTestFixture<SuppressModuleRule> {
-
+  public class SuppressMessageAttribute_ModuleTest : AssemblyRuleTestFixture<SuppressModuleRule>
+  {
         [OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
@@ -112,23 +112,27 @@ namespace Test.Framework {
 		}
 	}
 
-	public class SuppressTypeRule : Rule, ITypeRule {
-
+  public class SuppressTypeRule : Rule, ITypeRule
+  {
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			if (type.HasEvents) {
+      if (type.HasEvents)
+      {
 				Runner.Report (type.Events [0], Severity.Critical, Confidence.Total);
 				return Runner.CurrentRuleResult;
 			}
-			if (type.HasProperties) {
+      if (type.HasProperties)
+      {
 				Runner.Report (type.Properties [0], Severity.Critical, Confidence.Total);
 				return Runner.CurrentRuleResult;
 			}
-			if (type.HasFields) {
+      if (type.HasFields)
+      {
 				Runner.Report (type.Fields [0], Severity.Critical, Confidence.Total);
 				return Runner.CurrentRuleResult;
 			}
-			if (type.HasGenericParameters) {
+      if (type.HasGenericParameters)
+      {
 				Runner.Report (type.GenericParameters [0], Severity.Critical, Confidence.Total);
 				return Runner.CurrentRuleResult;
 			}
@@ -137,8 +141,8 @@ namespace Test.Framework {
 	}
 
 	[TestFixture]
-	public class SuppressMessageAttribute_TypeTest : TypeRuleTestFixture<SuppressTypeRule> {
-
+  public class SuppressMessageAttribute_TypeTest : TypeRuleTestFixture<SuppressTypeRule>
+  {
         [OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
@@ -146,14 +150,17 @@ namespace Test.Framework {
 		}
 
 		[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
-		class ClassDirectlySuppressed {
+    private class ClassDirectlySuppressed
+    {
 		}
 
 		// see GlobalSuppressions.cs
-		class ClassIndirectlySuppressed {
+    private class ClassIndirectlySuppressed
+    {
 		}
 
-		class ClassNotSuppressed {
+    private class ClassNotSuppressed
+    {
 		}
 
 		[Test]
@@ -167,9 +174,9 @@ namespace Test.Framework {
 		}
 
 		[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
-		delegate void DelegateDirectlySuppressed (int x);
+    private delegate void DelegateDirectlySuppressed(int x);
 
-		delegate void DelegateNotSuppressed ();
+    private delegate void DelegateNotSuppressed();
 
 		[Test]
 		// cover AttributeTargets.Delegate
@@ -181,10 +188,12 @@ namespace Test.Framework {
 		}
 
 		[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
-		enum EnumDirectlySuppressed {
+    private enum EnumDirectlySuppressed
+    {
 		}
 
-		enum EnumNotSuppressed {
+    private enum EnumNotSuppressed
+    {
 		}
 
 		[Test]
@@ -196,13 +205,15 @@ namespace Test.Framework {
 			AssertRuleFailure<EnumNotSuppressed> ();
 		}
 
-		class EventDirectlySuppressed {
+    private class EventDirectlySuppressed
+    {
 			[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
-			event EventHandler<EventArgs> Event;
+      private event EventHandler<EventArgs> Event;
 		}
 
-		class EventNotSuppressed {
-			event EventHandler<EventArgs> Event;
+    private class EventNotSuppressed
+    {
+      private event EventHandler<EventArgs> Event;
 		}
 
 		[Test]
@@ -214,12 +225,14 @@ namespace Test.Framework {
 			AssertRuleFailure<EventNotSuppressed> ();
 		}
 
-		class FieldDirectlySuppressed {
+    private class FieldDirectlySuppressed
+    {
 			[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
 			public int Field;
 		}
 
-		class FieldNotSuppressed {
+    private class FieldNotSuppressed
+    {
 			public int Field;
 		}
 
@@ -232,10 +245,12 @@ namespace Test.Framework {
 			AssertRuleFailure<FieldNotSuppressed> ();
 		}
 
-		class GenericParameterDirectlySuppressed<[SuppressMessage ("Test.Framework", "SuppressTypeRule")] T> {
+    private class GenericParameterDirectlySuppressed<[SuppressMessage("Test.Framework", "SuppressTypeRule")] T>
+    {
 		}
 
-		class GenericParameterNotSuppressed<T> {
+    private class GenericParameterNotSuppressed<T>
+    {
 		}
 
 		[Test]
@@ -248,10 +263,12 @@ namespace Test.Framework {
 		}
 
 		[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
-		interface InterfaceDirectlySuppressed {
+    private interface InterfaceDirectlySuppressed
+    {
 		}
 
-		interface InterfaceNotSuppressed {
+    private interface InterfaceNotSuppressed
+    {
 		}
 
 		[Test]
@@ -263,12 +280,14 @@ namespace Test.Framework {
 			AssertRuleSuccess<InterfaceNotSuppressed> ();
 		}
 
-		class PropertyDirectlySuppressed {
+    private class PropertyDirectlySuppressed
+    {
 			[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
 			public int Property { get; set; }
 		}
 
-		class PropertyNotSuppressed {
+    private class PropertyNotSuppressed
+    {
 			public int Property { get; set; }
 		}
 
@@ -282,10 +301,12 @@ namespace Test.Framework {
 		}
 
 		[SuppressMessage ("Test.Framework", "SuppressTypeRule")]
-		struct StructDirectlySuppressed {
+    private struct StructDirectlySuppressed
+    {
 		}
 
-		struct StructNotSuppressed {
+    private struct StructNotSuppressed
+    {
 		}
 
 		[Test]
@@ -298,19 +319,22 @@ namespace Test.Framework {
 		}
 	}
 
-	public class SuppressMethodRule : Rule, IMethodRule {
-
+  public class SuppressMethodRule : Rule, IMethodRule
+  {
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (method.HasGenericParameters) {
+      if (method.HasGenericParameters)
+      {
 				Runner.Report (method.GenericParameters [0], Severity.Critical, Confidence.Total);
 				return Runner.CurrentRuleResult;
 			}
-			if (method.HasParameters) {
+      if (method.HasParameters)
+      {
 				Runner.Report (method.Parameters [0], Severity.Critical, Confidence.Total);
 				return Runner.CurrentRuleResult;
 			}
-			if (method.ReturnType.FullName != "System.Void") {
+      if (method.ReturnType.FullName != "System.Void")
+      {
 				Runner.Report (method.MethodReturnType, Severity.Critical, Confidence.Total);
 				return Runner.CurrentRuleResult;
 			}
@@ -319,16 +343,16 @@ namespace Test.Framework {
 	}
 
 	[TestFixture]
-	public class SuppressMessageAttribute_MethodTest : MethodRuleTestFixture<SuppressMethodRule> {
-
+  public class SuppressMessageAttribute_MethodTest : MethodRuleTestFixture<SuppressMethodRule>
+  {
         [OneTimeSetUp]
 		public void FixtureSetUp ()
 		{
 			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
 		}
 
-		class TestCases {
-
+    private class TestCases
+    {
 			[SuppressMessage ("Test.Framework", "SuppressMethodRule")]
 			static TestCases ()
 			{

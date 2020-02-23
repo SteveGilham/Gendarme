@@ -36,8 +36,8 @@ using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Security.Cas {
-
+namespace Gendarme.Rules.Security.Cas
+{
 	/// <summary>
 	/// This rule fires if a type implements <c>System.Runtime.Serialization.ISerializable</c>
 	/// but the <c>GetObjectData</c> method is not protected with a <c>Demand</c> or 
@@ -68,15 +68,20 @@ namespace Gendarme.Rules.Security.Cas {
 
 	[Problem ("The method is not protected correctly against a serialization attack.")]
 	[Solution ("A security Demand for SerializationFormatter should be added to protect the method.")]
-	public class SecureGetObjectDataOverridesRule : Rule, ITypeRule {
-
+  public class SecureGetObjectDataOverridesRule : Rule, ITypeRule
+  {
 		private const string NotFound = "No [Link]Demand was found.";
 
-		static PermissionSet _ruleSet;
+#if NETSTANDARD2_0
+#else
+    private static PermissionSet _ruleSet;
 
-		static PermissionSet RuleSet {
-			get {
-				if (_ruleSet == null) {
+    private static PermissionSet RuleSet
+    {
+      get
+      {
+        if (_ruleSet == null)
+        {
 					SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.SerializationFormatter);
 					_ruleSet = new PermissionSet (PermissionState.None);
 					_ruleSet.AddPermission (sp);
@@ -90,8 +95,13 @@ namespace Gendarme.Rules.Security.Cas {
             Name = "ISerializable"
         };
 
+#endif
+
 		public RuleResult CheckType (TypeDefinition type)
 		{
+#if NETSTANDARD2_0
+      return RuleResult.DoesNotApply;
+#else
 			// rule applies only to types that implements ISerializable
 			if (!type.Implements (iserializable))
 				return RuleResult.DoesNotApply;
@@ -103,21 +113,25 @@ namespace Gendarme.Rules.Security.Cas {
 			// *** ok, the rule applies! ***
 
 			// is there any security applied ?
-			if (!method.HasSecurityDeclarations) {
+      if (!method.HasSecurityDeclarations)
+      {
 				Runner.Report (method, Severity.High, Confidence.Total, NotFound);
 				return RuleResult.Failure;
 			}
 
 			// the SerializationFormatter must be a subset of the one (of the) demand(s)
 			bool demand = false;
-			foreach (SecurityDeclaration declsec in method.SecurityDeclarations) {
-				switch (declsec.Action) {
+      foreach (SecurityDeclaration declsec in method.SecurityDeclarations)
+      {
+        switch (declsec.Action)
+        {
 				case Mono.Cecil.SecurityAction.Demand:
 				case Mono.Cecil.SecurityAction.NonCasDemand:
 				case Mono.Cecil.SecurityAction.LinkDemand:
 				case Mono.Cecil.SecurityAction.NonCasLinkDemand:
 					demand = true;
-					if (!RuleSet.IsSubsetOf (declsec.ToPermissionSet ())) {
+            if (!RuleSet.IsSubsetOf(declsec.ToPermissionSet()))
+            {
 						string message = String.Format (CultureInfo.InvariantCulture,
 							"{0} is not a subset of {1} permission set",
 							"SerializationFormatter", declsec.Action);
@@ -132,6 +146,7 @@ namespace Gendarme.Rules.Security.Cas {
 				Runner.Report (method, Severity.High, Confidence.Total, NotFound);
 
 			return Runner.CurrentRuleResult;
+#endif
 		}
 	}
 }

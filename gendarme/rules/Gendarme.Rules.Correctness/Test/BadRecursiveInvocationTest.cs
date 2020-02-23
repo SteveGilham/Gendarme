@@ -39,13 +39,13 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Correctness {
-
+namespace Test.Rules.Correctness
+{
 #pragma warning disable 162
 
 	[TestFixture]
-	public class BadRecursiveInvocationTest : MethodRuleTestFixture<BadRecursiveInvocationRule> {
-
+  public class BadRecursiveInvocationTest : MethodRuleTestFixture<BadRecursiveInvocationRule>
+  {
 		[Test]
 		public void DoesNotApply ()
 		{
@@ -55,48 +55,62 @@ namespace Test.Rules.Correctness {
 			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
 		}
 
-		class BadRec {
+    private class BadRec
+    {
+      /* This should be an error. */
 
-			/* This should be an error. */
-			public int Foo {
+      public int Foo
+      {
 				get { return Foo; }
 			}
 
 			/* This should be an error. */
-			public int OnePlusFoo {
+
+      public int OnePlusFoo
+      {
 				get { return 1 + OnePlusFoo; }
 			}
 
 			/* This should be an error. */
-			public int FooPlusOne {
+
+      public int FooPlusOne
+      {
 				get { return FooPlusOne + 1; }
 			}
 
-			public static int StaticFooPlusOne {
+      public static int StaticFooPlusOne
+      {
 				get { return StaticFooPlusOne + 1; }
 			}
 
 			/* correct */
-			public int Bar {
+
+      public int Bar
+      {
 				get { return -1; }
 			}
 
 			/* a more complex recursion */
-			public int FooBar {
+
+      public int FooBar
+      {
 				get { return BarFoo; }
 			}
 
-			public int BarFoo {
+      public int BarFoo
+      {
 				get { return FooBar; }
 			}
 
 			/* This should be fine, as it uses 'base.' */
+
 			public override int GetHashCode ()
 			{
 				return base.GetHashCode ();
 			}
 			
 			/* not fine, missing 'base.' */
+
 			public override bool Equals (object obzekt)
 			{
 				return Equals (obzekt);
@@ -149,12 +163,17 @@ namespace Test.Rules.Correctness {
 				rec.AnotherInstance ();
 			}
 
+#if NETCOREAPP2_1
+#else
+
 			public void Assert ()
 			{
 				new PermissionSet (PermissionState.None).Assert ();
 			}
 
-			static Helper help;
+#endif
+      private static Helper help;
+
 			public static void Write (bool value)
 			{
 				help.Write (value);
@@ -167,7 +186,8 @@ namespace Test.Rules.Correctness {
 			}
 		}
 
-		class Helper {
+    private class Helper
+    {
 			public void Write (bool value)
 			{
 			}
@@ -246,8 +266,8 @@ namespace Test.Rules.Correctness {
 		}
 
 		// test case provided by Richard Birkby
-		internal sealed class FalsePositive7 {
-
+    internal sealed class FalsePositive7
+    {
 			public void Run ()
 			{
 				GetType ();
@@ -272,8 +292,8 @@ namespace Test.Rules.Correctness {
 			AssertRuleSuccess<FalsePositive7> ();
 		}
 
-		internal class InterfaceCallGood : IDeserializationCallback {
-
+    internal class InterfaceCallGood : IDeserializationCallback
+    {
 			protected virtual void OnDeserialization (object sender)
 			{
 				((IDeserializationCallback) this).OnDeserialization (sender);
@@ -285,8 +305,8 @@ namespace Test.Rules.Correctness {
 			}
 		}
 
-		internal class InterfaceCallBad : IDeserializationCallback {
-
+    internal class InterfaceCallBad : IDeserializationCallback
+    {
 			void IDeserializationCallback.OnDeserialization (object sender)
 			{
 				// uho
@@ -303,8 +323,8 @@ namespace Test.Rules.Correctness {
 		}
 
 		// since we detect dots for interfaces... we test .ctor and .cctor
-		public class MyObject : ICloneable {
-
+    public class MyObject : ICloneable
+    {
 			static MyObject ()
 			{
 			}
@@ -333,7 +353,8 @@ namespace Test.Rules.Correctness {
 			AssertRuleSuccess<MyObject> ("System.ICloneable.Clone");
 		}
 
-		public class Coverage {
+    public class Coverage
+    {
 			public int FewParameters (int a, int b, int c)
 			{
 				return FewParameters (a, b, c);
@@ -344,12 +365,12 @@ namespace Test.Rules.Correctness {
 				return ManyParameters (a, b, c, d, e);
 			}
 
-			static int StaticFewParameters (int a, int b, int c)
+      private static int StaticFewParameters(int a, int b, int c)
 			{
 				return StaticFewParameters (a, b, c);
 			}
 
-			static int StaticManyParameters (int a, int b, int c, int d, int e)
+      private static int StaticManyParameters(int a, int b, int c, int d, int e)
 			{
 				return StaticManyParameters (a, b, c, d, e);
 			}
@@ -375,8 +396,8 @@ namespace Test.Rules.Correctness {
 			AssertRuleSuccess<BadRec> ("StaticGoodOverload", new Type [] { typeof (object) });
 		}
 
-		class Array {
-
+    private class Array
+    {
 			public virtual void SetProperty (string name, object value)
 			{
 				Console.WriteLine ("{0}: {1}", name, value);

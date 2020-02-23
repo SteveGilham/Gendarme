@@ -185,7 +185,7 @@ namespace Test.Rules.Interoperability {
 			}
 		}
 		#endregion
-
+		
         [OneTimeSetUp]
 		public void FixtureSetUp ()
 		{

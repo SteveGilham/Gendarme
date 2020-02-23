@@ -33,9 +33,12 @@ using SSP = System.Security.Permissions;
 using Mono.Cecil;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Security.Cas {
-
-	static public class SecurityDeclarationRocks {
+namespace Gendarme.Rules.Security.Cas
+{
+  static public class SecurityDeclarationRocks
+  {
+#if NETSTANDARD2_0
+#else
 
 		public static PermissionSet ToPermissionSet (this SecurityDeclaration self)
 		{
@@ -49,7 +52,7 @@ namespace Gendarme.Rules.Security.Cas {
 			return CreatePermissionSet (self);
 		}
 
-		static bool TryProcessPermissionSetAttribute (SecurityDeclaration declaration, out PermissionSet set)
+    private static bool TryProcessPermissionSetAttribute(SecurityDeclaration declaration, out PermissionSet set)
 		{
 			set = null;
 
@@ -67,27 +70,35 @@ namespace Gendarme.Rules.Security.Cas {
 
 			var attribute = new SSP.PermissionSetAttribute ((SSP.SecurityAction) declaration.Action);
 
-			foreach (var named_argument in security_attribute.Properties) {
+      foreach (var named_argument in security_attribute.Properties)
+      {
 				object value = named_argument.Argument.Value;
-				switch (named_argument.Name) {
+        switch (named_argument.Name)
+        {
 				case "Unrestricted":
 					attribute.Unrestricted = (bool) value;
 					break;
+
 				case "UnicodeEncoded":
 					attribute.UnicodeEncoded = (bool) value;
 					break;
+
 				case "XML":
 					attribute.XML = (string) value;
 					break;
+
 				case "Name":
 					attribute.Name = (string) value;
 					break;
+
 				case "File":
 					attribute.File = (string) value;
 					break;
+
 				case "Hex":
 					attribute.Hex = (string) value;
 					break;
+
 				default:
 					throw new NotImplementedException (named_argument.Name);
 				}
@@ -97,11 +108,12 @@ namespace Gendarme.Rules.Security.Cas {
 			return true;
 		}
 
-		static PermissionSet CreatePermissionSet (SecurityDeclaration declaration)
+    private static PermissionSet CreatePermissionSet(SecurityDeclaration declaration)
 		{
 			var set = new PermissionSet (SSP.PermissionState.None);
 
-			foreach (var attribute in declaration.SecurityAttributes) {
+      foreach (var attribute in declaration.SecurityAttributes)
+      {
 				var permission = CreatePermission (declaration, attribute);
 				set.AddPermission (permission);
 			}
@@ -109,14 +121,17 @@ namespace Gendarme.Rules.Security.Cas {
 			return set;
 		}
 
-		static IPermission CreatePermission (SecurityDeclaration declaration, SecurityAttribute attribute)
+#endif
+
+    private static IPermission CreatePermission(SecurityDeclaration declaration, SecurityAttribute attribute)
 		{
 			TypeReference atype = attribute.AttributeType;
 			string name = atype.FullName;
 
 			// most of the permissions resides inside mscorlib.dll
 			Type attribute_type = Type.GetType (name);
-			if (attribute_type == null) {
+      if (attribute_type == null)
+      {
 				// but not all of them, so we need to try harder :-)
 				TypeDefinition rtype = atype.Resolve ();
 				AssemblyDefinition ad = rtype == null ? atype.Module.Assembly : rtype.Module.Assembly;
@@ -134,7 +149,7 @@ namespace Gendarme.Rules.Security.Cas {
 			return security_attribute.CreatePermission ();
 		}
 
-		static void CompleteSecurityAttribute (SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
+    private static void CompleteSecurityAttribute(SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
 		{
 			if (attribute.HasFields)
 				CompleteSecurityAttributeFields (security_attribute, attribute);
@@ -143,7 +158,7 @@ namespace Gendarme.Rules.Security.Cas {
 				CompleteSecurityAttributeProperties (security_attribute, attribute);
 		}
 
-		static void CompleteSecurityAttributeFields (SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
+    private static void CompleteSecurityAttributeFields(SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
 		{
 			var type = security_attribute.GetType ();
 
@@ -151,7 +166,7 @@ namespace Gendarme.Rules.Security.Cas {
 				type.GetField (named_argument.Name).SetValue (security_attribute, named_argument.Argument.Value);
 		}
 
-		static void CompleteSecurityAttributeProperties (SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
+    private static void CompleteSecurityAttributeProperties(SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
 		{
 			var type = security_attribute.GetType ();
 
@@ -159,13 +174,16 @@ namespace Gendarme.Rules.Security.Cas {
 				type.GetProperty (named_argument.Name).SetValue (security_attribute, named_argument.Argument.Value, null);
 		}
 
-		static SSP.SecurityAttribute CreateSecurityAttribute (Type attribute_type, SecurityDeclaration declaration)
+    private static SSP.SecurityAttribute CreateSecurityAttribute(Type attribute_type, SecurityDeclaration declaration)
 		{
 			SSP.SecurityAttribute security_attribute;
-			try {
+      try
+      {
 				security_attribute = (SSP.SecurityAttribute) Activator.CreateInstance (
 					attribute_type, new object [] { (SSP.SecurityAction) declaration.Action });
-			} catch (MissingMethodException) {
+      }
+      catch (MissingMethodException)
+      {
 				security_attribute = (SSP.SecurityAttribute) Activator.CreateInstance (attribute_type, new object [0]);
 			}
 

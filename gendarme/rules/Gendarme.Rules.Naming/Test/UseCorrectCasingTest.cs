@@ -69,7 +69,7 @@ namespace Test.Rules.Naming {
             string unit = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs).Assembly.Location;
             AssertRuleSuccess(AssemblyDefinition.ReadAssembly(unit));
         }
-    }
+	}
 
 	[TestFixture]
 	public class UseCorrectCasingTypeTest : TypeRuleTestFixture<UseCorrectCasingRule> {
@@ -110,7 +110,7 @@ namespace Test.Rules.Naming {
             var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
             var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/get_ForceDelete@16");
             AssertRuleDoesNotApply(type);
-        }
+	}
 
 	}
 

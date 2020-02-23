@@ -29,11 +29,11 @@ using System;
 using Gendarme.Framework;
 using NUnit.Framework;
 
-namespace Test.Framework {
-
+namespace Test.Framework
+{
 	[TestFixture]
-	public class ThreadModelAttributeTest {
-
+  public class ThreadModelAttributeTest
+  {
 		private ThreadModelAttribute BasicCheck (ThreadModel model, bool every)
 		{
 			string name = model.ToString ();
@@ -104,4 +104,3 @@ namespace Test.Framework {
 		}
 	}
 }
-

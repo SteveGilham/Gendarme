@@ -33,11 +33,11 @@ using Gendarme.Framework.Rocks;
 using Mono.Cecil;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
-
+namespace Test.Framework.Rocks
+{
 	[TestFixture]
-	public class AssemblyRocksTest {
-
+  public class AssemblyRocksTest
+  {
 		private AssemblyDefinition assembly;
 
         [OneTimeSetUp]

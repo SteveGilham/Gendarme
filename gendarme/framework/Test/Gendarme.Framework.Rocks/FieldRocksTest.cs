@@ -37,11 +37,11 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
-
+namespace Test.Framework.Rocks
+{
 	[TestFixture]
-	public class FieldRocksTest {
-
+  public class FieldRocksTest
+  {
 		[System.Runtime.CompilerServices.CompilerGeneratedAttribute]
 		private static int cga = 1;
 
@@ -64,7 +64,8 @@ namespace Test.Framework.Rocks {
 
 		private FieldDefinition GetField (string fieldName)
 		{
-			foreach (FieldDefinition field in type.Fields) {
+      foreach (FieldDefinition field in type.Fields)
+      {
 				if (field.Name == fieldName)
 					return field;
 			}
@@ -81,7 +82,7 @@ namespace Test.Framework.Rocks {
             };
         }
         
-        [Test]
+		[Test]
 		public void HasAttribute_Namespace_Null ()
 		{
 			Assert.Throws<ArgumentNullException>(() => 
@@ -116,9 +117,10 @@ namespace Test.Framework.Rocks {
 			Assert.IsFalse (GetField ("assembly").IsGeneratedCode (), "FixtureSetUp");
 		}
 
-		static FieldDefinition GetField (TypeDefinition type, string name)
+    private static FieldDefinition GetField(TypeDefinition type, string name)
+    {
+      foreach (FieldDefinition field in type.Fields)
 		{
-			foreach (FieldDefinition field in type.Fields) {
 				if (field.Name == name)
 					return field;
 			}
@@ -153,9 +155,11 @@ namespace Test.Framework.Rocks {
 		[Test]
 		public void Resolve ()
 		{
-			foreach (Instruction ins in type.Methods [0].Body.Instructions) {
+      foreach (Instruction ins in type.Methods[0].Body.Instructions)
+      {
 				FieldReference field = (ins.Operand as FieldReference);
-				if ((field != null) && !(field is FieldDefinition)) {
+        if ((field != null) && !(field is FieldDefinition))
+        {
 					FieldDefinition fd = field.Resolve ();
 					Assert.AreEqual (field.Name, fd.Name, "Name");
 					Assert.AreEqual (field.FieldType.FullName, fd.FieldType.FullName, "FieldType");

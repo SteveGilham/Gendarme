@@ -34,12 +34,12 @@ using Gendarme.Rules.Design;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Design {
-
+namespace Test.Rules.Design
+{
 	[TestFixture]
-	public class AvoidSmallNamespaceTest : AssemblyRuleTestFixture<AvoidSmallNamespaceRule> {
-
-		AssemblyDefinition assembly;
+  public class AvoidSmallNamespaceTest : AssemblyRuleTestFixture<AvoidSmallNamespaceRule>
+  {
+    private AssemblyDefinition assembly;
 
 		private MethodDefinition Add (string namespaceName, string typeName, string methodName)
 		{
@@ -107,11 +107,13 @@ namespace Test.Rules.Design {
 		[Test]
 		public void FakeEntryPoint ()
 		{
-			try {
+      try
+      {
 				assembly.EntryPoint = Add ("Main", "Main", "Main");
 				AssertRuleSuccess (assembly);
 			}
-			finally {
+      finally
+      {
 				assembly.EntryPoint = null;
 			}
 		}
@@ -120,11 +122,13 @@ namespace Test.Rules.Design {
 		public void Zero ()
 		{
 			int minimum = Rule.Minimum;
-			try {
+      try
+      {
 				Rule.Minimum = 0;
 				AssertRuleSuccess (assembly);
 			}
-			finally {
+      finally
+      {
 				Rule.Minimum = minimum;
 			}
 		}

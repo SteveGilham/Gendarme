@@ -38,70 +38,86 @@ using Gendarme.Framework.Rocks;
 using Mono.Cecil;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
-
+namespace Test.Framework.Rocks
+{
 	[TestFixture]
-	public class TypeRocksTest {
-
+  public class TypeRocksTest
+  {
 		[System.Runtime.CompilerServices.CompilerGeneratedAttribute]
-		public class TypeCompilerGenerated {
+    public class TypeCompilerGenerated
+    {
 		}
 
 		[System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
-		public class TypeGeneratedCode {
+    public class TypeGeneratedCode
+    {
 		}
 
-		public enum Enum {
+    public enum Enum
+    {
 			Value
 		}
 
 		[Flags]
-		public enum Flags {
+    public enum Flags
+    {
 			Mask
 		}
 
-		interface IDeepCloneable : ICloneable {
+    private interface IDeepCloneable : ICloneable
+    {
 		}
 
-		class Deep : IDeepCloneable {
+    private class Deep : IDeepCloneable
+    {
 			public object Clone ()
 			{
 				throw new NotImplementedException ();
 			}
 		}
 
-		interface  IInterface1 {
+    private interface IInterface1
+    {
 		}
 
-		interface IInterface2 : IDeepCloneable {
+    private interface IInterface2 : IDeepCloneable
+    {
 		}
 
-		interface IMixinInterface : IInterface1, IInterface2 {
+    private interface IMixinInterface : IInterface1, IInterface2
+    {
 		}
 
-		class Mixin : IMixinInterface {
+    private class Mixin : IMixinInterface
+    {
 			public object Clone ()
 			{
 				throw new NotImplementedException ();
 			}
 		}
 
-		class NotAttribute {
+    private class NotAttribute
+    {
 		}
 
-		class AnAttribute : Attribute {
+    private class AnAttribute : Attribute
+    {
 		}
 
-		class ClassInheritsNotAttribute : NotAttribute {
+    private class ClassInheritsNotAttribute : NotAttribute
+    {
 		}
 
-		class AttributeInheritsAnAttribute : AnAttribute {
+    private class AttributeInheritsAnAttribute : AnAttribute
+    {
 		}
 
-		class AttributeInheritsOuterAttribute : ContextStaticAttribute {
+    private class AttributeInheritsOuterAttribute : ContextStaticAttribute
+    {
 		}
 
-		class AttributeInheritsOuterAttributeDerivingAttribute : AttributeInheritsOuterAttribute {
+    private class AttributeInheritsOuterAttributeDerivingAttribute : AttributeInheritsOuterAttribute
+    {
 		}
 
 		private byte [] array_of_bytes;
@@ -118,8 +134,9 @@ namespace Test.Framework.Rocks {
 		private UIntPtr UIntPtrValue;
 		private HandleRef HandleRefValue;
 
-		public void MethodA (bool parameter) { }
-
+    public void MethodA(bool parameter)
+    {
+    }
 
 		private AssemblyDefinition assembly;
 		private TypeDefinition type;
@@ -140,7 +157,8 @@ namespace Test.Framework.Rocks {
 		private TypeReference GetFieldType (string name)
 		{
 			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.TypeRocksTest");
-			foreach (FieldDefinition field in type.Fields) {
+      foreach (FieldDefinition field in type.Fields)
+      {
 				if (name == field.Name)
 					return field.FieldType;
 			}
@@ -310,8 +328,10 @@ namespace Test.Framework.Rocks {
 		{
 			TypeDefinition type = GetType (String.Empty);
 			Assert.IsFalse (type.IsFloatingPoint (), "Type.IsFloatingPoint");
-			foreach (FieldDefinition field in type.Fields) {
-				switch (field.Name) {
+      foreach (FieldDefinition field in type.Fields)
+      {
+        switch (field.Name)
+        {
 				case "SingleValue":
 				case "DoubleValue":
 					Assert.IsTrue (field.FieldType.IsFloatingPoint (), field.Name);
@@ -339,8 +359,10 @@ namespace Test.Framework.Rocks {
 		{
 			TypeDefinition type = GetType (String.Empty);
 			Assert.IsFalse (type.IsNative (), "Type.IsNative");
-			foreach (FieldDefinition field in type.Fields) {
-				switch (field.Name) {
+      foreach (FieldDefinition field in type.Fields)
+      {
+        switch (field.Name)
+        {
 				case "IntPtrValue":
 				case "UIntPtrValue":
 				case "HandleRefValue":

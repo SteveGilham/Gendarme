@@ -36,8 +36,8 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Concurrency {
-
+namespace Test.Rules.Concurrency
+{
 	[TestFixture]
 	public class DecorateThreadsTest {
         [OneTimeSetUp]
@@ -46,10 +46,11 @@ namespace Test.Rules.Concurrency {
             var def = AssemblyDefinition.ReadAssembly(typeof(ThreadModel).Assembly.Location);
             AssemblyResolver.Resolver.CacheAssembly(def);
         }
+    #region Test Cases
 		
-		#region Test Cases
 		// No threaded code.
-		internal sealed class Good1 {
+    internal sealed class Good1
+    {
 			public Good1 ()
 			{
 			}
@@ -60,35 +61,37 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 		
-    // Thread entry points cannot be main thread.
-		internal sealed class Good2 {
-        public void Spawn()
-        {
-            new Thread(this.Thread1).Start();
-            new Thread(this.Thread2).Start();
-            new Thread(this.Thread3).Start();
-        }
-
-        [ThreadModel(ThreadModel.SingleThread)]
-        private void Thread1()
-        {
-        }
-
-        [ThreadModel(ThreadModel.Serializable)]
-        private void Thread2()
-        {
-        }
-
-        [ThreadModel(ThreadModel.Concurrent)]
-        private void Thread3()
-        {
-        }
-    }
-
+		// Thread entry points cannot be main thread.
+    internal sealed class Good2
+    {
+			public void Spawn ()
+			{
+				new Thread (this.Thread1).Start ();
+				new Thread (this.Thread2).Start ();
+				new Thread (this.Thread3).Start ();
+			}
+			
+			[ThreadModel (ThreadModel.SingleThread)]
+			private void Thread1 ()
+			{
+			}
+			
+			[ThreadModel (ThreadModel.Serializable)]
+			private void Thread2 ()
+			{
+			}
+			
+			[ThreadModel (ThreadModel.Concurrent)]
+			private void Thread3 ()
+			{
+			}
+		}
+		
 		// MainThread code can call everything, AllowEveryCaller code can be called by 
 		// everything, SingleThread can call SingleThread/Serializable/Concurrent, and Serializable/
 		// Concurrent can call Serializable/Concurrent.
-		internal sealed class Good3 {
+    internal sealed class Good3
+    {
 			public void Stuff ()
 			{
 				MainStuff ();
@@ -141,7 +144,8 @@ namespace Test.Rules.Concurrency {
 		
 		// An override of a base method or an implementation of an interface method must 
 		// use the same threading model as the original method.
-		internal class Base {
+    internal class Base
+    {
 			public virtual void MainStuff ()
 			{
 			}
@@ -162,7 +166,8 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 		
-		internal interface Interface {
+    internal interface Interface
+    {
 			void MainStuff ();
 						
 			[ThreadModel (ThreadModel.SingleThread)]
@@ -172,7 +177,8 @@ namespace Test.Rules.Concurrency {
 			void ConcurrentStuff ();
 		}
 		
-		internal sealed class Good4 : Base {
+    internal sealed class Good4 : Base
+    {
 			[ThreadModel (ThreadModel.MainThread)]
 			public override void MainStuff ()
 			{
@@ -189,7 +195,8 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 		
-		internal class Good5 : Interface {
+    internal class Good5 : Interface
+    {
 			[ThreadModel (ThreadModel.MainThread)]
 			public void MainStuff ()
 			{
@@ -208,7 +215,8 @@ namespace Test.Rules.Concurrency {
 		
 		// A delegate used with a threaded event must use the same threading model as the 
 		// event.
-		internal class Good6 {
+    internal class Good6
+    {
 			public delegate void DataHandler1 (object sender, EventArgs e);
 			
 			[ThreadModel (ThreadModel.Concurrent)]
@@ -222,7 +230,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Delegates must be able to call the methods they are bound to.
-		internal class Good7 {
+    internal class Good7
+    {
 			public void Setup ()
 			{
 				single_callback = this.SingleStuff;
@@ -257,7 +266,8 @@ namespace Test.Rules.Concurrency {
 		
 		// Static ctors of concurrent and serializable types are SingleThread.
 		[ThreadModel (ThreadModel.Concurrent)]
-		internal sealed class Good8  {
+    internal sealed class Good8
+    {
 			static Good8 ()
 			{
 				Stuff ();
@@ -271,7 +281,8 @@ namespace Test.Rules.Concurrency {
 		
 		// Static operators inherit serializable thread from the type.
 		[ThreadModel (ThreadModel.Serializable)]
-		internal sealed class Good9 : IEquatable<Good9>  {
+    internal sealed class Good9 : IEquatable<Good9>
+    {
 			public override bool Equals (object obj)
 			{
 				if (obj == null)
@@ -309,7 +320,8 @@ namespace Test.Rules.Concurrency {
 			{
 				int hash = 0;
 				
-				unchecked {
+        unchecked
+        {
 					hash += data.GetHashCode ();
 				}
 				
@@ -320,7 +332,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Methods used within anonymous thread roots must be threaded.
-		internal sealed class Good10 {
+    internal sealed class Good10
+    {
 			public string path;
 			private System.Threading.Thread thread;
 			
@@ -337,7 +350,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Process.Exited uses the type's thread if SynchronizingObject is set to this.
-		public sealed class Good11 : System.ComponentModel.ISynchronizeInvoke {
+    public sealed class Good11 : System.ComponentModel.ISynchronizeInvoke
+    {
 			public void Spawn ()
 			{
 				var p = new System.Diagnostics.Process ();
@@ -347,7 +361,8 @@ namespace Test.Rules.Concurrency {
 				p.Start ();
 			}
 			
-			public bool InvokeRequired {
+      public bool InvokeRequired
+      {
 				get { return true; }
 			}
 			
@@ -383,7 +398,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Process.Exited is threaded if SynchronizingObject is set to non-this.
-		public sealed class Good12 {
+    public sealed class Good12
+    {
 			public void Spawn1 ()
 			{
 				var p = new System.Diagnostics.Process ();
@@ -411,7 +427,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// (Non-threaded) system delegates work with anything.
-		internal sealed class Good13 {
+    internal sealed class Good13
+    {
 			public string path;
 			private System.Threading.Thread thread;
 			
@@ -435,7 +452,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Another anonymous method case.
-		internal sealed class Good14 {
+    internal sealed class Good14
+    {
 			public void Spawn (object data)
 			{
 				Process (() => Stuff (data));
@@ -457,7 +475,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Thread entry points cannot be main thread.
-		internal sealed class Bad1 {
+    internal sealed class Bad1
+    {
 			public void Spawn ()
 			{
 				new Thread (this.Thread1).Start ();
@@ -477,7 +496,8 @@ namespace Test.Rules.Concurrency {
 		// MainThread code can call everything, AllowEveryCaller code can be called by 
 		// everything, SingleThread can call SingleThread/Serializable/Concurrent, and Serializable/
 		// Concurrent can call Serializable/Concurrent.
-		internal sealed class Bad2 {
+    internal sealed class Bad2
+    {
 			[ThreadModel (ThreadModel.MainThread)]
 			private void MainStuff ()
 			{
@@ -506,7 +526,8 @@ namespace Test.Rules.Concurrency {
 		
 		// An override of a base method or an implementation of an interface method must 
 		// use the same threading model as the original method.
-		internal sealed class Bad3 : Base {
+    internal sealed class Bad3 : Base
+    {
 			[ThreadModel (ThreadModel.SingleThread)]
 			public override void AllSingleStuff ()
 			{
@@ -527,7 +548,8 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 		
-		internal class Bad4 : Interface {
+    internal class Bad4 : Interface
+    {
 			[ThreadModel (ThreadModel.Concurrent)]
 			public void MainStuff ()
 			{
@@ -545,7 +567,8 @@ namespace Test.Rules.Concurrency {
 		
 		// A delegate used with a threaded event must use the same threading model as the 
 		// event.
-		internal class Bad5 {
+    internal class Bad5
+    {
 			[ThreadModel (ThreadModel.Concurrent)]
 			public delegate void DataHandler1 (object sender, EventArgs e);
 			
@@ -559,7 +582,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Delegates must be able to call the methods they are bound to.
-		internal class Bad6 {
+    internal class Bad6
+    {
 			public void Setup ()
 			{
 				concurrent_callback = this.SingleStuff;
@@ -580,7 +604,8 @@ namespace Test.Rules.Concurrency {
 		// Serializable cannot be applied to static methods and static methods of serializeable 
 		// types do not inherit it from their types.		
 		[ThreadModel (ThreadModel.Serializable)]
-		internal class Bad7 {
+    internal class Bad7
+    {
 			[ThreadModel (ThreadModel.Serializable)]
 			public static void BadDecoration ()
 			{
@@ -603,7 +628,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Methods used within anonymous thread roots must be threaded.
-		internal sealed class Bad8 {
+    internal sealed class Bad8
+    {
 			public string path;
 			private System.Threading.Thread thread;
 			
@@ -619,7 +645,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Delegates can be constructed in different ways.
-		public sealed class Bad9 {
+    public sealed class Bad9
+    {
 			public void Spawn ()
 			{
 				new Thread (Bad9.Thread1).Start ();
@@ -641,7 +668,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Process event handlers are threaded.
-		public sealed class Bad10 {
+    public sealed class Bad10
+    {
 			public void Spawn ()
 			{
 				var p = new System.Diagnostics.Process ();
@@ -667,7 +695,8 @@ namespace Test.Rules.Concurrency {
 		// Process.Exited uses the type's thread if SynchronizingObject is set to this and
 		// ErrorDataReceived is not affected.
 		[ThreadModel (ThreadModel.Serializable)]
-		public sealed class Bad11 : System.ComponentModel.ISynchronizeInvoke {
+    public sealed class Bad11 : System.ComponentModel.ISynchronizeInvoke
+    {
 			public void Spawn ()
 			{
 				var p = new System.Diagnostics.Process ();
@@ -677,7 +706,8 @@ namespace Test.Rules.Concurrency {
 				p.Start ();
 			}
 			
-			public bool InvokeRequired {
+      public bool InvokeRequired
+      {
 				get { return true; }
 			}
 			
@@ -708,7 +738,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Methods passed to the thread pool are entry points.
-		public sealed class Bad12 {
+    public sealed class Bad12
+    {
 			public void Spawn ()
 			{
 				ThreadPool.QueueUserWorkItem (this.Thread1);
@@ -725,7 +756,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Methods passed to the thread timer are entry points.
-		public sealed class Bad13 {
+    public sealed class Bad13
+    {
 			public void Spawn ()
 			{
 				Timer timer = new Timer (this.Thread1);
@@ -738,7 +770,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// Async methods are thread entry points.
-		public sealed class Bad14 {
+    public sealed class Bad14
+    {
 			public void Read (System.IO.Stream stream)
 			{
 				stream.BeginRead (buffer, 0, buffer.Length, this.DoRead, null);
@@ -751,8 +784,12 @@ namespace Test.Rules.Concurrency {
 			private byte [] buffer = new byte [256];
 		}
 		
+#if NETCOREAPP2_1
+#else
+
 		// EventLog.EntryWritten is threaded.
 		public sealed class Bad15 {
+
 			public void Spawn1 ()
 			{
 				var x = new System.Diagnostics.EventLog ();
@@ -764,15 +801,19 @@ namespace Test.Rules.Concurrency {
 			}
 		}
 		
+#endif
+
 		// Finalizers must be threaded.
-		public sealed class Bad16 {
+    public sealed class Bad16
+    {
 			~Bad16 ()
 			{
 			}
 		}
 		
 		// Another anonymous method case.
-		internal sealed class Bad17 {
+    internal sealed class Bad17
+    {
 			public void Spawn (object data)
 			{
 				Process (() => Stuff (data));
@@ -795,7 +836,8 @@ namespace Test.Rules.Concurrency {
 		}
 		
 		// BackgroundWorker events are threaded.
-		public sealed class Bad18 {
+    public sealed class Bad18
+    {
 			public void Spawn ()
 			{
 				var worker = new System.ComponentModel.BackgroundWorker ();
@@ -806,7 +848,8 @@ namespace Test.Rules.Concurrency {
 			{
 			}
 		}
-		#endregion
+
+    #endregion Test Cases
 		
 		public DecorateThreadsTest ()
 		{
@@ -846,13 +889,17 @@ namespace Test.Rules.Concurrency {
 			AssertFailureCount<Bad12> (2);
 			AssertFailureCount<Bad13> (1);
 			AssertFailureCount<Bad14> (1);
+#if NETCOREAPP2_1
+#else
 			AssertFailureCount<Bad15> (1);
+#endif
 			AssertFailureCount<Bad16> (1);
 			AssertFailureCount<Bad17> (1);
 			AssertFailureCount<Bad18> (1);
 		}
 		
 		#region Private Methods
+
 		// Unfortunately the standard test fixtures don't run the tests in anything like their
 		// normal environment  (in particular the events aren't fired, the runner isn't torn
 		// down, and rules aren't (re)initialized). This hoses our test so we have to hand roll
@@ -862,7 +909,8 @@ namespace Test.Rules.Concurrency {
 			runner.Reset ();
 			rule.Initialize (runner);
 			AssemblyDefinition assembly = obj.GetAssembly ();
-			if (!runner.Assemblies.Contains (assembly)) {
+      if (!runner.Assemblies.Contains(assembly))
+      {
 				runner.Assemblies.Clear ();
 				runner.Assemblies.Add (assembly);
 				runner.Engines.Build (runner.Assemblies);
@@ -880,7 +928,8 @@ namespace Test.Rules.Concurrency {
 			PreCheck (type);
 			
 //			runner.OnType (type);
-			foreach (MethodDefinition method in type.Methods) {
+      foreach (MethodDefinition method in type.Methods)
+      {
 				runner.OnMethod (method);
 			}
 			
@@ -890,11 +939,14 @@ namespace Test.Rules.Concurrency {
 				Assert.Fail ("{0} failed: should have {1} defects but got {2}.",
 					typeof (T).Name, expectedCount, rule.DefectCount);
 		}
-		#endregion
+
+    #endregion Private Methods
 		
 		#region Fields
+
 		private Gendarme.Rules.Concurrency.DecorateThreadsRule rule;
 		private TestRunner runner;
-		#endregion
+
+    #endregion Fields
 	}
 }
