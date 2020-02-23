@@ -278,13 +278,11 @@ namespace Gendarme.Rules.Smells {
 			int current_line = -1;
 			foreach (Instruction ins in method.Body.Instructions) {
 				SequencePoint sp = method.DebugInformation.GetSequencePoint(ins);
-				if (sp == null)
+        if (sp == null || sp.IsHidden || // next is backwards compatibility
+            ins.OpCode == OpCodes.Leave || ins.OpCode == OpCodes.Leave_S)
 					continue;
 
 				int line = sp.StartLine;
-				// special value for PDB (so that debuggers can ignore a line)
-				if (line == 0xFEEFEE)
-					continue;
 
 				// lines numbers may not be ordered (loops) or reused several times
 				if ((current_line == -1) || (line > current_line))

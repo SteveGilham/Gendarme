@@ -1,5 +1,8 @@
 With Roslyn
-10 Smells
+1 Smells ( + ignore 2 switch related tests)
+  AvoidCodeDuplicatedInSameClassRule failed on Test.Rules.Smells.AvoidCodeDuplicatedInSameClassTest/NonDuplicatedCodeIntoForeachLoop: result should be Success but got Failure.
+      Expected: Success
+      But was:  Failure
 
 5 Performance
 
