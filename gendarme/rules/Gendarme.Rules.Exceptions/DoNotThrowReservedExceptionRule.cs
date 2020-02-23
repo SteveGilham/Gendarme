@@ -76,7 +76,7 @@ namespace Gendarme.Rules.Exceptions {
 			case "IndexOutOfRangeException":
 			case "NullReferenceException":
 			case "OutOfMemoryException":
-				return (type.Namespace == "System");
+				return (type.Namespace == "System"); // OK
 			default:
 				return false;
 			}

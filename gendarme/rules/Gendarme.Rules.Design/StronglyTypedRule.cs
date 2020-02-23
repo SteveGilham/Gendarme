@@ -115,7 +115,7 @@ namespace Gendarme.Rules.Design {
 
 		static bool IsWeak (TypeReference type)
 		{
-			if (type.Namespace != "System")
+			if (type.Namespace != "System") // OK
 				return false;
 			string name = type.Name;
 			return ((name == "Object") || (name == "Array") || (name == "Object[]"));

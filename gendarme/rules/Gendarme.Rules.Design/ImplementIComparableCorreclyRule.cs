@@ -113,7 +113,7 @@ namespace Gendarme.Rules.Design {
 			bool icomparable = false;
 			foreach (TypeReference iface in type.Interfaces.Select(x => x.InterfaceType))
             {
-				if (iface.Namespace != "System")
+				if (iface.Namespace != "System") // OK
 					continue;
 				// catch both System.IComparable and System.IComparable`1<X>
 				if (iface.Name.StartsWith ("IComparable", StringComparison.Ordinal)) {

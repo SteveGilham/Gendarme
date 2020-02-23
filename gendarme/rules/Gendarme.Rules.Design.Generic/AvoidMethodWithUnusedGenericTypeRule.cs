@@ -128,10 +128,7 @@ namespace Gendarme.Rules.Design.Generic {
 			foreach (GenericParameter gp in method.GenericParameters) {
 				Severity severity = Severity.Medium;
 				bool found = false;
-				var name = new TypeName {
-                    Namespace = gp.Namespace, // TODO??
-                    Name = gp.Name
-                };
+                var name = gp.GetTypeName();
 				// ... is being used by the method parameters
 				foreach (ParameterDefinition pd in method.Parameters) {
 					if (IsGenericType (pd.ParameterType, name)) {

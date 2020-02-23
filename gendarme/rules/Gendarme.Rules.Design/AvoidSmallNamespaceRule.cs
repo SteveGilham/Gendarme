@@ -107,7 +107,7 @@ namespace Gendarme.Rules.Design {
 			MethodDefinition entry_point = assembly.EntryPoint;
 			if (entry_point != null) {
 				// for EXE assemblies ignore the namespace of the entry point
-				ignore.AddIfNew (entry_point.DeclaringType.Namespace);
+                ignore.AddIfNew(entry_point.DeclaringType.GetTypeName().Namespace);
 			}
 
 			// ignore assemblies with a single namespace

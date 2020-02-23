@@ -102,7 +102,7 @@ namespace Gendarme.Rules.Concurrency {
 
 		static bool IsWeakSealedType (TypeReference type)
 		{
-			switch (type.Namespace) {
+			switch (type.Namespace) { // OK
 			case "System":
 				string name = type.Name;
 				return ((name == "String") || (name == "ExecutionEngineException") || (name == "StackOverflowException"));

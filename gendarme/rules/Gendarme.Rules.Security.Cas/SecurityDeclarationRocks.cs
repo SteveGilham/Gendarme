@@ -62,7 +62,7 @@ namespace Gendarme.Rules.Security.Cas {
 
 			var security_attribute = attributes [0];
 			var attribute_type = security_attribute.AttributeType;
-			if (attribute_type.Name != "PermissionSetAttribute" || attribute_type.Namespace != "System.Security.Permissions")
+			if (attribute_type.Name != "PermissionSetAttribute" || attribute_type.Namespace != "System.Security.Permissions") // OK
 				return false;
 
 			var attribute = new SSP.PermissionSetAttribute ((SSP.SecurityAction) declaration.Action);

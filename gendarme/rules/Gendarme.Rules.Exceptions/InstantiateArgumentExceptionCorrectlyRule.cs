@@ -198,7 +198,7 @@ namespace Gendarme.Rules.Exceptions {
 
 				MethodReference ctor = (current.Operand as MethodReference);
 				TypeReference type = ctor.DeclaringType;
-				if (type.Namespace != "System")
+				if (type.Namespace != "System") // OK
 					continue;
 
 				switch (type.Name) {

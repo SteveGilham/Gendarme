@@ -109,7 +109,7 @@ namespace Gendarme.Rules.Naming {
 					return false;
 
 				TypeReference btype = baseMethod.DeclaringType;
-				string bnspace = btype.Namespace;
+                string bnspace = btype.GetTypeName().Namespace;
 				if (!name.StartsWith (bnspace, StringComparison.Ordinal))
 					return false;
 				if (name [bnspace.Length] != '.')

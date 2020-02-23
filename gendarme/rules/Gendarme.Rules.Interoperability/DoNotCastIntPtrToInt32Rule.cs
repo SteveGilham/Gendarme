@@ -193,7 +193,7 @@ namespace Gendarme.Rules.Interoperability {
 
 				// look for both IntPtr and the (less known) UIntPtr
 				TypeReference type = mr.DeclaringType;
-				if (type.Namespace == "System") {
+				if (type.Namespace == "System") { // OK
 					string name = type.Name;
 					bool intptr = (name == "IntPtr");
 					bool uintptr = (name == "UIntPtr");

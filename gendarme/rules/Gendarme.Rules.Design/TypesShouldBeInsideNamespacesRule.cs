@@ -78,7 +78,7 @@ namespace Gendarme.Rules.Design {
 			// rule applies!
 
 			// check if the type resides inside a namespace
-			if (!String.IsNullOrEmpty (type.Namespace))
+            if (!String.IsNullOrEmpty(type.GetTypeName().Namespace))
 				return RuleResult.Success;
 
 			Runner.Report (type, Severity.Low, Confidence.Total);

@@ -106,7 +106,7 @@ namespace Gendarme.Rules.Performance {
                     Name = name,
                     Namespace = "System.Diagnostics"
                 };
-				if ((cat.IsNamed (diag)) || (cat.Namespace == "System.Runtime.InteropServices" && 
+				if ((cat.IsNamed (diag)) || (cat.Namespace == "System.Runtime.InteropServices" && //OK
 					(name == "ComRegisterFunctionAttribute" || name == "ComUnregisterFunctionAttribute"))) {
 					return true;
 				}

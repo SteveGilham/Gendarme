@@ -93,7 +93,7 @@ namespace Gendarme.Rules.Exceptions {
 		//}
 		private static bool IsForbiddenTypeInCatches (TypeReference type)
 		{
-			if (type.Namespace != "System")
+			if (type.Namespace != "System") // OK
 				return false;
 
 			string name = type.Name;

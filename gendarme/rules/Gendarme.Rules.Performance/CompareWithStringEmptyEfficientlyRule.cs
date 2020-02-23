@@ -100,7 +100,7 @@ namespace Gendarme.Rules.Performance {
 					if (mref.Parameters.Count > 1)
 						continue;
 					TypeReference type = mref.DeclaringType;
-					if (type.Namespace != "System")
+					if (type.Namespace != "System") // OK
 						continue;
 					string name = type.Name;
 					if ((name != "String") && (name != "Object"))

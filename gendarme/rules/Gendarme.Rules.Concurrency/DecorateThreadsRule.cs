@@ -237,7 +237,7 @@ namespace Gendarme.Rules.Concurrency {
 
 		public RuleResult CheckMethod (MethodDefinition method)
 		{
-			if (ThreadRocks.ThreadedNamespace (method.DeclaringType.Namespace))
+			if (ThreadRocks.ThreadedNamespace (method.DeclaringType.GetTypeName().Namespace))
 				return RuleResult.DoesNotApply;
 			
 			Log.WriteLine (this);
@@ -266,7 +266,7 @@ namespace Gendarme.Rules.Concurrency {
 			if (method.IsAddOn) {
 				ParameterDefinition p = pdc [0];
 				TypeDefinition delegateType = p.ParameterType.Resolve ();
-				if (delegateType != null && !ThreadRocks.ThreadedNamespace (delegateType.Namespace)) {
+				if (delegateType != null && !ThreadRocks.ThreadedNamespace (delegateType.GetTypeName().Namespace)) {
 					ThreadModel delegateModel = delegateType.ThreadingModel ();
 					if (model != delegateModel && !delegateModel.AllowsEveryCaller ()) {
 						string mesg = String.Format (CultureInfo.InvariantCulture, 
@@ -289,7 +289,8 @@ namespace Gendarme.Rules.Concurrency {
 				string return_type_name = method.ReturnType.GetFullName ();
 				foreach (TypeDefinition type in superTypes) {
 					MethodDefinition superMethod = type.GetMethod (name, return_type_name, parameters);
-					if (superMethod != null && !ThreadRocks.ThreadedNamespace (superMethod.DeclaringType.Namespace)) {
+                    if (superMethod != null && !ThreadRocks.ThreadedNamespace(superMethod.DeclaringType.GetTypeName().Namespace))
+                    {
 						ThreadModel superModel = superMethod.ThreadingModel ();
 						if (model != superModel) {
 							string mesg = String.Format (CultureInfo.InvariantCulture, 
@@ -358,7 +359,7 @@ namespace Gendarme.Rules.Concurrency {
 						MethodReference ctor = (MethodReference) ins.Operand;
 						TypeReference type = ctor.DeclaringType;
 						if (type.IsDelegate ()) {
-							string nspace = type.Namespace;
+                            string nspace = type.GetTypeName().Namespace;
 							// ldftn entry-point
 							// newobj System.Void System.Threading.XXX::.ctor (System.Object,System.IntPtr)
 							// i.e. creation of a System.Threading delegate

@@ -98,7 +98,7 @@ namespace Gendarme.Rules.Serialization {
 
 		static bool IsSerializationAttribute (TypeReference type)
 		{
-			if (type.Namespace != "System.Runtime.Serialization")
+			if (type.Namespace != "System.Runtime.Serialization") // OK
 				return false;
 
 			switch (type.Name) {

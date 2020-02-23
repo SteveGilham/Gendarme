@@ -103,7 +103,7 @@ namespace Gendarme.Rules.Design {
 		{
 			TypeReference baseType = type;
 			while (baseType != null) {
-				if (baseType.Namespace == "System.Collections") {
+				if (baseType.Namespace == "System.Collections") { // OK
 					switch (baseType.Name) {
 					case "CollectionBase":
 					case "DictionaryBase":

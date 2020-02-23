@@ -63,7 +63,7 @@ namespace Gendarme.Rules.Concurrency {
 
 				// If the type is not decorated then we'll assume that the type is main 
 				// thread unless it's a System/Mono type.
-				if (ThreadedNamespace (type.Namespace))
+                if (ThreadedNamespace(type.GetTypeName().Namespace))
 					return ThreadModel.Concurrent;
 					
 				type = type.DeclaringType;

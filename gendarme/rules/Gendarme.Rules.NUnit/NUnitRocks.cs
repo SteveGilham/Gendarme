@@ -45,7 +45,7 @@ namespace Gendarme.Rules.NUnit {
 
 			foreach (CustomAttribute attribute in self.CustomAttributes) {
 				TypeReference type = attribute.AttributeType;
-				if (type.Namespace != "NUnit.Framework")
+				if (type.Namespace != "NUnit.Framework") // OK
 					continue;
 
 				string name = attribute.AttributeType.Name;

@@ -101,7 +101,7 @@ namespace Gendarme.Rules.Design {
 			}
 
 			Severity severity = Severity.Critical;
-			if ((ftype != null) && (ftype.Namespace == "System")) {
+			if ((ftype != null) && (ftype.Namespace == "System")) { // OK
 				switch (ftype.Name) {
 				case "Int32":
 					return RuleResult.Success;

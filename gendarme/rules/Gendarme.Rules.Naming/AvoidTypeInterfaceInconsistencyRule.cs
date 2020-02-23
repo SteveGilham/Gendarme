@@ -92,7 +92,7 @@ namespace Gendarme.Rules.Naming {
 			if (name [0] != 'I')
 				return RuleResult.DoesNotApply;
 
-			string nspace = type.Namespace;
+            string nspace = type.GetTypeName().Namespace;
 			TypeDefinition candidate = type.Module.GetType (nspace, name.Substring (1));
 			if (candidate != null) {
 				// does Foo implement IFoo ?

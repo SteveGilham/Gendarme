@@ -210,7 +210,7 @@ namespace Gendarme.Rules.Naming {
 
 		static private bool IsTypeFromAlienNamespace (TypeReference type)
 		{
-			return !NamespaceEngine.Exists (type.Namespace);
+            return !NamespaceEngine.Exists(type.GetTypeName().Namespace);
 		}
 	}
 }

@@ -100,7 +100,7 @@ namespace Gendarme.Rules.Naming {
 
 		public RuleResult CheckType (TypeDefinition type)
 		{
-			string ns = type.Namespace;
+            string ns = type.GetTypeName().Namespace;
 			if (type.IsGeneratedCode () || string.IsNullOrEmpty (ns))
 				return RuleResult.DoesNotApply;
 

@@ -94,7 +94,7 @@ namespace Gendarme.Rules.Performance {
 					switch (ptype.Name) {
 					case "Object":
 					case "Object[]":
-						return (ptype.Namespace == "System");
+						return (ptype.Namespace == "System"); // OK
 					}
 				}
 			}
@@ -165,7 +165,7 @@ namespace Gendarme.Rules.Performance {
 					continue;
 
 				TypeReference ptype = mr.Parameters [0].ParameterType;
-				if (ptype.Namespace != "System")
+				if (ptype.Namespace != "System") // OK
 					continue; // very unlikely
 
 				switch (ptype.Name) {

@@ -178,7 +178,7 @@ namespace Gendarme.Rules.Performance {
 				return ReferenceSize;
 
 			// list based on Type.IsPrimitive
-			if (type.Namespace == "System") {
+			if (type.Namespace == "System") { // OK
 				int size;
 				if (Primitives.TryGetValue (type.Name, out size))
 					return (long) size;

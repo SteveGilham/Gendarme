@@ -97,7 +97,7 @@ namespace Gendarme.Rules.Exceptions {
 
 				TypeReference type = ctor.DeclaringType;
 				string name = type.Name;
-				if (type.Namespace == "System") {
+				if (type.Namespace == "System") { // OK
 					// most common cases
 					switch (name) {
 					case "ArgumentException":

@@ -99,7 +99,7 @@ namespace Gendarme.Rules.Interoperability.Com {
 			if (method.HasCustomAttributes) {
 				foreach (CustomAttribute attribute in method.CustomAttributes) {
 					TypeReference type = attribute.AttributeType;
-					if (type.Namespace != "System.Runtime.InteropServices")
+					if (type.Namespace != "System.Runtime.InteropServices") // OK
 						continue;
 
 					switch (type.Name) {

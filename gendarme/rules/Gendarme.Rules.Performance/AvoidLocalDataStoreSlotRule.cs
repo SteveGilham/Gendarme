@@ -126,7 +126,7 @@ namespace Gendarme.Rules.Performance {
 						continue;
 
 					TypeReference type = mr.DeclaringType;
-					switch (type.Namespace) {
+					switch (type.Namespace) { // OK
 					case "System.Threading":
 					case "System.Runtime.Remoting.Contexts":
 						break;

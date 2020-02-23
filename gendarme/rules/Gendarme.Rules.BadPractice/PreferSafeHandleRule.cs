@@ -187,7 +187,7 @@ namespace Gendarme.Rules.BadPractice {
 		{
 			foreach (FieldDefinition field in type.Fields) {
 				TypeReference ftype = field.FieldType;
-				if (ftype.Namespace == "System") {
+				if (ftype.Namespace == "System") { // OK
 					string name = ftype.Name;
 					if ((name == "IntPtr") || (name == "UIntPtr"))
 						return field;

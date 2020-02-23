@@ -65,7 +65,7 @@ namespace Gendarme.Rules.Design.Generic {
 
 		private static bool IsList (TypeReference type)
 		{			
-			return type.Namespace == "System.Collections.Generic" &&
+			return type.Namespace == "System.Collections.Generic" && // OK
 				type.Name.StartsWith (List, StringComparison.Ordinal);
 		}
 

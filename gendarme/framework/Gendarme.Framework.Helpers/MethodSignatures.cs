@@ -145,7 +145,7 @@ namespace Gendarme.Framework.Helpers {
 					return false;
 
 				TypeReference mtype = method.DeclaringType;
-				if (last.Namespace != mtype.Namespace)
+                if (last.GetTypeName().Namespace != mtype.GetTypeName().Namespace)
 					return false;
 
 				string pt_name = last.Name;

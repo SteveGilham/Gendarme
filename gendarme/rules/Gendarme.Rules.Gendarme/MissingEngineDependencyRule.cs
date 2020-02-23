@@ -105,7 +105,7 @@ namespace Gendarme.Rules.Gendarme {
 
 					TypeReference dtype = m.DeclaringType;
 					// short-cut to avoid FullName - will work as long as all Engines comes from the same namespace (otherwise remove it)
-					if (dtype.Namespace != "Gendarme.Framework.Engines")
+					if (dtype.Namespace != "Gendarme.Framework.Engines") //OK
 						continue;
 
 					string declaringType = dtype.GetFullName ();

@@ -365,7 +365,7 @@ namespace Gendarme.Rules.Portability {
 				// we can avoid some false positives by doing additional checks here
 
 				TypeReference tr = target.DeclaringType;
-				string nameSpace = tr.Namespace;
+				string nameSpace = tr.Namespace; // OK
 				string typeName = tr.Name;
 				string methodName = target.Name;
 

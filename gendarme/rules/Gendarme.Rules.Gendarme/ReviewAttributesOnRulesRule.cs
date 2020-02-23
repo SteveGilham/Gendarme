@@ -131,7 +131,7 @@ namespace Gendarme.Rules.Gendarme {
 					if (td.HasCustomAttributes)
 						foreach (CustomAttribute attribute in td.CustomAttributes) {
 							TypeReference atype = attribute.AttributeType;
-							if (atype.Namespace != "Gendarme.Framework")
+							if (atype.Namespace != "Gendarme.Framework") //OK
 								continue;
 
 							string name = atype.Name;

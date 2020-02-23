@@ -70,7 +70,7 @@ namespace Gendarme.Rules.Exceptions {
 
 		protected override bool CheckException (TypeReference type)
 		{
-			if ((type == null) || (type.Namespace != "System"))
+			if ((type == null) || (type.Namespace != "System")) // OK
 				return false;
 			string name = type.Name;
 			return ((name == "Exception") || (name == "ApplicationException") || (name == "SystemException"));

@@ -207,7 +207,7 @@ namespace Gendarme.Rules.Naming {
 			if (definedSuffixes.TryGetValue (name, out candidates)) {
 				string nspace;
 				if (namespaces.TryGetValue (name, out nspace)) {
-					if (nspace == type.Namespace)
+                    if (nspace == type.GetTypeName().Namespace)
 						return true;
 				}
 			}

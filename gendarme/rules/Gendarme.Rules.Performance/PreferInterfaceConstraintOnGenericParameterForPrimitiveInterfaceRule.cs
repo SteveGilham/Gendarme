@@ -128,7 +128,7 @@ namespace Gendarme.Rules.Performance {
 
 			foreach (ParameterDefinition parameter in method.Parameters) {
 				TypeReference type = parameter.ParameterType;
-				if (type.Namespace != "System")
+				if (type.Namespace != "System") // OK
 					continue;
 
 				if (IsPrimitiveInterface (type)) {

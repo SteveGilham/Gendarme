@@ -97,7 +97,7 @@ namespace Gendarme.Rules.BadPractice {
 			TypeReference type = method.DeclaringType;
 			string tname = type.Name;
 			string mname = method.Name;
-			switch (type.Namespace) {
+			switch (type.Namespace) { // OK
 			case "System.IO":
 				switch (tname) {
 				case "File":

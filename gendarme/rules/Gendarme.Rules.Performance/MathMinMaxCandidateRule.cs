@@ -83,7 +83,7 @@ namespace Gendarme.Rules.Performance {
 		// unlikely than any JIT inlines it
 		private static bool IsSupported (TypeReference type)
 		{
-			if (type.Namespace != "System")
+			if (type.Namespace != "System") // OK
 				return false;
 			// GetElementType will remove the '&' for references
 			TypeReference tr = type.GetElementType ();

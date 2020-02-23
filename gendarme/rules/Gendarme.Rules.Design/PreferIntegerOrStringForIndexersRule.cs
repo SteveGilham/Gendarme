@@ -81,7 +81,7 @@ namespace Gendarme.Rules.Design {
 
 			foreach (ParameterDefinition parameter in method.Parameters) {
 				TypeReference ptype = parameter.ParameterType;
-				bool ok = (ptype.Namespace == "System");
+				bool ok = (ptype.Namespace == "System"); // OK
 				if (ok) {
 					switch (ptype.Name) {
 					case "Int32":

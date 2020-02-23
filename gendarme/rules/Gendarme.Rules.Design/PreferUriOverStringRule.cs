@@ -125,7 +125,7 @@ namespace Gendarme.Rules.Design {
 		{
 			if (type == null)
 				return true;
-			return !(type.Namespace == "System" && type.Name == "String") || !IsUri (memberName);
+			return !(type.Namespace == "System" && type.Name == "String") || !IsUri (memberName); //OK
 		}
 
 		private bool FindBadParameters (Collection<ParameterDefinition> parameters)
@@ -188,7 +188,7 @@ namespace Gendarme.Rules.Design {
 					if (!methodBitmask.Get (bit))
 						continue;
 					var paramType = overloadParams [i].ParameterType;
-					ok = paramType.Namespace == "System" && paramType.Name == "Uri";
+					ok = paramType.Namespace == "System" && paramType.Name == "Uri"; //OK
 					// If this overload didn't replace the string with a uri, skip to the next one.
 					if (!ok)
 						break;

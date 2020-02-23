@@ -79,7 +79,7 @@ namespace Gendarme.Rules.Exceptions {
 				return RuleResult.DoesNotApply;
 
 			// rule apply only to type that inherits from the base exceptions
-			if (btype.Namespace != "System")
+			if (btype.Namespace != "System") // OK
 				return RuleResult.DoesNotApply;
 			string name = btype.Name;
 			if ((name != "Exception") && (name != "SystemException") && (name != "ApplicationException"))

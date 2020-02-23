@@ -211,7 +211,7 @@ namespace Gendarme.Rules.Smells {
 			if ((type == null) || (type.BaseType == null))
 				return false;
 
-			string nspace = type.BaseType.Namespace;
+			string nspace = type.BaseType.Namespace; // OK
 			string tname = type.BaseType.Name;
 			switch (name) {
 			case "Build":

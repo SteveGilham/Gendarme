@@ -133,7 +133,7 @@ namespace Gendarme.Rules.Design {
 
 		static bool IsSpecificXmlType (TypeReference type)
 		{
-			if (type.Namespace == "System.Xml") {
+			if (type.Namespace == "System.Xml") { // OK
 				string name = type.Name;
 				return ((name == "XmlDocument") || (name == "XmlNode"));
 			}

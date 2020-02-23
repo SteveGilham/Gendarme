@@ -273,7 +273,7 @@ namespace Gendarme.Rules.Maintainability {
 
 		private static bool IsIgnoredSuggestionType (TypeReference type)
 		{
-			return (type.IsNamed (systemObject) || IsFromNonGenericCollectionNamespace (type.Namespace));
+            return (type.IsNamed(systemObject) || IsFromNonGenericCollectionNamespace(type.GetTypeName().Namespace));
 		}
 
 		private static List<MethodSignature> GetSignatures (IEnumerable<StackEntryUsageResult> usageResults)
@@ -285,7 +285,7 @@ namespace Gendarme.Rules.Maintainability {
 				case Code.Call:
 				case Code.Callvirt:
 					MethodReference method = (MethodReference) usage.Instruction.Operand;
-					if (IsSystemObjectMethod (method) || IsFromNonGenericCollectionNamespace (method.DeclaringType.Namespace))
+                    if (IsSystemObjectMethod(method) || IsFromNonGenericCollectionNamespace(method.DeclaringType.GetTypeName().Namespace))
 						continue;
 					signatures.Add (GetSignature (method));
 					break;
@@ -320,7 +320,7 @@ namespace Gendarme.Rules.Maintainability {
 					//we cannot really know if suggestion would work since the collection
 					//is non-generic thus we ignore it
 					TypeReference type = method.DeclaringType;
-					if (IsFromNonGenericCollectionNamespace (type.Namespace))
+                    if (IsFromNonGenericCollectionNamespace(type.GetTypeName().Namespace))
 						continue;
 
 					int pcount = method.HasParameters ? method.Parameters.Count : 0;
