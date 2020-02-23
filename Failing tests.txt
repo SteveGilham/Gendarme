@@ -1,21 +1,22 @@
+With Roslyn
+10 Smells
 
+5 Performance
+
+1 Maintainability
+  GenericMethod
+   Source: AvoidUnnecessarySpecializationTest.cs line 437 (Stack entry analysis)
+
+17 Interoperability
+
+2 Correctness
+
+6 Concurrency
+
+2 Framework
 Test FullName:	Test.Framework.StackEntryAnalysisTest.TestMultipleCatch
 Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 421
 
 Test FullName:	Test.Framework.StackEntryAnalysisTest.TestTryCatchFinally
 Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 381
 -
-Test FullName:	Test.Rules.Correctness.ProvideCorrectRegexPatternTest.Failure2d
-Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\rules\Gendarme.Rules.Correctness\Test\ProvideCorrectRegexPatternTest.cs : line 262
--
-Test FullName:	Test.Rules.Smells.AvoidCodeDuplicatedInSameClassTest.SuccessOnNonDuplicatedCodeIntoForeachLoopTest
-Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\rules\Gendarme.Rules.Smells\Test\AvoidCodeDuplicatedInSameClassTest.cs : line 259
-
-With Roslyn
-18 Smells
-5 Performance
-2 Naming
-2 Maintainability
-2 Correctness
-6 Concurrency
-2 Framework

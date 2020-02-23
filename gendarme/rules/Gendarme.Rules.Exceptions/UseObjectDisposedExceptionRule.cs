@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Exceptions.UseObjectDisposedExceptionRule
 //
 // Authors:
@@ -34,248 +34,272 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Exceptions {
+namespace Gendarme.Rules.Exceptions
+{
+  /// <summary>
+  /// It's usually a very bad idea to attempt to use an object after it has been
+  /// disposed. Doing so may lead to crashes in native code or any number of
+  /// other problems. In order to prevent this, and to report the problem in
+  /// a clear way, classes should throw System.ObjectDisposedException from
+  /// public methods if the object has been disposed.
+  ///
+  /// Note that there are some methods which should not throw ObjectDisposedException.
+  /// This includes constructors, finalizers, Equals, GetHashCode, ToString, and Dispose.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// internal sealed class WriteStuff : IDisposable
+  /// {
+  /// 	public WriteStuff (TextWriter writer)
+  /// 	{
+  /// 		this.writer = writer;
+  /// 	}
+  ///
+  /// 	// Objects are generally not in a useable state after being disposed so
+  /// 	// their public methods should throw ObjectDisposedException.
+  /// 	public void Write (string message)
+  /// 	{
+  /// 		writer.Write (message);
+  /// 	}
+  ///
+  /// 	public void Dispose ()
+  /// 	{
+  /// 		if (!disposed) {
+  /// 			writer.Dispose ();
+  /// 			disposed = true;
+  /// 		}
+  /// 	}
+  ///
+  /// 	private bool disposed;
+  /// 	private TextWriter writer;
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// internal sealed class WriteStuff : IDisposable
+  /// {
+  /// 	public WriteStuff (TextWriter writer)
+  /// 	{
+  /// 		this.writer = writer;
+  /// 	}
+  ///
+  /// 	// In general all public methods should throw ObjectDisposedException
+  /// 	// if Dispose has been called.
+  /// 	public void Write (string message)
+  /// 	{
+  /// 		if (disposed) {
+  /// 			throw new ObjectDisposedException (GetType ().Name);
+  /// 		}
+  ///
+  /// 		writer.Write (message);
+  /// 	}
+  ///
+  /// 	public void Dispose ()
+  /// 	{
+  /// 		if (!disposed) {
+  /// 			writer.Dispose ();
+  /// 			disposed = true;
+  /// 		}
+  /// 	}
+  ///
+  /// 	private bool disposed;
+  /// 	private TextWriter writer;
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.6</remarks>
 
-	/// <summary>
-	/// It's usually a very bad idea to attempt to use an object after it has been
-	/// disposed. Doing so may lead to crashes in native code or any number of
-	/// other problems. In order to prevent this, and to report the problem in
-	/// a clear way, classes should throw System.ObjectDisposedException from
-	/// public methods if the object has been disposed.
-	///
-	/// Note that there are some methods which should not throw ObjectDisposedException. 
-	/// This includes constructors, finalizers, Equals, GetHashCode, ToString, and Dispose.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// internal sealed class WriteStuff : IDisposable
-	/// {
-	/// 	public WriteStuff (TextWriter writer)
-	/// 	{
-	/// 		this.writer = writer;
-	/// 	}
-	/// 	
-	/// 	// Objects are generally not in a useable state after being disposed so
-	/// 	// their public methods should throw ObjectDisposedException.
-	/// 	public void Write (string message)
-	/// 	{
-	/// 		writer.Write (message);
-	/// 	}
-	/// 	
-	/// 	public void Dispose ()
-	/// 	{
-	/// 		if (!disposed) {
-	/// 			writer.Dispose ();
-	/// 			disposed = true;
-	/// 		}
-	/// 	}
-	/// 	
-	/// 	private bool disposed;
-	/// 	private TextWriter writer;
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// internal sealed class WriteStuff : IDisposable
-	/// {
-	/// 	public WriteStuff (TextWriter writer)
-	/// 	{
-	/// 		this.writer = writer;
-	/// 	}
-	/// 	
-	/// 	// In general all public methods should throw ObjectDisposedException
-	/// 	// if Dispose has been called.
-	/// 	public void Write (string message)
-	/// 	{
-	/// 		if (disposed) {
-	/// 			throw new ObjectDisposedException (GetType ().Name);
-	/// 		}
-	/// 		
-	/// 		writer.Write (message);
-	/// 	}
-	/// 	
-	/// 	public void Dispose ()
-	/// 	{
-	/// 		if (!disposed) {
-	/// 			writer.Dispose ();
-	/// 			disposed = true;
-	/// 		}
-	/// 	}
-	/// 	
-	/// 	private bool disposed;
-	/// 	private TextWriter writer;
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.6</remarks>
+  [Problem("A method of an IDisposable type does not throw System.ObjectDisposedException.")]
+  [Solution("Throw ObjectDisposedException if the object has been disposed.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public sealed class UseObjectDisposedExceptionRule : Rule, IMethodRule
+  {
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-	[Problem ("A method of an IDisposable type does not throw System.ObjectDisposedException.")]
-	[Solution ("Throw ObjectDisposedException if the object has been disposed.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public sealed class UseObjectDisposedExceptionRule : Rule, IMethodRule {
-		
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
-			
-			// Don't want to count the code generated by yield statements.
-			if (method.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
-			
-			if (Preflight (method)) {
-				Log.WriteLine (this);
-				Log.WriteLine (this, "-----------------------------------------");
-				Log.WriteLine (this, method);
-				
-				call_using_this = false;
-				field_access_using_this = false;
-				creates_exception = false;
-				has_dispose_check = false;
-				
-				CheckBody (method);
-				
-				if ((call_using_this || field_access_using_this) && !creates_exception) {
-					if (!has_dispose_check) {
-						Runner.Report (method, Severity.Medium, Confidence.High);
-					}
-				}
-			}
-			
-			return Runner.CurrentRuleResult;
-		}
-		
-		private void CheckBody (MethodDefinition method)
-		{
-			TypeReference type = method.DeclaringType;
-			var name = type.GetTypeName();
-			foreach (Instruction ins in method.Body.Instructions) {
-				switch (ins.OpCode.Code) {
-				case Code.Call:
-				case Code.Callvirt:
-					MethodReference target = (MethodReference) ins.Operand;
-					if (!call_using_this) {
-						MethodDefinition callee = target.Resolve ();
-						if (callee != null) {
-							if (!callee.IsPublic && !callee.IsStatic) {
-								if (callee.DeclaringType.IsNamed (name)) {
-									Instruction instance = ins.TraceBack (method);
-									if (instance != null && instance.OpCode.Code == Code.Ldarg_0) {
-										Log.WriteLine (this, "found non-public this call at {0:X4}", ins.Offset);
-										call_using_this = true;
-									}
-								}
-							}
-						}
-					}
-					
-					// Special case for helper methods like CheckIfClosedThrowDisposed or
-					// CheckObjectDisposedException.
-					if (!has_dispose_check) {
-						string tname = target.Name;
-						if (tname.Contains ("Check") && tname.Contains ("Dispose")) {
-							Log.WriteLine (this, "found dispose check at {0:X4}", ins.Offset);
-							has_dispose_check = true;
-						}
-					}
-					break;
-				
-				case Code.Ldfld:
-				case Code.Stfld:
-				case Code.Ldflda:
-					if (!field_access_using_this) {
-						FieldReference field = (FieldReference) ins.Operand;
-						if (field.DeclaringType.IsNamed (name)) {
-							Instruction instance = ins.TraceBack (method);
-							if (instance != null && instance.OpCode.Code == Code.Ldarg_0) {
-								Log.WriteLine (this, "found field access at {0:X4}", ins.Offset);
-								field_access_using_this = true;
-							}
-						}
-					}
-					break;
-				
-				case Code.Newobj:
-					if (!creates_exception) {
-						MethodReference ctor = (MethodReference) ins.Operand;
-						if (ctor.DeclaringType.IsNamed (ode)) {
-							Log.WriteLine (this, "creates exception at {0:X4}", ins.Offset);
-							creates_exception = true;
-						}
-					}
-					break;
-				}
-			}
-		}
-        private readonly static TypeName ode = new TypeName
+      // Don't want to count the code generated by yield statements.
+      // Return success as before for add_Event and remove_Event
+      if (method.IsGeneratedCode() && !method.IsEvent())
+        return RuleResult.DoesNotApply;
+
+      if (Preflight(method))
+      {
+        Log.WriteLine(this);
+        Log.WriteLine(this, "-----------------------------------------");
+        Log.WriteLine(this, method);
+
+        call_using_this = false;
+        field_access_using_this = false;
+        creates_exception = false;
+        has_dispose_check = false;
+
+        CheckBody(method);
+
+        if ((call_using_this || field_access_using_this) && !creates_exception)
         {
-            Namespace = "System",
-            Name = "ObjectDisposedException"
-        };
-        private readonly static TypeName idisposable = new TypeName
+          if (!has_dispose_check)
+          {
+            Runner.Report(method, Severity.Medium, Confidence.High);
+          }
+        }
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+
+    private void CheckBody(MethodDefinition method)
+    {
+      TypeReference type = method.DeclaringType;
+      var name = type.GetTypeName();
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        switch (ins.OpCode.Code)
         {
-            Namespace = "System",
-            Name = "IDisposable"
-        };
-		
-		// Skip methods which we don't want to examine in detail. Note that this
-		// will skip methods which don't call a method or touch a field. This is done 
-		// to eliminate annoying cases like methods that do nothing but throw 
-		// something like a not implemented exception.
-		static bool Preflight (MethodDefinition method)
-		{
-			bool needs = false;
-			
-			if (method.IsPublic) {
-				if (OpCodeEngine.GetBitmask (method).Intersect (CallsAndFields)) {
-					if (method.DeclaringType.Implements (idisposable)) {
-						if (AllowedToThrow (method)) {
-							needs = true;
-						}
-					}
-				}
-			}
-			
-			return needs;
-		}
-		
-		// Note that auto-setters are considered to be generated code so we won't
-		// make it this far for them.
-		static bool AllowedToThrow (MethodDefinition method)
-		{
-			if (method.IsConstructor)
-				return false;
-				
-			if (MethodSignatures.Finalize.Matches (method))
-				return false;
-				
-			if (method.IsGetter)
-				return false;
-			
-			if (method.IsAddOn || method.IsRemoveOn || method.IsFire)
-				return false;
-			
-			if (Equals1.Matches (method))
-				return false;
-				
-			if (MethodSignatures.GetHashCode.Matches (method))
-				return false;
-				
-			if (MethodSignatures.ToString.Matches (method))
-				return false;
-				
-			if (Close.Matches (method))
-				return false;
-				
-			if (method.Name == "Dispose")
-				return false;
-			
-			return true;
-		}
-		
+          case Code.Call:
+          case Code.Callvirt:
+            MethodReference target = (MethodReference)ins.Operand;
+            if (!call_using_this)
+            {
+              MethodDefinition callee = target.Resolve();
+              if (callee != null)
+              {
+                if (!callee.IsPublic && !callee.IsStatic)
+                {
+                  if (callee.DeclaringType.IsNamed(name))
+                  {
+                    Instruction instance = ins.TraceBack(method);
+                    if (instance != null && instance.OpCode.Code == Code.Ldarg_0)
+                    {
+                      Log.WriteLine(this, "found non-public this call at {0:X4}", ins.Offset);
+                      call_using_this = true;
+                    }
+                  }
+                }
+              }
+            }
+
+            // Special case for helper methods like CheckIfClosedThrowDisposed or
+            // CheckObjectDisposedException.
+            if (!has_dispose_check)
+            {
+              string tname = target.Name;
+              if (tname.Contains("Check") && tname.Contains("Dispose"))
+              {
+                Log.WriteLine(this, "found dispose check at {0:X4}", ins.Offset);
+                has_dispose_check = true;
+              }
+            }
+            break;
+
+          case Code.Ldfld:
+          case Code.Stfld:
+          case Code.Ldflda:
+            if (!field_access_using_this)
+            {
+              FieldReference field = (FieldReference)ins.Operand;
+              if (field.DeclaringType.IsNamed(name))
+              {
+                Instruction instance = ins.TraceBack(method);
+                if (instance != null && instance.OpCode.Code == Code.Ldarg_0)
+                {
+                  Log.WriteLine(this, "found field access at {0:X4}", ins.Offset);
+                  field_access_using_this = true;
+                }
+              }
+            }
+            break;
+
+          case Code.Newobj:
+            if (!creates_exception)
+            {
+              MethodReference ctor = (MethodReference)ins.Operand;
+              if (ctor.DeclaringType.IsNamed(ode))
+              {
+                Log.WriteLine(this, "creates exception at {0:X4}", ins.Offset);
+                creates_exception = true;
+              }
+            }
+            break;
+        }
+      }
+    }
+
+    private readonly static TypeName ode = new TypeName
+    {
+      Namespace = "System",
+      Name = "ObjectDisposedException"
+    };
+
+    private readonly static TypeName idisposable = new TypeName
+    {
+      Namespace = "System",
+      Name = "IDisposable"
+    };
+
+    // Skip methods which we don't want to examine in detail. Note that this
+    // will skip methods which don't call a method or touch a field. This is done
+    // to eliminate annoying cases like methods that do nothing but throw
+    // something like a not implemented exception.
+    private static bool Preflight(MethodDefinition method)
+    {
+      bool needs = false;
+
+      if (method.IsPublic)
+      {
+        if (OpCodeEngine.GetBitmask(method).Intersect(CallsAndFields))
+        {
+          if (method.DeclaringType.Implements(idisposable))
+          {
+            if (AllowedToThrow(method))
+            {
+              needs = true;
+            }
+          }
+        }
+      }
+
+      return needs;
+    }
+
+    // Note that auto-setters are considered to be generated code so we won't
+    // make it this far for them.
+    private static bool AllowedToThrow(MethodDefinition method)
+    {
+      if (method.IsConstructor)
+        return false;
+
+      if (MethodSignatures.Finalize.Matches(method))
+        return false;
+
+      if (method.IsGetter)
+        return false;
+
+      if (method.IsAddOn || method.IsRemoveOn || method.IsFire)
+        return false;
+
+      if (Equals1.Matches(method))
+        return false;
+
+      if (MethodSignatures.GetHashCode.Matches(method))
+        return false;
+
+      if (MethodSignatures.ToString.Matches(method))
+        return false;
+
+      if (Close.Matches(method))
+        return false;
+
+      if (method.Name == "Dispose")
+        return false;
+
+      return true;
+    }
+
 #if false
 		private void Bitmask ()
 		{
@@ -289,14 +313,14 @@ namespace Gendarme.Rules.Exceptions {
 			Console.WriteLine (mask);
 		}
 #endif
-		
-		private static readonly OpCodeBitmask CallsAndFields = new OpCodeBitmask (0x8000000000, 0x704400000000000, 0x0, 0x0);
-		private static readonly MethodSignature Equals1 = new MethodSignature ("Equals", "System.Boolean", new string [1]);
-		private static readonly MethodSignature Close = new MethodSignature ("Close", "System.Void", new string [0]);
-		
-		private bool call_using_this;
-		private bool field_access_using_this;
-		private bool creates_exception;
-		private bool has_dispose_check;
-	}
+
+    private static readonly OpCodeBitmask CallsAndFields = new OpCodeBitmask(0x8000000000, 0x704400000000000, 0x0, 0x0);
+    private static readonly MethodSignature Equals1 = new MethodSignature("Equals", "System.Boolean", new string[1]);
+    private static readonly MethodSignature Close = new MethodSignature("Close", "System.Void", new string[0]);
+
+    private bool call_using_this;
+    private bool field_access_using_this;
+    private bool creates_exception;
+    private bool has_dispose_check;
+  }
 }

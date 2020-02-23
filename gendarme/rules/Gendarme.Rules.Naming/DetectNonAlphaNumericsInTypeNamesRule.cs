@@ -37,181 +37,199 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Naming {
+namespace Gendarme.Rules.Naming
+{
+  // TODO: This is a confusing rule. It's called "AvoidNonAlphanumericIdentifierRule" and
+  // the summary suggests that it will fire for non-alphanumeric characters, but the
+  // problem/solution text and the code only check for underscores. The code suggests
+  // that it's only neccesary to check for underscores because the compiler will catch the
+  // others which seems to be true for gmcs 2.4. However section 9.4.2 of the standard
+  // clearly states that character classes like Lm should be allowed which seems like something
+  // the rule should fire for (see http://www.fileformat.info/info/unicode/category/Lm/index.htm).
+  // Also other compilers may very well be more lenient about which characters they accept.
+  //
+  // It seems to me that this rule should explain why underscores and unusual letters are
+  // a problem and fire if a character not in [a-zA-Z0-9] is used. And of course the summary
+  // and problem texts should be synced up.
 
-	// TODO: This is a confusing rule. It's called "AvoidNonAlphanumericIdentifierRule" and 
-	// the summary suggests that it will fire for non-alphanumeric characters, but the
-	// problem/solution text and the code only check for underscores. The code suggests
-	// that it's only neccesary to check for underscores because the compiler will catch the
-	// others which seems to be true for gmcs 2.4. However section 9.4.2 of the standard
-	// clearly states that character classes like Lm should be allowed which seems like something
-	// the rule should fire for (see http://www.fileformat.info/info/unicode/category/Lm/index.htm).
-	// Also other compilers may very well be more lenient about which characters they accept.
-	//
-	// It seems to me that this rule should explain why underscores and unusual letters are
-	// a problem and fire if a character not in [a-zA-Z0-9] is used. And of course the summary
-	// and problem texts should be synced up. 
+  /// <summary>
+  /// This rule ensures that identifiers like assembly names, namespaces, types and
+  /// members names don't have any non-alphanumerical characters inside them. The rule
+  /// will ignore interfaces used for COM interoperability - i.e. decorated with both
+  /// <c>[InterfaceType]</c> and <c>[Guid]</c> attributes.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// namespace New_Namespace {
+  ///
+  ///	public class My_Custom_Class {
+  ///
+  ///		public int My_Field;
+  ///
+  ///		public void My_Method (string my_string)
+  ///		{
+  ///		}
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// namespace NewNamespace {
+  ///
+  ///	public class MyCustomClass {
+  ///
+  ///		public int MyField;
+  ///
+  ///		public void MyMethod (string myString)
+  ///		{
+  ///		}
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>Prior to Gendarme 2.2 this rule was named DetectNonAlphanumericInTypeNamesRule</remarks>
 
-	/// <summary>
-	/// This rule ensures that identifiers like assembly names, namespaces, types and 
-	/// members names don't have any non-alphanumerical characters inside them. The rule 
-	/// will ignore interfaces used for COM interoperability - i.e. decorated with both 
-	/// <c>[InterfaceType]</c> and <c>[Guid]</c> attributes.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// namespace New_Namespace {
-	/// 
-	///	public class My_Custom_Class {
-	///	
-	///		public int My_Field;
-	/// 
-	///		public void My_Method (string my_string)
-	///		{
-	///		}
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// namespace NewNamespace {
-	/// 
-	///	public class MyCustomClass {
-	/// 
-	///		public int MyField;
-	///		
-	///		public void MyMethod (string myString)
-	///		{
-	///		}
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>Prior to Gendarme 2.2 this rule was named DetectNonAlphanumericInTypeNamesRule</remarks>
+  [Problem("This namespace, type or member name contains underscore(s).")]
+  [Solution("Remove the underscore from the specified name.")]
+  [EngineDependency(typeof(NamespaceEngine))]
+  [FxCopCompatibility("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+  public class AvoidNonAlphanumericIdentifierRule : Rule, IAssemblyRule, IMethodRule, ITypeRule
+  {
+    // Compiler generates an error for any other non alpha-numerics than underscore ('_'),
+    // so we just need to check the presence of underscore in method names
+    private static bool CheckName(string name, bool special)
+    {
+      int start = special ? name.IndexOf('_') + 1 : 0;
+      return (name.IndexOf('_', start) == -1);
+    }
 
-	[Problem ("This namespace, type or member name contains underscore(s).")]
-	[Solution ("Remove the underscore from the specified name.")]
-	[EngineDependency (typeof (NamespaceEngine))]
-	[FxCopCompatibility ("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-	public class AvoidNonAlphanumericIdentifierRule : Rule, IAssemblyRule, IMethodRule, ITypeRule {
+    private static bool UsedForComInterop(TypeDefinition type)
+    {
+      return (type.IsInterface && type.HasAttribute(ga) &&
+        type.HasAttribute(ita));
+    }
 
-		// Compiler generates an error for any other non alpha-numerics than underscore ('_'), 
-		// so we just need to check the presence of underscore in method names
-		private static bool CheckName (string name, bool special)
-		{
-			int start = special ? name.IndexOf ('_') + 1: 0;
-			return (name.IndexOf ('_', start) == -1);
-		}
+    private readonly static TypeName ga = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "GuidAttribute"
+    };
 
-		private static bool UsedForComInterop (TypeDefinition type)
-		{
-			return (type.IsInterface && type.HasAttribute (ga) &&
-				type.HasAttribute (ita));
-		}
-        private readonly static TypeName ga = new TypeName
+    private readonly static TypeName ita = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "InterfaceTypeAttribute"
+    };
+
+    public RuleResult CheckAssembly(AssemblyDefinition assembly)
+    {
+      if (!CheckName(assembly.Name.Name, false))
+        Runner.Report(assembly, Severity.Medium, Confidence.High);
+
+      // check every namespaces inside the assembly using the NamespaceEngine
+      foreach (string ns in NamespaceEngine.NamespacesInside(assembly))
+      {
+        if (!CheckName(ns, false))
+          Runner.Report(NamespaceDefinition.GetDefinition(ns), Severity.Medium, Confidence.High);
+      }
+      return Runner.CurrentRuleResult;
+    }
+
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // type must be visible and not generated by the compiler (or a tool)
+      if (!type.IsVisible() || type.IsGeneratedCode())
+        return RuleResult.DoesNotApply;
+
+      // the rule does not apply if the code is an interface to COM objects
+      if (UsedForComInterop(type))
+        return RuleResult.DoesNotApply;
+
+      // check the type name
+      if (!CheckName(type.Name, false))
+      {
+        Runner.Report(type, Severity.Medium, Confidence.High);
+      }
+
+      // CheckMethod covers methods, properties and events (indirectly)
+      // but we still need to cover fields
+      if (type.HasFields)
+      {
+        bool is_enum = type.IsEnum;
+        foreach (FieldDefinition field in type.Fields)
         {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "GuidAttribute"
-        };
-        private readonly static TypeName ita = new TypeName
+          if (!field.IsVisible())
+            continue;
+
+          // ignore "value__" inside every enumeration
+          if (is_enum && !field.IsStatic)
+            continue;
+
+          if (!CheckName(field.Name, false))
+          {
+            Runner.Report(field, Severity.Medium, Confidence.High);
+          }
+        }
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      var eh = method.IsEvent();
+
+      // exclude constrcutors, non-visible methods and generated code
+      if (method.IsConstructor || !method.IsVisible() || (!eh && method.IsGeneratedCode()))
+        return RuleResult.DoesNotApply;
+
+      // the rule does not apply if the code is an interface to COM objects
+      if (UsedForComInterop(method.DeclaringType as TypeDefinition))
+        return RuleResult.DoesNotApply;
+
+      var fsharp = method.IsFSharpCode();
+
+      var name = method.Name;
+      if (eh)
+      {
+        var chop = name.IndexOf("_");
+        name = name.Substring(chop + 1);
+      }
+      else
+      {
+        // Strip get_ and set_ prefixes out of property names
+        if (method.IsSetter || method.IsGetter)
+          name = name.Substring(4);
+        else
+        if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
         {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "InterfaceTypeAttribute"
-        };
+          var typename = method.Parameters[0].ParameterType.Name;
+          if (method.Name.StartsWith(typename + ".get_", StringComparison.Ordinal) ||
+              method.Name.StartsWith(typename + ".set_", StringComparison.Ordinal))
+            name = name.Substring(typename.Length + 5);
+        }
+      }
 
-		public RuleResult CheckAssembly (AssemblyDefinition assembly)
-		{
-			if (!CheckName (assembly.Name.Name, false))
-				Runner.Report (assembly, Severity.Medium, Confidence.High);
+      // check the method name
+      if (!CheckName(name, method.IsSpecialName))
+        Runner.Report(method, Severity.Medium, Confidence.High);
 
-			// check every namespaces inside the assembly using the NamespaceEngine
-			foreach (string ns in NamespaceEngine.NamespacesInside (assembly)) {
-				if (!CheckName (ns, false))
-					Runner.Report (NamespaceDefinition.GetDefinition (ns), Severity.Medium, Confidence.High);
-			}
-			return Runner.CurrentRuleResult;
-		}
+      if (method.HasParameters)
+      {
+        foreach (ParameterDefinition parameter in method.Parameters)
+        {
+          var pname = parameter.Name;
+          if (fsharp && pname.StartsWith("_arg", StringComparison.Ordinal))
+            continue;
+          if (!CheckName(pname, false))
+            Runner.Report(parameter, Severity.Medium, Confidence.High);
+        }
+      }
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// type must be visible and not generated by the compiler (or a tool)
-			if (!type.IsVisible () || type.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
-
-			// the rule does not apply if the code is an interface to COM objects
-			if (UsedForComInterop (type))
-				return RuleResult.DoesNotApply;
-
-			// check the type name
-			if (!CheckName (type.Name, false)) {
-				Runner.Report (type, Severity.Medium, Confidence.High);
-			}
-
-			// CheckMethod covers methods, properties and events (indirectly)
-			// but we still need to cover fields
-			if (type.HasFields) {
-				bool is_enum = type.IsEnum;
-				foreach (FieldDefinition field in type.Fields) {
-					if (!field.IsVisible ())
-						continue;
-
-					// ignore "value__" inside every enumeration
-					if (is_enum && !field.IsStatic)
-						continue;
-
-					if (!CheckName (field.Name, false)) {
-						Runner.Report (field, Severity.Medium, Confidence.High);
-					}
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// exclude constrcutors, non-visible methods and generated code
-			if (method.IsConstructor || !method.IsVisible () || method.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
-
-			// the rule does not apply if the code is an interface to COM objects
-			if (UsedForComInterop (method.DeclaringType as TypeDefinition))
-				return RuleResult.DoesNotApply;
-
-            var fsharp = method.IsFSharpCode();
-
-            // Strip get_ and set_ prefixes out of property names
-            var name = method.Name;
-            if (method.IsSetter || method.IsGetter)
-                name = name.Substring(4);
-            else
-            if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
-            {
-                var typename = method.Parameters[0].ParameterType.Name;
-                if (method.Name.StartsWith(typename + ".get_", StringComparison.Ordinal) ||
-                    method.Name.StartsWith(typename + ".set_", StringComparison.Ordinal))
-                    name = name.Substring(typename.Length + 5);
-            }
-
-			// check the method name
-			if (!CheckName (name, method.IsSpecialName))
-				Runner.Report (method, Severity.Medium, Confidence.High);
-
-			if (method.HasParameters) {
-				foreach (ParameterDefinition parameter in method.Parameters) {
-                    var pname = parameter.Name;
-                    if (fsharp && pname.StartsWith("_arg", StringComparison.Ordinal))
-                        continue;
-					if (!CheckName (pname, false))
-						Runner.Report (parameter, Severity.Medium, Confidence.High);
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }
-

@@ -35,11 +35,11 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Exceptions
-{
+namespace Test.Rules.Exceptions {
+
   [TestFixture]
-  public sealed class UseObjectDisposedExceptionTest : MethodRuleTestFixture<UseObjectDisposedExceptionRule>
-  {
+	public sealed class UseObjectDisposedExceptionTest : MethodRuleTestFixture<UseObjectDisposedExceptionRule> {
+		
     internal sealed class Good1 : IDisposable
     {
       // Has a throw.
@@ -181,8 +181,7 @@ namespace Test.Rules.Exceptions
       }
 
       // Missing throw.
-      public bool Flag
-      {
+			public bool Flag {
         set { flag = value; }
       }
 
@@ -209,8 +208,7 @@ namespace Test.Rules.Exceptions
     [Test]
     public void Test()
     {
-      // Have to ignore the compiler generated (DoesNotApply) event handler methods here
-      AssertRuleSuccess<Good1>(m => !m.Name.EndsWith("_Closed", StringComparison.Ordinal));
+			AssertRuleSuccess<Good1> ();
       AssertRuleSuccess<Good2>();
       AssertRuleSuccess<Good3>();
 

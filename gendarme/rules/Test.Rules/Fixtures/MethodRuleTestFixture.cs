@@ -28,7 +28,6 @@
 //
 
 using System;
-using System.Linq;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
@@ -36,15 +35,15 @@ using Test.Rules.Helpers;
 
 using Mono.Cecil;
 
-namespace Test.Rules.Fixtures
-{
+namespace Test.Rules.Fixtures {
+	
   /// <summary>
   /// Abstract class providing various helper methods that method test fixtures should inherit from.
   /// </summary>
   /// <typeparam name="TMethodRule">Type of rule to be tested.</typeparam>
   public abstract class MethodRuleTestFixture<TMethodRule> : RuleTestFixture<TMethodRule, MethodDefinition>
-    where TMethodRule : IMethodRule, new()
-  {
+		where TMethodRule : IMethodRule, new () {
+
     /// <summary>
     /// Asserts that the rule does not apply to all methods of the type.
     /// </summary>
@@ -88,13 +87,7 @@ namespace Test.Rules.Fixtures
     /// <typeparam name="T">Type containing the methods.</typeparam>
     protected void AssertRuleSuccess<T>()
     {
-      AssertRuleSuccess<T>(x => x != null);
-    }
-
-    protected void AssertRuleSuccess<T>(Func<MethodDefinition, bool> predicate)
-    {
-      foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T>().Methods
-                  .Where(predicate))
+			foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T> ().Methods)
         base.AssertRuleSuccess(method);
     }
 
