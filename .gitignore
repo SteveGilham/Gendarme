@@ -21,3 +21,4 @@ gendarme/AssemblyStaticInfo.cs
 gendarme/AssemblyStaticInfo.fs
 *.mdf
 *.ldf
+gendarme/.vs/
