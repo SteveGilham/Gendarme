@@ -39,6 +39,12 @@ namespace Test.Rules.NUnit {
 
 	[TestFixture]
 	public class UnitTestsMissingTestFixtureTest : TypeRuleTestFixture<UnitTestsMissingTestFixtureRule> {
+        [OneTimeSetUp]
+        public void FixtureSetUp()
+        {
+            var def = AssemblyDefinition.ReadAssembly(typeof(TestAttribute).Assembly.Location);
+            Gendarme.Framework.AssemblyResolver.Resolver.CacheAssembly(def);
+        }
 
 		abstract class AbstractClass {
 		}

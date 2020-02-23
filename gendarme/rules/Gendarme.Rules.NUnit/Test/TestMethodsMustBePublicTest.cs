@@ -39,7 +39,14 @@ namespace Test.Rules.NUnit {
 
 	[TestFixture]
 	public class TestMethodsMustBePublicTest : MethodRuleTestFixture<TestMethodsMustBePublicRule> {
-		// [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
+        [OneTimeSetUp]
+        public void FixtureSetUp()
+        {
+            var def = AssemblyDefinition.ReadAssembly(typeof(TestAttribute).Assembly.Location);
+            Gendarme.Framework.AssemblyResolver.Resolver.CacheAssembly(def);
+        }
+
+        // [Test] -- added later using Cecil to avoid NUnit treating this as a unit test
 		private void PrivateTestMethod ()
 		{
 		}
