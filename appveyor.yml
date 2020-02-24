@@ -6,23 +6,31 @@ branches:
   - trunk
   - /develop.*/
 skip_tags: true
-image: Visual Studio 2013
+image: Visual Studio 2019
 configuration: Release
 clone_depth: 2
-install:
-- cmd: appveyor DownloadFile https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: qgIIfE76i59qTVO64mT7QwKcAUUYCQLie4XdUdlnt7MXLhrwqTbcfGUsCss/TmLg
 nuget:
   disable_publish_on_pr: true
-before_build:
-- cmd: >-
-    NuGet restore .\packages.config -PackagesDirectory .\packages
+build_script:
+- ps: >-
+    $ErrorActionPreference = 'Continue'
 
-    powershell .\set-version.ps1
-build:
-  project: .\gendarme\gendarme-win.sln
-  verbosity: normal
-after_build:
-- cmd: NuGet pack altcode.gendarme.nuspec
+    & dotnet tool restore
+
+    & dotnet fake run .\Build\setup.fsx
+
+    & dotnet fake run .\Build\build.fsx
+
+    $save = $LASTEXITCODE
+    
+    $error.Clear()
+
+    Write-Host "Exit code $save"
+
+    if ($save -ne 0) { exit $save }
 test: off
 artifacts:
 - path: .\*.nupkg

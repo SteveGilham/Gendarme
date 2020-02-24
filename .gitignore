@@ -22,3 +22,6 @@ gendarme/AssemblyStaticInfo.fs
 *.mdf
 *.ldf
 gendarme/.vs/
+Build/build.fsx
+Build/.fake/
+Build/obj/

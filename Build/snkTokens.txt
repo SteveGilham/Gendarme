@@ -1,0 +1,20 @@
+Infrastructure.snk : c02b1a9f5b7cade8
+Recorder.snk : 4ebffcaabf10ce6a
+SelfTest.snk : 3eb3cd726036ff71
+ThirdParty.snk : 9aa26ad8b6cf2594
+
+--
+
+sn -p yourkey.snk publickey.snk
+sn -tp publickey.snk
+
+Genbu Gabiaru
+Habu
+Indori
+Jinmengyo
+Kaban
+
+https://stu.dev/dotnet-core-3-local-tools/
+bootstrap -- dotnet new tool-manifest
+add -- dotnet tool install $(TOOL)
+restore -- dotnet tool restore
