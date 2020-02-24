@@ -39,31 +39,16 @@ nuget Fake.Core.Environment >= 5.19.1
 nuget Fake.Core.Process >= 5.19.1
 nuget Fake.DotNet.AssemblyInfoFile >= 5.19.1
 nuget Fake.DotNet.Cli >= 5.19.1
-nuget Fake.DotNet.FxCop >= 5.19.1
-nuget Fake.DotNet.ILMerge >= 5.19.1
 nuget Fake.DotNet.MSBuild >= 5.19.1
 nuget Fake.DotNet.NuGet >= 5.19.1
 nuget Fake.DotNet.Testing.NUnit >= 5.19.1
-nuget Fake.DotNet.Testing.OpenCover >= 5.19.1
-nuget Fake.DotNet.Testing.XUnit2 >= 5.19.1
 nuget Fake.IO.FileSystem >= 5.19.1
-nuget Fake.DotNet.Testing.Coverlet >= 5.19.1
 nuget Fake.Testing.ReportGenerator >= 5.19.1
-nuget AltCode.Fake.DotNet.Gendarme >= 5.9.3.10
-nuget BlackFox.CommandLine >= 1.0.0
-nuget BlackFox.VsWhere >= 1.0.0
-nuget FSharpLint.Core >= 0.13.1
 nuget Markdown >= 2.2.1
-nuget NUnit >= 3.12.0
-nuget YamlDotNet >= 8.1 //"
+nuget NUnit >= 3.12.0 //"
 #r "System.IO.Compression.FileSystem.dll"
 #r "System.Xml"
 #r "System.Xml.Linq"
-#load "../AltCover/Primitive.fs"
-#load "../AltCover/TypeSafe.fs"
-#load "../AltCover/Api.fs"
-#load "../AltCover.FSApi/Definitions.fs"
-#load "../AltCover.Fake/Fake.fs"
 #load "actions.fsx"
 #load "targets.fsx"
 #nowarn "988"
