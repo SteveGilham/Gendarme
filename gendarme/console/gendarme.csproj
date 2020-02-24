@@ -23,7 +23,7 @@
     <Copy SourceFiles="$(TargetDir)..\..\..\rules\rules.xml" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="True" />
   </Target>
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.11.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" />
