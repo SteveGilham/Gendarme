@@ -13,13 +13,15 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
+    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +30,6 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

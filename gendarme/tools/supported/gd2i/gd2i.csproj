@@ -3,6 +3,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net40</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
+    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
@@ -11,7 +14,7 @@
     <PackageReference Include="Mono.Cecil" Version="0.11.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
+    <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
     <Compile Include="..\..\..\console\Options.cs" Link="Options.cs" />
   </ItemGroup>
 </Project>

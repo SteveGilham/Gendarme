@@ -2,6 +2,9 @@
   <PropertyGroup>
     <TargetFrameworks>net40;netcoreapp2.1</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
+    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>

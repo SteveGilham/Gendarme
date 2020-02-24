@@ -2,9 +2,11 @@
   <PropertyGroup>
     <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\gendarme\</SolutionDir>
+    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\bin\</OutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -18,7 +20,7 @@
     <PackageReference Include="Mono.Cecil" Version="0.11.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyStaticInfo.cs" />
+    <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />

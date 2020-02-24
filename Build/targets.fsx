@@ -112,8 +112,47 @@ _Target "Clean" (fun _ ->
   printfn "Cleaning the build and deploy folders"
   Actions.Clean())
 
-_Target "SetVersion" ignore
+_Target "SetVersion" (fun _ ->
 
+  let now = DateTime.Now
+  let time = now.ToString("HHmmss").Substring(0,5).TrimStart('0')
+  let y0 = now.Year
+  let m0 = now.Month
+  let d0 = now.Day
+  let y = y0.ToString()
+  let m = m0.ToString()
+  let d = d0.ToString()
+  Version := y + "." + m + "." + d + "."  + time
+
+  let copy = sprintf "© 2010-%d by Steve Gilham <SteveGilham@users.noreply.github.com>" y0
+  let copy2 = sprintf "Copyright (C) 2005-%d Novell, Inc. and contributors" y0
+  Copyright := "Copyright " + copy
+
+  Directory.ensure "./_Generated"
+
+  let v' = !Version
+  
+  AssemblyInfoFile.create "./_Generated/AssemblyStaticInfo.fs"
+         [ AssemblyInfo.Product "altcode.gendarme"
+           AssemblyInfo.Version v'
+           AssemblyInfo.FileVersion v'
+           AssemblyInfo.Company "Steve Gilham"
+           AssemblyInfo.Trademark ""
+           AssemblyInfo.CLSCompliant true
+           AssemblyInfo.ComVisible false
+           AssemblyInfo.Copyright copy ] (Some AssemblyInfoFileConfig.Default)
+
+  AssemblyInfoFile.create "./_Generated/AssemblyStaticInfo.cs"
+         [ AssemblyInfo.Title "Gendarme"
+           AssemblyInfo.Version v'
+           AssemblyInfo.FileVersion v'
+           AssemblyInfo.Company "Novell, Inc."
+           AssemblyInfo.Trademark ""
+           AssemblyInfo.Description "Rule-based assembly analyzer"
+           AssemblyInfo.CLSCompliant false
+           AssemblyInfo.ComVisible false
+           AssemblyInfo.Copyright copy2 ] (Some AssemblyInfoFileConfig.Default)
+)
 
 _Target "All" ignore
 

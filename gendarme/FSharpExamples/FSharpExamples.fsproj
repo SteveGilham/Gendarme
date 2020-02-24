@@ -2,10 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\</SolutionDir>
+    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
+    <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
     <Compile Include="AvoidLongParameterListsRule .fs" />
     <Compile Include="AvoidMultidimensionalIndexerRule.fs" />
     <Compile Include="AvoidNonAlphanumericIdentifierRule.fs" />

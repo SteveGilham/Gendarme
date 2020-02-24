@@ -2,6 +2,9 @@
   <PropertyGroup>
     <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\gendarme\</SolutionDir>
+    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -16,7 +19,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
+    <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
     <None Include="dataflow\BasicBlock.cs" />
     <None Include="dataflow\CFG.cs" />
     <None Include="dataflow\CFGEdge.cs" />

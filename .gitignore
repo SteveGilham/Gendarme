@@ -25,3 +25,4 @@ gendarme/.vs/
 Build/build.fsx
 Build/.fake/
 Build/obj/
+_*/
