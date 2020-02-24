@@ -26,4 +26,7 @@
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CecilExtensions\CecilExtensions.fsproj" />
+  </ItemGroup>
 </Project>

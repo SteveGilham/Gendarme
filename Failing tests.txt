@@ -11,9 +11,9 @@ With Roslyn
    Source: AvoidUnnecessarySpecializationTest.cs line 437 (Stack entry analysis)
 
 17 Interoperability
-   Source: DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs
+   Source: DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs (stack related)
 
-2 Correctness
+6 Correctness
 
 6 Concurrency
 
