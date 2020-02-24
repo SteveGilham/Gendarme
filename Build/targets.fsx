@@ -154,6 +154,56 @@ _Target "SetVersion" (fun _ ->
            AssemblyInfo.Copyright copy2 ] (Some AssemblyInfoFileConfig.Default)
 )
 
+// Basic compilation
+
+_Target "Compilation" ignore
+
+_Target "Restore" (fun _  ->
+    !!"./gendarme/**/*.*proj"
+    |> Seq.iter (fun f -> 
+                 let dir = Path.GetDirectoryName f
+                 let proj = Path.GetFileName f
+                 DotNet.restore (fun o -> o.WithCommon(withWorkingDirectoryVM dir)) proj))
+
+
+_Target "BuildRelease" (fun _ ->
+  "./gendarme/gendarme-win.sln"
+  |> msbuildRelease)
+
+_Target "BuildDebug" (fun _ ->
+  "./gendarme/gendarme-win.sln"
+  |> msbuildDebug)
+
+_Target "UnitTest" ignore
+
+_Target "JustUnitTest" (fun _ ->
+  Directory.ensure "./_Reports"
+  try
+    !!(@"_Binaries/Tests.*/Debug+AnyCPU/net4*/Tests.*.dll")
+    |> NUnit3.run (fun p ->
+         { p with
+             ToolPath = nunitConsole
+             WorkingDir = "."
+             ResultSpecs = [ "./_Reports/JustUnitTestReport.xml" ] })
+  with x ->
+    printfn "%A" x
+    )//reraise()) // while fixing
+
+_Target "UnitTestDotNet" (fun _ ->
+  Directory.ensure "./_Reports"
+  try
+    !!(@"./**/Tests.*.csproj")
+    |> Seq.iter
+         (DotNet.test (fun p ->
+           { p.WithCommon dotnetOptions with
+               Configuration = DotNet.BuildConfiguration.Debug
+               Framework = Some "netcoreapp2.1"
+               NoBuild = true }
+           |> withCLIArgs))
+  with x ->
+    printfn "%A" x
+    )//reraise()) // while fixing
+
 _Target "All" ignore
 
 let resetColours _ =
@@ -169,6 +219,21 @@ Target.activateFinal "ResetConsoleColours"
 "Clean"
 ==> "SetVersion"
 ==> "Preparation"
+
+"Preparation"
+==> "Restore"
+==> "BuildDebug"
+==> "Compilation"
+
+"Preparation"
+==> "Restore"
+==> "BuildRelease"
+==> "Compilation"
+
+"Compilation"
+==> "JustUnitTest"
+==> "UnitTestDotNet"
+==> "UnitTest"
 
 let defaultTarget() =
   resetColours()
