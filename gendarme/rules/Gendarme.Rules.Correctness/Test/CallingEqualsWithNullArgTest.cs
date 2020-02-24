@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for CallingEqualsWithNullArgRule
 //
 // Authors:
@@ -34,149 +34,150 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Correctness {
+namespace Test.Rules.Correctness
+{
+  [TestFixture]
+  public class CallingEqualsWithNullArgTest : MethodRuleTestFixture<CallingEqualsWithNullArgRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no CALL[VIRT]
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class CallingEqualsWithNullArgTest : MethodRuleTestFixture<CallingEqualsWithNullArgRule> {
+    public class CallToEqualsWithNullArg
+    {
+      public static void MainName(string[] args)
+      {
+        CallToEqualsWithNullArg c = new CallToEqualsWithNullArg();
+        c.Equals(null);
+      }
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no CALL[VIRT]
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    [Test]
+    public void CallToEqualsWithNullArgTest()
+    {
+      AssertRuleFailure<CallToEqualsWithNullArg>("MainName", 1);
+    }
 
-		public class CallToEqualsWithNullArg
-		{
-			public static void Main (string [] args)
-			{
-				CallToEqualsWithNullArg c = new CallToEqualsWithNullArg ();
-				c.Equals (null);
-			}
-		}
+    public class CallingEqualsWithNonNullArg
+    {
+      public static void MainName(string[] args)
+      {
+        CallingEqualsWithNonNullArg c = new CallingEqualsWithNonNullArg();
+        CallingEqualsWithNonNullArg c1 = new CallingEqualsWithNonNullArg();
+        c.Equals(c1);
+        c1 = null; // ensure an LDNULL instruction is inside the method
+      }
+    }
 
-		[Test]
-		public void CallToEqualsWithNullArgTest ()
-		{
-			AssertRuleFailure<CallToEqualsWithNullArg> ("Main", 1);
-		}
-		
-		public class CallingEqualsWithNonNullArg 
-		{
-			public static void Main (string [] args)
-			{
-				CallingEqualsWithNonNullArg c = new CallingEqualsWithNonNullArg ();
-				CallingEqualsWithNonNullArg c1 = new CallingEqualsWithNonNullArg ();
-				c.Equals (c1);
-				c1 = null; // ensure an LDNULL instruction is inside the method
-			}
-		}
+    [Test]
+    public void CallingEqualsWithNonNullArgTest()
+    {
+      AssertRuleSuccess<CallingEqualsWithNonNullArg>("MainName");
+    }
 
-		[Test]
-		public void CallingEqualsWithNonNullArgTest ()
-		{
-			AssertRuleSuccess<CallingEqualsWithNonNullArg> ("Main");
-		}
-		
-		public class CallingEqualsOnEnum
-		{
-			enum Days { Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday };
-			
-			public bool Equals (Enum e)
-			{
-				if (e == null)
-					return false;
-				else
-					return e.GetType () == typeof (Days);
-			}
-			
-			public void PassingArgNullInEquals ()
-			{
-				Type e = typeof (Days);
-				e.Equals (null);
-			}
-			
-			public void NotPassingNullArgInEquals ()
-			{
-				Type e = typeof (Days);
-				Type e1 = typeof (Days);
-				e.Equals (e1);
-				e1 = null; // ensure an LDNULL instruction is inside the method
-			}
-		}
+    public class CallingEqualsOnEnum
+    {
+      private enum Days
+      { Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday };
 
-		[Test]
-		public void CallingEqualsOnEnumTest ()
-		{
-			AssertRuleFailure<CallingEqualsOnEnum> ("PassingArgNullInEquals", 1);
-			AssertRuleSuccess<CallingEqualsOnEnum> ("NotPassingNullArgInEquals");
-		}
+      public bool Equals(Enum e)
+      {
+        if (e == null)
+          return false;
+        else
+          return e.GetType() == typeof(Days);
+      }
 
-		struct structure {
+      public void PassingArgNullInEquals()
+      {
+        Type e = typeof(Days);
+        e.Equals(null);
+      }
 
-			public bool Equals (structure s)
-			{
-				return s.GetType () == typeof (structure);
-			}
-		}
-		
-		public class CallingEqualsOnStruct
-		{			
-			public void PassingNullArgument ()
-			{
-				structure s = new structure ();
-				s.Equals (null);
-			}
-			
-			public void PassingNonNullArg ()
-			{
-				structure s = new structure ();
-				structure s1 = new structure ();
-				s.Equals (s1);
-			}
-		}
+      public void NotPassingNullArgInEquals()
+      {
+        Type e = typeof(Days);
+        Type e1 = typeof(Days);
+        e.Equals(e1);
+        e1 = null; // ensure an LDNULL instruction is inside the method
+      }
+    }
 
-		[Test]
-		public void CallingEqualsOnStructTest ()
-		{
-			AssertRuleFailure<CallingEqualsOnStruct> ("PassingNullArgument", 1);
-			// there's no LDNULL in the method, so the rule skip the analysis
-			AssertRuleDoesNotApply<CallingEqualsOnStruct> ("PassingNonNullArg");
-		}
+    [Test]
+    public void CallingEqualsOnEnumTest()
+    {
+      AssertRuleFailure<CallingEqualsOnEnum>("PassingArgNullInEquals", 1);
+      AssertRuleSuccess<CallingEqualsOnEnum>("NotPassingNullArgInEquals");
+    }
 
-		public class CallingEqualsOnArray
-		{
-			int [] a = new int [] {1, 2, 3};
-			
-			public bool Equals (int [] b)
-			{
-				if (b == null)
-					return false;
-				else
-					return a.Length == b.Length;
-			}
-			
-			public void PassingNullArg ()
-			{
-				int [] b = new int [] {1, 2, 3};
-				b.Equals (null);
-			}
-			
-			public void PassingNonNullArg ()
-			{
-				int [] b = new int [] {1, 2, 3};
-				b.Equals (a);
-				b = null;
-			}
-		}
+    private struct structure
+    {
+      public bool Equals(structure s)
+      {
+        return s.GetType() == typeof(structure);
+      }
+    }
 
-		[Test]
-		public void CallingEqualsOnArrayTest ()
-		{
-			AssertRuleFailure<CallingEqualsOnArray> ("PassingNullArg", 1);
-			AssertRuleSuccess<CallingEqualsOnArray> ("PassingNonNullArg");
-		}
-	}
+    public class CallingEqualsOnStruct
+    {
+      public void PassingNullArgument()
+      {
+        structure s = new structure();
+        s.Equals(null);
+      }
+
+      public void PassingNonNullArg()
+      {
+        structure s = new structure();
+        structure s1 = new structure();
+        s.Equals(s1);
+      }
+    }
+
+    [Test]
+    public void CallingEqualsOnStructTest()
+    {
+      AssertRuleFailure<CallingEqualsOnStruct>("PassingNullArgument", 1);
+      // there's no LDNULL in the method, so the rule skip the analysis
+      AssertRuleDoesNotApply<CallingEqualsOnStruct>("PassingNonNullArg");
+    }
+
+    public class CallingEqualsOnArray
+    {
+      private int[] a = new int[] { 1, 2, 3 };
+
+      public bool Equals(int[] b)
+      {
+        if (b == null)
+          return false;
+        else
+          return a.Length == b.Length;
+      }
+
+      public void PassingNullArg()
+      {
+        int[] b = new int[] { 1, 2, 3 };
+        b.Equals(null);
+      }
+
+      public void PassingNonNullArg()
+      {
+        int[] b = new int[] { 1, 2, 3 };
+        b.Equals(a);
+        b = null;
+      }
+    }
+
+    [Test]
+    public void CallingEqualsOnArrayTest()
+    {
+      AssertRuleFailure<CallingEqualsOnArray>("PassingNullArg", 1);
+      AssertRuleSuccess<CallingEqualsOnArray>("PassingNonNullArg");
+    }
+  }
 }

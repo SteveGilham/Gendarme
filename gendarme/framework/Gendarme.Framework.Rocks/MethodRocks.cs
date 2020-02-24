@@ -38,6 +38,10 @@ using System.Linq;
 
 using Mono.Cecil;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests.Framework")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests.Rules.Portability")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests.Rules.Ui")]
+
 namespace Gendarme.Framework.Rocks
 {
   // add Method[Reference|Definition][Collection] extensions methods here
@@ -126,6 +130,8 @@ namespace Gendarme.Framework.Rocks
       return self.DeclaringType.IsGeneratedCode();
     }
 
+    internal static String MainName = "Main";
+
     /// <summary>
     /// Check if the signature of a method is consitent for it's use as a Main method.
     /// Note: it doesn't check that the method is the EntryPoint of it's assembly.
@@ -136,6 +142,7 @@ namespace Gendarme.Framework.Rocks
     /// </summary>gre
     /// <param name="self">The MethodReference on which the extension method can be called.</param>
     /// <returns>True if the method is a valid Main, False otherwise.</returns>
+    ///
     public static bool IsMain(this MethodReference self)
     {
       if (self == null)
@@ -146,7 +153,7 @@ namespace Gendarme.Framework.Rocks
       if (!method.IsStatic)
         return false;
 
-      if (method.Name != "Main")
+      if (method.Name != MainName)
         return false;
 
       // Main must return void or int

@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for GetEntryAssemblyMayReturnNullRule
 //
 // Authors:
@@ -41,87 +41,89 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  internal class ClassCallingGetEntryAssembly
+  {
+    public static void MainName() // fake main
+    {
+    }
 
-	internal class ClassCallingGetEntryAssembly {
+    public void OneCall()
+    {
+      object o = System.Reflection.Assembly.GetEntryAssembly();
+    }
 
-		public static void Main () // fake main
-		{
-		}
+    public void ThreeCalls()
+    {
+      string s = System.Reflection.Assembly.GetEntryAssembly().ToString();
+      int x = 2 + 2;
+      x = x.CompareTo(1);
+      object o = System.Reflection.Assembly.GetEntryAssembly();
+      System.Reflection.Assembly.GetEntryAssembly();
+    }
 
-		public void OneCall ()
-		{
-			object o = System.Reflection.Assembly.GetEntryAssembly ();
-		}
+    public void NoCalls()
+    {
+      int x = 42;
+      int y = x * 42;
+      x = x * y.CompareTo(42);
+    }
+  }
 
-		public void ThreeCalls ()
-		{
-			string s = System.Reflection.Assembly.GetEntryAssembly ().ToString ();
-			int x = 2 + 2;
-			x = x.CompareTo (1);
-			object o = System.Reflection.Assembly.GetEntryAssembly ();
-			System.Reflection.Assembly.GetEntryAssembly ();
-		}
+  [TestFixture]
+  public class GetEntryAssemblyMayReturnNullTest : MethodRuleTestFixture<GetEntryAssemblyMayReturnNullRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no NEWOBJ
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-		public void NoCalls ()
-		{
-			int x = 42;
-			int y = x * 42;
-			x = x * y.CompareTo (42);
-		}
-	}
+    [Test]
+    public void TestMethodNotCallingGetEntryAssembly()
+    {
+      AssertRuleSuccess<ClassCallingGetEntryAssembly>("NoCalls");
+    }
 
-	[TestFixture]
-	public class GetEntryAssemblyMayReturnNullTest : MethodRuleTestFixture<GetEntryAssemblyMayReturnNullRule> {
+    private TypeDefinition GetTest<T>(AssemblyDefinition assembly)
+    {
+      return assembly.MainModule.GetType(typeof(T).FullName);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no NEWOBJ
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    [Test]
+    public void TestGetEntryAssemblyCallFromExecutable()
+    {
+      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(unit);
+      try
+      {
+        assembly.EntryPoint = GetTest<ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "MainName");
+        assembly.MainModule.Kind = ModuleKind.Console;
+        MethodDefinition method = GetTest<ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "ThreeCalls");
+        Assert.AreEqual(RuleResult.DoesNotApply, (Runner as TestRunner).CheckMethod(method), "RuleResult");
+        Assert.AreEqual(0, Runner.Defects.Count, "Count");
+      }
+      finally
+      {
+        assembly.EntryPoint = null;
+        assembly.MainModule.Kind = ModuleKind.Dll;
+      }
+    }
 
-		[Test]
-		public void TestMethodNotCallingGetEntryAssembly ()
-		{
-			AssertRuleSuccess<ClassCallingGetEntryAssembly> ("NoCalls");
-		}
+    [Test]
+    public void TestMethodCallingGetEntryAssemblyOnce()
+    {
+      AssertRuleFailure<ClassCallingGetEntryAssembly>("OneCall", 1);
+    }
 
-		private TypeDefinition GetTest<T> (AssemblyDefinition assembly)
-		{
-			return assembly.MainModule.GetType (typeof (T).FullName);
-		}
-
-		[Test]
-		public void TestGetEntryAssemblyCallFromExecutable ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (unit);
-			try {
-				assembly.EntryPoint = GetTest<ClassCallingGetEntryAssembly> (assembly).Methods.FirstOrDefault (m => m.Name == "Main");
-				assembly.MainModule.Kind = ModuleKind.Console;
-				MethodDefinition method = GetTest<ClassCallingGetEntryAssembly> (assembly).Methods.FirstOrDefault (m => m.Name == "ThreeCalls");
-				Assert.AreEqual (RuleResult.DoesNotApply, (Runner as TestRunner).CheckMethod (method), "RuleResult");
-				Assert.AreEqual (0, Runner.Defects.Count, "Count");
-			}
-			finally {
-				assembly.EntryPoint = null;
-				assembly.MainModule.Kind = ModuleKind.Dll;
-			}
-		}
-
-		[Test]
-		public void TestMethodCallingGetEntryAssemblyOnce ()
-		{
-			AssertRuleFailure<ClassCallingGetEntryAssembly> ("OneCall", 1);
-		}
-
-		[Test]
-		public void TestMethodCallingGetEntryAssemblyThreeTimes ()
-		{
-			AssertRuleFailure<ClassCallingGetEntryAssembly> ("ThreeCalls", 3);
-		}
-	}
+    [Test]
+    public void TestMethodCallingGetEntryAssemblyThreeTimes()
+    {
+      AssertRuleFailure<ClassCallingGetEntryAssembly>("ThreeCalls", 3);
+    }
+  }
 }

@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for CompareWithEmptyStringEfficientlyRule
 //
 // Authors:
@@ -35,246 +35,268 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Performance {
+namespace Test.Rules.Performance
+{
+  [TestFixture]
+  public class CompareWithEmptyStringEfficientlyTest : MethodRuleTestFixture<CompareWithEmptyStringEfficientlyRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // has no body
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // has no call to other methods
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class CompareWithEmptyStringEfficientlyTest : MethodRuleTestFixture<CompareWithEmptyStringEfficientlyRule> {
+    public class UsingStringEquals
+    {
+      private string s = "";
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// has no body
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// has no call to other methods
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+      public static void MainName(string[] args)
+      {
+        UsingStringEquals u = new UsingStringEquals();
+        if (u.s.Equals(""))
+        {
+        }
+      }
+    }
 
-		public class UsingStringEquals {
-			string s = "";
-			public static void Main (string [] args)
-			{
-				UsingStringEquals u = new UsingStringEquals ();
-				if (u.s.Equals ("")) {
-				}
-			}
-		}
+    public class UsingStringEqualsEmpty
+    {
+      private string s = "";
 
-		public class UsingStringEqualsEmpty {
-			string s = "";
-			public static void Main (string [] args)
-			{
-				UsingStringEqualsEmpty u = new UsingStringEqualsEmpty ();
-				if (u.s.Equals (String.Empty)) {
-				}
-			}
-		}
+      public static void MainName(string[] args)
+      {
+        UsingStringEqualsEmpty u = new UsingStringEqualsEmpty();
+        if (u.s.Equals(String.Empty))
+        {
+        }
+      }
+    }
 
-		public class UsingStringLength {
-			string s = "";
-			public static void Main (string [] args)
-			{
-				UsingStringLength u = new UsingStringLength ();
-				if (u.s.Length == 0) {
-				}
-			}
-		}
+    public class UsingStringLength
+    {
+      private string s = "";
 
-		public class UsingEqualsWithNonStringArg {
-			int i = 0;
-			public static void Main (string [] args)
-			{
-				UsingEqualsWithNonStringArg u = new UsingEqualsWithNonStringArg ();
-				if (u.i.Equals (1)) {
-				}
-			}
-		}
+      public static void MainName(string[] args)
+      {
+        UsingStringLength u = new UsingStringLength();
+        if (u.s.Length == 0)
+        {
+        }
+      }
+    }
 
-		public class AnotherUseOfEqualsWithEmptyString {
-			string s = "abc";
-			public static void Main (string [] args)
-			{
-				AnotherUseOfEqualsWithEmptyString a = new AnotherUseOfEqualsWithEmptyString ();
-				bool b = a.s.Equals ("");
-			}
-		}
+    public class UsingEqualsWithNonStringArg
+    {
+      private int i = 0;
 
-		public class AnotherUseOfEqualsWithStringEmpty {
-			string s = "abc";
-			public static void Main (string [] args)
-			{
-				AnotherUseOfEqualsWithStringEmpty a = new AnotherUseOfEqualsWithStringEmpty ();
-				bool b = a.s.Equals (String.Empty);
-			}
-		}
+      public static void MainName(string[] args)
+      {
+        UsingEqualsWithNonStringArg u = new UsingEqualsWithNonStringArg();
+        if (u.i.Equals(1))
+        {
+        }
+      }
+    }
 
-		public class OneMoreUseOfEqualsWithEmptyString {
-			string s = "";
-			public static void Main (string [] args)
-			{
-				OneMoreUseOfEqualsWithEmptyString o = new OneMoreUseOfEqualsWithEmptyString ();
-				if (o.s.Equals ("")) {
-					bool b = o.s.Equals ("");
-				}
-			}
-		}
+    public class AnotherUseOfEqualsWithEmptyString
+    {
+      private string s = "abc";
 
-		public class UsingEqualsWithNonEmptyString {
-			string s = "";
-			public static void Main (string [] args)
-			{
-				UsingEqualsWithNonEmptyString u = new UsingEqualsWithNonEmptyString ();
-				if (u.s.Equals ("abc")) {
-				}
-			}
-		}
+      public static void MainName(string[] args)
+      {
+        AnotherUseOfEqualsWithEmptyString a = new AnotherUseOfEqualsWithEmptyString();
+        bool b = a.s.Equals("");
+      }
+    }
 
-		[Test]
-		public void MainComparingStrings ()
-		{
-			AssertRuleFailure<UsingStringEquals> ("Main");
-			AssertRuleFailure<UsingStringEqualsEmpty> ("Main");
-			
-			AssertRuleSuccess<UsingStringLength> ("Main");
-			AssertRuleSuccess<UsingEqualsWithNonStringArg> ("Main");
+    public class AnotherUseOfEqualsWithStringEmpty
+    {
+      private string s = "abc";
 
-			AssertRuleFailure<AnotherUseOfEqualsWithEmptyString> ("Main");
-			AssertRuleFailure<AnotherUseOfEqualsWithStringEmpty> ("Main");
-			AssertRuleFailure<OneMoreUseOfEqualsWithEmptyString> ("Main");
-			AssertRuleSuccess<UsingEqualsWithNonEmptyString> ("Main");
-		}
+      public static void MainName(string[] args)
+      {
+        AnotherUseOfEqualsWithStringEmpty a = new AnotherUseOfEqualsWithStringEmpty();
+        bool b = a.s.Equals(String.Empty);
+      }
+    }
 
+    public class OneMoreUseOfEqualsWithEmptyString
+    {
+      private string s = "";
 
-		public bool WrapperLiteral (string s)
-		{
-			return s.Equals ("");
-		}
+      public static void MainName(string[] args)
+      {
+        OneMoreUseOfEqualsWithEmptyString o = new OneMoreUseOfEqualsWithEmptyString();
+        if (o.s.Equals(""))
+        {
+          bool b = o.s.Equals("");
+        }
+      }
+    }
 
-		public bool WrapperEmpty (string s)
-		{
-			return s.Equals (String.Empty);
-		}
+    public class UsingEqualsWithNonEmptyString
+    {
+      private string s = "";
 
-		[Test]
-		public void WrapperEqualsString ()
-		{
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("WrapperLiteral");
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("WrapperEmpty");
-		}
+      public static void MainName(string[] args)
+      {
+        UsingEqualsWithNonEmptyString u = new UsingEqualsWithNonEmptyString();
+        if (u.s.Equals("abc"))
+        {
+        }
+      }
+    }
 
-		public bool WrapperObjectLiteral (string s)
-		{
-			return s.Equals ((object) String.Empty);
-		}
+    [Test]
+    public void MainComparingStrings()
+    {
+      AssertRuleFailure<UsingStringEquals>("Main");
+      AssertRuleFailure<UsingStringEqualsEmpty>("Main");
 
-		public bool WrapperObjectEmpty (string s)
-		{
-			return s.Equals ((object) "");
-		}
+      AssertRuleSuccess<UsingStringLength>("Main");
+      AssertRuleSuccess<UsingEqualsWithNonStringArg>("Main");
 
-		[Test]
-		public void WrapperEqualsObject ()
-		{
-			// [g]mcs emit a "callvirt System.Boolean System.String::Equals(System.Object)"
-			// while csc emits "callvirt System.Boolean System.Object::Equals(System.Object)"
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("WrapperObjectLiteral");
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("WrapperObjectEmpty");
-		}
+      AssertRuleFailure<AnotherUseOfEqualsWithEmptyString>("Main");
+      AssertRuleFailure<AnotherUseOfEqualsWithStringEmpty>("Main");
+      AssertRuleFailure<OneMoreUseOfEqualsWithEmptyString>("Main");
+      AssertRuleSuccess<UsingEqualsWithNonEmptyString>("Main");
+    }
 
-		public bool OperatorEqualsLiteral (string s)
-		{
-			return (s == "");
-		}
+    public bool WrapperLiteral(string s)
+    {
+      return s.Equals("");
+    }
 
-		public bool OperatorEqualsStringEmpty (string s)
-		{
-			return (s == String.Empty);
-		}
+    public bool WrapperEmpty(string s)
+    {
+      return s.Equals(String.Empty);
+    }
 
-		public bool OperatorInequalsLiteral (string s)
-		{
-			return (s != "");
-		}
+    [Test]
+    public void WrapperEqualsString()
+    {
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("WrapperLiteral");
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("WrapperEmpty");
+    }
 
-		public bool OperatorInequalsStringEmpty (string s)
-		{
-			return (s != String.Empty);
-		}
+    public bool WrapperObjectLiteral(string s)
+    {
+      return s.Equals((object)String.Empty);
+    }
 
-		public bool OperatorEqualsString (string s)
-		{
-			return (s == "gendarme");
-		}
+    public bool WrapperObjectEmpty(string s)
+    {
+      return s.Equals((object)"");
+    }
 
-		public bool OperatorInequalsString (string s)
-		{
-			return (s != "gendarme");
-		}
+    [Test]
+    public void WrapperEqualsObject()
+    {
+      // [g]mcs emit a "callvirt System.Boolean System.String::Equals(System.Object)"
+      // while csc emits "callvirt System.Boolean System.Object::Equals(System.Object)"
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("WrapperObjectLiteral");
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("WrapperObjectEmpty");
+    }
 
-		[Test]
-		public void Operators ()
-		{
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("OperatorEqualsLiteral");
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("OperatorEqualsStringEmpty");
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("OperatorInequalsLiteral");
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("OperatorInequalsStringEmpty");
+    public bool OperatorEqualsLiteral(string s)
+    {
+      return (s == "");
+    }
 
-			AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest> ("OperatorEqualsString");
-			AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest> ("OperatorInequalsString");
-		}
+    public bool OperatorEqualsStringEmpty(string s)
+    {
+      return (s == String.Empty);
+    }
 
-		public bool TwoParameters ()
-		{
-			return Object.Equals ("", String.Empty);
-		}
+    public bool OperatorInequalsLiteral(string s)
+    {
+      return (s != "");
+    }
 
-		static string static_string;
-		string instance_string;
+    public bool OperatorInequalsStringEmpty(string s)
+    {
+      return (s != String.Empty);
+    }
 
-		public bool Fields ()
-		{
-			return ("".Equals (static_string) || String.Empty.Equals (instance_string));
-		}
+    public bool OperatorEqualsString(string s)
+    {
+      return (s == "gendarme");
+    }
 
-		public bool NewobjAndEquality ()
-		{
-			DateTime dt = new DateTime ();
-			return dt == DateTime.UtcNow;
-		}
+    public bool OperatorInequalsString(string s)
+    {
+      return (s != "gendarme");
+    }
 
-		[Test]
-		public void BetterCoverage ()
-		{
-			AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest> ("TwoParameters");
-			AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest> ("Fields");
-			AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest> ("NewobjAndEquality");
-		}
+    [Test]
+    public void Operators()
+    {
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("OperatorEqualsLiteral");
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("OperatorEqualsStringEmpty");
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("OperatorInequalsLiteral");
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("OperatorInequalsStringEmpty");
 
-		static bool CheckString (string val)
-		{
-			return (val.Length % 2 == 0);
-		}
+      AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest>("OperatorEqualsString");
+      AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest>("OperatorInequalsString");
+    }
 
-		static void ThrowValidationException (string a, string b, string c)
-		{
-		}
+    public bool TwoParameters()
+    {
+      return Object.Equals("", String.Empty);
+    }
 
-		// from mcs/class/System.Web/System.Web/HttpRequest.cs
-		static void ValidateNameValueCollection (string name, NameValueCollection coll)
-		{
-			if (coll == null)
-				return;
+    private static string static_string;
+    private string instance_string;
 
-			foreach (string key in coll.Keys) {
-				string val = coll [key];
-				if (val != null && val != "" && CheckString (val))
-					ThrowValidationException (name, key, val);
-			}
-		}
+    public bool Fields()
+    {
+      return ("".Equals(static_string) || String.Empty.Equals(instance_string));
+    }
 
-		[Test]
-		public void MultipleChecks ()
-		{
-			AssertRuleFailure<CompareWithEmptyStringEfficientlyTest> ("ValidateNameValueCollection", 1);
-		}
-	}
+    public bool NewobjAndEquality()
+    {
+      DateTime dt = new DateTime();
+      return dt == DateTime.UtcNow;
+    }
+
+    [Test]
+    public void BetterCoverage()
+    {
+      AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest>("TwoParameters");
+      AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest>("Fields");
+      AssertRuleSuccess<CompareWithEmptyStringEfficientlyTest>("NewobjAndEquality");
+    }
+
+    private static bool CheckString(string val)
+    {
+      return (val.Length % 2 == 0);
+    }
+
+    private static void ThrowValidationException(string a, string b, string c)
+    {
+    }
+
+    // from mcs/class/System.Web/System.Web/HttpRequest.cs
+    private static void ValidateNameValueCollection(string name, NameValueCollection coll)
+    {
+      if (coll == null)
+        return;
+
+      foreach (string key in coll.Keys)
+      {
+        string val = coll[key];
+        if (val != null && val != "" && CheckString(val))
+          ThrowValidationException(name, key, val);
+      }
+    }
+
+    [Test]
+    public void MultipleChecks()
+    {
+      AssertRuleFailure<CompareWithEmptyStringEfficientlyTest>("ValidateNameValueCollection", 1);
+    }
+  }
 }

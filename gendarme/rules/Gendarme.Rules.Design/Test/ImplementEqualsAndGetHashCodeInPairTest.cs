@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for ImplementEqualsAndGetHashCodeInPairRule
 //
 // Authors:
@@ -34,159 +34,173 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Design {
-	
-	[TestFixture]
-	public class ImplementEqualsAndGetHashCodeInPairTest : TypeRuleTestFixture<ImplementEqualsAndGetHashCodeInPairRule> {
+namespace Test.Rules.Design
+{
+  [TestFixture]
+  public class ImplementEqualsAndGetHashCodeInPairTest : TypeRuleTestFixture<ImplementEqualsAndGetHashCodeInPairRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
-		}
+    public class ImplementsEqualsButNotGetHashCode
+    {
+      public override bool Equals(Object obj)
+      {
+        return this == obj;
+      }
+    }
 
-		public class ImplementsEqualsButNotGetHashCode {
-			public override bool Equals (Object obj)
-			{
-				return this == obj;
-			}
-		}
+    [Test]
+    public void EqualsButNotGetHashCodeTest()
+    {
+      AssertRuleFailure<ImplementsEqualsButNotGetHashCode>(1);
+    }
 
-		[Test]
-		public void EqualsButNotGetHashCodeTest ()
-		{
-			AssertRuleFailure<ImplementsEqualsButNotGetHashCode> (1);
-		}
-			
-		public class ImplementsGetHashCodeButNotEquals {
-			public override int GetHashCode ()
-			{
-				return 2;
-			}
-		}
+    public class ImplementsGetHashCodeButNotEquals
+    {
+      public override int GetHashCode()
+      {
+        return 2;
+      }
+    }
 
-		[Test]
-		public void GetHashCodeButNotEqualsTest ()
-		{
-			AssertRuleFailure<ImplementsGetHashCodeButNotEquals> (1);
-		}
-		
-		public class ImplementsNoneOfThem {
-			public void test ()
-			{
-			}
-		}
+    [Test]
+    public void GetHashCodeButNotEqualsTest()
+    {
+      AssertRuleFailure<ImplementsGetHashCodeButNotEquals>(1);
+    }
 
-		[Test]
-		public void NoneOfThemTest ()
-		{
-			AssertRuleSuccess<ImplementsNoneOfThem> ();
-		}
+    public class ImplementsNoneOfThem
+    {
+      public void test()
+      {
+      }
+    }
 
-		public class ImplementsBothOfThem {
-			public override int GetHashCode ()
-			{
-				return 2;
-			}
-			public new bool Equals (Object obj)
-			{
-				return this == obj;
-			}
-		}
+    [Test]
+    public void NoneOfThemTest()
+    {
+      AssertRuleSuccess<ImplementsNoneOfThem>();
+    }
 
-		[Test]
-		public void BothOfThemTest ()
-		{
-			AssertRuleSuccess<ImplementsBothOfThem> ();
-		}
+    public class ImplementsBothOfThem
+    {
+      public override int GetHashCode()
+      {
+        return 2;
+      }
 
-		public class ImplementsEqualsUsesObjectGetHashCode {
-			public override bool Equals (Object obj)
-			{
-				return this == obj;
-			}
-			public static void Main (string [] args)
-			{
-				int j = 0;
-				ImplementsEqualsUsesObjectGetHashCode i = new ImplementsEqualsUsesObjectGetHashCode ();
-				j = i.GetHashCode ();
-			}
-		}
+      public new bool Equals(Object obj)
+      {
+        return this == obj;
+      }
+    }
 
-		[Test]
-		public void ImplementsEqualsUsesObjectGetHashCodeTest ()
-		{
-			AssertRuleFailure<ImplementsEqualsUsesObjectGetHashCode> (1);
-		}
+    [Test]
+    public void BothOfThemTest()
+    {
+      AssertRuleSuccess<ImplementsBothOfThem>();
+    }
 
-		public class ImplementsEqualsReuseBaseGetHashCode {
-			public override bool Equals (Object obj)
-			{
-				return this == obj;
-			}
-			public override int  GetHashCode()
-			{
- 				 return base.GetHashCode();
-			}
-			public static void Main (string [] args)
-			{
-				int j = 0;
-				ImplementsEqualsUsesObjectGetHashCode i = new ImplementsEqualsUsesObjectGetHashCode ();
-				j = i.GetHashCode ();
-			}
-		}
+    public class ImplementsEqualsUsesObjectGetHashCode
+    {
+      public override bool Equals(Object obj)
+      {
+        return this == obj;
+      }
 
-		[Test]
-		public void ImplementsEqualsReuseBaseGetHashCodeTest ()
-		{
-			AssertRuleSuccess<ImplementsEqualsReuseBaseGetHashCode> ();
-		}
+      public static void MainName(string[] args)
+      {
+        int j = 0;
+        ImplementsEqualsUsesObjectGetHashCode i = new ImplementsEqualsUsesObjectGetHashCode();
+        j = i.GetHashCode();
+      }
+    }
 
-		public class ImplementsGetHashCodeUsesObjectEquals {
-			public override int GetHashCode ()
-			{
-				return 1;
-			}
-			public static void Main (string [] args)
-			{
-				ImplementsGetHashCodeUsesObjectEquals i = new ImplementsGetHashCodeUsesObjectEquals ();
-				ImplementsGetHashCodeUsesObjectEquals i1 = new ImplementsGetHashCodeUsesObjectEquals ();
-				i.Equals (i1);
-			}
-		}
+    [Test]
+    public void ImplementsEqualsUsesObjectGetHashCodeTest()
+    {
+      AssertRuleFailure<ImplementsEqualsUsesObjectGetHashCode>(1);
+    }
 
-		[Test]
-		public void ImplementsGetHashCodeUsesObjectEqualsTest ()
-		{
-			AssertRuleFailure<ImplementsGetHashCodeUsesObjectEquals> (1);
-		}
+    public class ImplementsEqualsReuseBaseGetHashCode
+    {
+      public override bool Equals(Object obj)
+      {
+        return this == obj;
+      }
 
-		public class ImplementingEqualsWithTwoArgs {
-			public bool Equals (Object obj1, Object obj2)
-			{
-				return obj1 == obj2;
-			}
-		}
+      public override int GetHashCode()
+      {
+        return base.GetHashCode();
+      }
 
-		[Test]
-		public void EqualsWithTwoArgsTest ()
-		{
-			AssertRuleSuccess<ImplementingEqualsWithTwoArgs> ();
-		}
+      public static void MainName(string[] args)
+      {
+        int j = 0;
+        ImplementsEqualsUsesObjectGetHashCode i = new ImplementsEqualsUsesObjectGetHashCode();
+        j = i.GetHashCode();
+      }
+    }
 
-		public class ImplementingGetHashCodeWithOneArg {
-			public int GetHashCode (int j)
-			{
-				return j*2;
-			}
-		}
+    [Test]
+    public void ImplementsEqualsReuseBaseGetHashCodeTest()
+    {
+      AssertRuleSuccess<ImplementsEqualsReuseBaseGetHashCode>();
+    }
 
-		[Test]
-		public void GetHashCodeWithOneArgTest ()
-		{
-			AssertRuleSuccess<ImplementingGetHashCodeWithOneArg> ();
-		}
-	}
+    public class ImplementsGetHashCodeUsesObjectEquals
+    {
+      public override int GetHashCode()
+      {
+        return 1;
+      }
+
+      public static void MainName(string[] args)
+      {
+        ImplementsGetHashCodeUsesObjectEquals i = new ImplementsGetHashCodeUsesObjectEquals();
+        ImplementsGetHashCodeUsesObjectEquals i1 = new ImplementsGetHashCodeUsesObjectEquals();
+        i.Equals(i1);
+      }
+    }
+
+    [Test]
+    public void ImplementsGetHashCodeUsesObjectEqualsTest()
+    {
+      AssertRuleFailure<ImplementsGetHashCodeUsesObjectEquals>(1);
+    }
+
+    public class ImplementingEqualsWithTwoArgs
+    {
+      public bool Equals(Object obj1, Object obj2)
+      {
+        return obj1 == obj2;
+      }
+    }
+
+    [Test]
+    public void EqualsWithTwoArgsTest()
+    {
+      AssertRuleSuccess<ImplementingEqualsWithTwoArgs>();
+    }
+
+    public class ImplementingGetHashCodeWithOneArg
+    {
+      public int GetHashCode(int j)
+      {
+        return j * 2;
+      }
+    }
+
+    [Test]
+    public void GetHashCodeWithOneArgTest()
+    {
+      AssertRuleSuccess<ImplementingGetHashCodeWithOneArg>();
+    }
+  }
 }

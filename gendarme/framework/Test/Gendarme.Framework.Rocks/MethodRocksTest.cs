@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for MethodRocks
 //
 // Authors:
@@ -37,204 +37,214 @@ using NUnit.Framework;
 
 namespace Test.Framework.Rocks
 {
-	[TestFixture]
+  [TestFixture]
   public class MethodRocksTest
   {
     private class MainClassVoidVoid
     {
-      private static void Main()
-			{
-			}
-		}
+      private static void MainName()
+      {
+      }
+    }
 
     private class MainClassIntVoid
     {
-      private static int Main()
-			{
-				return 42;
-			}
-		}
+      private static int MainName()
+      {
+        return 42;
+      }
+    }
 
     private class MainClassVoidStrings
     {
-      private static void Main(string[] args)
-			{
-			}
-		}
+      private static void MainName(string[] args)
+      {
+      }
+    }
 
     private class MainClassIntStrings
     {
-      private static int Main(string[] args)
-			{
-				return 42;
-			}
+      private static int MainName(string[] args)
+      {
+        return 42;
+      }
 
-			~MainClassIntStrings ()
-			{
-			}
-		}
+      ~MainClassIntStrings()
+      {
+      }
+    }
 
     public int Value
     {
-			get { return 42; }
-			set { throw new NotSupportedException (); }
-		}
+      get { return 42; }
+      set { throw new NotSupportedException(); }
+    }
 
-		protected void EventCallback (object sender, EventArgs ea)
-		{
-		}
+    protected void EventCallback(object sender, EventArgs ea)
+    {
+    }
 
-		public class FooEventArgs : EventArgs {}
+    public class FooEventArgs : EventArgs { }
 
-		protected void FooEventCallback (object sender, FooEventArgs fea)
-		{
-		}
+    protected void FooEventCallback(object sender, FooEventArgs fea)
+    {
+    }
 
-		private AssemblyDefinition assembly;
+    private AssemblyDefinition assembly;
 
-		[OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
 
-        private static TypeName TN(string ns, string name)
-        {
-            return new TypeName
-            {
-                Namespace = ns,
-                Name = name
-            };
-        }
+    private static TypeName TN(string ns, string name)
+    {
+      return new TypeName
+      {
+        Namespace = ns,
+        Name = name
+      };
+    }
 
-		private MethodDefinition GetMethod (string typeName, string methodName)
-		{
-			TypeDefinition type = assembly.MainModule.GetType (typeName);
+    private MethodDefinition GetMethod(string typeName, string methodName)
+    {
+      TypeDefinition type = assembly.MainModule.GetType(typeName);
       foreach (MethodDefinition method in type.Methods)
       {
-				if (method.Name == methodName)
-					return method;
-			}
-			Assert.Fail ("Method {0} was not found.", methodName);
-			return null;
-		}
+        if (method.Name == methodName)
+          return method;
+      }
+      Assert.Fail("Method {0} was not found.", methodName);
+      return null;
+    }
 
-		private MethodDefinition GetMethod (string name)
-		{
-			return GetMethod ("Test.Framework.Rocks.MethodRocksTest", name);
-		}
+    private MethodDefinition GetMethod(string name)
+    {
+      return GetMethod("Test.Framework.Rocks.MethodRocksTest", name);
+    }
 
-		[Test]
-		public void HasAttribute_Namespace_Null ()
-		{
-			MethodDefinition method = GetMethod ("FixtureSetUp");
-			Assert.Throws<ArgumentNullException>(() => 
-			    method.HasAttribute (TN (null, "a")));
-		}
+    [Test]
+    public void HasAttribute_Namespace_Null()
+    {
+      MethodDefinition method = GetMethod("FixtureSetUp");
+      Assert.Throws<ArgumentNullException>(() =>
+          method.HasAttribute(TN(null, "a")));
+    }
 
-		[Test]
-		public void HasAttribute_Name_Null ()
-		{
-			MethodDefinition method = GetMethod ("FixtureSetUp");
-			Assert.Throws<ArgumentNullException>(() => 
-			    method.HasAttribute (TN ("a", null)));
-		}
+    [Test]
+    public void HasAttribute_Name_Null()
+    {
+      MethodDefinition method = GetMethod("FixtureSetUp");
+      Assert.Throws<ArgumentNullException>(() =>
+          method.HasAttribute(TN("a", null)));
+    }
 
-		[Test]
-        [Ignore("TestFixtureSetUp is obsolete")]
-		public void HasAttribute ()
-		{
-			MethodDefinition method = GetMethod ("FixtureSetUp");
-			Assert.IsTrue (method.HasAttribute (TN ("NUnit.Framework", "TestFixtureSetUpAttribute")), "NUnit.Framework.TestFixtureSetUpAttribute");
-			Assert.IsFalse (method.HasAttribute (TN ("NUnit.Framework", "TestFixtureSetUp")), "NUnit.Framework.TestFixtureSetUp");
-		}
+    [Test]
+    [Ignore("TestFixtureSetUp is obsolete")]
+    public void HasAttribute()
+    {
+      MethodDefinition method = GetMethod("FixtureSetUp");
+      Assert.IsTrue(method.HasAttribute(TN("NUnit.Framework", "TestFixtureSetUpAttribute")), "NUnit.Framework.TestFixtureSetUpAttribute");
+      Assert.IsFalse(method.HasAttribute(TN("NUnit.Framework", "TestFixtureSetUp")), "NUnit.Framework.TestFixtureSetUp");
+    }
 
-		[Test]
-		public void IsEntryPoint ()
-		{
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsEntryPoint (), "FixtureSetUp");
-		}
+    [Test]
+    public void IsEntryPoint()
+    {
+      Assert.IsFalse(GetMethod("FixtureSetUp").IsEntryPoint(), "FixtureSetUp");
+    }
 
-		[Test]
-		public void IsFinalizer ()
-		{
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsFinalizer (), "FixtureSetUp");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Finalize").IsFinalizer (), "~MainClassIntStrings");
-		}
+    [Test]
+    public void IsFinalizer()
+    {
+      Assert.IsFalse(GetMethod("FixtureSetUp").IsFinalizer(), "FixtureSetUp");
+      Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Finalize").IsFinalizer(), "~MainClassIntStrings");
+    }
 
-		[Test]
-		[System.Runtime.CompilerServices.CompilerGeneratedAttribute]
-		public void IsGeneratedCode_CompilerGenerated ()
-		{
-			Assert.IsTrue (GetMethod ("IsGeneratedCode_CompilerGenerated").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsGeneratedCode (), "FixtureSetUp");
-		}
+    [Test]
+    [System.Runtime.CompilerServices.CompilerGeneratedAttribute]
+    public void IsGeneratedCode_CompilerGenerated()
+    {
+      Assert.IsTrue(GetMethod("IsGeneratedCode_CompilerGenerated").IsGeneratedCode(), "IsCompilerGenerated");
+      Assert.IsFalse(GetMethod("FixtureSetUp").IsGeneratedCode(), "FixtureSetUp");
+    }
 
-		[Test]
-		[System.CodeDom.Compiler.GeneratedCodeAttribute ("unit test", "1.0")]
-		public void IsGeneratedCode_GeneratedCode ()
-		{
-			Assert.IsTrue (GetMethod ("IsGeneratedCode_GeneratedCode").IsGeneratedCode (), "IsCompilerGenerated");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsGeneratedCode (), "FixtureSetUp");
-		}
+    [Test]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("unit test", "1.0")]
+    public void IsGeneratedCode_GeneratedCode()
+    {
+      Assert.IsTrue(GetMethod("IsGeneratedCode_GeneratedCode").IsGeneratedCode(), "IsCompilerGenerated");
+      Assert.IsFalse(GetMethod("FixtureSetUp").IsGeneratedCode(), "FixtureSetUp");
+    }
 
-		[Test]
-		public void IsMain ()
-		{
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassVoidVoid", "Main").IsMain (), "MainClassVoidVoid");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntVoid", "Main").IsMain (), "MainClassIntVoid");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassVoidStrings", "Main").IsMain (), "MainClassVoidStrings");
-			Assert.IsTrue (GetMethod ("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Main").IsMain (), "MainClassIntStrings");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsMain (), "FixtureSetUp");
-		}
+    [Test]
+    public void IsMain()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassVoidVoid", substitute).IsMain(), "MainClassVoidVoid");
+        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntVoid", substitute).IsMain(), "MainClassIntVoid");
+        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassVoidStrings", substitute).IsMain(), "MainClassVoidStrings");
+        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", substitute).IsMain(), "MainClassIntStrings");
+        Assert.IsFalse(GetMethod("FixtureSetUp").IsMain(), "FixtureSetUp");
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void IsProperty ()
-		{
-			Assert.IsTrue (GetMethod ("get_Value").IsProperty (), "get_Value");
-			Assert.IsTrue (GetMethod ("set_Value").IsProperty (), "set_Value");
-			Assert.IsFalse (GetMethod ("FixtureSetUp").IsProperty (), "FixtureSetUp");
-		}
+    [Test]
+    public void IsProperty()
+    {
+      Assert.IsTrue(GetMethod("get_Value").IsProperty(), "get_Value");
+      Assert.IsTrue(GetMethod("set_Value").IsProperty(), "set_Value");
+      Assert.IsFalse(GetMethod("FixtureSetUp").IsProperty(), "FixtureSetUp");
+    }
 
-		[Test]
-		public void IsVisible ()
-		{
-			TypeDefinition type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType");
-			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "PublicType.PublicMethod");
-			Assert.IsTrue (type.GetMethod ("ProtectedMethod").IsVisible (), "PublicType.ProtectedMethod");
-			Assert.IsFalse (type.GetMethod ("InternalMethod").IsVisible (), "PublicType.InternalMethod");
-			Assert.IsFalse (type.GetMethod ("PrivateMethod").IsVisible (), "PublicType.PrivateMethod");
+    [Test]
+    public void IsVisible()
+    {
+      TypeDefinition type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType");
+      Assert.IsTrue(type.GetMethod("PublicMethod").IsVisible(), "PublicType.PublicMethod");
+      Assert.IsTrue(type.GetMethod("ProtectedMethod").IsVisible(), "PublicType.ProtectedMethod");
+      Assert.IsFalse(type.GetMethod("InternalMethod").IsVisible(), "PublicType.InternalMethod");
+      Assert.IsFalse(type.GetMethod("PrivateMethod").IsVisible(), "PublicType.PrivateMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPublicType");
-			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "NestedPublicType.PublicMethod");
-			Assert.IsTrue (type.GetMethod ("ProtectedMethod").IsVisible (), "NestedPublicType.ProtectedMethod");
-			Assert.IsFalse (type.GetMethod ("PrivateMethod").IsVisible (), "NestedPublicType.PrivateMethod");
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedPublicType");
+      Assert.IsTrue(type.GetMethod("PublicMethod").IsVisible(), "NestedPublicType.PublicMethod");
+      Assert.IsTrue(type.GetMethod("ProtectedMethod").IsVisible(), "NestedPublicType.ProtectedMethod");
+      Assert.IsFalse(type.GetMethod("PrivateMethod").IsVisible(), "NestedPublicType.PrivateMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedProtectedType");
-			Assert.IsTrue (type.GetMethod ("PublicMethod").IsVisible (), "NestedProtectedType.PublicMethod");
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedProtectedType");
+      Assert.IsTrue(type.GetMethod("PublicMethod").IsVisible(), "NestedProtectedType.PublicMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.PublicType/NestedPrivateType");
-			Assert.IsFalse (type.GetMethod ("PublicMethod").IsVisible (), "NestedPrivateType.PublicMethod");
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedPrivateType");
+      Assert.IsFalse(type.GetMethod("PublicMethod").IsVisible(), "NestedPrivateType.PublicMethod");
 
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.InternalType");
-			Assert.IsFalse (type.GetMethod ("PublicMethod").IsVisible (), "InternalType.PublicMethod");
-		}
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.InternalType");
+      Assert.IsFalse(type.GetMethod("PublicMethod").IsVisible(), "InternalType.PublicMethod");
+    }
 
-		[Test]
-		public void IsEventCallback ()
-		{
-			Assert.IsTrue (GetMethod ("EventCallback").IsEventCallback (), "EventCallback");
-			Assert.IsTrue (GetMethod ("FooEventCallback").IsEventCallback (), "FooEventCallback");
-			Assert.IsFalse (GetMethod ("IsEventCallback").IsEventCallback (), "IsEventCallback");
-		}
+    [Test]
+    public void IsEventCallback()
+    {
+      Assert.IsTrue(GetMethod("EventCallback").IsEventCallback(), "EventCallback");
+      Assert.IsTrue(GetMethod("FooEventCallback").IsEventCallback(), "FooEventCallback");
+      Assert.IsFalse(GetMethod("IsEventCallback").IsEventCallback(), "IsEventCallback");
+    }
 
-		[Test]
-		public void GetPropertyByAccessor ()
-		{
-			Assert.AreEqual (GetMethod ("get_Value").GetPropertyByAccessor ().Name, "Value", "get_Value");
-			Assert.AreEqual (GetMethod ("set_Value").GetPropertyByAccessor ().Name, "Value", "set_Value");
-			Assert.IsNull (GetMethod ("EventCallback").GetPropertyByAccessor (), "EventCallback");
-		}
-	}
+    [Test]
+    public void GetPropertyByAccessor()
+    {
+      Assert.AreEqual(GetMethod("get_Value").GetPropertyByAccessor().Name, "Value", "get_Value");
+      Assert.AreEqual(GetMethod("set_Value").GetPropertyByAccessor().Name, "Value", "set_Value");
+      Assert.IsNull(GetMethod("EventCallback").GetPropertyByAccessor(), "EventCallback");
+    }
+  }
 }

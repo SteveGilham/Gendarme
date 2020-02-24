@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for UseSTAThreadAttributeOnSWFEntryPointsTest
 //
 // Authors:
@@ -38,143 +38,230 @@ using Gendarme.Rules.UI;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Ui {
-	internal class CommonMainClass { }
+namespace Test.Rules.Ui
+{
+  internal class CommonMainClass { }
 
-	internal class NoAttributesMain : CommonMainClass {
-		public static void Main ()
-		{
-		}
-	}
+  internal class NoAttributesMain : CommonMainClass
+  {
+    public static void MainName()
+    {
+    }
+  }
 
-	internal class STAThreadMain : CommonMainClass {
-		[STAThread]
-		public static void Main ()
-		{
-		}
-	}
+  internal class STAThreadMain : CommonMainClass
+  {
+    [STAThread]
+    public static void MainName()
+    {
+    }
+  }
 
-	internal class MTAThreadMain : CommonMainClass {
-		[MTAThread]
-		public static void Main ()
-		{
-		}
-	}
+  internal class MTAThreadMain : CommonMainClass
+  {
+    [MTAThread]
+    public static void MainName()
+    {
+    }
+  }
 
-	internal class BothSTAAndMTAThreadMain : CommonMainClass {
-		[STAThread]
-		[MTAThread]
-		public static void Main ()
-		{
-		}
-	}
+  internal class BothSTAAndMTAThreadMain : CommonMainClass
+  {
+    [STAThread]
+    [MTAThread]
+    public static void MainName()
+    {
+    }
+  }
 
-	[TestFixture]
-	public class UseSTAThreadAttributeOnSWFEntryPointsTest {
+  [TestFixture]
+  public class UseSTAThreadAttributeOnSWFEntryPointsTest
+  {
+    private UseSTAThreadAttributeOnSWFEntryPointsRule rule;
+    private TestRunner runner;
+    private AssemblyDefinition assembly;
 
-		private UseSTAThreadAttributeOnSWFEntryPointsRule rule;
-		private TestRunner runner;
-		private AssemblyDefinition assembly;
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      rule = new UseSTAThreadAttributeOnSWFEntryPointsRule();
+      runner = new TestRunner(rule);
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			rule = new UseSTAThreadAttributeOnSWFEntryPointsRule ();
-			runner = new TestRunner (rule);
-		}
+    private AssemblyDefinition GetAssemblyAndInject<TInjectedType>(bool SWF)
+      where TInjectedType : CommonMainClass
+    {
+      // return executable assembly with predefined entry point - Main () of TInjectedType
+      string fullClassName = typeof(TInjectedType).FullName;
+      AssemblyDefinition ass = CreateAssembly(typeof(TInjectedType).Name + "Assembly", ModuleKind.Console);
+      if (SWF)
+      {
+        ass.MainModule.Kind = ModuleKind.Windows;
+        AssemblyNameReference winFormsRef = new AssemblyNameReference("System.Windows.Forms", new Version(2, 0, 0, 0));
+        winFormsRef.PublicKeyToken = new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };
+        ass.MainModule.AssemblyReferences.Add(winFormsRef);
+      }
+      TypeDefinition mainClass = Inject(assembly.MainModule.GetType(fullClassName), ass);
+      ass.EntryPoint = GetMethod(mainClass, Gendarme.Framework.Rocks.MethodRocks.MainName);
+      return ass;
+    }
 
-		private AssemblyDefinition GetAssemblyAndInject<TInjectedType> (bool SWF)
-			where TInjectedType : CommonMainClass
-		{
-			// return executable assembly with predefined entry point - Main () of TInjectedType
-			string fullClassName = typeof (TInjectedType).FullName;
-			AssemblyDefinition ass = CreateAssembly (typeof (TInjectedType).Name + "Assembly", ModuleKind.Console);
-			if (SWF) {
-				ass.MainModule.Kind = ModuleKind.Windows;
-				AssemblyNameReference winFormsRef = new AssemblyNameReference ("System.Windows.Forms", new Version (2, 0, 0, 0));
-				winFormsRef.PublicKeyToken = new byte [] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };
-				ass.MainModule.AssemblyReferences.Add (winFormsRef);
-			}
-			TypeDefinition mainClass = Inject (assembly.MainModule.GetType (fullClassName), ass);
-			ass.EntryPoint = GetMethod (mainClass, "Main");
-			return ass;
-		}
+    private static AssemblyDefinition CreateAssembly(string name, ModuleKind kind)
+    {
+      return AssemblyDefinition.CreateAssembly(new AssemblyNameDefinition(name, new Version()), name, kind);
+    }
 
-		static AssemblyDefinition CreateAssembly (string name, ModuleKind kind)
-		{
-			return AssemblyDefinition.CreateAssembly (new AssemblyNameDefinition (name, new Version ()), name, kind);
-		}
+    // horrible hack, we're pretending to copy a full loaded type into another assembly
+    private static TypeDefinition Inject(TypeDefinition type, AssemblyDefinition target)
+    {
+      var module = ModuleDefinition.ReadModule(
+        type.Module.FullyQualifiedName,
+        new ReaderParameters { ReadingMode = ReadingMode.Immediate });
 
-		// horrible hack, we're pretending to copy a full loaded type into another assembly
-		static TypeDefinition Inject (TypeDefinition type, AssemblyDefinition target)
-		{
-			var module = ModuleDefinition.ReadModule (
-				type.Module.FullyQualifiedName,
-				new ReaderParameters { ReadingMode = ReadingMode.Immediate });
+      type = module.GetType(type.FullName);
+      module.Types.Remove(type);
+      target.MainModule.Types.Add(type);
+      return type;
+    }
 
-			type = module.GetType (type.FullName);
-			module.Types.Remove (type);
-			target.MainModule.Types.Add (type);
-			return type;
-		}
+    private MethodDefinition GetMethod(TypeDefinition type, string name)
+    {
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.Name == name)
+          return method;
+      }
+      return null;
+    }
 
-		private MethodDefinition GetMethod (TypeDefinition type, string name)
-		{
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.Name == name)
-					return method;
-			}
-			return null;
-		}
+    [Test]
+    public void TestNoEntryPoint()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(assembly));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void TestNoEntryPoint ()
-		{
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckAssembly (assembly));
-		}
+    [Test]
+    public void TestNoTANonSWFAssembly()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<NoAttributesMain>(false)));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void TestNoTANonSWFAssembly ()
-		{
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckAssembly (GetAssemblyAndInject<NoAttributesMain> (false)));
-		}
+    [Test]
+    public void TestNoTASWFAssembly()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<NoAttributesMain>(true)));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void TestNoTASWFAssembly ()
-		{
-			Assert.AreEqual (RuleResult.Failure, runner.CheckAssembly (GetAssemblyAndInject<NoAttributesMain> (true)));
-		}
+    [Test]
+    public void TestSTANonSWFAssembly()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<STAThreadMain>(false)));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void TestSTANonSWFAssembly ()
-		{
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckAssembly (GetAssemblyAndInject<STAThreadMain> (false)));
-		}
+    [Test]
+    public void TestMTANonSWFAssembly()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<MTAThreadMain>(false)));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void TestMTANonSWFAssembly ()
-		{
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckAssembly (GetAssemblyAndInject<MTAThreadMain> (false)));
-		}
+    [Test]
+    public void TestSTAThreadSWFAssembly()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.Success, runner.CheckAssembly(GetAssemblyAndInject<STAThreadMain>(true)));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void TestSTAThreadSWFAssembly ()
-		{
-			Assert.AreEqual (RuleResult.Success, runner.CheckAssembly (GetAssemblyAndInject<STAThreadMain> (true)));
-		}
+    [Test]
+    public void TestMTAThreadSWFAssembly()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<MTAThreadMain>(true)));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
 
-		[Test]
-		public void TestMTAThreadSWFAssembly ()
-		{
-			Assert.AreEqual (RuleResult.Failure, runner.CheckAssembly (GetAssemblyAndInject<MTAThreadMain> (true)));
-		}
-
-		[Test]
-		public void TestSTAAndMTAThreadSWFAssembly ()
-		{
-			Assert.AreEqual (RuleResult.Failure, runner.CheckAssembly (GetAssemblyAndInject<BothSTAAndMTAThreadMain> (true)));
-		}
-	}
+    [Test]
+    public void TestSTAAndMTAThreadSWFAssembly()
+    {
+      var save = Gendarme.Framework.Rocks.MethodRocks.MainName;
+      var substitute = "MainName";
+      try
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
+        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<BothSTAAndMTAThreadMain>(true)));
+      }
+      finally
+      {
+        Gendarme.Framework.Rocks.MethodRocks.MainName = save;
+      }
+    }
+  }
 }
