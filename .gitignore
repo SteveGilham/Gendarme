@@ -26,3 +26,4 @@ Build/build.fsx
 Build/.fake/
 Build/obj/
 _*/
+Build/bin/

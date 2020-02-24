@@ -44,6 +44,7 @@ nuget Fake.DotNet.NuGet >= 5.19.1
 nuget Fake.DotNet.Testing.NUnit >= 5.19.1
 nuget Fake.IO.FileSystem >= 5.19.1
 nuget Fake.Testing.ReportGenerator >= 5.19.1
+nuget altcover.fake >= 6.7.750
 nuget Markdown >= 2.2.1
 nuget NUnit >= 3.12.0 //"
 #r "System.IO.Compression.FileSystem.dll"

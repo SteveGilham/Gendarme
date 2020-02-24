@@ -12,7 +12,6 @@ open Fake.IO.Globbing.Operators
 
 open HeyRed.MarkdownSharp
 open NUnit.Framework
-open YamlDotNet.RepresentationModel
 
 module Actions =
   let Clean() =

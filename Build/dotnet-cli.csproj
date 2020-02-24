@@ -10,11 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="altcover" Version="6.7.750" />
-    <PackageReference Include="NuGet.CommandLine" version="5.4.0">
+    <PackageReference Include="NuGet.CommandLine" Version="5.4.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coveralls.io" version="1.4.2" />
-    <PackageReference Include="NUnit.ConsoleRunner" version="3.11.1" />
+    <PackageReference Include="coveralls.io" Version="1.4.2" />
+    <PackageReference Include="NUnit.ConsoleRunner" Version="3.11.1" />
   </ItemGroup>
 </Project>

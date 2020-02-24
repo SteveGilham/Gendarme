@@ -19,8 +19,9 @@ open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing
 open Fake.IO.Globbing.Operators
 
-open FSharpLint.Application
-open FSharpLint.Framework
+open AltCover_Fake.DotNet.DotNet
+open AltCover_Fake.DotNet.Testing
+
 open NUnit.Framework
 
 let Copyright = ref String.Empty
@@ -43,7 +44,7 @@ let toolPackages =
   xml.Descendants(XName.Get("PackageReference"))
   |> Seq.map
        (fun x ->
-       (x.Attribute(XName.Get("Include")).Value, x.Attribute(XName.Get("version")).Value))
+       (x.Attribute(XName.Get("Include")).Value, x.Attribute(XName.Get("Version")).Value))
   |> Map.ofSeq
 
 let packageVersion (p: string) = p.ToLowerInvariant() + "/" + (toolPackages.Item p)
@@ -51,6 +52,21 @@ let packageVersion (p: string) = p.ToLowerInvariant() + "/" + (toolPackages.Item
 let nunitConsole =
   ("./packages/" + (packageVersion "NUnit.ConsoleRunner") + "/tools/nunit3-console.exe")
   |> Path.getFullName
+
+let altcover =
+  ("./packages/" + (packageVersion "altcover") + "/tools/net45/AltCover.exe")
+  |> Path.getFullName
+
+let framework_altcover = Fake.DotNet.ToolType.CreateFullFramework()
+
+let AltCoverFilter(p: Primitive.PrepareParams) =
+  { p with
+      //MethodFilter = "WaitForExitCustom" :: (p.MethodFilter |> Seq.toList)
+      AssemblyExcludeFilter = @"NUnit3\." :: (@"Tests\." :: (p.AssemblyExcludeFilter |> Seq.toList))
+      AssemblyFilter = "FSharp" :: @"Test\.Rules" :: (p.AssemblyFilter |> Seq.toList)
+      LocalSource = true
+      TypeFilter = [ @"System\."; "Microsoft" ] @ (p.TypeFilter |> Seq.toList) 
+        }
 
 let cliArguments =
   { MSBuild.CliArguments.Create() with
@@ -99,6 +115,37 @@ let msbuildDebug proj =
                Properties =
                  [ "Configuration", "Debug"
                    "DebugSymbols", "True" ] }) proj
+
+let misses = ref 0
+
+let uncovered (path:string) =
+    misses := 0
+    !! path
+    |> Seq.collect (fun f ->
+         let xml = XDocument.Load f
+         xml.Descendants(XName.Get("Uncoveredlines"))
+         |> Seq.filter (fun x ->
+              match String.IsNullOrWhiteSpace x.Value with
+              | false -> true
+              | _ ->
+                sprintf "No coverage from '%s'" f |> Trace.traceImportant
+                misses := 1 + !misses
+                false)
+         |> Seq.map (fun e ->
+              let coverage = e.Value
+              match Int32.TryParse coverage with
+              | (false, _) ->
+                printfn "%A" xml
+                Assert.Fail("Could not parse uncovered line value '" + coverage + "'")
+                0
+              | (_, numeric) ->
+                printfn "%s : %A"
+                  (f
+                   |> Path.GetDirectoryName
+                   |> Path.GetFileName) numeric
+                numeric))
+    |> Seq.toList
+
 
 let _Target s f =
   Target.description s
@@ -159,13 +206,13 @@ _Target "SetVersion" (fun _ ->
 _Target "Compilation" ignore
 
 _Target "Restore" (fun _  ->
-    !!"./gendarme/**/*.*proj"
+    [ (!!"./gendarme/**/*.*proj"); (!!"./Build/**/*.*proj") ]
+    |> Seq.concat 
     |> Seq.iter (fun f -> 
                  let dir = Path.GetDirectoryName f
                  let proj = Path.GetFileName f
                  DotNet.restore (fun o -> o.WithCommon(withWorkingDirectoryVM dir)) proj))
-
-
+    
 _Target "BuildRelease" (fun _ ->
   "./gendarme/gendarme-win.sln"
   |> msbuildRelease)
@@ -204,6 +251,85 @@ _Target "UnitTestDotNet" (fun _ ->
     printfn "%A" x
     )//reraise()) // while fixing
 
+_Target "Coverage" ignore
+
+_Target "UnitTestWithAltCoverRunner" (fun _ ->
+  let reports = Path.getFullName "./_Reports"
+  Directory.ensure reports
+  let report = "./_Reports/_UnitTestWithAltCoverRunner"
+  Directory.ensure report
+
+  let coverage = 
+      !!(@"_Binaries/Tests.*/Debug+AnyCPU/net4*/Tests.*.dll")
+      |> Seq.fold (fun l test -> 
+        let tname = test |> Path.GetFileNameWithoutExtension
+        let keyfile = Path.getFullName "Build/Infrastructure.snk"
+        let testDirectory = test |> Path.getFullName |> Path.GetDirectoryName
+        let altReport = reports @@ ("UnitTestWithAltCoverRunner." + tname + ".xml")
+
+        let prep =
+          AltCover.PrepareParams.Primitive
+            ({ Primitive.PrepareParams.Create() with
+                 XmlReport = altReport
+                 OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
+                 //StrongNameKey = keyfile
+                 Single = true
+                 InPlace = false
+                 Save = false }
+             |> AltCoverFilter)
+          |> AltCover.Prepare
+        { AltCover.Params.Create prep with
+            ToolPath = altcover
+            WorkingDirectory = testDirectory }.WithToolType framework_altcover
+        |> AltCover.run
+
+        printfn "Unit test the instrumented code"
+        let nunitparams =
+          { NUnit3Defaults with
+              ToolPath = nunitConsole
+              WorkingDir = "."
+              ResultSpecs = [ "./_Reports/UnitTestWithAltCoverRunnerReport." + tname + ".xml" ] }
+
+        let nunitcmd =
+          NUnit3.buildArgs nunitparams
+            [ testDirectory @@ "./__UnitTestWithAltCoverRunner" @@ (test |> Path.GetFileName) ]
+
+        try
+          let collect =
+            AltCover.CollectParams.Primitive
+              { Primitive.CollectParams.Create() with
+                  Executable = nunitConsole
+                  RecorderDirectory = testDirectory @@ "__UnitTestWithAltCoverRunner"
+                  CommandLine = AltCover.splitCommandLine nunitcmd }
+            |> AltCover.Collect
+          { AltCover.Params.Create collect with
+              ToolPath = altcover
+              WorkingDirectory = "." }.WithToolType framework_altcover
+          |> AltCover.run
+        with x ->
+          printfn "%A" x
+        altReport :: l
+      ) [] //reraise()) // while fixing
+
+  ReportGenerator.generateReports (fun p ->
+    { p with
+        ToolType = ToolType.CreateLocalTool()
+        ReportTypes =
+          [ ReportGenerator.ReportType.Html; ReportGenerator.ReportType.XmlSummary ]
+        TargetDir = report }) coverage
+
+  (report @@ "Summary.xml")
+  |> uncovered
+  |> printfn "%A uncovered lines"         
+
+    // TODO coveralls ?
+)
+
+
+_Target "UnitTestWithAltCoverCoreRunner"  (fun _ ->
+  ()// TODO
+)
+
 _Target "All" ignore
 
 let resetColours _ =
@@ -234,6 +360,11 @@ Target.activateFinal "ResetConsoleColours"
 ==> "JustUnitTest"
 ==> "UnitTestDotNet"
 ==> "UnitTest"
+
+"Compilation"
+==> "UnitTestWithAltCoverRunner"
+==> "UnitTestWithAltCoverCoreRunner"
+==> "Coverage"
 
 let defaultTarget() =
   resetColours()
