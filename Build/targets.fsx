@@ -441,7 +441,7 @@ _Target "Unpack" (fun _ ->
 
   let text = File.ReadAllText "./Build/dotnet-tools.json"
   let newtext = String.Format(text, !Version)
-  File.WriteAllText (config @@ dotnet-tools.json) newtext
+  File.WriteAllText ((config @@ "dotnet-tools.json"), newtext)
 
 
   let packroot = Path.GetFullPath "./_Packaging"
