@@ -1,4 +1,4 @@
-﻿namespace EnsureLocalDisposal
+namespace EnsureLocalDisposal
 
 [<NoComparison>]
 type StrongNameKeyData =

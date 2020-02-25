@@ -10,6 +10,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{E83F7555-F98B-48D9-8CD6-1E46895F276D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C8664DD7-3314-4932-ADA1-384C62568B59}"
+	ProjectSection(SolutionItems) = preProject
+		..\Build\actions.fsx = ..\Build\actions.fsx
+		..\Build\build.fsx = ..\Build\build.fsx
+		..\Build\setup.fsx = ..\Build\setup.fsx
+		..\Build\targets.fsx = ..\Build\targets.fsx
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{A208E677-6A00-4F5C-A15B-5CCA90AB78FF}"
 EndProject

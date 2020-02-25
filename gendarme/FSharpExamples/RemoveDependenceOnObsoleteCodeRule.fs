@@ -1,4 +1,4 @@
-﻿namespace RemoveDependenceOnObsoleteCode
+namespace RemoveDependenceOnObsoleteCode
 
 open System
 
@@ -17,7 +17,8 @@ type Params =
     ToolPath : string
     /// Which version of the tool
     [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Maintainability",
-      "RemoveDependenceOnObsoleteCodeRule",Justification="Goes at Genbu")>]
+                                                      "RemoveDependenceOnObsoleteCodeRule",
+                                                      Justification = "Goes at Genbu")>]
     ToolType : ToolType
     /// Working directory for relative file paths.  Default is the current working directory
     WorkingDirectory : string }

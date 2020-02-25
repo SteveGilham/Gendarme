@@ -1,12 +1,15 @@
-﻿namespace AvoidUnnecessarySpecialization
+namespace AvoidUnnecessarySpecialization
 
 open System.Collections.Generic
 open System.IO
 
 module Main =
-  let prepareTargetFiles (fromInfos : DirectoryInfo seq)
-      (toInfos : DirectoryInfo seq) (sourceInfos : DirectoryInfo seq)
-      (targets : string seq) =
+  let prepareTargetFiles
+      (fromInfos : DirectoryInfo seq)
+      (toInfos : DirectoryInfo seq)
+      (sourceInfos : DirectoryInfo seq)
+      (targets : string seq)
+    =
     // Copy all the files into the target directory
     let mapping = Dictionary<string, string>()
     Seq.zip sourceInfos targets

@@ -72,14 +72,11 @@ Target.activateFinal "ResetConsoleColours"
 
 // Restore the NuGet packages used by the build and the Framework version
 
-_Target "Preparation" (fun _ ->
-  RestoreMSSolutionPackages id "./gendarme/gendarme-win.sln"
-)
+_Target "Preparation"
+  (fun _ -> RestoreMSSolutionPackages id "./gendarme/gendarme-win.sln")
 
 let defaultTarget() =
   resetColours()
   "Preparation"
 
-Target.runOrDefault <| defaultTarget ()
-
-
+Target.runOrDefault <| defaultTarget()

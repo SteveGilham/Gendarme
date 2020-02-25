@@ -1,4 +1,4 @@
-﻿namespace AvoidSwitchStatements
+namespace AvoidSwitchStatements
 
 open System
 
@@ -9,7 +9,7 @@ type ReportFormat =
 
 module Counter =
   let updateReport format =
-      match format with
-      | ReportFormat.OpenCoverWithTracking | ReportFormat.OpenCover ->
-        "uspid"
-      | _ -> String.Empty
+    match format with
+    | ReportFormat.OpenCoverWithTracking
+    | ReportFormat.OpenCover -> "uspid"
+    | _ -> String.Empty

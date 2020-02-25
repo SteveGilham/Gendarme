@@ -1,4 +1,4 @@
-﻿namespace AltCode.CecilExtensions
+namespace AltCode.CecilExtensions
 
 open System
 open System.Collections.Generic
@@ -18,13 +18,11 @@ module ProgramDatabase =
   // start retrofit
   let optionFilter predicate option = // Option.filter
     match option with
-    | Some x -> if predicate x
-                then option
-                else None
+    | Some x ->
+        if predicate x then option else None
     | _ -> None
 
-  let isNull x =
-    x = null
+  let isNull x = x = null
   // end retrofit
 
   // We no longer have to violate Cecil encapsulation to get the PDB path
