@@ -263,7 +263,6 @@ _Target "UnitTestWithAltCoverRunner" (fun _ ->
       !!(@"_Binaries/Tests.*/Debug+AnyCPU/net4*/Tests.*.dll")
       |> Seq.fold (fun l test -> 
         let tname = test |> Path.GetFileNameWithoutExtension
-        let keyfile = Path.getFullName "Build/Infrastructure.snk"
         let testDirectory = test |> Path.getFullName |> Path.GetDirectoryName
         let altReport = reports @@ ("UnitTestWithAltCoverRunner." + tname + ".xml")
 
@@ -272,7 +271,6 @@ _Target "UnitTestWithAltCoverRunner" (fun _ ->
             ({ Primitive.PrepareParams.Create() with
                  XmlReport = altReport
                  OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
-                 //StrongNameKey = keyfile
                  Single = true
                  InPlace = false
                  Save = false }
@@ -325,9 +323,142 @@ _Target "UnitTestWithAltCoverRunner" (fun _ ->
     // TODO coveralls ?
 )
 
-
 _Target "UnitTestWithAltCoverCoreRunner"  (fun _ ->
   ()// TODO
+)
+
+_Target "Packaging"  (fun _ ->
+  let netcoresource = Path.getFullName "./gendarme/console/gendarme.csproj"
+  let publish = Path.getFullName "./_Publish"
+
+
+  DotNet.publish (fun options ->
+    { options with
+        OutputPath = Some publish
+        Configuration = DotNet.BuildConfiguration.Release
+        Framework = Some "netcoreapp2.1" }) netcoresource
+
+  let housekeeping = 
+      [ (Path.getFullName "./LICENS*", Some "", None)
+        (Path.getFullName "./Image.*g", Some "", None) ]
+
+  let rules = Directory.GetDirectories(".", "Gendarme.Rules.*", SearchOption.AllDirectories)
+              |> Seq.toList
+  //printfn "rules"
+  //List.iter (printfn "%A") rules
+
+  let n40rules = rules
+                 |> List.collect (fun f -> !!((Path.getFullName f) @@ "Release+AnyCPU/net40/Gendarme.Rules.*")
+                                           |> Seq.toList)
+                 |> List.filter (fun f -> let ex = f |> Path.GetExtension
+                                          match ex with
+                                          | ".dll"
+                                          | ".pdb" -> true
+                                          | _ -> false)
+                 |> List.distinctBy Path.GetFileName
+
+  // printfn "n40rules"
+  // List.iter (printfn "%A") n40rules
+
+  let corerules = rules
+                  |> List.collect (fun f -> !!((Path.getFullName f) @@ "Release+AnyCPU/netstandard2.0/Gendarme.Rules.*")
+                                            |> Seq.toList)
+                 |> List.filter (fun f -> let ex = f |> Path.GetExtension
+                                          match ex with
+                                          | ".dll"
+                                          | ".pdb" -> true
+                                          | _ -> false)
+                 |> List.distinctBy Path.GetFileName
+  //printfn "corerules"
+  //List.iter (printfn "%A") corerules
+ 
+
+  let net40 = 
+    List.concat
+      [ !!"./_Binaries/gendarme/Release+AnyCPU/net4*/*.*" |> Seq.toList
+        n40rules ]
+    |> List.map (fun f -> (f |> Path.getFullName, Some "tools/net40", None))
+
+  let netcore =
+    List.concat
+      [ !!"./_Binaries/gendarme/Release+AnyCPU/netcoreapp2.1/*.*" |> Seq.toList
+        corerules ]
+    |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None))
+
+  let files = List.concat [ net40; housekeeping ]
+  let globalfiles = List.concat [ netcore; housekeeping ]
+
+  let workingDir = "./_Binaries/_Packaging"
+  Directory.ensure workingDir
+  let output = "./_Packaging"
+  Directory.ensure output
+  let nuspec = "./Build/altcode.gendarme.nuspec"
+  
+  let x s = XName.Get(s, "http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd")
+  let dotnetNupkg = XDocument.Load nuspec
+  let title = dotnetNupkg.Descendants(x "title") |> Seq.head
+  title.ReplaceNodes "altcode.gendarme (.net core global tool)"
+
+  let tag = dotnetNupkg.Descendants(x "tags") |> Seq.head
+  let insert = XElement(x "packageTypes")
+  insert.Add(XElement(x "packageType", XAttribute(XName.Get "name", "DotnetTool")))
+  tag.AddAfterSelf insert
+  let globalnuspec = Path.getFullName "./_Packaging/altcode.gendarme.global.nuspec"
+  dotnetNupkg.Save globalnuspec
+
+  [
+    ("altcode.gendarme", files, nuspec)
+    ("altcode.gendarme.global", globalfiles, globalnuspec)
+  ]
+  |> List.iter (fun (project, payload, recipe) ->
+        NuGet (fun p ->
+           { p with
+               Authors = [ "Steve Gilham" ]
+               Project = project
+               Description = 
+                 "A somewhat updated build of the Mono.Gendarme static analysis tool for use with modern (including .net standard/core) assemblies."
+               OutputPath = output
+               WorkingDir = workingDir
+               Files = payload
+               Dependencies = []
+               Version = (!Version + "-pre-release")
+               Copyright = (!Copyright).Replace("©", "(c)")
+               Publish = false
+               ReleaseNotes = Path.getFullName "ReleaseNotes.md" |> File.ReadAllText
+               ToolPath =
+                 if Environment.isWindows then
+                   ("./packages/" + (packageVersion "NuGet.CommandLine")
+                    + "/tools/NuGet.exe") |> Path.getFullName
+                 else "/usr/bin/nuget" }) recipe)
+)
+
+_Target "Unpack" (fun _ ->
+  let unpack = Path.getFullName "./_Unpack"
+  let config = unpack @@ ".config"
+  Directory.ensure unpack
+  Shell.cleanDir (unpack)
+  Directory.ensure config
+
+  let text = File.ReadAllText "./Build/dotnet-tools.json"
+  let newtext = String.Format(text, !Version)
+  File.WriteAllText (config @@ dotnet-tools.json) newtext
+
+
+  let packroot = Path.GetFullPath "./_Packaging"
+  let config = XDocument.Load "./Build/NuGet.config.dotnettest"
+  let repo = config.Descendants(XName.Get("add")) |> Seq.head
+  repo.SetAttributeValue(XName.Get "value", packroot)
+  config.Save (unpack @@ "NuGet.config")
+
+  let csproj = XDocument.Load "./Build/unpack.xml"
+  let p = csproj.Descendants(XName.Get("PackageReference")) |> Seq.head
+  p.Attribute(XName.Get "Version").Value <- (!Version + "-pre-release")
+  let proj = unpack @@ "unpack.csproj"
+  csproj.Save proj
+
+  DotNet.restore (fun o ->
+    { o.WithCommon(withWorkingDirectoryVM unpack) with
+        Packages = [ "./packages" ] }) proj
 )
 
 _Target "All" ignore
@@ -356,15 +487,28 @@ Target.activateFinal "ResetConsoleColours"
 ==> "BuildRelease"
 ==> "Compilation"
 
-"Compilation"
+"BuildDebug"
 ==> "JustUnitTest"
 ==> "UnitTestDotNet"
 ==> "UnitTest"
 
-"Compilation"
+"BuildDebug"
 ==> "UnitTestWithAltCoverRunner"
 ==> "UnitTestWithAltCoverCoreRunner"
 ==> "Coverage"
+
+"BuildRelease"
+==> "Packaging"
+
+"UnitTest"
+==> "All"
+
+"Packaging"
+==> "Unpack"
+==> "All"
+
+"Coverage"
+==> "All"
 
 let defaultTarget() =
   resetColours()

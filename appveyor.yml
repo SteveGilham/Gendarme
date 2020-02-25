@@ -22,7 +22,7 @@ build_script:
 
     & dotnet fake run .\Build\setup.fsx
 
-    & dotnet fake run .\Build\build.fsx
+    & dotnet fake run .\Build\build.fsx --target Packaging
 
     $save = $LASTEXITCODE
     
@@ -33,7 +33,7 @@ build_script:
     if ($save -ne 0) { exit $save }
 test: off
 artifacts:
-- path: .\*.nupkg
+- path: .\_Packaging\*.nupkg
   name: Nuget
 deploy:
 - provider: NuGet
