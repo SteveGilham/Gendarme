@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -38,140 +38,147 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Smells {
-	
-	//
-	public abstract class AbstractClass {
-		public abstract void MakeStuff ();
-	}
+namespace Test.Rules.Smells
+{
+  //
+  public abstract class AbstractClass
+  {
+    public abstract void MakeStuff();
+  }
 
-	public class OverriderClass : AbstractClass {
-		public override void MakeStuff () 
-		{
-		
-		}
-	}
+  public class OverriderClass : AbstractClass
+  {
+    public override void MakeStuff()
+    {
+    }
+  }
 
-	//
-	public abstract class OtherAbstractClass {
-		public abstract void MakeStuff ();
-	}
+  //
+  public abstract class OtherAbstractClass
+  {
+    public abstract void MakeStuff();
+  }
 
-	public class OtherOverriderClass : OtherAbstractClass {
-		public override void MakeStuff () 
-		{
-		}
-	}
+  public class OtherOverriderClass : OtherAbstractClass
+  {
+    public override void MakeStuff()
+    {
+    }
+  }
 
-	public class YetAnotherOverriderClass : OtherAbstractClass {
-		public override void MakeStuff () 
-		{
-		}
-	}
+  public class YetAnotherOverriderClass : OtherAbstractClass
+  {
+    public override void MakeStuff()
+    {
+    }
+  }
 
-	//
+  //
 
-	public class ClassWithUnusedParameter {
-		public void Foo (int x) 
-		{
-		}
-	}
+  public class ClassWithUnusedParameter
+  {
+    public void Foo(int x)
+    {
+    }
+  }
 
-	public class ClassWithFourUnusedParameters {
-		public void Foo (int x) 
-		{
-		}
+  public class ClassWithFourUnusedParameters
+  {
+    public void Foo(int x)
+    {
+    }
 
-		public void Bar (int x, char f) 
-		{
-		}
+    public void Bar(int x, char f)
+    {
+    }
 
-		public void Baz (float f) 
-		{
-		}
+    public void Baz(float f)
+    {
+    }
+  }
 
-	}
-	
-	//
-	public class UnnecessaryDelegatedClass {
-		public void WriteLine (string message) 
-		{
-			Console.WriteLine (message);
-		}
+  //
+  public class UnnecessaryDelegatedClass
+  {
+    public void WriteLine(string message)
+    {
+      Console.WriteLine(message);
+    }
 
-		public DateTime GetDateTime ()
-		{
-			return DateTime.Now;
-		}
-	}
+    public DateTime GetDateTime()
+    {
+      return DateTime.Now;
+    }
+  }
 
-	//
-	public class NotUnnecessaryDelegatedClass {
-		public void WriteLog (string message)
-		{
-			Console.WriteLine ("Starting Logging...");
-			Console.WriteLine ("[LOGGING FOR] {0}", message);
-		}
+  //
+  public class NotUnnecessaryDelegatedClass
+  {
+    public void WriteLog(string message)
+    {
+      Console.WriteLine("Starting Logging...");
+      Console.WriteLine("[LOGGING FOR] {0}", message);
+    }
 
-		public void PrintBanner ()
-		{
-			Console.WriteLine ("This is a simple banner");
-			Console.WriteLine ("For the incredible Foo-Bar program");
-			Console.WriteLine ("Send your suggestions to foo@domain.com");
-		}
+    public void PrintBanner()
+    {
+      Console.WriteLine("This is a simple banner");
+      Console.WriteLine("For the incredible Foo-Bar program");
+      Console.WriteLine("Send your suggestions to foo@domain.com");
+    }
 
-		public DateTime GetDateTime ()
-		{
-			return DateTime.Now;
-		}
-	}
+    public DateTime GetDateTime()
+    {
+      return DateTime.Now;
+    }
+  }
 
-	[TestFixture]
-	public class AvoidSpeculativeGeneralityTest : TypeRuleTestFixture<AvoidSpeculativeGeneralityRule> {
+  [TestFixture]
+  public class AvoidSpeculativeGeneralityTest : TypeRuleTestFixture<AvoidSpeculativeGeneralityRule>
+  {
+    [Test]
+    public void AbstractClassesWithoutResponsabilityTest()
+    {
+      AssertRuleFailure<AbstractClass>(1);
+    }
 
-		[Test]
-		public void AbstractClassesWithoutResponsabilityTest () 
-		{
-			AssertRuleFailure<AbstractClass> (1);
-		}
+    [Test]
+    public void AbstractClassesWithResponsabilityTest()
+    {
+      AssertRuleSuccess<OtherAbstractClass>();
+    }
 
-		[Test]
-		public void AbstractClassesWithResponsabilityTest ()
-		{
-			AssertRuleSuccess<OtherAbstractClass> ();
-		}
+    [Test]
+    public void ClassWithUnusedParameterTest()
+    {
+      AssertRuleFailure<ClassWithUnusedParameter>(1);
+    }
 
-		[Test]
-		public void ClassWithUnusedParameterTest () 
-		{
-			AssertRuleFailure<ClassWithUnusedParameter> (1);
-		}
-		
-		[Test]
-		public void ClassWithFourUnusedParametersTest () 
-		{
-			AssertRuleFailure<ClassWithFourUnusedParameters> (4);
-		}
+    [Test]
+    public void ClassWithFourUnusedParametersTest()
+    {
+      AssertRuleFailure<ClassWithFourUnusedParameters>(4);
+    }
 
-		[Test]
-		public void ClassWithUnnecessaryDelegationTest ()
-		{
-			AssertRuleFailure<UnnecessaryDelegatedClass> (1);
-		}
+    [Test]
+    public void ClassWithUnnecessaryDelegationTest()
+    {
+      AssertRuleFailure<UnnecessaryDelegatedClass>(1);
+    }
 
-		[Test]
-		public void ClassWithoutUnnecessaryDelegationTest ()
-		{
-			AssertRuleSuccess<NotUnnecessaryDelegatedClass> ();
-		}
+    [Test]
+    public void ClassWithoutUnnecessaryDelegationTest()
+    {
+      AssertRuleSuccess<NotUnnecessaryDelegatedClass>();
+    }
 
-        [Test]
-        public void FSharpFunctionValuesAreIgnored()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("MethodCanBeMadeStatic.Instrument/hookResolveHandler@16");
-            AssertRuleDoesNotApply(type);
-        }
-	}
+    [Test]
+    public void FSharpFunctionValuesAreIgnored()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("MethodCanBeMadeStatic.Instrument/hookResolveHandler@13");
+      AssertRuleDoesNotApply(type);
+    }
+  }
 }

@@ -45,7 +45,7 @@ The following rule suites have unit test failures
 * Performance -- 8 failures + 1 more on .net core
 * Portability -- 5 failures + 1 more on .net core
 * Security.Cas -- 13 failures on .net core where it is not applicable
-* Smells -- 2 failures + 2 `[Ignore]`d switch related tests
+* Smells -- 1 failure + 2 `[Ignore]`d switch related tests
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
