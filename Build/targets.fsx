@@ -441,7 +441,7 @@ _Target "Unpack" (fun _ ->
 
    
   let text = File.ReadAllText "./Build/dotnet-tools.json"
-  let newtext = text.Replace("{0}", !Version)
+  let newtext = text.Replace("{0}", (!Version + "-pre-release"))
   File.WriteAllText ((config @@ "dotnet-tools.json"), newtext)
 
 
