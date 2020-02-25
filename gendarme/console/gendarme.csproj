@@ -3,10 +3,14 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Gendarme</RootNamespace>
     <TargetFrameworks>net40;netcoreapp2.1</TargetFrameworks>
+    <PackAsTool Condition="'$(TargetFramework)' != 'net40'">True</PackAsTool>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\gendarme\</SolutionDir>
     <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
+    <ApplicationIcon>$(SolutionDir)swf-wizard-runner\Resources\gendarme.ico</ApplicationIcon>
+    <ContinuousIntegrationBuild Condition="'$(APPVEYOR)'=='True'">true</ContinuousIntegrationBuild>
+    <DeterministicSourcePaths Condition="'$(APPVEYOR)'=='True'">true</DeterministicSourcePaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -19,9 +23,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
   </PropertyGroup>
-  <Target Name="AfterBuildMigrated">
-    <Copy SourceFiles="$(TargetDir)..\..\..\rules\rules.xml" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="True" />
-  </Target>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -31,6 +32,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" />
+    <Content Include="..\rules\rules.xml" Link="rules.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="DotnetToolSettings.xml">
+      <CopyToOutputDirectory Condition="'$(TargetFramework)' != 'net40'">PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\framework\Gendarme.Framework.csproj" />
