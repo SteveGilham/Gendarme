@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "altcode.gendarme.global": {
-      "version": "{0}}",
+      "version": "{0}",
       "commands": [
         "gendarme"
       ]

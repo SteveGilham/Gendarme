@@ -439,8 +439,9 @@ _Target "Unpack" (fun _ ->
   Shell.cleanDir (unpack)
   Directory.ensure config
 
+   
   let text = File.ReadAllText "./Build/dotnet-tools.json"
-  let newtext = String.Format(text, !Version)
+  let newtext = text.Replace("{0}", !Version)
   File.WriteAllText ((config @@ "dotnet-tools.json"), newtext)
 
 
