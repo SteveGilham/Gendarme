@@ -1,6 +1,6 @@
 
 # altcode.gendarme
-A Mono.Gendarme fork built against the most recent Mono.Cecil that can load assemblies built with current compilers.
+A Mono.Gendarme fork, built against the most recent Mono.Cecil, that can load assemblies built with current compilers.
 
 Since this is a fork, issues should be reported at my related repo](https://github.com/SteveGilham/altcode.fake/issues) that contains a Fake driver for the Gendarme tool, but noted as being against the forked Gendarme tool itself.
 
@@ -11,14 +11,13 @@ Since this is a fork, issues should be reported at my related repo](https://gith
 
 ## Build process from trunk as per `appveyor.yml`
 
-* Assumes latest NuGet (5.4.0) and VS2013 build environment
+Assumes VS2019 build environment
 
-NuGet restore .\packages.config -PackagesDirectory .\packages  
-powershell .\set-version.ps1  
-msbuild .\gendarme\gendarme-win.sln /p:Configuration=Release  
-NuGet pack altcode.gendarme.nuspec
+* dotnet tool restore
+* dotnet fake run .\Build\setup.fsx
+* dotnet fake run .\Build\build.fsx
 
-* the `msbuild` stage can be done in Visual Studio with the Debug configuration to run the unit tests
+The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests
 
 ## Features
 * Can load .net core assemblies 
@@ -26,42 +25,29 @@ NuGet pack altcode.gendarme.nuspec
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 
+## Direction
+After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
+
 ## Known Issues
 The AvoidSwitchStatements rule needs some serious decompiler code to recognise Roslyn's mangled switch as multiple conditional branches, so some tests have just been set to `[Ignore]`
 
 The following rule suites have unit test failures
 
-1 Smells (+ 2 `[Ignore]`d switch related tests)
-  AvoidCodeDuplicatedInSameClassRule failed on Test.Rules.Smells.AvoidCodeDuplicatedInSameClassTest/NonDuplicatedCodeIntoForeachLoop: result should be Success but got Failure.
-      Expected: Success
-      But was:  Failure
+* Framework -- 2 failures for Stack entry analysis (inherited from the VS2013 build)
+* BadPractice -- 8 in .net core only
+* Concurrency -- 6 failures
+* Correctness -- 6 failures (36 on .net core)
+* Design -- 2 in .net core only
+* Globalization -- 2 in .net core only
+* Interoperability -- 17 Stack entry analysis related failures 
+* Maintainability -- 2 failures
+* Naming -- 2 failures
+* Performance -- 8 failures + 1 more on .net core
+* Portability -- 5 failures + 1 more on .net core
+* Security.Cas -- 13 failures on .net core where it is not applicable
+* Smells -- 2 failures + 2 `[Ignore]`d switch related tests
 
-5 Performance
-
-1 Maintainability
-  GenericMethod
-   Source: AvoidUnnecessarySpecializationTest.cs line 437 (Stack entry analysis)
-
-17 Interoperability
-   Source: DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs (stack related)
-
-2 Correctness
-
-6 Concurrency
-
-2 Framework
-Test FullName:	Test.Framework.StackEntryAnalysisTest.TestMultipleCatch
-Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 421
-
-Test FullName:	Test.Framework.StackEntryAnalysisTest.TestTryCatchFinally
-Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 381
-
-## Direction
-After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
-
-### Progress to date 
-
-#### F# support
+## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
 
 * Fix `AvoidMultidimensionalIndexerRule` for F# generated parameterless methods called `get_Item`
