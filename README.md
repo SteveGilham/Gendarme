@@ -37,15 +37,14 @@ The following rule suites have unit test failures
 * BadPractice -- 8 in .net core only
 * Concurrency -- 6 failures
 * Correctness -- 6 failures (36 on .net core)
-* Design -- 2 in .net core only
-* Globalization -- 2 in .net core only
+* Design -- 2 in .net core only (PreferXmlAbstractionsTest)
+* Globalization -- 2 in .net core only (one is "System.NotSupportedException : Cannot read resources that depend on serialization.")
 * Interoperability -- 17 Stack entry analysis related failures 
-* Maintainability -- 2 failures
-* Naming -- 2 failures
-* Performance -- 8 failures + 1 more on .net core
-* Portability -- 5 failures + 1 more on .net core
+* Maintainability -- 1 failure (AvoidUnnecessarySpecializationRule)
+* Performance -- 8 failures (Character concatenation, others) + 1 more on .net core (AvoidLocalDataStoreSlotTest)
+* Portability -- 5 failures (MonoCompatibiliyReview) + 1 more on .net core (False positive detecting Registry keys as paths)
 * Security.Cas -- 13 failures on .net core where it is not applicable
-* Smells -- 1 failure + 2 `[Ignore]`d switch related tests
+* Smells -- 1 failure (`SuccessOnNonDuplicatedCodeIntoForeachLoopTest` detects the loop) + 2 `[Ignore]`d switch related tests
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --

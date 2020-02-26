@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,122 +35,138 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Naming {
+namespace Test.Rules.Naming
+{
+  public class C
+  {
+  }
 
-	public class C {
-	}
+  public class CorrectClass
+  {
+  }
 
-	public class CorrectClass {
-	}
+  public class AnotherCorrectClass
+  {
+  }
 
-	public class AnotherCorrectClass {
-	}
+  public class CIncorrectClass
+  {
+  }
 
-	public class CIncorrectClass {
-	}
+  public class INcorrectClass
+  {
+  }
 
-	public class INcorrectClass {
-	}
+  public class ILRange
+  {
+  }
 
-	public class ILRange {
-	}
+  public class InMemoryDoohicky
+  {
+  }
 
-	public class InMemoryDoohicky
-	{
-	}
+  public interface I
+  {
+  }
 
-	public interface I {
-	}
+  public interface ICorrectInterface
+  {
+  }
 
-	public interface ICorrectInterface {
-	}
+  public interface IncorrectInterface
+  {
+  }
 
-	public interface IncorrectInterface {
-	}
+  public interface AnotherIncorrectInterface
+  {
+  }
 
-	public interface AnotherIncorrectInterface {
-	}
+  public class CLSAbbreviation
+  { // ok
+  }
 
-	public class CLSAbbreviation { // ok
-	}
+  public interface ICLSAbbreviation
+  { // ok too
+  }
 
-	public interface ICLSAbbreviation { // ok too
-	}
+  public class GoodSingleGenericType<T, V, K>
+  {
+  }
 
-	public class GoodSingleGenericType<T, V, K> {
-	}
+  public class GoodPrefixGenericType<TPrefix>
+  {
+  }
 
-	public class GoodPrefixGenericType<TPrefix> {
-	}
+  public class BadCapsGenericType<a, b>
+  {
+  }
 
-	public class BadCapsGenericType<a, b> {
-	}
+  public class BadPrefixGenericType<Prefix>
+  {
+  }
 
-	public class BadPrefixGenericType<Prefix> {
-	}
+  [TestFixture]
+  public class UseCorrectPrefixTypeTest : TypeRuleTestFixture<UseCorrectPrefixRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.GeneratedType);
+    }
 
-	[TestFixture]
-	public class UseCorrectPrefixTypeTest : TypeRuleTestFixture<UseCorrectPrefixRule> {
+    [Test]
+    public void Types()
+    {
+      AssertRuleSuccess<C>();
+      AssertRuleSuccess<CorrectClass>();
+      AssertRuleSuccess<AnotherCorrectClass>();
+      AssertRuleFailure<CIncorrectClass>(1);
+      AssertRuleFailure<INcorrectClass>(1);
+      AssertRuleSuccess<ILRange>();
+      AssertRuleSuccess<InMemoryDoohicky>();
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.GeneratedType);
-		}
+    [Test]
+    public void Interfaces()
+    {
+      AssertRuleFailure<I>(1);
+      AssertRuleSuccess<ICorrectInterface>();
+      AssertRuleFailure<IncorrectInterface>(1);
+      AssertRuleFailure<AnotherIncorrectInterface>(1);
+    }
 
-		[Test]
-		public void Types ()
-		{
-			AssertRuleSuccess<C> ();
-			AssertRuleSuccess<CorrectClass> ();
-			AssertRuleSuccess<AnotherCorrectClass> ();
-			AssertRuleFailure<CIncorrectClass> (1);
-			AssertRuleFailure<INcorrectClass> (1);
-			AssertRuleSuccess<ILRange> ();
-			AssertRuleSuccess<InMemoryDoohicky> ();
-		}
+    [Test]
+    public void Abbreviations()
+    {
+      AssertRuleSuccess<CLSAbbreviation>();
+      AssertRuleSuccess<ICLSAbbreviation>();
+    }
 
-		[Test]
-		public void Interfaces ()
-		{
-			AssertRuleFailure<I> (1);
-			AssertRuleSuccess<ICorrectInterface> ();
-			AssertRuleFailure<IncorrectInterface> (1);
-			AssertRuleFailure<AnotherIncorrectInterface> (1);
-		}
+    [Test]
+    public void GenericParameters()
+    {
+      AssertRuleSuccess<GoodSingleGenericType<int, int, int>>();
+      AssertRuleSuccess<GoodPrefixGenericType<int>>();
+      AssertRuleFailure<BadCapsGenericType<int, int>>(2);
+      AssertRuleFailure<BadPrefixGenericType<int>>(1);
+    }
 
-		[Test]
-		public void Abbreviations ()
-		{
-			AssertRuleSuccess<CLSAbbreviation> ();
-			AssertRuleSuccess<ICLSAbbreviation> ();
-		}
+    [Test]
+    public void FSharpAllowSingleLowercaseGenericParameterTypes()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("UseCorrectPrefix.CreateProcess/ensureExitCode@18");
+      AssertRuleSuccess(type);
+    }
 
-		[Test]
-		public void GenericParameters ()
-		{
-			AssertRuleSuccess<GoodSingleGenericType<int, int, int>> ();
-			AssertRuleSuccess<GoodPrefixGenericType<int>> ();
-			AssertRuleFailure<BadCapsGenericType<int, int>> (2);
-			AssertRuleFailure<BadPrefixGenericType<int>> (1);
-		}
-
-        [Test]
-        public void FSharpAllowSingleLowercaseGenericParameterTypes()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("UseCorrectPrefix.CreateProcess/ensureExitCode@17");
-            AssertRuleSuccess(type);
-        }
-
-        [Test]
-        public void FSharpIgnoreGeneratedFunctionNames()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("UseCorrectPrefix.FSApi/CSharpContainingMethod@25");
-            AssertRuleSuccess(type);
-        }
-	}
+    [Test]
+    public void FSharpIgnoreGeneratedFunctionNames()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("UseCorrectPrefix.FSApi/CSharpContainingMethod@26");
+      AssertRuleSuccess(type);
+    }
+  }
 }
