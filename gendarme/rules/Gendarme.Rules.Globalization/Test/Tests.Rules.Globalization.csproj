@@ -61,17 +61,19 @@
     <None Include="Resources\StringInEnglishImageInFrench.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\XMLFileNotInResX.jp.xml"  Condition="'$(TargetFramework)' == 'net40'" />
     <EmbeddedResource Include="Resources\XMLFileNotInResX.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\XMLFileNotInResX.fr.xml" />
+    <EmbeddedResource Include="Resources\XMLFileNotInResX.fr.xml" Condition="'$(TargetFramework)' != 'net40'" />
+    <EmbeddedResource Include="Resources\XMLFileNotInResXOnlyInFrench.jp.xml"  Condition="'$(TargetFramework)' == 'net40'" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="PublicResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>PublicResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\XMLFileNotInResXOnlyInFrench.fr.xml" />
+    <EmbeddedResource Include="Resources\XMLFileNotInResXOnlyInFrench.fr.xml" Condition="'$(TargetFramework)' != 'net40'" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ImageUnused.bmp" />
@@ -82,5 +84,9 @@
   <ItemGroup>
     <Compile Remove="PreferIFormatProviderOverrideTest.cs" />
     <Compile Remove="PreferStringComparisonOverrideTest.cs" />
+    <EmbeddedResource Remove="Resource.fr.resx" Condition="'$(TargetFramework)' != 'net40'" />
+    <EmbeddedResource Remove="Resource.jp.resx" Condition="'$(TargetFramework)' == 'net40'" />
+    <EmbeddedResource Remove="MainResourceMissing.fr.resx" Condition="'$(TargetFramework)' != 'net40'" />
+    <EmbeddedResource Remove="MainResourceMissing.jp.resx" Condition="'$(TargetFramework)' == 'net40'" />
   </ItemGroup>
 </Project>

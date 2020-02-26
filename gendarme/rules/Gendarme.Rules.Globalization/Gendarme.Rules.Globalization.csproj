@@ -29,5 +29,6 @@
     <Compile Remove="PreferOverrideBaseRule.cs" />
     <Compile Remove="PreferStringComparisonOverrideRule.cs" />
     <Compile Remove="Test\**\*.cs" />
+    <EmbeddedResource Remove="Test\**\*.resx" />
   </ItemGroup>
 </Project>
