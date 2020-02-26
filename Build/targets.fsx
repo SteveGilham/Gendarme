@@ -444,7 +444,7 @@ _Target "Packaging" (fun _ ->
     List.concat
       [ !!"./_Binaries/gendarme/Release+AnyCPU/net4*/*.*" |> Seq.toList
         n40rules ]
-    |> List.map (fun f -> (f |> Path.getFullName, Some "tools/net40", None))
+    |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
 
   let netcore =
     List.concat
