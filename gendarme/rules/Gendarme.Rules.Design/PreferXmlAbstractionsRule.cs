@@ -103,9 +103,7 @@ namespace Gendarme.Rules.Design
         foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences)
         {
           if (name.Name == "System.Xml"
-#if NETSTANDARD2_0
-						|| name.Name.StartsWith("System.Xml.", StringComparison.Ordinal)
-#endif
+            || name.Name.StartsWith("System.Xml.", StringComparison.Ordinal)
             )
           {
             Active = true;
