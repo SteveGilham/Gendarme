@@ -32,122 +32,133 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule fires if an externally visible method or property uses an <c>XmlDocument</c>,
+  /// <c>XPathDocument</c> or <c>XmlNode</c> argument. The problem with this is that it ties
+  /// your API to a specific implementation so it is difficult to change later. Instead use
+  /// abstract types like <c>IXPathNavigable</c>, <c>XmlReader</c>, <c>XmlWriter</c>, or subtypes
+  /// of <c>XmlNode</c>.
+  /// </summary>
+  /// <example>
+  /// Bad example (property):
+  /// <code>
+  /// public class Application {
+  ///	public XmlDocument UserData {
+  ///		get {
+  ///			return userData;
+  ///		}
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (property):
+  /// <code>
+  /// public class Application {
+  ///	public IXPathNavigable UserData {
+  ///		get {
+  ///			return userData;
+  ///		}
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (method parameter):
+  /// <code>
+  /// public class Application {
+  ///	public bool IsValidUserData (XmlDocument userData)
+  ///	{
+  ///		/* implementation */
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (method parameter):
+  /// <code>
+  /// public class Application {
+  ///	public bool IsValidUserData (XmlReader userData)
+  ///	{
+  ///		/* implementation */
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.6</remarks>
 
-	/// <summary>
-	/// This rule fires if an externally visible method or property uses an <c>XmlDocument</c>, 
-	/// <c>XPathDocument</c> or <c>XmlNode</c> argument. The problem with this is that it ties 
-	/// your API to a specific implementation so it is difficult to change later. Instead use 
-	/// abstract types like <c>IXPathNavigable</c>, <c>XmlReader</c>, <c>XmlWriter</c>, or subtypes
-	/// of <c>XmlNode</c>.
-	/// </summary>
-	/// <example>
-	/// Bad example (property):
-	/// <code>
-	/// public class Application {
-	///	public XmlDocument UserData {
-	///		get {
-	///			return userData;
-	///		}
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (property):
-	/// <code>
-	/// public class Application {
-	///	public IXPathNavigable UserData {
-	///		get {
-	///			return userData;
-	///		}
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (method parameter):
-	/// <code>
-	/// public class Application {
-	///	public bool IsValidUserData (XmlDocument userData) 
-	///	{
-	///		/* implementation */
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (method parameter):
-	/// <code>
-	/// public class Application {
-	///	public bool IsValidUserData (XmlReader userData) 
-	///	{
-	///		/* implementation */
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.6</remarks>
+  [Problem("This visible method uses XmlDocument, XPathDocument or XmlNode in its signature. This makes changing the implementation more difficult than it should be.")]
+  [Solution("Use IXPathNavigable, XmlReader, XmlWriter, or a subtype of XmlNode instead.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes")]
+  public class PreferXmlAbstractionsRule : Rule, IMethodRule
+  {
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
 
-	[Problem ("This visible method uses XmlDocument, XPathDocument or XmlNode in its signature. This makes changing the implementation more difficult than it should be.")]
-	[Solution ("Use IXPathNavigable, XmlReader, XmlWriter, or a subtype of XmlNode instead.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes")]
-	public class PreferXmlAbstractionsRule : Rule, IMethodRule {
-
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
-
-			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences) {
-					if (name.Name == "System.Xml") {
-						Active = true;
-						return;
-					}
-				}
-				Active = false; //no System.Xml assembly reference has been found
-			};
-		}
-
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.IsVisible ())
-				return RuleResult.DoesNotApply;
-
-			MethodReturnType mrt = method.MethodReturnType;
-			if (IsSpecificXmlType (mrt.ReturnType))
-				Runner.Report (mrt, GetSeverity (method), Confidence.High);
-
-			if (method.HasParameters) {
-				foreach (ParameterDefinition parameter in method.Parameters) {
-					if (parameter.IsOut)
-						continue; //out params already have their rule
-
-					if (IsSpecificXmlType (parameter.ParameterType))
-						Runner.Report (parameter, GetSeverity (method), Confidence.High);
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-
-		static bool IsSpecificXmlType (TypeReference type)
-		{
-			if (type.Namespace == "System.Xml") { // OK
-				string name = type.Name;
-				return ((name == "XmlDocument") || (name == "XmlNode"));
-			}
-			return type.IsNamed (xpd);
-		}
-        private readonly static TypeName xpd = new TypeName
+      Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e)
+      {
+        foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences)
         {
-            Namespace = "System.Xml.XPath",
-            Name = "XPathDocument"
-        };
+          if (name.Name == "System.Xml"
+#if NETSTANDARD2_0
+						|| name.Name.StartsWith("System.Xml.", StringComparison.Ordinal)
+#endif
+            )
+          {
+            Active = true;
+            return;
+          }
+        }
+        Active = false; //no System.Xml assembly reference has been found
+      };
+    }
 
-		static Severity GetSeverity (MethodDefinition method)
-		{
-			return method.IsPublic ? Severity.Medium : Severity.Low;
-		}
-	}
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.IsVisible())
+        return RuleResult.DoesNotApply;
+
+      MethodReturnType mrt = method.MethodReturnType;
+      if (IsSpecificXmlType(mrt.ReturnType))
+        Runner.Report(mrt, GetSeverity(method), Confidence.High);
+
+      if (method.HasParameters)
+      {
+        foreach (ParameterDefinition parameter in method.Parameters)
+        {
+          if (parameter.IsOut)
+            continue; //out params already have their rule
+
+          if (IsSpecificXmlType(parameter.ParameterType))
+            Runner.Report(parameter, GetSeverity(method), Confidence.High);
+        }
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+
+    private static bool IsSpecificXmlType(TypeReference type)
+    {
+      if (type.Namespace == "System.Xml")
+      { // OK
+        string name = type.Name;
+        return ((name == "XmlDocument") || (name == "XmlNode"));
+      }
+      return type.IsNamed(xpd);
+    }
+
+    private readonly static TypeName xpd = new TypeName
+    {
+      Namespace = "System.Xml.XPath",
+      Name = "XPathDocument"
+    };
+
+    private static Severity GetSeverity(MethodDefinition method)
+    {
+      return method.IsPublic ? Severity.Medium : Severity.Low;
+    }
+  }
 }

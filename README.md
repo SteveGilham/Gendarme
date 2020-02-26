@@ -37,7 +37,6 @@ The following rule suites have unit test failures
 * BadPractice -- 8 in .net core only
 * Concurrency -- 6 failures
 * Correctness -- 6 failures (36 on .net core)
-* Design -- 2 in .net core only (PreferXmlAbstractionsTest)
 * Globalization -- 2 in .net core only (one is "System.NotSupportedException : Cannot read resources that depend on serialization.")
 * Interoperability -- 17 Stack entry analysis related failures 
 * Maintainability -- 1 failure (AvoidUnnecessarySpecializationRule)
