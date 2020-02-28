@@ -46,10 +46,7 @@ namespace Tests.Rules.Globalization
       {
         Console.WriteLine(InternalResource.CalledString);
         Console.WriteLine(PublicResource.CalledString);
-#if NETCOREAPP2_1
-#else
-        Console.WriteLine(InternalResource.ImageUsed.Size);
-#endif
+        Console.WriteLine(InternalResource.ImageUsed.ToString());
       }
     }
 
@@ -59,11 +56,8 @@ namespace Tests.Rules.Globalization
       AssertRuleSuccess<InternalResource>("get_CalledString");
       AssertRuleFailure<InternalResource>("get_UncalledString");
 
-#if NETCOREAPP2_1
-#else
       AssertRuleSuccess<InternalResource>("get_ImageUsed");
       AssertRuleFailure<InternalResource>("get_ImageUnused");
-#endif
     }
 
     [Test]
