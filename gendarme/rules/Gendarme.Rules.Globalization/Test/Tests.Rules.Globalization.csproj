@@ -5,7 +5,6 @@
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
     <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
-    <!-- EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems -->
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="altcover" Version="6.7.750" />
@@ -65,16 +64,14 @@
     <EmbeddedResource Include="Resources\XMLFileNotInResX.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\XMLFileNotInResX.ja.xml" Condition="'$(TargetFramework)' != 'net40'" />
-    <EmbeddedResource Include="Resources\XMLFileNotInResX.fr.xml" Condition="'$(TargetFramework)' == 'net40'" />
-    <EmbeddedResource Include="Resources\XMLFileNotInResXOnlyInFrench.fr.xml" Condition="'$(TargetFramework)' == 'net40'" />
-    <EmbeddedResource Include="Resources\XMLFileNotInResXOnlyInFrench.ja.xml" Condition="'$(TargetFramework)' != 'net40'" />
+    <EmbeddedResource Include="Resources\XMLFileNotInResX.fr.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="PublicResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>PublicResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\XMLFileNotInResXOnlyInFrench.fr.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ImageUnused.bmp" />
@@ -85,9 +82,5 @@
   <ItemGroup>
     <Compile Remove="PreferIFormatProviderOverrideTest.cs" />
     <Compile Remove="PreferStringComparisonOverrideTest.cs" />
-    <EmbeddedResource Remove="Resource.fr.resx" Condition="'$(TargetFramework)' != 'net40'" />
-    <EmbeddedResource Remove="Resource.ja.resx" Condition="'$(TargetFramework)' == 'net40'" />
-    <EmbeddedResource Remove="MainResourceMissing.fr.resx" Condition="'$(TargetFramework)' != 'net40'" />
-    <EmbeddedResource Remove="MainResourceMissing.ja.resx" Condition="'$(TargetFramework)' == 'net40'" />
   </ItemGroup>
 </Project>
