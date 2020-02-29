@@ -13,6 +13,9 @@ With Roslyn
 17 Interoperability
    Source: DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs (stack related)
 
+1 G10n
+  Deserializing bitmaps in .net core
+
 6 Correctness
 
 6 Concurrency
@@ -30,3 +33,6 @@ Problem: The depth of the namespace hierarchy is getting out of control.
 * Severity: Medium, Confidence: High
 * Target:   AltCode.Fake.DotNet.Gendarme, Version=0.1.0.0, Culture=neutral, PublicKeyToken=c02b1a9f5b7cade8
 * Location: <StartupCode$AltCode-Fake-DotNet-Gendarme>.$.NETFramework,Version=v4.7.2
+
+TODO
+* Emit the assembly, always
