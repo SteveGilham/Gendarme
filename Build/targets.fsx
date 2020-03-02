@@ -470,11 +470,11 @@ _Target "Packaging" (fun _ ->
   let insert = XElement(x "packageTypes")
   insert.Add(XElement(x "packageType", XAttribute(XName.Get "name", "DotnetTool")))
   tag.AddAfterSelf insert
-  let globalnuspec = Path.getFullName "./_Packaging/altcode.gendarme.global.nuspec"
+  let globalnuspec = Path.getFullName "./_Packaging/altcode.gendarme-tool.nuspec"
   dotnetNupkg.Save globalnuspec
 
   [ ("altcode.gendarme", files, nuspec)
-    ("altcode.gendarme.global", globalfiles, globalnuspec) ]
+    ("altcode.gendarme-tool", globalfiles, globalnuspec) ]
   |> List.iter (fun (project, payload, recipe) ->
        NuGet (fun p ->
          { p with
