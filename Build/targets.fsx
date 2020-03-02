@@ -470,11 +470,11 @@ _Target "Packaging" (fun _ ->
   let insert = XElement(x "packageTypes")
   insert.Add(XElement(x "packageType", XAttribute(XName.Get "name", "DotnetTool")))
   tag.AddAfterSelf insert
-  let globalnuspec = Path.getFullName "./_Packaging/altcode.gendarme.global.nuspec"
+  let globalnuspec = Path.getFullName "./_Packaging/altcode.gendarme-tool.nuspec"
   dotnetNupkg.Save globalnuspec
 
   [ ("altcode.gendarme", files, nuspec)
-    ("altcode.gendarme.global", globalfiles, globalnuspec) ]
+    ("altcode.gendarme-tool", globalfiles, globalnuspec) ]
   |> List.iter (fun (project, payload, recipe) ->
        NuGet (fun p ->
          { p with
@@ -522,7 +522,14 @@ _Target "Unpack" (fun _ ->
 
   DotNet.restore (fun o ->
     { o.WithCommon(withWorkingDirectoryVM unpack) with Packages = [ "./packages" ] })
-    proj)
+    proj
+
+  let vname = !Version + "-pre-release"
+  let from = (Path.getFullName @"_Unpack\packages\altcode.gendarme\") @@ vname
+  printfn "Copying from %A to %A" from unpack
+  Shell.copyDir unpack from (fun f -> printfn "%A" f
+                                      true)
+    )
 
 _Target "All" ignore
 

@@ -29,10 +29,20 @@ Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Ge
 -
 
 TODO
-Problem: The depth of the namespace hierarchy is getting out of control.
-* Severity: Medium, Confidence: High
-* Target:   AltCode.Fake.DotNet.Gendarme, Version=0.1.0.0, Culture=neutral, PublicKeyToken=c02b1a9f5b7cade8
-* Location: <StartupCode$AltCode-Fake-DotNet-Gendarme>.$.NETFramework,Version=v4.7.2
-
-TODO
 * Emit the assembly, always
+
+TODO -- Generally, why are some suppressions failing??
+
+TODO  -- attributed enums
+AvoidUninstantiatedInternalClassesRule
+
+Problem: The internal type is not instantiated by code within the assembly.
+* Severity: High, Confidence: Low
+* Target:   AltCover.Base.Tag
+
+TODO -- attributed module
+AvoidSpeculativeGeneralityRule
+
+Problem: If you will need the feature in the future then you should implement it in the future.
+* Severity: Medium, Confidence: Normal
+* Target:   AltCover.Augment
