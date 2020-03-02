@@ -522,7 +522,14 @@ _Target "Unpack" (fun _ ->
 
   DotNet.restore (fun o ->
     { o.WithCommon(withWorkingDirectoryVM unpack) with Packages = [ "./packages" ] })
-    proj)
+    proj
+
+  let vname = !Version + "-pre-release"
+  let from = (Path.getFullName @"_Unpack\packages\altcode.gendarme\") @@ vname
+  printfn "Copying from %A to %A" from unpack
+  Shell.copyDir unpack from (fun f -> printfn "%A" f
+                                      true)
+    )
 
 _Target "All" ignore
 
