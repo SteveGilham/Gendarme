@@ -276,26 +276,32 @@ namespace Gendarme.Framework.Rocks
         return false;
 
       IList<ParameterDefinition> parameters = method.Parameters;
-      if (parameters.Count != 2)
+      if (parameters == null || parameters.Count != 2)
         return false;
 
       TypeReference type = parameters[1].ParameterType;
       GenericParameter gp = (type as GenericParameter);
       if (gp == null)
+      {
         return type.Inherits(eventArgs);
+      }
 
       if (gp.Owner == method.DeclaringType)
       {
         int index = 0;
         var gps = method.DeclaringType.GenericParameters;
 
-        for (; index < gps.Count; index++)
+        if (gps != null)
         {
-          if (gps[index].FullName == gp.FullName)
+          for (; index < gps.Count; index++)
           {
-            var gtype = (self.DeclaringType as Mono.Cecil.GenericInstanceType);
-            if (gtype.GenericArguments[index].Inherits(eventArgs))
-              return true;
+            if (gps[index].FullName == gp.FullName)
+            {
+              var gtype = (self.DeclaringType as Mono.Cecil.GenericInstanceType);
+              if (gtype != null &&
+                gtype.GenericArguments[index].Inherits(eventArgs))
+                return true;
+            }
           }
         }
       }
