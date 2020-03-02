@@ -12,6 +12,7 @@
     <Compile Include="AvoidLongParameterListsRule .fs" />
     <Compile Include="AvoidMultidimensionalIndexerRule.fs" />
     <Compile Include="AvoidNonAlphanumericIdentifierRule.fs" />
+    <Compile Include="AvoidRepetitiveCastsRule.fs" />
     <Compile Include="AvoidSwitchStatementsRule.fs" />
     <Compile Include="AvoidUncalledPrivateCodeRule.fs" />
     <Compile Include="AvoidUnnecessarySpecializationRule.fs" />
