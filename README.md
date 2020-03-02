@@ -81,6 +81,9 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * Consider F# extension methods/properties to be object-bound rather than module bound for `UseCorrectCasingRule`
 * Add a heuristic to recognise F# compiler generated disposal after a `use` in `EnsureLocalDisposalRule`
 * Add a `RelaxedAvoidCodeDuplicatedInSameClassRule`, which looks for patterns aligning with visible sequence points, and excludes patterns containing `throw new ArgumentNullException(...)`
+* For `AvoidLargeClassesRule`, ignore `FSharpFunc` and `FSharpTypeFunc` valued fields in generated types with `@` in their names; treat them as methods in the type instead.
+* For `AvoidDeepNamespaceHierarchyRule`, ignore F# generated namespaces of the form `<StartupCode$a-b-c-d>.$.NETFramework,Version=...`
+* For `AvoidRepetitiveCastsRule`, ignore F# `is` then `as` of anonymous temporaries (often happens in `match` expressions on sum types)
 
 #### Unit test fixing
 
