@@ -1,5 +1,8 @@
-# 2020.2.xx.xxxxx-pre-release
+# 2020.3.xx.xxxxx-pre-release
 
+* [BUGFIX] The extension method `IsEventCallback` would throw NRE for certain generic F# types
+* For `AvoidLargeClassesRule`, ignore `FSharpFunc` and `FSharpTypeFunc` valued fields in generated types with `@` in their names; treat them as methods in the type instead.
+* For `AvoidDeepNamespaceHierarchyRule`, ignore F# generated namespaces of the form `<StartupCode$a-b-c-d>.$.NETFramework,Version=...`
 * Building on VS2019 for .net4.0 and .netcore2.1+
 * Now available as a dotnet global tool in package `altcode.gendarme.global`
 
