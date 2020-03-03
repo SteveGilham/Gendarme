@@ -435,7 +435,7 @@ namespace Gendarme.Framework
       }
       // don't report them if we hit an exception after analysis is completed (e.g. in reporting)
       currentRule = null;
-      currentTarget = null;
+      CurrentTarget = null;
     }
 
     public virtual void TearDown()
