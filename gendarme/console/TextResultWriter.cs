@@ -135,7 +135,7 @@ namespace Gendarme
       writer.WriteLine();
 
       writer.WriteLine("* Severity: {0}, Confidence: {1}", defect.Severity, defect.Confidence);
-      writer.WriteLine("* Target:   {0} ({1})", defect.Target, defect.Target.GetAssembly().FullName);
+      writer.WriteLine("* Target:   {0} ({1})", defect.Target, defect.Assembly.FullName);
 
       if (defect.Location != defect.Target)
         writer.WriteLine("* Location: {0}", defect.Location);

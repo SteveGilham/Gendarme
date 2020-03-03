@@ -491,7 +491,7 @@ namespace Gendarme
       if (CurrentRule != null)
         Console.WriteLine("Rule:\t{0}", CurrentRule);
       if (CurrentTarget != null)
-        Console.WriteLine("Target:\t{0} ({1})", CurrentTarget, CurrentTarget.GetAssembly().FullName);
+        Console.WriteLine("Target:\t{0} ({1})", CurrentTarget, CurrentAssembly);
       Console.WriteLine("Stack trace: {0}", e);
     }
 

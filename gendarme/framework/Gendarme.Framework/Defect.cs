@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Defect
 //
 // Authors:
@@ -32,95 +32,106 @@ using Mono.Cecil.Cil;
 
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  public class Defect
+  {
+    private string source;
 
-	public class Defect {
+    public Defect(IRule rule, IMetadataTokenProvider target, IMetadataTokenProvider location, Severity severity, Confidence confidence, string text)
+    {
+      if (rule == null)
+        throw new ArgumentNullException("rule");
+      if (target == null)
+        throw new ArgumentNullException("target");
+      if (location == null)
+        throw new ArgumentNullException("location");
 
-		private string source;
+      Rule = rule;
+      Target = target;
+      Location = location;
+      Confidence = confidence;
+      Severity = severity;
+      Text = text;
+      Assembly = Target.GetAssembly();
+    }
 
-		public Defect (IRule rule, IMetadataTokenProvider target, IMetadataTokenProvider location, Severity severity, Confidence confidence, string text)
-		{
-			if (rule == null)
-				throw new ArgumentNullException ("rule");
-			if (target == null)
-				throw new ArgumentNullException ("target");
-			if (location == null)
-				throw new ArgumentNullException ("location");
+    public Defect(IRule rule, IMetadataTokenProvider target, IMetadataTokenProvider location, Severity severity, Confidence confidence)
+      : this(rule, target, location, severity, confidence, String.Empty)
+    {
+    }
 
-			Rule = rule;
-			Target = target;
-			Location = location;
-			Confidence = confidence;
-			Severity = severity;
-			Text = text;
-		}
+    public Defect(IRule rule, IMetadataTokenProvider target, MethodDefinition location, Instruction ins, Severity severity, Confidence confidence, string text)
+      : this(rule, target, location, severity, confidence, text)
+    {
+      Instruction = ins;
+    }
 
-		public Defect (IRule rule, IMetadataTokenProvider target, IMetadataTokenProvider location, Severity severity, Confidence confidence)
-			: this (rule, target, location, severity, confidence, String.Empty)
-		{
-		}
+    public Defect(IRule rule, IMetadataTokenProvider target, MethodDefinition location, Instruction ins, Severity severity, Confidence confidence)
+      : this(rule, target, location, ins, severity, confidence, String.Empty)
+    {
+    }
 
-		public Defect (IRule rule, IMetadataTokenProvider target, MethodDefinition location, Instruction ins, Severity severity, Confidence confidence, string text)
-			: this (rule, target, location, severity, confidence, text)
-		{
-			Instruction = ins;
-		}
+    public AssemblyDefinition Assembly
+    {
+      get; private set;
+    }
 
-		public Defect (IRule rule, IMetadataTokenProvider target, MethodDefinition location, Instruction ins, Severity severity, Confidence confidence)
-			: this (rule, target, location, ins, severity, confidence, String.Empty)
-		{
-		}
+    public Confidence Confidence
+    {
+      get;
+      private set;
+    }
 
-		public AssemblyDefinition Assembly {
-			get { return Target.GetAssembly (); }
-		}
+    public Instruction Instruction
+    {
+      get;
+      private set;
+    }
 
-		public Confidence Confidence {
-			get;
-			private set;
-		}
+    public IMetadataTokenProvider Location
+    {
+      get;
+      private set;
+    }
 
-		public Instruction Instruction {
-			get;
-			private set;
-		}
+    public IRule Rule
+    {
+      get;
+      private set;
+    }
 
-		public IMetadataTokenProvider Location {
-			get;
-			private set;
-		}
+    public Severity Severity
+    {
+      get;
+      private set;
+    }
 
-		public IRule Rule {
-			get;
-			private set;
-		}
+    public string Source
+    {
+      get
+      {
+        if (source == null)
+        {
+          MethodDebugInformation dbg = (Location is MethodDefinition) ?
+                                       (Location as MethodDefinition).DebugInformation :
+                                       null;
+          source = Symbols.GetSource(this, dbg);
+        }
+        return source;
+      }
+    }
 
-		public Severity Severity {
-			get;
-			private set;
-		}
+    public IMetadataTokenProvider Target
+    {
+      get;
+      private set;
+    }
 
-		public string Source {
-			get {
-				if (source == null)
-                {
-                    MethodDebugInformation dbg = (Location is MethodDefinition) ? 
-                                                 (Location as MethodDefinition).DebugInformation : 
-                                                 null;
-					source = Symbols.GetSource (this, dbg);
-                }
-				return source;
-			}
-		}
-
-		public IMetadataTokenProvider Target {
-			get;
-			private set;
-		}
-
-		public string Text {
-			get;
-			private set;
-		}
-	}
+    public string Text
+    {
+      get;
+      private set;
+    }
+  }
 }
