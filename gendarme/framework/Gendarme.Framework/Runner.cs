@@ -55,7 +55,7 @@ namespace Gendarme.Framework
     private IEnumerable<IMethodRule> method_rules;
 
     private IRule currentRule;
-    private IMetadataTokenProvider _currentTarget;
+    private IMetadataTokenProvider currentTarget;
     private IIgnoreList ignoreList;
     private int defectCountBeforeCheck;
     private object[] engine_dependencies;
@@ -76,11 +76,11 @@ namespace Gendarme.Framework
 
     protected IMetadataTokenProvider CurrentTarget
     {
-      get { return _currentTarget; }
+      get { return currentTarget; }
       set
       {
-        _currentTarget = value;
-        CurrentAssembly = _currentTarget.GetAssembly();
+        currentTarget = value;
+        CurrentAssembly = currentTarget.GetAssembly();
       }
     }
 
