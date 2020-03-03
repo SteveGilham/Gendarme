@@ -43,11 +43,11 @@ using Gendarme.Framework.Engines;
 
 using NDesk.Options;
 
-namespace Gendarme {
-
+namespace Gendarme
+{
   [EngineDependency(typeof(SuppressMessageEngine))]
-	public class ConsoleRunner : Runner {
-
+  public class ConsoleRunner : Runner
+  {
     private string config_file;
     private string rule_set = "default";
     private string html_file;
@@ -60,45 +60,52 @@ namespace Gendarme {
     private bool console;
     private List<string> assembly_names;
 
-		static string [] SplitOptions (string value)
+    private static string[] SplitOptions(string value)
     {
       return value.ToUpperInvariant().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
     }
 
     // parse severity filter
     // e.g. Audit,High+ == Audit, High and Critical
-		bool ParseSeverity (string filter)
+    private bool ParseSeverity(string filter)
     {
       SeverityBitmask.ClearAll();
-			foreach (string option in SplitOptions (filter)) {
+      foreach (string option in SplitOptions(filter))
+      {
         Severity severity;
 
-				switch (option) {
+        switch (option)
+        {
           case "AUDIT":
           case "AUDIT+":
           case "AUDIT-":
             severity = Severity.Audit;
             break;
+
           case "LOW":
           case "LOW+":
           case "LOW-":
             severity = Severity.Low;
             break;
+
           case "MEDIUM":
           case "MEDIUM+":
           case "MEDIUM-":
             severity = Severity.Medium;
             break;
+
           case "HIGH":
           case "HIGH+":
           case "HIGH-":
             severity = Severity.High;
             break;
+
           case "CRITICAL":
           case "CRITICAL+":
           case "CRITICAL-":
             severity = Severity.Critical;
             break;
+
           case "ALL":
           case "*":
             SeverityBitmask.SetAll();
@@ -109,44 +116,55 @@ namespace Gendarme {
         }
 
         char end = option[option.Length - 1];
-				if (end == '+') {
+        if (end == '+')
+        {
           SeverityBitmask.SetDown(severity);
-				} else if (end == '-') {
+        }
+        else if (end == '-')
+        {
           SeverityBitmask.SetUp(severity);
-				} else {
+        }
+        else
+        {
           SeverityBitmask.Set(severity);
         }
       }
       return true;
     }
 
-		bool ParseConfidence (string filter)
+    private bool ParseConfidence(string filter)
     {
       ConfidenceBitmask.ClearAll();
-			foreach (string option in SplitOptions (filter)) {
+      foreach (string option in SplitOptions(filter))
+      {
         Confidence confidence;
 
-				switch (option) {
+        switch (option)
+        {
           case "LOW":
           case "LOW+":
           case "LOW-":
             confidence = Confidence.Low;
             break;
+
           case "NORMAL":
           case "NORMAL+":
           case "NORMAL-":
             confidence = Confidence.Normal;
             break;
+
           case "HIGH":
           case "HIGH+":
           case "HIGH-":
             confidence = Confidence.High;
             break;
+
           case "TOTAL":
           case "TOTAL+":
           case "TOTAL-":
             confidence = Confidence.Total;
             break;
+
           case "ALL":
           case "*":
             ConfidenceBitmask.SetAll();
@@ -157,32 +175,40 @@ namespace Gendarme {
         }
 
         char end = option[option.Length - 1];
-				if (end == '+') {
+        if (end == '+')
+        {
           ConfidenceBitmask.SetDown(confidence);
-				} else if (end == '-') {
+        }
+        else if (end == '-')
+        {
           ConfidenceBitmask.SetUp(confidence);
-				} else {
+        }
+        else
+        {
           ConfidenceBitmask.Set(confidence);
         }
       }
       return true;
     }
 
-		static string ValidateInputFile (string option, string file)
+    private static string ValidateInputFile(string option, string file)
+    {
+      if (!File.Exists(file))
       {
-			if (!File.Exists (file)) {
         string msg = String.Format(CultureInfo.CurrentCulture, "File '{0}' could not be found", file);
         throw new OptionException(msg, option);
       }
       return file;
     }
 
-		static string ValidateOutputFile (string option, string file)
+    private static string ValidateOutputFile(string option, string file)
     {
       string msg = String.Empty;
-			if (file.Length > 0) {
+      if (file.Length > 0)
+      {
         string path = Path.GetDirectoryName(file);
-				if (path.Length > 0) {
+        if (path.Length > 0)
+        {
           if (path.IndexOfAny(Path.GetInvalidPathChars()) != -1)
             msg = String.Format(CultureInfo.CurrentCulture, "Invalid path '{0}'", file);
           else if (!Directory.Exists(path))
@@ -191,7 +217,8 @@ namespace Gendarme {
       }
 
       string fname = Path.GetFileName(file);
-			if ((fname.Length == 0) || (fname.IndexOfAny (Path.GetInvalidFileNameChars ()) != -1)) {
+      if ((fname.Length == 0) || (fname.IndexOfAny(Path.GetInvalidFileNameChars()) != -1))
+      {
         msg = String.Format(CultureInfo.CurrentCulture, "Filename '{0}' is not valid", fname);
       }
 
@@ -201,25 +228,27 @@ namespace Gendarme {
       return file;
     }
 
-		static string ValidateRuleSet (string ruleSet)
+    private static string ValidateRuleSet(string ruleSet)
+    {
+      if (String.IsNullOrEmpty(ruleSet))
       {
-			if (String.IsNullOrEmpty (ruleSet)) {
         throw new OptionException("Missing rule set name", "set");
       }
       return ruleSet;
     }
 
-		static int ValidateLimit (string limit)
+    private static int ValidateLimit(string limit)
     {
       int defects_limit;
-			if (String.IsNullOrEmpty (limit) || !Int32.TryParse (limit, out defects_limit)) {
+      if (String.IsNullOrEmpty(limit) || !Int32.TryParse(limit, out defects_limit))
+      {
         string msg = String.Format(CultureInfo.CurrentCulture, "Invalid value '{0}' to limit defects", limit);
         throw new OptionException(msg, "limit");
       }
       return defects_limit;
     }
 
-		byte Parse (string [] args)
+    private byte Parse(string[] args)
     {
       bool severity = false;
       bool confidence = false;
@@ -243,24 +272,28 @@ namespace Gendarme {
         { "h|?|help", v => help = v != null },
       };
 
-			try {
+      try
+      {
         assembly_names = p.Parse(args);
       }
-			catch (OptionException e) {
+      catch (OptionException e)
+      {
         Console.WriteLine("Error parsing option '{0}' : {1}", e.OptionName, e.Message);
         Console.WriteLine();
         return 1;
       }
 
       // by default the runner will ignore Audit and Low severity defects
-			if (!severity) {
+      if (!severity)
+      {
         SeverityBitmask.SetAll();
         SeverityBitmask.Clear(Severity.Audit);
         SeverityBitmask.Clear(Severity.Low);
       }
 
       // by default the runner will ignore Low confidence defects
-			if (!confidence) {
+      if (!confidence)
+      {
         ConfidenceBitmask.SetAll();
         ConfidenceBitmask.Clear(Confidence.Low);
       }
@@ -272,37 +305,46 @@ namespace Gendarme {
     // - a filename (a single assembly)
     // - a mask (*, ?) for multiple assemblies
     // - a special file (@) containing a list of assemblies
-		byte AddFiles (string name)
+    private byte AddFiles(string name)
     {
       if (String.IsNullOrEmpty(name))
         return 0;
 
-			if (name.StartsWith ("@", StringComparison.OrdinalIgnoreCase)) {
+      if (name.StartsWith("@", StringComparison.OrdinalIgnoreCase))
+      {
         // note: recursive (can contains @, masks and filenames)
-				using (StreamReader sr = File.OpenText (name.Substring (1))) {
-					while (sr.Peek () >= 0) {
+        using (StreamReader sr = File.OpenText(name.Substring(1)))
+        {
+          while (sr.Peek() >= 0)
+          {
             AddFiles(sr.ReadLine());
           }
         }
-			} else if (name.IndexOfAny (new char [] { '*', '?' }) >= 0) {
+      }
+      else if (name.IndexOfAny(new char[] { '*', '?' }) >= 0)
+      {
         string dirname = Path.GetDirectoryName(name);
         if (dirname.Length == 0)
           dirname = "."; // assume current directory
         string[] files = Directory.GetFiles(dirname, Path.GetFileName(name));
-				foreach (string file in files) {
+        foreach (string file in files)
+        {
           AddAssembly(file);
         }
-			} else {
+      }
+      else
+      {
         AddAssembly(name);
       }
       return 0;
     }
 
-		void AddAssembly (string filename)
+    private void AddAssembly(string filename)
     {
       string warning = null;
 
-			try {
+      try
+      {
         string assembly_name = Path.GetFullPath(filename);
         AssemblyDefinition ad = AssemblyDefinition.ReadAssembly(
           assembly_name,
@@ -312,49 +354,60 @@ namespace Gendarme {
         if (ad.Modules.Count > 0)
           Assemblies.Add(ad);
       }
-			catch (BadImageFormatException) {
+      catch (BadImageFormatException)
+      {
         warning = "Invalid assembly format";
       }
-			catch (FileNotFoundException fnfe) {
+      catch (FileNotFoundException fnfe)
+      {
         // e.g. .netmodules
         warning = fnfe.Message;
       }
-			catch (ArgumentException e) {
+      catch (ArgumentException e)
+      {
         warning = e.ToString();
       }
 
       // show warning (quiet or not) but continue loading & analyzing assemblies
-			if (warning != null) {
+      if (warning != null)
+      {
         Console.Error.WriteLine("warning: could not load assembly '{0}', reason: {1}{2}",
           filename, warning, Environment.NewLine);
       }
     }
 
-		byte Report ()
+    private byte Report()
     {
       // re-activate all loaded (i.e. selected) rules since some of them could have
       // turned off themselve while executing but we still want them listed in the report
-			foreach (Rule rule in Rules) {
+      foreach (Rule rule in Rules)
+      {
         rule.Active = true;
       }
 
       // generate text report (default, to console, if xml and html aren't specified)
-			if (console || (log_file != null) || ((xml_file == null) && (html_file == null))) {
-				using (TextResultWriter writer = new TextResultWriter (this, log_file)) {
+      if (console || (log_file != null) || ((xml_file == null) && (html_file == null)))
+      {
+        using (TextResultWriter writer = new TextResultWriter(this, log_file))
+        {
           writer.Report();
         }
       }
 
       // generate XML report
-			if (xml_file != null) {
-				using (XmlResultWriter writer = new XmlResultWriter (this, xml_file)) {
+      if (xml_file != null)
+      {
+        using (XmlResultWriter writer = new XmlResultWriter(this, xml_file))
+        {
           writer.Report();
         }
       }
 
       // generate HTML report
-			if (html_file != null) {
-				using (HtmlResultWriter writer = new HtmlResultWriter (this, html_file)) {
+      if (html_file != null)
+      {
+        using (HtmlResultWriter writer = new HtmlResultWriter(this, html_file))
+        {
           writer.Report();
         }
       }
@@ -362,15 +415,17 @@ namespace Gendarme {
       return (byte)((0 == Defects.Count) ? 0 : 1);
     }
 
-		byte Execute (string [] args)
+    private byte Execute(string[] args)
+    {
+      try
       {
-			try {
         byte result = Parse(args);
         Header();
         if (version)
           return 0;
 
-				if ((result != 0) || help) {
+        if ((result != 0) || help)
+        {
           Help();
           return help ? (byte)0 : result;
         }
@@ -378,9 +433,11 @@ namespace Gendarme {
         // load configuration, including rules
         Settings config = new Settings(this, config_file, rule_set);
         // and continue if there's at least one rule to execute
-				if (!config.Load () || (Rules.Count < 1)) {
+        if (!config.Load() || (Rules.Count < 1))
+        {
           int validationErrorsCounter = 0;
-					foreach (string error in config.ValidationErrors) {
+          foreach (string error in config.ValidationErrors)
+          {
             Console.WriteLine(error);
             validationErrorsCounter++;
           }
@@ -389,7 +446,8 @@ namespace Gendarme {
           return 3;
         }
 
-				foreach (string name in assembly_names) {
+        foreach (string name in assembly_names)
+        {
           result = AddFiles(name);
           if (result != 0)
             return result;
@@ -405,17 +463,22 @@ namespace Gendarme {
         TearDown();
 
         return Report();
-
-			} catch (IOException e) {
-				if (0 == VerbosityLevel) {
+      }
+      catch (IOException e)
+      {
+        if (0 == VerbosityLevel)
+        {
           Console.Error.WriteLine("ERROR: {0}", e.Message);
           return 2;
-				} else {
+        }
+        else
+        {
           WriteUnhandledExceptionMessage(e);
           return 4;
         }
-
-			} catch (Exception e) {
+      }
+      catch (Exception e)
+      {
         WriteUnhandledExceptionMessage(e);
         return 4;
       }
@@ -445,7 +508,8 @@ namespace Gendarme {
 
     public override void Initialize()
     {
-			if (!quiet) {
+      if (!quiet)
+      {
         Console.Write("Initialization");
         total.Start();
         local.Start();
@@ -453,7 +517,8 @@ namespace Gendarme {
 
       base.Initialize();
 
-			if (!quiet) {
+      if (!quiet)
+      {
         local.Stop();
         Console.WriteLine(": {0}", TimeToString(local.Elapsed));
         local.Reset();
@@ -462,7 +527,8 @@ namespace Gendarme {
 
     public override void Run()
     {
-			if (Assemblies.Count == 0) {
+      if (Assemblies.Count == 0)
+      {
         Console.WriteLine("No assemblies were specified to be analyzed.");
         return;
       }
@@ -475,7 +541,8 @@ namespace Gendarme {
 
     public override void TearDown()
     {
-			if (!quiet) {
+      if (!quiet)
+      {
         Console.WriteLine(": {0}", TimeToString(local.Elapsed));
         local.Start();
         local.Reset();
@@ -483,7 +550,8 @@ namespace Gendarme {
 
       base.TearDown();
 
-			if (!quiet) {
+      if (!quiet)
+      {
         local.Stop();
         total.Stop();
         Console.WriteLine("TearDown: {0}", TimeToString(local.Elapsed));
@@ -496,7 +564,8 @@ namespace Gendarme {
             Assemblies.Count, TimeToString(total.Elapsed));
 
         string hint = string.Empty;
-				if (null != log_file || null != xml_file || null != html_file) {
+        if (null != log_file || null != xml_file || null != html_file)
+        {
           List<string> files = new List<string>(new string[] { log_file, xml_file, html_file });
           files.RemoveAll(string.IsNullOrEmpty);
           hint = String.Format(CultureInfo.CurrentCulture, "Report{0} written to: {1}.",
@@ -516,8 +585,10 @@ namespace Gendarme {
 
     protected override void OnAssembly(RunnerEventArgs e)
     {
-			if (!quiet) {
-				if (local.IsRunning) {
+      if (!quiet)
+      {
+        if (local.IsRunning)
+        {
           local.Stop();
           Console.WriteLine(": {0}", TimeToString(local.Elapsed));
           local.Reset();
@@ -531,16 +602,19 @@ namespace Gendarme {
       base.OnAssembly(e);
     }
 
-		void Header ()
+    private void Header()
     {
       if (quiet)
         return;
 
       Assembly a = Assembly.GetExecutingAssembly();
       Version v = a.GetName().Version;
-			if (v.ToString () != "0.0.0.0") {
+      if (v.ToString() != "0.0.0.0")
+      {
         Console.WriteLine("Gendarme v{0}", v);
-			} else {
+      }
+      else
+      {
         Console.WriteLine("Gendarme - Development Snapshot");
       }
 
@@ -553,15 +627,17 @@ namespace Gendarme {
 
     private static Assembly runner_assembly;
 
-		static public Assembly Assembly {
-			get {
+    static public Assembly Assembly
+    {
+      get
+      {
         if (runner_assembly == null)
           runner_assembly = Assembly.GetExecutingAssembly();
         return runner_assembly;
       }
     }
 
-		static void Help ()
+    private static void Help()
     {
       Console.WriteLine("Usage: gendarme [--config file] [--set ruleset] [--{log|xml|html} file] assemblies");
       Console.WriteLine("Where");
@@ -594,7 +670,7 @@ namespace Gendarme {
     /// 2 if some parameters are bad,
     /// 3 if a problem is related to the xml configuration file
     /// 4 if an uncaught exception occured</returns>
-		static int Main (string [] args)
+    private static int Main(string[] args)
     {
       return new ConsoleRunner().Execute(args);
     }

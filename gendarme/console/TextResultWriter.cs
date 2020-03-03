@@ -37,12 +37,13 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 
-namespace Gendarme {
-
-	public class TextResultWriter : ResultWriter, IDisposable {
-
+namespace Gendarme
+{
+  public class TextResultWriter : ResultWriter, IDisposable
+  {
     [Serializable]
-		enum ColorScheme {
+    private enum ColorScheme
+    {
       None,
       Light,
       Dark
@@ -54,22 +55,28 @@ namespace Gendarme {
     public TextResultWriter(IRunner runner, string fileName)
       : base(runner, fileName)
     {
-			if (String.IsNullOrEmpty (fileName)) {
+      if (String.IsNullOrEmpty(fileName))
+      {
         writer = System.Console.Out;
 
         string color_override = Environment.GetEnvironmentVariable("GENDARME_COLOR") ?? "dark";
-				switch (color_override.ToLowerInvariant ()) {
+        switch (color_override.ToLowerInvariant())
+        {
           case "none":
             break;
+
           case "light":
             color_scheme = ColorScheme.Light;
             break;
+
           case "dark":
           default:
             color_scheme = ColorScheme.Dark;
             break;
         }
-			} else {
+      }
+      else
+      {
         writer = new StreamWriter(fileName);
       }
     }
@@ -83,12 +90,15 @@ namespace Gendarme {
 
       WriteHeader();
       int num = 0;
-			if (query.Any ()) {				
+      if (query.Any())
+      {
         string name = string.Empty;
         string delimiter = new string('-', 60);
-				foreach (Defect defect in query) {
+        foreach (Defect defect in query)
+        {
           string rname = defect.Rule.Name;
-					if (rname != name) {
+          if (rname != name)
+          {
             writer.WriteLine(delimiter);
             name = rname;
           }
@@ -167,8 +177,10 @@ namespace Gendarme {
     [ThreadModel(ThreadModel.SingleThread)]
     protected override void Dispose(bool disposing)
     {
-			if (disposing) {
-				if (writer != Console.Out) {
+      if (disposing)
+      {
+        if (writer != Console.Out)
+        {
           writer.Dispose();
         }
       }
@@ -176,10 +188,12 @@ namespace Gendarme {
 
     private void BeginColor(ConsoleColor color)
     {
-			switch (color_scheme) {
+      switch (color_scheme)
+      {
         case ColorScheme.Dark:
           Console.ForegroundColor = color;
           break;
+
         case ColorScheme.Light:
           Console.ForegroundColor = (ConsoleColor)color + 8;
           break;
@@ -188,7 +202,8 @@ namespace Gendarme {
 
     private void EndColor()
     {
-			switch (color_scheme) {
+      switch (color_scheme)
+      {
         case ColorScheme.Dark:
         case ColorScheme.Light:
           Console.ResetColor();
