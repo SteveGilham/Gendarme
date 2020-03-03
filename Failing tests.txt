@@ -24,22 +24,3 @@ Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Ge
 Test FullName:	Test.Framework.StackEntryAnalysisTest.TestTryCatchFinally
 Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 381
 -
-
-TODO
-* Emit the assembly, always
-
-TODO -- Generally, whiy are some suppressions failing??
-
-TODO  -- attributed enums
-AvoidUninstantiatedInternalClassesRule
-
-Problem: The internal type is not instantiated by code within the assembly.
-* Severity: High, Confidence: Low
-* Target:   AltCover.Base.Tag
-
-TODO -- attributed module
-AvoidSpeculativeGeneralityRule
-
-Problem: If you will need the feature in the future then you should implement it in the future.
-* Severity: Medium, Confidence: Normal
-* Target:   AltCover.Augment
