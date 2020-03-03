@@ -37,10 +37,10 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework {
-
-	abstract public class Runner : IRunner {
-
+namespace Gendarme.Framework
+{
+  abstract public class Runner : IRunner
+  {
     private Collection<Defect> defect_list = new Collection<Defect>();
     private int defects_limit = Int32.MaxValue;
     private Bitmask<Severity> severity_bitmask = new Bitmask<Severity>(true);
@@ -61,11 +61,15 @@ namespace Gendarme.Framework {
     private object[] engine_dependencies;
 
     public event EventHandler<RunnerEventArgs> AnalyzeAssembly;
+
     public event EventHandler<RunnerEventArgs> AnalyzeModule;
+
     public event EventHandler<RunnerEventArgs> AnalyzeType;
+
     public event EventHandler<RunnerEventArgs> AnalyzeMethod;
 
-		protected IRule CurrentRule {
+    protected IRule CurrentRule
+    {
       get { return currentRule; }
       set { currentRule = value; }
     }
@@ -85,8 +89,10 @@ namespace Gendarme.Framework {
       get; private set;
     }
 
-		public IIgnoreList IgnoreList {
-			get {
+    public IIgnoreList IgnoreList
+    {
+      get
+      {
         if (ignoreList == null)
           throw new InvalidOperationException("No IgnoreList has been set for this runner.");
         return ignoreList;
@@ -94,43 +100,54 @@ namespace Gendarme.Framework {
       set { ignoreList = value; }
     }
 
-		public Collection<IRule> Rules {
+    public Collection<IRule> Rules
+    {
       get { return rules; }
     }
 
-		public Collection<AssemblyDefinition> Assemblies {
+    public Collection<AssemblyDefinition> Assemblies
+    {
       get { return assemblies; }
     }
 
-		public Collection<Defect> Defects {
+    public Collection<Defect> Defects
+    {
       get { return defect_list; }
     }
 
-		public int DefectsLimit {
+    public int DefectsLimit
+    {
       get { return defects_limit; }
-			set {
+      set
+      {
         if (value < 0)
           throw new ArgumentException("Cannot be negative", "DefectsLimit");
         defects_limit = value;
       }
     }
 
-		public Bitmask<Severity> SeverityBitmask {
+    public Bitmask<Severity> SeverityBitmask
+    {
       get { return severity_bitmask; }
     }
 
-		public Bitmask<Confidence> ConfidenceBitmask {
+    public Bitmask<Confidence> ConfidenceBitmask
+    {
       get { return confidence_bitmask; }
     }
 
-		public int VerbosityLevel {
+    public int VerbosityLevel
+    {
       get { return verbose_level; }
       set { verbose_level = value; }
     }
 
     private EngineController ec;
-		public EngineController Engines { 
-			get {
+
+    public EngineController Engines
+    {
+      get
+      {
         if (ec == null)
           ec = new EngineController(this);
         return ec;
@@ -150,20 +167,24 @@ namespace Gendarme.Framework {
       AssemblyResolver resolver = AssemblyResolver.Resolver;
       resolver.AssemblyCache.Clear();
 
-			foreach (AssemblyDefinition assembly in assemblies) {
+      foreach (AssemblyDefinition assembly in assemblies)
+      {
         assembly.MainModule.LoadDebuggingSymbols();
         resolver.CacheAssembly(assembly);
       }
 
-			foreach (Rule rule in rules) {
-				try {
+      foreach (Rule rule in rules)
+      {
+        try
+        {
           // don't initialize rules that *we*, the runner, don't want
           // to execute later (this also avoids the rule logic to reset
           // the Active property during optimizations)
           if (rule.Active)
             rule.Initialize(this);
         }
-				catch (Exception e) {
+        catch (Exception e)
+        {
           // if something goes wrong in initialization we desactivate the rule
           if (VerbosityLevel > 0)
             Console.Error.WriteLine(e);
@@ -172,9 +193,11 @@ namespace Gendarme.Framework {
       }
 
       engine_dependencies = GetType().GetCustomAttributes(typeof(EngineDependencyAttribute), true);
-			if (engine_dependencies.Length > 0) {
+      if (engine_dependencies.Length > 0)
+      {
         // subscribe to each engine the rule depends on
-				foreach (EngineDependencyAttribute eda in engine_dependencies) {
+        foreach (EngineDependencyAttribute eda in engine_dependencies)
+        {
           Engines.Subscribe(eda.EngineType);
         }
       }
@@ -192,7 +215,7 @@ namespace Gendarme.Framework {
         return false;
       // for Assembly | Type | Methods we can ignore before executing the rule
       // but for others (e.g. Parameters, Fields...) we can only ignore the results
-			return !IgnoreList.IsIgnored (currentRule, location);
+      return !IgnoreList.IsIgnored(currentRule, location);
     }
 
     public virtual void Report(Defect defect)
@@ -200,10 +223,10 @@ namespace Gendarme.Framework {
       if (defect == null)
         throw new ArgumentNullException("defect");
 
-			if (!Filter (defect.Severity, defect.Confidence, defect.Location))
+      if (!Filter(defect.Severity, defect.Confidence, defect.Location))
         return;
 
-			if (IgnoreList.IsIgnored (defect.Rule, defect.Target))
+      if (IgnoreList.IsIgnored(defect.Rule, defect.Target))
         return;
 
       defect_list.Add(defect);
@@ -263,13 +286,16 @@ namespace Gendarme.Framework {
         handler(this, e);
     }
 
-		static bool VisibilityCheck (ApplicabilityScope scope, bool visible)
+    private static bool VisibilityCheck(ApplicabilityScope scope, bool visible)
+    {
+      switch (scope)
       {
-			switch (scope) {
         case ApplicabilityScope.Visible:
           return visible;
+
         case ApplicabilityScope.NonVisible:
           return !visible;
+
         default:
           return true;
       }
@@ -281,7 +307,8 @@ namespace Gendarme.Framework {
     {
       OnEvent(AnalyzeAssembly, e);
 
-			foreach (IAssemblyRule rule in assembly_rules) {
+      foreach (IAssemblyRule rule in assembly_rules)
+      {
         defectCountBeforeCheck = Defects.Count;
         // stop if we reach the user defined defect limit
         if (defectCountBeforeCheck >= DefectsLimit)
@@ -310,7 +337,8 @@ namespace Gendarme.Framework {
     {
       OnEvent(AnalyzeType, e);
 
-			foreach (ITypeRule rule in type_rules) {
+      foreach (ITypeRule rule in type_rules)
+      {
         defectCountBeforeCheck = Defects.Count;
         // stop if we reach the user defined defect limit
         if (defectCountBeforeCheck >= DefectsLimit)
@@ -334,7 +362,8 @@ namespace Gendarme.Framework {
     {
       OnEvent(AnalyzeMethod, e);
 
-			foreach (IMethodRule rule in method_rules) {
+      foreach (IMethodRule rule in method_rules)
+      {
         defectCountBeforeCheck = Defects.Count;
         // stop if we reach the user defined defect limit
         if (defectCountBeforeCheck >= DefectsLimit)
@@ -359,8 +388,10 @@ namespace Gendarme.Framework {
     /// </summary>
     /// <returns>Return RuleResult.Failure is the number of defects has grown since
     /// the rule Check* method was called or RuleResult.Success otherwise</returns>
-		public RuleResult CurrentRuleResult {
-			get {
+		public RuleResult CurrentRuleResult
+    {
+      get
+      {
         return (Defects.Count > defectCountBeforeCheck) ?
           RuleResult.Failure : RuleResult.Success;
       }
@@ -404,20 +435,22 @@ namespace Gendarme.Framework {
       }
       // don't report them if we hit an exception after analysis is completed (e.g. in reporting)
       currentRule = null;
-			currentTarget = null;
+      currentTarget = null;
     }
 
     public virtual void TearDown()
     {
       // last chance to report defects
-			foreach (Rule rule in rules) {
+      foreach (Rule rule in rules)
+      {
         currentRule = rule;
         rule.TearDown();
       }
 
       currentRule = null;
 
-			if ((engine_dependencies != null) && (engine_dependencies.Length >= 0)) {
+      if ((engine_dependencies != null) && (engine_dependencies.Length >= 0))
+      {
         foreach (EngineDependencyAttribute eda in engine_dependencies)
           ec.Unsubscribe(eda.EngineType);
       }
