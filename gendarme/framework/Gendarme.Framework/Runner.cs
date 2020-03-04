@@ -71,7 +71,13 @@ namespace Gendarme.Framework
     protected IRule CurrentRule
     {
       get { return currentRule; }
-      set { currentRule = value; }
+      set
+      {
+        currentRule = value;
+#if TRACKDOWN
+        Console.WriteLine("Rule = {1} for {0}", currentTarget, currentRule);
+#endif
+      }
     }
 
     protected IMetadataTokenProvider CurrentTarget
@@ -81,6 +87,9 @@ namespace Gendarme.Framework
       {
         currentTarget = value;
         CurrentAssembly = currentTarget.GetAssembly();
+#if TRACKDOWN
+        Console.WriteLine("Target = {0} for {1}", currentTarget, CurrentRule);
+#endif
       }
     }
 
@@ -215,7 +224,7 @@ namespace Gendarme.Framework
         return false;
       // for Assembly | Type | Methods we can ignore before executing the rule
       // but for others (e.g. Parameters, Fields...) we can only ignore the results
-      return !IgnoreList.IsIgnored(currentRule, location);
+      return !IgnoreList.IsIgnored(CurrentRule, location);
     }
 
     public virtual void Report(Defect defect)
@@ -238,7 +247,7 @@ namespace Gendarme.Framework
       if (!Filter(severity, confidence, metadata))
         return;
 
-      Defect defect = new Defect(currentRule, CurrentTarget, metadata, severity, confidence);
+      Defect defect = new Defect(CurrentRule, CurrentTarget, metadata, severity, confidence);
       Report(defect);
     }
 
@@ -248,7 +257,7 @@ namespace Gendarme.Framework
       if (!Filter(severity, confidence, metadata))
         return;
 
-      Defect defect = new Defect(currentRule, CurrentTarget, metadata, severity, confidence, message);
+      Defect defect = new Defect(CurrentRule, CurrentTarget, metadata, severity, confidence, message);
       Report(defect);
     }
 
@@ -258,7 +267,7 @@ namespace Gendarme.Framework
       if (!Filter(severity, confidence, method))
         return;
 
-      Defect defect = new Defect(currentRule, CurrentTarget, method, ins, severity, confidence);
+      Defect defect = new Defect(CurrentRule, CurrentTarget, method, ins, severity, confidence);
       Report(defect);
     }
 
@@ -268,7 +277,7 @@ namespace Gendarme.Framework
       if (!Filter(severity, confidence, method))
         return;
 
-      Defect defect = new Defect(currentRule, CurrentTarget, method, ins, severity, confidence, message);
+      Defect defect = new Defect(CurrentRule, CurrentTarget, method, ins, severity, confidence, message);
       Report(defect);
     }
 
@@ -318,7 +327,7 @@ namespace Gendarme.Framework
         if (IgnoreList.IsIgnored(rule, e.CurrentAssembly))
           continue;
 
-        currentRule = rule;
+        CurrentRule = rule;
         rule.CheckAssembly(e.CurrentAssembly);
       }
     }
@@ -353,7 +362,7 @@ namespace Gendarme.Framework
         if (IgnoreList.IsIgnored(rule, e.CurrentType))
           continue;
 
-        currentRule = rule;
+        CurrentRule = rule;
         rule.CheckType(e.CurrentType);
       }
     }
@@ -378,7 +387,7 @@ namespace Gendarme.Framework
         if (IgnoreList.IsIgnored(rule, e.CurrentMethod))
           continue;
 
-        currentRule = rule;
+        CurrentRule = rule;
         rule.CheckMethod(e.CurrentMethod);
       }
     }
@@ -434,7 +443,7 @@ namespace Gendarme.Framework
         }
       }
       // don't report them if we hit an exception after analysis is completed (e.g. in reporting)
-      currentRule = null;
+      CurrentRule = null;
       CurrentTarget = null;
     }
 
@@ -443,11 +452,11 @@ namespace Gendarme.Framework
       // last chance to report defects
       foreach (Rule rule in rules)
       {
-        currentRule = rule;
+        CurrentRule = rule;
         rule.TearDown();
       }
 
-      currentRule = null;
+      CurrentRule = null;
 
       if ((engine_dependencies != null) && (engine_dependencies.Length >= 0))
       {
@@ -461,9 +470,9 @@ namespace Gendarme.Framework
     // This is for unit tests.
     public virtual void TearDown(IRule rule)
     {
-      currentRule = rule;
+      CurrentRule = rule;
       rule.TearDown();
-      currentRule = null;
+      CurrentRule = null;
     }
   }
 }
