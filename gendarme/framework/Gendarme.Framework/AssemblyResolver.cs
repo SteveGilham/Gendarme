@@ -36,58 +36,67 @@ using Mono.Cecil;
 
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  public class AssemblyResolver : BaseAssemblyResolver
+  {
+    private Dictionary<string, AssemblyDefinition> assemblies;
 
-	public class AssemblyResolver : BaseAssemblyResolver {
+    private AssemblyResolver()
+    {
+      assemblies = new Dictionary<string, AssemblyDefinition>();
+    }
 
-		Dictionary<string, AssemblyDefinition> assemblies;
+    public IDictionary<string, AssemblyDefinition> AssemblyCache
+    {
+      get { return assemblies; }
+    }
 
-		private AssemblyResolver ()
-		{
-			assemblies = new Dictionary<string, AssemblyDefinition> ();
-		}
+    public override AssemblyDefinition Resolve(AssemblyNameReference name)
+    {
+      if (name == null)
+        throw new ArgumentNullException("name");
 
-		public IDictionary<string,AssemblyDefinition> AssemblyCache {
-			get { return assemblies; }
-		}
+      string aname = name.Name;
+      AssemblyDefinition asm = null;
+      if (!assemblies.TryGetValue(aname, out asm))
+      {
+        try
+        {
+          asm = base.Resolve(name);
+        }
+        catch (FileNotFoundException)
+        {
+          // note: analysis will be incomplete
+        }
+        assemblies.Add(aname, asm);
+      }
+      return asm;
+    }
 
-		public override AssemblyDefinition Resolve (AssemblyNameReference name)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
+    public void CacheAssembly(AssemblyDefinition assembly)
+    {
+      if (assembly == null)
+        throw new ArgumentNullException("assembly");
 
-			string aname = name.Name;
-			AssemblyDefinition asm = null;
-			if (!assemblies.TryGetValue (aname, out asm)) {
-				try {
-					asm = base.Resolve (name);
-				}
-				catch (FileNotFoundException) {
-					// note: analysis will be incomplete
-				}
-				assemblies.Add (aname, asm);
-			}
-			return asm;
-		}
+      assemblies.Add(assembly.Name.Name, assembly);
+      string location = Path.GetDirectoryName(assembly.MainModule.FileName);
+      AddSearchDirectory(location);
+    }
 
-		public void CacheAssembly (AssemblyDefinition assembly)
-		{
-			if (assembly == null)
-				throw new ArgumentNullException ("assembly");
+    static private AssemblyResolver resolver;
 
-			assemblies.Add (assembly.Name.Name, assembly);
-			string location = Path.GetDirectoryName (assembly.MainModule.FileName);
-			AddSearchDirectory (location);
-		}
-
-		static private AssemblyResolver resolver;
-
-		static public AssemblyResolver Resolver {
-			get {
-				if (resolver == null)
-					resolver = new AssemblyResolver ();
-				return resolver;
-			}
-		}
-	}
+    static public AssemblyResolver Resolver
+    {
+      get
+      {
+        if (resolver == null)
+        {
+          resolver = new AssemblyResolver();
+          AltCode.CecilExtensions.NetCoreResolver.HookAssemblyResolver(resolver);
+        }
+        return resolver;
+      }
+    }
+  }
 }

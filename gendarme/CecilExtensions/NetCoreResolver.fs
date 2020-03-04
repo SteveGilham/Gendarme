@@ -62,7 +62,7 @@ module NetCoreResolver =
         |> Seq.tryHead
       match candidate sources with
       | None -> null
-      | Some x ->
+      | Some x -> //  TODO -- say something
           //String.Format
           //  (System.Globalization.CultureInfo.CurrentCulture,
           //   CommandLine.resources.GetString "resolved", y.ToString(), x)
@@ -73,12 +73,7 @@ module NetCoreResolver =
 
   let internal HookResolveHandler = new AssemblyResolveEventHandler(ResolveFromNugetCache)
 
-  let internal HookResolver(resolver : IAssemblyResolver) =
+  let HookAssemblyResolver(resolver : BaseAssemblyResolver) =
     if resolver.IsNotNull
     then
-      let hook = resolver.GetType().GetMethod("add_ResolveFailure")
-      hook.Invoke(resolver, [| HookResolveHandler :> obj |]) |> ignore
-
-  let HookAssembly (assembly : AssemblyDefinition) =
-      let resolver = assembly.MainModule.AssemblyResolver
-      HookResolver resolver
+      resolver.add_ResolveFailure HookResolveHandler
