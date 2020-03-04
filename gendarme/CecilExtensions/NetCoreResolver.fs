@@ -31,6 +31,7 @@ module NetCoreResolver =
     if ResolutionTable.ContainsKey name then
       ResolutionTable.[name]
     else
+      // Console.WriteLine("Resolving assembly reference {0}", name)
       // Placate Gendarme here
       let share = "|usr|share".Replace('|', Path.DirectorySeparatorChar)
       let shared = "dotnet|shared".Replace('|', Path.DirectorySeparatorChar)
@@ -58,14 +59,14 @@ module NetCoreResolver =
              x.Equals(".exe", StringComparison.OrdinalIgnoreCase)
              || x.Equals(".dll", StringComparison.OrdinalIgnoreCase))
         |> Seq.filter (fun f ->
-             y.ToString().Equals(FindAssemblyName f, StringComparison.Ordinal))
+             name.Equals(FindAssemblyName f, StringComparison.Ordinal))
         |> Seq.tryHead
       match candidate sources with
       | None -> null
       | Some x ->
           String.Format
             (System.Globalization.CultureInfo.InvariantCulture,
-             "Resolved assembly reference '{0}' as file '{1}'.", y.ToString(), x)
+             "Resolved assembly reference '{0}' as file '{1}'.", name, x)
           |> Console.WriteLine
           let a = AssemblyDefinition.ReadAssembly x
           ResolutionTable.[name] <- a
