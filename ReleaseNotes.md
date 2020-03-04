@@ -1,4 +1,4 @@
-# 2020.3.xx.xxxxx-pre-release
+# 2020.3.4.85xx-pre-release
 
 * [BUGFIX] The extension method `IsEventCallback` would throw NRE for certain generic F# types
 * For `AvoidLargeClassesRule`, ignore `FSharpFunc` and `FSharpTypeFunc` valued fields in generated types with `@` in their names; treat them as methods in the type instead.
