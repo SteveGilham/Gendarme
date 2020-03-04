@@ -10,7 +10,9 @@
 
   <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
+    <Compile Include="Augment.fs" />
     <Compile Include="ProgramDatabase.fs" />
+    <Compile Include="NetCoreResolver.fs" />
   </ItemGroup>
 
   <ItemGroup>
