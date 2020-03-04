@@ -412,8 +412,6 @@ _Target "Packaging" (fun _ ->
   let rules =
     Directory.GetDirectories(".", "Gendarme.Rules.*", SearchOption.AllDirectories)
     |> Seq.toList
-  //printfn "rules"
-  //List.iter (printfn "%A") rules
 
   let n40rules =
     rules
@@ -427,9 +425,6 @@ _Target "Packaging" (fun _ ->
          | _ -> false)
     |> List.distinctBy Path.GetFileName
 
-  // printfn "n40rules"
-  // List.iter (printfn "%A") n40rules
-
   let corerules =
     rules
     |> List.collect (fun f ->
@@ -442,8 +437,6 @@ _Target "Packaging" (fun _ ->
          | ".pdb" -> true
          | _ -> false)
     |> List.distinctBy Path.GetFileName
-  //printfn "corerules"
-  //List.iter (printfn "%A") corerules
 
   let net40 =
     List.concat
@@ -451,11 +444,16 @@ _Target "Packaging" (fun _ ->
         n40rules ]
     |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
 
+  let leadstring = publish.Length
+  let netcoremain = !!(Path.getFullName "./_Publish/**/*.*")
+                    |> Seq.map (fun f -> let relpath = (leadstring |> f.Substring).Replace("\\","/")
+                                         (f, Some ("tools/netcoreapp2.1/any" + relpath), None))
+                    |> Seq.toList
+
   let netcore =
     List.concat
-      [ !!"./_Binaries/gendarme/Release+AnyCPU/netcoreapp2.1/*.*" |> Seq.toList
-        corerules ]
-    |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None))
+      [ netcoremain
+        corerules |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
 
   let files = List.concat [ net40; housekeeping ]
   let globalfiles = List.concat [ netcore; housekeeping ]
