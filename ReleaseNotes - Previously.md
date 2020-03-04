@@ -1,3 +1,14 @@
+# 2020.3.4.8524-pre-release
+F# niggles part 6
+* [BUGFIX] The extension method `IsEventCallback` would throw NRE for certain generic F# types
+* For `AvoidLargeClassesRule`, ignore `FSharpFunc` and `FSharpTypeFunc` valued fields in generated types with `@` in their names; treat them as methods in the type instead.
+* For `AvoidDeepNamespaceHierarchyRule`, ignore F# generated namespaces of the form `<StartupCode$a-b-c-d>.$.NETFramework,Version=...`
+* For `AvoidRepetitiveCastsRule`, ignore F# `is` then `as` of anonymous temporaries (often happens in `match` expressions on sum types)
+* Report the owning assembly of the defect target, always (disambiguates when a source file is shared bewteen projects in the same build).
+* In the inhandled exception message, own this fork.
+* Building on VS2019 for .net4.0 and .netcore2.1+
+* Now available as a dotnet global tool in package `altcode.gendarme-tool`
+
 # 2020.2.20.18134-pre-release
 F# niggles part 5
 * Exempt generated types with "@" in the name from `AvoidMethodWithUnusedGenericTypeRule`
