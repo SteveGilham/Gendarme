@@ -1,3 +1,7 @@
+# 2020.3.4.14134-pre-release
+
+[BUGFIX] Fix up and operationally test the gendarme global tool as part of the build
+
 # 2020.3.4.8524-pre-release
 F# niggles part 6
 * [BUGFIX] The extension method `IsEventCallback` would throw NRE for certain generic F# types
