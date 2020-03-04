@@ -62,11 +62,11 @@ module NetCoreResolver =
         |> Seq.tryHead
       match candidate sources with
       | None -> null
-      | Some x -> //  TODO -- say something
-          //String.Format
-          //  (System.Globalization.CultureInfo.CurrentCulture,
-          //   CommandLine.resources.GetString "resolved", y.ToString(), x)
-          //|> (Output.WarnOn true)
+      | Some x ->
+          String.Format
+            (System.Globalization.CultureInfo.InvariantCulture,
+             "Resolved assembly reference '{0}' as file '{1}'.", y.ToString(), x)
+          |> Console.WriteLine
           let a = AssemblyDefinition.ReadAssembly x
           ResolutionTable.[name] <- a
           a
