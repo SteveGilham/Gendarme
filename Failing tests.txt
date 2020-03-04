@@ -24,3 +24,14 @@ Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Ge
 Test FullName:	Test.Framework.StackEntryAnalysisTest.TestTryCatchFinally
 Test Source:	c:\Users\steve\Documents\GitHub\Gendarme\gendarme\framework\Test\Gendarme.Framework.Helpers\StackEntryAnalysisTest.cs : line 381
 -
+
+Rule = Gendarme.Rules.Correctness.AvoidMethodsWithSideEffectsInConditionalCodeRule 
+for Microsoft.FSharp.Control.FSharpAsync`1<Microsoft.FSharp.Core.Unit> AltCover.Visualizer.Gui/showSource@1097-1:
+  :Invoke(Microsoft.FSharp.Core.Unit)
+
+              async {
+              Threading.Thread.Sleep(300) <== resolving this causes problems in netcore
+              ScrollToRow handler ()
+            }
+
+Generally, references to non-local (not just system) assemblies need special handling            
