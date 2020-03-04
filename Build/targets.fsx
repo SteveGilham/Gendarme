@@ -19,6 +19,7 @@ open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing
 open Fake.IO.Globbing.Operators
 
+open AltCode.Fake.DotNet
 open AltCover_Fake.DotNet.DotNet
 open AltCover_Fake.DotNet.Testing
 
@@ -58,6 +59,10 @@ let altcover =
   |> Path.getFullName
 
 let framework_altcover = Fake.DotNet.ToolType.CreateFullFramework()
+
+let nugetCache =
+  Path.Combine
+    (Environment.GetFolderPath Environment.SpecialFolder.UserProfile, ".nuget/packages")
 
 let AltCoverFilter(p : Primitive.PrepareParams) =
   { p with
@@ -531,6 +536,50 @@ _Target "Unpack" (fun _ ->
                                       true)
     )
 
+_Target "DotnetGlobalIntegration" (fun _ ->
+  let working = Path.getFullName "./_Unpack-tool"
+  let mutable set = false
+  try
+    Directory.ensure working
+    Shell.cleanDir working
+    Directory.ensure "./_Reports"
+
+    let packroot = Path.GetFullPath "./_Packaging"
+    let config = XDocument.Load "./Build/NuGet.config.dotnettest"
+    let repo = config.Descendants(XName.Get("add")) |> Seq.head
+    repo.SetAttributeValue(XName.Get "value", packroot)
+    config.Save(working @@ "NuGet.config")
+
+    Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
+      "tool"
+      ("install -g altcode.gendarme-tool --add-source "
+       + (Path.getFullName "./_Packaging") + " --version " + !Version + "-pre-release") "Installed"
+
+    Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
+      "tool" ("list -g ") "Checked"
+    set <- true
+
+    Gendarme.run
+      { Gendarme.Params.Create() with
+          WorkingDirectory = "."
+          Severity = Gendarme.Severity.All
+          Confidence = Gendarme.Confidence.All
+          Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+          Console = true
+          Log = Path.GetFullPath "./_Reports/gendarme.html"
+          LogKind = Gendarme.LogKind.Html
+          Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
+          ToolType = ToolType.CreateGlobalTool()
+          FailBuildOnDefect = true }    
+
+  finally
+    if set then
+      Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
+        "tool" ("uninstall -g altcode.gendarme-tool") "uninstalled"
+    let folder = (nugetCache @@ "altcode.gendarme-tool") @@ (!Version + "-pre-release")
+    Shell.mkdir folder
+    Shell.deleteDir folder)
+
 _Target "All" ignore
 
 let resetColours _ =
@@ -581,6 +630,10 @@ Target.activateFinal "ResetConsoleColours"
 
 "Packaging"
 ==> "Unpack"
+==> "All"
+
+"Packaging"
+==> "DotnetGlobalIntegration"
 ==> "All"
 
 "Coverage"

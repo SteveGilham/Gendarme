@@ -2,6 +2,11 @@ STORAGE: NONE
 RESTRICTION: == netstandard2.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
+    AltCode.Fake.DotNet.Gendarme (5.18.1.24)
+      Fake.Core.Environment (>= 5.18.1)
+      Fake.DotNet.Cli (>= 5.18.1)
+      FSharp.Core (>= 4.7)
+      System.Collections.Immutable (>= 1.6)
     altcover.fake (6.7.750)
       Fake.Core.Environment (>= 5.18.1)
       Fake.DotNet.Cli (>= 5.18.1)
