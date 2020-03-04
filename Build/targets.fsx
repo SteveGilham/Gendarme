@@ -502,6 +502,8 @@ _Target "Packaging" (fun _ ->
                else
                  "/usr/bin/nuget" }) recipe))
 
+_Target "OperationalTest" ignore
+
 _Target "Unpack" (fun _ ->
   let unpack = Path.getFullName "./_Unpack"
   let config = unpack @@ ".config"
@@ -534,6 +536,20 @@ _Target "Unpack" (fun _ ->
   printfn "Copying from %A to %A" from unpack
   Shell.copyDir unpack from (fun f -> printfn "%A" f
                                       true)
+
+  Assert.Throws<Exception> (fun () ->
+          Gendarme.run
+            { Gendarme.Params.Create() with
+                WorkingDirectory = unpack
+                Severity = Gendarme.Severity.All
+                Confidence = Gendarme.Confidence.All
+                Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                Console = true
+                Log = Path.GetFullPath "./_Reports/gendarme.html"
+                LogKind = Gendarme.LogKind.Html
+                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
+                ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
+                FailBuildOnDefect = true }  ) |> ignore
     )
 
 _Target "DotnetGlobalIntegration" (fun _ ->
@@ -559,18 +575,20 @@ _Target "DotnetGlobalIntegration" (fun _ ->
       "tool" ("list -g ") "Checked"
     set <- true
 
-    Gendarme.run
-      { Gendarme.Params.Create() with
-          WorkingDirectory = "."
-          Severity = Gendarme.Severity.All
-          Confidence = Gendarme.Confidence.All
-          Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
-          Console = true
-          Log = Path.GetFullPath "./_Reports/gendarme.html"
-          LogKind = Gendarme.LogKind.Html
-          Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
-          ToolType = ToolType.CreateGlobalTool()
-          FailBuildOnDefect = true }    
+    Assert.Throws<Exception> (fun () ->
+                Gendarme.run
+                  { Gendarme.Params.Create() with
+                      WorkingDirectory = working
+                      Severity = Gendarme.Severity.All
+                      Confidence = Gendarme.Confidence.All
+                      Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                      Console = true
+                      Log = Path.GetFullPath "./_Reports/gendarme-tool.html"
+                      LogKind = Gendarme.LogKind.Html
+                      Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
+                      ToolPath = "gendarme"
+                      ToolType = ToolType.CreateGlobalTool()
+                      FailBuildOnDefect = true }  ) |> ignore
 
   finally
     if set then
@@ -630,10 +648,13 @@ Target.activateFinal "ResetConsoleColours"
 
 "Packaging"
 ==> "Unpack"
-==> "All"
+==> "OperationalTest"
 
 "Packaging"
 ==> "DotnetGlobalIntegration"
+==> "OperationalTest"
+
+"OperationalTest"
 ==> "All"
 
 "Coverage"
