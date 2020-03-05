@@ -45,6 +45,7 @@ namespace Gendarme.Framework
     private AssemblyResolver()
     {
       assemblies = new Dictionary<string, AssemblyDefinition>();
+      ResolveFailure += AltCode.CecilExtensions.NetCoreResolver.ResolveHandler;
     }
 
     public IDictionary<string, AssemblyDefinition> AssemblyCache
@@ -93,7 +94,6 @@ namespace Gendarme.Framework
         if (resolver == null)
         {
           resolver = new AssemblyResolver();
-          AltCode.CecilExtensions.NetCoreResolver.HookAssemblyResolver(resolver);
         }
         return resolver;
       }

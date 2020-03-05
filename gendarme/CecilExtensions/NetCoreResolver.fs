@@ -72,9 +72,4 @@ module NetCoreResolver =
           ResolutionTable.[name] <- a
           a
 
-  let internal HookResolveHandler = new AssemblyResolveEventHandler(ResolveFromNugetCache)
-
-  let HookAssemblyResolver(resolver : BaseAssemblyResolver) =
-    if resolver.IsNotNull
-    then
-      resolver.add_ResolveFailure HookResolveHandler
+  let ResolveHandler = new AssemblyResolveEventHandler(ResolveFromNugetCache)
