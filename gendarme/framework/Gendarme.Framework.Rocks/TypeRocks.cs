@@ -293,7 +293,11 @@ namespace Gendarme.Framework.Rocks
           {
             if (iface.IsNamed(typename))
               return true;
+
             //if not, then maybe one of its parent interfaces does
+            AltCode.CecilExtensions.NetCoreResolver.HookResolver(
+                iface.Module.AssemblyResolver);
+
             if (Implements(iface.Resolve(), typename))
               return true;
           }

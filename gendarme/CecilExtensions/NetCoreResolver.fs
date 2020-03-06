@@ -75,8 +75,16 @@ module NetCoreResolver =
 
   let ResolveHandler = new AssemblyResolveEventHandler(ResolveFromNugetCache)
 
+  let internal HookTable = HashSet<WeakReference>()
+
   let HookResolver(resolver : IAssemblyResolver) =
     if resolver.IsNotNull
     then
-      let hook = resolver.GetType().GetMethod("add_ResolveFailure")
-      hook.Invoke(resolver, [| ResolveHandler :> obj |]) |> ignore
+      if HookTable
+        |> Seq.map (fun wr -> wr.Target)
+        |> Seq.exists (fun t -> obj.ReferenceEquals(t, resolver))
+        |> not
+      then
+        let hook = resolver.GetType().GetMethod("add_ResolveFailure")
+        hook.Invoke(resolver, [| ResolveHandler :> obj |]) |> ignore
+        HookTable.Add(WeakReference(resolver)) |> ignore
