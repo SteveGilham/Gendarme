@@ -58,13 +58,15 @@ namespace Gendarme.Framework
       if (name == null)
         throw new ArgumentNullException("name");
 
-      string aname = name.Name;
+      string aname = name.FullName;
       AssemblyDefinition asm = null;
       if (!assemblies.TryGetValue(aname, out asm))
       {
         try
         {
           asm = base.Resolve(name);
+          AltCode.CecilExtensions.NetCoreResolver.HookResolver(
+                asm.MainModule.AssemblyResolver);
         }
         catch (FileNotFoundException)
         {

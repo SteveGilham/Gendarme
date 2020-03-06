@@ -66,6 +66,7 @@ module NetCoreResolver =
       | Some x ->
           String.Format
             (System.Globalization.CultureInfo.InvariantCulture,
+             Environment.NewLine +
              "Resolved assembly reference '{0}' as file '{1}'.", name, x)
           |> Console.WriteLine
           let a = AssemblyDefinition.ReadAssembly x
@@ -73,3 +74,9 @@ module NetCoreResolver =
           a
 
   let ResolveHandler = new AssemblyResolveEventHandler(ResolveFromNugetCache)
+
+  let HookResolver(resolver : IAssemblyResolver) =
+    if resolver.IsNotNull
+    then
+      let hook = resolver.GetType().GetMethod("add_ResolveFailure")
+      hook.Invoke(resolver, [| ResolveHandler :> obj |]) |> ignore
