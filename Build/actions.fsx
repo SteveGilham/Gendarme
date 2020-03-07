@@ -57,3 +57,31 @@ module Actions =
       else Assert.Fail "Could not clean all the files"
 
     Clean1 0
+
+  let HandleResults (msg : string) (result : Fake.Core.ProcessResult) =
+    String.Join(Environment.NewLine, result.Messages) |> printfn "%s"
+    let save = (Console.ForegroundColor, Console.BackgroundColor)
+    match result.Errors |> Seq.toList with
+    | [] -> ()
+    | errors ->
+        try
+          Console.ForegroundColor <- ConsoleColor.Black
+          Console.BackgroundColor <- ConsoleColor.White
+          String.Join(Environment.NewLine, errors) |> printfn "ERR : %s"
+        finally
+          Console.ForegroundColor <- fst save
+          Console.BackgroundColor <- snd save
+    Assert.That(result.ExitCode, Is.EqualTo 0, msg)
+
+  let AssertResult (msg : string) (result : Fake.Core.ProcessResult<'a>) =
+    Assert.That(result.ExitCode, Is.EqualTo 0, msg)
+
+  let Run (file, dir, args) msg =
+    CreateProcess.fromRawCommand file args
+    |> CreateProcess.withWorkingDirectory dir
+    |> CreateProcess.withFramework
+    |> Proc.run
+    |> (AssertResult msg)
+
+  let RunDotnet (o : DotNet.Options -> DotNet.Options) cmd args msg =
+    DotNet.exec o cmd args |> (HandleResults msg)

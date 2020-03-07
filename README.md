@@ -21,7 +21,7 @@ The `build` stage can be done in Visual Studio with the Debug configuration to r
 
 ## Features
 * Can load .net core assemblies 
-  * but you may need to `dotnet publish` the code you want to analyse so Gendarme is able to pick up dependencies.  Otherwise there can be spurious warnings about e.g. virtual methods in sealed classes when that sealed class actually overrides a base-class virtual method.
+  * Will search the nuget cache for dependencies, though this can take some time; whether this is better than using `dotnet publish` to get all the code you want to analyse in one place so Gendarme is able to pick up dependencies will depend on your context.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 

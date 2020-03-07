@@ -22,7 +22,7 @@ build_script:
 
     & dotnet fake run .\Build\setup.fsx
 
-    & dotnet fake run .\Build\build.fsx --target Packaging
+    & dotnet fake run .\Build\build.fsx --target OperationalTest
 
     $save = $LASTEXITCODE
     

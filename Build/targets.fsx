@@ -19,6 +19,7 @@ open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing
 open Fake.IO.Globbing.Operators
 
+open AltCode.Fake.DotNet
 open AltCover_Fake.DotNet.DotNet
 open AltCover_Fake.DotNet.Testing
 
@@ -58,6 +59,10 @@ let altcover =
   |> Path.getFullName
 
 let framework_altcover = Fake.DotNet.ToolType.CreateFullFramework()
+
+let nugetCache =
+  Path.Combine
+    (Environment.GetFolderPath Environment.SpecialFolder.UserProfile, ".nuget/packages")
 
 let AltCoverFilter(p : Primitive.PrepareParams) =
   { p with
@@ -407,8 +412,6 @@ _Target "Packaging" (fun _ ->
   let rules =
     Directory.GetDirectories(".", "Gendarme.Rules.*", SearchOption.AllDirectories)
     |> Seq.toList
-  //printfn "rules"
-  //List.iter (printfn "%A") rules
 
   let n40rules =
     rules
@@ -422,9 +425,6 @@ _Target "Packaging" (fun _ ->
          | _ -> false)
     |> List.distinctBy Path.GetFileName
 
-  // printfn "n40rules"
-  // List.iter (printfn "%A") n40rules
-
   let corerules =
     rules
     |> List.collect (fun f ->
@@ -437,8 +437,6 @@ _Target "Packaging" (fun _ ->
          | ".pdb" -> true
          | _ -> false)
     |> List.distinctBy Path.GetFileName
-  //printfn "corerules"
-  //List.iter (printfn "%A") corerules
 
   let net40 =
     List.concat
@@ -446,11 +444,16 @@ _Target "Packaging" (fun _ ->
         n40rules ]
     |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
 
+  let leadstring = publish.Length
+  let netcoremain = !!(Path.getFullName "./_Publish/**/*.*")
+                    |> Seq.map (fun f -> let relpath = (leadstring |> f.Substring).Replace("\\","/")
+                                         (f, Some ("tools/netcoreapp2.1/any" + relpath), None))
+                    |> Seq.toList
+
   let netcore =
     List.concat
-      [ !!"./_Binaries/gendarme/Release+AnyCPU/netcoreapp2.1/*.*" |> Seq.toList
-        corerules ]
-    |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None))
+      [ netcoremain
+        corerules |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
 
   let files = List.concat [ net40; housekeeping ]
   let globalfiles = List.concat [ netcore; housekeeping ]
@@ -497,6 +500,8 @@ _Target "Packaging" (fun _ ->
                else
                  "/usr/bin/nuget" }) recipe))
 
+_Target "OperationalTest" ignore
+
 _Target "Unpack" (fun _ ->
   let unpack = Path.getFullName "./_Unpack"
   let config = unpack @@ ".config"
@@ -527,9 +532,75 @@ _Target "Unpack" (fun _ ->
   let vname = !Version + "-pre-release"
   let from = (Path.getFullName @"_Unpack\packages\altcode.gendarme\") @@ vname
   printfn "Copying from %A to %A" from unpack
-  Shell.copyDir unpack from (fun f -> printfn "%A" f
-                                      true)
+  Shell.copyDir unpack from (fun _ -> true)
+
+  Assert.Throws<Exception> (fun () ->
+          Gendarme.run
+            { Gendarme.Params.Create() with
+                WorkingDirectory = unpack
+                Severity = Gendarme.Severity.All
+                Confidence = Gendarme.Confidence.All
+                Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                Console = true
+                Log = Path.GetFullPath "./_Reports/gendarme.html"
+                LogKind = Gendarme.LogKind.Html
+                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/net40/FSharpExamples.dll"]
+                ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
+                FailBuildOnDefect = true }  ) |> ignore
     )
+
+_Target "DotnetGlobalIntegration" (fun _ ->
+  let working = Path.getFullName "./_Unpack-tool"
+  let mutable set = false
+  try
+    Directory.ensure working
+    Shell.cleanDir working
+    Directory.ensure "./_Reports"
+
+    let nugget = !!"./_Packaging/altcode.gendarme-tool.*.nupkg" |> Seq.last
+    let unpack = Path.getFullName "_Unpack-tool/tool"
+    System.IO.Compression.ZipFile.ExtractToDirectory(nugget, unpack)
+    let from = Path.getFullName @"_Unpack-tool\tool\tools\netcoreapp2.1\any\"
+    Shell.copyDir unpack from (fun _ -> true)
+
+    let packroot = Path.GetFullPath "./_Packaging"
+    let config = XDocument.Load "./Build/NuGet.config.dotnettest"
+    let repo = config.Descendants(XName.Get("add")) |> Seq.head
+    repo.SetAttributeValue(XName.Get "value", packroot)
+    config.Save(working @@ "NuGet.config")
+
+    Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
+      "tool"
+      ("install -g altcode.gendarme-tool --add-source "
+       + (Path.getFullName "./_Packaging") + " --version " + !Version + "-pre-release") "Installed"
+
+    Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
+      "tool" ("list -g ") "Checked"
+    set <- true
+
+    Assert.Throws<Exception> (fun () ->
+                Gendarme.run
+                  { Gendarme.Params.Create() with
+                      WorkingDirectory = working
+                      Severity = Gendarme.Severity.All
+                      Confidence = Gendarme.Confidence.All
+                      Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                      Console = true
+                      Log = Path.GetFullPath "./_Reports/gendarme-tool.html"
+                      LogKind = Gendarme.LogKind.Html
+                      Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
+                      ToolPath = "gendarme"
+                      ToolType = ToolType.CreateGlobalTool()
+                      FailBuildOnDefect = true }  ) |> ignore // (printfn "%A")
+// System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release+AnyCPU\netstandard2.0\FSharpExamples.dll"                      
+
+  finally
+    if set then
+      Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
+        "tool" ("uninstall -g altcode.gendarme-tool") "uninstalled"
+    let folder = (nugetCache @@ "altcode.gendarme-tool") @@ (!Version + "-pre-release")
+    Shell.mkdir folder
+    Shell.deleteDir folder)
 
 _Target "All" ignore
 
@@ -581,6 +652,13 @@ Target.activateFinal "ResetConsoleColours"
 
 "Packaging"
 ==> "Unpack"
+==> "OperationalTest"
+
+"Packaging"
+==> "DotnetGlobalIntegration"
+==> "OperationalTest"
+
+"OperationalTest"
 ==> "All"
 
 "Coverage"
