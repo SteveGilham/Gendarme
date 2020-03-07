@@ -1,3 +1,7 @@
+# 2020.3.4.15094-pre-release
+
+[BUGFIX] another fix needed for the tool, despite it working for the operational test.
+
 # 2020.3.4.14134-pre-release
 
 [BUGFIX] Fix up and operationally test the gendarme global tool as part of the build

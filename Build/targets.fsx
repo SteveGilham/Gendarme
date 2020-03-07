@@ -532,8 +532,7 @@ _Target "Unpack" (fun _ ->
   let vname = !Version + "-pre-release"
   let from = (Path.getFullName @"_Unpack\packages\altcode.gendarme\") @@ vname
   printfn "Copying from %A to %A" from unpack
-  Shell.copyDir unpack from (fun f -> printfn "%A" f
-                                      true)
+  Shell.copyDir unpack from (fun _ -> true)
 
   Assert.Throws<Exception> (fun () ->
           Gendarme.run
@@ -545,7 +544,7 @@ _Target "Unpack" (fun _ ->
                 Console = true
                 Log = Path.GetFullPath "./_Reports/gendarme.html"
                 LogKind = Gendarme.LogKind.Html
-                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
+                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/net40/FSharpExamples.dll"]
                 ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
                 FailBuildOnDefect = true }  ) |> ignore
     )
@@ -557,6 +556,12 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     Directory.ensure working
     Shell.cleanDir working
     Directory.ensure "./_Reports"
+
+    let nugget = !!"./_Packaging/altcode.gendarme-tool.*.nupkg" |> Seq.last
+    let unpack = Path.getFullName "_Unpack-tool/tool"
+    System.IO.Compression.ZipFile.ExtractToDirectory(nugget, unpack)
+    let from = Path.getFullName @"_Unpack-tool\tool\tools\netcoreapp2.1\any\"
+    Shell.copyDir unpack from (fun _ -> true)
 
     let packroot = Path.GetFullPath "./_Packaging"
     let config = XDocument.Load "./Build/NuGet.config.dotnettest"
@@ -586,7 +591,8 @@ _Target "DotnetGlobalIntegration" (fun _ ->
                       Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
                       ToolPath = "gendarme"
                       ToolType = ToolType.CreateGlobalTool()
-                      FailBuildOnDefect = true }  ) |> ignore
+                      FailBuildOnDefect = true }  ) |> ignore // (printfn "%A")
+// System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release+AnyCPU\netstandard2.0\FSharpExamples.dll"                      
 
   finally
     if set then

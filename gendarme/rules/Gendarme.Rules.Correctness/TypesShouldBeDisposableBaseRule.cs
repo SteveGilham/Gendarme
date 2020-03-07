@@ -36,88 +36,97 @@ using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Correctness {
+namespace Gendarme.Rules.Correctness
+{
+  public abstract class TypesShouldBeDisposableBaseRule : Rule, ITypeRule
+  {
+    protected TypesShouldBeDisposableBaseRule()
+    {
+      FieldCandidates = new HashSet<FieldDefinition>();
+    }
 
-	public abstract class TypesShouldBeDisposableBaseRule : Rule, ITypeRule {
+    protected HashSet<FieldDefinition> FieldCandidates { get; private set; }
 
-		protected TypesShouldBeDisposableBaseRule ()
-		{
-			FieldCandidates = new HashSet<FieldDefinition> ();
-		}
+    protected abstract string AbstractTypeMessage { get; }
+    protected abstract string TypeMessage { get; }
+    protected abstract string AbstractDisposeMessage { get; }
 
-		protected HashSet<FieldDefinition> FieldCandidates { get; private set; }
+    private static bool IsAbstract(MethodDefinition method)
+    {
+      return ((method != null) && (method.IsAbstract));
+    }
 
-		protected abstract string AbstractTypeMessage { get; }
-		protected abstract string TypeMessage { get; }
-		protected abstract string AbstractDisposeMessage { get; }
+    protected abstract void CheckMethod(MethodDefinition method, bool abstractWarning);
 
-		static bool IsAbstract (MethodDefinition method)
-		{
-			return ((method != null) && (method.IsAbstract));
-		}
+    protected abstract bool FieldTypeIsCandidate(TypeDefinition type);
 
-		protected abstract void CheckMethod (MethodDefinition method, bool abstractWarning);
+    private readonly static TypeName idisposable = new TypeName
+    {
+      Namespace = "System",
+      Name = "IDisposable"
+    };
 
-		protected abstract bool FieldTypeIsCandidate (TypeDefinition type);
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // that will cover interfaces, delegates too
+      if (!type.HasFields)
+        return RuleResult.DoesNotApply;
 
-        private readonly static TypeName idisposable = new TypeName
+      // rule doesn't apply to enums, interfaces, structs, delegates or generated code
+      if (type.IsEnum || type.IsValueType || type.IsGeneratedCode())
+        return RuleResult.DoesNotApply;
+
+      MethodDefinition explicitDisposeMethod = null;
+      MethodDefinition implicitDisposeMethod = null;
+
+      bool abstractWarning = false;
+
+      if (type.Implements(idisposable))
+      {
+        implicitDisposeMethod = type.GetMethod(MethodSignatures.Dispose);
+        explicitDisposeMethod = type.GetMethod(MethodSignatures.DisposeExplicit);
+
+        if (IsAbstract(implicitDisposeMethod) || IsAbstract(explicitDisposeMethod))
         {
-            Namespace = "System",
-            Name = "IDisposable"
-        };
-        public RuleResult CheckType(TypeDefinition type)
-		{
-			// that will cover interfaces, delegates too
-			if (!type.HasFields)
-				return RuleResult.DoesNotApply;
+          abstractWarning = true;
+        }
+        else
+        {
+          return RuleResult.Success;
+        }
+      }
 
-			// rule doesn't apply to enums, interfaces, structs, delegates or generated code
-			if (type.IsEnum || type.IsValueType || type.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
+      FieldCandidates.Clear();
 
-			MethodDefinition explicitDisposeMethod = null;
-			MethodDefinition implicitDisposeMethod = null;
+      foreach (FieldDefinition field in type.Fields)
+      {
+        // we can't dispose static fields in IDisposable
+        if (field.IsStatic)
+          continue;
+        TypeDefinition fieldType = field.FieldType.GetElementType().Resolve();
+        if (fieldType == null)
+          continue;
+        if (FieldTypeIsCandidate(fieldType))
+          FieldCandidates.Add(field);
+      }
 
-			bool abstractWarning = false;
+      // if there are fields types that implements IDisposable
+      if (type.HasMethods && (FieldCandidates.Count > 0))
+      {
+        // check if we're assigning new object to them
+        foreach (MethodDefinition method in type.Methods)
+        {
+          CheckMethod(method, abstractWarning);
+        }
+      }
 
-			if (type.Implements (idisposable)) {
-				implicitDisposeMethod = type.GetMethod (MethodSignatures.Dispose);
-				explicitDisposeMethod = type.GetMethod (MethodSignatures.DisposeExplicit);
+      // Warn about possible confusion if the Dispose methods are abstract
+      if (IsAbstract(implicitDisposeMethod))
+        Runner.Report(implicitDisposeMethod, Severity.Medium, Confidence.High, AbstractDisposeMessage);
 
-				if (IsAbstract (implicitDisposeMethod) || IsAbstract (explicitDisposeMethod)) {
-					abstractWarning = true;
-				} else {
-					return RuleResult.Success;
-				}
-			}
+      return Runner.CurrentRuleResult;
+    }
 
-			FieldCandidates.Clear ();
-
-			foreach (FieldDefinition field in type.Fields) {
-				// we can't dispose static fields in IDisposable
-				if (field.IsStatic)
-					continue;
-				TypeDefinition fieldType = field.FieldType.GetElementType ().Resolve ();
-				if (fieldType == null)
-					continue;
-				if (FieldTypeIsCandidate (fieldType))
-					FieldCandidates.Add (field);
-			}
-
-			// if there are fields types that implements IDisposable
-			if (type.HasMethods && (FieldCandidates.Count > 0)) {
-				// check if we're assigning new object to them
-				foreach (MethodDefinition method in type.Methods) {
-					CheckMethod (method, abstractWarning);
-				}
-			}
-
-			// Warn about possible confusion if the Dispose methods are abstract
-			if (IsAbstract (implicitDisposeMethod))
-				Runner.Report (implicitDisposeMethod, Severity.Medium, Confidence.High, AbstractDisposeMessage);
-
-			return Runner.CurrentRuleResult;
-		}
 #if false
 		public void Bitmask ()
 		{
@@ -127,6 +136,5 @@ namespace Gendarme.Rules.Correctness {
 			Console.WriteLine (mask);
 		}
 #endif
-	}
+  }
 }
-

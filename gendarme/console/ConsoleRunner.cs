@@ -468,7 +468,15 @@ namespace Gendarme
       {
         if (0 == VerbosityLevel)
         {
-          Console.Error.WriteLine("ERROR: {0}", e.Message);
+          if (e is AssemblyResolutionException)
+          {
+            Console.WriteLine("If, and only if, this message refers to an assembly mentioned");
+            Console.WriteLine("in a 'Resolved assembly reference' message above, then it is a bug.");
+            Console.WriteLine("If so, please report the entire stack trace.");
+            WriteUnhandledExceptionMessage(e);
+          }
+          else
+            Console.Error.WriteLine("ERROR: {0}", e.Message);
           return 2;
         }
         else

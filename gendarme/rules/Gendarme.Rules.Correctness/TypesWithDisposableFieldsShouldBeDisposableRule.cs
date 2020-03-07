@@ -36,106 +36,114 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Correctness {
+namespace Gendarme.Rules.Correctness
+{
+  /// <summary>
+  /// This rule will fire if a type contains disposable fields, i.e. fields whose types implements
+  /// <c>System.IDisposable</c>, but where the type itself does not implement <c>System.IDisposable</c>.
+  /// The rule will not report types that are not assigning themselves new instances to the fields.
+  /// </summary>
+  /// <example>
+  /// Bad examples:
+  /// <code>
+  /// class DoesNotImplementIDisposable {
+  ///	IDisposable field;
+  /// }
+  ///
+  /// class AbstractDispose : IDisposable {
+  ///	IDisposable field;
+  ///
+  ///	// the field should be disposed in the type that declares it
+  ///	public abstract void Dispose ();
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class Dispose : IDisposable {
+  ///	IDisposable field;
+  ///
+  ///	public void Dispose ()
+  ///	{
+  ///		field.Dispose ();
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule will fire if a type contains disposable fields, i.e. fields whose types implements 
-	/// <c>System.IDisposable</c>, but where the type itself does not implement <c>System.IDisposable</c>.
-	/// The rule will not report types that are not assigning themselves new instances to the fields.
-	/// </summary>
-	/// <example>
-	/// Bad examples:
-	/// <code>
-	/// class DoesNotImplementIDisposable {
-	///	IDisposable field;
-	/// }
-	/// 
-	/// class AbstractDispose : IDisposable {
-	///	IDisposable field;
-	///	
-	///	// the field should be disposed in the type that declares it
-	///	public abstract void Dispose ();
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class Dispose : IDisposable {
-	///	IDisposable field;
-	///	
-	///	public void Dispose ()
-	///	{
-	///		field.Dispose ();
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This type contains disposable field(s) but doesn't implement IDisposable.")]
+  [Solution("Implement IDisposable and free the disposable field(s) in the Dispose method.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class TypesWithDisposableFieldsShouldBeDisposableRule : TypesShouldBeDisposableBaseRule
+  {
+    private static OpCodeBitmask StoreFieldBitmask = new OpCodeBitmask(0x0, 0x400000000000000, 0x80000000, 0x0);
 
-	[Problem ("This type contains disposable field(s) but doesn't implement IDisposable.")]
-	[Solution ("Implement IDisposable and free the disposable field(s) in the Dispose method.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class TypesWithDisposableFieldsShouldBeDisposableRule : TypesShouldBeDisposableBaseRule {
+    protected override string AbstractTypeMessage
+    {
+      get { return "Field implement IDisposable. Type should implement a non-abstract Dispose() method"; }
+    }
 
-		static OpCodeBitmask StoreFieldBitmask = new OpCodeBitmask (0x0, 0x400000000000000, 0x80000000, 0x0);
+    protected override string TypeMessage
+    {
+      get { return "Field implement IDisposable. Type should implement a Dispose() method"; }
+    }
 
-		protected override string AbstractTypeMessage { 
-			get { return "Field implement IDisposable. Type should implement a non-abstract Dispose() method"; }
-		}
+    protected override string AbstractDisposeMessage
+    {
+      get { return "Some field(s) implement IDisposable. Making this method abstract shifts the reponsability of disposing those fields to the inheritors of this class."; }
+    }
 
-		protected override string TypeMessage { 
-			get { return "Field implement IDisposable. Type should implement a Dispose() method";  }
-		}
+    protected override void CheckMethod(MethodDefinition method, bool abstractWarning)
+    {
+      if ((method == null) || !method.HasBody)
+        return;
 
-		protected override string AbstractDisposeMessage { 
-			get { return "Some field(s) implement IDisposable. Making this method abstract shifts the reponsability of disposing those fields to the inheritors of this class."; }
-		}
+      OpCodeBitmask bitmask = OpCodeEngine.GetBitmask(method);
+      // method must have a NEWOBJ and either STFLD or STELEM_REF
+      if (!bitmask.Get(Code.Newobj) || !bitmask.Intersect(StoreFieldBitmask))
+        return;
 
-		protected override void CheckMethod (MethodDefinition method, bool abstractWarning)
-		{
-			if ((method == null) || !method.HasBody)
-				return;
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        if (!ins.Is(Code.Newobj))
+          continue;
 
-			OpCodeBitmask bitmask = OpCodeEngine.GetBitmask (method);
-			// method must have a NEWOBJ and either STFLD or STELEM_REF
-			if (!bitmask.Get (Code.Newobj) || !bitmask.Intersect (StoreFieldBitmask))
-				return;
-
-			foreach (Instruction ins in method.Body.Instructions) {
-				if (!ins.Is (Code.Newobj))
-					continue;
-
-				FieldDefinition field = null;
-				Instruction next = ins.Next;
-				if (next.Is (Code.Stfld)) {
-					field = next.Operand as FieldDefinition;
-				} else if (next.Is (Code.Stelem_Ref)) {
-					Instruction origin = next.TraceBack (method);
-					if (origin != null)
-						field = origin.Operand as FieldDefinition;
-				}
-
-				if (field != null && FieldCandidates.Contains (field)) {
-					Runner.Report (field, Severity.High, Confidence.High,
-						abstractWarning ? AbstractTypeMessage : TypeMessage);
-				}
-			}
-		}
-        private readonly static TypeName idisposable = new TypeName
+        FieldDefinition field = null;
+        Instruction next = ins.Next;
+        if (next.Is(Code.Stfld))
         {
-            Namespace = "System",
-            Name = "IDisposable"
-        };
+          field = next.Operand as FieldDefinition;
+        }
+        else if (next.Is(Code.Stelem_Ref))
+        {
+          Instruction origin = next.TraceBack(method);
+          if (origin != null)
+            field = origin.Operand as FieldDefinition;
+        }
 
-		protected override bool FieldTypeIsCandidate (TypeDefinition type)
-		{
-			// enums and primitives don't implement IDisposable
-			if ((type == null) || type.IsEnum || type.IsPrimitive)
-				return false;
+        if (field != null && FieldCandidates.Contains(field))
+        {
+          Runner.Report(field, Severity.High, Confidence.High,
+            abstractWarning ? AbstractTypeMessage : TypeMessage);
+        }
+      }
+    }
 
-			return type.Implements (idisposable);
-		}
-	}
+    private readonly static TypeName idisposable = new TypeName
+    {
+      Namespace = "System",
+      Name = "IDisposable"
+    };
+
+    protected override bool FieldTypeIsCandidate(TypeDefinition type)
+    {
+      // enums and primitives don't implement IDisposable
+      if ((type == null) || type.IsEnum || type.IsPrimitive)
+        return false;
+
+      return type.Implements(idisposable);
+    }
+  }
 }
-
