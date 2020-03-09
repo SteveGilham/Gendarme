@@ -32,81 +32,107 @@ using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 using Mono.Cecil;
 
-namespace Gendarme.Rules.Serialization {
+namespace Gendarme.Rules.Serialization
+{
+  /// <summary>
+  /// This rule checks for serializable types, i.e. decorated with the <c>[Serializable]</c>
+  /// attribute, and checks to see if all its fields are serializable as well. If not the rule will
+  /// fire unless the field is decorated with the <c>[NonSerialized]</c> attribute.
+  /// The rule will also warn if the field type is an interface as it is not possible,
+  /// before execution time, to know for certain if the type can be serialized or not.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// class NonSerializableClass {
+  /// }
+  ///
+  /// [Serializable]
+  /// class SerializableClass {
+  ///	NonSerializableClass field;
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class NonSerializableClass {
+  /// }
+  ///
+  /// [Serializable]
+  /// class SerializableClass {
+  ///	[NonSerialized]
+  ///	NonSerializableClass field;
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule checks for serializable types, i.e. decorated with the <c>[Serializable]</c>
-	/// attribute, and checks to see if all its fields are serializable as well. If not the rule will 
-	/// fire unless the field is decorated with the <c>[NonSerialized]</c> attribute.
-	/// The rule will also warn if the field type is an interface as it is not possible,
-	/// before execution time, to know for certain if the type can be serialized or not.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// class NonSerializableClass {
-	/// }
-	/// 
-	/// [Serializable]
-	/// class SerializableClass {
-	///	NonSerializableClass field;
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class NonSerializableClass {
-	/// }
-	/// 
-	/// [Serializable]
-	/// class SerializableClass {
-	///	[NonSerialized]
-	///	NonSerializableClass field;
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("This type is Serializable, but contains fields that aren't serializable which can cause runtime errors when instances are serialized.")]
+  [Solution("Make sure you are marking all non-serializable fields with the NonSerialized attribute or implement custom serialization.")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2235:MarkAllNonSerializableFields")]
+  public abstract class MarkAllNonSerializableFieldsRuleBase : Rule, ITypeRule
+  {
+    private readonly static TypeName iserializable = new TypeName
+    {
+      Namespace = "System.Runtime.Serialization",
+      Name = "ISerializable"
+    };
 
-	[Problem ("This type is Serializable, but contains fields that aren't serializable which can cause runtime errors when instances are serialized.")]
-	[Solution ("Make sure you are marking all non-serializable fields with the NonSerialized attribute or implement custom serialization.")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2235:MarkAllNonSerializableFields")]
-	public class MarkAllNonSerializableFieldsRule : Rule, ITypeRule {
+    protected abstract bool Inapplicable(TypeDefinition type);
 
-        private readonly static TypeName iserializable = new TypeName
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // if type is not serializable or has not any fields or does not implements a custom serialization
+      if (!type.IsSerializable || !type.HasFields || type.Implements(iserializable))
+        return RuleResult.DoesNotApply;
+
+      // Can't really serialize or annotate F# closures
+      if (Inapplicable(type))//(type.Name.Contains("@"))
+        return RuleResult.DoesNotApply;
+
+      foreach (FieldDefinition field in type.Fields)
+      {
+        if (!field.IsNotSerialized && !field.IsStatic)
         {
-            Namespace = "System.Runtime.Serialization",
-            Name = "ISerializable"
-        };
-        
-        public RuleResult CheckType(TypeDefinition type)
-		{
-			// if type is not serializable or has not any fields or does not implements a custom serialization
-			if (!type.IsSerializable || !type.HasFields || type.Implements (iserializable))
-				return RuleResult.DoesNotApply;
+          TypeDefinition fieldType = field.FieldType.Resolve();
+          if (fieldType == null)
+            continue;
 
-			foreach (FieldDefinition field in type.Fields) {
-				if (!field.IsNotSerialized && !field.IsStatic) { 
-					TypeDefinition fieldType = field.FieldType.Resolve ();
-					if (fieldType == null)
-						continue;
+          if (fieldType.IsInterface)
+          {
+            string msg = String.Format(CultureInfo.InvariantCulture,
+              "Serialization of interface {0} as field {1} unknown until runtime",
+              fieldType, field.Name);
+            Runner.Report(field, Severity.Critical, Confidence.Low, msg);
+            continue;
+          }
+          if (!fieldType.IsEnum && !fieldType.IsSerializable)
+          {
+            string msg = String.Format(CultureInfo.InvariantCulture,
+              "The field {0} isn't serializable.", field.Name);
+            Runner.Report(field, Severity.Critical, Confidence.High, msg);
+          }
+        }
+      }
 
-					if (fieldType.IsInterface) {
-						string msg = String.Format (CultureInfo.InvariantCulture,
-							"Serialization of interface {0} as field {1} unknown until runtime", 
-							fieldType, field.Name);
-						Runner.Report (field, Severity.Critical, Confidence.Low, msg);
-						continue;
-					}
-					if (!fieldType.IsEnum && !fieldType.IsSerializable) {
-						string msg = String.Format (CultureInfo.InvariantCulture,
-							"The field {0} isn't serializable.", field.Name);
-						Runner.Report (field, Severity.Critical, Confidence.High, msg);
-					}
-				}
-			}
+      return Runner.CurrentRuleResult;
+    }
+  }
 
-			return Runner.CurrentRuleResult;
-		}
-	}
+  public class MarkAllNonSerializableFieldsRule : MarkAllNonSerializableFieldsRuleBase
+  {
+    protected override bool Inapplicable(TypeDefinition type)
+    {
+      return false;
+    }
+  }
+
+  public class RelaxedMarkAllNonSerializableFieldsRule : MarkAllNonSerializableFieldsRuleBase
+  {
+    protected override bool Inapplicable(TypeDefinition type)
+    {
+      return type.Name.Contains("@");
+    }
+  }
 }

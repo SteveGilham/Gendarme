@@ -1,3 +1,9 @@
+# 2020.3.7.10241-pre-release
+
+* Improve the assembly resolution to 
+ * distinguish different versions of the same assembly
+ * look in the nuget cache if the assembly isn't local (means that .net core code needn't be published, at the cost of the extra time taken to search the cache.)
+
 # 2020.3.4.15094-pre-release
 
 [BUGFIX] another fix needed for the tool, despite it working for the operational test.
