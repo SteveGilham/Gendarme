@@ -67,7 +67,7 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * Exempt F# generated types with `@` in the name from `UseCorrectPrefixRule`,`VariableNamesShouldNotMatchFieldNamesRule` and `UseCorrectCasingRule`
 * Exempt generated abstract closure types from `AbstractTypesShouldNotHavePublicConstructorsRule`
 * Exempt constructors of record types, or generated types with `@` in the name, from `AvoidLongParameterListsRule`
-* Module-bound functions should be camel-cased in the `UseCorrectCasingRule`* Exempt generated types with `@` in their names from `AvoidUnnecessarySpecializationRule`, `AvoidSpeculativeGeneralityRule` and `MethodCanBeMadeStaticRule`
+* Exempt generated types with `@` in their names from `AvoidUnnecessarySpecializationRule`, `AvoidSpeculativeGeneralityRule` and `MethodCanBeMadeStaticRule`
 * Exempt F# placeholder arguments `_` (compiled to `_arg...`) from `UseCorrectCasingRule`
 * Exempt module-bound functions from `ConsiderConvertingMethodToPropertyRule`
 * Exempt fields and constructors of records from `RemoveDependenceOnObsoleteCodeRule`; accessors will still be caught but can be `[SuppressMessage]`d as needed
@@ -84,6 +84,8 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * For `AvoidLargeClassesRule`, ignore `FSharpFunc` and `FSharpTypeFunc` valued fields in generated types with `@` in their names; treat them as methods in the type instead.
 * For `AvoidDeepNamespaceHierarchyRule`, ignore F# generated namespaces of the form `<StartupCode$a-b-c-d>.$.NETFramework,Version=...`
 * For `AvoidRepetitiveCastsRule`, ignore F# `is` then `as` of anonymous temporaries (often happens in `match` expressions on sum types)
+* Adapt `UseCorrectCasingRule` to be compatible with `FSharpLint` for F# code (Non-class, non-public, functions should be camel-cased)
+* Add a `RelaxedMarkAllNonSerializableFieldsRule` which ignores F# types with `@` in the name, keeping the full-strength version for cases where serializing a closure is intentional.
 
 #### Unit test fixing
 

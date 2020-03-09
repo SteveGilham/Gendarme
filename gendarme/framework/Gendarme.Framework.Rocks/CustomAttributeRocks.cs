@@ -43,9 +43,9 @@ namespace Gendarme.Framework.Rocks
   /// CustomAttributeRocks contains extensions methods for CustomAttribute
   /// and the related collection classes.
   /// </summary>
-  public static class CustomAttributeRocks
+	public static class CustomAttributeRocks
   {
-    public static bool HasAnyGeneratedCodeAttribute(this ICustomAttributeProvider self)
+    internal static bool HasAnyGeneratedCodeAttribute(this ICustomAttributeProvider self)
     {
       if ((self == null) || !self.HasCustomAttributes)
         return false;
@@ -172,6 +172,16 @@ namespace Gendarme.Framework.Rocks
       return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
                                             a.ConstructorArguments.Count == 1 &&
                                             (0x1f & (int)a.ConstructorArguments[0].Value) == 7); // Module type
+    }
+
+    public static bool IsUnionCase(this ICustomAttributeProvider self)
+    {
+      if ((self == null) || !self.HasCustomAttributes)
+        return false;
+
+      return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
+                                            a.ConstructorArguments.Count == 2 &&
+                                            (0x1f & (int)a.ConstructorArguments[0].Value) == 8); // Module type
     }
   }
 }

@@ -229,50 +229,42 @@ namespace Gendarme.Rules.Naming
     private static MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
       MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
 
-    public static bool IsUnionTypeFactory(MethodDefinition method)
-    {
-      if ((method == null) || !method.HasCustomAttributes)
-        return false;
-
-      return method.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
-                                            a.ConstructorArguments.Count == 2 &&
-                                            (0x1f & (int)a.ConstructorArguments[0].Value) == 8); // Record type
-    }
-
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // ignore constructors (.ctor or .cctor) and compiler/tool-generated code
-      if (method.IsConstructor || method.IsGeneratedCode())
+      if (method.IsConstructor ||
+          method.IsGeneratedCode() ||
+          method.IsUnionCase())
         return RuleResult.DoesNotApply;
 
       // don't consider private add / remove on events
       if ((method.IsAddOn || method.IsRemoveOn) && method.IsPrivate)
         return RuleResult.DoesNotApply;
 
-      string name = method.Name;
       var fsharp = method.IsFSharpCode();
-      var fsharpNonClass = false;
-      if (fsharp)
-      {
-        // NewXxxx functions
-        if (IsUnionTypeFactory(method))
-          return RuleResult.DoesNotApply;
+      string name = method.Name;
+      var fsharpModule = method.DeclaringType.IsModuleType();
 
-        fsharpNonClass = !method.DeclaringType.IsObjectType();
+      if (fsharp && method.IsGetter || method.IsSetter)
+      {
+        var pname = name.Substring(4);
+        var property = method.DeclaringType.Properties.First(p => p.Name == pname);
+        if (property.IsFieldType())
+          return RuleResult.DoesNotApply;
       }
 
       // extension methods
-      if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
+      if (fsharp && method.HasParameters)
       {
-        var typename = method.Parameters[0].ParameterType.Name;
-        var isExtension = method.Name.StartsWith(typename + ".", StringComparison.Ordinal);
-        name = name.Substring(typename.Length + 1);
+        var dot = name.IndexOf('.');
+        var isExtension = dot > 0;
         if (isExtension)
         {
-          fsharpNonClass = false; // class-bound
-                                  // extension properties
+          fsharpModule = false; // class-bound
+                                // extension properties
+          name = name.Substring(dot + 1);
           if (name.StartsWith("get_", StringComparison.Ordinal) ||
-              name.StartsWith("get_", StringComparison.Ordinal))
+              name.StartsWith("set_", StringComparison.Ordinal))
           {
             name = name.Substring(4);
           }
@@ -292,32 +284,16 @@ namespace Gendarme.Rules.Naming
         return RuleResult.Success;
       }
 
-      bool skip = false;
-
-      // Heuristic for record fields
-      if (fsharp && method.DeclaringType.IsRecordType())
-      {
-        var fields = method.DeclaringType.Fields.
-          Where(f => !f.HasAnyGeneratedCodeAttribute());
-        var types = method.DeclaringType.NestedTypes.
-          Where(f => !f.HasAnyGeneratedCodeAttribute());
-        var names = fields.Select(f => f.Name).Concat(
-                     types.Select(t => t.Name)).ToList();
-        skip = names.All(n => IsPascalCase(n)) ||
-               names.All(n => IsCamelCase(n));
-      }
-
-      // FSharpLint convention
-      // Use camelCase for internal and private values and functions
-      // Use PascalCase for public names
-      if (skip) {; }
-      else if (fsharp && fsharpNonClass &&
-          ((!method.IsPublic) || method.DeclaringType.IsNotPublic))
+      // F# convention
+      // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
+      // Use camelCase for module-bound public functions
+      // Use camelCase for internal and private module-bound values and functions
+      if (fsharpModule && !method.IsVisible())
       {
         if (!IsCamelCase(name))
         {
           string errorMessage = String.Format(CultureInfo.InvariantCulture,
-              "By existing naming conventions, module-bound non-public function names should all be camel-cased (e.g. myOperation). Rename '{0}' to '{1}'.",
+              "By existing naming conventions, module-bound function names should all be camel-cased (e.g. myOperation). Rename '{0}' to '{1}'.",
               name, CamelCase(name));
           Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
         }
