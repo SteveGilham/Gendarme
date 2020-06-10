@@ -20,8 +20,8 @@ open Fake.IO.Globbing
 open Fake.IO.Globbing.Operators
 
 open AltCode.Fake.DotNet
-open AltCover_Fake.DotNet.DotNet
-open AltCover_Fake.DotNet.Testing
+open AltCoverFake.DotNet.DotNet
+open AltCoverFake.DotNet.Testing
 
 open NUnit.Framework
 
@@ -64,7 +64,7 @@ let nugetCache =
   Path.Combine
     (Environment.GetFolderPath Environment.SpecialFolder.UserProfile, ".nuget/packages")
 
-let AltCoverFilter(p : Primitive.PrepareParams) =
+let AltCoverFilter(p : Primitive.PrepareOptions) =
   { p with
       //MethodFilter = "WaitForExitCustom" :: (p.MethodFilter |> Seq.toList)
       AssemblyExcludeFilter =
@@ -269,19 +269,20 @@ _Target "UnitTestWithAltCoverRunner" (fun _ ->
          let altReport = reports @@ ("UnitTestWithAltCoverRunner." + tname + ".xml")
 
          let prep =
-           AltCover.PrepareParams.Primitive
-             ({ Primitive.PrepareParams.Create() with
+           AltCover.PrepareOptions.Primitive
+             ({ Primitive.PrepareOptions.Create() with
                   XmlReport = altReport
                   OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
-                  Single = true
+                  SingleVisit = true
                   InPlace = false
                   Save = false }
               |> AltCoverFilter)
-           |> AltCover.Prepare
-         { AltCover.Params.Create prep with
+           |> AltCoverCommand.Prepare
+         { AltCoverCommand.Options.Create prep with
              ToolPath = altcover
-             WorkingDirectory = testDirectory }.WithToolType framework_altcover
-         |> AltCover.run
+             ToolType = framework_altcover
+             WorkingDirectory = testDirectory }
+         |> AltCoverCommand.run
 
          printfn "Unit test the instrumented code"
          let nunitparams =
@@ -298,16 +299,17 @@ _Target "UnitTestWithAltCoverRunner" (fun _ ->
 
          try
            let collect =
-             AltCover.CollectParams.Primitive
-               { Primitive.CollectParams.Create() with
+             AltCover.CollectOptions.Primitive
+               { Primitive.CollectOptions.Create() with
                    Executable = nunitConsole
                    RecorderDirectory = testDirectory @@ "__UnitTestWithAltCoverRunner"
-                   CommandLine = AltCover.splitCommandLine nunitcmd }
-             |> AltCover.Collect
-           { AltCover.Params.Create collect with
+                   CommandLine = AltCoverCommand.splitCommandLine nunitcmd }
+             |> AltCoverCommand.Collect
+           { AltCoverCommand.Options.Create collect with
                ToolPath = altcover
-               WorkingDirectory = "." }.WithToolType framework_altcover
-           |> AltCover.run
+               ToolType = framework_altcover
+               WorkingDirectory = "." }
+           |> AltCoverCommand.run
          with x -> printfn "%A" x
          altReport :: l) [] //reraise()) // while fixing
 
@@ -346,21 +348,21 @@ _Target "UnitTestWithAltCoverCoreRunner" (fun _ ->
          let altReport2 =
            reports @@ ("UnitTestWithAltCoverCoreRunner." + tname + ".netcoreapp2.1.xml")
 
-         let collect = AltCover.CollectParams.Primitive(Primitive.CollectParams.Create()) // FSApi
+         let collect = AltCover.CollectOptions.Primitive(Primitive.CollectOptions.Create()) // FSApi
 
          let prepare =
-           AltCover.PrepareParams.Primitive // FSApi
-             ({ Primitive.PrepareParams.Create() with
+           AltCover.PrepareOptions.Primitive // FSApi
+             ({ Primitive.PrepareOptions.Create() with
                   XmlReport = altReport
-                  Single = true }
+                  SingleVisit = true }
               |> AltCoverFilter)
 
-         let ForceTrue = DotNet.CLIArgs.Force true
+         let ForceTrue = DotNet.CLIOptions.Force true
          //printfn "Test arguments : '%s'" (DotNet.ToTestArguments prepare collect ForceTrue)
 
          let t =
-           DotNet.TestOptions.Create().WithAltCoverParameters prepare collect ForceTrue
-         printfn "WithAltCoverParameters returned '%A'" t.Common.CustomParams
+           DotNet.TestOptions.Create().WithAltCoverOptions prepare collect ForceTrue
+         printfn "WithAltCoverOptions returned '%A'" t.Common.CustomParams
 
          let setBaseOptions (o : DotNet.Options) =
            { o with
@@ -375,7 +377,7 @@ _Target "UnitTestWithAltCoverCoreRunner" (fun _ ->
 
          try
            DotNet.test (fun to' ->
-             { to'.WithCommon(setBaseOptions).WithAltCoverParameters prepare collect
+             { to'.WithCommon(setBaseOptions).WithAltCoverOptions prepare collect
                  ForceTrue with
                  Framework = Some "netcoreapp2.1"
                  MSBuildParams = cliArguments }) test
@@ -592,7 +594,7 @@ _Target "DotnetGlobalIntegration" (fun _ ->
                       ToolPath = "gendarme"
                       ToolType = ToolType.CreateGlobalTool()
                       FailBuildOnDefect = true }  ) |> ignore // (printfn "%A")
-// System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release+AnyCPU\netstandard2.0\FSharpExamples.dll"                      
+// System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release+AnyCPU\netstandard2.0\FSharpExamples.dll"
 
   finally
     if set then
