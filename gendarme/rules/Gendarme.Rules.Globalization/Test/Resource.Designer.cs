@@ -62,7 +62,8 @@ namespace Tests.Rules.Globalization {
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
+#if NETCOREAPP2_1
+#else        /// </summary>
         internal static System.Drawing.Bitmap ImageInBothCultures {
             get {
                 object obj = ResourceManager.GetObject("ImageInBothCultures", resourceCulture);
@@ -79,7 +80,7 @@ namespace Tests.Rules.Globalization {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+#endif        
         /// <summary>
         ///   Looks up a localized string similar to Hello!.
         /// </summary>
