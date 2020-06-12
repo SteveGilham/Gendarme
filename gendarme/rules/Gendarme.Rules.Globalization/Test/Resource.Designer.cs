@@ -59,7 +59,7 @@ namespace Tests.Rules.Globalization {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
 #if NETCOREAPP2_1

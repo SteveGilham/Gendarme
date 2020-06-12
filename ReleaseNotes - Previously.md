@@ -1,3 +1,9 @@
+# 2020.3.9.15370-pre-release
+
+F# niggles part 7
+* Adapt `UseCorrectCasingRule` to be compatible with `FSharpLint` for F# code
+* Add a `RelaxedMarkAllNonSerializableFieldsRule` which ignores F# types with `@` in the name, keeping the full-strength version for cases where serializing a closure is intentional.
+
 # 2020.3.7.10241-pre-release
 
 * Improve the assembly resolution to 
