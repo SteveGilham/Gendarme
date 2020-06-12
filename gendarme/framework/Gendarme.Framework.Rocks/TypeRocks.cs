@@ -31,7 +31,6 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -286,7 +285,7 @@ namespace Gendarme.Framework.Rocks
     {
       while (type != null)
       {
-        // does the type implements it itself
+        // does the type implement it itself
         if (type.HasInterfaces)
         {
           foreach (TypeReference iface in type.Interfaces.Select(x => x.InterfaceType))
@@ -303,7 +302,17 @@ namespace Gendarme.Framework.Rocks
           }
         }
 
-        type = type.BaseType != null ? type.BaseType.Resolve() : null;
+        // move up the inheritance hierarchy
+        if (type.BaseType != null)
+        {
+          AltCode.CecilExtensions.NetCoreResolver.HookResolver(
+              type.BaseType.Module.AssemblyResolver);
+          type = type.BaseType.Resolve();
+        }
+        else
+        {
+          type = null;
+        }
       }
       return false;
     }
@@ -334,6 +343,8 @@ namespace Gendarme.Framework.Rocks
         if (current.IsNamed(systemObject))
           return false;
 
+        AltCode.CecilExtensions.NetCoreResolver.HookResolver(
+            current.Module.AssemblyResolver);
         TypeDefinition td = current.Resolve();
         if (td == null)
           return false;   // could not resolve type
