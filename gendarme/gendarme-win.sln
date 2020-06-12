@@ -15,6 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\appveyor.yml = ..\appveyor.yml
 		..\Build\build.fsx = ..\Build\build.fsx
 		..\.config\dotnet-tools.json = ..\.config\dotnet-tools.json
+		..\README.md = ..\README.md
+		..\ReleaseNotes - Previously.md = ..\ReleaseNotes - Previously.md
+		..\ReleaseNotes.md = ..\ReleaseNotes.md
 		..\Build\setup.fsx = ..\Build\setup.fsx
 		..\Build\targets.fsx = ..\Build\targets.fsx
 	EndProjectSection
