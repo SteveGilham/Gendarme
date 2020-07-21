@@ -42,9 +42,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="Wizard.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Wizard.cs" />
     <Compile Update="Wizard.Designer.cs">
       <DependentUpon>Wizard.cs</DependentUpon>
     </Compile>

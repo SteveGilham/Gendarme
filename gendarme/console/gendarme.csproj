@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <RootNamespace>Gendarme</RootNamespace>
-    <TargetFrameworks>net40;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net40</TargetFrameworks>
     <PackAsTool Condition="'$(TargetFramework)' != 'net40'">True</PackAsTool>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\gendarme\</SolutionDir>

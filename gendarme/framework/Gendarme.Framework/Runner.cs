@@ -362,6 +362,10 @@ namespace Gendarme.Framework
         if (IgnoreList.IsIgnored(rule, e.CurrentType))
           continue;
 
+        // It means it
+        if (e.CurrentType.Name.Equals("<PrivateImplementationDetails>"))
+          continue;
+
         CurrentRule = rule;
         rule.CheckType(e.CurrentType);
       }
@@ -385,6 +389,10 @@ namespace Gendarme.Framework
 
         // ignore the rule on some user defined methods
         if (IgnoreList.IsIgnored(rule, e.CurrentMethod))
+          continue;
+
+        // It means it
+        if (e.CurrentMethod.DeclaringType.Name.Equals("<PrivateImplementationDetails>"))
           continue;
 
         CurrentRule = rule;

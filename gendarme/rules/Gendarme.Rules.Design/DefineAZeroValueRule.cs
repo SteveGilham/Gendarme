@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Design.DefineAZeroValueRule
 //
 // Authors:
@@ -29,25 +29,67 @@ using System;
 using Mono.Cecil;
 
 using Gendarme.Framework;
+using System.Runtime.InteropServices;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  abstract public class DefineAZeroValueRule : Rule
+  {
+    protected static FieldDefinition GetZeroValueField(TypeDefinition type)
+    {
+      if (type == null)
+        return null;
 
-	abstract public class DefineAZeroValueRule : Rule {
+      foreach (FieldDefinition field in type.Fields)
+      {
+        // the special __value field is not static like the others (user defined)
+        if (!field.IsStatic)
+          continue;
+        object o = field.Constant;
 
-		protected static FieldDefinition GetZeroValueField (TypeDefinition type)
-		{
-			if (type == null)
-				return null;
+        var value = long.MaxValue;
 
-			foreach (FieldDefinition field in type.Fields) {
-				// the special __value field is not static like the others (user defined)
-				if (!field.IsStatic)
-					continue;
-				object o = field.Constant;
-				if ((o is int) && ((int) o == 0))
-					return field;
-			}
-			return null;
-		}
-	}
+        // Don't be stupid if the underlying type is not int
+        // That is a matter for a separate rule.
+        switch (Type.GetTypeCode(o.GetType()))
+        {
+          case TypeCode.Byte:
+            value = (byte)o;
+            break;
+
+          case TypeCode.SByte:
+            value = (sbyte)o;
+            break;
+
+          case TypeCode.UInt16:
+            value = (ushort)o;
+            break;
+
+          case TypeCode.UInt32:
+            value = (uint)o;
+            break;
+
+          case TypeCode.Int16:
+            value = (short)o;
+            break;
+
+          case TypeCode.Int32:
+            value = (int)o;
+            break;
+
+          case TypeCode.UInt64:
+          case TypeCode.Int64:
+            value = (long)o;
+            break;
+
+          default:
+            continue;
+        }
+
+        if (value == 0L)
+          return field;
+      }
+      return null;
+    }
+  }
 }
