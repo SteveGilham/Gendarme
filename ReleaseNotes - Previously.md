@@ -1,3 +1,10 @@
+# 2020.6.12.11211-pre-release
+
+Issues found in use
+* Improve the assembly resolution to 
+  * check more cases where type hierarchies are being explored
+* In `PreferLiteralOverInitOnlyFieldsRule`. a field initialization may be by reference -- ensure it is resolved before treating it directly.
+
 # 2020.3.9.15370-pre-release
 
 F# niggles part 7

@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for EnumsShouldDefineAZeroValueRule
 //
 // Authors:
@@ -37,73 +37,90 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+  internal enum PrivateEnumWithZeroValue
+  {
+    Zero,
+    One,
+    Two
+  }
 
-	enum PrivateEnumWithZeroValue {
-		Zero,
-		One,
-		Two
-	}
+  internal enum InternalEnumWithoutZeroValue
+  {
+    One = 1,
+    Two,
+    Three
+  }
 
-	internal enum InternalEnumWithoutZeroValue {
-		One = 1,
-		Two,
-		Three
-	}
+  public enum FontQuality : byte
+  {
+    Default = 0,
+    Draft = 1,
+    Proof = 2,
+    NonAntiAliased = 3,
+    AntiAliased = 4,
+    ClearType = 5,
+    ClearTypeNatural = 6,
+  }
 
-	[TestFixture]
-	public class EnumsShouldDefineAZeroValueTest : TypeRuleTestFixture<EnumsShouldDefineAZeroValueRule> {
+  [TestFixture]
+  public class EnumsShouldDefineAZeroValueTest : TypeRuleTestFixture<EnumsShouldDefineAZeroValueRule>
+  {
+    public enum NestedPublicEnumWithZeroValue
+    {
+      Zero
+    }
 
-		public enum NestedPublicEnumWithZeroValue {
-			Zero
-		}
+    [Flags]
+    private enum NestedInternalFlagsWithZeroValue
+    {
+      GhostBit = 0,
+      FirstBit,
+    }
 
-		[Flags]
-		private enum NestedInternalFlagsWithZeroValue {
-			GhostBit = 0,
-			FirstBit,
-		}
+    [Flags]
+    private enum NestedPrivateFlagsWithoutZeroValue
+    {
+      FirstBit = 1,
+      SecondBit = 2,
+      ThirdBit = 4
+    }
 
-		[Flags]
-		private enum NestedPrivateFlagsWithoutZeroValue {
-			FirstBit = 1,
-			SecondBit = 2,
-			ThirdBit = 4
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+      AssertRuleDoesNotApply(SimpleTypes.Structure);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Class);
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
-			AssertRuleDoesNotApply (SimpleTypes.Structure);
-		}
+    [Test]
+    public void EnumWithZeroValue()
+    {
+      AssertRuleSuccess<FontQuality>();
+      AssertRuleSuccess<PrivateEnumWithZeroValue>();
+      AssertRuleSuccess<NestedPublicEnumWithZeroValue>();
+    }
 
-		[Test]
-		public void EnumWithZeroValue ()
-		{
-			AssertRuleSuccess<PrivateEnumWithZeroValue> ();
-			AssertRuleSuccess<NestedPublicEnumWithZeroValue> ();
-		}
+    [Test]
+    public void EnumWithoutZeroValue()
+    {
+      AssertRuleFailure<InternalEnumWithoutZeroValue>();
+    }
 
-		[Test]
-		public void EnumWithoutZeroValue ()
-		{
-			AssertRuleFailure<InternalEnumWithoutZeroValue> ();
-		}
+    [Test]
+    public void FlagWithoutZeroValue()
+    {
+      AssertRuleDoesNotApply<NestedPrivateFlagsWithoutZeroValue>();
+    }
 
-		[Test]
-		public void FlagWithoutZeroValue ()
-		{
-			AssertRuleDoesNotApply<NestedPrivateFlagsWithoutZeroValue> ();
-		}
-
-		[Test]
-		public void FlagWithZeroValue ()
-		{
-			// flags are ignored by the rule
-			AssertRuleDoesNotApply<NestedInternalFlagsWithZeroValue> ();
-		}
-	}
+    [Test]
+    public void FlagWithZeroValue()
+    {
+      // flags are ignored by the rule
+      AssertRuleDoesNotApply<NestedInternalFlagsWithZeroValue>();
+    }
+  }
 }
