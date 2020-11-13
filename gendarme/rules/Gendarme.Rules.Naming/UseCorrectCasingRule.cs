@@ -288,6 +288,9 @@ namespace Gendarme.Rules.Naming
       // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
       // Use camelCase for module-bound public functions
       // Use camelCase for internal and private module-bound values and functions
+      // FSharpLint convention
+      // Use camelCase for internal and private values and functions
+      // Use PascalCase for public names
       if (fsharpModule && !method.IsVisible())
       {
         if (!IsCamelCase(name))

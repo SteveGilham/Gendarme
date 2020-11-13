@@ -15,7 +15,7 @@ type Params =
 module CreateProcess =
   [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Design.Generic",
                                                     "AvoidMethodWithUnusedGenericTypeRule")>]
-  let ensureExitCode = id
+  let internal ensureExitCode = id
 
 [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Smells",
                                                   "AvoidSpeculativeGeneralityRule")>]
