@@ -46,6 +46,7 @@ nuget Fake.IO.FileSystem >= 5.20.0
 nuget Fake.Testing.ReportGenerator >= 5.20.0
 nuget altcover.fake >= 7.0.773
 nuget AltCode.Fake.DotNet.Gendarme >= 5.18.1.24
+nuget FSharpLint.Core >= 0.16.3
 nuget Markdown >= 2.2.1
 nuget NUnit >= 3.12.0 //"
 #r "System.IO.Compression.FileSystem.dll"

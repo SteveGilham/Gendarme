@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -29,148 +29,167 @@
 //
 
 using System;
+using System.Linq;
 using System.Reflection;
 
 using Gendarme.Framework.Helpers;
 using Gendarme.Rules.Naming;
 
+using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Naming {
+namespace Test.Rules.Naming
+{
+  internal interface ISomeInterface
+  {
+    bool InterfaceMethod(int im);
+  }
 
-	interface ISomeInterface {
-		bool InterfaceMethod (int im);
-	}
+  internal interface ISomeInterface2
+  {
+    bool InterfaceMethod2(int im);
+  }
 
-	interface ISomeInterface2 {
-		bool InterfaceMethod2 (int im);
-	}
+  abstract public class SuperBaseClass
+  {
+    protected virtual void VirtualSuperIncorrect(int vsi1, bool vsi2)
+    {
+    }
 
-	abstract public class SuperBaseClass {
-		protected virtual void VirtualSuperIncorrect (int vsi1, bool vsi2)
-		{
-		}
-		protected virtual void VirtualSuperIncorrect (int vsi1, int vsi2_)
-		{
-		}
-	}
+    protected virtual void VirtualSuperIncorrect(int vsi1, int vsi2_)
+    {
+    }
+  }
 
-	abstract public class BaseClass : SuperBaseClass {
-		protected virtual void VirtualCorrect (int vc1, int vc2)
-		{
-		}
+  abstract public class BaseClass : SuperBaseClass
+  {
+    protected virtual void VirtualCorrect(int vc1, int vc2)
+    {
+    }
 
-		protected virtual void VirtualIncorrect (int vi1, int vi2)
-		{
-		}
+    protected virtual void VirtualIncorrect(int vi1, int vi2)
+    {
+    }
 
-		protected abstract void AbstractCorrect (int ac1, int ac2);
+    protected abstract void AbstractCorrect(int ac1, int ac2);
 
-		protected abstract void AbstractIncorrect (int ai1, int ai2);
+    protected abstract void AbstractIncorrect(int ai1, int ai2);
 
-		protected virtual void NoOverwrite (int a, int b)
-		{
-		}
-	}
+    protected virtual void NoOverwrite(int a, int b)
+    {
+    }
+  }
 
-	[TestFixture]
-	public class ParameterNamesShouldMatchOverridenMethodTest : MethodRuleTestFixture<ParameterNamesShouldMatchOverriddenMethodRule> {
+  [TestFixture]
+  public class ParameterNamesShouldMatchOverridenMethodTest : MethodRuleTestFixture<ParameterNamesShouldMatchOverriddenMethodRule>
+  {
+    private class TestCase : BaseClass, ISomeInterface, ISomeInterface2, IEquatable<string>
+    {
+      protected override void VirtualCorrect(int vc1, int vc2)
+      {
+      }
 
-		class TestCase : BaseClass, ISomeInterface, ISomeInterface2, IEquatable<string> {
-			protected override void VirtualCorrect (int vc1, int vc2)
-			{
-			}
+      protected override void VirtualIncorrect(int vi1, int vi2a)
+      {
+      }
 
-			protected override void VirtualIncorrect (int vi1, int vi2a)
-			{
-			}
+      protected override void VirtualSuperIncorrect(int vsi1, bool vsi2_)
+      {
+      }
 
-			protected override void VirtualSuperIncorrect (int vsi1, bool vsi2_)
-			{
-			}
+      protected override void AbstractCorrect(int ac1, int ac2)
+      {
+        throw new NotImplementedException();
+      }
 
-			protected override void AbstractCorrect (int ac1, int ac2)
-			{
-				throw new NotImplementedException ();
-			}
+      protected override void AbstractIncorrect(int ai1, int ai2_)
+      {
+        throw new NotImplementedException();
+      }
 
-			protected override void AbstractIncorrect (int ai1, int ai2_)
-			{
-				throw new NotImplementedException ();
-			}
+      protected virtual void NoOverwrite(int a, int bb)
+      {
+      }
 
-			protected virtual void NoOverwrite (int a, int bb)
-			{
-			}
+      public bool InterfaceMethod(int im_)
+      {
+        return false;
+      }
 
-			public bool InterfaceMethod (int im_)
-			{
-				return false;
-			}
+      bool ISomeInterface2.InterfaceMethod2(int im_)
+      {
+        return false;
+      }
 
-			bool ISomeInterface2.InterfaceMethod2 (int im_)
-			{
-				return false;
-			}
+      private void NoParameter()
+      {
+      }
 
-			void NoParameter ()
-			{
-			}
+      public bool Equals(string s)
+      {
+        throw new NotImplementedException();
+      }
+    }
 
-			public bool Equals (string s)
-			{
-				throw new NotImplementedException ();
-			}
-		}
+    [Test]
+    public void TestVirtual()
+    {
+      AssertRuleSuccess<TestCase>("VirtualCorrect");
+      AssertRuleFailure<TestCase>("VirtualIncorrect", 1);
+      AssertRuleFailure<TestCase>("VirtualSuperIncorrect", 1);
+    }
 
-		[Test]
-		public void TestVirtual ()
-		{
-			AssertRuleSuccess<TestCase> ("VirtualCorrect");
-			AssertRuleFailure<TestCase> ("VirtualIncorrect", 1);
-			AssertRuleFailure<TestCase> ("VirtualSuperIncorrect", 1);
-		}
+    [Test]
+    public void TestAbstract()
+    {
+      AssertRuleSuccess<TestCase>("AbstractCorrect");
+      AssertRuleFailure<TestCase>("AbstractIncorrect", 1);
+    }
 
-		[Test]
-		public void TestAbstract ()
-		{
-			AssertRuleSuccess<TestCase> ("AbstractCorrect");
-			AssertRuleFailure<TestCase> ("AbstractIncorrect", 1);
-		}
+    [Test]
+    public void TestNoOverwrite()
+    {
+      AssertRuleSuccess<TestCase>("NoOverwrite");
+    }
 
-		[Test]
-		public void TestNoOverwrite ()
-		{
-			AssertRuleSuccess<TestCase> ("NoOverwrite");
-		}
+    [Test]
+    public void TestInterfaceMethod()
+    {
+      AssertRuleFailure<TestCase>("InterfaceMethod", 1);
+      AssertRuleFailure<TestCase>("Test.Rules.Naming.ISomeInterface2.InterfaceMethod2", 1);
+    }
 
-		[Test]
-		public void TestInterfaceMethod ()
-		{
-			AssertRuleFailure<TestCase> ("InterfaceMethod", 1);
-			AssertRuleFailure<TestCase> ("Test.Rules.Naming.ISomeInterface2.InterfaceMethod2", 1);
-		}
+    [Test]
+    public void TestDoesNotApply()
+    {
+      AssertRuleDoesNotApply<TestCase>("NoParameter");
+    }
 
-		[Test]
-		public void TestDoesNotApply ()
-		{
-			AssertRuleDoesNotApply<TestCase> ("NoParameter");
-		}
+    [Test]
+    public void GenericInterface()
+    {
+      AssertRuleSuccess<OpCodeBitmask>("Equals", new Type[] { typeof(OpCodeBitmask) });
+      AssertRuleFailure<TestCase>("Equals", 1);
+    }
 
-		[Test]
-		public void GenericInterface ()
-		{
-			AssertRuleSuccess<OpCodeBitmask> ("Equals", new Type [] { typeof (OpCodeBitmask) });
-			AssertRuleFailure<TestCase> ("Equals", 1);
-		}
+    [Test]
+    public void FSharpAllowFSharpFunc()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetType("UseCorrectPrefix.FSApi+doTool@29");
+      AssertRuleDoesNotApply(type, "Invoke");
+    }
 
-        [Test]
-        public void FSharpAllowFSharpFunc()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var type = probe.Assembly.GetType("UseCorrectPrefix.FSApi+doTool@29");
-            AssertRuleDoesNotApply(type, "Invoke");
-        }
-	}
+    [Test]
+    public void FSharpAllowInterfaces()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var definition = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = definition.MainModule.GetType("ParameterNamesShouldMatch.Handler");
+
+      AssertRuleDoesNotApply(type.Methods.First(x => x.Name == "ParameterNamesShouldMatch.IVisualizerWindow.set_Title"));
+      AssertRuleDoesNotApply(type.Methods.First(x => x.Name == "ParameterNamesShouldMatch.IVisualizerWindow.ShowMessage"));
+    }
+  }
 }

@@ -47,7 +47,9 @@ namespace Gendarme.Rules.Design
           continue;
         object o = field.Constant;
 
-        var value = long.MaxValue;
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+        var value = long.MaxValue; // Actually, necessary as default
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
 
         // Don't be stupid if the underlying type is not int
         // That is a matter for a separate rule.

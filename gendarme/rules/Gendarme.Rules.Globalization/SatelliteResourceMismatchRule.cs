@@ -39,243 +39,259 @@ using Mono.Collections.Generic;
 
 using Gendarme.Framework;
 
-namespace Gendarme.Rules.Globalization {
+namespace Gendarme.Rules.Globalization
+{
+  /// <summary>
+  /// A satellite assembly have a resource which does not match with a main assembly resource.
+  /// Either :
+  ///	* The resource doesn't exist in the main assembly and should be removed from the satellite assembly.
+  ///	* The resource is not of the same type in the main and satellite assembly. The satellite one should be fixed.
+  ///	* The satellite string resource does not have the same string.Format parameters than the main assembly. The satellite one should be fixed.
+  /// </summary>
+  /// <remarks>
+  /// The satellites assemblies are searched in the subdirectories of the main assembly location.
+  /// </remarks>
 
-	/// <summary>
-	/// A satellite assembly have a resource which does not match with a main assembly resource.
-	/// Either :
-	///	* The resource doesn't exist in the main assembly and should be removed from the satellite assembly.
-	///	* The resource is not of the same type in the main and satellite assembly. The satellite one should be fixed.
-	///	* The satellite string resource does not have the same string.Format parameters than the main assembly. The satellite one should be fixed.
-	/// </summary>
-	/// <remarks>
-	/// The satellites assemblies are searched in the subdirectories of the main assembly location.
-	/// </remarks>
+  [Problem("A satellite assembly have a resource which does not match correctly with a main assembly resource.")]
+  [Solution("Remove or fix the resource in the satellite assemby.")]
+  public sealed class SatelliteResourceMismatchRule : Rule, IAssemblyRule
+  {
+    private const string resXResourcesExtension = ".resources";
+    private AssemblyResourceCache mainAssemblyResourceCache;
 
-	[Problem ("A satellite assembly have a resource which does not match correctly with a main assembly resource.")]
-	[Solution ("Remove or fix the resource in the satellite assemby.")]
-	public sealed class SatelliteResourceMismatchRule : Rule, IAssemblyRule {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="assembly"></param>
+    /// <returns></returns>
+    public RuleResult CheckAssembly(AssemblyDefinition assembly)
+    {
+      // If the analyzed assembly is a satellite assembly, does not apply
+      if (!string.IsNullOrEmpty(assembly.Name.Culture))
+        return RuleResult.DoesNotApply;
 
-		private const string resXResourcesExtension = ".resources";
-		private AssemblyResourceCache mainAssemblyResourceCache;
+      // Reset caches
+      mainAssemblyResourceCache = new AssemblyResourceCache(assembly);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns></returns>
-		public RuleResult CheckAssembly (AssemblyDefinition assembly)
-		{
-			// If the analyzed assembly is a satellite assembly, does not apply
-			if (!string.IsNullOrEmpty (assembly.Name.Culture))
-				return RuleResult.DoesNotApply;
+      foreach (AssemblyDefinition satellite in GetSatellitesAssemblies(assembly))
+        CheckSatelliteAssembly(satellite);
 
-			// Reset caches
-			mainAssemblyResourceCache = new AssemblyResourceCache (assembly);
+      return RuleResult.Success;
+    }
 
-			foreach (AssemblyDefinition satellite in GetSatellitesAssemblies (assembly))
-				CheckSatelliteAssembly (satellite);
+    private void CheckSatelliteAssembly(AssemblyDefinition satellite)
+    {
+      string culture = satellite.Name.Culture;
+      Collection<Resource> satellitesResources = satellite.MainModule.Resources;
+      foreach (EmbeddedResource resource in satellitesResources)
+      {
+        string resourceName = GetNameInSatellite(resource, culture);
+        if (!mainAssemblyResourceCache.TryGetMainResourceFile(resourceName, out EmbeddedResource mainResource))
+        {
+          string msg = String.Format(CultureInfo.InvariantCulture,
+            "The resource file {0} exist in the satellite assembly but not in the main assembly",
+            resource.Name);
+          Runner.Report(satellite, Severity.Low, Confidence.High, msg);
+          continue;
+        }
 
-			return RuleResult.Success;
-		}
+        if (!IsResXResources(resource))
+          continue;
 
-		private void CheckSatelliteAssembly (AssemblyDefinition satellite)
-		{
-			string culture = satellite.Name.Culture;
-			Collection<Resource> satellitesResources = satellite.MainModule.Resources;
-			foreach (EmbeddedResource resource in satellitesResources) {
-				EmbeddedResource mainResource;
-				string resourceName = GetNameInSatellite (resource, culture);
-				if (!mainAssemblyResourceCache.TryGetMainResourceFile (resourceName, out mainResource)) {
-					string msg = String.Format (CultureInfo.InvariantCulture, 
-						"The resource file {0} exist in the satellite assembly but not in the main assembly", 
-						resource.Name);
-					Runner.Report (satellite, Severity.Low, Confidence.High, msg);
-					continue;
-				}
+        CheckSatelliteResource(mainResource, resource, satellite);
+      }
+    }
 
-				if (!IsResXResources (resource))
-					continue;
+    private void CheckSatelliteResource(EmbeddedResource mainResource, EmbeddedResource satelliteResource, IMetadataTokenProvider satelliteAssembly)
+    {
+      using (Stream resourceStream = satelliteResource.GetResourceStream())
+      using (ResourceSet resourceSet = new ResourceSet(resourceStream))
+      {
+        foreach (DictionaryEntry entry in resourceSet)
+        {
+          string resourceName = (string)entry.Key;
+          object satelliteValue = entry.Value;
+          if (!mainAssemblyResourceCache.TryGetMainResource(mainResource, resourceName, out object mainValue))
+          {
+            string msg = String.Format(CultureInfo.InvariantCulture,
+              "The resource {0} in the file {1} exist in the satellite assembly but not in the main assembly",
+              resourceName, satelliteResource.Name);
+            Runner.Report(satelliteAssembly, Severity.Low, Confidence.High, msg);
+            continue;
+          }
 
-				CheckSatelliteResource (mainResource, resource, satellite);
-			}
-		}
+          Type satelliteType = satelliteValue.GetType();
+          Type mainType = mainValue.GetType();
+          if (!satelliteType.Equals(mainType))
+          {
+            string msg = String.Format(CultureInfo.InvariantCulture,
+              "The resource {0} in the file {1} is of type {2} in the satellite assembly but of type {3} in the main assembly",
+              resourceName, satelliteResource.Name, satelliteType, mainType);
+            Runner.Report(satelliteAssembly, Severity.High, Confidence.High, msg);
+            continue;
+          }
 
-		private void CheckSatelliteResource (EmbeddedResource mainResource, EmbeddedResource satelliteResource, IMetadataTokenProvider satelliteAssembly)
-		{
-			using (Stream resourceStream = satelliteResource.GetResourceStream ())
-			using (ResourceSet resourceSet = new ResourceSet (resourceStream)) {
-				foreach (DictionaryEntry entry in resourceSet) {
-					string resourceName = (string) entry.Key;
-					object satelliteValue = entry.Value;
-					object mainValue;
-					if (!mainAssemblyResourceCache.TryGetMainResource (mainResource, resourceName, out mainValue)) {
-						string msg = String.Format (CultureInfo.InvariantCulture, 
-							"The resource {0} in the file {1} exist in the satellite assembly but not in the main assembly", 
-							resourceName, satelliteResource.Name);
-						Runner.Report (satelliteAssembly, Severity.Low, Confidence.High, msg);
-						continue;
-					}
+          if (satelliteType.Equals(typeof(string)))
+          {
+            Bitmask<int> mainParameters = GetStringFormatExpectedParameters((string)mainValue);
+            Bitmask<int> satelliteParameters = GetStringFormatExpectedParameters((string)satelliteValue);
 
-					Type satelliteType = satelliteValue.GetType ();
-					Type mainType = mainValue.GetType ();
-					if (!satelliteType.Equals (mainType)) {
-						string msg = String.Format (CultureInfo.InvariantCulture, 
-							"The resource {0} in the file {1} is of type {2} in the satellite assembly but of type {3} in the main assembly", 
-							resourceName, satelliteResource.Name, satelliteType, mainType);
-						Runner.Report (satelliteAssembly, Severity.High, Confidence.High, msg);
-						continue;
-					}
+            if (!mainParameters.Equals(satelliteParameters))
+            {
+              string msg = String.Format(CultureInfo.InvariantCulture,
+                "The string resource {0} in the file {1} does not use the same string format parameters in the satellite and main assemblies",
+                resourceName, satelliteResource.Name);
+              Runner.Report(satelliteAssembly, Severity.High, Confidence.Normal, msg);
+            }
+          }
+        }
+      }
+    }
 
-					if (satelliteType.Equals (typeof (string))) {
-						Bitmask<int> mainParameters = GetStringFormatExpectedParameters ((string) mainValue);
-						Bitmask<int> satelliteParameters = GetStringFormatExpectedParameters ((string) satelliteValue);
+    private static Bitmask<int> GetStringFormatExpectedParameters(string format)
+    {
+      Bitmask<int> result = new Bitmask<int>(false);
 
-						if (!mainParameters.Equals (satelliteParameters)) {
-							string msg = String.Format (CultureInfo.InvariantCulture, 
-								"The string resource {0} in the file {1} does not use the same string format parameters in the satellite and main assemblies", 
-								resourceName, satelliteResource.Name);
-							Runner.Report (satelliteAssembly, Severity.High, Confidence.Normal, msg);
-						}
-					}
-				}
-			}
-		}
+      if (format == null)
+        return result;
 
-		private static Bitmask<int> GetStringFormatExpectedParameters (string format)
-		{
-			Bitmask<int> result = new Bitmask<int> (false);
+      // if last character is { then there's no digit after it
+      for (int index = 0; index < format.Length - 1; index++)
+      {
+        if (format[index] != '{')
+          continue;
 
-			if (format == null)
-				return result;
+        char nextChar = format[index + 1];
+        if (nextChar == '{')
+        {
+          index++; // skip special {{
+          continue;
+        }
 
-			// if last character is { then there's no digit after it
-			for (int index = 0; index < format.Length - 1; index++) {
-				if (format [index] != '{')
-					continue;
+        if (!char.IsDigit(nextChar))
+          continue;
 
-				char nextChar = format [index + 1];
-				if (nextChar == '{') {
-					index++; // skip special {{
-					continue;
-				}
+        int value = nextChar - '0';
 
-				if (!char.IsDigit (nextChar))
-					continue;
+        index++; // next char is already added to value
 
-				int value = nextChar - '0';
+        int tenPower = 1;
+        while (index++ < format.Length)
+        {
+          char current = format[index];
+          if (!char.IsDigit(current))
+            break;
+          tenPower *= 10;
+          value = value * tenPower + current - '0';
+        }
 
-				index++; // next char is already added to value
+        if (index == format.Length)
+          break; // Incorrect format
 
-				int tenPower = 1;
-				while (index++ < format.Length) {
-					char current = format [index];
-					if (!char.IsDigit (current))
-						break;
-					tenPower *= 10;
-					value = value * tenPower + current - '0';
-				}
+        result.Set(value);
+      }
 
-				if (index == format.Length)
-					break; // Incorrect format
+      return result;
+    }
 
-				result.Set (value);
-			}
+    private static IEnumerable<AssemblyDefinition> GetSatellitesAssemblies(AssemblyDefinition mainAssembly)
+    {
+      string satellitesName = mainAssembly.Name.Name + ".resources.dll";
 
-			return result;
-		}
+      DirectoryInfo directory = new DirectoryInfo(Path.GetDirectoryName(
+        mainAssembly.MainModule.FileName));
+      DirectoryInfo[] subDirectories = directory.GetDirectories();
+      foreach (DirectoryInfo dir in subDirectories)
+      {
+        FileInfo[] files;
+        try
+        {
+          files = dir.GetFiles(satellitesName, SearchOption.TopDirectoryOnly);
+        }
+        catch (UnauthorizedAccessException)
+        {
+          continue; // If we don't have access to directory ignore it
+        }
+        if (files.Length == 0)
+          continue;
 
-		private static IEnumerable<AssemblyDefinition> GetSatellitesAssemblies (AssemblyDefinition mainAssembly)
-		{
-			string satellitesName = mainAssembly.Name.Name + ".resources.dll";
+        AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(files[0].FullName);
+        yield return assembly;
+      }
+    }
 
-			DirectoryInfo directory = new DirectoryInfo (Path.GetDirectoryName (
-				mainAssembly.MainModule.FileName));
-			DirectoryInfo [] subDirectories = directory.GetDirectories ();
-			foreach (DirectoryInfo dir in subDirectories) {
-				FileInfo [] files;
-				try {
-					files = dir.GetFiles (satellitesName, SearchOption.TopDirectoryOnly);
-				} catch (UnauthorizedAccessException) {
-					continue; // If we don't have access to directory ignore it
-				}
-				if (files.Length == 0)
-					continue;
+    // In satellites assemblies, the resource file name sometimes contains the culture
+    // some times do not
+    // This method always returns the name without the culture to be able to match with the main
+    // assembly resource
+    private static string GetNameInSatellite(Resource resource, string culture)
+    {
+      string name = resource.Name;
+      string nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
 
-				AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (files [0].FullName);
-				yield return assembly;
-			}
-		}
+      string cultureExtension = "." + culture;
 
-		// In satellites assemblies, the resource file name sometimes contains the culture 
-		// some times do not
-		// This method always returns the name without the culture to be able to match with the main
-		// assembly resource
-		private static string GetNameInSatellite (Resource resource, string culture)
-		{
-			string name = resource.Name;
-			string nameWithoutExtension = Path.GetFileNameWithoutExtension (name);
+      if (!nameWithoutExtension.EndsWith(cultureExtension, StringComparison.Ordinal))
+        return name;
 
-			string cultureExtension = "." + culture;
+      string nameWithoutCulture = Path.GetFileNameWithoutExtension(nameWithoutExtension);
+      return nameWithoutCulture + Path.GetExtension(name);
+    }
 
-			if (!nameWithoutExtension.EndsWith (cultureExtension, StringComparison.Ordinal))
-				return name;
+    private static bool IsResXResources(Resource resource)
+    {
+      return resource.Name.EndsWith(resXResourcesExtension, StringComparison.Ordinal);
+    }
 
-			string nameWithoutCulture = Path.GetFileNameWithoutExtension (nameWithoutExtension);
-			return nameWithoutCulture + Path.GetExtension (name);
-		}
+    private sealed class AssemblyResourceCache
+    {
+      private readonly AssemblyDefinition assembly;
+      private Dictionary<string, EmbeddedResource> files;
+      private Dictionary<EmbeddedResource, Dictionary<string, object>> values;
 
-		private static bool IsResXResources (Resource resource)
-		{
-			return resource.Name.EndsWith (resXResourcesExtension, StringComparison.Ordinal);
-		}
+      public AssemblyResourceCache(AssemblyDefinition assemblyDefinition)
+      {
+        assembly = assemblyDefinition;
+      }
 
-		private sealed class AssemblyResourceCache {
-			private AssemblyDefinition assembly;
-			private Dictionary<string, EmbeddedResource> files;
-			private Dictionary<EmbeddedResource, Dictionary<string, object>> values;
+      public bool TryGetMainResourceFile(string resourceFileName, out EmbeddedResource embeddedResource)
+      {
+        if (files == null)
+        {
+          // Build cache of resources files
+          files = new Dictionary<string, EmbeddedResource>();
 
-			public AssemblyResourceCache (AssemblyDefinition assemblyDefinition)
-			{
-				assembly = assemblyDefinition;
-			}
+          Collection<Resource> mainResources = assembly.MainModule.Resources;
+          foreach (EmbeddedResource resource in mainResources)
+            files.Add(resource.Name, resource);
+        }
+        return files.TryGetValue(resourceFileName, out embeddedResource);
+      }
 
-			public bool TryGetMainResourceFile (string resourceFileName, out EmbeddedResource embeddedResource)
-			{
-				if (files == null) {
-					// Build cache of resources files
-					files = new Dictionary<string, EmbeddedResource> ();
+      public bool TryGetMainResource(EmbeddedResource embeddedResource, string resourceName, out object value)
+      {
+        value = null;
 
-					Collection<Resource> mainResources = assembly.MainModule.Resources;
-					foreach (EmbeddedResource resource in mainResources)
-						files.Add (resource.Name, resource);
-				}
-				return files.TryGetValue (resourceFileName, out embeddedResource);
-			}
+        if (values == null)
+        {
+          // Build cache of resources values
+          values = new Dictionary<EmbeddedResource, Dictionary<string, object>>();
+        }
 
-			public bool TryGetMainResource (EmbeddedResource embeddedResource, string resourceName, out object value)
-			{
-				value = null;
+        if (!values.TryGetValue(embeddedResource, out Dictionary<string, object> fileResources))
+        {
+          fileResources = new Dictionary<string, object>();
+          using (Stream resourceStream = embeddedResource.GetResourceStream())
+          using (ResourceSet resourceSet = new ResourceSet(resourceStream))
+          {
+            foreach (DictionaryEntry entry in resourceSet)
+              fileResources.Add((string)entry.Key, entry.Value);
+          }
+          values.Add(embeddedResource, fileResources);
+        }
 
-				if (values == null) {
-					// Build cache of resources values
-					values = new Dictionary<EmbeddedResource, Dictionary<string, object>> ();
-				}
-
-				Dictionary<string, object> fileResources;
-				if (!values.TryGetValue (embeddedResource, out fileResources)) {
-					fileResources = new Dictionary<string, object> ();
-					using (Stream resourceStream = embeddedResource.GetResourceStream ())
-					using (ResourceSet resourceSet = new ResourceSet (resourceStream)) {
-						foreach (DictionaryEntry entry in resourceSet)
-							fileResources.Add ((string) entry.Key, entry.Value);
-					}
-					values.Add (embeddedResource, fileResources);
-				}
-
-				return fileResources.TryGetValue (resourceName, out value);
-			}
-		}
-	}
-
+        return fileResources.TryGetValue(resourceName, out value);
+      }
+    }
+  }
 }
