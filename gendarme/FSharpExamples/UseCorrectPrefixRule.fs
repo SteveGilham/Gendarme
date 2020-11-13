@@ -23,7 +23,7 @@ module FSApi =
   [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Naming",
                                                     "UseCorrectCasingRule")>]
   let CSharpContainingMethod x = // makes classes beginning with "C" happen
-    x |> Seq.filter (fun x -> x <> null)
+    x |> Seq.filter (isNull >> not)
 
   let createProcess (parameters : Params) =
     let doTool() = parameters.ToolPath

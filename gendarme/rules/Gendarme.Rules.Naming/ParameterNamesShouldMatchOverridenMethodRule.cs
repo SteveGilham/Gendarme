@@ -37,8 +37,8 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Naming {
-
+namespace Gendarme.Rules.Naming
+{
   /// <summary>
   /// This rule warns if an overriden method's parameter names does not match those of the
   /// base class or those of the implemented interface. This can be confusing because it may
@@ -80,19 +80,22 @@ namespace Gendarme.Rules.Naming {
   [Problem("This method overrides (or implements) an existing method but does not use the same parameter names as the original.")]
   [Solution("Keep parameter names consistent when overriding a class or implementing an interface.")]
   [FxCopCompatibility("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-	public class ParameterNamesShouldMatchOverriddenMethodRule : Rule, IMethodRule {
-
+  public class ParameterNamesShouldMatchOverriddenMethodRule : Rule, IMethodRule
+  {
     public override void Initialize(IRunner runner)
     {
       base.Initialize(runner);
 
       //check if this is a Boo assembly using macros
-			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				IsBooAssemblyUsingMacro = (e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
+      Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e)
+      {
+        IsBooAssemblyUsingMacro = (e.CurrentModule.AnyTypeReference((TypeReference tr) =>
+        {
           return tr.IsNamed(macro);
         }));
       };
     }
+
     private readonly static TypeName macro = new TypeName
     {
       Namespace = "Boo.Lang.Compiler.Ast",
@@ -104,7 +107,8 @@ namespace Gendarme.Rules.Naming {
       string name = method.Name;
       string base_name = baseMethod.Name;
 
-			if (name != base_name) {
+      if (name != base_name)
+      {
         if (!explicitInterfaceCheck)
           return false;
 
@@ -135,12 +139,14 @@ namespace Gendarme.Rules.Naming {
       if (baseType == null)
         return null;
 
-			while ((baseType.BaseType != null) && (baseType != baseType.BaseType)) {
+      while ((baseType.BaseType != null) && (baseType != baseType.BaseType))
+      {
         baseType = baseType.BaseType.Resolve();
         if ((baseType == null) || !baseType.HasMethods)
           return null;    // could not resolve
 
-				foreach (MethodDefinition baseMethodCandidate in baseType.Methods) {
+        foreach (MethodDefinition baseMethodCandidate in baseType.Methods)
+        {
           if (SignatureMatches(method, baseMethodCandidate, false))
             return baseMethodCandidate;
         }
@@ -160,7 +166,8 @@ namespace Gendarme.Rules.Naming {
         if ((interfaceCandidate == null) || !interfaceCandidate.HasMethods)
           continue;
 
-				foreach (MethodDefinition interfaceMethodCandidate in interfaceCandidate.Methods) {
+        foreach (MethodDefinition interfaceMethodCandidate in interfaceCandidate.Methods)
+        {
           if (SignatureMatches(method, interfaceMethodCandidate, true))
             return interfaceMethodCandidate;
         }

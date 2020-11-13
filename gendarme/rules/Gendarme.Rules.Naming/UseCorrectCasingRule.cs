@@ -226,7 +226,7 @@ namespace Gendarme.Rules.Naming
       return Runner.CurrentRuleResult;
     }
 
-    private static MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
+    private readonly static MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
       MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
 
     public RuleResult CheckMethod(MethodDefinition method)
