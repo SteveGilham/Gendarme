@@ -29,11 +29,13 @@
 //
 
 using System;
+using System.Linq;
 using System.Reflection;
 
 using Gendarme.Framework.Helpers;
 using Gendarme.Rules.Naming;
 
+using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
@@ -183,9 +185,11 @@ namespace Test.Rules.Naming
     public void FSharpAllowInterfaces()
     {
       var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-      var type = probe.Assembly.GetType("ParameterNamesShouldMatch.Handler");
-      AssertRuleDoesNotApply(type, "ShowMessage");
-      AssertRuleDoesNotApply(type, "set_Title");
+      var definition = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = definition.MainModule.GetType("ParameterNamesShouldMatch.Handler");
+
+      AssertRuleDoesNotApply(type.Methods.First(x => x.Name == "ParameterNamesShouldMatch.IVisualizerWindow.set_Title"));
+      AssertRuleDoesNotApply(type.Methods.First(x => x.Name == "ParameterNamesShouldMatch.IVisualizerWindow.ShowMessage"));
     }
   }
 }

@@ -39,171 +39,176 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Naming {
 
-	/// <summary>
-	/// This rule warns if an overriden method's parameter names does not match those of the 
-	/// base class or those of the implemented interface. This can be confusing because it may
-	/// not always be clear that it is an override or implementation of an interface method. It
-	/// also makes it more difficult to use the method with languages that support named
-	/// parameters (like C# 4.0).
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class Base {
-	///	public abstract void Write (string text);
-	/// }
-	/// 
-	/// public class SubType : Base {
-	///	public override void Write (string output)
-	///	{
-	///		//...
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class Base {
-	///	public abstract void Write (string text);
-	/// }
-	/// 
-	/// class SubType : Base {
-	///	public override void Write (string text)
-	///	{
-	///		//...
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  /// <summary>
+  /// This rule warns if an overriden method's parameter names does not match those of the
+  /// base class or those of the implemented interface. This can be confusing because it may
+  /// not always be clear that it is an override or implementation of an interface method. It
+  /// also makes it more difficult to use the method with languages that support named
+  /// parameters (like C# 4.0).
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class Base {
+  ///	public abstract void Write (string text);
+  /// }
+  ///
+  /// public class SubType : Base {
+  ///	public override void Write (string output)
+  ///	{
+  ///		//...
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class Base {
+  ///	public abstract void Write (string text);
+  /// }
+  ///
+  /// class SubType : Base {
+  ///	public override void Write (string text)
+  ///	{
+  ///		//...
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	[Problem ("This method overrides (or implements) an existing method but does not use the same parameter names as the original.")]
-	[Solution ("Keep parameter names consistent when overriding a class or implementing an interface.")]
-	[FxCopCompatibility ("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+  [Problem("This method overrides (or implements) an existing method but does not use the same parameter names as the original.")]
+  [Solution("Keep parameter names consistent when overriding a class or implementing an interface.")]
+  [FxCopCompatibility("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
 	public class ParameterNamesShouldMatchOverriddenMethodRule : Rule, IMethodRule {
 
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
 
-			//check if this is a Boo assembly using macros
+      //check if this is a Boo assembly using macros
 			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
 				IsBooAssemblyUsingMacro = (e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-					return tr.IsNamed (macro);
-				}));
-			};
-		}
-        private readonly static TypeName macro = new TypeName
-        {
-            Namespace = "Boo.Lang.Compiler.Ast",
-            Name = "MacroStatement"
-        };
+          return tr.IsNamed(macro);
+        }));
+      };
+    }
+    private readonly static TypeName macro = new TypeName
+    {
+      Namespace = "Boo.Lang.Compiler.Ast",
+      Name = "MacroStatement"
+    };
 
-		private static bool SignatureMatches (MethodReference method, MethodReference baseMethod, bool explicitInterfaceCheck)
-		{
-			string name = method.Name;
-			string base_name = baseMethod.Name;
+    private static bool SignatureMatches(MethodReference method, MethodReference baseMethod, bool explicitInterfaceCheck)
+    {
+      string name = method.Name;
+      string base_name = baseMethod.Name;
 
 			if (name != base_name) {
-				if (!explicitInterfaceCheck)
-					return false;
+        if (!explicitInterfaceCheck)
+          return false;
 
-				TypeReference btype = baseMethod.DeclaringType;
-                string bnspace = btype.GetTypeName().Namespace;
-				if (!name.StartsWith (bnspace, StringComparison.Ordinal))
-					return false;
-				if (name [bnspace.Length] != '.')
-					return false;
+        TypeReference btype = baseMethod.DeclaringType;
+        string bnspace = btype.GetTypeName().Namespace;
+        if (!name.StartsWith(bnspace, StringComparison.Ordinal))
+          return false;
+        if (name[bnspace.Length] != '.')
+          return false;
 
-				string bname = btype.Name;
-				if (String.CompareOrdinal (bname, 0, name, bnspace.Length + 1, bname.Length) != 0)
-					return false;
+        string bname = btype.Name;
+        if (String.CompareOrdinal(bname, 0, name, bnspace.Length + 1, bname.Length) != 0)
+          return false;
 
-				int dot = bnspace.Length + bname.Length + 1;
-				if (name [dot] != '.')
-					return false;
+        int dot = bnspace.Length + bname.Length + 1;
+        if (name[dot] != '.')
+          return false;
 
-				if (name.LastIndexOf (base_name, StringComparison.Ordinal) != dot + 1)
-					return false;
-			}
-			return method.CompareSignature (baseMethod);
-		}
+        if (name.LastIndexOf(base_name, StringComparison.Ordinal) != dot + 1)
+          return false;
+      }
+      return method.CompareSignature(baseMethod);
+    }
 
-		private static MethodDefinition GetBaseMethod (MethodDefinition method)
-		{
-			TypeDefinition baseType = method.DeclaringType.Resolve ();
-			if (baseType == null)
-				return null;
+    private static MethodDefinition GetBaseMethod(MethodDefinition method)
+    {
+      TypeDefinition baseType = method.DeclaringType.Resolve();
+      if (baseType == null)
+        return null;
 
 			while ((baseType.BaseType != null) && (baseType != baseType.BaseType)) {
-				baseType = baseType.BaseType.Resolve ();
-				if ((baseType == null) || !baseType.HasMethods)
-					return null;		// could not resolve
+        baseType = baseType.BaseType.Resolve();
+        if ((baseType == null) || !baseType.HasMethods)
+          return null;    // could not resolve
 
 				foreach (MethodDefinition baseMethodCandidate in baseType.Methods) {
-					if (SignatureMatches (method, baseMethodCandidate, false))
-						return baseMethodCandidate;
-				}
-			}
-			return null;
-		}
+          if (SignatureMatches(method, baseMethodCandidate, false))
+            return baseMethodCandidate;
+        }
+      }
+      return null;
+    }
 
-		private static MethodDefinition GetInterfaceMethod (MethodDefinition method)
-		{
-			TypeDefinition type = (method.DeclaringType as TypeDefinition);
-			if (!type.HasInterfaces)
-				return null;
+    private static MethodDefinition GetInterfaceMethod(MethodDefinition method)
+    {
+      TypeDefinition type = (method.DeclaringType as TypeDefinition);
+      if (!type.HasInterfaces)
+        return null;
 
-            foreach (TypeReference interfaceReference in type.Interfaces.Select(x => x.InterfaceType))
-            {
-				TypeDefinition interfaceCandidate = interfaceReference.Resolve ();
-				if ((interfaceCandidate == null) || !interfaceCandidate.HasMethods)
-					continue;
+      foreach (TypeReference interfaceReference in type.Interfaces.Select(x => x.InterfaceType))
+      {
+        TypeDefinition interfaceCandidate = interfaceReference.Resolve();
+        if ((interfaceCandidate == null) || !interfaceCandidate.HasMethods)
+          continue;
 
 				foreach (MethodDefinition interfaceMethodCandidate in interfaceCandidate.Methods) {
-					if (SignatureMatches (method, interfaceMethodCandidate, true))
-						return interfaceMethodCandidate;
-				}
-			}
-			return null;
-		}
+          if (SignatureMatches(method, interfaceMethodCandidate, true))
+            return interfaceMethodCandidate;
+        }
+      }
+      return null;
+    }
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedCode () ||
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedCode() ||
                 method.DeclaringType.Name.Contains("@"))
-				return RuleResult.DoesNotApply;
+        return RuleResult.DoesNotApply;
 
-			MethodDefinition baseMethod = null;
-			if (!method.IsNewSlot)
-				baseMethod = GetBaseMethod (method);
-			if (baseMethod == null)
-				baseMethod = GetInterfaceMethod (method);
-			if (baseMethod == null)
-				return RuleResult.Success;
+      MethodDefinition baseMethod = null;
+      if (!method.IsNewSlot)
+        baseMethod = GetBaseMethod(method);
+      if (baseMethod == null)
+        baseMethod = GetInterfaceMethod(method);
+      if (baseMethod == null)
+        return RuleResult.Success;
 
-			IList<ParameterDefinition> base_pdc = baseMethod.Parameters;
-			//do not trigger false positives on Boo macros
-			if (IsBooAssemblyUsingMacro && IsBooMacroParameter (base_pdc [0]))
-				return RuleResult.Success;
+      IList<ParameterDefinition> base_pdc = baseMethod.Parameters;
+      //do not trigger false positives on Boo macros
+      if (IsBooAssemblyUsingMacro && IsBooMacroParameter(base_pdc[0]))
+        return RuleResult.Success;
 
-			IList<ParameterDefinition> pdc = method.Parameters;
-			for (int i = 0; i < pdc.Count; i++) {
-				if (pdc [i].Name != base_pdc [i].Name) {
-					string s = String.Format (CultureInfo.InvariantCulture,
-						"The name of parameter #{0} ({1}) does not match the name of the parameter in the overriden method ({2}).", 
-						i + 1, pdc [i].Name, base_pdc [i].Name);
-					Runner.Report (method, Severity.Medium, Confidence.High, s);
-				}
-			}
-			return Runner.CurrentRuleResult;
-		}
+      if (base_pdc.All(x => String.IsNullOrWhiteSpace(x.Name)))
+        return RuleResult.DoesNotApply;
 
-		private bool IsBooAssemblyUsingMacro { get; set; }
+      IList<ParameterDefinition> pdc = method.Parameters;
+      for (int i = 0; i < pdc.Count; i++)
+      {
+        if (pdc[i].Name != base_pdc[i].Name)
+        {
+          string s = String.Format(CultureInfo.InvariantCulture,
+            "The name of parameter #{0} ({1}) does not match the name of the parameter in the overriden method ({2}).",
+            i + 1, pdc[i].Name, base_pdc[i].Name);
+          Runner.Report(method, Severity.Medium, Confidence.High, s);
+        }
+      }
+      return Runner.CurrentRuleResult;
+    }
 
-		private static bool IsBooMacroParameter (ParameterReference p)
-		{
-			return p.Name == "macro" && p.ParameterType.IsNamed (macro);
-		}
-	}
+    private bool IsBooAssemblyUsingMacro { get; set; }
+
+    private static bool IsBooMacroParameter(ParameterReference p)
+    {
+      return p.Name == "macro" && p.ParameterType.IsNamed(macro);
+    }
+  }
 }
