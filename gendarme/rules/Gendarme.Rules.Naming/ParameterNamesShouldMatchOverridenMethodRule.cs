@@ -200,6 +200,8 @@ namespace Gendarme.Rules.Naming
       IList<ParameterDefinition> pdc = method.Parameters;
       for (int i = 0; i < pdc.Count; i++)
       {
+        if (string.IsNullOrWhiteSpace(base_pdc[i].Name))
+          continue;
         if (pdc[i].Name != base_pdc[i].Name)
         {
           string s = String.Format(CultureInfo.InvariantCulture,
