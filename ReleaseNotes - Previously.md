@@ -1,3 +1,9 @@
+# 2020.7.21.12091-pre-release
+
+Issues found in use
+* Notice zero values in non-int32 enums
+* Skip types called `<PrivateImplementationDetails>`
+
 # 2020.6.12.11211-pre-release
 
 Issues found in use
