@@ -524,7 +524,7 @@ _Target "Unpack" (fun _ ->
     proj
 
   let vname = !Version + "-pre-release"
-  let from = (Path.getFullName @"_Unpack\packages\altcode.gendarme\") @@ vname
+  let from = (Path.getFullName @"_Unpack/packages/altcode.gendarme/") @@ vname
   printfn "Copying from %A to %A" from unpack
   Shell.copyDir unpack from (fun _ -> true)
 
@@ -554,7 +554,7 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     let nugget = !!"./_Packaging/altcode.gendarme-tool.*.nupkg" |> Seq.last
     let unpack = Path.getFullName "_Unpack-tool/tool"
     System.IO.Compression.ZipFile.ExtractToDirectory(nugget, unpack)
-    let from = Path.getFullName @"_Unpack-tool\tool\tools\netcoreapp2.1\any\"
+    let from = Path.getFullName @"_Unpack-tool/tool/tools/netcoreapp2.1/any/"
     Shell.copyDir unpack from (fun _ -> true)
 
     let packroot = Path.GetFullPath "./_Packaging"
