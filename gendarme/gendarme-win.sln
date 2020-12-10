@@ -132,7 +132,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "CecilExtensions", "CecilExt
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FSharpExamples", "FSharpExamples\FSharpExamples.fsproj", "{EE3693FE-3A8A-4078-9248-88A4FCA39CFB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-cli", "..\Build\dotnet-cli.csproj", "{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet", "..\Build\NuGet.csproj", "{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

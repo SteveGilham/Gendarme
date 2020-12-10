@@ -42,7 +42,7 @@ let dotnetOptions (o : DotNet.Options) =
 
 let toolPackages =
   let xml =
-    "./Build/dotnet-cli.csproj"
+    "./Build/NuGet.csproj"
     |> Path.getFullName
     |> XDocument.Load
   xml.Descendants(XName.Get("PackageReference"))
@@ -80,6 +80,7 @@ let cliArguments =
   { MSBuild.CliArguments.Create() with
       ConsoleLogParameters = []
       DistributedLoggers = None
+      Properties = [("CheckEolTargetFramework", "false")]
       DisableInternalBinLog = true }
 
 let withWorkingDirectoryVM dir o =
@@ -102,27 +103,15 @@ let defaultTestOptions fwk common (o : DotNet.TestOptions) =
       Framework = fwk // Some "netcoreapp3.0"
       Configuration = DotNet.BuildConfiguration.Debug }
 
-let msbuildRelease proj =
-  MSBuild.build (fun p ->
-    { p with
-        Verbosity = Some MSBuildVerbosity.Normal
-        ConsoleLogParameters = []
-        DistributedLoggers = None
-        DisableInternalBinLog = true
-        Properties =
-          [ "Configuration", "Release"
-            "DebugSymbols", "True" ] }) proj
+let dotnetBuildRelease proj =
+  DotNet.build (fun p ->
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Release }
+    |> withMSBuildParams) (Path.GetFullPath proj)
 
-let msbuildDebug proj =
-  MSBuild.build (fun p ->
-    { p with
-        Verbosity = Some MSBuildVerbosity.Normal
-        ConsoleLogParameters = []
-        DistributedLoggers = None
-        DisableInternalBinLog = true
-        Properties =
-          [ "Configuration", "Debug"
-            "DebugSymbols", "True" ] }) proj
+let dotnetBuildDebug proj =
+  DotNet.build (fun p ->
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Debug }
+    |> withMSBuildParams) (Path.GetFullPath proj)
 
 let misses = ref 0
 
@@ -221,9 +210,9 @@ _Target "Restore" (fun _ ->
        let proj = Path.GetFileName f
        DotNet.restore (fun o -> o.WithCommon(withWorkingDirectoryVM dir)) proj))
 
-_Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> msbuildRelease)
+_Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildRelease)
 
-_Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> msbuildDebug)
+_Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
 
 _Target "UnitTest" ignore
 
