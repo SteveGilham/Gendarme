@@ -58,7 +58,7 @@ let nunitConsole =
   |> Path.getFullName
 
 let altcover =
-  ("./packages/" + (packageVersion "altcover") + "/tools/net45/AltCover.exe")
+  ("./packages/" + (packageVersion "altcover") + "/tools/net472/AltCover.exe")
   |> Path.getFullName
 
 let framework_altcover = Fake.DotNet.ToolType.CreateFullFramework()
