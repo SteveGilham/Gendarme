@@ -39,7 +39,6 @@ The AvoidSwitchStatements rule needs some serious decompiler code to recognise R
 The following rule suites have unit test failures
 
 * Framework -- 2 failures for Stack entry analysis (inherited from the VS2013 build)
-* BadPractice -- 4 tests need to be rewritten for .net core
 * Concurrency -- 6 failures
 * Correctness -- 6 failures (36 on .net core)
 * Globalization -- 1 failure
