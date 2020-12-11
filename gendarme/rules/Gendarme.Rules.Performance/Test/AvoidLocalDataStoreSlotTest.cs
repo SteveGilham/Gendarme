@@ -28,8 +28,7 @@
 
 using System;
 
-#if NETCOREAPP2_1
-#else
+#if !NETCOREAPP2_1
 
 using System.Runtime.Remoting.Contexts;
 
@@ -246,17 +245,17 @@ namespace Test.Rules.Performance
     {
 #if NETCOREAPP2_1
 #else
-			AssertRuleFailure<BadContextLocalStorage> (".ctor");
-			AssertRuleFailure<BadContextLocalStorage> ("get_Key");
-			AssertRuleFailure<BadContextLocalStorage> ("set_Key");
-			AssertRuleFailure<BadContextLocalStorage> ("GetKeyCopy");
+      AssertRuleFailure<BadContextLocalStorage>(".ctor");
+      AssertRuleFailure<BadContextLocalStorage>("get_Key");
+      AssertRuleFailure<BadContextLocalStorage>("set_Key");
+      AssertRuleFailure<BadContextLocalStorage>("GetKeyCopy");
 
-			AssertRuleFailure<BadNamedContextLocalStorage> (".ctor");
-			AssertRuleFailure<BadNamedContextLocalStorage> ("Finalize");
-			AssertRuleFailure<BadNamedContextLocalStorage> ("GetLocalDataStoreSlot");
-			AssertRuleFailure<BadNamedContextLocalStorage> ("get_Key");
-			AssertRuleFailure<BadNamedContextLocalStorage> ("set_Key");
-			AssertRuleFailure<BadNamedContextLocalStorage> ("GetKeyCopy");
+      AssertRuleFailure<BadNamedContextLocalStorage>(".ctor");
+      AssertRuleFailure<BadNamedContextLocalStorage>("Finalize");
+      AssertRuleFailure<BadNamedContextLocalStorage>("GetLocalDataStoreSlot");
+      AssertRuleFailure<BadNamedContextLocalStorage>("get_Key");
+      AssertRuleFailure<BadNamedContextLocalStorage>("set_Key");
+      AssertRuleFailure<BadNamedContextLocalStorage>("GetKeyCopy");
 #endif
 
       // no call
@@ -282,7 +281,9 @@ namespace Test.Rules.Performance
     public void OtherUsage()
     {
       AssertRuleSuccess<AvoidLocalDataStoreSlotTest>("UsingThread");
+#if !NETCOREAPP2_1
       AssertRuleSuccess<AvoidLocalDataStoreSlotTest>("UsingContext");
+#endif
     }
   }
 }
