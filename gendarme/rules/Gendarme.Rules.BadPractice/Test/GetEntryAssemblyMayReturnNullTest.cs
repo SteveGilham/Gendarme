@@ -83,11 +83,16 @@ namespace Test.Rules.BadPractice
       AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
     }
 
+    // TODO separate library
+#if !NETCOREAPP2_1 // unit tests are console mode executables
+
     [Test]
     public void TestMethodNotCallingGetEntryAssembly()
     {
       AssertRuleSuccess<ClassCallingGetEntryAssembly>("NoCalls");
     }
+
+#endif
 
     private TypeDefinition GetTest<T>(AssemblyDefinition assembly)
     {
@@ -114,6 +119,9 @@ namespace Test.Rules.BadPractice
       }
     }
 
+    // TODO separate library
+#if !NETCOREAPP2_1 // unit tests are console mode executables
+
     [Test]
     public void TestMethodCallingGetEntryAssemblyOnce()
     {
@@ -125,5 +133,7 @@ namespace Test.Rules.BadPractice
     {
       AssertRuleFailure<ClassCallingGetEntryAssembly>("ThreeCalls", 3);
     }
+
+#endif
   }
 }

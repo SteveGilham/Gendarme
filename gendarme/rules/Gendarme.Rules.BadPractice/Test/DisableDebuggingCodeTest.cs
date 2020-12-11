@@ -135,6 +135,7 @@ namespace Test.Rules.BadPractice
       (Runner as TestRunner).OnAssembly(assembly);
       Assert.IsTrue(Rule.Active, "Assembly-Active-True");
 
+// TODO separate library
 #if !NETCOREAPP2_1 // unit tests are console mode executables
       (Runner as TestRunner).OnModule(assembly.MainModule);
       Assert.IsTrue(Rule.Active, "Module-Active-True");
