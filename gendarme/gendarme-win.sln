@@ -15,6 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\appveyor.yml = ..\appveyor.yml
 		..\Build\build.fsx = ..\Build\build.fsx
 		..\.config\dotnet-tools.json = ..\.config\dotnet-tools.json
+		..\README.md = ..\README.md
+		..\ReleaseNotes - Previously.md = ..\ReleaseNotes - Previously.md
+		..\ReleaseNotes.md = ..\ReleaseNotes.md
 		..\Build\setup.fsx = ..\Build\setup.fsx
 		..\Build\targets.fsx = ..\Build\targets.fsx
 	EndProjectSection
@@ -129,7 +132,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "CecilExtensions", "CecilExt
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FSharpExamples", "FSharpExamples\FSharpExamples.fsproj", "{EE3693FE-3A8A-4078-9248-88A4FCA39CFB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-cli", "..\Build\dotnet-cli.csproj", "{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet", "..\Build\NuGet.csproj", "{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -346,9 +349,7 @@ Global
 		{EE3693FE-3A8A-4078-9248-88A4FCA39CFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE3693FE-3A8A-4078-9248-88A4FCA39CFB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29C26A5B-8486-4F3A-B47D-FD8E791DDC4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

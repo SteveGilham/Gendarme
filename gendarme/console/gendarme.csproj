@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <RootNamespace>Gendarme</RootNamespace>
-    <TargetFrameworks>net40;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net40</TargetFrameworks>
     <PackAsTool Condition="'$(TargetFramework)' != 'net40'">True</PackAsTool>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\gendarme\</SolutionDir>
@@ -11,6 +11,8 @@
     <ApplicationIcon>$(SolutionDir)swf-wizard-runner\Resources\gendarme.ico</ApplicationIcon>
     <ContinuousIntegrationBuild Condition="'$(APPVEYOR)'=='True'">true</ContinuousIntegrationBuild>
     <DeterministicSourcePaths Condition="'$(APPVEYOR)'=='True'">true</DeterministicSourcePaths>
+    <RollForward>Major</RollForward>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DefineConstants>TRACE;RELEASE</DefineConstants>

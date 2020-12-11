@@ -37,96 +37,99 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Performance {
+namespace Gendarme.Rules.Performance
+{
+  /// <summary>
+  /// This rule looks for <c>InitOnly</c> fields (<c>readonly</c> in C#) that could be
+  /// turned into <c>Literal</c> (<c>const</c> in C#) because their value is known at
+  /// compile time. <c>Literal</c> fields don't need to be initialized (i.e. they don't
+  /// force the compiler to add a static constructor to the type) resulting in less code and the
+  /// value (not a reference to the field) will be directly used in the IL (which is OK
+  /// if the field has internal visibility, but is often problematic if the field is visible outside
+  /// the assembly).
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class ClassWithReadOnly {
+  ///	static readonly int One = 1;
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class ClassWithConst
+  /// {
+  ///	const int One = 1;
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.2</remarks>
 
-	/// <summary>
-	/// This rule looks for <c>InitOnly</c> fields (<c>readonly</c> in C#) that could be
-	/// turned into <c>Literal</c> (<c>const</c> in C#) because their value is known at
-	/// compile time. <c>Literal</c> fields don't need to be initialized (i.e. they don't
-	/// force the compiler to add a static constructor to the type) resulting in less code and the 
-	/// value (not a reference to the field) will be directly used in the IL (which is OK
-	/// if the field has internal visibility, but is often problematic if the field is visible outside
-	/// the assembly).
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class ClassWithReadOnly {
-	///	static readonly int One = 1;
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class ClassWithConst
-	/// {
-	///	const int One = 1;
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.2</remarks>
+  [Problem("Static readonly fields were found where a literal (const) field could be used.")]
+  [Solution("Replace the static readonly fields with const(ant) fields.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  [FxCopCompatibility("Microsoft.Performance", "CA1802:UseLiteralsWhereAppropriate")]
+  public class PreferLiteralOverInitOnlyFieldsRule : Rule, ITypeRule
+  {
+    private static OpCodeBitmask Constant = new OpCodeBitmask(0xFFFE00000, 0x2000000000000, 0x0, 0x0);
+    private static OpCodeBitmask Convert = new OpCodeBitmask(0x0, 0x80203FC000000000, 0x400F87F8000001FF, 0x0);
 
-	[Problem ("Static readonly fields were found where a literal (const) field could be used.")]
-	[Solution ("Replace the static readonly fields with const(ant) fields.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	[FxCopCompatibility ("Microsoft.Performance", "CA1802:UseLiteralsWhereAppropriate")]
-	public class PreferLiteralOverInitOnlyFieldsRule : Rule, ITypeRule {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.IsEnum || type.IsInterface || type.IsDelegate())
+        return RuleResult.DoesNotApply;
 
-		static OpCodeBitmask Constant = new OpCodeBitmask (0xFFFE00000, 0x2000000000000, 0x0, 0x0);
-		static OpCodeBitmask Convert = new OpCodeBitmask (0x0, 0x80203FC000000000, 0x400F87F8000001FF, 0x0);
+      // get the static constructor
+      MethodDefinition cctor = type.Methods.FirstOrDefault(m => m.IsConstructor && m.IsStatic);
+      if (cctor == null)
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (type.IsEnum || type.IsInterface || type.IsDelegate ())
-				return RuleResult.DoesNotApply;
+      // check if we store things into static fields
+      if (!OpCodeEngine.GetBitmask(cctor).Get(Code.Stsfld))
+        return RuleResult.DoesNotApply;
 
-			// get the static constructor
-			MethodDefinition cctor = type.Methods.FirstOrDefault (m => m.IsConstructor && m.IsStatic);
-			if (cctor == null)
-				return RuleResult.DoesNotApply;
+      // verify each store we do in a static field
+      foreach (Instruction ins in cctor.Body.Instructions)
+      {
+        if (ins.OpCode.Code != Code.Stsfld)
+          continue;
 
-			// check if we store things into static fields
-			if (!OpCodeEngine.GetBitmask (cctor).Get (Code.Stsfld))
-				return RuleResult.DoesNotApply;
+        // make sure we assign to this type (and not another one)
+        FieldReference fr = (ins.Operand as FieldReference);
+        if (fr.DeclaringType != type)
+          continue;
+        // if it's this one then we have a FieldDefinition available
+        FieldDefinition field = (fr is FieldDefinition) ?
+                                 fr as FieldDefinition : fr.Resolve();
+        // check for static (we already know with Stsfld) and readonly
+        if (!field.IsInitOnly)
+          continue;
 
-			// verify each store we do in a static field
-			foreach (Instruction ins in cctor.Body.Instructions) {
-				if (ins.OpCode.Code != Code.Stsfld)
-					continue;
-
-				// make sure we assign to this type (and not another one)
-				FieldReference fr = (ins.Operand as FieldReference);
-				if (fr.DeclaringType != type)
-					continue;
-				// if it's this one then we have a FieldDefinition available
-				FieldDefinition field = (fr as FieldDefinition);
-				// check for static (we already know with Stsfld) and readonly
-				if (!field.IsInitOnly)
-					continue;
-
-				// look at what is being assigned
-				Instruction previous = ins.Previous;
-				// while skipping conversions
-				if (Convert.Get (previous.OpCode.Code))
-					previous = previous.Previous;
-				// and report constant stuff
-				if (Constant.Get (previous.OpCode.Code)) {
-					// adjust severity based on the field visibility and it's type
-					Severity s = (field.FieldType.IsNamed (systemString) || !field.IsVisible ()) ?
-						Severity.High : Severity.Medium;
-					Runner.Report (field, s, Confidence.Normal);
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-
-        private readonly static TypeName systemString = new TypeName
+        // look at what is being assigned
+        Instruction previous = ins.Previous;
+        // while skipping conversions
+        if (Convert.Get(previous.OpCode.Code))
+          previous = previous.Previous;
+        // and report constant stuff
+        if (Constant.Get(previous.OpCode.Code))
         {
-            Namespace = "System",
-            Name = "String"
-        };
+          // adjust severity based on the field visibility and it's type
+          Severity s = (field.FieldType.IsNamed(systemString) || !field.IsVisible()) ?
+            Severity.High : Severity.Medium;
+          Runner.Report(field, s, Confidence.Normal);
+        }
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+
+    private readonly static TypeName systemString = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
 
 #if false
 		public void Bitmask ()
@@ -187,5 +190,5 @@ namespace Gendarme.Rules.Performance {
 			Console.WriteLine (convert);
 		}
 #endif
-	}
+  }
 }

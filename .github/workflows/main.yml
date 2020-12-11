@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - trunk
+    - feature/*
+    - develop/github/*    
+  pull_request:
+    branches:
+    - trunk
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.100'
+    - name: Tools
+      run: dotnet tool restore
+    - name: Setup
+      run: dotnet fake run ./Build/setup.fsx
+    - name: Build
+#      env:
+#        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: dotnet fake run ./Build/build.fsx  --target OperationalTest
+    - uses: actions/upload-artifact@v2
+      with:
+          name: nupkgs
+          path: _Packagin*/*.nupkg
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+          name: reports.windows
+          path: _Reports
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.100'
+    - name: Tools
+      run: dotnet tool restore
+    - name: Setup
+      run: dotnet fake run ./Build/setup.fsx
+    - name: Build
+      run: dotnet fake run ./Build/build.fsx   --target OperationalTest
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+          name: reports.linux
+          path: _Reports

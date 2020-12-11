@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Engines.SuppressMessageEngine
 //
 // Authors:
@@ -33,210 +33,229 @@ using Mono.Cecil;
 
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework.Engines {
+namespace Gendarme.Framework.Engines
+{
+  public class SuppressMessageEngine : Engine
+  {
+    //const string SuppressMessage = "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute";
 
-	public class SuppressMessageEngine : Engine {
+    private static readonly Type fxCopCompatibility = typeof(FxCopCompatibilityAttribute);
+    private Dictionary<string, HashSet<string>> mapper;
+    private Dictionary<string, HashSet<string>> targets;
 
-		const string SuppressMessage = "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute";
+    public override void Initialize(EngineController controller)
+    {
+      base.Initialize(controller);
+      controller.BuildingAssembly += new EventHandler<EngineEventArgs>(OnAssembly);
 
-		static Type fxCopCompatibility = typeof (FxCopCompatibilityAttribute);
-		private Dictionary<string, HashSet <string>> mapper;
-		Dictionary<string, HashSet<string>> targets;
-
-		public override void Initialize (EngineController controller)
-		{
-			base.Initialize (controller);
-			controller.BuildingAssembly += new EventHandler<EngineEventArgs> (OnAssembly);
-
-			mapper = new Dictionary<string, HashSet<string>> ();
-			foreach (IRule rule in Controller.Runner.Rules) {
-				Type type = rule.GetType ();
-				object [] attrs = type.GetCustomAttributes (fxCopCompatibility, true);
-				if (attrs.Length == 0)
-					continue;
-				// one Gendarme rule can be mapped to several FxCop rules
-				// one FxCop rules can be split across several Gendarme rules
-				foreach (FxCopCompatibilityAttribute attr in attrs) {
-					HashSet<string> grules = null;
-					if (!mapper.TryGetValue (attr.CheckId, out grules)) {
-						grules = new HashSet<string> ();
-						mapper.Add (attr.CheckId, grules);
-					}
-					grules.Add (rule.FullName);
-				}
-			}
-		}
-
-		void OnAssembly (object sender, EngineEventArgs e)
-		{
-			// we only need to check the custom attributes if [SuppressMessage] is referenced (note: won't work for mscorlib)
-			AssemblyDefinition assembly = (sender as AssemblyDefinition);
-			if (assembly.MainModule.AnyTypeReference ((TypeReference tr) => { return tr.IsNamed (suppressMessage); })) {
-				Controller.BuildingCustomAttributes += new EventHandler<EngineEventArgs> (OnCustomAttributes);
-			} else {
-				Controller.BuildingCustomAttributes -= new EventHandler<EngineEventArgs> (OnCustomAttributes);
-			}
-		}
-
-        private readonly static TypeName suppressMessage = new TypeName
+      mapper = new Dictionary<string, HashSet<string>>();
+      foreach (IRule rule in Controller.Runner.Rules)
+      {
+        Type type = rule.GetType();
+        object[] attrs = type.GetCustomAttributes(fxCopCompatibility, true);
+        if (attrs.Length == 0)
+          continue;
+        // one Gendarme rule can be mapped to several FxCop rules
+        // one FxCop rules can be split across several Gendarme rules
+        foreach (FxCopCompatibilityAttribute attr in attrs)
         {
-            Namespace = "System.Diagnostics.CodeAnalysis",
-            Name = "SuppressMessageAttribute"
-        };
+          if (!mapper.TryGetValue(attr.CheckId, out HashSet<string> grules))
+          {
+            grules = new HashSet<string>();
+            mapper.Add(attr.CheckId, grules);
+          }
+          grules.Add(rule.FullName);
+        }
+      }
+    }
 
+    private void OnAssembly(object sender, EngineEventArgs e)
+    {
+      // we only need to check the custom attributes if [SuppressMessage] is referenced (note: won't work for mscorlib)
+      AssemblyDefinition assembly = (sender as AssemblyDefinition);
+      if (assembly.MainModule.AnyTypeReference((TypeReference tr) => { return tr.IsNamed(suppressMessage); }))
+      {
+        Controller.BuildingCustomAttributes += new EventHandler<EngineEventArgs>(OnCustomAttributes);
+      }
+      else
+      {
+        Controller.BuildingCustomAttributes -= new EventHandler<EngineEventArgs>(OnCustomAttributes);
+      }
+    }
 
-		static string GetPropertyString (ICustomAttribute attribute, string name)
-		{
-			if (!attribute.HasProperties)
-				return String.Empty;
+    private readonly static TypeName suppressMessage = new TypeName
+    {
+      Namespace = "System.Diagnostics.CodeAnalysis",
+      Name = "SuppressMessageAttribute"
+    };
 
-			foreach (var namedArg in attribute.Properties) {
-				if (namedArg.Name == name) {
-					return (namedArg.Argument.Value as string);
-				}
-			}
-			return String.Empty;
-		}
+    private static string GetPropertyString(ICustomAttribute attribute, string name)
+    {
+      if (!attribute.HasProperties)
+        return String.Empty;
 
-		void OnCustomAttributes (object sender, EngineEventArgs e)
-		{
-			ICustomAttributeProvider cap = (sender as ICustomAttributeProvider);
-			if (!cap.HasCustomAttributes)
-				return;
+      foreach (var namedArg in attribute.Properties)
+      {
+        if (namedArg.Name == name)
+        {
+          return (namedArg.Argument.Value as string);
+        }
+      }
+      return String.Empty;
+    }
 
-			// deal with Target only for global (asembly-level) attributes
-			bool global = (sender is AssemblyDefinition);
+    private void OnCustomAttributes(object sender, EngineEventArgs e)
+    {
+      ICustomAttributeProvider cap = (sender as ICustomAttributeProvider);
+      if (!cap.HasCustomAttributes)
+        return;
 
-			foreach (CustomAttribute ca in cap.CustomAttributes) {
-				if (!ca.HasConstructorArguments)
-					continue;
-				if (!ca.AttributeType.IsNamed (suppressMessage))
-					continue;
+      // deal with Target only for global (asembly-level) attributes
+      bool global = (sender is AssemblyDefinition);
 
-				var arguments = ca.ConstructorArguments;
-				string category = (string) arguments [0].Value;
-				string checkId = (string) arguments [1].Value;
-				if (String.IsNullOrEmpty (category) || String.IsNullOrEmpty (checkId))
-					continue;
+      foreach (CustomAttribute ca in cap.CustomAttributes)
+      {
+        if (!ca.HasConstructorArguments)
+          continue;
+        if (!ca.AttributeType.IsNamed(suppressMessage))
+          continue;
 
-				IMetadataTokenProvider token = (sender as IMetadataTokenProvider);
-				// map from FxCop - otherwise keep the Gendarme syntax
-				HashSet<string> mapped_names = null;
-				if (!mapper.TryGetValue (checkId, out mapped_names)) {
-					mapped_names = new HashSet<string> ();
-					mapped_names.Add (category + "." + checkId);
-				}
+        var arguments = ca.ConstructorArguments;
+        string category = (string)arguments[0].Value;
+        string checkId = (string)arguments[1].Value;
+        if (String.IsNullOrEmpty(category) || String.IsNullOrEmpty(checkId))
+          continue;
 
-				// FIXME: Scope ? "member", "resource", "module", "type", "method", or "namespace"
+        IMetadataTokenProvider token = (sender as IMetadataTokenProvider);
+        // map from FxCop - otherwise keep the Gendarme syntax
+        if (!mapper.TryGetValue(checkId, out HashSet<string> mapped_names))
+        {
+          mapped_names = new HashSet<string>
+          {
+            category + "." + checkId
+          };
+        }
 
-				string target = global ? GetPropertyString (ca, "Target") : null;
-				if (String.IsNullOrEmpty (target)) {
-					AddIgnore (token, mapped_names);
-					// continue loop - [SuppressMessage] has AllowMultiple == true
-					continue;
-				} else {
-					// we do not want to look for each target individually since we do not know
-					// what they represent. Running the "big" loop one time is more than enough
-					AddTargets (target, mapped_names);
-				}
-			}
+        // FIXME: Scope ? "member", "resource", "module", "type", "method", or "namespace"
 
-			ResolveTargets ();
-		}
+        string target = global ? GetPropertyString(ca, "Target") : null;
+        if (String.IsNullOrEmpty(target))
+        {
+          AddIgnore(token, mapped_names);
+          // continue loop - [SuppressMessage] has AllowMultiple == true
+          continue;
+        }
+        else
+        {
+          // we do not want to look for each target individually since we do not know
+          // what they represent. Running the "big" loop one time is more than enough
+          AddTargets(target, mapped_names);
+        }
+      }
 
-		private void AddIgnore (IMetadataTokenProvider token, IEnumerable<string> mapped_names)
-		{
-			IIgnoreList ignore = Controller.Runner.IgnoreList;
-			switch (token.MetadataToken.TokenType) {
-			case TokenType.Property:
-				PropertyDefinition pd = (token as PropertyDefinition);
-				foreach (string name in mapped_names) {
-					ignore.Add (name, pd.GetMethod);
-					ignore.Add (name, pd.SetMethod);
-				}
-				break;
-			case TokenType.Event:
-				EventDefinition ed = (token as EventDefinition);
-				foreach (string name in mapped_names) {
-					ignore.Add (name, ed.AddMethod);
-					ignore.Add (name, ed.RemoveMethod);
-					ignore.Add (name, ed.InvokeMethod);
-					if (ed.HasOtherMethods) {
-						foreach (MethodDefinition md in ed.OtherMethods) {
-							ignore.Add (name, md);
-						}
-					}
-				}
-				break;
-			}
-			// the 'token' itself is always added (i.e. for properties and events too)
-			foreach (string name in mapped_names)
-				ignore.Add (name, token);
-		}
+      ResolveTargets();
+    }
 
-		private void AddTargets (string target, IEnumerable<string> mapped_names)
-		{
-			if (targets == null)
-				targets = new Dictionary<string, HashSet<string>> ();
+    private void AddIgnore(IMetadataTokenProvider token, IEnumerable<string> mapped_names)
+    {
+      IIgnoreList ignore = Controller.Runner.IgnoreList;
+      switch (token.MetadataToken.TokenType)
+      {
+        case TokenType.Property:
+          PropertyDefinition pd = (token as PropertyDefinition);
+          foreach (string name in mapped_names)
+          {
+            ignore.Add(name, pd.GetMethod);
+            ignore.Add(name, pd.SetMethod);
+          }
+          break;
 
-			// inner types syntax fix
-			target = target.Replace ('+', '/');
-			// method/member syntax fix
-			target = target.Replace (".#", "::");
+        case TokenType.Event:
+          EventDefinition ed = (token as EventDefinition);
+          foreach (string name in mapped_names)
+          {
+            ignore.Add(name, ed.AddMethod);
+            ignore.Add(name, ed.RemoveMethod);
+            ignore.Add(name, ed.InvokeMethod);
+            if (ed.HasOtherMethods)
+            {
+              foreach (MethodDefinition md in ed.OtherMethods)
+              {
+                ignore.Add(name, md);
+              }
+            }
+          }
+          break;
+      }
+      // the 'token' itself is always added (i.e. for properties and events too)
+      foreach (string name in mapped_names)
+        ignore.Add(name, token);
+    }
 
-			HashSet<string> list = null;
-			if (!targets.TryGetValue (target, out list)) {
-				list = new HashSet<string> ();
-				targets.Add (target, list);
-			}
+    private void AddTargets(string target, IEnumerable<string> mapped_names)
+    {
+      if (targets == null)
+        targets = new Dictionary<string, HashSet<string>>();
 
-			foreach (string name in mapped_names)
-				list.AddIfNew (name);
-		}
+      // inner types syntax fix
+      target = target.Replace('+', '/');
+      // method/member syntax fix
+      target = target.Replace(".#", "::");
 
-		// scan the analysis code a single time looking for targets
-		private void ResolveTargets ()
-		{
-			if (targets == null || targets.Count == 0)
-				return;
+      if (!targets.TryGetValue(target, out HashSet<string> list))
+      {
+        list = new HashSet<string>();
+        targets.Add(target, list);
+      }
 
-			HashSet<string> rules;
-			// scan all code and look for targets
-			foreach (AssemblyDefinition assembly in Controller.Runner.Assemblies) {
-				// TODO ...
-				foreach (ModuleDefinition module in assembly.Modules) {
-					// TODO ...
-					foreach (TypeDefinition type in module.GetAllTypes ()) {
-						if (targets.TryGetValue (type.GetFullName (), out rules))
-							Add (type, rules);
+      foreach (string name in mapped_names)
+        list.AddIfNew(name);
+    }
 
-						if (type.HasMethods) {
-							foreach (MethodDefinition method in type.Methods)
-								ResolveMethod (method);
-						}
-					}
-				}
-			}
-			targets.Clear ();
-		}
+    // scan the analysis code a single time looking for targets
+    private void ResolveTargets()
+    {
+      if (targets == null || targets.Count == 0)
+        return;
 
-		private void ResolveMethod (MemberReference method)
-		{
-			HashSet<string> rules;
+      // scan all code and look for targets
+      foreach (AssemblyDefinition assembly in Controller.Runner.Assemblies)
+      {
+        // TODO ...
+        foreach (ModuleDefinition module in assembly.Modules)
+        {
+          // TODO ...
+          foreach (TypeDefinition type in module.GetAllTypes())
+          {
+            if (targets.TryGetValue(type.GetFullName(), out HashSet<string> rules))
+              Add(type, rules);
 
-			string m = method.GetFullName ();
-			m = m.Substring (m.IndexOf (' ') + 1);
+            if (type.HasMethods)
+            {
+              foreach (MethodDefinition method in type.Methods)
+                ResolveMethod(method);
+            }
+          }
+        }
+      }
+      targets.Clear();
+    }
 
-			if (targets.TryGetValue (m, out rules))
-				Add (method, rules);
-		}
+    private void ResolveMethod(MemberReference method)
+    {
+      string m = method.GetFullName();
+      m = m.Substring(m.IndexOf(' ') + 1);
 
-		private void Add (IMetadataTokenProvider metadata, IEnumerable<string> rules)
-		{
-			foreach (string rule in rules) {
-				Controller.Runner.IgnoreList.Add (rule, metadata);
-			}
-		}
-	}
+      if (targets.TryGetValue(m, out HashSet<string> rules))
+        Add(method, rules);
+    }
+
+    private void Add(IMetadataTokenProvider metadata, IEnumerable<string> rules)
+    {
+      foreach (string rule in rules)
+      {
+        Controller.Runner.IgnoreList.Add(rule, metadata);
+      }
+    }
+  }
 }
-

@@ -40,271 +40,300 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Naming {
+namespace Gendarme.Rules.Naming
+{
+  /// <summary>
+  /// This rule ensures that identifiers are correctly cased. In particular:
+  /// <list>
+  /// <item><description>namespace names are PascalCased</description></item>
+  /// <item><description>type names are PascalCased</description></item>
+  /// <item><description>method names are PascalCased</description></item>
+  /// <item><description>parameter names are camelCased</description></item>
+  /// </list>
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// namespace A {
+  ///	abstract public class myClass {
+  ///		abstract public int thisMethod (int ThatParameter);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// namespace Company.Product.Technology {
+  ///	abstract public class MyClass {
+  ///		abstract public int ThisMethod (int thatParameter);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule ensures that identifiers are correctly cased. In particular:
-	/// <list>
-	/// <item><description>namespace names are PascalCased</description></item>
-	/// <item><description>type names are PascalCased</description></item>
-	/// <item><description>method names are PascalCased</description></item>
-	/// <item><description>parameter names are camelCased</description></item>
-	/// </list>
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// namespace A {
-	///	abstract public class myClass {
-	///		abstract public int thisMethod (int ThatParameter);
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// namespace Company.Product.Technology {
-	///	abstract public class MyClass {
-	///		abstract public int ThisMethod (int thatParameter);
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  // F# conventions @ https://docs.microsoft.com/en-us/dotnet/fsharp/style-guide/formatting#naming-conventions
+  // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
+  // Use camelCase for module-bound public functions
+  // Use camelCase for internal and private module-bound values and functions
+  // Use camelCase for parameters
+  // Use PascalCase for modules, type declarations, members, and labels
+  // Use PascalCase for constructs intrinsic to .NET
 
-    // F# conventions @ https://docs.microsoft.com/en-us/dotnet/fsharp/style-guide/formatting#naming-conventions
-    // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
-    // Use camelCase for module-bound public functions
-    // Use camelCase for internal and private module-bound values and functions
-    // Use camelCase for parameters
-    // Use PascalCase for modules, type declarations, members, and labels
-    // Use PascalCase for constructs intrinsic to .NET
+  [Problem("This identifier (namespace, type, or method) violates the .NET naming conventions.")]
+  [Solution("Change the namespace, type, or method name to be pascal-cased (like MyClass) and parameter names to be camel-cased (like myParameter).")]
+  [EngineDependency(typeof(NamespaceEngine))]
+  [FxCopCompatibility("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+  public class UseCorrectCasingRule : Rule, IAssemblyRule, ITypeRule, IMethodRule
+  {
+    // check if name is PascalCased
+    private static bool IsPascalCase(string name)
+    {
+      if (String.IsNullOrEmpty(name))
+        return true;
 
-	[Problem ("This identifier (namespace, type, or method) violates the .NET naming conventions.")]
-	[Solution ("Change the namespace, type, or method name to be pascal-cased (like MyClass) and parameter names to be camel-cased (like myParameter).")]
-	[EngineDependency (typeof (NamespaceEngine))]
-	[FxCopCompatibility ("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-	public class UseCorrectCasingRule : Rule, IAssemblyRule, ITypeRule, IMethodRule {
+      return Char.IsUpper(name[0]);
+    }
 
-		// check if name is PascalCased
-		private static bool IsPascalCase (string name)
-		{
-			if (String.IsNullOrEmpty (name))
-				return true;
+    // convert name to PascalCase
+    private static string PascalCase(string name)
+    {
+      if (String.IsNullOrEmpty(name))
+        return String.Empty;
 
-			return Char.IsUpper (name [0]);
-		}
+      if (name.Length == 1)
+        return name.ToUpperInvariant();
 
-		// convert name to PascalCase
-		private static string PascalCase (string name)
-		{
-			if (String.IsNullOrEmpty (name))
-				return String.Empty;
+      int index = IndexOfFirstCorrectChar(name);
+      return Char.ToUpperInvariant(name[index]).ToString(CultureInfo.InvariantCulture) + name.Substring(index + 1);
+    }
 
-			if (name.Length == 1)
-				return name.ToUpperInvariant ();
+    // check if name is camelCased
+    private static bool IsCamelCase(string name)
+    {
+      if (String.IsNullOrEmpty(name))
+        return true;
 
-			int index = IndexOfFirstCorrectChar (name);
-			return Char.ToUpperInvariant (name [index]).ToString (CultureInfo.InvariantCulture) + name.Substring (index + 1);
-		}
+      return Char.IsLower(name[0]);
+    }
 
-		// check if name is camelCased
-		private static bool IsCamelCase (string name)
-		{
-			if (String.IsNullOrEmpty (name))
-				return true;
+    // convert name to camelCase
+    private static string CamelCase(string name)
+    {
+      if (String.IsNullOrEmpty(name))
+        return String.Empty;
 
-			return Char.IsLower (name [0]);
-		}
+      if (name.Length == 1)
+        return name.ToLowerInvariant();
 
-		// convert name to camelCase
-		private static string CamelCase (string name)
-		{
-			if (String.IsNullOrEmpty (name))
-				return String.Empty;
+      int index = IndexOfFirstCorrectChar(name);
+      return Char.ToLowerInvariant(name[index]).ToString(CultureInfo.InvariantCulture) + name.Substring(index + 1);
+    }
 
-			if (name.Length == 1)
-				return name.ToLowerInvariant ();
+    private static int IndexOfFirstCorrectChar(string s)
+    {
+      int index = 0;
+      while ((index < s.Length) && (s[index] == '_'))
+        index++;
+      // it's possible that we won't find one, e.g. something called "_"
+      return (index == s.Length) ? 0 : index;
+    }
 
-			int index = IndexOfFirstCorrectChar (name);
-			return Char.ToLowerInvariant (name [index]).ToString (CultureInfo.InvariantCulture) + name.Substring (index + 1);
-		}
+    private void ReportCasingError(IMetadataTokenProvider metadata, string message)
+    {
+      Runner.Report(metadata, Severity.Medium, Confidence.High, message);
+    }
 
-		private static int IndexOfFirstCorrectChar (string s)
-		{
-			int index = 0;
-			while ((index < s.Length) && (s [index] == '_'))
-				index++;
-			// it's possible that we won't find one, e.g. something called "_"
-			return (index == s.Length) ? 0 : index;
-		}
+    private void CheckNamespace(string nspace)
+    {
+      if (String.IsNullOrEmpty(nspace))
+        return;
 
-		void ReportCasingError (IMetadataTokenProvider metadata, string message)
-		{
-			Runner.Report (metadata, Severity.Medium, Confidence.High, message);
-		}
+      // Skip F# names.
+      if (nspace.StartsWith("<StartupCode$", StringComparison.Ordinal))
+        return;
 
-		void CheckNamespace (string nspace)
-		{
-			if (String.IsNullOrEmpty (nspace))
-				return;
+      NamespaceDefinition nd = NamespaceDefinition.GetDefinition(nspace);
+      foreach (string ns in nspace.Split('.'))
+      {
+        switch (ns.Length)
+        {
+          case 1:
+            ReportCasingError(nd, String.Format(CultureInfo.InvariantCulture,
+              "Use of single character namespace is discouraged. Rename namespace {0}", ns));
 
-            // Skip F# names.
-            if (nspace.StartsWith("<StartupCode$", StringComparison.Ordinal))
-                return;
+            break;
 
-			NamespaceDefinition nd = NamespaceDefinition.GetDefinition (nspace);
-			foreach (string ns in nspace.Split ('.')) {
-				switch (ns.Length) {
-				case 1:
-					ReportCasingError (nd, String.Format (CultureInfo.InvariantCulture,
-						"Use of single character namespace is discouraged. Rename namespace {0}", ns));
-
-					break;
-				case 2:
-					// if the subnamespace is made of 2 chars, each letter have to be uppercase
-					if (ns.Any (c => Char.IsLetter (c) && Char.IsLower (c))) {
-						string msg = String.Format (CultureInfo.InvariantCulture,
-							"In namespaces made of two characters, both characters should uppercase. Rename namespace '{0}' to '{1}'",
-							ns, ns.ToUpperInvariant ());
-						ReportCasingError (nd, msg);
-					}
-					break;
-				default:
-					// if the sub namespace is made of 3 or more chars, make sure they're not all uppercase
-					if (ns.All (c => Char.IsLetter (c) && Char.IsUpper (c))) {
-						string msg = String.Format (CultureInfo.InvariantCulture,
-							"Namespaces longer than two characters should not be all uppercase. Rename namespace '{0}' to '{1}{2}'",
-							ns, ns [0].ToString (CultureInfo.InvariantCulture), ns.Substring (1).ToLowerInvariant ());
-						ReportCasingError (nd, msg);
-					} else if (!IsPascalCase (ns)) {
-						string msg = String.Format (CultureInfo.InvariantCulture,
-							"Namespaces longer than two characters should be pascal cased. Rename namespace '{0}' to '{1}'",
-							ns, PascalCase (ns));
-						ReportCasingError (nd, msg);
-					}
-					break;
-				}
-			}
-		}
-
-		public RuleResult CheckAssembly (AssemblyDefinition assembly)
-		{
-			foreach (string ns in NamespaceEngine.NamespacesInside (assembly)) {
-				CheckNamespace (ns);
-			}
-			return Runner.CurrentRuleResult;
-		}
-
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule does not apply to generated code (outside developer's control)
-			if (type.IsGeneratedCode () || type.Name.Contains("@"))
-				return RuleResult.DoesNotApply;
-
-            // Debugger related methods in F# with just a [CompilerGenerated] constructor
-            if(type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
-                return RuleResult.DoesNotApply;
-
-			// types should all be PascalCased
-			string name = type.Name;
-			if (!IsPascalCase (name)) {
-				ReportCasingError (type, String.Format (CultureInfo.InvariantCulture,
-					"Type names should all be pascal-cased. Rename '{0}' type to '{1}'.", 
-					name, PascalCase (name)));
-			}
-			return Runner.CurrentRuleResult;
-		}
-
-		static MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
-			MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
-
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// ignore constructors (.ctor or .cctor) and compiler/tool-generated code
-			if (method.IsConstructor || method.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
-
-			// don't consider private add / remove on events
-			if ((method.IsAddOn || method.IsRemoveOn) && method.IsPrivate)
-				return RuleResult.DoesNotApply;
-
-            var fsharp = method.IsFSharpCode();
-            string name = method.Name;
-            var fsharpModule = method.DeclaringType.IsModuleType();
-
-            // extension methods
-            if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
+          case 2:
+            // if the subnamespace is made of 2 chars, each letter have to be uppercase
+            if (ns.Any(c => Char.IsLetter(c) && Char.IsLower(c)))
             {
-                var typename = method.Parameters[0].ParameterType.Name;
-                var isExtension = method.Name.StartsWith(typename + ".", StringComparison.Ordinal);
-                name = name.Substring(typename.Length + 1);
-                if (isExtension)
-                {
-                    fsharpModule = false; // class-bound
-                    // extension properties
-                    if (name.StartsWith("get_", StringComparison.Ordinal) ||
-                        name.StartsWith("get_", StringComparison.Ordinal))
-                    {
-                        name = name.Substring(4);
-                    }
-                }
+              string msg = String.Format(CultureInfo.InvariantCulture,
+                "In namespaces made of two characters, both characters should uppercase. Rename namespace '{0}' to '{1}'",
+                ns, ns.ToUpperInvariant());
+              ReportCasingError(nd, msg);
             }
+            break;
 
-			MethodSemanticsAttributes attrs = method.SemanticsAttributes;
-			if ((attrs & mask) != 0) {
-				// it's something special
-				int underscore = name.IndexOf ('_');
-				if (underscore != -1)
-					name = name.Substring (underscore + 1);
-			} else if (method.IsSpecialName) {
-				return RuleResult.Success;
-			}
-
-            // F# convention
-            // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
-            // Use camelCase for module-bound public functions
-            // Use camelCase for internal and private module-bound values and functions
-            if (fsharpModule)
+          default:
+            // if the sub namespace is made of 3 or more chars, make sure they're not all uppercase
+            if (ns.All(c => Char.IsLetter(c) && Char.IsUpper(c)))
             {
-                if (!IsCamelCase(name))
-                {
-                    string errorMessage = String.Format(CultureInfo.InvariantCulture,
-                        "By existing naming conventions, module-bound function names should all be camel-cased (e.g. myOperation). Rename '{0}' to '{1}'.",
-                        name, CamelCase(name));
-                    Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
-                }
+              string msg = String.Format(CultureInfo.InvariantCulture,
+                "Namespaces longer than two characters should not be all uppercase. Rename namespace '{0}' to '{1}{2}'",
+                ns, ns[0].ToString(CultureInfo.InvariantCulture), ns.Substring(1).ToLowerInvariant());
+              ReportCasingError(nd, msg);
             }
-            else
+            else if (!IsPascalCase(ns))
             {
-                // like types, methods/props should all be PascalCased, too
-                if (!IsPascalCase(name))
-                {
-                    string errorMessage = String.Format(CultureInfo.InvariantCulture,
-                        "By existing naming conventions, all the method and property names should all be pascal-cased (e.g. MyOperation). Rename '{0}' to '{1}'.",
-                        name, PascalCase(name));
-                    Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
-                }
+              string msg = String.Format(CultureInfo.InvariantCulture,
+                "Namespaces longer than two characters should be pascal cased. Rename namespace '{0}' to '{1}'",
+                ns, PascalCase(ns));
+              ReportCasingError(nd, msg);
             }
+            break;
+        }
+      }
+    }
 
-			// check parameters
-			if (method.HasParameters) {
-				foreach (ParameterDefinition param in method.Parameters) {
-                    // ignore F# placeholder ("_") arguments
-                    if (fsharp && param.Name.StartsWith("_arg", StringComparison.Ordinal))
-                        continue;
+    public RuleResult CheckAssembly(AssemblyDefinition assembly)
+    {
+      foreach (string ns in NamespaceEngine.NamespacesInside(assembly))
+      {
+        CheckNamespace(ns);
+      }
+      return Runner.CurrentRuleResult;
+    }
 
-					// params should all be camelCased
-					if (!IsCamelCase (param.Name)) {
-						string errorMessage = String.Format (CultureInfo.InvariantCulture,
-							"By existing naming conventions, the parameter names should all be camel-cased (e.g. myParameter). Rename '{0}' parameter to '{1}'.",
-							param, CamelCase (param.Name));
-						Runner.Report (method, Severity.Medium, Confidence.High, errorMessage);
-					}
-				}
-			}
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule does not apply to generated code (outside developer's control)
+      if (type.IsGeneratedCode() || type.Name.Contains("@"))
+        return RuleResult.DoesNotApply;
 
-			return Runner.CurrentRuleResult;
-		}
-	}
+      // Debugger related methods in F# with just a [CompilerGenerated] constructor
+      if (type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+        return RuleResult.DoesNotApply;
+
+      // types should all be PascalCased
+      string name = type.Name;
+      if (!IsPascalCase(name))
+      {
+        ReportCasingError(type, String.Format(CultureInfo.InvariantCulture,
+          "Type names should all be pascal-cased. Rename '{0}' type to '{1}'.",
+          name, PascalCase(name)));
+      }
+      return Runner.CurrentRuleResult;
+    }
+
+    private readonly static MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
+      MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
+
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // ignore constructors (.ctor or .cctor) and compiler/tool-generated code
+      if (method.IsConstructor ||
+          method.IsGeneratedCode() ||
+          method.IsUnionCase())
+        return RuleResult.DoesNotApply;
+
+      // don't consider private add / remove on events
+      if ((method.IsAddOn || method.IsRemoveOn) && method.IsPrivate)
+        return RuleResult.DoesNotApply;
+
+      var fsharp = method.IsFSharpCode();
+      string name = method.Name;
+      var fsharpModule = method.DeclaringType.IsModuleType();
+
+      if (fsharp && method.IsGetter || method.IsSetter)
+      {
+        var pname = name.Substring(4);
+        var property = method.DeclaringType.Properties.First(p => p.Name == pname);
+        if (property.IsFieldType())
+          return RuleResult.DoesNotApply;
+      }
+
+      // extension methods
+      if (fsharp && method.HasParameters)
+      {
+        var dot = name.IndexOf('.');
+        var isExtension = dot > 0;
+        if (isExtension)
+        {
+          fsharpModule = false; // class-bound
+                                // extension properties
+          name = name.Substring(dot + 1);
+          if (name.StartsWith("get_", StringComparison.Ordinal) ||
+              name.StartsWith("set_", StringComparison.Ordinal))
+          {
+            name = name.Substring(4);
+          }
+        }
+      }
+
+      MethodSemanticsAttributes attrs = method.SemanticsAttributes;
+      if ((attrs & mask) != 0)
+      {
+        // it's something special
+        int underscore = name.IndexOf('_');
+        if (underscore != -1)
+          name = name.Substring(underscore + 1);
+      }
+      else if (method.IsSpecialName)
+      {
+        return RuleResult.Success;
+      }
+
+      // F# convention
+      // Use camelCase for class-bound, expression-bound and pattern-bound values and functions
+      // Use camelCase for module-bound public functions
+      // Use camelCase for internal and private module-bound values and functions
+      // FSharpLint convention
+      // Use camelCase for internal and private values and functions
+      // Use PascalCase for public names
+      if (fsharpModule && !method.IsVisible())
+      {
+        if (!IsCamelCase(name))
+        {
+          string errorMessage = String.Format(CultureInfo.InvariantCulture,
+              "By existing naming conventions, module-bound function names should all be camel-cased (e.g. myOperation). Rename '{0}' to '{1}'.",
+              name, CamelCase(name));
+          Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
+        }
+      }
+      else
+      {
+        // like types, methods/props should all be PascalCased, too
+        if (!IsPascalCase(name))
+        {
+          string errorMessage = String.Format(CultureInfo.InvariantCulture,
+              "By existing naming conventions, all the method and property names should all be pascal-cased (e.g. MyOperation). Rename '{0}' to '{1}'.",
+              name, PascalCase(name));
+          Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
+        }
+      }
+
+      // check parameters
+      if (method.HasParameters)
+      {
+        foreach (ParameterDefinition param in method.Parameters)
+        {
+          // ignore F# placeholder ("_") arguments
+          if (fsharp && param.Name.StartsWith("_arg", StringComparison.Ordinal))
+            continue;
+
+          // params should all be camelCased
+          if (!IsCamelCase(param.Name))
+          {
+            string errorMessage = String.Format(CultureInfo.InvariantCulture,
+              "By existing naming conventions, the parameter names should all be camel-cased (e.g. myParameter). Rename '{0}' parameter to '{1}'.",
+              param, CamelCase(param.Name));
+            Runner.Report(method, Severity.Medium, Confidence.High, errorMessage);
+          }
+        }
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

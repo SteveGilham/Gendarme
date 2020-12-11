@@ -1,3 +1,22 @@
+# 2020.7.21.12091-pre-release
+
+Issues found in use
+* Notice zero values in non-int32 enums
+* Skip types called `<PrivateImplementationDetails>`
+
+# 2020.6.12.11211-pre-release
+
+Issues found in use
+* Improve the assembly resolution to 
+  * check more cases where type hierarchies are being explored
+* In `PreferLiteralOverInitOnlyFieldsRule`. a field initialization may be by reference -- ensure it is resolved before treating it directly.
+
+# 2020.3.9.15370-pre-release
+
+F# niggles part 7
+* Adapt `UseCorrectCasingRule` to be compatible with `FSharpLint` for F# code
+* Add a `RelaxedMarkAllNonSerializableFieldsRule` which ignores F# types with `@` in the name, keeping the full-strength version for cases where serializing a closure is intentional.
+
 # 2020.3.7.10241-pre-release
 
 * Improve the assembly resolution to 
@@ -19,7 +38,7 @@ F# niggles part 6
 * For `AvoidDeepNamespaceHierarchyRule`, ignore F# generated namespaces of the form `<StartupCode$a-b-c-d>.$.NETFramework,Version=...`
 * For `AvoidRepetitiveCastsRule`, ignore F# `is` then `as` of anonymous temporaries (often happens in `match` expressions on sum types)
 * Report the owning assembly of the defect target, always (disambiguates when a source file is shared bewteen projects in the same build).
-* In the inhandled exception message, own this fork.
+* In the unhandled exception message, own this fork.
 * Building on VS2019 for .net4.0 and .netcore2.1+
 * Now available as a dotnet global tool in package `altcode.gendarme-tool`
 

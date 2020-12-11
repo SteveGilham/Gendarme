@@ -23,6 +23,9 @@ open AltCode.Fake.DotNet
 open AltCoverFake.DotNet.DotNet
 open AltCoverFake.DotNet.Testing
 
+open FSharpLint.Application
+open FSharpLint.Framework
+
 open NUnit.Framework
 
 let Copyright = ref String.Empty
@@ -39,7 +42,7 @@ let dotnetOptions (o : DotNet.Options) =
 
 let toolPackages =
   let xml =
-    "./Build/dotnet-cli.csproj"
+    "./Build/NuGet.csproj"
     |> Path.getFullName
     |> XDocument.Load
   xml.Descendants(XName.Get("PackageReference"))
@@ -55,7 +58,7 @@ let nunitConsole =
   |> Path.getFullName
 
 let altcover =
-  ("./packages/" + (packageVersion "altcover") + "/tools/net45/AltCover.exe")
+  ("./packages/" + (packageVersion "altcover") + "/tools/net472/AltCover.exe")
   |> Path.getFullName
 
 let framework_altcover = Fake.DotNet.ToolType.CreateFullFramework()
@@ -77,6 +80,7 @@ let cliArguments =
   { MSBuild.CliArguments.Create() with
       ConsoleLogParameters = []
       DistributedLoggers = None
+      Properties = [("CheckEolTargetFramework", "false")]
       DisableInternalBinLog = true }
 
 let withWorkingDirectoryVM dir o =
@@ -99,27 +103,15 @@ let defaultTestOptions fwk common (o : DotNet.TestOptions) =
       Framework = fwk // Some "netcoreapp3.0"
       Configuration = DotNet.BuildConfiguration.Debug }
 
-let msbuildRelease proj =
-  MSBuild.build (fun p ->
-    { p with
-        Verbosity = Some MSBuildVerbosity.Normal
-        ConsoleLogParameters = []
-        DistributedLoggers = None
-        DisableInternalBinLog = true
-        Properties =
-          [ "Configuration", "Release"
-            "DebugSymbols", "True" ] }) proj
+let dotnetBuildRelease proj =
+  DotNet.build (fun p ->
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Release }
+    |> withMSBuildParams) (Path.GetFullPath proj)
 
-let msbuildDebug proj =
-  MSBuild.build (fun p ->
-    { p with
-        Verbosity = Some MSBuildVerbosity.Normal
-        ConsoleLogParameters = []
-        DistributedLoggers = None
-        DisableInternalBinLog = true
-        Properties =
-          [ "Configuration", "Debug"
-            "DebugSymbols", "True" ] }) proj
+let dotnetBuildDebug proj =
+  DotNet.build (fun p ->
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Debug }
+    |> withMSBuildParams) (Path.GetFullPath proj)
 
 let misses = ref 0
 
@@ -218,9 +210,9 @@ _Target "Restore" (fun _ ->
        let proj = Path.GetFileName f
        DotNet.restore (fun o -> o.WithCommon(withWorkingDirectoryVM dir)) proj))
 
-_Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> msbuildRelease)
+_Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildRelease)
 
-_Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> msbuildDebug)
+_Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
 
 _Target "UnitTest" ignore
 
@@ -532,7 +524,7 @@ _Target "Unpack" (fun _ ->
     proj
 
   let vname = !Version + "-pre-release"
-  let from = (Path.getFullName @"_Unpack\packages\altcode.gendarme\") @@ vname
+  let from = (Path.getFullName @"_Unpack/packages/altcode.gendarme/") @@ vname
   printfn "Copying from %A to %A" from unpack
   Shell.copyDir unpack from (fun _ -> true)
 
@@ -562,7 +554,7 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     let nugget = !!"./_Packaging/altcode.gendarme-tool.*.nupkg" |> Seq.last
     let unpack = Path.getFullName "_Unpack-tool/tool"
     System.IO.Compression.ZipFile.ExtractToDirectory(nugget, unpack)
-    let from = Path.getFullName @"_Unpack-tool\tool\tools\netcoreapp2.1\any\"
+    let from = Path.getFullName @"_Unpack-tool/tool/tools/netcoreapp2.1/any/"
     Shell.copyDir unpack from (fun _ -> true)
 
     let packroot = Path.GetFullPath "./_Packaging"
@@ -603,7 +595,38 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     let folder = (nugetCache @@ "altcode.gendarme-tool") @@ (!Version + "-pre-release")
     Shell.mkdir folder
     Shell.deleteDir folder)
+    
+_Target "Lint" (fun _ ->
+  let failOnIssuesFound (issuesFound : bool) =
+    Assert.That(issuesFound, Is.False, "Lint issues were found")
+  try
+    let options =
+      { Lint.OptionalLintParameters.Default with
+          Configuration = FromFile(Path.getFullName "./fsharplint.json") }
 
+    [
+      !!"**/*.fsproj"
+      |> Seq.collect (fun n -> !!(Path.GetDirectoryName n @@ "*.fs"))
+      |> Seq.distinct;
+      !!"./Build/*.fsx"
+      |> Seq.map Path.GetFullPath
+    ]
+    |> Seq.concat
+    |> Seq.collect (fun f ->
+         match Lint.lintFile options f with
+         | Lint.LintResult.Failure x -> failwithf "%A" x
+         | Lint.LintResult.Success w ->
+             w
+             |> Seq.filter (fun x -> x.Details.SuggestedFix |> Option.isSome))
+    |> Seq.fold (fun _ x ->
+         printfn "Info: %A\r\n Range: %A\r\n Fix: %A\r\n====" x.Details.Message
+           x.Details.Range x.Details.SuggestedFix
+         true) false
+    |> failOnIssuesFound
+  with ex ->
+    printfn "%A" ex
+    reraise())
+    
 _Target "All" ignore
 
 let resetColours _ =

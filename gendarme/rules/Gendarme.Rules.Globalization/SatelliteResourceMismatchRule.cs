@@ -85,9 +85,8 @@ namespace Gendarme.Rules.Globalization
       Collection<Resource> satellitesResources = satellite.MainModule.Resources;
       foreach (EmbeddedResource resource in satellitesResources)
       {
-        EmbeddedResource mainResource;
         string resourceName = GetNameInSatellite(resource, culture);
-        if (!mainAssemblyResourceCache.TryGetMainResourceFile(resourceName, out mainResource))
+        if (!mainAssemblyResourceCache.TryGetMainResourceFile(resourceName, out EmbeddedResource mainResource))
         {
           string msg = String.Format(CultureInfo.InvariantCulture,
             "The resource file {0} exist in the satellite assembly but not in the main assembly",
@@ -116,15 +115,13 @@ namespace Gendarme.Rules.Globalization
     private void CheckSatelliteResource(EmbeddedResource mainResource, EmbeddedResource satelliteResource, IMetadataTokenProvider satelliteAssembly)
     {
       using (Stream resourceStream = satelliteResource.GetResourceStream())
-      using (IResourceReader safeReader = MakeResourceReader(resourceStream))
-      using (ResourceSet resourceSet = new ResourceSet(safeReader))
+      using (ResourceSet resourceSet = new ResourceSet(resourceStream))
       {
         foreach (DictionaryEntry entry in resourceSet)
         {
           string resourceName = (string)entry.Key;
           object satelliteValue = entry.Value;
-          object mainValue;
-          if (!mainAssemblyResourceCache.TryGetMainResource(mainResource, resourceName, out mainValue))
+          if (!mainAssemblyResourceCache.TryGetMainResource(mainResource, resourceName, out object mainValue))
           {
             string msg = String.Format(CultureInfo.InvariantCulture,
               "The resource {0} in the file {1} exist in the satellite assembly but not in the main assembly",
@@ -258,7 +255,7 @@ namespace Gendarme.Rules.Globalization
 
     private sealed class AssemblyResourceCache
     {
-      private AssemblyDefinition assembly;
+      private readonly AssemblyDefinition assembly;
       private Dictionary<string, EmbeddedResource> files;
       private Dictionary<EmbeddedResource, Dictionary<string, object>> values;
 
@@ -291,13 +288,11 @@ namespace Gendarme.Rules.Globalization
           values = new Dictionary<EmbeddedResource, Dictionary<string, object>>();
         }
 
-        Dictionary<string, object> fileResources;
-        if (!values.TryGetValue(embeddedResource, out fileResources))
+        if (!values.TryGetValue(embeddedResource, out Dictionary<string, object> fileResources))
         {
           fileResources = new Dictionary<string, object>();
           using (Stream resourceStream = embeddedResource.GetResourceStream())
-          using (IResourceReader safeReader = MakeResourceReader(resourceStream))
-          using (ResourceSet resourceSet = new ResourceSet(safeReader))
+          using (ResourceSet resourceSet = new ResourceSet(resourceStream))
           {
             foreach (DictionaryEntry entry in resourceSet)
               fileResources.Add((string)entry.Key, entry.Value);

@@ -29,9 +29,6 @@
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ChangeLog" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
