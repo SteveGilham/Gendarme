@@ -48,7 +48,7 @@ The following rule suites have unit test failures
 * Performance -- 8 failures (Character concatenation, others) + 1 more on .net core (AvoidLocalDataStoreSlotTest)
 * Portability -- 5 failures (MonoCompatibiliyReview) + 1 more on .net core (False positive detecting Registry keys as paths)
 * Security.Cas -- 13 failures on .net core where it is not applicable
-* Smells -- 1 failure (`SuccessOnNonDuplicatedCodeIntoForeachLoopTest` detects the loop) + 2 `[Ignore]`d switch related tests
+* Smells -- 2 failure (`SuccessOnNonDuplicatedCodeIntoForeachLoopTest` detects the loop and `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest` the switch) + 2 `[Ignore]`d switch related tests
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
