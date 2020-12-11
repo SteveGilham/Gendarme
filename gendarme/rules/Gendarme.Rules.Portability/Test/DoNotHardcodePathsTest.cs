@@ -159,17 +159,17 @@ namespace Test.Rules.Portability
       return "a elbereth gilthoniel.txt";
     }
 
-#if NETCOREAPP2_1
-#else
-
     private void DontReportRegistryKeys()
     {
+#if !NETCOREAPP2_1
+
       // they look like paths but they aren't
       Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine
         .OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", true);
-    }
-
+#else
+     Assert.That(@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", Is.Not.Empty);
 #endif
+    }
 
     private string DontReportXML()
     {
