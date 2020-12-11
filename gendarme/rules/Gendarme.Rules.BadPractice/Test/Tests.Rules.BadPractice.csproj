@@ -24,10 +24,12 @@
     <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.BadPractice.csproj" />
+    <ProjectReference Include="Examples\Examples.Rules.BadPractice\Examples.Rules.BadPractice.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="AvoidNullCheckWithAsOperatorTest.cs" />
     <Compile Remove="DoNotDecreaseVisibilityTest.cs" />
+    <Compile Remove="Examples\**\*.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
     <PackageReference Include="System.Security.Permissions">
