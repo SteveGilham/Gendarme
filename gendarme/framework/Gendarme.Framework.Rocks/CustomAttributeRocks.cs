@@ -114,14 +114,26 @@ namespace Gendarme.Framework.Rocks
       return false;
     }
 
+    private static bool IsSumType(CustomAttribute a)
+    {
+      var b = a.GetBlob();
+      if (b.Length != 8)
+        return false;
+      var v = BitConverter.ToInt64(b, 0);
+      var mask = v & 0x1fffff;
+      return mask == 0x10001;
+    }
+
     public static bool IsSumType(this ICustomAttributeProvider self)
     {
       if ((self == null) || !self.HasCustomAttributes)
         return false;
 
+      //return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
+      //                                      a.ConstructorArguments.Count == 1 &&
+      //                                      (0x1f & (int)a.ConstructorArguments[0].Value) == 1); // Sum type
       return self.CustomAttributes.Any(a => a.AttributeType.FullName == "Microsoft.FSharp.Core.CompilationMappingAttribute" &&
-                                            a.ConstructorArguments.Count == 1 &&
-                                            (0x1f & (int)a.ConstructorArguments[0].Value) == 1); // Sum type
+                                            IsSumType(a)); // Sum type
     }
 
     public static bool IsRecordType(this ICustomAttributeProvider self)
