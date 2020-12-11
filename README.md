@@ -45,8 +45,8 @@ The following rule suites have unit test failures
 * Interoperability -- 17 Stack entry analysis related failures 
 * Maintainability -- 1 failure (AvoidUnnecessarySpecializationRule)
 * Performance -- 8 failures (Character concatenation, others)
-* Portability -- 5 failures (MonoCompatibiliyReview)
-* Security.Cas -- 13 failures on .net core where it is not applicable
+* Portability -- 5 failures (MonoCompatibilityReview)
+* Security.Cas -- 11 failures on .net core where it is not applicable
 * Smells -- 2 failure (`SuccessOnNonDuplicatedCodeIntoForeachLoopTest` detects the loop and `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest` the switch) + 2 `[Ignore]`d switch related tests
 
 ## Changes made for F# support

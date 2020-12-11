@@ -73,13 +73,6 @@ namespace Gendarme.Rules.Security.Cas
   [FxCopCompatibility("Microsoft.Security", "CA2126:TypeLinkDemandsRequireInheritanceDemands")]
   public class AddMissingTypeInheritanceDemandRule : Rule, ITypeRule
   {
-#if NETSTANDARD2_0
-    public RuleResult CheckType(TypeDefinition type)
-    {
-      return RuleResult.DoesNotApply;
-    }
-#else
-
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule apply only to types that
@@ -141,6 +134,5 @@ namespace Gendarme.Rules.Security.Cas
       return Runner.CurrentRuleResult;
     }
 
-#endif
   }
 }
