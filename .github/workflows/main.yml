@@ -25,9 +25,9 @@ jobs:
     - name: Setup
       run: dotnet fake run ./Build/setup.fsx
     - name: Build
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      run: dotnet fake run ./Build/build.fsx
+#      env:
+#        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: dotnet fake run ./Build/build.fsx  --target OperationalTest
     - uses: actions/upload-artifact@v2
       with:
           name: nupkgs
@@ -49,7 +49,7 @@ jobs:
     - name: Setup
       run: dotnet fake run ./Build/setup.fsx
     - name: Build
-      run: dotnet fake run ./Build/build.fsx  
+      run: dotnet fake run ./Build/build.fsx   --target OperationalTest
     - uses: actions/upload-artifact@v2
       if: failure()
       with:
