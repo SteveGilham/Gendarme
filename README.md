@@ -1,12 +1,10 @@
 
 # altcode.gendarme
-A Mono.Gendarme fork, built against the most recent Mono.Cecil, that can load assemblies built with current compilers.
-
-Since this is a fork, issues should be reported at [my related repo](https://github.com/SteveGilham/altcode.fake/issues) that contains a Fake driver for the Gendarme tool, but noted as being against the forked Gendarme tool itself.
+A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can load assemblies built with current compilers.
 
 ### Badges
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Command-line tool](https://www.nuget.org/packages/altcode.gendarme)
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme-tool?includePreReleases=true) Global tool](https://www.nuget.org/packages/altcode.gendarme-tool)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme-tool?includePreReleases=true) Global tool for .net core 2.1 and later](https://www.nuget.org/packages/altcode.gendarme-tool)
 
 | | | |
 | --- | --- | --- | 
@@ -25,6 +23,10 @@ Assumes net50 build environment
 The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests
 
 ## Features
+See [the head of the (pre-)release branch](https://github.com/SteveGilham/Gendarme/blob/release/pre-release/README.md) for the features in the latest actual release.
+
+In this branch
+
 * Can load .net core assemblies 
   * Will search the nuget cache for dependencies, though this can take some timeas an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
@@ -34,14 +36,18 @@ The `build` stage can be done in Visual Studio with the Debug configuration to r
   * DoNotExposeMethodsProtectedByLinkDemandRule
   * DoNotReduceTypeSecurityOnMethodsRule
   * SecureGetObjectDataOverridesRule
-* Similarly, `Gendarme.Rules.Portability.MonoCompatibilityReviewRule`, which uses a Framework-only API, is not implemented in the global tool version.
+* Similarly, `Gendarme.Rules.Portability.MonoComspatibilityReviewRule`, which uses a Framework-only API, is not implemented in the global tool version.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
 
 ## Known Issues
-The AvoidSwitchStatements rule needs some serious decompiler code to recognise Roslyn's mangled switch as multiple conditional branches, so some tests have just been set to `[Ignore]`
+
+
+#### Unit test fixing
+
+Having resolved many issues stemming from a Cecil change to what the name and namespace properties of a nested type returned, the next major sources of test failure have been compiler changes (from pre-Roslyn to now) and differences in behaviour under `.netstandard` compared with the .net Framework.  In particular, the `AvoidSwitchStatements` rule needs some serious decompiler code to recognise Roslyn's mangled switch constructs (compiled as multiple conditional branches) so some tests have just been set to `[Ignore]`
 
 The following rule suites have unit test failures
 
@@ -50,19 +56,19 @@ The following rule suites have unit test failures
  * TestTryCatchFinally()
 * Concurrency -- 6 failures
   * Do not lock on Static Type/This/Type (false negatives)
-  * ProtectCallToEventDelegatesRule (3 * false positives)
+  * `ProtectCallToEventDelegatesRule` (3 * false positives)
 * Correctness -- 5 failures (false negatives)
-  * ProvideCorrectArgumentsToFormattingMethods * 3 -- changed IL : `call Array.Empty` used instead of an explict load
-  * TestNativeFieldsArray -- changed IL
-  * CheckParametersNullityInVisibleMethods -- not sure what's up here
+  * `ProvideCorrectArgumentsToFormattingMethods` * 3 -- changed IL : `call Array.Empty` used instead of an explict load
+  * `TestNativeFieldsArray` -- changed IL
+  * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
 * Globalization -- 1 failure (Cannot read satellite resources with available reader)
 * Interoperability -- 17 failures (false negatives)
-  * 17 false negatives in DelegatesPassedToNativeCodeMustIncludeExceptionHandling
-* Maintainability -- 1 failure (false negative in AvoidUnnecessarySpecializationRule)
+  * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling`
+* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule`)
 * Performance -- 4 failures
-  * false negative in ReviewLinqMethodRule
-  * false negative in UseIsOperatorRule
-  * 2 false negatives in AvoidConcatenatingCharsRule
+  * false negative in `ReviewLinqMethodRule`
+  * false negative in `UseIsOperatorRule`
+  * 2 false negatives in `AvoidConcatenatingCharsRule`
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
@@ -111,8 +117,3 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * Add a `RelaxedMarkAllNonSerializableFieldsRule` which ignores F# types with `@` in the name, keeping the full-strength version for cases where serializing a closure is intentional.
 * Skip types called `<PrivateImplementationDetails>`
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
-
-#### Unit test fixing
-
-Many issues stemmed from a cecil change to what the name and namespace properties of a nested type returned.
-
