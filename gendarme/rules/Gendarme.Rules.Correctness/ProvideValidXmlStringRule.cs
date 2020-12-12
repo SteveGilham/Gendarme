@@ -42,161 +42,164 @@ using System.Text.RegularExpressions;
 
 namespace Gendarme.Rules.Correctness {
 
-	/// <summary>
-	/// This rule verifies that valid XML string arguments are passed as arguments.
-	/// </summary>
-	/// <example>
-	/// Bad example (using LoadXml):
-	/// <code>
-	/// XmlDocument doc = new XmlDocument ();
-	/// doc.LoadXml ("&lt;book&gt;");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (using LoadXml):
-	/// <code>
-	/// XmlDocument doc = new XmlDocument ();
-	/// doc.LoadXml ("&lt;book /&gt;");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (using InnerXml):
-	/// <code>
-	/// bookElement.InnerXml = "&lt;author&gt;Robert J. Sawyer&lt;/authr&gt;";
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (using InnerXml):
-	/// <code>
-	/// bookElement.InnerXml = "&lt;author&gt;Robert J. Sawyer&lt;/author&gt;";
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.6</remarks>
+  /// <summary>
+  /// This rule verifies that valid XML string arguments are passed as arguments.
+  /// </summary>
+  /// <example>
+  /// Bad example (using LoadXml):
+  /// <code>
+  /// XmlDocument doc = new XmlDocument ();
+  /// doc.LoadXml ("&lt;book&gt;");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (using LoadXml):
+  /// <code>
+  /// XmlDocument doc = new XmlDocument ();
+  /// doc.LoadXml ("&lt;book /&gt;");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (using InnerXml):
+  /// <code>
+  /// bookElement.InnerXml = "&lt;author&gt;Robert J. Sawyer&lt;/authr&gt;";
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (using InnerXml):
+  /// <code>
+  /// bookElement.InnerXml = "&lt;author&gt;Robert J. Sawyer&lt;/author&gt;";
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.6</remarks>
 
-	[Problem ("An invalid XML string is provided to a method.")]
-	[Solution ("Fix the invalid XML string.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public sealed class ProvideValidXmlStringRule : Rule, IMethodRule {
+  [Problem("An invalid XML string is provided to a method.")]
+  [Solution("Fix the invalid XML string.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public sealed class ProvideValidXmlStringRule : Rule, IMethodRule
+  {
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
 
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
-
-			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences) {
-					if (name.Name == "System.Xml") {
-						Active = true;
-						return;
-					}
-				}
-				Active = false; //no System.Xml assembly reference has been found
-			};
-		}
+      Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e)
+      {
+        foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences)
+        {
+          if (name.Name.StartsWith("System.Xml", StringComparison.Ordinal))
+          {
+            Active = true;
+            return;
+          }
+        }
+        Active = false; //no System.Xml assembly reference has been found
+      };
+    }
 
 		void CheckString (MethodDefinition method, Instruction ins, int argumentOffset)
-		{
-			Instruction ld = ins.TraceBack (method, argumentOffset);
-			if (null == ld)
-				return;
+    {
+      Instruction ld = ins.TraceBack(method, argumentOffset);
+      if (null == ld)
+        return;
 
 			switch (ld.OpCode.Code) {
-			case Code.Ldstr:
-				CheckString (method, ins, (string) ld.Operand);
-				break;
-			case Code.Ldsfld:
-				FieldReference f = (FieldReference) ld.Operand;
-				if (f.Name == "Empty" && f.DeclaringType.IsNamed (systemString))
-					CheckString (method, ins, null);
-				break;
-			case Code.Ldnull:
-				CheckString (method, ins, null);
-				break;
-			}
-		}
+        case Code.Ldstr:
+          CheckString(method, ins, (string)ld.Operand);
+          break;
+        case Code.Ldsfld:
+          FieldReference f = (FieldReference)ld.Operand;
+          if (f.Name == "Empty" && f.DeclaringType.IsNamed(systemString))
+            CheckString(method, ins, null);
+          break;
+        case Code.Ldnull:
+          CheckString(method, ins, null);
+          break;
+      }
+    }
 
 		void CheckString (MethodDefinition method, Instruction ins, string xml)
-		{
+      {
 			if (string.IsNullOrEmpty (xml)) {
-				Runner.Report (method, ins, Severity.High, Confidence.Total, "XML string is null or empty.");
-				return;
-			}
+        Runner.Report(method, ins, Severity.High, Confidence.Total, "XML string is null or empty.");
+        return;
+      }
 
 			try {
-				(new XmlDocument ()).LoadXml (xml);
+        (new XmlDocument()).LoadXml(xml);
 			} catch (XmlException e) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
-					"XML string '{0}' is invalid. Details: {1}", xml, e.Message);
-				Runner.Report (method, ins, Severity.High, Confidence.High, msg);
-			}
-		}
+        string msg = String.Format(CultureInfo.InvariantCulture,
+          "XML string '{0}' is invalid. Details: {1}", xml, e.Message);
+        Runner.Report(method, ins, Severity.High, Confidence.High, msg);
+      }
+    }
 
-        private readonly static TypeName xpn = new TypeName
-        {
-            Namespace = "System.Xml.XPath",
-            Name = "XPathNavigator"
-        };
-        private readonly static TypeName systemString = new TypeName
-        {
-            Namespace = "System",
-            Name = "String"
-        };
-        private readonly static TypeName node = new TypeName
-        {
-            Namespace = "System.Xml",
-            Name = "XmlNode"
-        };
-        private readonly static TypeName document = new TypeName
-        {
-            Namespace = "System.Xml",
-            Name = "XmlDocument"
-        };
+    private readonly static TypeName xpn = new TypeName
+    {
+      Namespace = "System.Xml.XPath",
+      Name = "XPathNavigator"
+    };
+    private readonly static TypeName systemString = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
+    private readonly static TypeName node = new TypeName
+    {
+      Namespace = "System.Xml",
+      Name = "XmlNode"
+    };
+    private readonly static TypeName document = new TypeName
+    {
+      Namespace = "System.Xml",
+      Name = "XmlDocument"
+    };
         void CheckCall(MethodDefinition method, Instruction ins, MethodReference mref)
-		{
-			if (null == mref || !mref.HasParameters)
-				return;
+    {
+      if (null == mref || !mref.HasParameters)
+        return;
 
 			switch (mref.Name) {
-			case "LoadXml":
-				if (mref.DeclaringType.IsNamed (document))
-					CheckString (method, ins, -1);
-				break;
-			case "set_InnerXml":
-			case "set_OuterXml":
-				TypeReference tr = mref.DeclaringType;
-				if (tr.Inherits (node) || tr.Inherits (xpn))
-					CheckString (method, ins, -1);
-				break;
-			case "AppendChild":
-			case "PrependChild":
-			case "InsertAfter":
-			case "InsertBefore":
-				IList<ParameterDefinition> pdc = mref.Parameters;
-				if (pdc.Count == 1
-					&& pdc [0].ParameterType.IsNamed (systemString)
-					&& mref.DeclaringType.Inherits (xpn))
-					CheckString (method, ins, -1);
-				break;
-			}
-		}
+        case "LoadXml":
+          if (mref.DeclaringType.IsNamed(document))
+            CheckString(method, ins, -1);
+          break;
+        case "set_InnerXml":
+        case "set_OuterXml":
+          TypeReference tr = mref.DeclaringType;
+          if (tr.Inherits(node) || tr.Inherits(xpn))
+            CheckString(method, ins, -1);
+          break;
+        case "AppendChild":
+        case "PrependChild":
+        case "InsertAfter":
+        case "InsertBefore":
+          IList<ParameterDefinition> pdc = mref.Parameters;
+          if (pdc.Count == 1
+            && pdc[0].ParameterType.IsNamed(systemString)
+            && mref.DeclaringType.Inherits(xpn))
+            CheckString(method, ins, -1);
+          break;
+      }
+    }
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-			//is there any interesting opcode in the method?
-			OpCodeBitmask calls = OpCodeBitmask.Calls;
-			if (!calls.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+      //is there any interesting opcode in the method?
+      OpCodeBitmask calls = OpCodeBitmask.Calls;
+      if (!calls.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
 
 			foreach (Instruction ins in method.Body.Instructions) {
-				if (!calls.Get (ins.OpCode.Code))
-					continue;
+        if (!calls.Get(ins.OpCode.Code))
+          continue;
 
-				CheckCall (method, ins, (MethodReference) ins.Operand);
-			}
+        CheckCall(method, ins, (MethodReference)ins.Operand);
+      }
 
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }
