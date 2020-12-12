@@ -16,9 +16,9 @@ A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can lo
 
 Assumes net50 build environment
 
-* dotnet tool restore
-* dotnet fake run .\Build\setup.fsx
-* dotnet fake run .\Build\build.fsx
+* `dotnet tool restore`
+* `dotnet fake run .\Build\setup.fsx`
+* `dotnet fake run .\Build\build.fsx`
 
 The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests
 
@@ -32,10 +32,10 @@ In this branch
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 * Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
-  * AddMissingTypeInheritanceDemandRule
-  * DoNotExposeMethodsProtectedByLinkDemandRule
-  * DoNotReduceTypeSecurityOnMethodsRule
-  * SecureGetObjectDataOverridesRule
+  * `AddMissingTypeInheritanceDemandRule`
+  * `DoNotExposeMethodsProtectedByLinkDemandRule`
+  * `DoNotReduceTypeSecurityOnMethodsRule`
+  * `SecureGetObjectDataOverridesRule`
 * Similarly, `Gendarme.Rules.Portability.MonoComspatibilityReviewRule`, which uses a Framework-only API, is not implemented in the global tool version.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 
@@ -52,8 +52,8 @@ Having resolved many issues stemming from a Cecil change to what the name and na
 The following rule suites have unit test failures
 
 * Framework -- 2 failures for Stack entry analysis (Roslyn, most likely)
- * TestMultipleCatch()
- * TestTryCatchFinally()
+  * TestMultipleCatch()
+  * TestTryCatchFinally()
 * Concurrency -- 6 failures
   * Do not lock on Static Type/This/Type (false negatives)
   * `ProtectCallToEventDelegatesRule` (3 * false positives)
