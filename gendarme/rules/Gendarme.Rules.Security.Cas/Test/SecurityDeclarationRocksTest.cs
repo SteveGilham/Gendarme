@@ -51,21 +51,16 @@ namespace Tests.Rules.Security.Cas
   [TestFixture]
   public class SecurityDeclarationRocksTest
   {
-#if NETCOREAPP2_1
-#else
+    [Test]
+    public void Unrestricted_Boolean()
+    {
+      TypeDefinition t = DefinitionLoader.GetTypeDefinition<UnrestrictedTrue>();
+      PermissionSet ps = t.SecurityDeclarations[0].ToPermissionSet();
+      Assert.IsTrue(ps.IsUnrestricted(), "IsUnrestricted");
 
-		[Test]
-		public void Unrestricted_Boolean ()
-		{
-			TypeDefinition t = DefinitionLoader.GetTypeDefinition<UnrestrictedTrue> ();
-			PermissionSet ps = t.SecurityDeclarations [0].ToPermissionSet ();
-			Assert.IsTrue (ps.IsUnrestricted (), "IsUnrestricted");
-
-			t = DefinitionLoader.GetTypeDefinition<UnrestrictedFalse> ();
-			ps = t.SecurityDeclarations [0].ToPermissionSet ();
-			Assert.IsFalse (ps.IsUnrestricted (), "!IsUnrestricted");
-		}
-
-#endif
+      t = DefinitionLoader.GetTypeDefinition<UnrestrictedFalse>();
+      ps = t.SecurityDeclarations[0].ToPermissionSet();
+      Assert.IsFalse(ps.IsUnrestricted(), "!IsUnrestricted");
+    }
   }
 }

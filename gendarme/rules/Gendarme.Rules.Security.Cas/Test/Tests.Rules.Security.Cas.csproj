@@ -6,6 +6,22 @@
     <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
+    <NoWarn>1701;1702;618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+    <Compile Remove="AddMissingTypeInheritanceDemandTest.cs" />
+    <None Include="AddMissingTypeInheritanceDemandTest.cs" />
+    <Compile Remove="DoNotReduceTypeSecurityOnMethodsTest.cs" />
+    <None Include="DoNotReduceTypeSecurityOnMethodsTest.cs" />
+    <Compile Remove="SecureGetObjectDataOverridesTest.cs" />
+    <None Include="DoNotExposeMethodsProtectedByLinkDemandTest.cs" />
+    <Compile Remove="DoNotExposeMethodsProtectedByLinkDemandTest.cs" />
+    <None Include="SecureGetObjectDataOverridesTest.cs" />
+    <Compile Remove="SecurityDeclarationRocksTest.cs" />
+    <None Include="SecurityDeclarationRocksTest.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="altcover" Version="7.2.801" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />

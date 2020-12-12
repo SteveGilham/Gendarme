@@ -93,12 +93,6 @@ namespace Gendarme.Rules.Security.Cas
   [FxCopCompatibility("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
   public class DoNotExposeMethodsProtectedByLinkDemandRule : Rule, IMethodRule
   {
-#if NETSTANDARD2_0
-    private static bool Check(ISecurityDeclarationProvider caller, ISecurityDeclarationProvider callee)
-    {
-      return true;
-    }
-#else
     private static PermissionSet Empty = new PermissionSet(PermissionState.None);
 
     private static PermissionSet GetLinkDemand(ISecurityDeclarationProvider method)
@@ -125,8 +119,6 @@ namespace Gendarme.Rules.Security.Cas
       // 2 - Ensure the caller requires a superset (or the same) permissions
       return calleeLinkDemand.IsSubsetOf(GetLinkDemand(caller));
     }
-
-#endif
 
     public RuleResult CheckMethod(MethodDefinition method)
     {

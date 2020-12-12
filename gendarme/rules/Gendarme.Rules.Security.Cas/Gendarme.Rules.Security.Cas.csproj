@@ -27,4 +27,14 @@
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <Compile Remove="AddMissingTypeInheritanceDemandRule.cs" />
+    <None Include="AddMissingTypeInheritanceDemandRule.cs" />
+    <Compile Remove="DoNotExposeMethodsProtectedByLinkDemandRule.cs" />
+    <None Include="DoNotExposeMethodsProtectedByLinkDemandRule.cs" />
+    <Compile Remove="DoNotReduceTypeSecurityOnMethodsRule.cs" />
+    <None Include="DoNotReduceTypeSecurityOnMethodsRule.cs" />
+    <Compile Remove="SecureGetObjectDataOverridesRule.cs" />
+    <None Include="SecureGetObjectDataOverridesRule.cs" />
+  </ItemGroup>
 </Project>

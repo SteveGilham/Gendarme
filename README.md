@@ -14,9 +14,9 @@ Since this is a fork, issues should be reported at [my related repo](https://git
 | |<sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
 
 
-## Build process from trunk as per `appveyor.yml`
+## Build process from trunk as per the CI YAML
 
-Assumes VS2019 build environment
+Assumes net50 build environment
 
 * dotnet tool restore
 * dotnet fake run .\Build\setup.fsx
@@ -26,9 +26,15 @@ The `build` stage can be done in Visual Studio with the Debug configuration to r
 
 ## Features
 * Can load .net core assemblies 
-  * Will search the nuget cache for dependencies, though this can take some time; whether this is better than using `dotnet publish` to get all the code you want to analyse in one place so Gendarme is able to pick up dependencies will depend on your context.
+  * Will search the nuget cache for dependencies, though this can take some timeas an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
+* Because of these obsolescing functions not being present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
+  * AddMissingTypeInheritanceDemandRule
+  * DoNotExposeMethodsProtectedByLinkDemandRule
+  * DoNotReduceTypeSecurityOnMethodsRule
+  * SecureGetObjectDataOverridesRule
+* `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
@@ -45,8 +51,7 @@ The following rule suites have unit test failures
 * Interoperability -- 17 Stack entry analysis related failures 
 * Maintainability -- 1 failure (AvoidUnnecessarySpecializationRule)
 * Performance -- 8 failures (Character concatenation, others)
-* Portability -- 5 failures (MonoCompatibiliyReview)
-* Security.Cas -- 13 failures on .net core where it is not applicable
+* Portability -- 5 failures (MonoCompatibilityReview)
 * Smells -- 2 failure (`SuccessOnNonDuplicatedCodeIntoForeachLoopTest` detects the loop and `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest` the switch) + 2 `[Ignore]`d switch related tests
 
 ## Changes made for F# support
@@ -92,9 +97,6 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * Add a `RelaxedMarkAllNonSerializableFieldsRule` which ignores F# types with `@` in the name, keeping the full-strength version for cases where serializing a closure is intentional.
 * Skip types called `<PrivateImplementationDetails>`
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
-
-## Other Changes
-* `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 
 #### Unit test fixing
 
