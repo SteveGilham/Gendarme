@@ -29,7 +29,7 @@ The `build` stage can be done in Visual Studio with the Debug configuration to r
   * Will search the nuget cache for dependencies, though this can take some timeas an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
-* Because of these obsolescing functions not being present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
+* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
   * AddMissingTypeInheritanceDemandRule
   * DoNotExposeMethodsProtectedByLinkDemandRule
   * DoNotReduceTypeSecurityOnMethodsRule
