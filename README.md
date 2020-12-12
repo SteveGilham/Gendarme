@@ -59,8 +59,9 @@ The following rule suites have unit test failures
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in DelegatesPassedToNativeCodeMustIncludeExceptionHandling
 * Maintainability -- 1 failure (false negative in AvoidUnnecessarySpecializationRule)
-* Performance -- 8 failures
-  * 4 problems with finding the uncalled methods to examine
+* Performance -- 6 failures
+  * Code visibility in `AvoidUncalledPrivateCode` testing
+  * Anonymous method name in `AvoidUnusedParameters` testing
   * false negative in ReviewLinqMethodRule
   * false negative in UseIsOperatorRule
   * 2 false negatives in AvoidConcatenatingCharsRule

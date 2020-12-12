@@ -76,25 +76,12 @@ namespace Test.Rules.Performance
       }
     }
 
-    public class CalledPrivateMethod
-    {
-      private void display()
-      {
-      }
-
-      public static void MainName(string[] args)
-      {
-        CalledPrivateMethod c = new CalledPrivateMethod();
-        c.display();
-      }
-    }
-
     [Test]
     public void PrivateMethodsInPublicType()
     {
       AssertRuleFailure<UncalledPrivateMethod>("display", 1);
-      AssertRuleSuccess<CalledPrivateMethod>("display");
-      AssertRuleDoesNotApply<CalledPrivateMethod>("Main");
+      AssertRuleSuccess<Examples.Rules.Performance.AvoidUncalledPrivateCode.CalledPrivateMethod>("display");
+      AssertRuleDoesNotApply<Examples.Rules.Performance.AvoidUncalledPrivateCode.CalledPrivateMethod>("Main");
     }
 
     public class UncalledInternalMethod
@@ -104,28 +91,12 @@ namespace Test.Rules.Performance
       }
     }
 
-    public class CalledInternalMethod
-    {
-      internal void CalledMethod()
-      {
-      }
-    }
-
-    public class MethodCallingClass
-    {
-      public static void MainName(string[] args)
-      {
-        CalledInternalMethod c = new CalledInternalMethod();
-        c.CalledMethod();
-      }
-    }
-
     [Test]
     public void InternalMethodsInPublicTypes()
     {
       AssertRuleFailure<UncalledInternalMethod>("print", 1);
-      AssertRuleSuccess<CalledInternalMethod>("CalledMethod");
-      AssertRuleDoesNotApply<MethodCallingClass>("Main");
+      AssertRuleSuccess<Examples.Rules.Performance.AvoidUncalledPrivateCode.CalledInternalMethod>("CalledMethod");
+      AssertRuleDoesNotApply<Examples.Rules.Performance.AvoidUncalledPrivateCode.MethodCallingClass>("Main");
     }
 
     private class PrivateMethodInPrivateClass
@@ -148,57 +119,17 @@ namespace Test.Rules.Performance
       AssertRuleSuccess<PrivateMethodInPrivateClass>("privateMethodCalled");
     }
 
-    private class PublicMethodsInPrivateClass
-    {
-      public void PublicCalledMethod()
-      {
-      }
-
-      public virtual void PublicVirtualUncalledMethod()
-      {
-      }
-
-      public void PublicUncalledMethod()
-      {
-      }
-
-      public static void MainName(string[] args)
-      {
-        PublicMethodsInPrivateClass p = new PublicMethodsInPrivateClass();
-        p.PublicCalledMethod();
-      }
-    }
-
-    internal class PublicMethodsInInternalClass
-    {
-      public void PublicCalledMethod()
-      {
-      }
-
-      public virtual void PublicVirtualUncalledMethod()
-      {
-      }
-
-      public void PublicUncalledMethod()
-      {
-      }
-
-      public static void MainName(string[] args)
-      {
-        PublicMethodsInInternalClass p = new PublicMethodsInInternalClass();
-        p.PublicCalledMethod();
-      }
-    }
-
     [Test]
     public void PublicMethods()
     {
-      AssertRuleFailure<PublicMethodsInPrivateClass>("PublicUncalledMethod");
-      AssertRuleSuccess<PublicMethodsInPrivateClass>("PublicVirtualUncalledMethod");
-      AssertRuleSuccess<PublicMethodsInPrivateClass>("PublicCalledMethod");
-      AssertRuleFailure<PublicMethodsInInternalClass>("PublicUncalledMethod");
-      AssertRuleSuccess<PublicMethodsInInternalClass>("PublicVirtualUncalledMethod");
-      AssertRuleSuccess<PublicMethodsInInternalClass>("PublicCalledMethod");
+      Assert.Fail("PublicMethods");
+      // TODO
+      //AssertRuleFailure<PublicMethodsInPrivateClass>("PublicUncalledMethod");
+      //AssertRuleSuccess<PublicMethodsInPrivateClass>("PublicVirtualUncalledMethod");
+      //AssertRuleSuccess<PublicMethodsInPrivateClass>("PublicCalledMethod");
+      //AssertRuleFailure<PublicMethodsInInternalClass>("PublicUncalledMethod");
+      //AssertRuleSuccess<PublicMethodsInInternalClass>("PublicVirtualUncalledMethod");
+      //AssertRuleSuccess<PublicMethodsInInternalClass>("PublicCalledMethod");
     }
 
     public class AnonymousMethod
