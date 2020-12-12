@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec @RUNTIME@ $MONO_OPTIONS "@prefix@/lib/gsharp/gsharp.exe" "$@"

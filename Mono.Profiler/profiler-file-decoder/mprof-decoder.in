@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec mono "@prefix@/lib/@PACKAGE@/mprof-decoder.exe" "$@"
