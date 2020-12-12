@@ -34,6 +34,7 @@ The `build` stage can be done in Visual Studio with the Debug configuration to r
   * DoNotExposeMethodsProtectedByLinkDemandRule
   * DoNotReduceTypeSecurityOnMethodsRule
   * SecureGetObjectDataOverridesRule
+* Similarly, `Gendarme.Rules.Portability.MonoCompatibilityReviewRule`, which uses a Framework-only API, is not implemented in the global tool version.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 
 ## Direction
@@ -50,20 +51,19 @@ The following rule suites have unit test failures
 * Concurrency -- 6 failures
   * Do not lock on Static Type/This/Type (false negatives)
   * ProtectCallToEventDelegatesRule (3 * false positives)
-* Correctness -- 6 failures (false negatives)
+* Correctness -- 5 failures (false negatives)
   * ProvideCorrectArgumentsToFormattingMethods * 3 -- changed IL : `call Array.Empty` used instead of an explict load
   * TestNativeFieldsArray -- changed IL
   * CheckParametersNullityInVisibleMethods -- not sure what's up here
 * Globalization -- 1 failure (Cannot read satellite resources with availble reader)
-* Interoperability -- 17 Stack entry analysis related failures 
-  * DelegatesPassedToNativeCodeMustIncludeExceptionHandling false negatives
+* Interoperability -- 17 failures (false negatives)
+  * 17 false negatives in DelegatesPassedToNativeCodeMustIncludeExceptionHandling
 * Maintainability -- 1 failure (false negative in AvoidUnnecessarySpecializationRule)
 * Performance -- 8 failures
   * 4 problems with finding the uncalled methods to examine
   * false negative in ReviewLinqMethodRule
   * false negative in UseIsOperatorRule
   * 2 false negatives in AvoidConcatenatingCharsRule
-* Portability -- 5 failures (missing something in MonoCompatibilityReview)
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`

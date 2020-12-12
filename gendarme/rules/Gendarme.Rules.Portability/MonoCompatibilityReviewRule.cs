@@ -44,13 +44,7 @@ using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
 using ICSharpCode.SharpZipLib.Zip;
-
-#if NETSTANDARD2_0
-#else
-
 using MoMA.Analyzer.MoMAWebService;
-
-#endif
 
 namespace Gendarme.Rules.Portability
 {
@@ -77,9 +71,9 @@ namespace Gendarme.Rules.Portability
     private const string MissingMessage = "{0} is missing from Mono.";
     private const string TodoMessage = "{0} is marked with a [MonoTODO] attribute: {1}.";
 
-    private HashSet<string> NotImplementedInternal; //value is unused
-    private HashSet<string> MissingInternal; //value is unused
-    private Dictionary<string, string> TodoInternal; //value = TODO Description
+    private HashSet<string> NotImplementedInternal = new HashSet<string>();
+    private HashSet<string> MissingInternal = new HashSet<string>();
+    private Dictionary<string, string> TodoInternal = new Dictionary<string, string>();
 
     private Version version;
     private string definitions_folder;
@@ -304,8 +298,7 @@ namespace Gendarme.Rules.Portability
     private Version DownloadLatestDefinitions()
     {
       Version v = null;
-#if NETSTANDARD2_0 // TODO
-#else
+
       // try to download files from the net
       try
       {
@@ -330,7 +323,6 @@ namespace Gendarme.Rules.Portability
         if (Runner.VerbosityLevel > 0)
           Console.Error.WriteLine(e);
       }
-#endif
       return v;
     }
 

@@ -9,6 +9,10 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>
   </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+    <Compile Remove="MonoCompatibilityReviewTest.cs" />
+    <None Include="MonoCompatibilityReviewTest.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="altcover" Version="7.2.801" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />

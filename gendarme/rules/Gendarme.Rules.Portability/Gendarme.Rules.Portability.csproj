@@ -23,7 +23,7 @@
       <HintPath>..\..\wix\Libraries\ICSharpCode.SharpZipLib.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Web.Services"  Condition="'$(TargetFramework)' != 'netstandard2.0'" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
@@ -36,5 +36,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <Compile Remove="MonoCompatibilityReviewRule.cs" />
+    <None Include="MonoCompatibilityReviewRule.cs" />
+    <Compile Remove="MoMAWebService.cs" />
+    <None Include="MoMAWebService.cs" />
   </ItemGroup>
 </Project>
