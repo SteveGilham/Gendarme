@@ -46,7 +46,7 @@ The following rule suites have unit test failures
 
 * Framework -- 2 failures for Stack entry analysis (inherited from the VS2013 build)
 * Concurrency -- 6 failures
-* Correctness -- 6 failures (35 on .net core)
+* Correctness -- 6 failures
 * Globalization -- 1 failure
 * Interoperability -- 17 Stack entry analysis related failures 
 * Maintainability -- 1 failure (AvoidUnnecessarySpecializationRule)
