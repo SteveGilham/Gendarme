@@ -44,15 +44,30 @@ The AvoidSwitchStatements rule needs some serious decompiler code to recognise R
 
 The following rule suites have unit test failures
 
-* Framework -- 2 failures for Stack entry analysis (inherited from the VS2013 build)
+* Framework -- 2 failures for Stack entry analysis (Roslyn, most likely)
+ * TestMultipleCatch()
+ * TestTryCatchFinally()
 * Concurrency -- 6 failures
-* Correctness -- 6 failures
-* Globalization -- 1 failure
+  * Do not lock on Static Type/This/Type (false negatives)
+  * ProtectCallToEventDelegatesRule (3 * false positives)
+* Correctness -- 6 failures (false negatives)
+  * ProvideCorrectArgumentsToFormattingMethods * 3 -- changed IL : `call Array.Empty` used instead of an explict load
+  * TestNativeFieldsArray -- changed IL
+  * CheckParametersNullityInVisibleMethods -- not sure what's up here
+* Globalization -- 1 failure (Cannot read satellite resources with availble reader)
 * Interoperability -- 17 Stack entry analysis related failures 
-* Maintainability -- 1 failure (AvoidUnnecessarySpecializationRule)
-* Performance -- 8 failures (Character concatenation, others)
-* Portability -- 5 failures (MonoCompatibilityReview)
-* Smells -- 2 failure (`SuccessOnNonDuplicatedCodeIntoForeachLoopTest` detects the loop and `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest` the switch) + 2 `[Ignore]`d switch related tests
+  * DelegatesPassedToNativeCodeMustIncludeExceptionHandling false negatives
+* Maintainability -- 1 failure (false negative in AvoidUnnecessarySpecializationRule)
+* Performance -- 8 failures
+  * 4 problems with finding the uncalled methods to examine
+  * false negative in ReviewLinqMethodRule
+  * false negative in UseIsOperatorRule
+  * 2 false negatives in AvoidConcatenatingCharsRule
+* Portability -- 5 failures (missing something in MonoCompatibilityReview)
+* Smells -- 2 failure
+  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
+  * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
+  * 2 other `[Ignore]`d switch related tests
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
