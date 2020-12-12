@@ -300,6 +300,10 @@ namespace Gendarme.Rules.Portability
       Version v = null;
 
       // try to download files from the net
+      // can just load from http://www.go-mono.com/archive/moma/defs/
+      // in particular http://www.go-mono.com/archive/moma/defs/2.8-4.0-defs.zip
+      // https is not available
+      // Can store that as a resource stream
       try
       {
         string definitionsUri;
