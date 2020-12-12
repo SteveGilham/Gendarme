@@ -40,8 +40,8 @@ module NetCoreResolver =
         [ Environment.GetEnvironmentVariable "NUGET_PACKAGES"
           Path.Combine
             (Environment.GetEnvironmentVariable "ProgramFiles"
-             |> Option.nullable
-             |> (Option.getOrElse share), shared)
+             |> Option.ofObj
+             |> (Option.defaultValue share), shared)
           Path.Combine(share, shared)
           nugetCache ]
 
