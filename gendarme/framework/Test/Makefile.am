@@ -1,3 +1,0 @@
-DISTCLEANFILES = Makefile.in 
-
-all:
