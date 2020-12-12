@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,365 +45,377 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Performance {
+namespace Test.Rules.Performance
+{
+  public abstract class AbstractClass
+  {
+    public abstract void AbstractMethod(int x);
+  }
 
-	public abstract class AbstractClass {
-		public abstract void AbstractMethod (int x);
-	}
+  public class VirtualClass
+  {
+    public virtual void VirtualMethod(int x)
+    {
+    }
+  }
 
-	public class VirtualClass {
-		public virtual void VirtualMethod (int x) 
-		{
-		}
-	}
+  public class OverrideClass : VirtualClass
+  {
+    public override void VirtualMethod(int x)
+    {
+    }
+  }
 
-	public class OverrideClass : VirtualClass {
-		public override void VirtualMethod (int x) 
-		{
-		}
-	}
-	
-	[TestFixture]
-	public class AvoidUnusedParametersTest : MethodRuleTestFixture<AvoidUnusedParametersRule> {
+  [TestFixture]
+  public class AvoidUnusedParametersTest : MethodRuleTestFixture<AvoidUnusedParametersRule>
+  {
+    [OneTimeSetUp]
+    public void SetUp()
+    {
+      Runner.Engines.Subscribe("Gendarme.Framework.Engines.SuppressMessageEngine");
+    }
 
-        [OneTimeSetUp]
-		public void SetUp ()
-		{
-			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
-		}
-		
-		public void PrintBannerUsingParameter (Version version) 
-		{
-			Console.WriteLine ("Welcome to the foo program {0}", version);
-		}
+    public void PrintBannerUsingParameter(Version version)
+    {
+      Console.WriteLine("Welcome to the foo program {0}", version);
+    }
 
-		public void PrintBannerUsingAssembly (Version version)
-		{
-			Console.WriteLine ("Welcome to the foo program {0}", Assembly.GetExecutingAssembly ().GetName ().Version);
-		}
+    public void PrintBannerUsingAssembly(Version version)
+    {
+      Console.WriteLine("Welcome to the foo program {0}", Assembly.GetExecutingAssembly().GetName().Version);
+    }
 
-		public void PrintBannerWithoutParameters () 
-		{
-			Console.WriteLine ("Welcome to the foo program {0}", Assembly.GetExecutingAssembly ().GetName ().Version);
-		}
+    public void PrintBannerWithoutParameters()
+    {
+      Console.WriteLine("Welcome to the foo program {0}", Assembly.GetExecutingAssembly().GetName().Version);
+    }
 
-		[Test]
-		public void PrintBanner ()
-		{
-			AssertRuleSuccess<AvoidUnusedParametersTest> ("PrintBannerUsingParameter");
-			AssertRuleFailure<AvoidUnusedParametersTest> ("PrintBannerUsingAssembly", 1);
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("PrintBannerWithoutParameters");
-		}
+    [Test]
+    public void PrintBanner()
+    {
+      AssertRuleSuccess<AvoidUnusedParametersTest>("PrintBannerUsingParameter");
+      AssertRuleFailure<AvoidUnusedParametersTest>("PrintBannerUsingAssembly", 1);
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("PrintBannerWithoutParameters");
+    }
 
-		public void MethodWithUnusedParameters (IEnumerable enumerable, int x) 
-		{
-			Console.WriteLine ("Method with unused parameters");
-		}
+    public void MethodWithUnusedParameters(IEnumerable enumerable, int x)
+    {
+      Console.WriteLine("Method with unused parameters");
+    }
 
-		[Test]
-		public void MethodWithUnusedParametersTest ()
-		{
-			AssertRuleFailure<AvoidUnusedParametersTest> ("MethodWithUnusedParameters", 2);
-		}
+    [Test]
+    public void MethodWithUnusedParametersTest()
+    {
+      AssertRuleFailure<AvoidUnusedParametersTest>("MethodWithUnusedParameters", 2);
+    }
 
-		public void MethodWith5UsedParameters (int x, IEnumerable enumerable, string foo, char c, float f) 
-		{
-			Console.WriteLine (f);
-			Console.WriteLine (c);
-			Console.WriteLine (foo);
-			Console.WriteLine (enumerable);
-			Console.WriteLine (x);
-		}
+    public void MethodWith5UsedParameters(int x, IEnumerable enumerable, string foo, char c, float f)
+    {
+      Console.WriteLine(f);
+      Console.WriteLine(c);
+      Console.WriteLine(foo);
+      Console.WriteLine(enumerable);
+      Console.WriteLine(x);
+    }
 
-		[Test]
-		public void MethodWith5UsedParametersTest ()
-		{
-			AssertRuleSuccess<AvoidUnusedParametersTest> ("MethodWith5UsedParameters");
-		}
+    [Test]
+    public void MethodWith5UsedParametersTest()
+    {
+      AssertRuleSuccess<AvoidUnusedParametersTest>("MethodWith5UsedParameters");
+    }
 
-		public static void StaticMethodWithUnusedParameters (int x, string foo) 
-		{
-		}
+    public static void StaticMethodWithUnusedParameters(int x, string foo)
+    {
+    }
 
-		[Test]
-		public void StaticMethodWithUnusedParametersTest ()
-		{
-			AssertRuleFailure<AvoidUnusedParametersTest> ("StaticMethodWithUnusedParameters", 2);
-		}
+    [Test]
+    public void StaticMethodWithUnusedParametersTest()
+    {
+      AssertRuleFailure<AvoidUnusedParametersTest>("StaticMethodWithUnusedParameters", 2);
+    }
 
-		public static void StaticMethodWithUsedParameters (int x, string foo) 
-		{
-			Console.WriteLine (x);
-			Console.WriteLine (foo);
-		}
+    public static void StaticMethodWithUsedParameters(int x, string foo)
+    {
+      Console.WriteLine(x);
+      Console.WriteLine(foo);
+    }
 
-		[Test]
-		public void StaticMethodWithUsedParametersTest ()
-		{
-			AssertRuleSuccess<AvoidUnusedParametersTest> ("StaticMethodWithUsedParameters");
-		}
+    [Test]
+    public void StaticMethodWithUsedParametersTest()
+    {
+      AssertRuleSuccess<AvoidUnusedParametersTest>("StaticMethodWithUsedParameters");
+    }
 
-		public static void StaticMethodWith5UsedParameters (int x, string foo, IEnumerable enumerable, char c, float f) 
-		{
-			Console.WriteLine (f);
-			Console.WriteLine (c);
-			Console.WriteLine (foo);
-			Console.WriteLine (enumerable);
-			Console.WriteLine (x);
-		}
+    public static void StaticMethodWith5UsedParameters(int x, string foo, IEnumerable enumerable, char c, float f)
+    {
+      Console.WriteLine(f);
+      Console.WriteLine(c);
+      Console.WriteLine(foo);
+      Console.WriteLine(enumerable);
+      Console.WriteLine(x);
+    }
 
-		[Test]
-		public void StaticMethodWith5UsedParametersTest ()
-		{
-			AssertRuleSuccess<AvoidUnusedParametersTest> ("StaticMethodWith5UsedParameters");
-		}
+    [Test]
+    public void StaticMethodWith5UsedParametersTest()
+    {
+      AssertRuleSuccess<AvoidUnusedParametersTest>("StaticMethodWith5UsedParameters");
+    }
 
-		public static void StaticMethodWith5UnusedParameters (int x, string foo, IEnumerable enumerable, char c, float f)
-		{
-		}
+    public static void StaticMethodWith5UnusedParameters(int x, string foo, IEnumerable enumerable, char c, float f)
+    {
+    }
 
-		[Test]
-		public void StaticMethodWith5UnusedParametersTest ()
-		{
-			AssertRuleFailure<AvoidUnusedParametersTest> ("StaticMethodWith5UnusedParameters", 5);
-		}
-		
-		public delegate void SimpleCallback (int x);
-		public void SimpleCallbackImpl (int x) 
-		{
-		}
+    [Test]
+    public void StaticMethodWith5UnusedParametersTest()
+    {
+      AssertRuleFailure<AvoidUnusedParametersTest>("StaticMethodWith5UnusedParameters", 5);
+    }
 
-		public void SimpleCallbackImpl2 (int x) 
-		{
-		}
+    public delegate void SimpleCallback(int x);
 
-		[Test]
-		public void DelegateMethodTest ()
-		{
-			SimpleCallback callback = new SimpleCallback (SimpleCallbackImpl);
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("SimpleCallbackImpl");
-		}
+    public void SimpleCallbackImpl(int x)
+    {
+    }
 
-		[Test]
-		public void DelegateMethodTestWithMultipleDelegates ()
-		{
-			SimpleCallback callback = new SimpleCallback (SimpleCallbackImpl);
-			SimpleCallback callback2 = new SimpleCallback (SimpleCallbackImpl2);
+    public void SimpleCallbackImpl2(int x)
+    {
+    }
 
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("SimpleCallbackImpl");
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("SimpleCallbackImpl2");
-		}
+    [Test]
+    public void DelegateMethodTest()
+    {
+      SimpleCallback callback = new SimpleCallback(SimpleCallbackImpl);
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl");
+    }
 
-		public void AnonymousMethodWithUnusedParameters ()
-		{
-			SimpleCallback callback = delegate (int x) {
-				//Empty	
-			};
-		}
+    [Test]
+    public void DelegateMethodTestWithMultipleDelegates()
+    {
+      SimpleCallback callback = new SimpleCallback(SimpleCallbackImpl);
+      SimpleCallback callback2 = new SimpleCallback(SimpleCallbackImpl2);
 
-		[Test]
-		public void AnonymousMethodTest ()
-		{
-			MethodDefinition method = null;
-			// compiler generated code is compiler dependant, check for [g]mcs (inner type)
-			TypeDefinition type = DefinitionLoader.GetTypeDefinition (typeof (AvoidUnusedParametersTest).Assembly, "AvoidUnusedParametersTest/<>c__CompilerGenerated0");
-			if (type != null)
-				method = DefinitionLoader .GetMethodDefinition (type, "<AnonymousMethodWithUnusedParameters>c__2", null);
-			// otherwise try for csc (inside same class)
-			if (method == null) {
-				type = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest> ();
-				foreach (MethodDefinition md in type.Methods) {
-					if (md.Name.StartsWith ("<AnonymousMethodWithUnusedParameters>")) {
-						method = md;
-						break;
-					}
-				}
-			}
-			Assert.IsNotNull (method, "method not found!");
-			AssertRuleDoesNotApply (method);
-		}
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl");
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl2");
+    }
 
-		public delegate void SimpleEventHandler (int x);
-		public event SimpleEventHandler SimpleEvent;
-		public void OnSimpleEvent (int x) 
-		{
-		}
+    public void AnonymousMethodWithUnusedParameters()
+    {
+      SimpleCallback callback = delegate (int x)
+      {
+        //Empty
+      };
+    }
 
-		[Test]
-		public void EventTest ()
-		{
-			SimpleEvent += new SimpleEventHandler (OnSimpleEvent);
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("OnSimpleEvent");
-		} 
+    [Test]
+    public void AnonymousMethodTest()
+    {
+      MethodDefinition method = null;
+      // compiler generated code is compiler dependant, check for [g]mcs (inner type)
+      TypeDefinition type = DefinitionLoader.GetTypeDefinition(typeof(AvoidUnusedParametersTest).Assembly, "Test.Rules.Performance.AvoidUnusedParametersTest/<>c");
+      if (type != null)
+        method = DefinitionLoader.GetMethodDefinition(type, "<AnonymousMethodWithUnusedParameters>b__22_0", null);
+      // otherwise try for csc (inside same class)
+      // would have to handle argument exception, not jjust null return, to get into this case
+      //if (method == null)
+      //{
+      //  type = DefinitionLoader.GetTypeDefinition<AvoidUnusedParametersTest>();
+      //  foreach (MethodDefinition md in type.Methods)
+      //  {
+      //    if (md.Name.StartsWith("<AnonymousMethodWithUnusedParameters>"))
+      //    {
+      //      method = md;
+      //      break;
+      //    }
+      //  }
+      //}
+      Assert.IsNotNull(method, "method not found!");
+      AssertRuleDoesNotApply(method);
+    }
 
-		public void EmptyMethod (int x) 
-		{
-		}
+    public delegate void SimpleEventHandler(int x);
 
-		[Test]
-		public void EmptyMethodTest ()
-		{
-			AssertRuleFailure<AvoidUnusedParametersTest> ("EmptyMethod", 1);
-		}
+    public event SimpleEventHandler SimpleEvent;
 
-		public static bool operator == (AvoidUnusedParametersTest t1, AvoidUnusedParametersTest t2)
-		{
-			return t1.Equals (t2);
-		}
+    public void OnSimpleEvent(int x)
+    {
+    }
 
-		public static bool operator != (AvoidUnusedParametersTest t1, AvoidUnusedParametersTest t2)
-		{
-			return !t1.Equals (t2);
-		}
+    [Test]
+    public void EventTest()
+    {
+      SimpleEvent += new SimpleEventHandler(OnSimpleEvent);
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("OnSimpleEvent");
+    }
 
-		public struct StructureOk {
+    public void EmptyMethod(int x)
+    {
+    }
 
-			public static bool operator == (StructureOk s1, StructureOk s2)
-			{
-				return Object.ReferenceEquals (s1, s2);
-			}
+    [Test]
+    public void EmptyMethodTest()
+    {
+      AssertRuleFailure<AvoidUnusedParametersTest>("EmptyMethod", 1);
+    }
 
-			public static bool operator != (StructureOk s1, StructureOk s2)
-			{
-				return !Object.ReferenceEquals (s1, s2);
-			}
-		}
+    public static bool operator ==(AvoidUnusedParametersTest t1, AvoidUnusedParametersTest t2)
+    {
+      return t1.Equals(t2);
+    }
 
-		public struct StructureBad {
+    public static bool operator !=(AvoidUnusedParametersTest t1, AvoidUnusedParametersTest t2)
+    {
+      return !t1.Equals(t2);
+    }
 
-			public static bool operator == (StructureBad s1, StructureBad s2)
-			{
-				return true;
-			}
+    public struct StructureOk
+    {
+      public static bool operator ==(StructureOk s1, StructureOk s2)
+      {
+        return Object.ReferenceEquals(s1, s2);
+      }
 
-			public static bool operator != (StructureBad s1, StructureBad s2)
-			{
-				return false;
-			}
-		}
+      public static bool operator !=(StructureOk s1, StructureOk s2)
+      {
+        return !Object.ReferenceEquals(s1, s2);
+      }
+    }
 
-		[Test]
-		public void OperatorsClass ()
-		{
-			AssertRuleSuccess<AvoidUnusedParametersTest> ("op_Equality");
-			AssertRuleSuccess<AvoidUnusedParametersTest> ("op_Inequality");
-		}
+    public struct StructureBad
+    {
+      public static bool operator ==(StructureBad s1, StructureBad s2)
+      {
+        return true;
+      }
 
-		[Test]
-		public void OperatorsStructureOk ()
-		{
-			AssertRuleSuccess<AvoidUnusedParametersTest.StructureOk> ("op_Equality");
-			AssertRuleSuccess<AvoidUnusedParametersTest.StructureOk> ("op_Inequality");
-		}
+      public static bool operator !=(StructureBad s1, StructureBad s2)
+      {
+        return false;
+      }
+    }
 
-		[Test]
-		public void OperatorsStructureBad ()
-		{
-			AssertRuleFailure<AvoidUnusedParametersTest.StructureBad> ("op_Equality", 2);
-			AssertRuleFailure<AvoidUnusedParametersTest.StructureBad> ("op_Inequality", 2);
-		}
+    [Test]
+    public void OperatorsClass()
+    {
+      AssertRuleSuccess<AvoidUnusedParametersTest>("op_Equality");
+      AssertRuleSuccess<AvoidUnusedParametersTest>("op_Inequality");
+    }
 
-		[Test]
-		public void OperatorsCecil ()
-		{
-			AssertRuleSuccess<OpCode> ("op_Equality");
-			AssertRuleSuccess<OpCode> ("op_Inequality");
-		}
+    [Test]
+    public void OperatorsStructureOk()
+    {
+      AssertRuleSuccess<AvoidUnusedParametersTest.StructureOk>("op_Equality");
+      AssertRuleSuccess<AvoidUnusedParametersTest.StructureOk>("op_Inequality");
+    }
 
-		public void ButtonClick_EvenArgsUnused (object o, EventArgs e)
-		{
-			if (o == null)
-				throw new ArgumentNullException ("o");
-		}
+    [Test]
+    public void OperatorsStructureBad()
+    {
+      AssertRuleFailure<AvoidUnusedParametersTest.StructureBad>("op_Equality", 2);
+      AssertRuleFailure<AvoidUnusedParametersTest.StructureBad>("op_Inequality", 2);
+    }
 
-		public void ButtonClick_NoParameterUnused (object o, EventArgs e)
-		{
-			Console.WriteLine ("uho");
-		}
+    [Test]
+    public void OperatorsCecil()
+    {
+      AssertRuleSuccess<OpCode>("op_Equality");
+      AssertRuleSuccess<OpCode>("op_Inequality");
+    }
 
-		[Test]
-		public void EventArgs ()
-		{
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("ButtonClick_EvenArgsUnused");
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("ButtonClick_NoParameterUnused");
-		}
+    public void ButtonClick_EvenArgsUnused(object o, EventArgs e)
+    {
+      if (o == null)
+        throw new ArgumentNullException("o");
+    }
 
-		[Test]
-		public void AbstractMethodTest () 
-		{
-			AssertRuleDoesNotApply<AbstractClass> ("AbstractMethod");
-		}
+    public void ButtonClick_NoParameterUnused(object o, EventArgs e)
+    {
+      Console.WriteLine("uho");
+    }
 
-		[Test]
-		public void VirtualMethodTest () 
-		{
-			AssertRuleDoesNotApply<VirtualClass> ("VirtualMethod");
-		}
+    [Test]
+    public void EventArgs()
+    {
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("ButtonClick_EvenArgsUnused");
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("ButtonClick_NoParameterUnused");
+    }
 
-		[Test]
-		public void OverrideMethodTest () 
-		{
-			AssertRuleDoesNotApply<OverrideClass> ("VirtualMethod");
-		}
+    [Test]
+    public void AbstractMethodTest()
+    {
+      AssertRuleDoesNotApply<AbstractClass>("AbstractMethod");
+    }
 
-		// using our own extern helps more in coverage than SimpleMethods.External would
-		[DllImport ("libc.so")]
-		private static extern double cos (double x);
+    [Test]
+    public void VirtualMethodTest()
+    {
+      AssertRuleDoesNotApply<VirtualClass>("VirtualMethod");
+    }
 
-		[Test]
-		public void ExternMethodTest () 
-		{
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("cos");
-		}
+    [Test]
+    public void OverrideMethodTest()
+    {
+      AssertRuleDoesNotApply<OverrideClass>("VirtualMethod");
+    }
 
-		[Conditional ("DO_NOT_DEFINE")]
-		void WriteLine (string s)
-		{
-			// the C.WL will not be compiled since DO_NOT_DEFINE is undefined
-			// which means parameter 's' will be unused by the method
-			Console.WriteLine (s);
-		}
+    // using our own extern helps more in coverage than SimpleMethods.External would
+    [DllImport("libc.so")]
+    private static extern double cos(double x);
 
-		[Test]
-		public void ConditionalCode ()
-		{
-			AssertRuleDoesNotApply<AvoidUnusedParametersTest> ("WriteLine");
-		}
+    [Test]
+    public void ExternMethodTest()
+    {
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("cos");
+    }
 
-		public class FxCopTest {
+    [Conditional("DO_NOT_DEFINE")]
+    private void WriteLine(string s)
+    {
+      // the C.WL will not be compiled since DO_NOT_DEFINE is undefined
+      // which means parameter 's' will be unused by the method
+      Console.WriteLine(s);
+    }
 
-			// CA1801
-			public class ReviewUnusedParameters {
-				static public void Fail (int count)
-				{
-				}
+    [Test]
+    public void ConditionalCode()
+    {
+      AssertRuleDoesNotApply<AvoidUnusedParametersTest>("WriteLine");
+    }
 
-				// manually suppressed - no MessageId
-				[SuppressMessage ("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-				static public void ManuallySuppressed (int count)
-				{
-				}
+    public class FxCopTest
+    {
+      // CA1801
+      public class ReviewUnusedParameters
+      {
+        static public void Fail(int count)
+        {
+        }
 
-				// automatically suppressed using VS2010
-				[System.Diagnostics.CodeAnalysis.SuppressMessage ("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "count")]
-				static public void AutomaticallySuppressed (int count)
-				{
-				}
+        // manually suppressed - no MessageId
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
+        static public void ManuallySuppressed(int count)
+        {
+        }
 
-				// automatically suppressed using VS2010 (see GlobalSupressions.cs)
-				static public void GloballySuppressed (int count)
-				{
-				}
-			}
-		}
+        // automatically suppressed using VS2010
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "count")]
+        static public void AutomaticallySuppressed(int count)
+        {
+        }
 
-		[Test]
-		public void CA1801 ()
-		{
-			AssertRuleFailure<FxCopTest.ReviewUnusedParameters> ("Fail", 1);
-			AssertRuleDoesNotApply<FxCopTest.ReviewUnusedParameters> ("ManuallySuppressed");
-			AssertRuleDoesNotApply<FxCopTest.ReviewUnusedParameters> ("AutomaticallySuppressed");
-			AssertRuleDoesNotApply<FxCopTest.ReviewUnusedParameters> ("GloballySuppressed");
-		}
-	}
+        // automatically suppressed using VS2010 (see GlobalSupressions.cs)
+        static public void GloballySuppressed(int count)
+        {
+        }
+      }
+    }
+
+    [Test]
+    public void CA1801()
+    {
+      AssertRuleFailure<FxCopTest.ReviewUnusedParameters>("Fail", 1);
+      AssertRuleDoesNotApply<FxCopTest.ReviewUnusedParameters>("ManuallySuppressed");
+      AssertRuleDoesNotApply<FxCopTest.ReviewUnusedParameters>("AutomaticallySuppressed");
+      AssertRuleDoesNotApply<FxCopTest.ReviewUnusedParameters>("GloballySuppressed");
+    }
+  }
 }

@@ -122,14 +122,21 @@ namespace Test.Rules.Performance
     [Test]
     public void PublicMethods()
     {
-      Assert.Fail("PublicMethods");
-      // TODO
-      //AssertRuleFailure<PublicMethodsInPrivateClass>("PublicUncalledMethod");
-      //AssertRuleSuccess<PublicMethodsInPrivateClass>("PublicVirtualUncalledMethod");
-      //AssertRuleSuccess<PublicMethodsInPrivateClass>("PublicCalledMethod");
-      //AssertRuleFailure<PublicMethodsInInternalClass>("PublicUncalledMethod");
-      //AssertRuleSuccess<PublicMethodsInInternalClass>("PublicVirtualUncalledMethod");
-      //AssertRuleSuccess<PublicMethodsInInternalClass>("PublicCalledMethod");
+      var type = DefinitionLoader.GetTypeDefinition(typeof(Examples.Rules.Performance.AvoidUncalledPrivateCode).Assembly, "Examples.Rules.Performance.AvoidUncalledPrivateCode/PublicMethodsInPrivateClass");
+      var method = DefinitionLoader.GetMethodDefinition(type, "PublicUncalledMethod", null);
+      AssertRuleFailure(method);
+      method = DefinitionLoader.GetMethodDefinition(type, "PublicVirtualUncalledMethod", null);
+      AssertRuleSuccess(method);
+      method = DefinitionLoader.GetMethodDefinition(type, "PublicCalledMethod", null);
+      AssertRuleSuccess(method);
+
+      type = DefinitionLoader.GetTypeDefinition(typeof(Examples.Rules.Performance.AvoidUncalledPrivateCode).Assembly, "Examples.Rules.Performance.AvoidUncalledPrivateCode/PublicMethodsInInternalClass");
+      method = DefinitionLoader.GetMethodDefinition(type, "PublicUncalledMethod", null);
+      AssertRuleFailure(method);
+      method = DefinitionLoader.GetMethodDefinition(type, "PublicVirtualUncalledMethod", null);
+      AssertRuleSuccess(method);
+      method = DefinitionLoader.GetMethodDefinition(type, "PublicCalledMethod", null);
+      AssertRuleSuccess(method);
     }
 
     public class AnonymousMethod

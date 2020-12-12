@@ -55,13 +55,11 @@ The following rule suites have unit test failures
   * ProvideCorrectArgumentsToFormattingMethods * 3 -- changed IL : `call Array.Empty` used instead of an explict load
   * TestNativeFieldsArray -- changed IL
   * CheckParametersNullityInVisibleMethods -- not sure what's up here
-* Globalization -- 1 failure (Cannot read satellite resources with availble reader)
+* Globalization -- 1 failure (Cannot read satellite resources with available reader)
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in DelegatesPassedToNativeCodeMustIncludeExceptionHandling
 * Maintainability -- 1 failure (false negative in AvoidUnnecessarySpecializationRule)
-* Performance -- 6 failures
-  * Code visibility in `AvoidUncalledPrivateCode` testing
-  * Anonymous method name in `AvoidUnusedParameters` testing
+* Performance -- 4 failures
   * false negative in ReviewLinqMethodRule
   * false negative in UseIsOperatorRule
   * 2 false negatives in AvoidConcatenatingCharsRule
