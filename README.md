@@ -38,6 +38,7 @@ In this branch
   * `SecureGetObjectDataOverridesRule`
 * The obsolete `Gendarme.Rules.Portability.MonoComspatibilityReviewRule` is not implemented in this fork.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
+* Due to IL changes `UseIsOperatorRule` has been tuned to avoid false positives at the cost of missing some failure cases
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
@@ -64,10 +65,9 @@ The following rule suites have unit test failures
 * Globalization -- 1 failure (Cannot read satellite resources with available reader)
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
-* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule`)
-* Performance -- 4 failures
+* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` possibly Stack entry analysis)
+* Performance -- 3 failures
   * false negative in `ReviewLinqMethodRule`
-  * false negative in `UseIsOperatorRule`
   * 2 false negatives in `AvoidConcatenatingCharsRule`
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
