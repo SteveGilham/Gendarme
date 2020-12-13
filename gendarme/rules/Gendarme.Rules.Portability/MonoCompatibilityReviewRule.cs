@@ -44,7 +44,6 @@ using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
 using ICSharpCode.SharpZipLib.Zip;
-using MoMA.Analyzer.MoMAWebService;
 
 namespace Gendarme.Rules.Portability
 {
@@ -307,9 +306,8 @@ namespace Gendarme.Rules.Portability
       try
       {
         string definitionsUri;
-        using (MoMASubmit ws = new MoMASubmit())
         {
-          string lastest_def = ws.GetLatestDefinitionsVersion();
+          string lastest_def = "||http://www.go-mono.com/archive/moma/defs/2.8-4.0-defs.zip";
           int s = lastest_def.LastIndexOf('/') + 1;
           int e = lastest_def.IndexOf('-', s);
           v = new Version(lastest_def.Substring(s, e - s));

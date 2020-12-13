@@ -16,7 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SharpZipLib" Version="1.3.1" Condition="'$(TargetFramework)' != 'netstandard2.0'" />
+    <PackageReference Include="SharpZipLib" Version="1.3.1" />
     <PackageReference Include="Mono.Cecil" Version="0.11.2" />
   </ItemGroup>
   <ItemGroup>
@@ -33,11 +33,5 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <Compile Remove="MonoCompatibilityReviewRule.cs" />
-    <None Include="MonoCompatibilityReviewRule.cs" />
-    <Compile Remove="MoMAWebService.cs" />
-    <None Include="MoMAWebService.cs" />
   </ItemGroup>
 </Project>

@@ -186,7 +186,7 @@ namespace Test.Rules.Portability
     }
 
     [Test]
-    [Ignore("This test needs internet access and could be slow.")]
+    //[Ignore("This test needs internet access and could be slow.")]
     public void TestDefinitionDownload()
     {
       DeleteDefinitionData();
