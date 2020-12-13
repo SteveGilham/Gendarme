@@ -66,9 +66,6 @@ The following rule suites have unit test failures
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
 * Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` possibly Stack entry analysis)
-* Performance -- 3 failures
-  * false negative in `ReviewLinqMethodRule`
-  * 2 false negatives in `AvoidConcatenatingCharsRule`
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`

@@ -97,7 +97,7 @@ namespace Gendarme.Rules.Performance {
 	[EngineDependency (typeof (OpCodeEngine))]
 	public sealed class ReviewLinqMethodRule : Rule, IMethodRule {
 
-		private readonly OpCodeBitmask Comparisons = new OpCodeBitmask (0x2801400000000000, 0x0, 0x0, 0xB);
+		private readonly OpCodeBitmask Comparisons = new OpCodeBitmask (0x2801400000000000, 0x0, 0x0, 0xF);
 		private readonly OpCodeBitmask Conditions = new OpCodeBitmask (0x300180000000000, 0x0, 0x0, 0x0);
 
 		public readonly MethodSignature CountProperty = new MethodSignature ("get_Count", null, new string [0]);
@@ -130,10 +130,10 @@ namespace Gendarme.Rules.Performance {
 		}
 
 		private void CheckForAny (MethodDefinition method, Instruction ins)
-		{			
+		{
 			// call System.Int32 System.Linq.Enumerable::Count<System.String>(System.Collections.Generic.IEnumerable`1<!!0>)
 			// ldc.i4.0
-			// cgt, clt, ceq, ble, ble.s, bge or bge.s
+			// cgt, clt, ceq, ble, ble.s, bge or bge.s + cgt.un
 			Instruction n1 = ins.Next;
 			Instruction n2 = n1 != null ? n1.Next : null;
 			if (n1 != null && n2 != null) {
