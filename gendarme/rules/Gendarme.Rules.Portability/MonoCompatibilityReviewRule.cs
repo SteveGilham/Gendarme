@@ -30,10 +30,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Net;
+using System.IO.Compression;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -42,8 +41,6 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
-
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace Gendarme.Rules.Portability
 {
@@ -111,31 +108,28 @@ namespace Gendarme.Rules.Portability
     {
       using (var zip = System.Reflection.Assembly.GetExecutingAssembly()
                  .GetManifestResourceStream("Gendarme.Rules.Portability.2.8-4.0-defs.zip"))
-      using (ZipInputStream zs = new ZipInputStream(zip))
-      using (StreamLineReader sr = new StreamLineReader(zs))
-      {
-        ZipEntry ze;
-        while ((ze = zs.GetNextEntry()) != null)
-        {
-          switch (ze.Name)
+      using (var zs = new ZipArchive(zip))
+        foreach (var ze in zs.Entries)
+          using (StreamLineReader sr = new StreamLineReader(ze.Open()))
           {
-            case "exception.txt":
-              NotImplementedInternal = Read(sr);
-              break;
+            switch (ze.Name)
+            {
+              case "exception.txt":
+                NotImplementedInternal = Read(sr);
+                break;
 
-            case "missing.txt":
-              MissingInternal = Read(sr);
-              break;
+              case "missing.txt":
+                MissingInternal = Read(sr);
+                break;
 
-            case "monotodo.txt":
-              TodoInternal = ReadWithComments(sr);
-              break;
+              case "monotodo.txt":
+                TodoInternal = ReadWithComments(sr);
+                break;
 
-            default:
-              break;
+              default:
+                break;
+            }
           }
-        }
-      }
     }
 
     private static byte[] ecma_key = new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };
