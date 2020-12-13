@@ -36,7 +36,7 @@ In this branch
   * `DoNotExposeMethodsProtectedByLinkDemandRule`
   * `DoNotReduceTypeSecurityOnMethodsRule`
   * `SecureGetObjectDataOverridesRule`
-* The obsolete `Gendarme.Rules.Portability.MonoComspatibilityReviewRule is not implemented in this fork.
+* The obsolete `Gendarme.Rules.Portability.MonoComspatibilityReviewRule` is not implemented in this fork.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 
 ## Direction
@@ -63,7 +63,7 @@ The following rule suites have unit test failures
   * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
 * Globalization -- 1 failure (Cannot read satellite resources with available reader)
 * Interoperability -- 17 failures (false negatives)
-  * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling`
+  * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
 * Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule`)
 * Performance -- 4 failures
   * false negative in `ReviewLinqMethodRule`
