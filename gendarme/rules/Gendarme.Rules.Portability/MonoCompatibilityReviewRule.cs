@@ -296,35 +296,23 @@ namespace Gendarme.Rules.Portability
 
     private Version DownloadLatestDefinitions()
     {
-      Version v = null;
+      Version v = new Version(2, 8);
 
       // try to download files from the net
       // can just load from http://www.go-mono.com/archive/moma/defs/
       // in particular http://www.go-mono.com/archive/moma/defs/2.8-4.0-defs.zip
       // https is not available
       // Can store that as a resource stream
-      try
-      {
-        string definitionsUri;
-        {
-          string lastest_def = "||http://www.go-mono.com/archive/moma/defs/2.8-4.0-defs.zip";
-          int s = lastest_def.LastIndexOf('/') + 1;
-          int e = lastest_def.IndexOf('-', s);
-          v = new Version(lastest_def.Substring(s, e - s));
-          definitionsUri = lastest_def.Split('|')[2];
-        }
+      // Gendarme.Rules.Portability.2.8-4.0-defs.zip
 
-        using (WebClient wc = new WebClient())
-        {
-          string filename = GetFileName(v);
-          wc.DownloadFile(new Uri(definitionsUri), filename);
-        }
-      }
-      catch (WebException e)
+      string filename = GetFileName(v);
+      using (var zip = System.Reflection.Assembly.GetExecutingAssembly()
+                 .GetManifestResourceStream("Gendarme.Rules.Portability.2.8-4.0-defs.zip"))
+      using (var file = File.OpenWrite(filename))
       {
-        if (Runner.VerbosityLevel > 0)
-          Console.Error.WriteLine(e);
+        zip.CopyTo(file);
       }
+
       return v;
     }
 

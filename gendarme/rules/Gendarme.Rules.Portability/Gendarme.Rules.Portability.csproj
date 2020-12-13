@@ -34,4 +34,10 @@
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="2.8-4.0-defs.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="2.8-4.0-defs.zip" />
+  </ItemGroup>
 </Project>
