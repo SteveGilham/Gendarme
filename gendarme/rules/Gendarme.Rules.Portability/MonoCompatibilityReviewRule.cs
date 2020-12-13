@@ -107,88 +107,11 @@ namespace Gendarme.Rules.Portability
       }
     }
 
-    /// <summary>
-    /// The version of Mono against which you wish to review compatibility.
-    /// You need to have this version of the definitions file downloaded in order to use it.
-    /// This is useful if you want to upgrade Gendarme but still want to test compatibility
-    /// against an older version of Mono.
-    /// </summary>
-    [Description("The version of Mono against which you wish to review compatibility.")]
-    public string Version
+    private void LoadDefinitions()
     {
-      get
-      {
-        if (version == null)
-          return String.Empty;
-        return version.ToString();
-      }
-      set
-      {
-        version = new Version(value);
-        string file = GetFileName(version);
-        if (!File.Exists(file))
-        {
-          version = null;
-          throw new FileNotFoundException("Cannot find definitions for the requested version.", file);
-        }
-      }
-    }
-
-    private string GetFileName(Version v)
-    {
-      return Path.Combine(DefinitionsFolder, String.Format(CultureInfo.InvariantCulture, "definitions-{0}.zip", v));
-    }
-
-    private Version FindLastestLocalVersion()
-    {
-      string[] def_files = Directory.GetFiles(DefinitionsFolder, "definitions-*.zip");
-      if (def_files.Length > 1)
-        Array.Sort<string>(def_files);
-      if (def_files.Length == 0)
-        return new Version();
-
-      try
-      {
-        string latest = def_files[def_files.Length - 1];
-        int s = latest.LastIndexOf("definitions-", StringComparison.Ordinal) + 12;
-        return new Version(latest.Substring(s, latest.Length - s - 4)); // remove .zip
-      }
-      catch (FormatException)
-      {
-        return new Version();
-      }
-    }
-
-    private string SelectDefinitionsFile()
-    {
-      Version def_version = version;
-
-      // nothing specified ?
-      if (def_version == null)
-      {
-        // then we'll use the latest local version available
-        def_version = FindLastestLocalVersion();
-        // if Gendarme version is newer than the definitions then there's likely something new available
-        if (typeof(IRule).Assembly.GetName().Version > def_version)
-        {
-          // however we don't want to download a (potentially) unexisting file each time we execute
-          // Gendarme (e.g. a development release, like 2.5.x.x) so we limit this to once per week
-          FileInfo fi = new FileInfo(GetFileName(def_version));
-          if (!fi.Exists || (fi.CreationTimeUtc < DateTime.UtcNow.AddDays(-7)))
-            def_version = DownloadLatestDefinitions();
-        }
-      }
-
-      return GetFileName(def_version);
-    }
-
-    private void LoadDefinitions(string filename)
-    {
-      if (!File.Exists(filename))
-        return;
-
-      using (FileStream fs = File.OpenRead(filename))
-      using (ZipInputStream zs = new ZipInputStream(fs))
+      using (var zip = System.Reflection.Assembly.GetExecutingAssembly()
+                 .GetManifestResourceStream("Gendarme.Rules.Portability.2.8-4.0-defs.zip"))
+      using (ZipInputStream zs = new ZipInputStream(zip))
       using (StreamLineReader sr = new StreamLineReader(zs))
       {
         ZipEntry ze;
@@ -274,7 +197,7 @@ namespace Gendarme.Rules.Portability
 
       // get the specified or latest definition file available locally *or*
       // download it if none is present or if gendarme is more recent than the file
-      LoadDefinitions(SelectDefinitionsFile());
+      LoadDefinitions();
 
       // rule is active only if we have, at least one of, the MoMA files
       Active = ((NotImplemented != null) || (Missing != null) || (ToDo != null));
@@ -292,28 +215,6 @@ namespace Gendarme.Rules.Portability
         }
         Active = false;
       };
-    }
-
-    private Version DownloadLatestDefinitions()
-    {
-      Version v = new Version(2, 8);
-
-      // try to download files from the net
-      // can just load from http://www.go-mono.com/archive/moma/defs/
-      // in particular http://www.go-mono.com/archive/moma/defs/2.8-4.0-defs.zip
-      // https is not available
-      // Can store that as a resource stream
-      // Gendarme.Rules.Portability.2.8-4.0-defs.zip
-
-      string filename = GetFileName(v);
-      using (var zip = System.Reflection.Assembly.GetExecutingAssembly()
-                 .GetManifestResourceStream("Gendarme.Rules.Portability.2.8-4.0-defs.zip"))
-      using (var file = File.OpenWrite(filename))
-      {
-        zip.CopyTo(file);
-      }
-
-      return v;
     }
 
     private static char[] buffer = new char[4096];

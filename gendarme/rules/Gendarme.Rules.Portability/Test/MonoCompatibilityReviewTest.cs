@@ -173,29 +173,5 @@ namespace Test.Rules.Portability
             //should only warn once
             Assert.IsNull (rule.CheckMethod (method, new MinimalRunner ()));*/
     }
-
-    private void DeleteDefinitionData()
-    {
-      string localAppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-      string definitionsFolder = Path.Combine(localAppDataFolder, "Gendarme");
-      string[] files = Directory.GetFiles(definitionsFolder, "definitions*.zip");
-      foreach (string file in files)
-      {
-        File.Delete(file);
-      }
-    }
-
-    [Test]
-    //[Ignore("This test needs internet access and could be slow.")]
-    public void TestDefinitionDownload()
-    {
-      DeleteDefinitionData();
-
-      MonoCompatibilityReviewRule rule = new MonoCompatibilityReviewRule();
-      rule.Initialize(new TestRunner(rule));
-      Assert.IsNotNull(rule.Missing, "rule.Missing is not null test");
-      Assert.IsNotNull(rule.NotImplemented, "rule.NotImplemented is not null test");
-      Assert.IsNotNull(rule.ToDo, "rule.ToDo is not null test");
-    }
   }
 }
