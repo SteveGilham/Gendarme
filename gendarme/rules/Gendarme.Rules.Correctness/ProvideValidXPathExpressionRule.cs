@@ -39,172 +39,192 @@ using Gendarme.Framework.Helpers;
 
 using System.Text.RegularExpressions;
 
-namespace Gendarme.Rules.Correctness {
+namespace Gendarme.Rules.Correctness
+{
+  /// <summary>
+  /// This rule verifies that valid XPath expression strings are passed as arguments.
+  /// </summary>
+  /// <example>
+  /// Bad example (node selection):
+  /// <code>
+  /// XmlNodeList nodes = document.SelectNodes ("/book[@npages == 100]/@title");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (node selection):
+  /// <code>
+  /// XmlNodeList nodes = document.SelectNodes ("/book[@npages = 100]/@title");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (expression compilation):
+  /// <code>
+  /// var xpath = XPathExpression.Compile ("/book[@npages == 100]/@title");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (expression compilation):
+  /// <code>
+  /// var xpath = XPathExpression.Compile ("/book[@npages = 100]/@title");
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.6</remarks>
 
-	/// <summary>
-	/// This rule verifies that valid XPath expression strings are passed as arguments.
-	/// </summary>
-	/// <example>
-	/// Bad example (node selection):
-	/// <code>
-	/// XmlNodeList nodes = document.SelectNodes ("/book[@npages == 100]/@title");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (node selection):
-	/// <code>
-	/// XmlNodeList nodes = document.SelectNodes ("/book[@npages = 100]/@title");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (expression compilation):
-	/// <code>
-	/// var xpath = XPathExpression.Compile ("/book[@npages == 100]/@title");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (expression compilation):
-	/// <code>
-	/// var xpath = XPathExpression.Compile ("/book[@npages = 100]/@title");
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.6</remarks>
+  [Problem("An invalid XPath expression string is provided to a method.")]
+  [Solution("Fix the invalid XPath expression.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public sealed class ProvideValidXPathExpressionRule : Rule, IMethodRule
+  {
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
 
-	[Problem ("An invalid XPath expression string is provided to a method.")]
-	[Solution ("Fix the invalid XPath expression.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public sealed class ProvideValidXPathExpressionRule : Rule, IMethodRule {
-
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
-
-			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences) {
-					if (name.Name == "System.Xml") {
-						Active = true;
-						return;
-					}
-				}
-				Active = false; //no System.Xml assembly reference has been found
-			};
-		}
-
-		void CheckString (MethodDefinition method, Instruction ins, int argumentOffset)
-		{
-			Instruction ld = ins.TraceBack (method, argumentOffset);
-			if (null == ld)
-				return;
-
-			switch (ld.OpCode.Code) {
-			case Code.Ldstr:
-				CheckString (method, ins, (string) ld.Operand);
-				break;
-			case Code.Ldsfld:
-				FieldReference f = (FieldReference) ld.Operand;
-				if (f.Name == "Empty" && f.DeclaringType.IsNamed (systemString))
-					CheckString (method, ins, null);
-				break;
-			case Code.Ldnull:
-				CheckString (method, ins, null);
-				break;
-			}
-		}
-        private readonly static TypeName systemString = new TypeName
+      Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e)
+      {
+        foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences)
         {
-            Namespace = "System",
-            Name = "String"
-        };
+          if (name.Name.StartsWith("System.Xml", StringComparison.Ordinal))
+          {
+            Active = true;
+            return;
+          }
+        }
+        Active = false; //no System.Xml assembly reference has been found
+      };
+    }
 
-		void CheckString (MethodDefinition method, Instruction ins, string expression)
-		{
-			if (string.IsNullOrEmpty (expression)) {
-				Runner.Report (method, ins, Severity.High, Confidence.Total, "Expression is null or empty.");
-				return;
-			}
+    private void CheckString(MethodDefinition method, Instruction ins, int argumentOffset)
+    {
+      Instruction ld = ins.TraceBack(method, argumentOffset);
+      if (null == ld)
+        return;
 
-			try {
-				XPathExpression.Compile (expression);
-			} catch (XPathException e) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
-					"Expression '{0}' is invalid. Details: {1}", expression, e.Message);
-				Runner.Report (method, ins, Severity.High, Confidence.High, msg);
-			}
-		}
-        private readonly static TypeName xpe = new TypeName
-        {
-            Namespace = "System.Xml.XPath",
-            Name = "XPathExpression"
-        };
-        private readonly static TypeName xpn = new TypeName
-        {
-            Namespace = "System.Xml.XPath",
-            Name = "XPathNavigator"
-        };
-        private readonly static TypeName node = new TypeName
-        {
-            Namespace = "System.Xml",
-            Name = "XmlNode"
-        };
+      switch (ld.OpCode.Code)
+      {
+        case Code.Ldstr:
+          CheckString(method, ins, (string)ld.Operand);
+          break;
 
-		void CheckCall (MethodDefinition method, Instruction ins, MethodReference mref)
-		{
-			if (null == mref || !mref.HasParameters)
-				return;
+        case Code.Ldsfld:
+          FieldReference f = (FieldReference)ld.Operand;
+          if (f.Name == "Empty" && f.DeclaringType.IsNamed(systemString))
+            CheckString(method, ins, null);
+          break;
 
-			switch (mref.Name) {
-			case "Compile":
-				TypeReference tr = mref.DeclaringType;
-				if (tr.IsNamed (xpe) || tr.Inherits (xpn))
-					CheckString (method, ins, GetFirstArgumentOffset (mref));
-				break;
-			case "SelectNodes":
-				if (mref.DeclaringType.IsNamed (node))
-					CheckString (method, ins, -1);
-				break;
-			case "Evaluate":
-			case "Select":
-				CheckXPathNavigatorString (method, ins, mref);
-				break;
-			case "SelectSingleNode":
-				CheckXPathNavigatorString (method, ins, mref);
-				if (mref.DeclaringType.IsNamed (node))
-					CheckString (method, ins, -1);
-				break;
-			}
-		}
+        case Code.Ldnull:
+          CheckString(method, ins, null);
+          break;
+      }
+    }
 
-		void CheckXPathNavigatorString (MethodDefinition method, Instruction ins, MethodReference mref)
-		{
-			if (mref.Parameters [0].ParameterType.IsNamed (systemString)) {
-				if (mref.DeclaringType.Inherits (xpn))
-					CheckString (method, ins, -1);
-			}
-		}
+    private readonly static TypeName systemString = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+    private void CheckString(MethodDefinition method, Instruction ins, string expression)
+    {
+      if (string.IsNullOrEmpty(expression))
+      {
+        Runner.Report(method, ins, Severity.High, Confidence.Total, "Expression is null or empty.");
+        return;
+      }
 
-			//is there any interesting opcode in the method?
-			OpCodeBitmask calls = OpCodeBitmask.Calls;
-			if (!calls.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+      try
+      {
+        XPathExpression.Compile(expression);
+      }
+      catch (XPathException e)
+      {
+        string msg = String.Format(CultureInfo.InvariantCulture,
+          "Expression '{0}' is invalid. Details: {1}", expression, e.Message);
+        Runner.Report(method, ins, Severity.High, Confidence.High, msg);
+      }
+    }
 
-			foreach (Instruction ins in method.Body.Instructions) {
-				if (!calls.Get (ins.OpCode.Code))
-					continue;
+    private readonly static TypeName xpe = new TypeName
+    {
+      Namespace = "System.Xml.XPath",
+      Name = "XPathExpression"
+    };
 
-				CheckCall (method, ins, (MethodReference) ins.Operand);
-			}
+    private readonly static TypeName xpn = new TypeName
+    {
+      Namespace = "System.Xml.XPath",
+      Name = "XPathNavigator"
+    };
 
-			return Runner.CurrentRuleResult;
-		}
+    private readonly static TypeName node = new TypeName
+    {
+      Namespace = "System.Xml",
+      Name = "XmlNode"
+    };
 
-		static int GetFirstArgumentOffset (IMethodSignature mref)
-		{
-			return (mref.HasThis ? -1 : 0);
-		}
-	}
+    private void CheckCall(MethodDefinition method, Instruction ins, MethodReference mref)
+    {
+      if (null == mref || !mref.HasParameters)
+        return;
+
+      switch (mref.Name)
+      {
+        case "Compile":
+          TypeReference tr = mref.DeclaringType;
+          if (tr.IsNamed(xpe) || tr.Inherits(xpn))
+            CheckString(method, ins, GetFirstArgumentOffset(mref));
+          break;
+
+        case "SelectNodes":
+          if (mref.DeclaringType.IsNamed(node))
+            CheckString(method, ins, -1);
+          break;
+
+        case "Evaluate":
+        case "Select":
+          CheckXPathNavigatorString(method, ins, mref);
+          break;
+
+        case "SelectSingleNode":
+          CheckXPathNavigatorString(method, ins, mref);
+          if (mref.DeclaringType.IsNamed(node))
+            CheckString(method, ins, -1);
+          break;
+      }
+    }
+
+    private void CheckXPathNavigatorString(MethodDefinition method, Instruction ins, MethodReference mref)
+    {
+      if (mref.Parameters[0].ParameterType.IsNamed(systemString))
+      {
+        if (mref.DeclaringType.Inherits(xpn))
+          CheckString(method, ins, -1);
+      }
+    }
+
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
+
+      //is there any interesting opcode in the method?
+      OpCodeBitmask calls = OpCodeBitmask.Calls;
+      if (!calls.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
+
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        if (!calls.Get(ins.OpCode.Code))
+          continue;
+
+        CheckCall(method, ins, (MethodReference)ins.Operand);
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+
+    private static int GetFirstArgumentOffset(IMethodSignature mref)
+    {
+      return (mref.HasThis ? -1 : 0);
+    }
+  }
 }

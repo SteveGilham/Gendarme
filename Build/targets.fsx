@@ -42,7 +42,7 @@ let dotnetOptions (o : DotNet.Options) =
 
 let toolPackages =
   let xml =
-    "./Build/dotnet-cli.csproj"
+    "./Build/NuGet.csproj"
     |> Path.getFullName
     |> XDocument.Load
   xml.Descendants(XName.Get("PackageReference"))
@@ -58,7 +58,7 @@ let nunitConsole =
   |> Path.getFullName
 
 let altcover =
-  ("./packages/" + (packageVersion "altcover") + "/tools/net45/AltCover.exe")
+  ("./packages/" + (packageVersion "altcover") + "/tools/net472/AltCover.exe")
   |> Path.getFullName
 
 let framework_altcover = Fake.DotNet.ToolType.CreateFullFramework()
@@ -80,6 +80,7 @@ let cliArguments =
   { MSBuild.CliArguments.Create() with
       ConsoleLogParameters = []
       DistributedLoggers = None
+      Properties = [("CheckEolTargetFramework", "false")]
       DisableInternalBinLog = true }
 
 let withWorkingDirectoryVM dir o =
@@ -102,27 +103,15 @@ let defaultTestOptions fwk common (o : DotNet.TestOptions) =
       Framework = fwk // Some "netcoreapp3.0"
       Configuration = DotNet.BuildConfiguration.Debug }
 
-let msbuildRelease proj =
-  MSBuild.build (fun p ->
-    { p with
-        Verbosity = Some MSBuildVerbosity.Normal
-        ConsoleLogParameters = []
-        DistributedLoggers = None
-        DisableInternalBinLog = true
-        Properties =
-          [ "Configuration", "Release"
-            "DebugSymbols", "True" ] }) proj
+let dotnetBuildRelease proj =
+  DotNet.build (fun p ->
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Release }
+    |> withMSBuildParams) (Path.GetFullPath proj)
 
-let msbuildDebug proj =
-  MSBuild.build (fun p ->
-    { p with
-        Verbosity = Some MSBuildVerbosity.Normal
-        ConsoleLogParameters = []
-        DistributedLoggers = None
-        DisableInternalBinLog = true
-        Properties =
-          [ "Configuration", "Debug"
-            "DebugSymbols", "True" ] }) proj
+let dotnetBuildDebug proj =
+  DotNet.build (fun p ->
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Debug }
+    |> withMSBuildParams) (Path.GetFullPath proj)
 
 let misses = ref 0
 
@@ -221,9 +210,9 @@ _Target "Restore" (fun _ ->
        let proj = Path.GetFileName f
        DotNet.restore (fun o -> o.WithCommon(withWorkingDirectoryVM dir)) proj))
 
-_Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> msbuildRelease)
+_Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildRelease)
 
-_Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> msbuildDebug)
+_Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
 
 _Target "UnitTest" ignore
 
@@ -535,7 +524,7 @@ _Target "Unpack" (fun _ ->
     proj
 
   let vname = !Version + "-pre-release"
-  let from = (Path.getFullName @"_Unpack\packages\altcode.gendarme\") @@ vname
+  let from = (Path.getFullName @"_Unpack/packages/altcode.gendarme/") @@ vname
   printfn "Copying from %A to %A" from unpack
   Shell.copyDir unpack from (fun _ -> true)
 
@@ -565,7 +554,7 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     let nugget = !!"./_Packaging/altcode.gendarme-tool.*.nupkg" |> Seq.last
     let unpack = Path.getFullName "_Unpack-tool/tool"
     System.IO.Compression.ZipFile.ExtractToDirectory(nugget, unpack)
-    let from = Path.getFullName @"_Unpack-tool\tool\tools\netcoreapp2.1\any\"
+    let from = Path.getFullName @"_Unpack-tool/tool/tools/netcoreapp2.1/any/"
     Shell.copyDir unpack from (fun _ -> true)
 
     let packroot = Path.GetFullPath "./_Packaging"

@@ -9,6 +9,4 @@ module internal Augment =
         self |> isNull |> not
 
   type Microsoft.FSharp.Core.Option<'T> with
-    static member getOrElse (fallback : 'T) (x : option<'T>) = defaultArg x fallback
-    static member nullable (x : 'T) : option<'T> =
-      if isNull (x :> obj) then None else Some x
+    static member defaultValue (fallback : 'T) (x : option<'T>) = defaultArg x fallback

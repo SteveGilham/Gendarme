@@ -102,6 +102,16 @@ namespace Gendarme.Rules.Globalization
       }
     }
 
+    private static IResourceReader MakeResourceReader(Stream resourceStream)
+    {
+#if NETSTANDARD2_0
+      var safeStream = new BlobReadingStream(resourceStream);
+      return new System.Resources.Extensions.DeserializingResourceReader(safeStream);
+#else
+      return new ResourceReader(resourceStream);
+#endif
+    }
+
     private void CheckSatelliteResource(EmbeddedResource mainResource, EmbeddedResource satelliteResource, IMetadataTokenProvider satelliteAssembly)
     {
       using (Stream resourceStream = satelliteResource.GetResourceStream())

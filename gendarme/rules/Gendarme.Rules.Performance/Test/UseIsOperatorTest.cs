@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -34,114 +34,119 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Performance {
+namespace Test.Rules.Performance
+{
+  [TestFixture]
+  public class UseIsOperatorTest : MethodRuleTestFixture<UseIsOperatorRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+    }
 
-	[TestFixture]
-	public class UseIsOperatorTest : MethodRuleTestFixture<UseIsOperatorRule> {
+    private bool ReturnEqualityBad(object value)
+    {
+      return ((value as UseIsOperatorTest) == null);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-		}
+    private bool ReturnInequalityBad(object value)
+    {
+      return ((value as UseIsOperatorTest) != null);
+    }
 
-		private bool ReturnEqualityBad (object value)
-		{
-			return ((value as UseIsOperatorTest) == null);
-		}
+    private bool ReturnEqualityOk(object value)
+    {
+      return (value is UseIsOperatorTest);
+    }
 
-		private bool ReturnInequalityBad (object value)
-		{
-			return ((value as UseIsOperatorTest) != null);
-		}
+    private bool ReturnInequalityOk(object value)
+    {
+      return !(value is UseIsOperatorTest);
+    }
 
-		private bool ReturnEqualityOk (object value)
-		{
-			return (value is UseIsOperatorTest);
-		}
+    [Test]
+    public void Return()
+    {
+      AssertRuleFailure<UseIsOperatorTest>("ReturnEqualityBad", 1);
+      AssertRuleDoesNotApply<UseIsOperatorTest>("ReturnInequalityBad");
+      AssertRuleDoesNotApply<UseIsOperatorTest>("ReturnEqualityOk");
+      AssertRuleSuccess<UseIsOperatorTest>("ReturnInequalityOk");
+    }
 
-		private bool ReturnInequalityOk (object value)
-		{
-			return !(value is UseIsOperatorTest);
-		}
+    private void ConditionIsOk(object value)
+    {
+      if (value is UseIsOperatorTest)
+      {
+        Console.WriteLine("Ok");
+      }
+    }
 
-		[Test]
-		public void Return ()
-		{
-			AssertRuleFailure<UseIsOperatorTest> ("ReturnEqualityBad", 1);
-			AssertRuleFailure<UseIsOperatorTest> ("ReturnInequalityBad", 1);
-			AssertRuleDoesNotApply<UseIsOperatorTest> ("ReturnEqualityOk");
-			AssertRuleSuccess<UseIsOperatorTest> ("ReturnInequalityOk");
-		}
+    private void ConditionAsOk(object value)
+    {
+      UseIsOperatorTest test = (value as UseIsOperatorTest);
+      if (test != null)
+      {
+        // 'is' would not be optimal since we use the 'as' result
+        Console.WriteLine(test.ToString());
+      }
+    }
 
-		private void ConditionIsOk (object value)
-		{
-			if (value is UseIsOperatorTest) {
-				Console.WriteLine ("Ok");
-			}
-		}
+    [Test]
+    public void Conditions()
+    {
+      AssertRuleDoesNotApply<UseIsOperatorTest>("ConditionIsOk");
+      AssertRuleDoesNotApply<UseIsOperatorTest>("ConditionAsOk");
+    }
 
-		private void ConditionAsOk (object value)
-		{
-			UseIsOperatorTest test = (value as UseIsOperatorTest);
-			if (test != null) {
-				// 'is' would not be optimal since we use the 'as' result
-				Console.WriteLine (test.ToString ());
-			}
-		}
+    private void ConditionSplitBad(object value)
+    {
+      UseIsOperatorTest test = (value as UseIsOperatorTest);
+      // 'test' is unused after the test
+      if (test != null)
+      {
+        Console.WriteLine("Bad");
+      }
+    }
 
-		[Test]
-		public void Conditions ()
-		{
-			AssertRuleDoesNotApply<UseIsOperatorTest> ("ConditionIsOk");
-			AssertRuleDoesNotApply<UseIsOperatorTest> ("ConditionAsOk");
-		}
+    // [g]mcs compiles this like an 'is', csc does too when compiling with optimizations
+    private void ConditionEqualityBad(object value)
+    {
+      if ((value as UseIsOperatorTest) == null)
+      {
+        Console.WriteLine("Bad");
+      }
+    }
 
-		private void ConditionSplitBad (object value)
-		{
-			UseIsOperatorTest test = (value as UseIsOperatorTest);
-			// 'test' is unused after the test
-			if (test != null) {
-				Console.WriteLine ("Bad");
-			}
-		}
+    private void ConditionInequalityBad(object value)
+    {
+      if ((value as UseIsOperatorTest) != null)
+      {
+        Console.WriteLine("Bad");
+      }
+    }
 
-		// [g]mcs compiles this like an 'is', csc does too when compiling with optimizations
-		private void ConditionEqualityBad (object value)
-		{
-			if ((value as UseIsOperatorTest) == null) {
-				Console.WriteLine ("Bad");
-			}
-		}
+    [Test]
+    [Ignore("Compiler optimization (default for [g]mcs) can fix this")]
+    public void ConditionsOptimized()
+    {
+      // missed opportunities are less problematic than false positives ;-)
+      AssertRuleFailure<UseIsOperatorTest>("ConditionEqualityBad", 1);
+      AssertRuleFailure<UseIsOperatorTest>("ConditionInequalityBad", 1);
+      AssertRuleFailure<UseIsOperatorTest>("ConditionSplitBad", 1);
+    }
 
-		private void ConditionInequalityBad (object value)
-		{
-			if ((value as UseIsOperatorTest) != null) {
-				Console.WriteLine ("Bad");
-			}
-		}
+    private object ReturnEqualityThis(object value)
+    {
+      if ((value as UseIsOperatorTest) == this)
+        return false;
+      return (this == null);
+    }
 
-		[Test]
-		[Ignore ("Compiler optimization (default for [g]mcs) can fix this")]
-		public void ConditionsOptimized ()
-		{
-			// missed opportunities are less problematic than false positives ;-)
-			AssertRuleFailure<UseIsOperatorTest> ("ConditionEqualityBad", 1);
-			AssertRuleFailure<UseIsOperatorTest> ("ConditionInequalityBad", 1);
-			AssertRuleFailure<UseIsOperatorTest> ("ConditionSplitBad", 1);
-		}
-
-		private object ReturnEqualityThis (object value)
-		{
-			if ((value as UseIsOperatorTest) == this)
-				return false;
-			return (this == null);
-		}
-
-		[Test]
-		public void BetterCoverage ()
-		{
-			AssertRuleSuccess<UseIsOperatorTest> ("ReturnEqualityThis");
-		}
-	}
+    [Test]
+    public void BetterCoverage()
+    {
+      AssertRuleSuccess<UseIsOperatorTest>("ReturnEqualityThis");
+    }
+  }
 }

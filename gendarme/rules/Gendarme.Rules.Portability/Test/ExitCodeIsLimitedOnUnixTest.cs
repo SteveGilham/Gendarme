@@ -232,7 +232,7 @@ namespace Test.Rules.Portability
     private static TypeDefinition Inject(TypeDefinition type, AssemblyDefinition target)
     {
       var module = ModuleDefinition.ReadModule(
-        type.Module.FullyQualifiedName,
+        type.Module.FileName,
         new ReaderParameters { ReadingMode = ReadingMode.Immediate });
 
       type = module.GetType(type.FullName);

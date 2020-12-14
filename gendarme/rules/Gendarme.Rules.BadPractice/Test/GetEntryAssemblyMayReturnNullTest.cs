@@ -43,34 +43,6 @@ using Test.Rules.Helpers;
 
 namespace Test.Rules.BadPractice
 {
-  internal class ClassCallingGetEntryAssembly
-  {
-    public static void MainName() // fake main
-    {
-    }
-
-    public void OneCall()
-    {
-      object o = System.Reflection.Assembly.GetEntryAssembly();
-    }
-
-    public void ThreeCalls()
-    {
-      string s = System.Reflection.Assembly.GetEntryAssembly().ToString();
-      int x = 2 + 2;
-      x = x.CompareTo(1);
-      object o = System.Reflection.Assembly.GetEntryAssembly();
-      System.Reflection.Assembly.GetEntryAssembly();
-    }
-
-    public void NoCalls()
-    {
-      int x = 42;
-      int y = x * 42;
-      x = x * y.CompareTo(42);
-    }
-  }
-
   [TestFixture]
   public class GetEntryAssemblyMayReturnNullTest : MethodRuleTestFixture<GetEntryAssemblyMayReturnNullRule>
   {
@@ -86,7 +58,7 @@ namespace Test.Rules.BadPractice
     [Test]
     public void TestMethodNotCallingGetEntryAssembly()
     {
-      AssertRuleSuccess<ClassCallingGetEntryAssembly>("NoCalls");
+      AssertRuleSuccess<Examples.Rules.BadPractice.ClassCallingGetEntryAssembly>("NoCalls");
     }
 
     private TypeDefinition GetTest<T>(AssemblyDefinition assembly)
@@ -97,13 +69,13 @@ namespace Test.Rules.BadPractice
     [Test]
     public void TestGetEntryAssemblyCallFromExecutable()
     {
-      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      string unit = typeof(Examples.Rules.BadPractice.ClassCallingGetEntryAssembly).Assembly.Location;
       AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(unit);
       try
       {
-        assembly.EntryPoint = GetTest<ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "MainName");
+        assembly.EntryPoint = GetTest<Examples.Rules.BadPractice.ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "MainName");
         assembly.MainModule.Kind = ModuleKind.Console;
-        MethodDefinition method = GetTest<ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "ThreeCalls");
+        MethodDefinition method = GetTest<Examples.Rules.BadPractice.ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "ThreeCalls");
         Assert.AreEqual(RuleResult.DoesNotApply, (Runner as TestRunner).CheckMethod(method), "RuleResult");
         Assert.AreEqual(0, Runner.Defects.Count, "Count");
       }
@@ -117,13 +89,13 @@ namespace Test.Rules.BadPractice
     [Test]
     public void TestMethodCallingGetEntryAssemblyOnce()
     {
-      AssertRuleFailure<ClassCallingGetEntryAssembly>("OneCall", 1);
+      AssertRuleFailure<Examples.Rules.BadPractice.ClassCallingGetEntryAssembly>("OneCall", 1);
     }
 
     [Test]
     public void TestMethodCallingGetEntryAssemblyThreeTimes()
     {
-      AssertRuleFailure<ClassCallingGetEntryAssembly>("ThreeCalls", 3);
+      AssertRuleFailure<Examples.Rules.BadPractice.ClassCallingGetEntryAssembly>("ThreeCalls", 3);
     }
   }
 }

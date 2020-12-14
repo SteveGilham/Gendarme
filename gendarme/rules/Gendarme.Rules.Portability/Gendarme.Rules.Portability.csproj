@@ -19,13 +19,6 @@
     <PackageReference Include="Mono.Cecil" Version="0.11.2" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=2.84.0.0, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\..\wix\Libraries\ICSharpCode.SharpZipLib.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="System.Web.Services" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -36,5 +29,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="2.8-4.0-defs.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="2.8-4.0-defs.zip" />
   </ItemGroup>
 </Project>

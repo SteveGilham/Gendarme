@@ -1,3 +1,8 @@
+# 2020.11.13.18xxx-pre-release
+
+Issues found in use
+* Don't apply ParameterNamesShouldMatchOverridenMethodRule to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
+
 # 2020.7.21.12091-pre-release
 
 Issues found in use
@@ -38,7 +43,7 @@ F# niggles part 6
 * For `AvoidDeepNamespaceHierarchyRule`, ignore F# generated namespaces of the form `<StartupCode$a-b-c-d>.$.NETFramework,Version=...`
 * For `AvoidRepetitiveCastsRule`, ignore F# `is` then `as` of anonymous temporaries (often happens in `match` expressions on sum types)
 * Report the owning assembly of the defect target, always (disambiguates when a source file is shared bewteen projects in the same build).
-* In the inhandled exception message, own this fork.
+* In the unhandled exception message, own this fork.
 * Building on VS2019 for .net4.0 and .netcore2.1+
 * Now available as a dotnet global tool in package `altcode.gendarme-tool`
 

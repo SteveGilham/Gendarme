@@ -177,7 +177,12 @@ namespace Test.Rules.BadPractice
     [Test]
     public void MethodWithAssemblyLoadFromCallTest()
     {
-      AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFromCall", 3);
+      AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFromCall",
+#if NETCOREAPP2_1
+        1);
+#else
+        3);
+#endif
     }
 
     public void MethodWithAssemblyLoadFileCall()
@@ -192,7 +197,12 @@ namespace Test.Rules.BadPractice
     [Test]
     public void MethodWithAssemblyLoadFileCallTest()
     {
-      AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFileCall", 2);
+      AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFileCall",
+#if NETCOREAPP2_1
+        1);
+#else
+        2);
+#endif
     }
 
     public void MethodWithAssemblyLoadWithPartialNameCall()
@@ -200,14 +210,19 @@ namespace Test.Rules.BadPractice
       Assembly.LoadWithPartialName("MyAssembly");
 #if NETCOREAPP2_1
 #else
-       Assembly.LoadWithPartialName("MyAssembly", new Evidence());
+      Assembly.LoadWithPartialName("MyAssembly", new Evidence());
 #endif
     }
 
     [Test]
     public void MethodWithAssemblyLoadWithPartialNameCallTest()
     {
-      AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadWithPartialNameCall", 2);
+      AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadWithPartialNameCall",
+#if NETCOREAPP2_1
+        1);
+#else
+        2);
+#endif
     }
 
     public void MethodWithouAnyDangerousCall()
@@ -218,9 +233,9 @@ namespace Test.Rules.BadPractice
     }
 
     [Test]
-    public void MethodWithouAnyDangerousCallTest()
+    public void MethodWithoutAnyDangerousCallTest()
     {
-      AssertRuleSuccess<AvoidCallingProblematicMethodsTest>("MethodWithouAnyDangerousCallTest");
+      AssertRuleSuccess<AvoidCallingProblematicMethodsTest>("MethodWithoutAnyDangerousCallTest");
     }
   }
 }

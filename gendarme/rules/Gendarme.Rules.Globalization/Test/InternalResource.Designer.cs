@@ -70,24 +70,42 @@ namespace Tests.Rules.Globalization {
         }
 
 #if NETCOREAPP2_1
+    internal static Object ImageUnused
+    {
 #else
     internal static System.Drawing.Bitmap ImageUnused {
-            get {
-                object obj = ResourceManager.GetObject("ImageUnused", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap ImageUsed {
-            get {
-                object obj = ResourceManager.GetObject("ImageUsed", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-#endif        
-    /// <summary>
-    ///   Looks up a localized string similar to Uncalled.
-    /// </summary>
+#endif
+      get
+      {
+        object obj = ResourceManager.GetObject("ImageUnused", resourceCulture);
+#if NETCOREAPP2_1
+        return obj;
+#else
+        return ((System.Drawing.Bitmap)(obj));
+#endif
+      }
+    }
+
+#if NETCOREAPP2_1
+    internal static Object ImageUsed
+    {
+#else
+    internal static System.Drawing.Bitmap ImageUsed {
+#endif
+      get
+      {
+        object obj = ResourceManager.GetObject("ImageUsed", resourceCulture);
+#if NETCOREAPP2_1
+        return obj;
+#else
+        return ((System.Drawing.Bitmap)(obj));
+#endif
+      }
+    }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Uncalled.
+        /// </summary>
     internal static string UncalledString {
             get {
                 return ResourceManager.GetString("UncalledString", resourceCulture);

@@ -46,10 +46,7 @@ namespace Tests.Rules.Globalization
       {
         Console.WriteLine(InternalResource.CalledString);
         Console.WriteLine(PublicResource.CalledString);
-#if NETCOREAPP2_1
-#else
-				Console.WriteLine (InternalResource.ImageUsed.Size);
-#endif
+        Console.WriteLine(InternalResource.ImageUsed.ToString());
       }
     }
 

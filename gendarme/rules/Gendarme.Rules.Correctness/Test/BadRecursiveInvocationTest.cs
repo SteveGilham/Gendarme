@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,17 +43,17 @@ namespace Test.Rules.Correctness
 {
 #pragma warning disable 162
 
-	[TestFixture]
+  [TestFixture]
   public class BadRecursiveInvocationTest : MethodRuleTestFixture<BadRecursiveInvocationRule>
   {
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no CALL[VIRT] or NEWOBJ
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no CALL[VIRT] or NEWOBJ
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
     private class BadRec
     {
@@ -61,365 +61,371 @@ namespace Test.Rules.Correctness
 
       public int Foo
       {
-				get { return Foo; }
-			}
+        get { return Foo; }
+      }
 
-			/* This should be an error. */
+      /* This should be an error. */
 
       public int OnePlusFoo
       {
-				get { return 1 + OnePlusFoo; }
-			}
+        get { return 1 + OnePlusFoo; }
+      }
 
-			/* This should be an error. */
+      /* This should be an error. */
 
       public int FooPlusOne
       {
-				get { return FooPlusOne + 1; }
-			}
+        get { return FooPlusOne + 1; }
+      }
 
       public static int StaticFooPlusOne
       {
-				get { return StaticFooPlusOne + 1; }
-			}
+        get { return StaticFooPlusOne + 1; }
+      }
 
-			/* correct */
+      /* correct */
 
       public int Bar
       {
-				get { return -1; }
-			}
+        get { return -1; }
+      }
 
-			/* a more complex recursion */
+      /* a more complex recursion */
 
       public int FooBar
       {
-				get { return BarFoo; }
-			}
+        get { return BarFoo; }
+      }
 
       public int BarFoo
       {
-				get { return FooBar; }
-			}
+        get { return FooBar; }
+      }
 
-			/* This should be fine, as it uses 'base.' */
+      /* This should be fine, as it uses 'base.' */
 
-			public override int GetHashCode ()
-			{
-				return base.GetHashCode ();
-			}
-			
-			/* not fine, missing 'base.' */
+      public override int GetHashCode()
+      {
+        return base.GetHashCode();
+      }
 
-			public override bool Equals (object obzekt)
-			{
-				return Equals (obzekt);
-			}
+      /* not fine, missing 'base.' */
 
-			public static int StaticGoodOverload (object obzekt)
-			{
-				return StaticGoodOverload ((string) obzekt);
-			}
+      public override bool Equals(object obzekt)
+      {
+        return Equals(obzekt);
+      }
 
-			public static int StaticGoodOverload (string s)
-			{
-				return 0;
-			}
+      public static int StaticGoodOverload(object obzekt)
+      {
+        return StaticGoodOverload((string)obzekt);
+      }
 
-			public static int StaticBad (object obzekt)
-			{
-				return StaticBad (obzekt);
-			}
+      public static int StaticGoodOverload(string s)
+      {
+        return 0;
+      }
 
-			public static int StaticBadFibo (int n)
-			{
-				return StaticBadFibo (n - 1) + StaticBadFibo (n - 2);
-			}
+      public static int StaticBad(object obzekt)
+      {
+        return StaticBad(obzekt);
+      }
 
-			public int BadFibo (int n)
-			{
-				return BadFibo (n - 1) + BadFibo (n - 2);
-			}
-			
-			public static int StaticFibonacci (int n)
-			{
-				if (n < 2)
-					return n;
+      public static int StaticBadFibo(int n)
+      {
+        return StaticBadFibo(n - 1) + StaticBadFibo(n - 2);
+      }
 
-				return StaticFibonacci (n - 1) + StaticFibonacci (n - 2);
-			}
+      public int BadFibo(int n)
+      {
+        return BadFibo(n - 1) + BadFibo(n - 2);
+      }
 
-			public int Fibonacci (int n)
-			{
-				if (n < 2)
-					return n;
+      public static int StaticFibonacci(int n)
+      {
+        if (n < 2)
+          return n;
 
-				return Fibonacci (n - 1) + Fibonacci (n - 2);
-			}
+        return StaticFibonacci(n - 1) + StaticFibonacci(n - 2);
+      }
 
-			public void AnotherInstance ()
-			{
-				BadRec rec = new BadRec ();
-				rec.AnotherInstance ();
-			}
+      public int Fibonacci(int n)
+      {
+        if (n < 2)
+          return n;
+
+        return Fibonacci(n - 1) + Fibonacci(n - 2);
+      }
+
+      public void AnotherInstance()
+      {
+        BadRec rec = new BadRec();
+        rec.AnotherInstance();
+      }
 
 #if NETCOREAPP2_1
-#else
-
 			public void Assert ()
 			{
-				new PermissionSet (PermissionState.None).Assert ();
+				throw new SecurityException("Assert");
 			}
+
+#else
+
+      public void Assert()
+      {
+        new PermissionSet(PermissionState.None).Assert();
+      }
 
 #endif
+#pragma warning disable IDE0044 // Add readonly modifier
       private static Helper help;
+#pragma warning restore IDE0044 // Add readonly modifier
 
-			public static void Write (bool value)
-			{
-				help.Write (value);
-			}
+      public static void Write(bool value)
+      {
+        help.Write(value);
+      }
 
-			public void Unreachable ()
-			{
-				throw new NotImplementedException ();
-				Unreachable ();
-			}
-		}
+      public void Unreachable()
+      {
+        throw new NotImplementedException();
+        Unreachable();
+      }
+    }
 
     private class Helper
     {
-			public void Write (bool value)
-			{
-			}
-		}
-		
-		[Test]
-		public void RecursiveProperties ()
-		{
-			AssertRuleFailure<BadRec> ("get_Foo", 1);
-			AssertRuleFailure<BadRec> ("get_OnePlusFoo", 1);
-			AssertRuleFailure<BadRec> ("get_FooPlusOne", 1);
-			AssertRuleFailure<BadRec> ("get_StaticFooPlusOne", 1);
-		}
-		
-		[Test]
-		public void Property ()
-		{
-			AssertRuleDoesNotApply<BadRec> ("get_Bar"); // no method call
-		}
+      public void Write(bool value)
+      {
+      }
+    }
 
-		[Test, Ignore ("uncaught by rule")]
-		public void IndirectRecursiveProperty ()
-		{
-			AssertRuleFailure<BadRec> ("get_FooBar", 1);
-		}
+    [Test]
+    public void RecursiveProperties()
+    {
+      AssertRuleFailure<BadRec>("get_Foo", 1);
+      AssertRuleFailure<BadRec>("get_OnePlusFoo", 1);
+      AssertRuleFailure<BadRec>("get_FooPlusOne", 1);
+      AssertRuleFailure<BadRec>("get_StaticFooPlusOne", 1);
+    }
 
-		[Test]
-		public void OverriddenMethod ()
-		{
-			AssertRuleSuccess<BadRec> ("GetHashCode");
-		}
-		
-		[Test]
-		public void BadRecursiveMethods ()
-		{
-			AssertRuleFailure<BadRec> ("Equals", 1);
-			AssertRuleFailure<BadRec> ("StaticBad", 1);
-		}
+    [Test]
+    public void Property()
+    {
+      AssertRuleDoesNotApply<BadRec>("get_Bar"); // no method call
+    }
 
-		[Test]
-		public void BadFibo ()
-		{
-			AssertRuleFailure<BadRec> ("BadFibo", 1);
-			AssertRuleFailure<BadRec> ("StaticBadFibo", 1);
-		}
+    [Test, Ignore("uncaught by rule")]
+    public void IndirectRecursiveProperty()
+    {
+      AssertRuleFailure<BadRec>("get_FooBar", 1);
+    }
 
-		[Test]
-		public void Fibonacci ()
-		{
-			AssertRuleSuccess<BadRec> ("Fibonacci");
-			AssertRuleSuccess<BadRec> ("StaticFibonacci");
-		}
+    [Test]
+    public void OverriddenMethod()
+    {
+      AssertRuleSuccess<BadRec>("GetHashCode");
+    }
 
-		[Test, Ignore ("uncaught by rule")]
-		public void CodeUsingAnInstanceOfItself ()
-		{
-			AssertRuleFailure<BadRec> ("AnotherInstance", 1);
-		}
+    [Test]
+    public void BadRecursiveMethods()
+    {
+      AssertRuleFailure<BadRec>("Equals", 1);
+      AssertRuleFailure<BadRec>("StaticBad", 1);
+    }
 
-		[Test]
-		public void TestAssert ()
-		{
-			AssertRuleSuccess<BadRec> ("Assert");
-		}
+    [Test]
+    public void BadFibo()
+    {
+      AssertRuleFailure<BadRec>("BadFibo", 1);
+      AssertRuleFailure<BadRec>("StaticBadFibo", 1);
+    }
 
-		[Test]
-		public void TestStaticCallingAnotherClassWithSameMethodName ()
-		{
-			AssertRuleSuccess<BadRec> ("Write");
-		}
+    [Test]
+    public void Fibonacci()
+    {
+      AssertRuleSuccess<BadRec>("Fibonacci");
+      AssertRuleSuccess<BadRec>("StaticFibonacci");
+    }
 
-		[Test]
-		public void TestUnreachable ()
-		{
-			AssertRuleSuccess<BadRec> ("Unreachable");
-		}
+    [Test, Ignore("uncaught by rule")]
+    public void CodeUsingAnInstanceOfItself()
+    {
+      AssertRuleFailure<BadRec>("AnotherInstance", 1);
+    }
 
-		// test case provided by Richard Birkby
+    [Test]
+    public void TestAssert()
+    {
+      AssertRuleSuccess<BadRec>("Assert");
+    }
+
+    [Test]
+    public void TestStaticCallingAnotherClassWithSameMethodName()
+    {
+      AssertRuleSuccess<BadRec>("Write");
+    }
+
+    [Test]
+    public void TestUnreachable()
+    {
+      AssertRuleSuccess<BadRec>("Unreachable");
+    }
+
+    // test case provided by Richard Birkby
     internal sealed class FalsePositive7
     {
-			public void Run ()
-			{
-				GetType ();
-				Console.WriteLine (Select ());
-			}
+      public void Run()
+      {
+        GetType();
+        Console.WriteLine(Select());
+      }
 
-			private static T Select<T> ()
-			{
-				Console.WriteLine ();
-				return default (T);
-			}
+      private static T Select<T>()
+      {
+        Console.WriteLine();
+        return default(T);
+      }
 
-			private static string Select ()
-			{
-				return Select<string> ();
-			}
-		}
+      private static string Select()
+      {
+        return Select<string>();
+      }
+    }
 
-		[Test]
-		public void Generics ()
-		{
-			AssertRuleSuccess<FalsePositive7> ();
-		}
+    [Test]
+    public void Generics()
+    {
+      AssertRuleSuccess<FalsePositive7>();
+    }
 
     internal class InterfaceCallGood : IDeserializationCallback
     {
-			protected virtual void OnDeserialization (object sender)
-			{
-				((IDeserializationCallback) this).OnDeserialization (sender);
-			}
+      protected virtual void OnDeserialization(object sender)
+      {
+        ((IDeserializationCallback)this).OnDeserialization(sender);
+      }
 
-			void IDeserializationCallback.OnDeserialization (object sender)
-			{
-				throw new NotImplementedException ();
-			}
-		}
+      void IDeserializationCallback.OnDeserialization(object sender)
+      {
+        throw new NotImplementedException();
+      }
+    }
 
     internal class InterfaceCallBad : IDeserializationCallback
     {
-			void IDeserializationCallback.OnDeserialization (object sender)
-			{
-				// uho
-				((IDeserializationCallback) this).OnDeserialization (sender);
-			}
-		}
+      void IDeserializationCallback.OnDeserialization(object sender)
+      {
+        // uho
+        ((IDeserializationCallback)this).OnDeserialization(sender);
+      }
+    }
 
-		[Test]
-		public void Interfaces ()
-		{
-			AssertRuleSuccess<InterfaceCallGood> ("OnDeserialization");
-			AssertRuleSuccess<InterfaceCallGood> ("System.Runtime.Serialization.IDeserializationCallback.OnDeserialization");
-			AssertRuleFailure<InterfaceCallBad> ("System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", 1);
-		}
+    [Test]
+    public void Interfaces()
+    {
+      AssertRuleSuccess<InterfaceCallGood>("OnDeserialization");
+      AssertRuleSuccess<InterfaceCallGood>("System.Runtime.Serialization.IDeserializationCallback.OnDeserialization");
+      AssertRuleFailure<InterfaceCallBad>("System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", 1);
+    }
 
-		// since we detect dots for interfaces... we test .ctor and .cctor
+    // since we detect dots for interfaces... we test .ctor and .cctor
     public class MyObject : ICloneable
     {
-			static MyObject ()
-			{
-			}
+      static MyObject()
+      {
+      }
 
-			public MyObject ()
-			{
-				Clone ();
-			}
+      public MyObject()
+      {
+        Clone();
+      }
 
-			public object Clone ()
-			{
-				throw new NotImplementedException ();
-			}
+      public object Clone()
+      {
+        throw new NotImplementedException();
+      }
 
-			object ICloneable.Clone ()
-			{
-				return new MyObject ();
-			}
-		}
+      object ICloneable.Clone()
+      {
+        return new MyObject();
+      }
+    }
 
-		[Test]
-		public void Dots ()
-		{
-			AssertRuleDoesNotApply<MyObject> (".cctor"); // no call in method
-			AssertRuleSuccess<MyObject> (".ctor");
-			AssertRuleSuccess<MyObject> ("System.ICloneable.Clone");
-		}
+    [Test]
+    public void Dots()
+    {
+      AssertRuleDoesNotApply<MyObject>(".cctor"); // no call in method
+      AssertRuleSuccess<MyObject>(".ctor");
+      AssertRuleSuccess<MyObject>("System.ICloneable.Clone");
+    }
 
     public class Coverage
     {
-			public int FewParameters (int a, int b, int c)
-			{
-				return FewParameters (a, b, c);
-			}
+      public int FewParameters(int a, int b, int c)
+      {
+        return FewParameters(a, b, c);
+      }
 
-			public int ManyParameters (int a, int b, int c, int d, int e)
-			{
-				return ManyParameters (a, b, c, d, e);
-			}
+      public int ManyParameters(int a, int b, int c, int d, int e)
+      {
+        return ManyParameters(a, b, c, d, e);
+      }
 
       private static int StaticFewParameters(int a, int b, int c)
-			{
-				return StaticFewParameters (a, b, c);
-			}
+      {
+        return StaticFewParameters(a, b, c);
+      }
 
       private static int StaticManyParameters(int a, int b, int c, int d, int e)
-			{
-				return StaticManyParameters (a, b, c, d, e);
-			}
-		}
+      {
+        return StaticManyParameters(a, b, c, d, e);
+      }
+    }
 
-		[Test]
-		public void MoreCoverage_Static ()
-		{
-			AssertRuleFailure<Coverage> ("StaticFewParameters", 1);
-			AssertRuleFailure<Coverage> ("StaticManyParameters", 1);
-		}
+    [Test]
+    public void MoreCoverage_Static()
+    {
+      AssertRuleFailure<Coverage>("StaticFewParameters", 1);
+      AssertRuleFailure<Coverage>("StaticManyParameters", 1);
+    }
 
-		[Test]
-		public void MoreCoverage_Instance ()
-		{
-			AssertRuleFailure<Coverage> ("FewParameters", 1);
-			AssertRuleFailure<Coverage> ("ManyParameters", 1);
-		}
+    [Test]
+    public void MoreCoverage_Instance()
+    {
+      AssertRuleFailure<Coverage>("FewParameters", 1);
+      AssertRuleFailure<Coverage>("ManyParameters", 1);
+    }
 
-		[Test]
-		public void StaticGoodOverload ()
-		{
-			AssertRuleSuccess<BadRec> ("StaticGoodOverload", new Type [] { typeof (object) });
-		}
+    [Test]
+    public void StaticGoodOverload()
+    {
+      AssertRuleSuccess<BadRec>("StaticGoodOverload", new Type[] { typeof(object) });
+    }
 
     private class Array
     {
-			public virtual void SetProperty (string name, object value)
-			{
-				Console.WriteLine ("{0}: {1}", name, value);
-			}
+      public virtual void SetProperty(string name, object value)
+      {
+        Console.WriteLine("{0}: {1}", name, value);
+      }
 
-			internal virtual void SetProperty (string name, object [] args)
-			{
-				SetProperty (name, args [0]);
-			}
-		}
+      internal virtual void SetProperty(string name, object[] args)
+      {
+        SetProperty(name, args[0]);
+      }
+    }
 
-		[Test]
-		public void ArrayOverload ()
-		{
-			AssertRuleSuccess<Array> ("SetProperty", new Type [] { typeof (string), typeof (object[]) });
-		}
+    [Test]
+    public void ArrayOverload()
+    {
+      AssertRuleSuccess<Array>("SetProperty", new Type[] { typeof(string), typeof(object[]) });
+    }
 
-        [Test]
-        public void FSharpObjectConstruction()
-        {
-            AssertRuleSuccess<BadRecursiveInvocation.Handler>(".ctor");
-        }
-
-	}
+    [Test]
+    public void FSharpObjectConstruction()
+    {
+      AssertRuleSuccess<BadRecursiveInvocation.Handler>(".ctor");
+    }
+  }
 }

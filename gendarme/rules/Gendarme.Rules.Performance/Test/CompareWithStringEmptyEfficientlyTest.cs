@@ -49,120 +49,19 @@ namespace Test.Rules.Performance
       AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
     }
 
-    public class UsingStringEquals
-    {
-      private string s = "";
-
-      public static void MainName(string[] args)
-      {
-        UsingStringEquals u = new UsingStringEquals();
-        if (u.s.Equals(""))
-        {
-        }
-      }
-    }
-
-    public class UsingStringEqualsEmpty
-    {
-      private string s = "";
-
-      public static void MainName(string[] args)
-      {
-        UsingStringEqualsEmpty u = new UsingStringEqualsEmpty();
-        if (u.s.Equals(String.Empty))
-        {
-        }
-      }
-    }
-
-    public class UsingStringLength
-    {
-      private string s = "";
-
-      public static void MainName(string[] args)
-      {
-        UsingStringLength u = new UsingStringLength();
-        if (u.s.Length == 0)
-        {
-        }
-      }
-    }
-
-    public class UsingEqualsWithNonStringArg
-    {
-      private int i = 0;
-
-      public static void MainName(string[] args)
-      {
-        UsingEqualsWithNonStringArg u = new UsingEqualsWithNonStringArg();
-        if (u.i.Equals(1))
-        {
-        }
-      }
-    }
-
-    public class AnotherUseOfEqualsWithEmptyString
-    {
-      private string s = "abc";
-
-      public static void MainName(string[] args)
-      {
-        AnotherUseOfEqualsWithEmptyString a = new AnotherUseOfEqualsWithEmptyString();
-        bool b = a.s.Equals("");
-      }
-    }
-
-    public class AnotherUseOfEqualsWithStringEmpty
-    {
-      private string s = "abc";
-
-      public static void MainName(string[] args)
-      {
-        AnotherUseOfEqualsWithStringEmpty a = new AnotherUseOfEqualsWithStringEmpty();
-        bool b = a.s.Equals(String.Empty);
-      }
-    }
-
-    public class OneMoreUseOfEqualsWithEmptyString
-    {
-      private string s = "";
-
-      public static void MainName(string[] args)
-      {
-        OneMoreUseOfEqualsWithEmptyString o = new OneMoreUseOfEqualsWithEmptyString();
-        if (o.s.Equals(""))
-        {
-          bool b = o.s.Equals("");
-        }
-      }
-    }
-
-    public class UsingEqualsWithNonEmptyString
-    {
-      private string s = "";
-
-      public static void MainName(string[] args)
-      {
-        UsingEqualsWithNonEmptyString u = new UsingEqualsWithNonEmptyString();
-        if (u.s.Equals("abc"))
-        {
-        }
-      }
-    }
-
     [Test]
     public void MainComparingStrings()
     {
-      AssertRuleFailure<UsingStringEquals>("Main");
-      AssertRuleFailure<UsingStringEqualsEmpty>("Main");
+      AssertRuleFailure<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.UsingStringEquals>("Main");
+      AssertRuleFailure<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.UsingStringEqualsEmpty>("Main");
 
-      AssertRuleSuccess<UsingStringLength>("Main");
-      AssertRuleSuccess<UsingEqualsWithNonStringArg>("Main");
+      AssertRuleSuccess<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.UsingStringLength>("Main");
+      AssertRuleSuccess<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.UsingEqualsWithNonStringArg>("Main");
 
-      AssertRuleFailure<AnotherUseOfEqualsWithEmptyString>("Main");
-      AssertRuleFailure<AnotherUseOfEqualsWithStringEmpty>("Main");
-      AssertRuleFailure<OneMoreUseOfEqualsWithEmptyString>("Main");
-      AssertRuleSuccess<UsingEqualsWithNonEmptyString>("Main");
+      AssertRuleFailure<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.AnotherUseOfEqualsWithEmptyString>("Main");
+      AssertRuleFailure<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.AnotherUseOfEqualsWithStringEmpty>("Main");
+      AssertRuleFailure<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.OneMoreUseOfEqualsWithEmptyString>("Main");
+      AssertRuleSuccess<Examples.Rules.Performance.CompareWithEmptyStringEfficiently.UsingEqualsWithNonEmptyString>("Main");
     }
 
     public bool WrapperLiteral(string s)

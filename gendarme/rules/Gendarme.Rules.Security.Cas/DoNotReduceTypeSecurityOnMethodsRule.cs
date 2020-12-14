@@ -69,12 +69,6 @@ namespace Gendarme.Rules.Security.Cas
   [FxCopCompatibility("Microsoft.Security", "CA2114:MethodSecurityShouldBeASupersetOfType")]
   public class DoNotReduceTypeSecurityOnMethodsRule : Rule, ITypeRule
   {
-#if NETSTANDARD2_0
-    private bool RuleDoesAppliesToType(ISecurityDeclarationProvider type)
-    {
-      return false;
-    }
-#else
     private PermissionSet assert;
     private PermissionSet deny;
     private PermissionSet permitonly;
@@ -122,8 +116,6 @@ namespace Gendarme.Rules.Security.Cas
       return apply;
     }
 
-#endif
-
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule applies only if type has security declarations
@@ -141,8 +133,6 @@ namespace Gendarme.Rules.Security.Cas
 
         foreach (SecurityDeclaration declsec in method.SecurityDeclarations)
         {
-#if NETSTANDARD2_0
-#else
           switch (declsec.Action)
           {
             case Mono.Cecil.SecurityAction.Assert:
@@ -174,7 +164,6 @@ namespace Gendarme.Rules.Security.Cas
                 Runner.Report(method, Severity.High, Confidence.Total, "Demand");
               break;
           }
-#endif
         }
       }
       return Runner.CurrentRuleResult;

@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for DisableDebuggingCodeRule
 //
 // Authors:
@@ -37,106 +37,63 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class DisableDebuggingCodeTest : MethodRuleTestFixture<DisableDebuggingCodeRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no NEWOBJ
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class DisableDebuggingCodeTest : MethodRuleTestFixture<DisableDebuggingCodeRule> {
+    [Test]
+    public void CommonCheck()
+    {
+      AssertRuleSuccess<Examples.Rules.BadPractice.DisableDebuggingCode>("ConditionalTrace");
+      AssertRuleFailure<Examples.Rules.BadPractice.DisableDebuggingCode>("ConditionalOther", 1);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no NEWOBJ
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    [Test]
+    [Conditional("DEBUG")]
+    public void DebugCheck()
+    {
+      AssertRuleSuccess<Examples.Rules.BadPractice.DisableDebuggingCode>("ConditionalDebug");
+      AssertRuleSuccess<Examples.Rules.BadPractice.DisableDebuggingCode>("ConditionalMultiple");
+    }
 
-		// note: [Conditional] is usable on type from 2.0 onward but only if it inherit from Attribute
-
-		[Conditional ("DEBUG")]
-		public void ConditionalDebug ()
-		{
-			Console.WriteLine ("debug");
-		}
-
-		[Conditional ("TRACE")]
-		public void ConditionalTrace ()
-		{
-			Console.WriteLine ("debug");
-		}
-
-		[Conditional ("OTHER")]
-		[Conditional ("DEBUG")]
-		public void ConditionalMultiple ()
-		{
-			Console.WriteLine ("debug");
-		}
-
-		[Conditional ("OTHER")]
-		public void ConditionalOther ()
-		{
-			Console.WriteLine ("debug");
-		}
-
-		[Test]
-		public void CommonCheck ()
-		{
-			AssertRuleSuccess<DisableDebuggingCodeTest> ("ConditionalTrace");
-			AssertRuleFailure<DisableDebuggingCodeTest> ("ConditionalOther", 1);
-		}
-
-		[Test]
-		[Conditional ("DEBUG")]
-		public void DebugCheck ()
-		{
-			AssertRuleSuccess<DisableDebuggingCodeTest> ("ConditionalDebug");
-			AssertRuleSuccess<DisableDebuggingCodeTest> ("ConditionalMultiple");
-		}
-
-		public void UsingTrace ()
-		{
-			Trace.WriteLine ("debug");
-		}
-
-		public void UsingDebug ()
-		{
-			Debug.WriteLine ("debug");
-		}
-
-		[Category ("DEBUG")] // wrong attribute
-		public void UsingConsole ()
-		{
-			Console.WriteLine ("debug");
-		}
-
-		[Test]
-		public void NonDebug ()
-		{
+    [Test]
+    public void NonDebug()
+    {
 #if DEBUG
- 			AssertRuleSuccess<DisableDebuggingCodeTest> ("UsingDebug"); 
+      AssertRuleSuccess<Examples.Rules.BadPractice.DisableDebuggingCode>("UsingDebug");
 #else
-			AssertRuleDoesNotApply<DisableDebuggingCodeTest> ("UsingDebug");	// method has no body in release
+			AssertRuleDoesNotApply<Examples.Rules.BadPractice.DisableDebuggingCode> ("UsingDebug");	// method has no body in release
 #endif
-			AssertRuleSuccess<DisableDebuggingCodeTest> ("UsingTrace");
-			AssertRuleFailure<DisableDebuggingCodeTest> ("UsingConsole", 1);
-		}
+      AssertRuleSuccess<Examples.Rules.BadPractice.DisableDebuggingCode>("UsingTrace");
+      AssertRuleFailure<Examples.Rules.BadPractice.DisableDebuggingCode>("UsingConsole", 1);
+    }
 
-		[Test]
-		public void Initialize ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (unit);
+    [Test]
+    public void Initialize()
+    {
+      string unit = typeof(Examples.Rules.BadPractice.DisableDebuggingCode).Assembly.Location;
+      AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(unit);
 
-			Rule.Active = false;
-			(Runner as TestRunner).OnAssembly (assembly);
-			Assert.IsFalse (Rule.Active, "Default-Active-False");
+      Rule.Active = false;
+      (Runner as TestRunner).OnAssembly(assembly);
+      Assert.IsFalse(Rule.Active, "Default-Active-False");
 
-			Rule.Active = true;
-			(Runner as TestRunner).OnAssembly (assembly);
-			Assert.IsTrue (Rule.Active, "Assembly-Active-True");
+      Rule.Active = true;
+      (Runner as TestRunner).OnAssembly(assembly);
+      Assert.IsTrue(Rule.Active, "Assembly-Active-True");
 
-			(Runner as TestRunner).OnModule (assembly.MainModule);
-			Assert.IsTrue (Rule.Active, "Module-Active-True");
-		}
-	}
+      (Runner as TestRunner).OnModule(assembly.MainModule);
+      Assert.IsTrue(Rule.Active, "Module-Active-True");
+    }
+  }
 }

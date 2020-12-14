@@ -38,42 +38,40 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Security.Cas
 {
-	/// <summary>
-	/// This rule fires if a type implements <c>System.Runtime.Serialization.ISerializable</c>
-	/// but the <c>GetObjectData</c> method is not protected with a <c>Demand</c> or 
-	/// <c>LinkDemand</c> for <c>SerializationFormatter</c>.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class Bad : ISerializable {
-	/// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class Good : ISerializable {
-	///	[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
-	/// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>Before Gendarme 2.2 this rule was part of Gendarme.Rules.Security.</remarks>
+  /// <summary>
+  /// This rule fires if a type implements <c>System.Runtime.Serialization.ISerializable</c>
+  /// but the <c>GetObjectData</c> method is not protected with a <c>Demand</c> or
+  /// <c>LinkDemand</c> for <c>SerializationFormatter</c>.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class Bad : ISerializable {
+  /// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class Good : ISerializable {
+  ///	[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+  /// 	public override void GetObjectData (SerializationInfo info, StreamingContext context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>Before Gendarme 2.2 this rule was part of Gendarme.Rules.Security.</remarks>
 
-	[Problem ("The method is not protected correctly against a serialization attack.")]
-	[Solution ("A security Demand for SerializationFormatter should be added to protect the method.")]
+  [Problem("The method is not protected correctly against a serialization attack.")]
+  [Solution("A security Demand for SerializationFormatter should be added to protect the method.")]
   public class SecureGetObjectDataOverridesRule : Rule, ITypeRule
   {
-		private const string NotFound = "No [Link]Demand was found.";
+    private const string NotFound = "No [Link]Demand was found.";
 
-#if NETSTANDARD2_0
-#else
     private static PermissionSet _ruleSet;
 
     private static PermissionSet RuleSet
@@ -82,71 +80,66 @@ namespace Gendarme.Rules.Security.Cas
       {
         if (_ruleSet == null)
         {
-					SecurityPermission sp = new SecurityPermission (SecurityPermissionFlag.SerializationFormatter);
-					_ruleSet = new PermissionSet (PermissionState.None);
-					_ruleSet.AddPermission (sp);
-				}
-				return _ruleSet;
-			}
-		}
-        private readonly static TypeName iserializable = new TypeName
-        {
-            Namespace = "System.Runtime.Serialization",
-            Name = "ISerializable"
-        };
+          SecurityPermission sp = new SecurityPermission(SecurityPermissionFlag.SerializationFormatter);
+          _ruleSet = new PermissionSet(PermissionState.None);
+          _ruleSet.AddPermission(sp);
+        }
+        return _ruleSet;
+      }
+    }
 
-#endif
+    private readonly static TypeName iserializable = new TypeName
+    {
+      Namespace = "System.Runtime.Serialization",
+      Name = "ISerializable"
+    };
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-#if NETSTANDARD2_0
-      return RuleResult.DoesNotApply;
-#else
-			// rule applies only to types that implements ISerializable
-			if (!type.Implements (iserializable))
-				return RuleResult.DoesNotApply;
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule applies only to types that implements ISerializable
+      if (!type.Implements(iserializable))
+        return RuleResult.DoesNotApply;
 
-			MethodDefinition method = type.GetMethod (MethodSignatures.GetObjectData);
-			if (method == null)
-				return RuleResult.DoesNotApply;
+      MethodDefinition method = type.GetMethod(MethodSignatures.GetObjectData);
+      if (method == null)
+        return RuleResult.DoesNotApply;
 
-			// *** ok, the rule applies! ***
+      // *** ok, the rule applies! ***
 
-			// is there any security applied ?
+      // is there any security applied ?
       if (!method.HasSecurityDeclarations)
       {
-				Runner.Report (method, Severity.High, Confidence.Total, NotFound);
-				return RuleResult.Failure;
-			}
+        Runner.Report(method, Severity.High, Confidence.Total, NotFound);
+        return RuleResult.Failure;
+      }
 
-			// the SerializationFormatter must be a subset of the one (of the) demand(s)
-			bool demand = false;
+      // the SerializationFormatter must be a subset of the one (of the) demand(s)
+      bool demand = false;
       foreach (SecurityDeclaration declsec in method.SecurityDeclarations)
       {
         switch (declsec.Action)
         {
-				case Mono.Cecil.SecurityAction.Demand:
-				case Mono.Cecil.SecurityAction.NonCasDemand:
-				case Mono.Cecil.SecurityAction.LinkDemand:
-				case Mono.Cecil.SecurityAction.NonCasLinkDemand:
-					demand = true;
+          case Mono.Cecil.SecurityAction.Demand:
+          case Mono.Cecil.SecurityAction.NonCasDemand:
+          case Mono.Cecil.SecurityAction.LinkDemand:
+          case Mono.Cecil.SecurityAction.NonCasLinkDemand:
+            demand = true;
             if (!RuleSet.IsSubsetOf(declsec.ToPermissionSet()))
             {
-						string message = String.Format (CultureInfo.InvariantCulture,
-							"{0} is not a subset of {1} permission set",
-							"SerializationFormatter", declsec.Action);
-						Runner.Report (method, Severity.High, Confidence.Total, message);
-					}
-					break;
-				}
-			}
+              string message = String.Format(CultureInfo.InvariantCulture,
+                "{0} is not a subset of {1} permission set",
+                "SerializationFormatter", declsec.Action);
+              Runner.Report(method, Severity.High, Confidence.Total, message);
+            }
+            break;
+        }
+      }
 
-			// there was no [NonCas][Link]Demand but other actions are possible
-			if (!demand)
-				Runner.Report (method, Severity.High, Confidence.Total, NotFound);
+      // there was no [NonCas][Link]Demand but other actions are possible
+      if (!demand)
+        Runner.Report(method, Severity.High, Confidence.Total, NotFound);
 
-			return Runner.CurrentRuleResult;
-#endif
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

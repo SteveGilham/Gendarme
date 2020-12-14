@@ -13,6 +13,9 @@ With Roslyn
 17 Interoperability
    Source: DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.cs (stack related)
 
+1 G10n
+  Deserializing bitmaps in .net core
+
 6 Correctness
 
 6 Concurrency

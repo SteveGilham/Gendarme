@@ -1,49 +1,75 @@
 
 # altcode.gendarme
-A Mono.Gendarme fork, built against the most recent Mono.Cecil, that can load assemblies built with current compilers.
-
-Since this is a fork, issues should be reported at my related repo](https://github.com/SteveGilham/altcode.fake/issues) that contains a Fake driver for the Gendarme tool, but noted as being against the forked Gendarme tool itself.
+A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can load assemblies built with current compilers.
 
 ### Badges
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Command-line tool](https://www.nuget.org/packages/altcode.gendarme)
-* [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme)
-* ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme-tool?includePreReleases=true) Global tool for .net core 2.1 and later](https://www.nuget.org/packages/altcode.gendarme-tool)
 
-## Build process from trunk as per `appveyor.yml`
+| | | |
+| --- | --- | --- | 
+| **Build** | <sup>AppVeyor</sup> [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme) | ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme) 
+| |<sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
 
-Assumes VS2019 build environment
 
-* dotnet tool restore
-* dotnet fake run .\Build\setup.fsx
-* dotnet fake run .\Build\build.fsx
+## Build process from trunk as per the CI YAML
+
+Assumes net50 build environment
+
+* `dotnet tool restore`
+* `dotnet fake run .\Build\setup.fsx`
+* `dotnet fake run .\Build\build.fsx`
 
 The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests
 
 ## Features
+See [the head of the (pre-)release branch](https://github.com/SteveGilham/Gendarme/blob/release/pre-release/README.md) for the features in the latest actual release.
+
+In this branch
+
 * Can load .net core assemblies 
-  * Will search the nuget cache for dependencies, though this can take some time; whether this is better than using `dotnet publish` to get all the code you want to analyse in one place so Gendarme is able to pick up dependencies will depend on your context.
+  * Will search the nuget cache for dependencies, though this can take some timeas an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
+* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
+  * `AddMissingTypeInheritanceDemandRule`
+  * `DoNotExposeMethodsProtectedByLinkDemandRule`
+  * `DoNotReduceTypeSecurityOnMethodsRule`
+  * `SecureGetObjectDataOverridesRule`
+* The obsolete `Gendarme.Rules.Portability.MonoCompatibilityReviewRule` is not implemented in this fork.
+* `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
+* Due to IL changes `UseIsOperatorRule` has been tuned to avoid false positives at the cost of missing some failure cases
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
 
 ## Known Issues
-The AvoidSwitchStatements rule needs some serious decompiler code to recognise Roslyn's mangled switch as multiple conditional branches, so some tests have just been set to `[Ignore]`
+
+
+#### Unit test fixing
+
+Having resolved many issues stemming from a Cecil change to what the name and namespace properties of a nested type returned, the next major sources of test failure have been compiler changes (from pre-Roslyn to now) and differences in behaviour under `.netstandard` compared with the .net Framework.  In particular, the `AvoidSwitchStatements` rule needs some serious decompiler code to recognise Roslyn's mangled switch constructs (compiled as multiple conditional branches) so some tests have just been set to `[Ignore]`
 
 The following rule suites have unit test failures
 
-* Framework -- 2 failures for Stack entry analysis (inherited from the VS2013 build)
-* BadPractice -- 8 in .net core only
+* Framework -- 2 failures for Stack entry analysis (Roslyn, most likely)
+  * TestMultipleCatch()
+  * TestTryCatchFinally()
 * Concurrency -- 6 failures
-* Correctness -- 6 failures (36 on .net core)
-* Globalization -- 2 in .net core only (one is "System.NotSupportedException : Cannot read resources that depend on serialization.")
-* Interoperability -- 17 Stack entry analysis related failures 
-* Maintainability -- 1 failure (AvoidUnnecessarySpecializationRule)
-* Performance -- 8 failures (Character concatenation, others) + 1 more on .net core (AvoidLocalDataStoreSlotTest)
-* Portability -- 5 failures (MonoCompatibiliyReview) + 1 more on .net core (False positive detecting Registry keys as paths)
-* Security.Cas -- 13 failures on .net core where it is not applicable
-* Smells -- 1 failure (`SuccessOnNonDuplicatedCodeIntoForeachLoopTest` detects the loop) + 2 `[Ignore]`d switch related tests
+  * Do not lock on Static Type/This/Type (false negatives)
+  * `ProtectCallToEventDelegatesRule` (3 * false positives)
+* Correctness -- 5 failures (false negatives)
+  * `ProvideCorrectArgumentsToFormattingMethods` * 3 -- changed IL : `call Array.Empty` used instead of an explict load
+  * `TestNativeFieldsArray` -- changed IL
+  * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
+* Globalization -- 1 failure (Cannot read satellite resources with available reader)
+* Interoperability -- 17 failures (false negatives)
+  * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
+* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` possibly Stack entry analysis)
+* Smells -- 2 failure
+  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
+  * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
+  * 2 other `[Ignore]`d switch related tests
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
@@ -86,8 +112,5 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * For `AvoidRepetitiveCastsRule`, ignore F# `is` then `as` of anonymous temporaries (often happens in `match` expressions on sum types)
 * Adapt `UseCorrectCasingRule` to be compatible with `FSharpLint` for F# code (Non-class, non-public, functions should be camel-cased)
 * Add a `RelaxedMarkAllNonSerializableFieldsRule` which ignores F# types with `@` in the name, keeping the full-strength version for cases where serializing a closure is intentional.
-
-#### Unit test fixing
-
-Many issues stemmed from a cecil change to what the name and namespace properties of a nested type returned.
-
+* Skip types called `<PrivateImplementationDetails>`
+* Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)

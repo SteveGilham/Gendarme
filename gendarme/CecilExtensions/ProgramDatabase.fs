@@ -10,7 +10,8 @@ open Mono.Cecil.Mdb
 open Mono.Cecil.Pdb
 
 // Code from https://github.com/SteveGilham/altcover/commit/431fa57e4bf1e75f2cf2c01c9c61726a57f894dc
-// plus retrofit for the old F#  verion we are using here
+// as modified at https://github.com/SteveGilham/altcover/commit/324f13c275ff020f60c4216969b668e7766e544a
+// plus retrofit for the old F# version we are using here
 
 module ProgramDatabase =
   let internal SymbolFolders = List<String>()
@@ -67,10 +68,13 @@ module ProgramDatabase =
       if File.Exists(fallback2) then Some name else None
 
   let GetPdbWithFallback(assembly : AssemblyDefinition) =
+    let path = assembly.MainModule.FileName
     match GetPdbFromImage assembly with
-    | None ->
-        let foldername = Path.GetDirectoryName assembly.MainModule.FileName
-        let filename = Path.GetFileName assembly.MainModule.FileName
+    | None when path
+                |> String.IsNullOrWhiteSpace
+                |> not -> // i.e. assemblies read from disk only
+        let foldername = Path.GetDirectoryName path
+        let filename = Path.GetFileName path
         foldername :: (Seq.toList SymbolFolders)
         |> Seq.map (GetSymbolsByFolder filename)
         |> Seq.choose id

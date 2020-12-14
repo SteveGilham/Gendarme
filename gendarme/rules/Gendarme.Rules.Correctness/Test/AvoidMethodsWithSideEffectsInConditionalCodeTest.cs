@@ -76,6 +76,12 @@ namespace Test.Rules.Correctness {
 			}
 
 #if NETCOREAPP2_1
+			// Getters can be used with conditional code.
+			public void Good3 (string context)
+			{
+				ConditionalCall (context.Length);
+			}
+
 #else
 
 			// Getters can be used with conditional code.
