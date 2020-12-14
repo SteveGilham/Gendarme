@@ -1,3 +1,8 @@
+# 2020.11.13.18xxx-pre-release
+
+Issues found in use
+* Don't apply ParameterNamesShouldMatchOverridenMethodRule to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
+
 # 2020.7.21.12091-pre-release
 
 Issues found in use
