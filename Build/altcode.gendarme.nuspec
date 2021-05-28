@@ -14,6 +14,7 @@
     <icon>Image.png</icon>
     <description>A somewhat updated build of the Mono.Gendarme static analysis tool for use with modern (including .net standard/core) assemblies.</description>
     <releaseNotes>@releaseNotes@</releaseNotes>
+    <readme>NuGet.md</readme>
     <copyright>@copyright@</copyright>
     <tags>gendarme static-analysis .netcore .net mono</tags>
     <repository type="git" url="https://github.com/SteveGilham/Gendarme" />
