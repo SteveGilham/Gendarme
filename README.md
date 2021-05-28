@@ -28,7 +28,7 @@ See [the head of the (pre-)release branch](https://github.com/SteveGilham/Gendar
 In this branch
 
 * Can load .net core assemblies 
-  * Will search the nuget cache for dependencies, though this can take some timeas an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
+  * Will search the nuget cache for dependencies, though this can take some time as an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 * Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
@@ -114,3 +114,4 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * Add a `RelaxedMarkAllNonSerializableFieldsRule` which ignores F# types with `@` in the name, keeping the full-strength version for cases where serializing a closure is intentional.
 * Skip types called `<PrivateImplementationDetails>`
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
+* Don't apply `DoNotDeclareVirtualMethodsInSealedTypeRule` to F# closure types

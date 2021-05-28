@@ -156,6 +156,18 @@ _Target "Clean" (fun _ ->
   Actions.Clean())
 
 _Target "SetVersion" (fun _ ->
+  Directory.ensure "./_Generated"
+
+  let hack =
+      """namespace AltCover
+module SolutionRoot =
+  let location = """
+            + "\"\"\""
+            + (Path.getFullName ".")
+            + "\"\"\""
+
+  let path = "_Generated/SolutionRoot.fs"
+  File.WriteAllText(path, hack)
 
   let now = DateTime.Now
   let time = now.ToString("HHmmss").Substring(0, 5).TrimStart('0')
@@ -171,8 +183,6 @@ _Target "SetVersion" (fun _ ->
     sprintf "© 2010-%d by Steve Gilham <SteveGilham@users.noreply.github.com>" y0
   let copy2 = sprintf "Copyright (C) 2005-%d Novell, Inc. and contributors" y0
   Copyright := "Copyright " + copy
-
-  Directory.ensure "./_Generated"
 
   let v' = !Version
 
@@ -400,7 +410,8 @@ _Target "Packaging" (fun _ ->
         Framework = Some "netcoreapp2.1" }) netcoresource
 
   let housekeeping =
-    [ (Path.getFullName "./LICENS*", Some "", None)
+    [ (Path.getFullName "./Nu*.md", Some "", None)
+      (Path.getFullName "./LICENS*", Some "", None)
       (Path.getFullName "./Image.*g", Some "", None) ]
 
   let rules =
@@ -488,11 +499,7 @@ _Target "Packaging" (fun _ ->
              Publish = false
              ReleaseNotes = Path.getFullName "ReleaseNotes.md" |> File.ReadAllText
              ToolPath =
-               if Environment.isWindows then
-                 ("./packages/" + (packageVersion "NuGet.CommandLine")
-                  + "/tools/NuGet.exe") |> Path.getFullName
-               else
-                 "/usr/bin/nuget" }) recipe))
+               "./gendarme/_Binaries/NuPacker/Release+AnyCPU/net472/NuPacker.exe" }) recipe))
 
 _Target "OperationalTest" ignore
 

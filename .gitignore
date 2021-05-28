@@ -27,3 +27,4 @@ Build/obj/
 _*/
 Build/bin/
 gendarme/console/Properties/launchSettings.json
+Build/NuPacker/obj/
