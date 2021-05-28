@@ -498,8 +498,8 @@ _Target "Packaging" (fun _ ->
              Copyright = (!Copyright).Replace("©", "(c)")
              Publish = false
              ReleaseNotes = Path.getFullName "ReleaseNotes.md" |> File.ReadAllText
-             ToolPath =
-               "./gendarme/_Binaries/NuPacker/Release+AnyCPU/net472/NuPacker.exe" }) recipe))
+             ToolPath = Path.getFullName "gendarme/_Binaries/Nupacker/Release+AnyCPU/net472/NuPacker.exe"
+         }) recipe))
 
 _Target "OperationalTest" ignore
 
