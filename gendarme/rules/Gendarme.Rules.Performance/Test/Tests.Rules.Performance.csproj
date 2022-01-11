@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
@@ -17,17 +17,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="altcover" Version="8.2.821" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.XML" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.2" Condition="'$(TargetFramework)' == 'net472'">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\framework\Gendarme.Framework.csproj" />
@@ -36,7 +37,7 @@
     <ProjectReference Include="..\Gendarme.Rules.Performance.csproj" />
     <ProjectReference Include="Examples\Examples.Rules.Performance.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+  <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
     <PackageReference Include="System.Security.Permissions">
       <Version>4.7.0</Version>
     </PackageReference>
