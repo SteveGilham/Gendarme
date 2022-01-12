@@ -430,10 +430,10 @@ _Target "Packaging" (fun _ ->
     Directory.GetDirectories(".", "Gendarme.Rules.*", SearchOption.AllDirectories)
     |> Seq.toList
 
-  let n40rules =
+  let n472rules =
     rules
     |> List.collect (fun f ->
-         !!((Path.getFullName f) @@ "Release+AnyCPU/net40/Gendarme.Rules.*") |> Seq.toList)
+         !!((Path.getFullName f) @@ "Release+AnyCPU/netstandard2.0/Gendarme.Rules.*") |> Seq.toList)
     |> List.filter (fun f ->
          let ex = f |> Path.GetExtension
          match ex with
@@ -455,10 +455,10 @@ _Target "Packaging" (fun _ ->
          | _ -> false)
     |> List.distinctBy Path.GetFileName
 
-  let net40 =
+  let net472 =
     List.concat
       [ !!"./_Binaries/gendarme/Release+AnyCPU/net4*/*.*" |> Seq.toList
-        n40rules ]
+        n472rules ]
     |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
 
   let leadstring = publish.Length
@@ -472,7 +472,7 @@ _Target "Packaging" (fun _ ->
       [ netcoremain
         corerules |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
 
-  let files = List.concat [ net40; housekeeping ]
+  let files = List.concat [ net472; housekeeping ]
   let globalfiles = List.concat [ netcore; housekeeping ]
 
   let workingDir = "./_Binaries/_Packaging"
@@ -560,7 +560,7 @@ _Target "Unpack" (fun _ ->
                 Console = true
                 Log = Path.GetFullPath "./_Reports/gendarme.html"
                 LogKind = Gendarme.LogKind.Html
-                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/net40/FSharpExamples.dll"]
+                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
                 ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
                 FailBuildOnDefect = true }  ) |> ignore
     )
