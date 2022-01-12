@@ -164,6 +164,10 @@ let uncovered (path : string) =
                 numeric))
   |> Seq.toList
 
+let commitHash = Information.getCurrentSHA1 (".")
+let infoV = Information.showName "." commitHash
+printfn "Build at %A" infoV
+
 let _Target s f =
     let doTarget s f =
         let banner x =
@@ -223,22 +227,30 @@ module SolutionRoot =
     [ AssemblyInfo.Product "altcode.gendarme"
       AssemblyInfo.Version v'
       AssemblyInfo.FileVersion v'
+      AssemblyInfo.InformationalVersion(commitHash + " " + currentBranch) 
       AssemblyInfo.Company "Steve Gilham"
       AssemblyInfo.Trademark ""
       AssemblyInfo.CLSCompliant true
       AssemblyInfo.ComVisible false
-      AssemblyInfo.Copyright copy ] (Some AssemblyInfoFileConfig.Default)
+      AssemblyInfo.Copyright copy
+      AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")       
+      AssemblyInfo.Metadata("CommitHash", commitHash)       
+      AssemblyInfo.Metadata("Branch", currentBranch) ] (Some AssemblyInfoFileConfig.Default)
 
   AssemblyInfoFile.create "./_Generated/AssemblyStaticInfo.cs"
     [ AssemblyInfo.Title "Gendarme"
       AssemblyInfo.Version v'
       AssemblyInfo.FileVersion v'
+      AssemblyInfo.InformationalVersion(commitHash + " " + currentBranch) 
       AssemblyInfo.Company "Novell, Inc."
       AssemblyInfo.Trademark ""
       AssemblyInfo.Description "Rule-based assembly analyzer"
       AssemblyInfo.CLSCompliant false
       AssemblyInfo.ComVisible false
-      AssemblyInfo.Copyright copy2 ] (Some AssemblyInfoFileConfig.Default))
+      AssemblyInfo.Copyright copy2
+      AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")       
+      AssemblyInfo.Metadata("CommitHash", commitHash)       
+      AssemblyInfo.Metadata("Branch", currentBranch) ] (Some AssemblyInfoFileConfig.Default))
 
 // Basic compilation
 
