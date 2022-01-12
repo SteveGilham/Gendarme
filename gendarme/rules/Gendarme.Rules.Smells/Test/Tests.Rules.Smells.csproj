@@ -5,6 +5,7 @@
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
     <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
+    <NoWarn>1701;1702;CA1822;IDE0028;IDE0044;IDE0051;IDE0052</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -21,10 +22,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="AvoidLongMethodsTest.cs" />

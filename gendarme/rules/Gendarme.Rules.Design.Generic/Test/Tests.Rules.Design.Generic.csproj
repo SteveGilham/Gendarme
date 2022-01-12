@@ -20,9 +20,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.XML" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\framework\Gendarme.Framework.csproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Design.Generic.csproj" />

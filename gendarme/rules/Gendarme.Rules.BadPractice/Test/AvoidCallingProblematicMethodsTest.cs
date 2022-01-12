@@ -167,8 +167,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFromCall()
     {
       Assembly.LoadFrom("myAssembly.dll");
-#if NETCOREAPP2_1
-#else
+#if !NET472
       Assembly.LoadFrom("myAssembly.dll", new Evidence());
       Assembly.LoadFrom("myAssembly.dll", new Evidence(), null, AssemblyHashAlgorithm.None);
 #endif
@@ -178,7 +177,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFromCallTest()
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFromCall",
-#if NETCOREAPP2_1
+#if !NET472
         1);
 #else
         3);
@@ -188,7 +187,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFileCall()
     {
       Assembly.LoadFile("myAssembly.dll");
-#if NETCOREAPP2_1
+#if !NET472
 #else
       Assembly.LoadFile("myAssembly.dll", new Evidence());
 #endif
@@ -198,7 +197,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFileCallTest()
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFileCall",
-#if NETCOREAPP2_1
+#if !NET472
         1);
 #else
         2);
@@ -208,7 +207,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadWithPartialNameCall()
     {
       Assembly.LoadWithPartialName("MyAssembly");
-#if NETCOREAPP2_1
+#if !NET472
 #else
       Assembly.LoadWithPartialName("MyAssembly", new Evidence());
 #endif
@@ -218,7 +217,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadWithPartialNameCallTest()
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadWithPartialNameCall",
-#if NETCOREAPP2_1
+#if !NET472
         1);
 #else
         2);

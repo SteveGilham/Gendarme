@@ -22,9 +22,6 @@
     <PackageReference Include="Mono.Cecil" Version="0.11.4" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
     <None Include="dataflow\BasicBlock.cs" />
     <None Include="dataflow\CFG.cs" />

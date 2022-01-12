@@ -20,12 +20,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\framework\Gendarme.Framework.csproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Ui.csproj" />

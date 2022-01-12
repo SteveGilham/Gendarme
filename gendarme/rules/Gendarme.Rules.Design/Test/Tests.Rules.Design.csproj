@@ -24,9 +24,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.XML" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\framework\Gendarme.Framework.csproj" />
     <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />

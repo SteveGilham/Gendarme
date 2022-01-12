@@ -163,7 +163,7 @@ namespace Test.Rules.Correctness
         rec.AnotherInstance();
       }
 
-#if NETCOREAPP2_1
+#if !NET472
 			public void Assert ()
 			{
 				throw new SecurityException("Assert");
