@@ -153,6 +153,37 @@ namespace Gendarme
       EndColor();
       writer.Write(rule.Solution);
       writer.WriteLine();
+      writer.WriteLine();
+
+      BeginColor(ConsoleColor.DarkYellow);
+      writer.WriteLine("Global Suppression Attribute: ");
+      EndColor();
+
+      var category = defect.Rule.FullName;
+      var length = category.Length - (defect.Rule.Name.Length + 1);
+      category = category.Substring(0, length);
+      writer.WriteLine("[<assembly: SuppressMessage(\"{0}\",", category);
+      writer.WriteLine("                            \"{0}\",", defect.Rule.Name);
+
+      var target = defect.Target;
+      // member, module, namespace, namespaceanddescendants or type
+      var scope = "member"; // fail-safe; no namespace provider
+      if (target is AssemblyDefinition ||
+          target is ModuleReference)
+        scope = "module";
+      if (target is TypeReference)
+        scope = "type";
+      writer.WriteLine("                            Scope = \"{0}\", // {1}", scope, target.GetType().Name);
+
+      var targetName = target.ToString();
+      if (target is MethodDefinition)
+        targetName = targetName.Substring(targetName.IndexOf(' ')).Trim();
+        
+      writer.WriteLine("                            Target = \"{0}\",", targetName);
+      writer.WriteLine("                            Justification = \"\")>]");
+
+      writer.WriteLine();
+      writer.WriteLine();
 
       writer.WriteLine("More info available at: {0}", rule.Uri.ToString());
       writer.WriteLine();

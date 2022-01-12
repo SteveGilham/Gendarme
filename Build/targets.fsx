@@ -144,8 +144,20 @@ let uncovered (path : string) =
   |> Seq.toList
 
 let _Target s f =
-  Target.description s
-  Target.create s f
+    let doTarget s f =
+        let banner x =
+            printfn ""
+            printfn " ****************** %s ******************" s
+            f x
+
+        Target.create s banner
+
+    Target.description s
+    doTarget s f
+
+    let s2 = "Replay" + s
+    Target.description s2
+    doTarget s2 f
 
 // Preparation
 
