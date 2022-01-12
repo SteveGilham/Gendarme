@@ -18,6 +18,7 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing
 open Fake.IO.Globbing.Operators
+open Fake.Tools.Git
 
 open AltCode.Fake.DotNet
 open AltCoverFake.DotNet.DotNet
@@ -39,6 +40,26 @@ let dotnetOptions (o : DotNet.Options) =
   match dotnetPath with
   | Some f -> { o with DotNetCliPath = f }
   | None -> o
+
+let currentBranch =
+    let env =
+        Environment.environVar "APPVEYOR_REPO_BRANCH"
+
+    if env |> String.IsNullOrWhiteSpace then
+        "."
+        |> Path.getFullName
+        |> Information.getBranchName
+    else
+        env
+
+let badge =
+    if
+        currentBranch.StartsWith("release/", StringComparison.Ordinal)
+        && (currentBranch.Contains("pre-release") |> not)
+    then
+        String.Empty
+    else
+        "-pre-release"
 
 let toolPackages =
   let xml =
@@ -506,7 +527,7 @@ _Target "Packaging" (fun _ ->
              WorkingDir = workingDir
              Files = payload
              Dependencies = []
-             Version = (!Version + "-pre-release")
+             Version = (!Version + badge)
              Copyright = (!Copyright).Replace("©", "(c)")
              Publish = false
              ReleaseNotes = Path.getFullName "ReleaseNotes.md" |> File.ReadAllText
@@ -526,7 +547,7 @@ _Target "Unpack" (fun _ ->
   Directory.ensure config
 
   let text = File.ReadAllText "./Build/dotnet-tools.json"
-  let newtext = text.Replace("{0}", (!Version + "-pre-release"))
+  let newtext = text.Replace("{0}", (!Version + badge))
   File.WriteAllText((config @@ "dotnet-tools.json"), newtext)
 
   let packroot = Path.GetFullPath "./_Packaging"
@@ -537,7 +558,7 @@ _Target "Unpack" (fun _ ->
 
   let csproj = XDocument.Load "./Build/unpack.xml"
   let p = csproj.Descendants(XName.Get("PackageReference")) |> Seq.head
-  p.Attribute(XName.Get "Version").Value <- (!Version + "-pre-release")
+  p.Attribute(XName.Get "Version").Value <- (!Version + badge)
   let proj = unpack @@ "unpack.csproj"
   csproj.Save proj
 
@@ -545,7 +566,7 @@ _Target "Unpack" (fun _ ->
     { o.WithCommon(withWorkingDirectoryVM unpack) with Packages = [ "./packages" ] })
     proj
 
-  let vname = !Version + "-pre-release"
+  let vname = !Version + badge
   let from = (Path.getFullName @"_Unpack/packages/altcode.gendarme/") @@ vname
   printfn "Copying from %A to %A" from unpack
   Shell.copyDir unpack from (fun _ -> true)
@@ -588,7 +609,7 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
       "tool"
       ("install -g altcode.gendarme-tool --add-source "
-       + (Path.getFullName "./_Packaging") + " --version " + !Version + "-pre-release") "Installed"
+       + (Path.getFullName "./_Packaging") + " --version " + !Version + badge) "Installed"
 
     Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
       "tool" ("list -g ") "Checked"
@@ -614,7 +635,7 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     if set then
       Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
         "tool" ("uninstall -g altcode.gendarme-tool") "uninstalled"
-    let folder = (nugetCache @@ "altcode.gendarme-tool") @@ (!Version + "-pre-release")
+    let folder = (nugetCache @@ "altcode.gendarme-tool") @@ (!Version + badge)
     Shell.mkdir folder
     Shell.deleteDir folder)
 
