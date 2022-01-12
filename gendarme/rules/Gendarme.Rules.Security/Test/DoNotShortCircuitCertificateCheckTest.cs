@@ -155,7 +155,9 @@ namespace Test.Rules.Security
 
     public abstract class AbstractIndirectPolicy : IMyPolicy
     {
+#pragma warning disable IDE0044 // Add readonly modifier
       private bool result;
+#pragma warning restore IDE0044 // Add readonly modifier
 
       public AbstractIndirectPolicy(bool value)
       {

@@ -40,8 +40,6 @@ using NUnit.Framework;
 
 namespace Test.Rules.Portability
 {
-#pragma warning disable 169, 219, 414
-
   [TestFixture]
   public class DoNotHardcodePathsTest : MethodRuleTestFixture<DoNotHardcodePathsRule>
   {

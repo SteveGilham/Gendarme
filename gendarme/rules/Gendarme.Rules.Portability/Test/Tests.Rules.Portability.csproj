@@ -5,12 +5,13 @@
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
     <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
-    <NoWarn>1701;1702;CA2200</NoWarn>
+    <NoWarn>1701;1702;CA2200;CA1822;IDE0051;IDE0059;IDE0052;IDE0060;414</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="altcover" Version="8.2.833" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.4" />
     <PackageReference Include="NUnit" Version="3.13.2" />

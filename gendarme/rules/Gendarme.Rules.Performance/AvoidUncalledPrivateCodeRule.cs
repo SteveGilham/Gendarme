@@ -291,7 +291,7 @@ namespace Gendarme.Rules.Performance
       return false;
     }
 
-    private static Dictionary<TypeDefinition, HashSet<ulong>> cache = new Dictionary<TypeDefinition, HashSet<ulong>>();
+    private static readonly Dictionary<TypeDefinition, HashSet<ulong>> cache = new Dictionary<TypeDefinition, HashSet<ulong>>();
 
     private static ulong GetToken(MethodReference method)
     {
@@ -321,8 +321,7 @@ namespace Gendarme.Rules.Performance
 
     private static HashSet<ulong> GetCache(TypeDefinition type)
     {
-      HashSet<ulong> methods;
-      if (!cache.TryGetValue(type, out methods))
+      if (!cache.TryGetValue(type, out HashSet<ulong> methods))
       {
         methods = new HashSet<ulong>();
         cache.Add(type, methods);

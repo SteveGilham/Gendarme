@@ -6,8 +6,10 @@
     <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <NoWarn>SYSLIB0012</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="altcover" Version="8.2.833" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.4" />
     <PackageReference Include="NUnit" Version="3.13.2" />

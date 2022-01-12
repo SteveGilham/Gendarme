@@ -82,7 +82,7 @@ namespace Test.Rules.BadPractice
       var h = new IsolatedStorageFileStream("HelloWorld.cs", FileMode.Create, FileAccess.Write);
 
       // unrelated code
-      List<string> ls = new List<string> { "a", "b" };
+      var ls = new List<string> { "a", "b" };
       ls.Clear();
 
       var i = new FileStream("HelloWorld.cs", FileMode.Open,

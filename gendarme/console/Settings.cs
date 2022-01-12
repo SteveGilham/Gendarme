@@ -43,10 +43,10 @@ namespace Gendarme
   {
     private const string DefaultRulesFile = "rules.xml";
 
-    private Collection<IRule> rules;
-    private string config_file;
-    private string rule_set;
-    private IList<string> validation_errors = new List<string>();
+    private readonly Collection<IRule> rules;
+    private readonly string config_file;
+    private readonly string rule_set;
+    private readonly IList<string> validation_errors = new List<string>();
 
     public Settings(IRunner runner, string configurationFile, string ruleSet)
     {

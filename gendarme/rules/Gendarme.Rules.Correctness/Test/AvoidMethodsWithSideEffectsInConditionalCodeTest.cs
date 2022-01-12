@@ -39,23 +39,6 @@ using System.Runtime.InteropServices;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace System.Diagnostics.Contracts
-{
-  [Serializable]
-  [AttributeUsage(AttributeTargets.Method | AttributeTargets.Delegate, AllowMultiple = false)]
-  public sealed class PureAttribute : Attribute
-  {
-  }
-
-  public static class Contract
-  {
-    public static bool Foo(bool predicate)
-    {
-      return predicate;
-    }
-  }
-}
-
 namespace Test.Rules.Correctness
 {
   [TestFixture]
@@ -102,7 +85,7 @@ namespace Test.Rules.Correctness
       // All Contract methods can be used with conditional code.
       public void Good5(bool data)
       {
-        ConditionalCall(Contract.Foo(data));
+        ConditionalCall(Contract.OldValue(data));
       }
 
       // All System.String methods can be used with conditional code.

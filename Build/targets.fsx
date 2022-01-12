@@ -245,7 +245,7 @@ _Target "UnitTestDotNet" (fun _ ->
          (DotNet.test (fun p ->
            { p.WithCommon dotnetOptions with
                Configuration = DotNet.BuildConfiguration.Debug
-               Framework = Some "netcoreapp2.1"
+               Framework = Some "net6.0"
                NoBuild = true }
            |> withCLIArgs))
   with x -> printfn "%A" x) //reraise()) // while fixing
@@ -348,7 +348,7 @@ _Target "UnitTestWithAltCoverCoreRunner" (fun _ ->
 
          let altReport = reports @@ ("UnitTestWithAltCoverCoreRunner." + tname + ".xml")
          let altReport2 =
-           reports @@ ("UnitTestWithAltCoverCoreRunner." + tname + ".netcoreapp2.1.xml")
+           reports @@ ("UnitTestWithAltCoverCoreRunner." + tname + ".net6.0.xml")
 
          let collect = AltCover.CollectOptions.Primitive(Primitive.CollectOptions.Create()) // FSApi
 
@@ -381,7 +381,7 @@ _Target "UnitTestWithAltCoverCoreRunner" (fun _ ->
            DotNet.test (fun to' ->
              { to'.WithCommon(setBaseOptions).WithAltCoverOptions prepare collect
                  ForceTrue with
-                 Framework = Some "netcoreapp2.1"
+                 Framework = Some "net6.0"
                  MSBuildParams = cliArguments }) test
          with x -> printfn "%A" x
          // reraise()) // while fixing

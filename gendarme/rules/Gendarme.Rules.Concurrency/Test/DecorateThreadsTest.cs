@@ -168,7 +168,7 @@ namespace Test.Rules.Concurrency
       }
     }
 
-    internal interface Interface
+    internal interface IInterface
     {
       void MainStuff();
 
@@ -197,7 +197,7 @@ namespace Test.Rules.Concurrency
       }
     }
 
-    internal class Good5 : Interface
+    internal class Good5 : IInterface
     {
       [ThreadModel(ThreadModel.MainThread)]
       public void MainStuff()
@@ -550,7 +550,7 @@ namespace Test.Rules.Concurrency
       }
     }
 
-    internal class Bad4 : Interface
+    internal class Bad4 : IInterface
     {
       [ThreadModel(ThreadModel.Concurrent)]
       public void MainStuff()

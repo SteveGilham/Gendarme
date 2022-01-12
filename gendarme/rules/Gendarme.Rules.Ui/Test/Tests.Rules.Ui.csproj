@@ -5,8 +5,10 @@
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\..\..\..\gendarme\</SolutionDir>
     <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
+    <NoWarn>CA1822</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="altcover" Version="8.2.833" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.4" />
     <PackageReference Include="NUnit" Version="3.13.2" />
@@ -23,5 +25,10 @@
     <ProjectReference Include="..\..\..\framework\Gendarme.Framework.csproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Ui.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
   </ItemGroup>
 </Project>
