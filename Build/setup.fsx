@@ -44,6 +44,7 @@ nuget Fake.DotNet.NuGet >= 5.20.0
 nuget Fake.DotNet.Testing.NUnit >= 5.20.0
 nuget Fake.IO.FileSystem >= 5.20.0
 nuget Fake.Testing.ReportGenerator >= 5.20.0
+nuget Fake.Tools.Git >= 5.20.0
 nuget altcover.fake >= 7.0.773
 nuget AltCode.Fake.DotNet.Gendarme >= 5.18.1.24
 nuget FSharpLint.Core >= 0.16.3
