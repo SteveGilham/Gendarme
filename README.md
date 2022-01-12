@@ -31,7 +31,7 @@ In this branch
   * Will search the nuget cache for dependencies, though this can take some time as an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
-* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
+* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in this fork:
   * `AddMissingTypeInheritanceDemandRule`
   * `DoNotExposeMethodsProtectedByLinkDemandRule`
   * `DoNotReduceTypeSecurityOnMethodsRule`
@@ -70,6 +70,11 @@ The following rule suites have unit test failures
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
   * 2 other `[Ignore]`d switch related tests
+
+Regressions this branch
+* Bad practice  -- 2 AssemblyLoad tests and 1 GetInterface
+* Maintainability -- 1 more failure in same area
+* Performance -- 6 Uncalled private code tests (net472 only)
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
