@@ -547,6 +547,7 @@ _Target "Packaging" (fun _ ->
                 ("./packages/"
                   + (packageVersion "NuGet.CommandLine")
                   + "/tools/NuGet.exe")
+                  |> Path.getFullName 
          }) recipe))
 
 _Target "OperationalTest" ignore
