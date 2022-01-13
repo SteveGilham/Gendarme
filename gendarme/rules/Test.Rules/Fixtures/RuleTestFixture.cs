@@ -131,8 +131,12 @@ namespace Test.Rules.Fixtures
     {
       void SearchBeside(ModuleDefinition m)
       {
-        var dir = Path.GetDirectoryName(m.FileName);
-        AltCode.CecilExtensions.NetCoreResolver.AddSearchLocation(dir);
+        var file = m.FileName;
+        if (!String.IsNullOrWhiteSpace(file))
+        {
+          var dir = Path.GetDirectoryName(file);
+          AltCode.CecilExtensions.NetCoreResolver.AddSearchLocation(dir);
+        }
       }
 
       AltCode.CecilExtensions.NetCoreResolver.ClearSearchLocations();

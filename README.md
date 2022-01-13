@@ -72,7 +72,6 @@ The following rule suites have unit test failures
   * 2 other `[Ignore]`d switch related tests
 
 Regressions this branch
-* Design -- 1 (net472 only)
 * Maintainability -- 1 more failure in same area
 
 ## Changes made for F# support
