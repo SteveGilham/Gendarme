@@ -71,9 +71,6 @@ The following rule suites have unit test failures
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
   * 2 other `[Ignore]`d switch related tests
 
-Regressions this branch
-* Maintainability -- 1 more failure in same area
-
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
 
