@@ -15,6 +15,7 @@ module NetCoreResolver =
         (Environment.GetFolderPath Environment.SpecialFolder.UserProfile, ".nuget"),
        "packages")
   let internal ResolutionTable = Dictionary<string, AssemblyDefinition>()
+  let internal SearchLocations = HashSet<string>()
 
   let internal FindAssemblyName f =
     try
@@ -44,6 +45,13 @@ module NetCoreResolver =
              |> (Option.defaultValue share), shared)
           Path.Combine(share, shared)
           nugetCache ]
+        |> List.distinct
+
+      let explicitSources =
+        SearchLocations
+        |> Seq.toList
+        |> List.filter (String.IsNullOrWhiteSpace >> not)
+        |> List.filter Directory.Exists
 
       let candidate source =
         source
@@ -61,21 +69,35 @@ module NetCoreResolver =
         |> Seq.filter (fun f ->
              name.Equals(FindAssemblyName f, StringComparison.Ordinal))
         |> Seq.tryHead
-      match candidate sources with
-      | None -> null
-      | Some x ->
-          String.Format
-            (System.Globalization.CultureInfo.InvariantCulture,
-             Environment.NewLine +
-             "Resolved assembly reference '{0}' as file '{1}'.", name, x)
-          |> Console.WriteLine
-          let a = AssemblyDefinition.ReadAssembly x
-          ResolutionTable.[name] <- a
-          a
+
+      let handleResolved (x:string) =
+        String.Format
+          (System.Globalization.CultureInfo.InvariantCulture,
+            Environment.NewLine +
+            "Resolved assembly reference '{0}' as file '{1}'.", name, x)
+        |> Console.WriteLine
+        let a = AssemblyDefinition.ReadAssembly x
+        ResolutionTable.[name] <- a
+        a
+      match candidate explicitSources with
+      | None ->
+        match candidate sources with
+        | None -> null
+        | Some x ->
+          handleResolved x
+      | Some x -> handleResolved x
 
   let ResolveHandler = new AssemblyResolveEventHandler(ResolveFromNugetCache)
 
   let internal HookTable = HashSet<WeakReference>()
+
+  let AddSearchLocation path =
+    path
+    |> SearchLocations.Add
+    |> ignore
+
+  let ClearSearchLocations () =
+    SearchLocations.Clear()
 
   let HookResolver(resolver : IAssemblyResolver) =
     if resolver.IsNotNull

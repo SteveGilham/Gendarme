@@ -72,8 +72,8 @@ The following rule suites have unit test failures
   * 2 other `[Ignore]`d switch related tests
 
 Regressions this branch
+* Design -- 1 (net472 only)
 * Maintainability -- 1 more failure in same area
-* Performance -- 6 Uncalled private code tests (net472 only)
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
