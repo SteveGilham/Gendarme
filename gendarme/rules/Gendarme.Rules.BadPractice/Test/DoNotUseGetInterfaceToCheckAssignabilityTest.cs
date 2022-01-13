@@ -136,7 +136,6 @@ namespace Test.Rules.BadPractice
     [Test]
     public void GetInterface()
     {
-      Assert.Fail("hangs");
       AssertRuleSuccess<DoNotUseGetInterfaceToCheckAssignabilityTest>("CallToAnotherGetInterfaceMethod");
     }
   }

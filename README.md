@@ -72,7 +72,6 @@ The following rule suites have unit test failures
   * 2 other `[Ignore]`d switch related tests
 
 Regressions this branch
-* Bad practice  -- 2 AssemblyLoad tests and 1 GetInterface
 * Maintainability -- 1 more failure in same area
 * Performance -- 6 Uncalled private code tests (net472 only)
 

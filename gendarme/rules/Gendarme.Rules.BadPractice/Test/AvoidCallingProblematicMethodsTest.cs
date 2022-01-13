@@ -180,9 +180,9 @@ namespace Test.Rules.BadPractice
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFromCall",
 #if NET472
-        1);
-#else
         3);
+#else
+        1);
 #endif
     }
 
@@ -199,9 +199,9 @@ namespace Test.Rules.BadPractice
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFileCall",
 #if NET472
-        1);
-#else
         2);
+#else
+        1);
 #endif
     }
 
