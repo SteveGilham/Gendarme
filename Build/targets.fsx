@@ -30,7 +30,7 @@ open FSharpLint.Framework
 open NUnit.Framework
 
 let Copyright = ref String.Empty
-let Version = ref String.Empty
+let Version = ref "0.0.0.0"
 let consoleBefore = (Console.ForegroundColor, Console.BackgroundColor)
 
 let programFiles = Environment.environVar "ProgramFiles"
@@ -267,7 +267,7 @@ _Target "UnitTest" ignore
 _Target "JustUnitTest" (fun _ ->
   Directory.ensure "./_Reports"
   try
-    !!(@"_Binaries/Tests.*/Debug+AnyCPU/net4*/Tests.*.dll")
+    !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
     |> NUnit3.run (fun p ->
          { p with
              ToolPath = nunitConsole
@@ -297,7 +297,7 @@ _Target "UnitTestWithAltCoverRunner" (fun _ ->
   Directory.ensure report
 
   let coverage =
-    !!(@"_Binaries/Tests.*/Debug+AnyCPU/net4*/Tests.*.dll")
+    !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
     |> Seq.fold (fun l test ->
          let tname = test |> Path.GetFileNameWithoutExtension
 
@@ -452,39 +452,25 @@ _Target "Packaging" (fun _ ->
       (Path.getFullName "./LICENS*", Some "", None)
       (Path.getFullName "./Image.*g", Some "", None) ]
 
-  let rules =
-    Directory.GetDirectories(".", "Gendarme.Rules.*", SearchOption.AllDirectories)
+  let rulesDirs =
+    Directory.GetDirectories("./_Binaries", "Gendarme.Rules.*", SearchOption.AllDirectories)
+    |> Seq.map Path.getFullName
     |> Seq.toList
 
-  let n472rules =
-    rules
+  //rulesDirs |> List.iter (printfn "%A")
+
+  let rules =
+    rulesDirs
     |> List.collect (fun f ->
-         !!((Path.getFullName f) @@ "Release+AnyCPU/netstandard2.0/Gendarme.Rules.*") |> Seq.toList)
-    |> List.filter (fun f ->
-         let ex = f |> Path.GetExtension
-         match ex with
-         | ".dll"
-         | ".pdb" -> true
-         | _ -> false)
+         !!(f @@ "Release/netstandard2.0/Gendarme.Rules.*.dll") |> Seq.toList)
     |> List.distinctBy Path.GetFileName
 
-  let corerules =
-    rules
-    |> List.collect (fun f ->
-         !!((Path.getFullName f) @@ "Release+AnyCPU/netstandard2.0/Gendarme.Rules.*")
-         |> Seq.toList)
-    |> List.filter (fun f ->
-         let ex = f |> Path.GetExtension
-         match ex with
-         | ".dll"
-         | ".pdb" -> true
-         | _ -> false)
-    |> List.distinctBy Path.GetFileName
+  //rules |> List.iter (printfn "%A")
 
   let net472 =
     List.concat
-      [ !!"./_Binaries/gendarme/Release+AnyCPU/net4*/*.*" |> Seq.toList
-        n472rules ]
+      [ !!"./_Binaries/gendarme/Release/net472/*.*" |> Seq.toList
+        rules ]
     |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
 
   let leadstring = publish.Length
@@ -496,7 +482,7 @@ _Target "Packaging" (fun _ ->
   let netcore =
     List.concat
       [ netcoremain
-        corerules |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
+        rules |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
 
   let files = List.concat [ net472; housekeeping ]
   let globalfiles = List.concat [ netcore; housekeeping ]
@@ -587,7 +573,7 @@ _Target "Unpack" (fun _ ->
                 Console = true
                 Log = Path.GetFullPath "./_Reports/gendarme.html"
                 LogKind = Gendarme.LogKind.Html
-                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
+                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/netstandard2.0/FSharpExamples.dll"]
                 ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
                 FailBuildOnDefect = true }  ) |> ignore
     )
@@ -631,11 +617,11 @@ _Target "DotnetGlobalIntegration" (fun _ ->
                       Console = true
                       Log = Path.GetFullPath "./_Reports/gendarme-tool.html"
                       LogKind = Gendarme.LogKind.Html
-                      Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll"]
+                      Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/netstandard2.0/FSharpExamples.dll"]
                       ToolPath = "gendarme"
                       ToolType = ToolType.CreateGlobalTool()
                       FailBuildOnDefect = true }  ) |> ignore // (printfn "%A")
-// System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release+AnyCPU\netstandard2.0\FSharpExamples.dll"
+// System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release\netstandard2.0\FSharpExamples.dll"
 
   finally
     if set then
