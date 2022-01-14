@@ -167,6 +167,10 @@ namespace Gendarme
 
       var target = defect.Target;
       // member, module, namespace, namespaceanddescendants or type
+      // Rukes should only have MethodDefinition, TypeDefinition or 
+      // Assembly definition, as per types expected in
+      // https://github.com/SteveGilham/Gendarme/blob/3929474f0228b16ca9a9e0e8739583fd622a9cac/gendarme/rules/Test.Rules/Fixtures/RuleTestFixture.cs#L130
+      // but hew to the safe side anyway.
       var scope = "member"; // fail-safe; no namespace provider
       if (target is AssemblyDefinition ||
           target is ModuleReference)
@@ -176,7 +180,7 @@ namespace Gendarme
       writer.WriteLine("                            Scope = \"{0}\", // {1}", scope, target.GetType().Name);
 
       var targetName = target.ToString();
-      if (target is MethodDefinition)
+      if (target is MethodReference)
         targetName = targetName.Substring(targetName.IndexOf(' ')).Trim();
         
       writer.WriteLine("                            Target = \"{0}\",", targetName);
