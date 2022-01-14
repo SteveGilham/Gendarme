@@ -2,10 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <OtherFlags Condition="'$(TargetFramework)' == 'net40'">--standalone</OtherFlags>
-    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\</SolutionDir>
-    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
-    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,11 +14,6 @@
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="6.0.1" />
     <PackageReference Update="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
   </ItemGroup>
   
 </Project>

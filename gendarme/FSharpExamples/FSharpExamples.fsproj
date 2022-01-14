@@ -2,9 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <SolutionDir Condition="'$(SolutionDir)' == ''">$(ProjectDir)..\</SolutionDir>
-    <OutputPath>$(SolutionDir)..\_Binaries/$(AssemblyName)/$(Configuration)+$(Platform)/</OutputPath>
-    <IntermediateOutputPath>$(SolutionDir)..\_Intermediate/$(AssemblyName)/$(Configuration)+$(Platform)/</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,7 +29,6 @@
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="6.0.1" />
     <PackageReference Update="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
   </ItemGroup>
 
 </Project>

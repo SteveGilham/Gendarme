@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <BuildDir>$(ProjectDir)\..\_Binaries\</BuildDir>
+<BaseIntermediateOutputPath>$(ProjectDir)\..\_Intermediate/$(MSBuildProjectName)/$(Configuration)</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+    <ProjectBuildDirectoryName>$(GendarmeTag)$(MSBuildProjectName)/$(Configuration)</ProjectBuildDirectoryName>
+    <OutputPathWithoutEndSlash>$(BuildDir)$(ProjectBuildDirectoryName)</OutputPathWithoutEndSlash>
+    <OutputPath>$(OutputPathWithoutEndSlash)/</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

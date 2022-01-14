@@ -712,7 +712,7 @@ Target.activateFinal "ResetConsoleColours"
 
 "BuildDebug"
 ==> "JustUnitTest"
-==> "UnitTest"
+//==> "UnitTest"
 
 "BuildDebug"
 ==> "UnitTestDotNet"
