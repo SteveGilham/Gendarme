@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <NoWarn>169;67;414;649;114;660;661;219;659</NoWarn>
+    <NoWarn>$(NoWarn);169;67;414;649;114;660;661;219;659</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Include="NullDerefTest.cs" />

@@ -4,5 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="ChangeLog" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

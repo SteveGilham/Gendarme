@@ -27,6 +27,7 @@
     <None Include="ChangeLog" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Test\**\*.cs" />
     <Compile Remove="dataflow\BasicBlock.cs" />
     <Compile Remove="dataflow\CFG.cs" />
     <Compile Remove="dataflow\CFGEdge.cs" />

@@ -7,5 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DoNotThrowInNonCatchClausesRule.cs" />
+    <Compile Remove="Test\**\*.cs" />
   </ItemGroup>
 </Project>

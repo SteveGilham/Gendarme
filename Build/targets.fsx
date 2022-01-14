@@ -126,12 +126,14 @@ let defaultTestOptions fwk common (o : DotNet.TestOptions) =
 
 let dotnetBuildRelease proj =
   DotNet.build (fun p ->
-    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Release }
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Release
+                                      NoRestore = false }
     |> withMSBuildParams) (Path.GetFullPath proj)
 
 let dotnetBuildDebug proj =
   DotNet.build (fun p ->
-    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Debug }
+    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Debug
+                                      NoRestore = false }
     |> withMSBuildParams) (Path.GetFullPath proj)
 
 let misses = ref 0
@@ -255,15 +257,6 @@ module SolutionRoot =
 // Basic compilation
 
 _Target "Compilation" ignore
-
-_Target "Restore" (fun _ ->
-  [ (!!"./gendarme/**/*.*proj")
-    (!!"./Build/**/*.*proj") ]
-  |> Seq.concat
-  |> Seq.iter (fun f ->
-       let dir = Path.GetDirectoryName f
-       let proj = Path.GetFileName f
-       DotNet.restore (fun o -> o.WithCommon(withWorkingDirectoryVM dir)) proj))
 
 _Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildRelease)
 
@@ -701,12 +694,10 @@ Target.activateFinal "ResetConsoleColours"
 ==> "Preparation"
 
 "Preparation"
-==> "Restore"
 ==> "BuildDebug"
 ==> "Compilation"
 
 "Preparation"
-==> "Restore"
 ==> "BuildRelease"
 ==> "Compilation"
 

@@ -4,10 +4,7 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="Test\**" />
-    <None Remove="Test\**" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Remove="Test\**\*.cs" />
     <Compile Remove="PreferIFormatProviderOverrideRule.cs" />
     <Compile Remove="PreferOverrideBaseRule.cs" />
     <Compile Remove="PreferStringComparisonOverrideRule.cs" />

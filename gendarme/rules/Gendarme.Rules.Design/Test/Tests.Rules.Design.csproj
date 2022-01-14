@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <NoWarn>67;169;649;661;659;660;661;628;108;114</NoWarn>
+    <NoWarn>$(NoWarn);67;169;649;661;659;660;661;628;108;114</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>

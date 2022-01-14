@@ -3,12 +3,9 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Test\**\*.cs" />
     <None Include="ChangeLog" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="2.8-4.0-defs.zip" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="2.8-4.0-defs.zip" />
   </ItemGroup>
 </Project>

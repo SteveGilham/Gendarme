@@ -9,4 +9,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <WarningsAsErrors>1570</WarningsAsErrors>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Test\**\*.cs" />
+  </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>1701;1702;SYSLIB0003;649;67;660;661;108;659;414;1718;169;168;219</NoWarn>
+    <NoWarn>$(NoWarn);1701;1702;SYSLIB0003;649;67;660;661;108;659;414;1718;169;168;219</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>

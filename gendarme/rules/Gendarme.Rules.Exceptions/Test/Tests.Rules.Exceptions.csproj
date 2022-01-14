@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <NoWarn>1701;1702;CA2200;628;649;618;660;661;162;168;659;67</NoWarn>
+    <NoWarn>$(NoWarn);1701;1702;CA2200;628;649;618;660;661;162;168;659;67</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />

@@ -1,5 +1,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
     <PackageReference Include="altcover" Version="8.2.833" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="NUnit" Version="3.13.2" />
@@ -18,7 +21,7 @@
     <ProjectReference Include="$(SolutionDir)\framework\Gendarme.Framework.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Test\**\*.cs" />
+    <!-- nice idea, doesn't work Compile Remove="Test\**\*.cs" / -->
     <EmbeddedResource Remove="Test\**" />
     <None Remove="Test\**" />
   </ItemGroup>

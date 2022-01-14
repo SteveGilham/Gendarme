@@ -6,4 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Gendarme.Rules.Performance\Gendarme.Rules.Performance.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Test\**\*.cs" />
+  </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <NoWarn>1701;1702;618;649;</NoWarn>
+    <NoWarn>$(NoWarn);1701;1702;618;649;</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -16,5 +16,6 @@
     <Compile Remove="AvoidNullCheckWithAsOperatorTest.cs" />
     <Compile Remove="DoNotDecreaseVisibilityTest.cs" />
     <Compile Remove="Examples\**\*.cs" />
+    <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
   </ItemGroup>
 </Project>
