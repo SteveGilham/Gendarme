@@ -573,7 +573,7 @@ _Target "Unpack" (fun _ ->
                 Console = true
                 Log = Path.GetFullPath "./_Reports/gendarme.html"
                 LogKind = Gendarme.LogKind.Html
-                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/netstandard2.0/FSharpExamples.dll"]
+                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/net472/FSharpExamples.dll"]
                 ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
                 FailBuildOnDefect = true }  ) |> ignore
     )

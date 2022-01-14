@@ -353,6 +353,8 @@ namespace Gendarme
         // if a .netmodule is missing (otherwise this exception will occur later in several places)
         if (ad.Modules.Count > 0)
           Assemblies.Add(ad);
+        var dir = Path.GetDirectoryName(assembly_name);
+        AltCode.CecilExtensions.NetCoreResolver.AddSearchLocation(dir);	      
       }
       catch (BadImageFormatException)
       {
