@@ -5,7 +5,5 @@
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
     <None Include="ChangeLog" />
-    <None Remove="2.8-4.0-defs.zip" />
-    <EmbeddedResource Include="2.8-4.0-defs.zip" />
   </ItemGroup>
 </Project>
