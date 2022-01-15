@@ -18,10 +18,10 @@ module NetCoreResolver =
       "packages"
     )
 
-  let internal ResolutionTable = Dictionary<string, AssemblyDefinition>()
-  let internal SearchLocations = HashSet<string>()
+  let internal resolutionTable = Dictionary<string, AssemblyDefinition>()
+  let internal searchLocations = HashSet<string>()
 
-  let internal FindAssemblyName f =
+  let internal findAssemblyName f =
     try
       (AssemblyName.GetAssemblyName f).ToString()
     with
@@ -31,11 +31,11 @@ module NetCoreResolver =
     | :? BadImageFormatException
     | :? FileLoadException -> String.Empty
 
-  let internal ResolveFromNugetCache _ (y: AssemblyNameReference) =
+  let internal resolveFromNugetCache _ (y: AssemblyNameReference) =
     let name = y.ToString()
 
-    if ResolutionTable.ContainsKey name then
-      ResolutionTable.[name]
+    if resolutionTable.ContainsKey name then
+      resolutionTable.[name]
     else
       // Console.WriteLine("Resolving assembly reference {0}", name)
       // Placate Gendarme here
@@ -60,7 +60,7 @@ module NetCoreResolver =
         |> List.distinct
 
       let explicitSources =
-        SearchLocations
+        searchLocations
         |> Seq.toList
         |> List.filter (String.IsNullOrWhiteSpace >> not)
         |> List.filter Directory.Exists
@@ -80,7 +80,7 @@ module NetCoreResolver =
 
                x.Equals(".exe", StringComparison.OrdinalIgnoreCase)
                || x.Equals(".dll", StringComparison.OrdinalIgnoreCase))
-        |> Seq.filter (fun f -> name.Equals(FindAssemblyName f, StringComparison.Ordinal))
+        |> Seq.filter (fun f -> name.Equals(findAssemblyName f, StringComparison.Ordinal))
         |> Seq.tryHead
 
       let handleResolved (x: string) =
@@ -94,7 +94,7 @@ module NetCoreResolver =
         |> Console.WriteLine
 
         let a = AssemblyDefinition.ReadAssembly x
-        ResolutionTable.[name] <- a
+        resolutionTable.[name] <- a
         a
 
       match candidate explicitSources with
@@ -105,17 +105,17 @@ module NetCoreResolver =
       | Some x -> handleResolved x
 
   let ResolveHandler =
-    new AssemblyResolveEventHandler(ResolveFromNugetCache)
+    new AssemblyResolveEventHandler(resolveFromNugetCache)
 
-  let internal HookTable = HashSet<WeakReference>()
+  let internal hookTable = HashSet<WeakReference>()
 
-  let AddSearchLocation path = path |> SearchLocations.Add |> ignore
+  let AddSearchLocation path = path |> searchLocations.Add |> ignore
 
-  let ClearSearchLocations () = SearchLocations.Clear()
+  let ClearsearchLocations () = searchLocations.Clear()
 
   let HookResolver (resolver: IAssemblyResolver) =
     if resolver.IsNotNull then
-      if HookTable
+      if hookTable
          |> Seq.map (fun wr -> wr.Target)
          |> Seq.exists (fun t -> obj.ReferenceEquals(t, resolver))
          |> not then
@@ -125,4 +125,4 @@ module NetCoreResolver =
         hook.Invoke(resolver, [| ResolveHandler :> obj |])
         |> ignore
 
-        HookTable.Add(WeakReference(resolver)) |> ignore
+        hookTable.Add(WeakReference(resolver)) |> ignore

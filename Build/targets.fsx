@@ -91,7 +91,7 @@ let altcover =
      + "/tools/net472/AltCover.exe")
     |> Path.getFullName
 
-let framework_altcover =
+let frameworkAltcover =
     Fake.DotNet.ToolType.CreateFullFramework()
 
 let nugetCache =
@@ -392,7 +392,7 @@ _Target
 
                     { AltCoverCommand.Options.Create prep with
                           ToolPath = altcover
-                          ToolType = framework_altcover
+                          ToolType = frameworkAltcover
                           WorkingDirectory = testDirectory }
                     |> AltCoverCommand.run
 
@@ -425,7 +425,7 @@ _Target
 
                         { AltCoverCommand.Options.Create collect with
                               ToolPath = altcover
-                              ToolType = framework_altcover
+                              ToolType = frameworkAltcover
                               WorkingDirectory = "." }
                         |> AltCoverCommand.run
                     with
@@ -493,11 +493,11 @@ _Target
                             |> AltCoverFilter
                         )
 
-                    let ForceTrue = DotNet.CLIOptions.Force true
-                    //printfn "Test arguments : '%s'" (DotNet.ToTestArguments prepare collect ForceTrue)
+                    let forceTrue = DotNet.CLIOptions.Force true
+                    //printfn "Test arguments : '%s'" (DotNet.ToTestArguments prepare collect forceTrue)
 
                     let t =
-                        DotNet.TestOptions.Create().WithAltCoverOptions prepare collect ForceTrue
+                        DotNet.TestOptions.Create().WithAltCoverOptions prepare collect forceTrue
 
                     printfn "WithAltCoverOptions returned '%A'" t.Common.CustomParams
 
@@ -515,7 +515,7 @@ _Target
                     try
                         DotNet.test
                             (fun to' ->
-                                { to'.WithCommon(setBaseOptions).WithAltCoverOptions prepare collect ForceTrue with
+                                { to'.WithCommon(setBaseOptions).WithAltCoverOptions prepare collect forceTrue with
                                       Framework = Some "net6.0"
                                       MSBuildParams = cliArguments })
                             test

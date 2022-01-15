@@ -14,7 +14,7 @@ open Mono.Cecil.Pdb
 // plus retrofit for the old F# version we are using here
 
 module ProgramDatabase =
-  let internal SymbolFolders = List<String>()
+  let internal symbolFolders = List<String>()
 
   // start retrofit
   let optionFilter predicate option = // Option.filter
@@ -22,18 +22,15 @@ module ProgramDatabase =
     | Some x -> if predicate x then option else None
     | _ -> None
 
-  let isNull x = x = null
-  // end retrofit
-
   // We no longer have to violate Cecil encapsulation to get the PDB path
   // but we do to get the embedded PDB info
   let internal getEmbed =
     (typeof<Mono.Cecil.AssemblyDefinition>.Assembly.GetTypes ()
      |> Seq.filter (fun m -> m.FullName = "Mono.Cecil.Mixin")
      |> Seq.head)
-      .GetMethod("GetEmbeddedPortablePdbEntry")
+      .GetMethod("getEmbeddedPortablePdbEntry")
 
-  let internal GetEmbeddedPortablePdbEntry (assembly: AssemblyDefinition) =
+  let internal getEmbeddedPortablePdbEntry (assembly: AssemblyDefinition) =
     getEmbed.Invoke(null, [| assembly.MainModule.GetDebugHeader() :> obj |])
     :?> ImageDebugHeaderEntry
 
@@ -58,7 +55,7 @@ module ProgramDatabase =
            File.Exists s
            || (s = (assembly.Name.Name + ".pdb")
                && (assembly
-                   |> GetEmbeddedPortablePdbEntry
+                   |> getEmbeddedPortablePdbEntry
                    |> isNull
                    |> not)))
 
@@ -84,7 +81,7 @@ module ProgramDatabase =
       let foldername = Path.GetDirectoryName path
       let filename = Path.GetFileName path
 
-      foldername :: (Seq.toList SymbolFolders)
+      foldername :: (Seq.toList symbolFolders)
       |> Seq.map (GetSymbolsByFolder filename)
       |> Seq.choose id
       |> Seq.tryFind (fun _ -> true)

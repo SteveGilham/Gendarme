@@ -52,4 +52,4 @@ module Augment =
     | Choice2Of2 x -> Choice2Of2 x
 
   type System.Object with
-    member self.IsNotNull = self <> null
+    member self.IsNotNull = self |> isNull |> not
