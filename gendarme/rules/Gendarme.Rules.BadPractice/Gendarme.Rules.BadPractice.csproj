@@ -4,7 +4,5 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
-    <Compile Remove="AvoidNullCheckWithAsOperatorRule.cs" />
-    <Compile Remove="DoNotDecreaseVisibilityRule.cs" />
   </ItemGroup>
 </Project>

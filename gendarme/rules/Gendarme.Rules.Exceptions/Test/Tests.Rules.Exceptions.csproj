@@ -10,7 +10,4 @@
   <ItemGroup>
     <None Include="ChangeLog" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="DoNotThrowInNonCatchClausesTest.cs" />
-  </ItemGroup>
 </Project>

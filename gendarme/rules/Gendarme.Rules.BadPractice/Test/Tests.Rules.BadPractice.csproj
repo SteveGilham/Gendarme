@@ -13,8 +13,6 @@
     <ProjectReference Include="Examples\Examples.Rules.BadPractice\Examples.Rules.BadPractice.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="AvoidNullCheckWithAsOperatorTest.cs" />
-    <Compile Remove="DoNotDecreaseVisibilityTest.cs" />
     <Compile Remove="Examples\**\*.cs" />
     <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
   </ItemGroup>

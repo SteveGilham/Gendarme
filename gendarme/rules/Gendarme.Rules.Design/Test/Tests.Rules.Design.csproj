@@ -12,7 +12,4 @@
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Design.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="DoNotDeclareSettersOnCollectionPropertiesTest.cs" />
-  </ItemGroup>
 </Project>

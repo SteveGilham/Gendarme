@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for DoNotDeclareSettersOnCollectionPropertiesRule
 //
 // Authors:
@@ -27,7 +27,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security;
 
 using Gendarme.Rules.Design;
 
@@ -35,103 +34,108 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+  [TestFixture]
+  public class DoNotDeclareSettersOnCollectionPropertiesTest : TypeRuleTestFixture<DoNotDeclareSettersOnCollectionPropertiesRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+      AssertRuleDoesNotApply(SimpleTypes.GeneratedType);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+      AssertRuleDoesNotApply(SimpleTypes.Structure);
+    }
 
-	[TestFixture]
-	public class DoNotDeclareSettersOnCollectionPropertiesTest : TypeRuleTestFixture<DoNotDeclareSettersOnCollectionPropertiesRule> {
+    public interface IGoodInterface
+    {
+      ICollection Collection { get; }
+      ICollection<string> GenericCollection { get; }
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Class);
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-			AssertRuleDoesNotApply (SimpleTypes.GeneratedType);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
-			AssertRuleDoesNotApply (SimpleTypes.Structure);
-		}
+    public class TypeImplementingGoodInterface : IGoodInterface
+    {
+      public ICollection Collection { get; private set; }
+      public ICollection<string> GenericCollection { get; private set; }
+    }
 
-		public interface IGoodInterface {
-			ICollection Collection { get; }
-			ICollection<string> GenericCollection { get; }
-		}
+    public struct GoodStruct
+    {
+      private ArrayList list;
 
-		public class TypeImplementingGoodInterface : IGoodInterface {
-			public ICollection Collection { get; private set; }
-			public ICollection<string> GenericCollection { get; private set; }
-		}
+      public IDictionary Dictionary { get; private set; }
 
-		public struct GoodStruct {
-			private ArrayList list;
+      public ArrayList List
+      {
+        get { return list; }
+      }
+    }
 
-			public IDictionary Dictionary { get; private set; }
-			public ArrayList List { 
-				get { return list; }
-			}
-		}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<IGoodInterface>();
+      AssertRuleSuccess<TypeImplementingGoodInterface>();
+      AssertRuleSuccess<GoodStruct>();
+    }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<IGoodInterface> ();
-			AssertRuleSuccess<TypeImplementingGoodInterface> ();
-			AssertRuleSuccess<GoodStruct> ();
-		}
+    // interface members are not "declared" as public - but they force a type to do so!
+    public interface IBadInterface
+    {
+      ICollection Collection { get; set; }
+      ICollection<string> GenericCollection { get; set; }
+    }
 
-		// interface members are not "declared" as public - but they force a type to do so!
-		public interface IBadInterface {
-			ICollection Collection { get; set; }
-			ICollection<string> GenericCollection { get; set; }
-		}
+    public class TypeImplementingBadInterface : IBadInterface
+    {
+      public ICollection Collection { get; set; }
+      public ICollection<string> GenericCollection { get; set; }
+    }
 
-		public class TypeImplementingBadInterface : IBadInterface {
-			public ICollection Collection { get; set; }
-			public ICollection<string> GenericCollection { get; set; }
-		}
+    public struct BadStruct
+    {
+      public IDictionary Dictionary { private get; set; }
+      public ArrayList List { get; set; }
+    }
 
-		public struct BadStruct {
-			public IDictionary Dictionary { private get; set; }
-			public ArrayList List { get; set; }
-		}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<IBadInterface>(2);
+      AssertRuleFailure<TypeImplementingBadInterface>(2);
+      AssertRuleFailure<BadStruct>(2);
+    }
 
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<IBadInterface> (2);
-			AssertRuleFailure<TypeImplementingBadInterface> (2);
-			AssertRuleFailure<BadStruct> (2);
-		}
+    public class Indexers
+    {
+      private int[] array;
 
-		public class SecurityPermissions {
-			public PermissionSet Permissions { get; set; }
-			public NamedPermissionSet NamedPermissions { get; set; }
-		}
+      public int this[int index]
+      {
+        get { return array[index]; }
+        set { array[index] = value; }
+      }
 
-		public class Indexers {
-			int [] array;
+      public int this[int x, int y]
+      {
+        get { return array[x]; }
+        set { array[y] = value; }
+      }
+    }
 
-			public int this [int index] {
-				get { return array [index]; }
-				set { array [index] = value; }
-			}
+    public class Arrays
+    {
+      public Array Array { get; set; }
+    }
 
-			public int this [int x, int y] {
-				get { return array [x]; }
-				set { array [y] = value; }
-			}
-		}
-
-		public class Arrays {
-
-			public Array Array { get; set; }
-		}
-
-		[Test]
-		public void SpecialCases ()
-		{
-			AssertRuleSuccess<SecurityPermissions> ();
-			AssertRuleSuccess<Indexers> ();
-			AssertRuleFailure<Arrays> (1);
-		}
-	}
+    [Test]
+    public void SpecialCases()
+    {
+      AssertRuleSuccess<Indexers>();
+      AssertRuleFailure<Arrays>(1);
+    }
+  }
 }
