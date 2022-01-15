@@ -72,8 +72,4 @@
   <ItemGroup>
     <None Include="Resources\ImageUsed.bmp" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="PreferIFormatProviderOverrideTest.cs" />
-    <Compile Remove="PreferStringComparisonOverrideTest.cs" />
-  </ItemGroup>
 </Project>

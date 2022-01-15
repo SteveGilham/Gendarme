@@ -5,9 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
-    <Compile Remove="PreferIFormatProviderOverrideRule.cs" />
-    <Compile Remove="PreferOverrideBaseRule.cs" />
-    <Compile Remove="PreferStringComparisonOverrideRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Resources.Extensions">

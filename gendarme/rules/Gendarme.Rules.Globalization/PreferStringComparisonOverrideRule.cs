@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -34,49 +34,55 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Globalization {
+namespace Gendarme.Rules.Globalization
+{
+  /// <summary>
+  /// This rule detects calls to method that could be changed to call an <c>override</c> accepting an
+  /// extra <c>System.StringComparison</c> parameter. Using the <c>override</c> makes the code easier
+  /// to maintain since it makes the intent clear on how the string needs to be compared.
+  /// It is even more important since the default string comparison rules have changed between
+  /// .NET 2.0 and .NET 4.0.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public bool Check (string name)
+  /// {
+  ///	// it's not clear if the string comparison should be culture sensitive or not
+  ///	return (String.Compare (name, "Software") == 0);
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public bool Check (string name)
+  /// {
+  ///	return (String.Compare (name, "Software", StringComparison.CurrentCulture) == 0);
+  /// }
+  /// </code>
+  /// </example>
+  [Problem("A call is made to a method for which an override, accepting an extra StringComparison, is available")]
+  [Solution("Specify how the string should be compared by adding the right StringComparison value to the call")]
+  [FxCopCompatibility("Microsoft.Globalization", "CA1307:SpecifyStringComparison")]
+  public class PreferStringComparisonOverrideRule : PreferOverrideBaseRule
+  {
+    private static readonly TypeName stringComparison = new TypeName
+    {
+      Namespace = "System",
+      Name = "StringComparison"
+    };
 
-	/// <summary>
-	/// This rule detects calls to method that could be changed to call an <c>override</c> accepting an
-	/// extra <c>System.StringComparison</c> parameter. Using the <c>override</c> makes the code easier
-	/// to maintain since it makes the intent clear on how the string needs to be compared.
-	/// It is even more important since the default string comparison rules have changed between
-	/// .NET 2.0 and .NET 4.0.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public bool Check (string name)
-	/// {
-	///	// it's not clear if the string comparison should be culture sensitive or not
-	///	return (String.Compare (name, "Software") == 0);
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public bool Check (string name)
-	/// {
-	///	return (String.Compare (name, "Software", StringComparison.CurrentCulture) == 0);
-	/// }
-	/// </code>
-	/// </example>
-	[Problem ("A call is made to a method for which an override, accepting an extra StringComparison, is available")]
-	[Solution ("Specify how the string should be compared by adding the right StringComparison value to the call")]
-	[FxCopCompatibility ("Microsoft.Globalization", "CA1307:SpecifyStringComparison")]
-	public class PreferStringComparisonOverrideRule : PreferOverrideBaseRule {
+    protected override bool IsPrefered(TypeReference type)
+    {
+      return type.IsNamed(stringComparison);
+    }
 
-		protected override bool IsPrefered (TypeReference type)
-		{
-			return type.IsNamed ("System", "StringComparison");
-		}
-
-		protected override void Report (MethodDefinition method, Instruction instruction, MethodReference prefered)
-		{
-			string msg = String.Format (CultureInfo.InvariantCulture, 
-				"Consider using the perfered '{0}' override.", prefered.GetFullName ());
-			Runner.Report (method, instruction, Severity.Medium, Confidence.High, msg);
-		}
-	}
+    protected override void Report(MethodDefinition method, Instruction instruction, MethodReference prefered)
+    {
+      string msg = String.Format(CultureInfo.InvariantCulture,
+        "Consider using the perfered '{0}' override.", prefered.GetFullName());
+      Runner.Report(method, instruction, Severity.Medium, Confidence.High, msg);
+    }
+  }
 }
