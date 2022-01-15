@@ -153,7 +153,7 @@ namespace Gendarme.Rules.Globalization
 
     public RuleResult CheckMethod(MethodDefinition method)
     {
-      if (!method.HasBody)
+      if (!method.HasBody || method.IsGeneratedCode())
         return RuleResult.DoesNotApply;
 
       // exclude methods that don't have calls

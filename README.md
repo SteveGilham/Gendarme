@@ -129,3 +129,4 @@ Global Suppression Attribute:
 * Skip types called `<PrivateImplementationDetails>`
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
 * Don't apply `DoNotDeclareVirtualMethodsInSealedTypeRule` to F# closure types
+* Don't apply `PreferStringComparisonOverrideRule` to generated code
