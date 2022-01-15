@@ -245,7 +245,7 @@ namespace Gendarme.Rules.Naming
       string name = method.Name;
       var fsharpModule = method.DeclaringType.IsModuleType();
 
-      if (fsharp && method.IsGetter || method.IsSetter)
+      if (fsharp && (method.IsGetter || method.IsSetter))
       {
         var pname = name.Substring(4);
         var property = method.DeclaringType.Properties.First(p => p.Name == pname);

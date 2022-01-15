@@ -811,6 +811,7 @@ _Target
                 !!("./_Binaries/*endarm*/Debug/*/*endarm*.dll")
                 |> Seq.map Path.GetFullPath
                 |> Seq.filter (fun f -> (Path.GetFileName f).StartsWith("Test") |> not)
+                |> Seq.distinctBy Path.GetFileName
                 |> Seq.toList
 
             Gendarme.run

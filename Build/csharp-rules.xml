@@ -52,6 +52,7 @@
     <rules include="*"
            from="Gendarme.Rules.Gendarme.dll" />
     <rules include="*"
+           exclude="SatelliteResourceMismatchRule" 
            from="Gendarme.Rules.Globalization.dll" />
   </ruleset>
 </gendarme>
