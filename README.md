@@ -31,6 +31,8 @@ In this branch
   * Will search the nuget cache for dependencies, though this can take some time as an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
+* Depending whether the Framework or dotnet tool version is used, the results may differ when faced with the same assembly, because of the different runtime being consulted
+  * e.g. several types marked `[Serializable]` in the Framework are not so marked at `dotnet`, so serialization rules will give different answers
 * Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in this fork:
   * `AddMissingTypeInheritanceDemandRule`
   * `DoNotExposeMethodsProtectedByLinkDemandRule`
