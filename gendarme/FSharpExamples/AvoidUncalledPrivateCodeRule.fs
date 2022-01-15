@@ -3,16 +3,13 @@ namespace AvoidUncalledPrivateCode
 open System.Collections.Generic
 
 type internal PointVisit =
-  { mutable Count : int64
+  { mutable Count: int64
     [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Performance",
                                                       "AvoidUncalledPrivateCodeRule",
-                                                      Justification =
-                                                        "Not part of the example")>]
-    Tracks : List<int> }
+                                                      Justification = "Not part of the example")>]
+    Tracks: List<int> }
 
-  static member Create() =
-    { Count = 0L
-      Tracks = List<int>() }
+  static member Create() = { Count = 0L; Tracks = List<int>() }
 
   static member Init n l =
     let tmp = { PointVisit.Create() with Count = n }
@@ -22,9 +19,9 @@ type internal PointVisit =
 module Instance =
   [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Performance",
                                                     "AvoidUncalledPrivateCodeRule",
-                                                    Justification =
-                                                      "Not part of the example")>]
-  let mutable internal visits = new Dictionary<string, Dictionary<int, PointVisit>>()
+                                                    Justification = "Not part of the example")>]
+  let mutable internal visits =
+    new Dictionary<string, Dictionary<int, PointVisit>>()
 
 module Adapter =
   let visitsAdd name line number =

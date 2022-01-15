@@ -4,9 +4,9 @@ open System
 
 type Params =
   { /// Path to the Altcover executable.
-    ToolPath : string
+    ToolPath: string
     /// Working directory for relative file paths.  Default is the current working directory
-    WorkingDirectory : string }
+    WorkingDirectory: string }
 
   static member Create() =
     { ToolPath = "altcover"
@@ -25,17 +25,18 @@ module FSApi =
   let CSharpContainingMethod x = // makes classes beginning with "C" happen
     x |> Seq.filter (isNull >> not)
 
-  let createProcess (parameters : Params) =
-    let doTool() = parameters.ToolPath
+  let createProcess (parameters: Params) =
+    let doTool () = parameters.ToolPath
 
     let withWorkingDirectory c =
       c
-      |> if String.IsNullOrWhiteSpace parameters.WorkingDirectory
-         then id
-         else (fun s -> sprintf "(%s)%s" parameters.WorkingDirectory c)
+      |> if String.IsNullOrWhiteSpace parameters.WorkingDirectory then
+           id
+         else
+           (fun s -> sprintf "(%s)%s" parameters.WorkingDirectory c)
 
-    doTool()
+    doTool ()
     |> withWorkingDirectory
     |> CreateProcess.ensureExitCode
 
-  let transform<'a> (x : 'a) = x.ToString()
+  let transform<'a> (x: 'a) = x.ToString()

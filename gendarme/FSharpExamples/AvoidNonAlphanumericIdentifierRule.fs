@@ -5,11 +5,11 @@ open System.IO
 
 module Primitive =
   type CollectParams =
-    { RecorderDirectory : String }
+    { RecorderDirectory: String }
     static member Create() = { RecorderDirectory = String.Empty }
 
   type PrepareParams =
-    { InputDirectories : String seq }
+    { InputDirectories: String seq }
     static member Create() = { InputDirectories = Seq.empty }
 
 module TypeSafe =
@@ -23,11 +23,11 @@ module TypeSafe =
     | NoDirectories
 
   type CollectParams =
-    { RecorderDirectory : DirectoryPath }
+    { RecorderDirectory: DirectoryPath }
     static member Create() = { RecorderDirectory = NoDirectory }
 
   type PrepareParams =
-    { InputDirectories : DirectoryPaths }
+    { InputDirectories: DirectoryPaths }
     static member Create() = { InputDirectories = NoDirectories }
 
 type CollectParams =
@@ -52,4 +52,4 @@ module Augment =
     | Choice2Of2 x -> Choice2Of2 x
 
   type System.Object with
-    member self.IsNotNull with get() = self <> null
+    member self.IsNotNull = self <> null

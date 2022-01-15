@@ -14,11 +14,11 @@ type ToolType =
 [<NoComparison; NoEquality>]
 type Params =
   { /// Path to the Altcover executable.
-    ToolPath : string
+    ToolPath: string
     /// Which version of the tool
     [<System.Diagnostics.CodeAnalysis.SuppressMessage("Gendarme.Rules.Maintainability",
                                                       "RemoveDependenceOnObsoleteCodeRule",
                                                       Justification = "Goes at Genbu")>]
-    ToolType : ToolType
+    ToolType: ToolType
     /// Working directory for relative file paths.  Default is the current working directory
-    WorkingDirectory : string }
+    WorkingDirectory: string }

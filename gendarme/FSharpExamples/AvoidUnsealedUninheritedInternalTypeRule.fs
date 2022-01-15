@@ -9,6 +9,6 @@ type internal Track =
 
 [<SuppressMessage("Gendarme.Rules.Smells", "AvoidSpeculativeGeneralityRule")>]
 module Tracking =
-  let createNull() = Track.Null :> obj
+  let createNull () = Track.Null :> obj
   let createTime i = (Track.Time i) :> obj
   let createCall i = (Track.Call i) :> obj

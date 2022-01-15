@@ -31,15 +31,20 @@ open NUnit.Framework
 
 let Copyright = ref String.Empty
 let Version = ref "0.0.0.0"
-let consoleBefore = (Console.ForegroundColor, Console.BackgroundColor)
+
+let consoleBefore =
+    (Console.ForegroundColor, Console.BackgroundColor)
 
 let programFiles = Environment.environVar "ProgramFiles"
-let dotnetPath = "dotnet" |> Fake.Core.ProcessUtils.tryFindFileOnPath
 
-let dotnetOptions (o : DotNet.Options) =
-  match dotnetPath with
-  | Some f -> { o with DotNetCliPath = f }
-  | None -> o
+let dotnetPath =
+    "dotnet"
+    |> Fake.Core.ProcessUtils.tryFindFileOnPath
+
+let dotnetOptions (o: DotNet.Options) =
+    match dotnetPath with
+    | Some f -> { o with DotNetCliPath = f }
+    | None -> o
 
 let currentBranch =
     let env =
@@ -62,109 +67,139 @@ let badge =
         "-pre-release"
 
 let toolPackages =
-  let xml =
-    "./Build/NuGet.csproj"
-    |> Path.getFullName
-    |> XDocument.Load
-  xml.Descendants(XName.Get("PackageReference"))
-  |> Seq.map
-       (fun x ->
-         (x.Attribute(XName.Get("Include")).Value, x.Attribute(XName.Get("Version")).Value))
-  |> Map.ofSeq
+    let xml =
+        "./Build/NuGet.csproj"
+        |> Path.getFullName
+        |> XDocument.Load
 
-let packageVersion (p : string) = p.ToLowerInvariant() + "/" + (toolPackages.Item p)
+    xml.Descendants(XName.Get("PackageReference"))
+    |> Seq.map (fun x -> (x.Attribute(XName.Get("Include")).Value, x.Attribute(XName.Get("Version")).Value))
+    |> Map.ofSeq
+
+let packageVersion (p: string) =
+    p.ToLowerInvariant() + "/" + (toolPackages.Item p)
 
 let nunitConsole =
-  ("./packages/" + (packageVersion "NUnit.ConsoleRunner") + "/tools/nunit3-console.exe")
-  |> Path.getFullName
+    ("./packages/"
+     + (packageVersion "NUnit.ConsoleRunner")
+     + "/tools/nunit3-console.exe")
+    |> Path.getFullName
 
 let altcover =
-  ("./packages/" + (packageVersion "altcover") + "/tools/net472/AltCover.exe")
-  |> Path.getFullName
+    ("./packages/"
+     + (packageVersion "altcover")
+     + "/tools/net472/AltCover.exe")
+    |> Path.getFullName
 
-let framework_altcover = Fake.DotNet.ToolType.CreateFullFramework()
+let framework_altcover =
+    Fake.DotNet.ToolType.CreateFullFramework()
 
 let nugetCache =
-  Path.Combine
-    (Environment.GetFolderPath Environment.SpecialFolder.UserProfile, ".nuget/packages")
+    Path.Combine(Environment.GetFolderPath Environment.SpecialFolder.UserProfile, ".nuget/packages")
 
-let AltCoverFilter(p : Primitive.PrepareOptions) =
-  { p with
-      //MethodFilter = "WaitForExitCustom" :: (p.MethodFilter |> Seq.toList)
-      AssemblyExcludeFilter =
-        @"NUnit3\." :: (@"Tests\." :: (p.AssemblyExcludeFilter |> Seq.toList))
-      AssemblyFilter = "FSharp" :: @"Test\.Rules" :: (p.AssemblyFilter |> Seq.toList)
-      LocalSource = true
-      TypeFilter = [ @"System\."; "Microsoft" ] @ (p.TypeFilter |> Seq.toList) }
+let AltCoverFilter (p: Primitive.PrepareOptions) =
+    { p with
+          //MethodFilter = "WaitForExitCustom" :: (p.MethodFilter |> Seq.toList)
+          AssemblyExcludeFilter =
+              @"NUnit3\."
+              :: (@"Tests\."
+                  :: (p.AssemblyExcludeFilter |> Seq.toList))
+          AssemblyFilter =
+              "FSharp"
+              :: @"Test\.Rules" :: (p.AssemblyFilter |> Seq.toList)
+          LocalSource = true
+          TypeFilter =
+              [ @"System\."; "Microsoft" ]
+              @ (p.TypeFilter |> Seq.toList) }
 
 let cliArguments =
-  { MSBuild.CliArguments.Create() with
-      ConsoleLogParameters = []
-      DistributedLoggers = None
-      Properties = [("CheckEolTargetFramework", "false")]
-      DisableInternalBinLog = true }
+    { MSBuild.CliArguments.Create() with
+          ConsoleLogParameters = []
+          DistributedLoggers = None
+          Properties = [ ("CheckEolTargetFramework", "false") ]
+          DisableInternalBinLog = true }
 
 let withWorkingDirectoryVM dir o =
-  { dotnetOptions o with
-      WorkingDirectory = Path.getFullName dir
-      Verbosity = Some DotNet.Verbosity.Minimal }
+    { dotnetOptions o with
+          WorkingDirectory = Path.getFullName dir
+          Verbosity = Some DotNet.Verbosity.Minimal }
 
 let withWorkingDirectoryOnly dir o =
-  { dotnetOptions o with WorkingDirectory = Path.getFullName dir }
+    { dotnetOptions o with
+          WorkingDirectory = Path.getFullName dir }
 
-let withCLIArgs (o : Fake.DotNet.DotNet.TestOptions) =
-  { o with MSBuildParams = cliArguments }
-let withMSBuildParams (o : Fake.DotNet.DotNet.BuildOptions) =
-  { o with MSBuildParams = cliArguments }
+let withCLIArgs (o: Fake.DotNet.DotNet.TestOptions) = { o with MSBuildParams = cliArguments }
+let withMSBuildParams (o: Fake.DotNet.DotNet.BuildOptions) = { o with MSBuildParams = cliArguments }
 
-let defaultTestOptions fwk common (o : DotNet.TestOptions) =
-  { o.WithCommon
-      ((fun o2 -> { o2 with Verbosity = Some DotNet.Verbosity.Normal }) >> common) with
-      NoBuild = true
-      Framework = fwk // Some "netcoreapp3.0"
-      Configuration = DotNet.BuildConfiguration.Debug }
+let defaultTestOptions fwk common (o: DotNet.TestOptions) =
+    { o.WithCommon(
+          (fun o2 ->
+              { o2 with
+                    Verbosity = Some DotNet.Verbosity.Normal })
+          >> common
+      ) with
+          NoBuild = true
+          Framework = fwk // Some "netcoreapp3.0"
+          Configuration = DotNet.BuildConfiguration.Debug }
 
 let dotnetBuildRelease proj =
-  DotNet.build (fun p ->
-    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Release
-                                      NoRestore = false }
-    |> withMSBuildParams) (Path.GetFullPath proj)
+    DotNet.build
+        (fun p ->
+            { p.WithCommon dotnetOptions with
+                  Configuration = DotNet.BuildConfiguration.Release
+                  NoRestore = false }
+            |> withMSBuildParams)
+        (Path.GetFullPath proj)
 
 let dotnetBuildDebug proj =
-  DotNet.build (fun p ->
-    { p.WithCommon dotnetOptions with Configuration = DotNet.BuildConfiguration.Debug
-                                      NoRestore = false }
-    |> withMSBuildParams) (Path.GetFullPath proj)
+    DotNet.build
+        (fun p ->
+            { p.WithCommon dotnetOptions with
+                  Configuration = DotNet.BuildConfiguration.Debug
+                  NoRestore = false }
+            |> withMSBuildParams)
+        (Path.GetFullPath proj)
 
 let misses = ref 0
 
-let uncovered (path : string) =
-  misses := 0
-  !!path
-  |> Seq.collect (fun f ->
-       let xml = XDocument.Load f
-       xml.Descendants(XName.Get("Uncoveredlines"))
-       |> Seq.filter (fun x ->
-            match String.IsNullOrWhiteSpace x.Value with
-            | false -> true
-            | _ ->
-                sprintf "No coverage from '%s'" f |> Trace.traceImportant
-                misses := 1 + !misses
-                false)
-       |> Seq.map (fun e ->
-            let coverage = e.Value
-            match Int32.TryParse coverage with
-            | (false, _) ->
-                printfn "%A" xml
-                Assert.Fail("Could not parse uncovered line value '" + coverage + "'")
-                0
-            | (_, numeric) ->
-                printfn "%s : %A"
-                  (f
-                   |> Path.GetDirectoryName
-                   |> Path.GetFileName) numeric
-                numeric))
-  |> Seq.toList
+let uncovered (path: string) =
+    misses := 0
+
+    !!path
+    |> Seq.collect
+        (fun f ->
+            let xml = XDocument.Load f
+
+            xml.Descendants(XName.Get("Uncoveredlines"))
+            |> Seq.filter
+                (fun x ->
+                    match String.IsNullOrWhiteSpace x.Value with
+                    | false -> true
+                    | _ ->
+                        sprintf "No coverage from '%s'" f
+                        |> Trace.traceImportant
+
+                        misses := 1 + !misses
+                        false)
+            |> Seq.map
+                (fun e ->
+                    let coverage = e.Value
+
+                    match Int32.TryParse coverage with
+                    | (false, _) ->
+                        printfn "%A" xml
+
+                        Assert.Fail(
+                            "Could not parse uncovered line value '"
+                            + coverage
+                            + "'"
+                        )
+
+                        0
+                    | (_, numeric) ->
+                        printfn "%s : %A" (f |> Path.GetDirectoryName |> Path.GetFileName) numeric
+                        numeric))
+    |> Seq.toList
 
 let commitHash = Information.getCurrentSHA1 (".")
 let infoV = Information.showName "." commitHash
@@ -190,446 +225,639 @@ let _Target s f =
 
 _Target "Preparation" ignore
 
-_Target "Clean" (fun _ ->
-  printfn "Cleaning the build and deploy folders"
-  Actions.Clean())
+_Target
+    "Clean"
+    (fun _ ->
+        printfn "Cleaning the build and deploy folders"
+        Actions.Clean())
 
-_Target "SetVersion" (fun _ ->
-  Directory.ensure "./_Generated"
+_Target
+    "SetVersion"
+    (fun _ ->
+        Directory.ensure "./_Generated"
 
-  let hack =
-      """namespace AltCover
+        let hack =
+            """namespace AltCover
 module SolutionRoot =
   let location = """
             + "\"\"\""
             + (Path.getFullName ".")
             + "\"\"\""
 
-  let path = "_Generated/SolutionRoot.fs"
-  File.WriteAllText(path, hack)
+        let path = "_Generated/SolutionRoot.fs"
+        File.WriteAllText(path, hack)
 
-  let now = DateTime.Now
-  let time = now.ToString("HHmmss").Substring(0, 5).TrimStart('0')
-  let y0 = now.Year
-  let m0 = now.Month
-  let d0 = now.Day
-  let y = y0.ToString()
-  let m = m0.ToString()
-  let d = d0.ToString()
-  Version := y + "." + m + "." + d + "." + time
+        let now = DateTime.Now
 
-  let copy =
-    sprintf "© 2010-%d by Steve Gilham <SteveGilham@users.noreply.github.com>" y0
-  let copy2 = sprintf "Copyright (C) 2005-%d Novell, Inc. and contributors" y0
-  Copyright := "Copyright " + copy
+        let time =
+            now
+                .ToString("HHmmss")
+                .Substring(0, 5)
+                .TrimStart('0')
 
-  let v' = !Version
+        let y0 = now.Year
+        let m0 = now.Month
+        let d0 = now.Day
+        let y = y0.ToString()
+        let m = m0.ToString()
+        let d = d0.ToString()
+        Version := y + "." + m + "." + d + "." + time
 
-  AssemblyInfoFile.create "./_Generated/AssemblyStaticInfo.fs"
-    [ AssemblyInfo.Product "altcode.gendarme"
-      AssemblyInfo.Version v'
-      AssemblyInfo.FileVersion v'
-      AssemblyInfo.InformationalVersion(commitHash + " " + currentBranch) 
-      AssemblyInfo.Company "Steve Gilham"
-      AssemblyInfo.Trademark ""
-      AssemblyInfo.CLSCompliant true
-      AssemblyInfo.ComVisible false
-      AssemblyInfo.Copyright copy
-      AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")       
-      AssemblyInfo.Metadata("CommitHash", commitHash)       
-      AssemblyInfo.Metadata("Branch", currentBranch) ] (Some AssemblyInfoFileConfig.Default)
+        let copy =
+            sprintf "© 2010-%d by Steve Gilham <SteveGilham@users.noreply.github.com>" y0
 
-  AssemblyInfoFile.create "./_Generated/AssemblyStaticInfo.cs"
-    [ AssemblyInfo.Title "Gendarme"
-      AssemblyInfo.Version v'
-      AssemblyInfo.FileVersion v'
-      AssemblyInfo.InformationalVersion(commitHash + " " + currentBranch) 
-      AssemblyInfo.Company "Novell, Inc."
-      AssemblyInfo.Trademark ""
-      AssemblyInfo.Description "Rule-based assembly analyzer"
-      AssemblyInfo.CLSCompliant false
-      AssemblyInfo.ComVisible false
-      AssemblyInfo.Copyright copy2
-      AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")       
-      AssemblyInfo.Metadata("CommitHash", commitHash)       
-      AssemblyInfo.Metadata("Branch", currentBranch) ] (Some AssemblyInfoFileConfig.Default))
+        let copy2 =
+            sprintf "Copyright (C) 2005-%d Novell, Inc. and contributors" y0
+
+        Copyright := "Copyright " + copy
+
+        let v' = !Version
+
+        AssemblyInfoFile.create
+            "./_Generated/AssemblyStaticInfo.fs"
+            [ AssemblyInfo.Product "altcode.gendarme"
+              AssemblyInfo.Version v'
+              AssemblyInfo.FileVersion v'
+              AssemblyInfo.InformationalVersion(commitHash + " " + currentBranch)
+              AssemblyInfo.Company "Steve Gilham"
+              AssemblyInfo.Trademark ""
+              AssemblyInfo.CLSCompliant true
+              AssemblyInfo.ComVisible false
+              AssemblyInfo.Copyright copy
+              AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
+              AssemblyInfo.Metadata("CommitHash", commitHash)
+              AssemblyInfo.Metadata("Branch", currentBranch) ]
+            (Some AssemblyInfoFileConfig.Default)
+
+        AssemblyInfoFile.create
+            "./_Generated/AssemblyStaticInfo.cs"
+            [ AssemblyInfo.Title "Gendarme"
+              AssemblyInfo.Version v'
+              AssemblyInfo.FileVersion v'
+              AssemblyInfo.InformationalVersion(commitHash + " " + currentBranch)
+              AssemblyInfo.Company "Novell, Inc."
+              AssemblyInfo.Trademark ""
+              AssemblyInfo.Description "Rule-based assembly analyzer"
+              AssemblyInfo.CLSCompliant false
+              AssemblyInfo.ComVisible false
+              AssemblyInfo.Copyright copy2
+              AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
+              AssemblyInfo.Metadata("CommitHash", commitHash)
+              AssemblyInfo.Metadata("Branch", currentBranch) ]
+            (Some AssemblyInfoFileConfig.Default))
 
 // Basic compilation
 
 _Target "Compilation" ignore
 
-_Target "BuildRelease" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildRelease)
+_Target
+    "BuildRelease"
+    (fun _ ->
+        "./gendarme/gendarme-win.sln"
+        |> dotnetBuildRelease)
 
 _Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
 
 _Target "UnitTest" ignore
 
-_Target "JustUnitTest" (fun _ ->
-  Directory.ensure "./_Reports"
-  try
-    !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
-    |> NUnit3.run (fun p ->
-         { p with
-             ToolPath = nunitConsole
-             WorkingDir = "."
-             ResultSpecs = [ "./_Reports/JustUnitTestReport.xml" ] })
-  with x -> printfn "%A" x) //reraise()) // while fixing
+_Target
+    "JustUnitTest"
+    (fun _ ->
+        Directory.ensure "./_Reports"
 
-_Target "UnitTestDotNet" (fun _ ->
-  Directory.ensure "./_Reports"
-  try
-    !!(@"./**/Tests.*.csproj")
-    |> Seq.iter
-         (DotNet.test (fun p ->
-           { p.WithCommon dotnetOptions with
-               Configuration = DotNet.BuildConfiguration.Debug
-               Framework = Some "net6.0"
-               NoBuild = true }
-           |> withCLIArgs))
-  with x -> printfn "%A" x) //reraise()) // while fixing
+        try
+            !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+            |> NUnit3.run
+                (fun p ->
+                    { p with
+                          ToolPath = nunitConsole
+                          WorkingDir = "."
+                          ResultSpecs = [ "./_Reports/JustUnitTestReport.xml" ] })
+        with
+        | x -> printfn "%A" x) //reraise()) // while fixing
+
+_Target
+    "UnitTestDotNet"
+    (fun _ ->
+        Directory.ensure "./_Reports"
+
+        try
+            !!(@"./**/Tests.*.csproj")
+            |> Seq.iter (
+                DotNet.test
+                    (fun p ->
+                        { p.WithCommon dotnetOptions with
+                              Configuration = DotNet.BuildConfiguration.Debug
+                              Framework = Some "net6.0"
+                              NoBuild = true }
+                        |> withCLIArgs)
+            )
+        with
+        | x -> printfn "%A" x) //reraise()) // while fixing
 
 _Target "Coverage" ignore
 
-_Target "UnitTestWithAltCoverRunner" (fun _ ->
-  let reports = Path.getFullName "./_Reports"
-  Directory.ensure reports
-  let report = "./_Reports/_UnitTestWithAltCoverRunner"
-  Directory.ensure report
+_Target
+    "UnitTestWithAltCoverRunner"
+    (fun _ ->
+        let reports = Path.getFullName "./_Reports"
+        Directory.ensure reports
+        let report = "./_Reports/_UnitTestWithAltCoverRunner"
+        Directory.ensure report
 
-  let coverage =
-    !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
-    |> Seq.fold (fun l test ->
-         let tname = test |> Path.GetFileNameWithoutExtension
+        let coverage =
+            !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+            |> Seq.fold
+                (fun l test ->
+                    let tname = test |> Path.GetFileNameWithoutExtension
 
-         let testDirectory =
-           test
-           |> Path.getFullName
-           |> Path.GetDirectoryName
+                    let testDirectory =
+                        test |> Path.getFullName |> Path.GetDirectoryName
 
-         let altReport = reports @@ ("UnitTestWithAltCoverRunner." + tname + ".xml")
+                    let altReport =
+                        reports
+                        @@ ("UnitTestWithAltCoverRunner." + tname + ".xml")
 
-         let prep =
-           AltCover.PrepareOptions.Primitive
-             ({ Primitive.PrepareOptions.Create() with
-                  Report = altReport
-                  OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
-                  SingleVisit = true
-                  InPlace = false
-                  Save = false }
-              |> AltCoverFilter)
-           |> AltCoverCommand.Prepare
-         { AltCoverCommand.Options.Create prep with
-             ToolPath = altcover
-             ToolType = framework_altcover
-             WorkingDirectory = testDirectory }
-         |> AltCoverCommand.run
+                    let prep =
+                        AltCover.PrepareOptions.Primitive(
+                            { Primitive.PrepareOptions.Create() with
+                                  Report = altReport
+                                  OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
+                                  SingleVisit = true
+                                  InPlace = false
+                                  Save = false }
+                            |> AltCoverFilter
+                        )
+                        |> AltCoverCommand.Prepare
 
-         printfn "Unit test the instrumented code"
-         let nunitparams =
-           { NUnit3Defaults with
-               ToolPath = nunitConsole
-               WorkingDir = "."
-               ResultSpecs =
-                 [ "./_Reports/UnitTestWithAltCoverRunnerReport." + tname + ".xml" ] }
+                    { AltCoverCommand.Options.Create prep with
+                          ToolPath = altcover
+                          ToolType = framework_altcover
+                          WorkingDirectory = testDirectory }
+                    |> AltCoverCommand.run
 
-         let nunitcmd =
-           NUnit3.buildArgs nunitparams
-             [ testDirectory
-               @@ "./__UnitTestWithAltCoverRunner" @@ (test |> Path.GetFileName) ]
+                    printfn "Unit test the instrumented code"
 
-         try
-           let collect =
-             AltCover.CollectOptions.Primitive
-               { Primitive.CollectOptions.Create() with
-                   Executable = nunitConsole
-                   RecorderDirectory = testDirectory @@ "__UnitTestWithAltCoverRunner"
-                   CommandLine = AltCoverCommand.splitCommandLine nunitcmd }
-             |> AltCoverCommand.Collect
-           { AltCoverCommand.Options.Create collect with
-               ToolPath = altcover
-               ToolType = framework_altcover
-               WorkingDirectory = "." }
-           |> AltCoverCommand.run
-         with x -> printfn "%A" x
-         altReport :: l) [] //reraise()) // while fixing
+                    let nunitparams =
+                        { NUnit3Defaults with
+                              ToolPath = nunitConsole
+                              WorkingDir = "."
+                              ResultSpecs =
+                                  [ "./_Reports/UnitTestWithAltCoverRunnerReport."
+                                    + tname
+                                    + ".xml" ] }
 
-  ReportGenerator.generateReports (fun p ->
-    { p with
-        ToolType = ToolType.CreateLocalTool()
-        ReportTypes =
-          [ ReportGenerator.ReportType.Html; ReportGenerator.ReportType.XmlSummary ]
-        TargetDir = report }) coverage
+                    let nunitcmd =
+                        NUnit3.buildArgs
+                            nunitparams
+                            [ testDirectory
+                              @@ "./__UnitTestWithAltCoverRunner"
+                                 @@ (test |> Path.GetFileName) ]
 
-  (report @@ "Summary.xml")
-  |> uncovered
-  |> printfn "%A uncovered lines"
+                    try
+                        let collect =
+                            AltCover.CollectOptions.Primitive
+                                { Primitive.CollectOptions.Create() with
+                                      Executable = nunitConsole
+                                      RecorderDirectory = testDirectory @@ "__UnitTestWithAltCoverRunner"
+                                      CommandLine = AltCoverCommand.splitCommandLine nunitcmd }
+                            |> AltCoverCommand.Collect
 
-  // TODO coveralls ?
-  )
+                        { AltCoverCommand.Options.Create collect with
+                              ToolPath = altcover
+                              ToolType = framework_altcover
+                              WorkingDirectory = "." }
+                        |> AltCoverCommand.run
+                    with
+                    | x -> printfn "%A" x
 
-_Target "UnitTestWithAltCoverCoreRunner" (fun _ ->
-  let reports = Path.getFullName "./_Reports"
-  Directory.ensure reports
-  let report = "./_Reports/_UnitTestWithAltCoverCoreRunner"
-  Directory.ensure report
+                    altReport :: l)
+                [] //reraise()) // while fixing
 
-  let coverage =
-    !!(@"gendarme/**/Tests.*.csproj")
-    |> Seq.fold (fun l test ->
-         printfn "%A" test
-         let tname = test |> Path.GetFileNameWithoutExtension
+        ReportGenerator.generateReports
+            (fun p ->
+                { p with
+                      ToolType = ToolType.CreateLocalTool()
+                      ReportTypes =
+                          [ ReportGenerator.ReportType.Html
+                            ReportGenerator.ReportType.XmlSummary ]
+                      TargetDir = report })
+            coverage
 
-         let testDirectory =
-           test
-           |> Path.getFullName
-           |> Path.GetDirectoryName
+        (report @@ "Summary.xml")
+        |> uncovered
+        |> printfn "%A uncovered lines"
 
-         let altReport = reports @@ ("UnitTestWithAltCoverCoreRunner." + tname + ".xml")
-         let altReport2 =
-           reports @@ ("UnitTestWithAltCoverCoreRunner." + tname + ".net6.0.xml")
+        // TODO coveralls ?
+        )
 
-         let collect = AltCover.CollectOptions.Primitive(Primitive.CollectOptions.Create()) // FSApi
+_Target
+    "UnitTestWithAltCoverCoreRunner"
+    (fun _ ->
+        let reports = Path.getFullName "./_Reports"
+        Directory.ensure reports
 
-         let prepare =
-           AltCover.PrepareOptions.Primitive // FSApi
-             ({ Primitive.PrepareOptions.Create() with
-                  Report = altReport
-                  SingleVisit = true }
-              |> AltCoverFilter)
+        let report =
+            "./_Reports/_UnitTestWithAltCoverCoreRunner"
 
-         let ForceTrue = DotNet.CLIOptions.Force true
-         //printfn "Test arguments : '%s'" (DotNet.ToTestArguments prepare collect ForceTrue)
+        Directory.ensure report
 
-         let t =
-           DotNet.TestOptions.Create().WithAltCoverOptions prepare collect ForceTrue
-         printfn "WithAltCoverOptions returned '%A'" t.Common.CustomParams
+        let coverage =
+            !!(@"gendarme/**/Tests.*.csproj")
+            |> Seq.fold
+                (fun l test ->
+                    printfn "%A" test
+                    let tname = test |> Path.GetFileNameWithoutExtension
 
-         let setBaseOptions (o : DotNet.Options) =
-           { o with
-               WorkingDirectory = Path.getFullName testDirectory
-               Verbosity = Some DotNet.Verbosity.Minimal }
+                    let testDirectory =
+                        test |> Path.getFullName |> Path.GetDirectoryName
 
-         let cliArguments =
-           { MSBuild.CliArguments.Create() with
-               ConsoleLogParameters = []
-               DistributedLoggers = None
-               DisableInternalBinLog = true }
+                    let altReport =
+                        reports
+                        @@ ("UnitTestWithAltCoverCoreRunner." + tname + ".xml")
 
-         try
-           DotNet.test (fun to' ->
-             { to'.WithCommon(setBaseOptions).WithAltCoverOptions prepare collect
-                 ForceTrue with
-                 Framework = Some "net6.0"
-                 MSBuildParams = cliArguments }) test
-         with x -> printfn "%A" x
-         // reraise()) // while fixing
+                    let altReport2 =
+                        reports
+                        @@ ("UnitTestWithAltCoverCoreRunner."
+                            + tname
+                            + ".net6.0.xml")
 
-         altReport2 :: l) []
+                    let collect =
+                        AltCover.CollectOptions.Primitive(Primitive.CollectOptions.Create()) // FSApi
 
-  ReportGenerator.generateReports (fun p ->
-    { p with
-        ToolType = ToolType.CreateLocalTool()
-        ReportTypes =
-          [ ReportGenerator.ReportType.Html; ReportGenerator.ReportType.XmlSummary ]
-        TargetDir = report }) coverage
+                    let prepare =
+                        AltCover.PrepareOptions.Primitive( // FSApi
+                            { Primitive.PrepareOptions.Create() with
+                                  Report = altReport
+                                  SingleVisit = true }
+                            |> AltCoverFilter
+                        )
 
-  (report @@ "Summary.xml")
-  |> uncovered
-  |> printfn "%A uncovered lines")
+                    let ForceTrue = DotNet.CLIOptions.Force true
+                    //printfn "Test arguments : '%s'" (DotNet.ToTestArguments prepare collect ForceTrue)
 
-_Target "Packaging" (fun _ ->
-  let netcoresource = Path.getFullName "./gendarme/console/gendarme.csproj"
-  let publish = Path.getFullName "./_Publish"
+                    let t =
+                        DotNet.TestOptions.Create().WithAltCoverOptions prepare collect ForceTrue
 
-  DotNet.publish (fun options ->
-    { options with
-        OutputPath = Some publish
-        Configuration = DotNet.BuildConfiguration.Release
-        Framework = Some "netcoreapp2.1" }) netcoresource
+                    printfn "WithAltCoverOptions returned '%A'" t.Common.CustomParams
 
-  let housekeeping =
-    [ (Path.getFullName "./Nu*.md", Some "", None)
-      (Path.getFullName "./LICENS*", Some "", None)
-      (Path.getFullName "./Image.*g", Some "", None) ]
+                    let setBaseOptions (o: DotNet.Options) =
+                        { o with
+                              WorkingDirectory = Path.getFullName testDirectory
+                              Verbosity = Some DotNet.Verbosity.Minimal }
 
-  let rulesDirs =
-    Directory.GetDirectories("./_Binaries", "Gendarme.Rules.*", SearchOption.AllDirectories)
-    |> Seq.map Path.getFullName
-    |> Seq.toList
+                    let cliArguments =
+                        { MSBuild.CliArguments.Create() with
+                              ConsoleLogParameters = []
+                              DistributedLoggers = None
+                              DisableInternalBinLog = true }
 
-  //rulesDirs |> List.iter (printfn "%A")
+                    try
+                        DotNet.test
+                            (fun to' ->
+                                { to'.WithCommon(setBaseOptions).WithAltCoverOptions prepare collect ForceTrue with
+                                      Framework = Some "net6.0"
+                                      MSBuildParams = cliArguments })
+                            test
+                    with
+                    | x -> printfn "%A" x
+                    // reraise()) // while fixing
 
-  let rules =
-    rulesDirs
-    |> List.collect (fun f ->
-         !!(f @@ "Release/netstandard2.0/Gendarme.Rules.*.dll") |> Seq.toList)
-    |> List.distinctBy Path.GetFileName
+                    altReport2 :: l)
+                []
 
-  //rules |> List.iter (printfn "%A")
+        ReportGenerator.generateReports
+            (fun p ->
+                { p with
+                      ToolType = ToolType.CreateLocalTool()
+                      ReportTypes =
+                          [ ReportGenerator.ReportType.Html
+                            ReportGenerator.ReportType.XmlSummary ]
+                      TargetDir = report })
+            coverage
 
-  let net472 =
-    List.concat
-      [ !!"./_Binaries/gendarme/Release/net472/*.*" |> Seq.toList
-        rules ]
-    |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
+        (report @@ "Summary.xml")
+        |> uncovered
+        |> printfn "%A uncovered lines")
 
-  let leadstring = publish.Length
-  let netcoremain = !!(Path.getFullName "./_Publish/**/*.*")
-                    |> Seq.map (fun f -> let relpath = (leadstring |> f.Substring).Replace("\\","/")
-                                         (f, Some ("tools/netcoreapp2.1/any" + relpath), None))
-                    |> Seq.toList
+_Target
+    "Packaging"
+    (fun _ ->
+        let netcoresource =
+            Path.getFullName "./gendarme/console/gendarme.csproj"
 
-  let netcore =
-    List.concat
-      [ netcoremain
-        rules |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
+        let publish = Path.getFullName "./_Publish"
 
-  let files = List.concat [ net472; housekeeping ]
-  let globalfiles = List.concat [ netcore; housekeeping ]
+        DotNet.publish
+            (fun options ->
+                { options with
+                      OutputPath = Some publish
+                      Configuration = DotNet.BuildConfiguration.Release
+                      Framework = Some "netcoreapp2.1" })
+            netcoresource
 
-  let workingDir = "./_Binaries/_Packaging"
-  Directory.ensure workingDir
-  let output = "./_Packaging"
-  Directory.ensure output
-  let nuspec = "./Build/altcode.gendarme.nuspec"
+        let housekeeping =
+            [ (Path.getFullName "./Nu*.md", Some "", None)
+              (Path.getFullName "./LICENS*", Some "", None)
+              (Path.getFullName "./Image.*g", Some "", None) ]
 
-  let x s = XName.Get(s, "http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd")
-  let dotnetNupkg = XDocument.Load nuspec
-  let title = dotnetNupkg.Descendants(x "title") |> Seq.head
-  title.ReplaceNodes "altcode.gendarme (.net core global tool)"
+        let rulesDirs =
+            Directory.GetDirectories("./_Binaries", "Gendarme.Rules.*", SearchOption.AllDirectories)
+            |> Seq.map Path.getFullName
+            |> Seq.toList
 
-  let tag = dotnetNupkg.Descendants(x "tags") |> Seq.head
-  let insert = XElement(x "packageTypes")
-  insert.Add(XElement(x "packageType", XAttribute(XName.Get "name", "DotnetTool")))
-  tag.AddAfterSelf insert
-  let globalnuspec = Path.getFullName "./_Packaging/altcode.gendarme-tool.nuspec"
-  dotnetNupkg.Save globalnuspec
+        //rulesDirs |> List.iter (printfn "%A")
 
-  [ ("altcode.gendarme", files, nuspec)
-    ("altcode.gendarme-tool", globalfiles, globalnuspec) ]
-  |> List.iter (fun (project, payload, recipe) ->
-       NuGet (fun p ->
-         { p with
-             Authors = [ "Steve Gilham" ]
-             Project = project
-             Description =
-               "A somewhat updated build of the Mono.Gendarme static analysis tool for use with modern (including .net standard/core) assemblies."
-             OutputPath = output
-             WorkingDir = workingDir
-             Files = payload
-             Dependencies = []
-             Version = (!Version + badge)
-             Copyright = (!Copyright).Replace("©", "(c)")
-             Publish = false
-             ReleaseNotes = Path.getFullName "ReleaseNotes.md" |> File.ReadAllText
-             ToolPath =
-                ("./packages/"
-                  + (packageVersion "NuGet.CommandLine")
-                  + "/tools/NuGet.exe")
-                  |> Path.getFullName 
-         }) recipe))
+        let rules =
+            rulesDirs
+            |> List.collect
+                (fun f ->
+                    !!(f @@ "Release/netstandard2.0/Gendarme.Rules.*.dll")
+                    |> Seq.toList)
+            |> List.distinctBy Path.GetFileName
+
+        //rules |> List.iter (printfn "%A")
+
+        let net472 =
+            List.concat [ !! "./_Binaries/gendarme/Release/net472/*.*"
+                          |> Seq.toList
+                          rules ]
+            |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
+
+        let leadstring = publish.Length
+
+        let netcoremain =
+            !!(Path.getFullName "./_Publish/**/*.*")
+            |> Seq.map
+                (fun f ->
+                    let relpath =
+                        (leadstring |> f.Substring).Replace("\\", "/")
+
+                    (f, Some("tools/netcoreapp2.1/any" + relpath), None))
+            |> Seq.toList
+
+        let netcore =
+            List.concat [ netcoremain
+                          rules
+                          |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
+
+        let files = List.concat [ net472; housekeeping ]
+        let globalfiles = List.concat [ netcore; housekeeping ]
+
+        let workingDir = "./_Binaries/_Packaging"
+        Directory.ensure workingDir
+        let output = "./_Packaging"
+        Directory.ensure output
+        let nuspec = "./Build/altcode.gendarme.nuspec"
+
+        let x s =
+            XName.Get(s, "http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd")
+
+        let dotnetNupkg = XDocument.Load nuspec
+
+        let title =
+            dotnetNupkg.Descendants(x "title") |> Seq.head
+
+        title.ReplaceNodes "altcode.gendarme (.net core global tool)"
+
+        let tag =
+            dotnetNupkg.Descendants(x "tags") |> Seq.head
+
+        let insert = XElement(x "packageTypes")
+        insert.Add(XElement(x "packageType", XAttribute(XName.Get "name", "DotnetTool")))
+        tag.AddAfterSelf insert
+
+        let globalnuspec =
+            Path.getFullName "./_Packaging/altcode.gendarme-tool.nuspec"
+
+        dotnetNupkg.Save globalnuspec
+
+        [ ("altcode.gendarme", files, nuspec)
+          ("altcode.gendarme-tool", globalfiles, globalnuspec) ]
+        |> List.iter
+            (fun (project, payload, recipe) ->
+                NuGet
+                    (fun p ->
+                        { p with
+                              Authors = [ "Steve Gilham" ]
+                              Project = project
+                              Description =
+                                  "A somewhat updated build of the Mono.Gendarme static analysis tool for use with modern (including .net standard/core) assemblies."
+                              OutputPath = output
+                              WorkingDir = workingDir
+                              Files = payload
+                              Dependencies = []
+                              Version = (!Version + badge)
+                              Copyright = (!Copyright).Replace("©", "(c)")
+                              Publish = false
+                              ReleaseNotes =
+                                  Path.getFullName "ReleaseNotes.md"
+                                  |> File.ReadAllText
+                              ToolPath =
+                                  ("./packages/"
+                                   + (packageVersion "NuGet.CommandLine")
+                                   + "/tools/NuGet.exe")
+                                  |> Path.getFullName })
+                    recipe))
 
 _Target "OperationalTest" ignore
 
-_Target "Unpack" (fun _ ->
-  let unpack = Path.getFullName "./_Unpack"
-  let config = unpack @@ ".config"
-  Directory.ensure unpack
-  Shell.cleanDir (unpack)
-  Directory.ensure config
+_Target
+    "Unpack"
+    (fun _ ->
+        let unpack = Path.getFullName "./_Unpack"
+        let config = unpack @@ ".config"
+        Directory.ensure unpack
+        Shell.cleanDir (unpack)
+        Directory.ensure config
 
-  let text = File.ReadAllText "./Build/dotnet-tools.json"
-  let newtext = text.Replace("{0}", (!Version + badge))
-  File.WriteAllText((config @@ "dotnet-tools.json"), newtext)
+        let text =
+            File.ReadAllText "./Build/dotnet-tools.json"
 
-  let packroot = Path.GetFullPath "./_Packaging"
-  let config = XDocument.Load "./Build/NuGet.config.dotnettest"
-  let repo = config.Descendants(XName.Get("add")) |> Seq.head
-  repo.SetAttributeValue(XName.Get "value", packroot)
-  config.Save(unpack @@ "NuGet.config")
+        let newtext = text.Replace("{0}", (!Version + badge))
+        File.WriteAllText((config @@ "dotnet-tools.json"), newtext)
 
-  let csproj = XDocument.Load "./Build/unpack.xml"
-  let p = csproj.Descendants(XName.Get("PackageReference")) |> Seq.head
-  p.Attribute(XName.Get "Version").Value <- (!Version + badge)
-  let proj = unpack @@ "unpack.csproj"
-  csproj.Save proj
+        let packroot = Path.GetFullPath "./_Packaging"
 
-  DotNet.restore (fun o ->
-    { o.WithCommon(withWorkingDirectoryVM unpack) with Packages = [ "./packages" ] })
-    proj
+        let config =
+            XDocument.Load "./Build/NuGet.config.dotnettest"
 
-  let vname = !Version + badge
-  let from = (Path.getFullName @"_Unpack/packages/altcode.gendarme/") @@ vname
-  printfn "Copying from %A to %A" from unpack
-  Shell.copyDir unpack from (fun _ -> true)
+        let repo =
+            config.Descendants(XName.Get("add")) |> Seq.head
 
-  Assert.Throws<Exception> (fun () ->
-          Gendarme.run
-            { Gendarme.Params.Create() with
-                WorkingDirectory = unpack
-                Severity = Gendarme.Severity.All
-                Confidence = Gendarme.Confidence.All
-                Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
-                Console = true
-                Log = Path.GetFullPath "./_Reports/gendarme.html"
-                LogKind = Gendarme.LogKind.Html
-                Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/net472/FSharpExamples.dll"]
-                ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
-                FailBuildOnDefect = true }  ) |> ignore
-    )
+        repo.SetAttributeValue(XName.Get "value", packroot)
+        config.Save(unpack @@ "NuGet.config")
 
-_Target "DotnetGlobalIntegration" (fun _ ->
-  let working = Path.getFullName "./_Unpack-tool"
-  let mutable set = false
-  try
-    Directory.ensure working
-    Shell.cleanDir working
-    Directory.ensure "./_Reports"
+        let csproj = XDocument.Load "./Build/unpack.xml"
 
-    let nugget = !!"./_Packaging/altcode.gendarme-tool.*.nupkg" |> Seq.last
-    let unpack = Path.getFullName "_Unpack-tool/tool"
-    System.IO.Compression.ZipFile.ExtractToDirectory(nugget, unpack)
-    let from = Path.getFullName @"_Unpack-tool/tool/tools/netcoreapp2.1/any/"
-    Shell.copyDir unpack from (fun _ -> true)
+        let p =
+            csproj.Descendants(XName.Get("PackageReference"))
+            |> Seq.head
 
-    let packroot = Path.GetFullPath "./_Packaging"
-    let config = XDocument.Load "./Build/NuGet.config.dotnettest"
-    let repo = config.Descendants(XName.Get("add")) |> Seq.head
-    repo.SetAttributeValue(XName.Get "value", packroot)
-    config.Save(working @@ "NuGet.config")
+        p.Attribute(XName.Get "Version").Value <- (!Version + badge)
+        let proj = unpack @@ "unpack.csproj"
+        csproj.Save proj
 
-    Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
-      "tool"
-      ("install -g altcode.gendarme-tool --add-source "
-       + (Path.getFullName "./_Packaging") + " --version " + !Version + badge) "Installed"
+        DotNet.restore
+            (fun o ->
+                { o.WithCommon(withWorkingDirectoryVM unpack) with
+                      Packages = [ "./packages" ] })
+            proj
 
-    Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
-      "tool" ("list -g ") "Checked"
-    set <- true
+        let vname = !Version + badge
 
-    Assert.Throws<Exception> (fun () ->
+        let from =
+            (Path.getFullName @"_Unpack/packages/altcode.gendarme/")
+            @@ vname
+
+        printfn "Copying from %A to %A" from unpack
+        Shell.copyDir unpack from (fun _ -> true)
+
+        Assert.Throws<Exception>
+            (fun () ->
                 Gendarme.run
-                  { Gendarme.Params.Create() with
+                    { Gendarme.Params.Create() with
+                          WorkingDirectory = unpack
+                          Severity = Gendarme.Severity.All
+                          Confidence = Gendarme.Confidence.All
+                          Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                          Console = true
+                          Log = Path.GetFullPath "./_Reports/gendarme.html"
+                          LogKind = Gendarme.LogKind.Html
+                          Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/net472/FSharpExamples.dll" ]
+                          ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
+                          FailBuildOnDefect = true })
+        |> ignore)
+
+_Target
+    "DotnetGlobalIntegration"
+    (fun _ ->
+        let working = Path.getFullName "./_Unpack-tool"
+        let mutable set = false
+
+        try
+            Directory.ensure working
+            Shell.cleanDir working
+            Directory.ensure "./_Reports"
+
+            let nugget =
+                !! "./_Packaging/altcode.gendarme-tool.*.nupkg"
+                |> Seq.last
+
+            let unpack = Path.getFullName "_Unpack-tool/tool-raw"
+            System.IO.Compression.ZipFile.ExtractToDirectory(nugget, unpack)
+
+            let from =
+                Path.getFullName @"_Unpack-tool/tool-raw/tools/netcoreapp2.1/any/"
+
+            let shallow = Path.getFullName "_Unpack-tool/tool"
+            Shell.copyDir shallow from (fun _ -> true)
+
+            let packroot = Path.GetFullPath "./_Packaging"
+
+            let config =
+                XDocument.Load "./Build/NuGet.config.dotnettest"
+
+            let repo =
+                config.Descendants(XName.Get("add")) |> Seq.head
+
+            repo.SetAttributeValue(XName.Get "value", packroot)
+            config.Save(working @@ "NuGet.config")
+
+            Actions.RunDotnet
+                (fun o' ->
+                    { dotnetOptions o' with
+                          WorkingDirectory = working })
+                "tool"
+                ("install -g altcode.gendarme-tool --add-source "
+                 + (Path.getFullName "./_Packaging")
+                 + " --version "
+                 + !Version
+                 + badge)
+                "Installed"
+
+            Actions.RunDotnet
+                (fun o' ->
+                    { dotnetOptions o' with
+                          WorkingDirectory = working })
+                "tool"
+                ("list -g ")
+                "Checked"
+
+            set <- true
+
+            Assert.Throws<Exception>
+                (fun () ->
+                    Gendarme.run
+                        { Gendarme.Params.Create() with
+                              WorkingDirectory = working
+                              Severity = Gendarme.Severity.All
+                              Confidence = Gendarme.Confidence.All
+                              Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                              Console = true
+                              Log = Path.GetFullPath "./_Reports/gendarme-tool.html"
+                              LogKind = Gendarme.LogKind.Html
+                              Targets =
+                                  [ Path.GetFullPath
+                                        "./_Binaries/FSharpExamples/Release/netstandard2.0/FSharpExamples.dll" ]
+                              ToolPath = "gendarme"
+                              ToolType = ToolType.CreateGlobalTool()
+                              FailBuildOnDefect = true })
+            |> ignore // (printfn "%A")
+            // System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release\netstandard2.0\FSharpExamples.dll"
+
+            // self-test
+            let targets =
+                !!("./_Binaries/*endarm*/Debug/*/*endarm*.dll")
+                |> Seq.map Path.GetFullPath
+                |> Seq.toList
+
+            Gendarme.run
+                { Gendarme.Params.Create() with
                       WorkingDirectory = working
                       Severity = Gendarme.Severity.All
                       Confidence = Gendarme.Confidence.All
-                      Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                      Configuration = (Path.GetFullPath "./gendarme/Build/csharp-rules.xml")
                       Console = true
-                      Log = Path.GetFullPath "./_Reports/gendarme-tool.html"
+                      Log = Path.GetFullPath "./_Reports/gendarme-tool-selftest.html"
                       LogKind = Gendarme.LogKind.Html
-                      Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/netstandard2.0/FSharpExamples.dll"]
+                      Targets = targets
                       ToolPath = "gendarme"
                       ToolType = ToolType.CreateGlobalTool()
-                      FailBuildOnDefect = true }  ) |> ignore // (printfn "%A")
-// System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release\netstandard2.0\FSharpExamples.dll"
+                      FailBuildOnDefect = true }
 
-  finally
-    if set then
-      Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working })
-        "tool" ("uninstall -g altcode.gendarme-tool") "uninstalled"
-    let folder = (nugetCache @@ "altcode.gendarme-tool") @@ (!Version + badge)
-    Shell.mkdir folder
-    Shell.deleteDir folder)
+            Gendarme.run
+                { Gendarme.Params.Create() with
+                      WorkingDirectory = working
+                      Severity = Gendarme.Severity.All
+                      Confidence = Gendarme.Confidence.All
+                      Configuration = (Path.GetFullPath "./gendarme/Build/common-rules.xml")
+                      Console = true
+                      Log = Path.GetFullPath "./_Reports/gendarme-tool-fsselftest.html"
+                      LogKind = Gendarme.LogKind.Html
+                      Targets =
+                          [ Path.GetFullPath "./_Binaries/CecilExtensions/Debug/netstandard2.0"
+                            @@ "CecilExtensions.dll" ]
+                      ToolPath = "gendarme"
+                      ToolType = ToolType.CreateGlobalTool()
+                      FailBuildOnDefect = true }
+
+        finally
+            if set then
+                Actions.RunDotnet
+                    (fun o' ->
+                        { dotnetOptions o' with
+                              WorkingDirectory = working })
+                    "tool"
+                    ("uninstall -g altcode.gendarme-tool")
+                    "uninstalled"
+
+            let folder =
+                (nugetCache @@ "altcode.gendarme-tool")
+                @@ (!Version + badge)
+
+            Shell.mkdir folder
+            Shell.deleteDir folder)
 
 _Target
     "Lint"
@@ -670,41 +898,41 @@ _Target
         |> Seq.exists (fun x -> x <> 0)
         |> failOnIssuesFound)
 
-  //let failOnIssuesFound (issuesFound : bool) =
-  //  Assert.That(issuesFound, Is.False, "Lint issues were found")
-  //try
-  //  let options =
-  //    { Lint.OptionalLintParameters.Default with
-  //        Configuration = FromFile(Path.getFullName "./fsharplint.json") }
+//let failOnIssuesFound (issuesFound : bool) =
+//  Assert.That(issuesFound, Is.False, "Lint issues were found")
+//try
+//  let options =
+//    { Lint.OptionalLintParameters.Default with
+//        Configuration = FromFile(Path.getFullName "./fsharplint.json") }
 
-  //  [
-  //    !!"**/*.fsproj"
-  //    |> Seq.collect (fun n -> !!(Path.GetDirectoryName n @@ "*.fs"))
-  //    |> Seq.distinct;
-  //    !!"./Build/*.fsx"
-  //    |> Seq.map Path.GetFullPath
-  //  ]
-  //  |> Seq.concat
-  //  |> Seq.collect (fun f ->
-  //       match Lint.lintFile options f with
-  //       | Lint.LintResult.Failure x -> failwithf "%A" x
-  //       | Lint.LintResult.Success w ->
-  //           w
-  //           |> Seq.filter (fun x -> x.Details.SuggestedFix |> Option.isSome))
-  //  |> Seq.fold (fun _ x ->
-  //       printfn "Info: %A\r\n Range: %A\r\n Fix: %A\r\n====" x.Details.Message
-  //         x.Details.Range x.Details.SuggestedFix
-  //       true) false
-  //  |> failOnIssuesFound
-  //with ex ->
-  //  printfn "%A" ex
-  //  reraise()
+//  [
+//    !!"**/*.fsproj"
+//    |> Seq.collect (fun n -> !!(Path.GetDirectoryName n @@ "*.fs"))
+//    |> Seq.distinct;
+//    !!"./Build/*.fsx"
+//    |> Seq.map Path.GetFullPath
+//  ]
+//  |> Seq.concat
+//  |> Seq.collect (fun f ->
+//       match Lint.lintFile options f with
+//       | Lint.LintResult.Failure x -> failwithf "%A" x
+//       | Lint.LintResult.Success w ->
+//           w
+//           |> Seq.filter (fun x -> x.Details.SuggestedFix |> Option.isSome))
+//  |> Seq.fold (fun _ x ->
+//       printfn "Info: %A\r\n Range: %A\r\n Fix: %A\r\n====" x.Details.Message
+//         x.Details.Range x.Details.SuggestedFix
+//       true) false
+//  |> failOnIssuesFound
+//with ex ->
+//  printfn "%A" ex
+//  reraise()
 
 _Target "All" ignore
 
 let resetColours _ =
-  Console.ForegroundColor <- consoleBefore |> fst
-  Console.BackgroundColor <- consoleBefore |> snd
+    Console.ForegroundColor <- consoleBefore |> fst
+    Console.BackgroundColor <- consoleBefore |> snd
 
 Target.description "ResetConsoleColours"
 Target.createFinal "ResetConsoleColours" resetColours
@@ -712,29 +940,18 @@ Target.activateFinal "ResetConsoleColours"
 
 // Dependencies
 
-"Clean"
-==> "SetVersion"
-==> "Preparation"
+"Clean" ==> "SetVersion" ==> "Preparation"
 
-"Preparation"
-==> "BuildDebug"
-==> "Compilation"
+"Preparation" ==> "BuildDebug" ==> "Compilation"
 
-"BuildDebug"
-==> "Lint"
-==> "All"
+"BuildDebug" ==> "Lint" ==> "All"
 
-"Preparation"
-==> "BuildRelease"
-==> "Compilation"
+"Preparation" ==> "BuildRelease" ==> "Compilation"
 
-"BuildDebug"
-==> "JustUnitTest"
+"BuildDebug" ==> "JustUnitTest"
 //==> "UnitTest"
 
-"BuildDebug"
-==> "UnitTestDotNet"
-==> "UnitTest"
+"BuildDebug" ==> "UnitTestDotNet" ==> "UnitTest"
 
 "BuildDebug"
 ==> "UnitTestWithAltCoverRunner"
@@ -744,28 +961,24 @@ Target.activateFinal "ResetConsoleColours"
 ==> "UnitTestWithAltCoverCoreRunner"
 ==> "Coverage"
 
-"BuildRelease"
-==> "Packaging"
+"BuildRelease" ==> "Packaging"
 
-"UnitTest"
-==> "All"
+"UnitTest" ==> "All"
 
-"Packaging"
-==> "Unpack"
-==> "OperationalTest"
+"Packaging" ==> "Unpack" ==> "OperationalTest"
 
 "Packaging"
 ==> "DotnetGlobalIntegration"
 ==> "OperationalTest"
 
-"OperationalTest"
-==> "All"
+"BuildDebug" ==> "DotnetGlobalIntegration"
 
-"Coverage"
-==> "All"
+"OperationalTest" ==> "All"
 
-let defaultTarget() =
-  resetColours()
-  "All"
+"Coverage" ==> "All"
+
+let defaultTarget () =
+    resetColours ()
+    "All"
 
 Target.runOrDefault <| defaultTarget ()
