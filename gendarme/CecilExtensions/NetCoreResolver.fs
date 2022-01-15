@@ -111,7 +111,7 @@ module NetCoreResolver =
 
   let AddSearchLocation path = path |> searchLocations.Add |> ignore
 
-  let ClearsearchLocations () = searchLocations.Clear()
+  let ClearSearchLocations () = searchLocations.Clear()
 
   let HookResolver (resolver: IAssemblyResolver) =
     if resolver.IsNotNull then
