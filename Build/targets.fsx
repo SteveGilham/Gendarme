@@ -631,7 +631,45 @@ _Target "DotnetGlobalIntegration" (fun _ ->
     Shell.mkdir folder
     Shell.deleteDir folder)
 
-_Target "Lint" (fun _ ->
+_Target
+    "Lint"
+    (fun _ ->
+        let cfg = Path.getFullName "./fsharplint.json"
+
+        let doLint f =
+            CreateProcess.fromRawCommand "dotnet" [ "fsharplint"; "lint"; "-l"; cfg; f ]
+            |> CreateProcess.setEnvironmentVariable "DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX" "2"
+            |> CreateProcess.ensureExitCodeWithMessage "Lint issues were found"
+            |> Proc.run
+
+        let doLintAsync f = async { return (doLint f).ExitCode }
+
+        let throttle x =
+            Async.Parallel(x, System.Environment.ProcessorCount)
+
+        let demo = Path.getFullName "./Demo"
+        let regress = Path.getFullName "./RegressionTesting"
+        let sample = Path.getFullName "./Samples"
+
+        let failOnIssuesFound (issuesFound: bool) =
+            Assert.That(issuesFound, Is.False, "Lint issues were found")
+
+        [ !! "./**/*.fsproj"
+          |> Seq.sortBy (Path.GetFileName)
+          |> Seq.filter
+              (fun f ->
+                  ((f.Contains demo)
+                   || (f.Contains regress)
+                   || (f.Contains sample))
+                  |> not)
+          !! "./Build/*.fsx" |> Seq.map Path.GetFullPath ]
+        |> Seq.concat
+        |> Seq.map doLintAsync
+        |> throttle
+        |> Async.RunSynchronously
+        |> Seq.exists (fun x -> x <> 0)
+        |> failOnIssuesFound)
+
   //let failOnIssuesFound (issuesFound : bool) =
   //  Assert.That(issuesFound, Is.False, "Lint issues were found")
   //try
@@ -661,7 +699,6 @@ _Target "Lint" (fun _ ->
   //with ex ->
   //  printfn "%A" ex
   //  reraise()
-  ())
 
 _Target "All" ignore
 
@@ -682,6 +719,10 @@ Target.activateFinal "ResetConsoleColours"
 "Preparation"
 ==> "BuildDebug"
 ==> "Compilation"
+
+"BuildDebug"
+==> "Lint"
+==> "All"
 
 "Preparation"
 ==> "BuildRelease"
