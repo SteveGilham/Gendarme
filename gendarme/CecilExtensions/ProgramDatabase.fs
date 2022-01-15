@@ -28,7 +28,7 @@ module ProgramDatabase =
     (typeof<Mono.Cecil.AssemblyDefinition>.Assembly.GetTypes ()
      |> Seq.filter (fun m -> m.FullName = "Mono.Cecil.Mixin")
      |> Seq.head)
-      .GetMethod("getEmbeddedPortablePdbEntry")
+      .GetMethod("GetEmbeddedPortablePdbEntry")
 
   let internal getEmbeddedPortablePdbEntry (assembly: AssemblyDefinition) =
     getEmbed.Invoke(null, [| assembly.MainModule.GetDebugHeader() :> obj |])

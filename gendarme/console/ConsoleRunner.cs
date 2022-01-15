@@ -497,7 +497,7 @@ namespace Gendarme
     private void WriteUnhandledExceptionMessage(Exception e)
     {
       Console.WriteLine();
-      Console.WriteLine("An uncaught exception occured. Please fill a bug report at https://github.com/SteveGilham/altcode.fake/issues");
+      Console.WriteLine("An uncaught exception occured. Please fill a bug report at https://github.com/SteveGilham/Gendarme/issues");
       if (CurrentRule != null)
         Console.WriteLine("Rule:\t{0}", CurrentRule);
       if (CurrentTarget != null)

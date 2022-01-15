@@ -61,7 +61,7 @@ namespace Gendarme.Rules.Design {
 	/// </example>
 
 	[Problem ("This type is visible outside the assembly so it should be defined inside a namespace to avoid conflicts.")]
-	[Solution ("Move this type inside a namespace or reduce it's visibility (e.g. internal or private).")]
+	[Solution ("Move this type inside a namespace or reduce its visibility (e.g. internal or private).")]
 	[FxCopCompatibility ("Microsoft.Design", "CA1050:DeclareTypesInNamespaces")]
 	public class TypesShouldBeInsideNamespacesRule : Rule, ITypeRule {
 
