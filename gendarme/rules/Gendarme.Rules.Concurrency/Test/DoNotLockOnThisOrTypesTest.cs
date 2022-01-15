@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,177 +35,245 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Concurrency {
+namespace Test.Rules.Concurrency
+{
+  [TestFixture]
+  public class DoNotLockOnThisOrTypesTest : MethodRuleTestFixture<DoNotLockOnThisOrTypesRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL for p/invokes
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no calls[virt]
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class DoNotLockOnThisOrTypesTest : MethodRuleTestFixture<DoNotLockOnThisOrTypesRule> {
+    private static Dictionary<string, Type> cache = new Dictionary<string, Type>();
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL for p/invokes
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no calls[virt]
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    public bool LockThis(string s)
+    {
+      lock (this)
+      {
+        return cache.ContainsKey(s);
+      }
+    }
 
-		static Dictionary<string, Type> cache = new Dictionary<string, Type> ();
+    [Test]
+    public void This()
+    {
+      /* IL now looks like
 
-		public bool LockThis (string s)
-		{
-			lock (this) {
-				return cache.ContainsKey (s);
-			}
-		}
+  IL_0000: nop
+	// lock (this)
+	IL_0001: ldarg.0
+	IL_0002: stloc.0 <= fail to find this
+	// {
+	IL_0003: ldc.i4.0
+	IL_0004: stloc.1
+	.try
+	{
+		IL_0005: ldloc.0 <= identify this
+		IL_0006: ldloca.s 1
+		// (no C# code)
+		IL_0008: call void [mscorlib]System.Threading.Monitor::Enter(object, bool&)
 
-		[Test]
-		public void This ()
-		{
-			AssertRuleFailure<DoNotLockOnThisOrTypesTest> ("LockThis");
-		}
+       */
+      AssertRuleFailure<DoNotLockOnThisOrTypesTest>("LockThis");
+    }
 
-		public bool LockType (string s)
-		{
-			lock (typeof (DoNotLockOnThisOrTypesTest)) {
-				return cache.ContainsKey (s);
-			}
-		}
+    public bool LockType(string s)
+    {
+      lock (typeof(DoNotLockOnThisOrTypesTest))
+      {
+        return cache.ContainsKey(s);
+      }
+    }
 
-		public bool LockTypes (string s)
-		{
-			lock (typeof (DoNotLockOnThisOrTypesTest)) {
-				lock (s.GetType ()) {
-					return cache.ContainsKey (s);
-				}
-			}
-		}
+    public bool LockTypes(string s)
+    {
+      lock (typeof(DoNotLockOnThisOrTypesTest))
+      {
+        lock (s.GetType())
+        {
+          return cache.ContainsKey(s);
+        }
+      }
+    }
 
-		[Test]
-		public void Type ()
-		{
-			AssertRuleFailure<DoNotLockOnThisOrTypesTest> ("LockType", 1);
-			AssertRuleFailure<DoNotLockOnThisOrTypesTest> ("LockTypes", 2);
-		}
+    [Test]
+    public void Type()
+    {
+      AssertRuleFailure<DoNotLockOnThisOrTypesTest>("LockType", 1);
+    }
 
-		static public bool StaticLockType (string s)
-		{
-			lock (typeof (DoNotLockOnThisOrTypesTest)) {
-				return cache.ContainsKey (s);
-			}
-		}
+    [Test]
+    public void Types()
+    {
+      AssertRuleFailure<DoNotLockOnThisOrTypesTest>("LockTypes", 2);
+    }
 
-		static public bool StaticLockTypes (string s)
-		{
-			lock (typeof (DoNotLockOnThisOrTypesTest)) {
-				lock (s.GetType ()) {
-					return cache.ContainsKey (s);
-				}
-			}
-		}
+    public static bool StaticLockType(string s)
+    {
+      lock (typeof(DoNotLockOnThisOrTypesTest))
+      {
+        return cache.ContainsKey(s);
+      }
+    }
 
-		static bool TryEnter (object obj)
-		{
-			lock (obj) {
-				Console.WriteLine ();
-			}
-			return true;
-		}
+    public static bool StaticLockTypes(string s)
+    {
+      lock (typeof(DoNotLockOnThisOrTypesTest))
+      {
+        lock (s.GetType())
+        {
+          return cache.ContainsKey(s);
+        }
+      }
+    }
 
-		[Test]
-		public void StaticType ()
-		{
-			AssertRuleFailure<DoNotLockOnThisOrTypesTest> ("StaticLockType", 1);
-			AssertRuleFailure<DoNotLockOnThisOrTypesTest> ("StaticLockTypes", 2);
-			AssertRuleSuccess<DoNotLockOnThisOrTypesTest> ("TryEnter");
-		}
+    private static bool TryEnter(object obj)
+    {
+      lock (obj)
+      {
+        Console.WriteLine();
+      }
+      return true;
+    }
 
-		object instance_locker = new object ();
-		static object static_locker = new object ();
+    [Test]
+    public void StaticType()
+    {
+      /*
+  IL_0000: nop
+	// lock (typeof(DoNotLockOnThisOrTypesTest))
+	IL_0001: ldtoken Test.Rules.Concurrency.DoNotLockOnThisOrTypesTest
+	IL_0006: call class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
+	IL_000b: stloc.0
+	// {
+	IL_000c: ldc.i4.0
+	IL_000d: stloc.1
+	.try
+	{
+		IL_000e: ldloc.0
+		IL_000f: ldloca.s 1
+		// (no C# code)
+		IL_0011: call void [mscorlib]System.Threading.Monitor::Enter(object, bool&)
+       */
 
-		public bool LockInstanceObject (string s)
-		{
-			lock (instance_locker) {
-				return cache.ContainsKey (s);
-			}
-		}
+      AssertRuleFailure<DoNotLockOnThisOrTypesTest>("StaticLockType", 1);
+    }
 
-		public bool LockStaticObject (string s)
-		{
-			lock (static_locker) {
-				return cache.ContainsKey (s);
-			}
-		}
+    [Test]
+    public void StaticTypes()
+    {
+      AssertRuleFailure<DoNotLockOnThisOrTypesTest>("StaticLockTypes", 2);
+    }
 
-		public bool NoLock (string s)
-		{
-			return cache.ContainsKey (s);
-		}
+    [Test]
+    public void TryEnterTest()
+    {
+      AssertRuleSuccess<DoNotLockOnThisOrTypesTest>("TryEnter");
+    }
 
-		[Test]
-		public void Instance ()
-		{
-			AssertRuleSuccess<DoNotLockOnThisOrTypesTest> ("LockInstanceObject");
-			AssertRuleSuccess<DoNotLockOnThisOrTypesTest> ("LockStaticObject");
-			AssertRuleSuccess<DoNotLockOnThisOrTypesTest> ("NoLock");
-		}
+    private object instance_locker = new object();
+    private static object static_locker = new object();
 
-		static public bool StaticLockStaticObject (string s)
-		{
-			lock (static_locker) {
-				return cache.ContainsKey (s);
-			}
-		}
+    public bool LockInstanceObject(string s)
+    {
+      lock (instance_locker)
+      {
+        return cache.ContainsKey(s);
+      }
+    }
 
-		static public bool StaticNoLock (string s)
-		{
-			return cache.ContainsKey (s);
-		}
+    public bool LockStaticObject(string s)
+    {
+      lock (static_locker)
+      {
+        return cache.ContainsKey(s);
+      }
+    }
 
-		[Test]
-		public void Static ()
-		{
-			AssertRuleSuccess<DoNotLockOnThisOrTypesTest> ("StaticLockStaticObject");
-			AssertRuleSuccess<DoNotLockOnThisOrTypesTest> ("StaticNoLock");
-		}
+    public bool NoLock(string s)
+    {
+      return cache.ContainsKey(s);
+    }
 
-		abstract class Base {
-			protected object locker = new object ();
+    [Test]
+    public void Instance()
+    {
+      AssertRuleSuccess<DoNotLockOnThisOrTypesTest>("LockInstanceObject");
+      AssertRuleSuccess<DoNotLockOnThisOrTypesTest>("LockStaticObject");
+      AssertRuleSuccess<DoNotLockOnThisOrTypesTest>("NoLock");
+    }
 
-			public object Locker {
-				get { return locker; }
-			}
-		}
+    public static bool StaticLockStaticObject(string s)
+    {
+      lock (static_locker)
+      {
+        return cache.ContainsKey(s);
+      }
+    }
 
-		class Concrete : Base {
+    public static bool StaticNoLock(string s)
+    {
+      return cache.ContainsKey(s);
+    }
 
-			void LockField (string s)
-			{
-				try {
-					lock (base.locker) {
-						Console.WriteLine (s);
-					}
-				}
-				catch {
-				}
-			}
+    [Test]
+    public void Static()
+    {
+      AssertRuleSuccess<DoNotLockOnThisOrTypesTest>("StaticLockStaticObject");
+      AssertRuleSuccess<DoNotLockOnThisOrTypesTest>("StaticNoLock");
+    }
 
-			void LockProperty (string s)
-			{
-				try {
-					lock (base.Locker) {
-						Console.WriteLine (s);
-					}
-				}
-				catch {
-				}
-			}
-		}
+    private abstract class Base
+    {
+      protected object locker = new object();
 
-		[Test]
-		public void CallingBase ()
-		{
-			AssertRuleSuccess<Concrete> ("LockField");
-			AssertRuleSuccess<Concrete> ("LockProperty");
-		}
-	}
+      public object Locker
+      {
+        get { return locker; }
+      }
+    }
+
+    private class Concrete : Base
+    {
+      private void LockField(string s)
+      {
+        try
+        {
+          lock (base.locker)
+          {
+            Console.WriteLine(s);
+          }
+        }
+        catch
+        {
+        }
+      }
+
+      private void LockProperty(string s)
+      {
+        try
+        {
+          lock (base.Locker)
+          {
+            Console.WriteLine(s);
+          }
+        }
+        catch
+        {
+        }
+      }
+    }
+
+    [Test]
+    public void CallingBase()
+    {
+      AssertRuleSuccess<Concrete>("LockField");
+      AssertRuleSuccess<Concrete>("LockProperty");
+    }
+  }
 }

@@ -58,8 +58,7 @@ The following rule suites have unit test failures
   * TestMultipleCatch()
   * TestTryCatchFinally()
 * Concurrency -- 6 failures
-  * Do not lock on Static Type/This/Type (false negatives)
-  * `ProtectCallToEventDelegatesRule` (3 * false positives)
+  * `ProtectCallToEventDelegatesRule` (false positives)
 * Correctness -- 5 failures (false negatives)
   * `ProvideCorrectArgumentsToFormattingMethods` * 3 -- changed IL : `call Array.Empty` used instead of an explict load
   * `TestNativeFieldsArray` -- changed IL

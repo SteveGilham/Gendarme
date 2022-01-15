@@ -17,11 +17,11 @@ Global Suppression Attribute:
                             Justification = "")>]
 
 ```
-
-* reenable several rules omitted in previous builds
-  * bad practice rules AvoidNullCheckWithAsOperatorRule and DoNotDecreaseVisibilityRule
-  * design rule DoNotDeclareSettersOnCollectionPropertiesRule (excluding the `PermissionSet` exemption)
-  * exception rule DoNotThrowInNonCatchClausesRule
-  * globalization rules PreferIFormatProviderOverrideRule and PreferStringComparisonOverrideRule
+* Fixes `DoNotLockOnThisOrTypesRule` for current C# compiler IL generation
+* Reenable several rules omitted in previous builds
+  * bad practice rules `AvoidNullCheckWithAsOperatorRule` and `DoNotDecreaseVisibilityRule`
+  * design rule `DoNotDeclareSettersOnCollectionPropertiesRule` (excluding the `PermissionSet` exemption)
+  * exception rule `DoNotThrowInNonCatchClausesRule`
+  * globalization rules `PreferIFormatProviderOverrideRule` and `PreferStringComparisonOverrideRule`
 
 For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md

@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,42 +36,42 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Concurrency {
+namespace Test.Rules.Concurrency
+{
+  [TestFixture]
+  public class DoNotUseMethodImplOptionsSynchronizedTest : MethodRuleTestFixture<DoNotUseMethodImplOptionsSynchronizedRule>
+  {
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void Synchronized()
+    {
+    }
 
-	[TestFixture]
-	public class DoNotUseMethodImplOptionsSynchronizedTest : MethodRuleTestFixture<DoNotUseMethodImplOptionsSynchronizedRule> {
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<DoNotUseMethodImplOptionsSynchronizedTest>("Synchronized");
+    }
 
-		[MethodImpl (MethodImplOptions.Synchronized)]
-		public void Synchronized ()
-		{
-		}
+    [MethodImpl(MethodImplOptions.InternalCall)]
+    public extern void NotSynchronized();
 
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<DoNotUseMethodImplOptionsSynchronizedTest> ("Synchronized");
-		}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<DoNotUseMethodImplOptionsSynchronizedTest>("NotSynchronized");
+    }
 
-		[MethodImpl (MethodImplOptions.InternalCall)]
-		public extern void NotSynchronized ();
+    //public event EventHandler<EventArgs> CompilerGeneratedSynchronized;
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<DoNotUseMethodImplOptionsSynchronizedTest> ("NotSynchronized");
-		}
+    //[Test]
+    //public void DoesNotApply ()
+    //{
+    //	MethodDefinition md = DefinitionLoader.GetMethodDefinition<DoNotUseMethodImplOptionsSynchronizedTest> ("add_CompilerGeneratedSynchronized");
+    //	if (!md.IsSynchronized)
+    //		Assert.Ignore ("newer versions of CSC (e.g. 10.0) does not set the Synchronized");
 
-		public event EventHandler<EventArgs> CompilerGeneratedSynchronized;
-
-		[Test]
-		public void DoesNotApply ()
-		{
-			MethodDefinition md = DefinitionLoader.GetMethodDefinition<DoNotUseMethodImplOptionsSynchronizedTest> ("add_CompilerGeneratedSynchronized");
-			if (!md.IsSynchronized)
-				Assert.Ignore ("newer versions of CSC (e.g. 10.0) does not set the Synchronized");
-
-			AssertRuleDoesNotApply (md);
-			AssertRuleDoesNotApply<DoNotUseMethodImplOptionsSynchronizedTest> ("remove_CompilerGeneratedSynchronized");
-		}
-	}
+    //	AssertRuleDoesNotApply (md);
+    //	AssertRuleDoesNotApply<DoNotUseMethodImplOptionsSynchronizedTest> ("remove_CompilerGeneratedSynchronized");
+    //}
+  }
 }
