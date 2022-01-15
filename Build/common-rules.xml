@@ -3,7 +3,7 @@
     <!-- AvoidAssemblyVersionMismatchRule is silly as assembly version is a contract,
          and many file versions can satisfy it -->
     <rules include="*"
-           exclude="AvoidAssemblyVersionMismatchRule"
+           exclude="DisableDebuggingCodeRule | AvoidAssemblyVersionMismatchRule"
            from="Gendarme.Rules.BadPractice.dll" />
     <rules include="*"
            from="Gendarme.Rules.Concurrency.dll" />
@@ -31,8 +31,10 @@
     <rules include="*"
            from="Gendarme.Rules.Interoperability.Com.dll" />
     <rules include="*"
+           exclude="UseCorrectCasingRule"
            from="Gendarme.Rules.Naming.dll" />
     <rules include="*"
+           exclude="AvoidUnusedParametersRule | AvoidUncalledPrivateCodeRule"
            from="Gendarme.Rules.Performance.dll" />
     <!-- AltCover is operationally tested on Mono;
          System.Xml.Schema.Extensions::Validate seems to be there now -->
@@ -49,7 +51,7 @@
            from="Gendarme.Rules.Serialization.dll" />
     <!-- Use the relaxed variant -->
     <rules include="*"
-           exclude="AvoidCodeDuplicatedInSameClassRule"
+           exclude="AvoidSpeculativeGeneralityRule | AvoidCodeDuplicatedInSameClassRule"
            from="Gendarme.Rules.Smells.dll" />
     <rules include="*"
            from="Gendarme.Rules.Ui.dll" />
@@ -58,6 +60,7 @@
     <rules include="*"
            from="Gendarme.Rules.Gendarme.dll" />
     <rules include="*"
+           exclude="PreferStringComparisonOverrideRule"
            from="Gendarme.Rules.Globalization.dll" />
   </ruleset>
 </gendarme>
