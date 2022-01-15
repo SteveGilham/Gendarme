@@ -810,6 +810,7 @@ _Target
             let targets =
                 !!("./_Binaries/*endarm*/Debug/*/*endarm*.dll")
                 |> Seq.map Path.GetFullPath
+                |> Seq.filter (fun f -> (Path.GetFileName f).StartsWith("Test") |> not)
                 |> Seq.toList
 
             Gendarme.run
@@ -817,7 +818,7 @@ _Target
                       WorkingDirectory = working
                       Severity = Gendarme.Severity.All
                       Confidence = Gendarme.Confidence.All
-                      Configuration = (Path.GetFullPath "./gendarme/Build/csharp-rules.xml")
+                      Configuration = (Path.GetFullPath "./Build/csharp-rules.xml")
                       Console = true
                       Log = Path.GetFullPath "./_Reports/gendarme-tool-selftest.html"
                       LogKind = Gendarme.LogKind.Html
@@ -831,7 +832,7 @@ _Target
                       WorkingDirectory = working
                       Severity = Gendarme.Severity.All
                       Confidence = Gendarme.Confidence.All
-                      Configuration = (Path.GetFullPath "./gendarme/Build/common-rules.xml")
+                      Configuration = (Path.GetFullPath "./Build/common-rules.xml")
                       Console = true
                       Log = Path.GetFullPath "./_Reports/gendarme-tool-fsselftest.html"
                       LogKind = Gendarme.LogKind.Html
