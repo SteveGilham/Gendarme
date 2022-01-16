@@ -98,7 +98,11 @@ let (fxcop, dixon) =
             |> Path.getFullName
 
         if File.Exists expect then
-            (Some expect, Some ("./packages/fxcop/DixonCmd.exe" |> Path.getFullName))
+            (Some expect,
+             Some(
+                 "./packages/fxcop/DixonCmd.exe"
+                 |> Path.getFullName
+             ))
         else
             (None, None)
     else
@@ -434,41 +438,40 @@ _Target
                           standardRules
                           nonFsharpRules ]
 
-        let workInProgressRules = [
-                                     "-Microsoft.Design#CA1004" //:GenericMethodsShouldProvideTypeParameter"
-                                     "-Microsoft.Design#CA1011" //:ConsiderPassingBaseTypesAsParameters"
-                                     "-Microsoft.Design#CA1012"// :AbstractTypesShouldNotHaveConstructors"
-                                     "-Microsoft.Design#CA1019"// :DefineAccessorsForAttributeArguments"
-                                     "-Microsoft.Design#CA1021" //:AvoidOutParameters"
-                                     "-Microsoft.Design#CA1027"// :MarkEnumsWithFlags"
-                                     "-Microsoft.Design#CA1031"// :DoNotCatchGeneralExceptionTypes"
-                                     "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
-                                     "-Microsoft.Design#CA1062" //:Validate arguments of public methods"
-                                     "-Microsoft.Globalization#CA1303" //:Do not pass literals as localized parameters"
-                                     "-Microsoft.Globalization#CA1305" //:SpecifyIFormatProvider"
-                                     "-Microsoft.Globalization#CA1307" //:SpecifyStringComparison"
-                                     "-Microsoft.Globalization#CA1308" //:NormalizeStringsToUppercase"
-                                     "-Microsoft.Globalization#CA1309" //:UseOrdinalStringComparison"
-                                     "-Microsoft.Maintainability#CA1500" //:VariableNamesShouldNotMatchFieldNames"
-                                     "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity"
-                                     "-Microsoft.Maintainability#CA1506" //:AvoidExcessiveClassCoupling"
-                                     "-Microsoft.Naming#CA1704"// :IdentifiersShouldBeSpelledCorrectly"
-                                     "-Microsoft.Naming#CA1702"// :CompoundWordsShouldBeCasedCorrectly"
-                                     "-Microsoft.Naming#CA1707"// :IdentifiersShouldNotContainUnderscores"
-                                     "-Microsoft.Naming#CA1709" //:IdentifiersShouldBeCasedCorrectly"
-                                     "-Microsoft.Naming#CA1726" //:UsePreferredTerms"
-                                     "-Microsoft.Performance#CA1800" //:DoNotCastUnnecessarily"
-                                     "-Microsoft.Usage#CA1806" //:DoNotIgnoreMethodResults"
-                                     "-Microsoft.Performance#CA1810" //:InitializeReferenceTypeStaticFieldsInline"
-                                     "-Microsoft.Performance#CA1811" //:AvoidUncalledPrivateCode"
-                                     "-Microsoft.Performance#CA1815" //:OverrideEqualsAndOperatorEqualsOnValueTypes"
-                                     "-Microsoft.Performance#CA1802" //:UseLiteralsWhereAppropriate"
-                                     "-Microsoft.Performance#CA1823" //:AvoidUnusedPrivateFields",
-                                     "-Microsoft.Performance#CA1824" //:MarkAssembliesWithNeutralResourcesLanguage",
-                                     "-Microsoft.Security#CA2104"// :DoNotDeclareReadOnlyMutableReferenceTypes"
-                                     "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
-                                     "-Microsoft.Usage#CA2208"// :InstantiateArgumentExceptionsCorrectly"
-                                  ]
+        let workInProgressRules =
+            [ "-Microsoft.Design#CA1004" //:GenericMethodsShouldProvideTypeParameter"
+              "-Microsoft.Design#CA1011" //:ConsiderPassingBaseTypesAsParameters"
+              "-Microsoft.Design#CA1012" // :AbstractTypesShouldNotHaveConstructors"
+              "-Microsoft.Design#CA1019" // :DefineAccessorsForAttributeArguments"
+              "-Microsoft.Design#CA1021" //:AvoidOutParameters"
+              "-Microsoft.Design#CA1027" // :MarkEnumsWithFlags"
+              "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
+              "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
+              "-Microsoft.Design#CA1062" //:Validate arguments of public methods"
+              "-Microsoft.Globalization#CA1303" //:Do not pass literals as localized parameters"
+              "-Microsoft.Globalization#CA1305" //:SpecifyIFormatProvider"
+              "-Microsoft.Globalization#CA1307" //:SpecifyStringComparison"
+              "-Microsoft.Globalization#CA1308" //:NormalizeStringsToUppercase"
+              "-Microsoft.Globalization#CA1309" //:UseOrdinalStringComparison"
+              "-Microsoft.Maintainability#CA1500" //:VariableNamesShouldNotMatchFieldNames"
+              "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity"
+              "-Microsoft.Maintainability#CA1506" //:AvoidExcessiveClassCoupling"
+              "-Microsoft.Naming#CA1704" // :IdentifiersShouldBeSpelledCorrectly"
+              "-Microsoft.Naming#CA1702" // :CompoundWordsShouldBeCasedCorrectly"
+              "-Microsoft.Naming#CA1707" // :IdentifiersShouldNotContainUnderscores"
+              "-Microsoft.Naming#CA1709" //:IdentifiersShouldBeCasedCorrectly"
+              "-Microsoft.Naming#CA1726" //:UsePreferredTerms"
+              "-Microsoft.Performance#CA1800" //:DoNotCastUnnecessarily"
+              "-Microsoft.Usage#CA1806" //:DoNotIgnoreMethodResults"
+              "-Microsoft.Performance#CA1810" //:InitializeReferenceTypeStaticFieldsInline"
+              "-Microsoft.Performance#CA1811" //:AvoidUncalledPrivateCode"
+              "-Microsoft.Performance#CA1815" //:OverrideEqualsAndOperatorEqualsOnValueTypes"
+              "-Microsoft.Performance#CA1802" //:UseLiteralsWhereAppropriate"
+              "-Microsoft.Performance#CA1823" //:AvoidUnusedPrivateFields",
+              "-Microsoft.Performance#CA1824" //:MarkAssembliesWithNeutralResourcesLanguage",
+              "-Microsoft.Security#CA2104" // :DoNotDeclareReadOnlyMutableReferenceTypes"
+              "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
+              "-Microsoft.Usage#CA2208" ] // :InstantiateArgumentExceptionsCorrectly"
 
         let defaultCSharpRules =
             List.concat [ deprecatedRules
@@ -479,16 +482,17 @@ _Target
             List.concat [ defaultCSharpRules
                           workInProgressRules ]
 
-        let refdir = @"C:\Program Files\dotnet\sdk\6.0.101\ref" // TODO generate
+        let refdir =
+            @"C:\Program Files\dotnet\sdk\6.0.101\ref" // TODO generate
 
         try
             [ Path.GetFullPath "./_Binaries/gendarme/Debug/net472/gendarme.exe" ]
             |> FxCop.run
                 { FxCop.Params.Create() with
                       WorkingDirectory = "."
-                      DependencyDirectories = [
-                                                nugetCache @@ "mono.cecil/0.11.4/lib/netstandard2.0"
-                                              ]
+                      DependencyDirectories =
+                          [ nugetCache
+                            @@ "mono.cecil/0.11.4/lib/netstandard2.0" ]
                       ToolPath = Option.get fxcop
                       UseGAC = true
                       Verbose = false
@@ -507,10 +511,11 @@ _Target
             |> FxCop.run
                 { FxCop.Params.Create() with
                       WorkingDirectory = "."
-                      DependencyDirectories = [
-                                                nugetCache @@ "mono.cecil/0.11.4/lib/netstandard2.0"
-                                                nugetCache @@ "fsharp.core/6.0.1/lib/netstandard2.0"
-                                              ]
+                      DependencyDirectories =
+                          [ nugetCache
+                            @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                            nugetCache
+                            @@ "fsharp.core/6.0.1/lib/netstandard2.0" ]
                       ToolPath = Option.get dixon
                       PlatformDirectory = refdir
                       UseGAC = true
@@ -531,15 +536,17 @@ _Target
             |> Seq.map Path.GetFullPath
             |> Seq.distinctBy Path.GetFileName
             |> Seq.toList
+
         try
             targets
             |> FxCop.run
                 { FxCop.Params.Create() with
                       WorkingDirectory = "."
-                      DependencyDirectories = [
-                                                nugetCache @@ "mono.cecil/0.11.4/lib/netstandard2.0"
-                                                nugetCache @@ "system.resources.extensions/6.0.0/lib/netstandard2.0"
-                                              ]
+                      DependencyDirectories =
+                          [ nugetCache
+                            @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                            nugetCache
+                            @@ "system.resources.extensions/6.0.0/lib/netstandard2.0" ]
                       ToolPath = Option.get dixon
                       PlatformDirectory = refdir
                       UseGAC = true
@@ -1150,6 +1157,7 @@ Target.activateFinal "ResetConsoleColours"
 "Preparation" ==> "BuildDebug" ==> "Compilation"
 
 "BuildDebug" ==> "Lint" ==> "All"
+
 "BuildDebug" ==> "FxCop"
 =?> ("All", Environment.isWindows && fxcop |> Option.isSome) // not supported
 
