@@ -215,12 +215,12 @@ namespace Gendarme
 
         IRule rule = GetRule(ruleName);
         if (rule == null)
-          throw GetException("The rule with name {0} doesn't exist", ruleName, String.Empty, String.Empty);
+          RaiseException(Strings.RuleDoesntExist, ruleName, String.Empty, String.Empty);
         PropertyInfo property = rule.GetType().GetProperty(propertyName);
         if (property == null)
-          throw GetException("The property {1} can't be found in the rule {0}", ruleName, propertyName, String.Empty);
+          RaiseException(Strings.PropertyNotInRule, ruleName, propertyName, String.Empty);
         if (!property.CanWrite)
-          throw GetException("The property {1} can't be written in the rule {0}", ruleName, propertyName, String.Empty);
+          RaiseException(Strings.PropertyUnwriteableInRule, ruleName, propertyName, String.Empty);
 
         string value = GetAttribute(parameter, "value", String.Empty);
         if (String.IsNullOrEmpty(value))
@@ -247,16 +247,19 @@ namespace Gendarme
         }
 
         if (values[0] == null)
-          throw GetException("The value '{2}' could not be converted into the property {1} type for rule {0}", ruleName, propertyName, value);
+          RaiseException(Strings.ValueCannotBeConverted, ruleName, propertyName, value);
 
         property.GetSetMethod().Invoke(rule, values);
       }
     }
 
-    private static Exception GetException(string message, string ruleName, string propertyName, string value)
+    private static void RaiseException(string message, string ruleName, string propertyName, string value)
     {
-      return new XmlException(String.Format(CultureInfo.CurrentCulture,
-        message + ".  Review your configuration file.", ruleName, propertyName, value));
+      var composed = message
+        + Strings.ReviewConfigurationFile;
+
+      throw new XmlException(String.Format(CultureInfo.CurrentCulture,
+        composed, ruleName, propertyName, value));
     }
 
     public bool Load()

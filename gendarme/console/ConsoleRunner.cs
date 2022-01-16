@@ -34,8 +34,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Xml;
+using System.Resources;
 
 using Mono.Cecil;
 
@@ -44,74 +43,28 @@ using Gendarme.Framework.Engines;
 
 using NDesk.Options;
 
-[assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "gendarme", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Execute(System.String[])", MessageId = "System.Console.WriteLine(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "Gendarme.ConsoleRunner.#Execute(System.String[])", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Header()", MessageId = "System.Console.WriteLine(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Header()", MessageId = "System.Console.WriteLine(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Help()", MessageId = "System.Console.WriteLine(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "Gendarme.ConsoleRunner.#Help()", MessageId = "configfile", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "Gendarme.ConsoleRunner.#Help()", MessageId = "ruleset", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "Gendarme.ConsoleRunner.#Help()", MessageId = "stdout", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Initialize()", MessageId = "System.Console.Write(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Initialize()", MessageId = "System.Console.WriteLine(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#OnAssembly(Gendarme.Framework.RunnerEventArgs)", MessageId = "System.Console.WriteLine(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "Gendarme.ConsoleRunner.#OnAssembly(Gendarme.Framework.RunnerEventArgs)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Parse(System.String[])", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "Gendarme.ConsoleRunner.#ParseConfidence(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "Gendarme.ConsoleRunner.#ParseSeverity(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#Run()", MessageId = "System.Console.WriteLine(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "Gendarme.ConsoleRunner.#Run()", MessageId = "analyzed", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#TearDown()", MessageId = "System.Console.WriteLine(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#TearDown()", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#WriteUnhandledExceptionMessage(System.Exception)", MessageId = "System.Console.WriteLine(System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#WriteUnhandledExceptionMessage(System.Exception)", MessageId = "System.Console.WriteLine(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.ConsoleRunner.#WriteUnhandledExceptionMessage(System.Exception)", MessageId = "System.Console.WriteLine(System.String,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "Gendarme.ConsoleRunner.#WriteUnhandledExceptionMessage(System.Exception)", MessageId = "SteveGilham", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "Gendarme.ConsoleRunner.#WriteUnhandledExceptionMessage(System.Exception)", MessageId = "github", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "Gendarme.ConsoleRunner.#WriteUnhandledExceptionMessage(System.Exception)", MessageId = "occured", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", Scope = "member", Target = "Gendarme.Settings.#SetCustomParameters(System.Xml.XmlNode)", MessageId = "Gendarme.Settings.GetException(System.String,System.String,System.String,System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Dixon.Design", "Dx0002:ReraiseCorrectlyRule", Scope = "member", Target = "Gendarme.Settings.#SetCustomParameters(System.Xml.XmlNode)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Scope = "member", Target = "Gendarme.TextResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Scope = "member", Target = "Gendarme.XmlResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", Scope = "type", Target = "NDesk.Options.Option", MessageId = "Option", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#.ctor(System.String,System.String,System.Int32)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Scope = "member", Target = "NDesk.Options.Option.#AddSeparators(System.String,System.Int32,System.Collections.Generic.ICollection`1<System.String>)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#AddSeparators(System.String,System.Int32,System.Collections.Generic.ICollection`1<System.String>)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#Invoke(NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.Option.#Invoke(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#Parse`1(System.String,NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#Parse`1(System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.Option.#Parse`1(System.String,NDesk.Options.OptionContext)", MessageId = "1", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Scope = "member", Target = "NDesk.Options.Option.#ParsePrototype()", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#ParsePrototype()", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#ParsePrototype()", MessageId = "System.String.Format(System.String,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Scope = "type", Target = "NDesk.Options.OptionException", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Scope = "type", Target = "NDesk.Options.OptionSet", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#GetArgumentName(System.Int32,System.Int32,System.String)", MessageId = "System.Int32.ToString", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1307:SpecifyStringComparison", Scope = "member", Target = "NDesk.Options.OptionSet.#GetArgumentName(System.Int32,System.Int32,System.String)", MessageId = "System.String.IndexOf(System.String,System.Int32)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Scope = "member", Target = "NDesk.Options.OptionSet.#GetKeyForItem(NDesk.Options.Option)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "1#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "2#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "3#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "4#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "flag", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.Collections.Generic.IEnumerable`1<System.String>)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.Collections.Generic.IEnumerable`1<System.String>)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.String,NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.String,NDesk.Options.OptionContext)", MessageId = "1", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseBundledValue(System.String,System.String,NDesk.Options.OptionContext)", MessageId = "OptionValueType", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseBundledValue(System.String,System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseValue(System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.OptionSet.#WriteOptionDescriptions(System.IO.TextWriter)", MessageId = "o", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet.#WriteOptionDescriptions(System.IO.TextWriter)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet+ActionOption.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet+ActionOption`1.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet+ActionOption`2.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#AssertValid(System.Int32)", MessageId = "OptionContext", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#AssertValid(System.Int32)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#ToList()", Justification = "work in progress")]
+[assembly: NeutralResourcesLanguageAttribute("en-GB")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly",
+  MessageId = "gendarme",
+  Justification = "design decision")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1701:ResourceStringCompoundWordsShouldBeCasedCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "TearDown",
+  Justification = "Like, that's your opinion, man")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "Gilham",
+  Justification = "That's my name")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "github",
+  Justification = "It's a name")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "configfile",
+  Justification = "product jargon")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "ruleset",
+  Justification = "product jargon")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "stdout",
+  Justification = "industry jargon")]
 
 namespace Gendarme
 {
@@ -137,6 +90,8 @@ namespace Gendarme
 
     // parse severity filter
     // e.g. Audit,High+ == Audit, High and Critical
+    [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
+      Justification = "Roslyn switch on string generates complexity")]
     private bool ParseSeverity(string filter)
     {
       SeverityBitmask.ClearAll();
@@ -202,6 +157,8 @@ namespace Gendarme
       return true;
     }
 
+    [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
+      Justification = "Roslyn switch on string generates complexity")]
     private bool ParseConfidence(string filter)
     {
       ConfidenceBitmask.ClearAll();
@@ -348,7 +305,7 @@ namespace Gendarme
       }
       catch (OptionException e)
       {
-        Console.WriteLine("Error parsing option '{0}' : {1}", e.OptionName, e.Message);
+        Console.WriteLine(Strings.ErrorParsingOption, e.OptionName, e.Message);
         Console.WriteLine();
         return 1;
       }
@@ -487,6 +444,8 @@ namespace Gendarme
       return (byte)((0 == Defects.Count) ? 0 : 1);
     }
 
+    [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+      Justification = "Top of call tree")]
     private byte Execute(string[] args)
     {
       try
@@ -514,7 +473,7 @@ namespace Gendarme
             validationErrorsCounter++;
           }
           if (validationErrorsCounter == 0)
-            Console.WriteLine("Configuration parameters does not match any known rule.");
+            Console.WriteLine(Strings.UnmatchedConfigurationParameters);
           return 3;
         }
 
@@ -542,13 +501,11 @@ namespace Gendarme
         {
           if (e is AssemblyResolutionException)
           {
-            Console.WriteLine("If, and only if, this message refers to an assembly mentioned");
-            Console.WriteLine("in a 'Resolved assembly reference' message above, then it is a bug.");
-            Console.WriteLine("If so, please report the entire stack trace.");
+            Console.WriteLine(Strings.MaybeBugReport);
             WriteUnhandledExceptionMessage(e);
           }
           else
-            Console.Error.WriteLine("ERROR: {0}", e.Message);
+            Console.Error.WriteLine(Strings.ERROR, e.Message);
           return 2;
         }
         else
@@ -567,12 +524,12 @@ namespace Gendarme
     private void WriteUnhandledExceptionMessage(Exception e)
     {
       Console.WriteLine();
-      Console.WriteLine("An uncaught exception occured. Please fill a bug report at https://github.com/SteveGilham/Gendarme/issues");
+      Console.WriteLine(Strings.UncaughtException);
       if (CurrentRule != null)
-        Console.WriteLine("Rule:\t{0}", CurrentRule);
+        Console.WriteLine(Strings.Rule, CurrentRule);
       if (CurrentTarget != null)
-        Console.WriteLine("Target:\t{0} ({1})", CurrentTarget, CurrentAssembly);
-      Console.WriteLine("Stack trace: {0}", e);
+        Console.WriteLine(Strings.Target, CurrentTarget, CurrentAssembly);
+      Console.WriteLine(Strings.StackTrace, e);
     }
 
     private Stopwatch total = new Stopwatch();
@@ -590,7 +547,7 @@ namespace Gendarme
     {
       if (!quiet)
       {
-        Console.Write("Initialization");
+        Console.Write(Strings.Initialization);
         total.Start();
         local.Start();
       }
@@ -600,7 +557,7 @@ namespace Gendarme
       if (!quiet)
       {
         local.Stop();
-        Console.WriteLine(": {0}", TimeToString(local.Elapsed));
+        Console.WriteLine(Strings.ColonValue, TimeToString(local.Elapsed));
         local.Reset();
       }
     }
@@ -609,7 +566,7 @@ namespace Gendarme
     {
       if (Assemblies.Count == 0)
       {
-        Console.WriteLine("No assemblies were specified to be analyzed.");
+        Console.WriteLine(Strings.NoAssembliesSpecified);
         return;
       }
 
@@ -623,7 +580,7 @@ namespace Gendarme
     {
       if (!quiet)
       {
-        Console.WriteLine(": {0}", TimeToString(local.Elapsed));
+        Console.WriteLine(Strings.ColonValue, TimeToString(local.Elapsed));
         local.Start();
         local.Reset();
       }
@@ -634,13 +591,13 @@ namespace Gendarme
       {
         local.Stop();
         total.Stop();
-        Console.WriteLine("TearDown: {0}", TimeToString(local.Elapsed));
+        Console.WriteLine(Strings.TearDown, TimeToString(local.Elapsed));
         Console.WriteLine();
         if (Assemblies.Count == 1)
-          Console.WriteLine("One assembly processed in {0}.",
+          Console.WriteLine(Strings.OneAssemblyProcessed,
             TimeToString(total.Elapsed));
         else
-          Console.WriteLine("{0} assemblies processed in {1}.",
+          Console.WriteLine(Strings.AssembliesProcessed,
             Assemblies.Count, TimeToString(total.Elapsed));
 
         string hint = string.Empty;
@@ -655,14 +612,16 @@ namespace Gendarme
         }
 
         if (Defects.Count == 0)
-          Console.WriteLine("No defect found. {0}", hint);
+          Console.WriteLine(Strings.NoDefectsFound, hint);
         else if (Defects.Count == 1)
-          Console.WriteLine("One defect found. {0}", hint);
+          Console.WriteLine(Strings.OneDefectFound, hint);
         else
-          Console.WriteLine("{0} defects found. {1}", Defects.Count, hint);
+          Console.WriteLine(Strings.DefectsFound, Defects.Count, hint);
       }
     }
 
+    [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
+      Justification = "work in progress")]
     protected override void OnAssembly(RunnerEventArgs e)
     {
       if (!quiet)
@@ -670,7 +629,7 @@ namespace Gendarme
         if (local.IsRunning)
         {
           local.Stop();
-          Console.WriteLine(": {0}", TimeToString(local.Elapsed));
+          Console.WriteLine(Strings.ColonValue, TimeToString(local.Elapsed));
           local.Reset();
         }
 
@@ -691,11 +650,11 @@ namespace Gendarme
       Version v = a.GetName().Version;
       if (v.ToString() != "0.0.0.0")
       {
-        Console.WriteLine("Gendarme v{0}", v);
+        Console.WriteLine(Strings.GendarmeVersion, v);
       }
       else
       {
-        Console.WriteLine("Gendarme - Development Snapshot");
+        Console.WriteLine(Strings.GendarmeSnapshot);
       }
 
       object[] attr = a.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
@@ -717,28 +676,13 @@ namespace Gendarme
       }
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "Console.WriteLine")]
+    [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly",
+      Justification = "application jargon")]
     private static void Help()
     {
-      Console.WriteLine("Usage: gendarme [--config file] [--set ruleset] [--{log|xml|html} file] assemblies");
-      Console.WriteLine("Where");
-      Console.WriteLine("  --config file\t\tSpecify the rule sets and rule settings. Default is 'rules.xml'.");
-      Console.WriteLine("  --set ruleset\t\tSpecify a rule set from configfile. Default is 'default'.");
-      Console.WriteLine("  --log file\t\tSave the report to the specified file.");
-      Console.WriteLine("  --xml file\t\tSave the report, as XML, to the specified file.");
-      Console.WriteLine("  --html file\t\tSave the report, as HTML, to the specified file.");
-      Console.WriteLine("  --ignore file\t\tDo not report defects listed in the specified file.");
-      Console.WriteLine("  --limit N\t\tStop reporting after N defects are found.");
-      Console.WriteLine("  --severity [all | [[audit | low | medium | high | critical][+|-]]],...");
-      Console.WriteLine("\t\t\tFilter defects for the specified severity levels.");
-      Console.WriteLine("\t\t\tDefault is 'medium+'");
-      Console.WriteLine("  --confidence [all | [[low | normal | high | total][+|-]],...");
-      Console.WriteLine("\t\t\tFilter defects for the specified confidence levels.");
-      Console.WriteLine("\t\t\tDefault is 'normal+'");
-      Console.WriteLine("  --console\t\tShow defects on the console even if --log, --xml or --html are specified.");
-      Console.WriteLine("  --quiet\t\tUsed to disable progress and other information which is normally written to stdout.");
-      Console.WriteLine("  --v\t\t\tWhen present additional progress information is written to stdout (can be used multiple times).");
-      Console.WriteLine("  assemblies\t\tSpecify the assemblies to verify.");
-      Console.WriteLine();
+      Console.WriteLine(Strings.HelpText);
     }
 
     /// <summary>
