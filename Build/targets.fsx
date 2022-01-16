@@ -431,7 +431,7 @@ _Target
             [ "-Microsoft.Design#CA1020"
               "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ] // small namespaces
 
-        let cantStrongName = [ "-Microsoft.Design#CA2210" ] // should strongname
+        // let cantStrongName = [ "-Microsoft.Design#CA2210" ] // should strongname
 
         let defaultFSharpRules =
             List.concat [ deprecatedRules

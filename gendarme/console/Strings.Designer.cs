@@ -261,7 +261,7 @@ namespace Gendarme {
         /// <summary>
         ///   Looks up a localized string similar to The rule with name {0} doesn&apos;t exist.
         /// </summary>
-        internal static string RuleDoesntExist {
+        internal static string RuleDoesNotExist {
             get {
                 return ResourceManager.GetString("RuleDoesntExist", resourceCulture);
             }

@@ -215,12 +215,12 @@ namespace Gendarme
 
         IRule rule = GetRule(ruleName);
         if (rule == null)
-          RaiseException(Strings.RuleDoesntExist, ruleName, String.Empty, String.Empty);
+          ThrowException(Strings.RuleDoesNotExist, ruleName, String.Empty, String.Empty);
         PropertyInfo property = rule.GetType().GetProperty(propertyName);
         if (property == null)
-          RaiseException(Strings.PropertyNotInRule, ruleName, propertyName, String.Empty);
+          ThrowException(Strings.PropertyNotInRule, ruleName, propertyName, String.Empty);
         if (!property.CanWrite)
-          RaiseException(Strings.PropertyUnwriteableInRule, ruleName, propertyName, String.Empty);
+          ThrowException(Strings.PropertyUnwriteableInRule, ruleName, propertyName, String.Empty);
 
         string value = GetAttribute(parameter, "value", String.Empty);
         if (String.IsNullOrEmpty(value))
@@ -247,13 +247,13 @@ namespace Gendarme
         }
 
         if (values[0] == null)
-          RaiseException(Strings.ValueCannotBeConverted, ruleName, propertyName, value);
+          ThrowException(Strings.ValueCannotBeConverted, ruleName, propertyName, value);
 
         property.GetSetMethod().Invoke(rule, values);
       }
     }
 
-    private static void RaiseException(string message, string ruleName, string propertyName, string value)
+    private static void ThrowException(string message, string ruleName, string propertyName, string value)
     {
       var composed = message
         + Strings.ReviewConfigurationFile;

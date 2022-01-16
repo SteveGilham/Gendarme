@@ -202,7 +202,7 @@ If so, please report the entire stack trace.</value>
   <data name="Rule" xml:space="preserve">
     <value>Rule:`t{0}</value>
   </data>
-  <data name="RuleDoesntExist" xml:space="preserve">
+  <data name="RuleDoesNotExist" xml:space="preserve">
     <value>The rule with name {0} doesn't exist</value>
   </data>
   <data name="StackTrace" xml:space="preserve">
