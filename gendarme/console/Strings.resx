@@ -132,6 +132,9 @@
   <data name="ErrorParsingOption" xml:space="preserve">
     <value>Error parsing option '{0}' : {1}</value>
   </data>
+  <data name="Fast" xml:space="preserve">
+    <value>&lt;0.1 seconds</value>
+  </data>
   <data name="GendarmeSnapshot" xml:space="preserve">
     <value>Gendarme - Development Snapshot</value>
   </data>
@@ -141,28 +144,31 @@
   <data name="HelpText" xml:space="preserve">
     <value>Usage: gendarme [--config file] [--set ruleset] [--{log|xml|html} file] assemblies
 Where
-  --config file&#x09;&#x09;Specify the rule sets and rule settings. Default is 'rules.xml'.
-  --set ruleset&#x09;&#x09;Specify a rule set from configfile. Default is 'default'.
-  --log file&#x09;&#x09;Save the report to the specified file.
-  --xml file&#x09;&#x09;Save the report, as XML, to the specified file.
-  --html file&#x09;&#x09;Save the report, as HTML, to the specified file.
-  --ignore file&#x09;&#x09;Do not report defects listed in the specified file.
-  --limit N&#x09;&#x09;Stop reporting after N defects are found.
+  --config file`t`tSpecify the rule sets and rule settings. Default is 'rules.xml'.
+  --set ruleset`t`tSpecify a rule set from configfile. Default is 'default'.
+  --log file`t`tSave the report to the specified file.
+  --xml file`t`tSave the report, as XML, to the specified file.
+  --html file`t`tSave the report, as HTML, to the specified file.
+  --ignore file`t`tDo not report defects listed in the specified file.
+  --limit N`t`tStop reporting after N defects are found.
   --severity [all | [[audit | low | medium | high | critical][+|-]]],...
-&#x09;&#x09;&#x09;Filter defects for the specified severity levels.
-&#x09;&#x09;&#x09;Default is 'medium+'
+`t`t`tFilter defects for the specified severity levels.
+`t`t`tDefault is 'medium+'
   --confidence [all | [[low | normal | high | total][+|-]],...
-&#x09;&#x09;&#x09;Filter defects for the specified confidence levels.
-&#x09;&#x09;&#x09;Default is 'normal+'
-  --console&#x09;&#x09;Show defects on the console even if --log, --xml or --html are specified.
-  --quiet&#x09;&#x09;Used to disable progress and other information which is normally written to stdout.
-  --v&#x09;&#x09;&#x09;When present additional progress information is written to stdout (can be used multiple times).
-  assemblies&#x09;&#x09;Specify the assemblies to verify.
+`t`t`tFilter defects for the specified confidence levels.
+`t`t`tDefault is 'normal+'
+  --console`t`tShow defects on the console even if --log, --xml or --html are specified.
+  --quiet`t`tUsed to disable progress and other information which is normally written to stdout.
+  --v`t`t`tWhen present additional progress information is written to stdout (can be used multiple times).
+  assemblies`t`tSpecify the assemblies to verify.
 
     </value>
   </data>
   <data name="Initialization" xml:space="preserve">
     <value>Initialization</value>
+  </data>
+  <data name="InvalidAssemblyFormat" xml:space="preserve">
+    <value>Invalid assembly format</value>
   </data>
   <data name="MaybeBugReport" xml:space="preserve">
     <value>If, and only if, this message refers to an assembly mentioned
@@ -187,11 +193,14 @@ If so, please report the entire stack trace.</value>
   <data name="PropertyUnwriteableInRule" xml:space="preserve">
     <value>The property {1} can't be written in the rule {0}</value>
   </data>
+  <data name="ReportWrittenTo" xml:space="preserve">
+    <value>Report {0} written to: {1}.</value>
+  </data>
   <data name="ReviewConfigurationFile" xml:space="preserve">
     <value>".  Review your configuration file."</value>
   </data>
   <data name="Rule" xml:space="preserve">
-    <value>Rule:&#x09;{0}</value>
+    <value>Rule:`t{0}</value>
   </data>
   <data name="RuleDoesntExist" xml:space="preserve">
     <value>The rule with name {0} doesn't exist</value>
@@ -200,10 +209,13 @@ If so, please report the entire stack trace.</value>
     <value>Stack trace: {0}</value>
   </data>
   <data name="Target" xml:space="preserve">
-    <value>Target:&#x09;{0} ({1})</value>
+    <value>Target:`t{0} ({1})</value>
   </data>
   <data name="TearDown" xml:space="preserve">
     <value>TearDown: {0}</value>
+  </data>
+  <data name="TimeToString" xml:space="preserve">
+    <value>{0:0.0} seconds</value>
   </data>
   <data name="UncaughtException" xml:space="preserve">
     <value>An uncaught exception occurred. Please fill a bug report at https://github.com/SteveGilham/Gendarme/issues</value>

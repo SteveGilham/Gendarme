@@ -106,6 +106,15 @@ namespace Gendarme {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;0.1 seconds.
+        /// </summary>
+        internal static string Fast {
+            get {
+                return ResourceManager.GetString("Fast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gendarme - Development Snapshot.
         /// </summary>
         internal static string GendarmeSnapshot {
@@ -126,13 +135,12 @@ namespace Gendarme {
         /// <summary>
         ///   Looks up a localized string similar to Usage: gendarme [--config file] [--set ruleset] [--{log|xml|html} file] assemblies
         ///Where
-        ///  --config file		Specify the rule sets and rule settings. Default is &apos;rules.xml&apos;.
-        ///  --set ruleset		Specify a rule set from configfile. Default is &apos;default&apos;.
-        ///  --log file		Save the report to the specified file.
-        ///  --xml file		Save the report, as XML, to the specified file.
-        ///  --html file		Save the report, as HTML, to the specified file.
-        ///  --ignore file		Do not report defects listed in the specified file.
-        ///  --limit  [rest of string was truncated]&quot;;.
+        ///  --config file`t`tSpecify the rule sets and rule settings. Default is &apos;rules.xml&apos;.
+        ///  --set ruleset`t`tSpecify a rule set from configfile. Default is &apos;default&apos;.
+        ///  --log file`t`tSave the report to the specified file.
+        ///  --xml file`t`tSave the report, as XML, to the specified file.
+        ///  --html file`t`tSave the report, as HTML, to the specified file.
+        ///  --ignore file`t`tDo not report defects listed in the specified file. [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HelpText {
             get {
@@ -146,6 +154,15 @@ namespace Gendarme {
         internal static string Initialization {
             get {
                 return ResourceManager.GetString("Initialization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid assembly format.
+        /// </summary>
+        internal static string InvalidAssemblyFormat {
+            get {
+                return ResourceManager.GetString("InvalidAssemblyFormat", resourceCulture);
             }
         }
         
@@ -215,6 +232,15 @@ namespace Gendarme {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Report {0} written to: {1}..
+        /// </summary>
+        internal static string ReportWrittenTo {
+            get {
+                return ResourceManager.GetString("ReportWrittenTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;.  Review your configuration file.&quot;.
         /// </summary>
         internal static string ReviewConfigurationFile {
@@ -224,7 +250,7 @@ namespace Gendarme {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rule:	{0}.
+        ///   Looks up a localized string similar to Rule:`t{0}.
         /// </summary>
         internal static string Rule {
             get {
@@ -251,7 +277,7 @@ namespace Gendarme {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Target:	{0} ({1}).
+        ///   Looks up a localized string similar to Target:`t{0} ({1}).
         /// </summary>
         internal static string Target {
             get {
@@ -265,6 +291,15 @@ namespace Gendarme {
         internal static string TearDown {
             get {
                 return ResourceManager.GetString("TearDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:0.0} seconds.
+        /// </summary>
+        internal static string TimeToString {
+            get {
+                return ResourceManager.GetString("TimeToString", resourceCulture);
             }
         }
         

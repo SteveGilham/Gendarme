@@ -385,7 +385,7 @@ namespace Gendarme
       }
       catch (BadImageFormatException)
       {
-        warning = "Invalid assembly format";
+        warning = Strings.InvalidAssemblyFormat;
       }
       catch (FileNotFoundException fnfe)
       {
@@ -526,9 +526,9 @@ namespace Gendarme
       Console.WriteLine();
       Console.WriteLine(Strings.UncaughtException);
       if (CurrentRule != null)
-        Console.WriteLine(Strings.Rule, CurrentRule);
+        Console.WriteLine(Strings.Rule.Replace("`t", "\t"), CurrentRule);
       if (CurrentTarget != null)
-        Console.WriteLine(Strings.Target, CurrentTarget, CurrentAssembly);
+        Console.WriteLine(Strings.Target.Replace("`t", "\t"), CurrentTarget, CurrentAssembly);
       Console.WriteLine(Strings.StackTrace, e);
     }
 
@@ -538,9 +538,9 @@ namespace Gendarme
     private static string TimeToString(TimeSpan time)
     {
       if (time >= TimeSpan.FromMilliseconds(100))
-        return String.Format(CultureInfo.CurrentCulture, "{0:0.0} seconds", time.TotalSeconds);
+        return String.Format(CultureInfo.CurrentCulture, Strings.TimeToString, time.TotalSeconds);
       else
-        return "<0.1 seconds";
+        return Strings.Fast;
     }
 
     public override void Initialize()
@@ -605,7 +605,7 @@ namespace Gendarme
         {
           List<string> files = new List<string>(new string[] { log_file, xml_file, html_file });
           files.RemoveAll(string.IsNullOrEmpty);
-          hint = String.Format(CultureInfo.CurrentCulture, "Report{0} written to: {1}.",
+          hint = String.Format(CultureInfo.CurrentCulture, Strings.ReportWrittenTo,
             (files.Count > 1) ? "s" : string.Empty,
             string.Join(",", files.Select(file =>
             String.Format(CultureInfo.CurrentCulture, "`{0}'", file)).ToArray()));
@@ -676,13 +676,9 @@ namespace Gendarme
       }
     }
 
-    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
-      Justification = "Console.WriteLine")]
-    [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly",
-      Justification = "application jargon")]
     private static void Help()
     {
-      Console.WriteLine(Strings.HelpText);
+      Console.WriteLine(Strings.HelpText.Replace("`t", "\t"));
     }
 
     /// <summary>
