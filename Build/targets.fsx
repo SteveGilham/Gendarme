@@ -961,7 +961,7 @@ _Target
                           WorkingDirectory = unpack
                           Severity = Gendarme.Severity.All
                           Confidence = Gendarme.Confidence.All
-                          Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                          Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/fsharp-rules.xml")
                           Console = true
                           Log = Path.GetFullPath "./_Reports/gendarme.html"
                           LogKind = Gendarme.LogKind.Html
