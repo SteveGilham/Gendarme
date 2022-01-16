@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security;
 using SSP = System.Security.Permissions;
 
@@ -37,6 +38,9 @@ namespace Gendarme.Rules.Security.Cas
 {
   public static class SecurityDeclarationRocks
   {
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                            "RemoveDependenceOnObsoleteCodeRule",
+                            Justification = "Obsolexing here too")]
     private static IPermission CreatePermission(SecurityDeclaration declaration, SecurityAttribute attribute)
     {
       TypeReference atype = attribute.AttributeType;
@@ -63,6 +67,9 @@ namespace Gendarme.Rules.Security.Cas
       return security_attribute.CreatePermission();
     }
 
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                            "RemoveDependenceOnObsoleteCodeRule",
+                            Justification = "Obsolexing here too")]
     private static void CompleteSecurityAttribute(SSP.SecurityAttribute security_attribute, SecurityAttribute attribute)
     {
       if (attribute.HasFields)
@@ -72,6 +79,9 @@ namespace Gendarme.Rules.Security.Cas
         CompleteSecurityAttributeProperties(security_attribute, attribute);
     }
 
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                            "RemoveDependenceOnObsoleteCodeRule",
+                            Justification = "Obsolexing here too")]
     private static void CompleteSecurityAttributeFields(SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
     {
       var type = security_attribute.GetType();
@@ -80,6 +90,9 @@ namespace Gendarme.Rules.Security.Cas
         type.GetField(named_argument.Name).SetValue(security_attribute, named_argument.Argument.Value);
     }
 
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                            "RemoveDependenceOnObsoleteCodeRule",
+                            Justification = "Obsolexing here too")]
     private static void CompleteSecurityAttributeProperties(SSP.SecurityAttribute security_attribute, ICustomAttribute attribute)
     {
       var type = security_attribute.GetType();
@@ -88,6 +101,9 @@ namespace Gendarme.Rules.Security.Cas
         type.GetProperty(named_argument.Name).SetValue(security_attribute, named_argument.Argument.Value, null);
     }
 
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                            "RemoveDependenceOnObsoleteCodeRule",
+                            Justification = "Obsolexing here too")]
     private static SSP.SecurityAttribute CreateSecurityAttribute(Type attribute_type, SecurityDeclaration declaration)
     {
       SSP.SecurityAttribute security_attribute;
