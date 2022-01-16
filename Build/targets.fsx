@@ -433,7 +433,7 @@ _Target
 
         let cantStrongName = [ "-Microsoft.Design#CA2210" ] // should strongname
 
-        let defaultRules =
+        let defaultFSharpRules =
             List.concat [ deprecatedRules
                           standardRules
                           nonFsharpRules ]
@@ -522,7 +522,7 @@ _Target
                       Verbose = false
                       ReportFileName = "_Reports/FxCopReport.xml"
                       Types = []
-                      Rules = defaultRules
+                      Rules = defaultFSharpRules
                       FailOnError = FxCop.ErrorLevel.Warning
                       IgnoreGeneratedCode = true }
 

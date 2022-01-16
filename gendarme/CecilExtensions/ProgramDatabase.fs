@@ -2,6 +2,7 @@ namespace AltCode.CecilExtensions
 
 open System
 open System.Collections.Generic
+open System.Diagnostics.CodeAnalysis
 open System.IO
 
 open Mono.Cecil
@@ -17,7 +18,7 @@ module ProgramDatabase =
   let internal symbolFolders = List<String>()
 
   // start retrofit
-  let optionFilter predicate option = // Option.filter
+  let internal optionFilter predicate option = // Option.filter
     match option with
     | Some x -> if predicate x then option else None
     | _ -> None
@@ -34,7 +35,7 @@ module ProgramDatabase =
     getEmbed.Invoke(null, [| assembly.MainModule.GetDebugHeader() :> obj |])
     :?> ImageDebugHeaderEntry
 
-  let GetPdbFromImage (assembly: AssemblyDefinition) =
+  let internal GetPdbFromImage (assembly: AssemblyDefinition) =
     Some assembly.MainModule
     |> optionFilter (fun x -> x.HasDebugHeader)
     |> Option.map (fun x -> x.GetDebugHeader())
@@ -73,7 +74,7 @@ module ProgramDatabase =
       else
         None
 
-  let GetPdbWithFallback (assembly: AssemblyDefinition) =
+  let internal GetSymbolsWithFallback (assembly: AssemblyDefinition) =
     let path = assembly.MainModule.FileName
 
     match GetPdbFromImage assembly with
@@ -91,7 +92,7 @@ module ProgramDatabase =
   // Cecil currently only does the Path.ChangeExtension(path, ".pdb") fallback if left to its own devices
   // Will fail  with InvalidOperationException if there is a malformed file with the expected name
   let ReadSymbols (assembly: AssemblyDefinition) =
-    GetPdbWithFallback assembly
+    GetSymbolsWithFallback assembly
     |> Option.iter
          (fun pdbpath ->
            let provider: ISymbolReaderProvider =
@@ -104,3 +105,16 @@ module ProgramDatabase =
              provider.GetSymbolReader(assembly.MainModule, pdbpath)
 
            assembly.MainModule.ReadSymbols(reader))
+
+[<assembly: SuppressMessage("Microsoft.Performance",
+                            "CA1810:InitializeReferenceTypeStaticFieldsInline",
+                            Scope = "member",
+                            Target = "<StartupCode$CecilExtensions>.$ProgramDatabase.#.cctor()",
+                            Justification = "Compiler generated")>]
+[<assembly: SuppressMessage("Microsoft.Naming",
+                            "CA1704:IdentifiersShouldBeSpelledCorrectly",
+                            Scope = "member",
+                            Target = "AltCode.CecilExtensions.ProgramDatabase.#optionFilter`1(Microsoft.FSharp.Core.FSharpFunc`2<!!0,System.Boolean>,Microsoft.FSharp.Core.FSharpOption`1<!!0>)",
+                            MessageId = "a",
+                            Justification = "Compiler generated")>]
+()
