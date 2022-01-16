@@ -35,7 +35,7 @@ module ProgramDatabase =
     getEmbed.Invoke(null, [| assembly.MainModule.GetDebugHeader() :> obj |])
     :?> ImageDebugHeaderEntry
 
-  let internal GetPdbFromImage (assembly: AssemblyDefinition) =
+  let internal getPdbFromImage (assembly: AssemblyDefinition) =
     Some assembly.MainModule
     |> optionFilter (fun x -> x.HasDebugHeader)
     |> Option.map (fun x -> x.GetDebugHeader())
@@ -60,7 +60,7 @@ module ProgramDatabase =
                    |> isNull
                    |> not)))
 
-  let GetSymbolsByFolder fileName folderName =
+  let internal getSymbolsByFolder fileName folderName =
     let name = Path.Combine(folderName, fileName)
     let fallback = Path.ChangeExtension(name, ".pdb")
 
@@ -74,16 +74,16 @@ module ProgramDatabase =
       else
         None
 
-  let internal GetSymbolsWithFallback (assembly: AssemblyDefinition) =
+  let internal getSymbolsWithFallback (assembly: AssemblyDefinition) =
     let path = assembly.MainModule.FileName
 
-    match GetPdbFromImage assembly with
+    match getPdbFromImage assembly with
     | None when path |> String.IsNullOrWhiteSpace |> not -> // i.e. assemblies read from disk only
       let foldername = Path.GetDirectoryName path
       let filename = Path.GetFileName path
 
       foldername :: (Seq.toList symbolFolders)
-      |> Seq.map (GetSymbolsByFolder filename)
+      |> Seq.map (getSymbolsByFolder filename)
       |> Seq.choose id
       |> Seq.tryFind (fun _ -> true)
     | pdbpath -> pdbpath
@@ -92,7 +92,7 @@ module ProgramDatabase =
   // Cecil currently only does the Path.ChangeExtension(path, ".pdb") fallback if left to its own devices
   // Will fail  with InvalidOperationException if there is a malformed file with the expected name
   let ReadSymbols (assembly: AssemblyDefinition) =
-    GetSymbolsWithFallback assembly
+    getSymbolsWithFallback assembly
     |> Option.iter
          (fun pdbpath ->
            let provider: ISymbolReaderProvider =
