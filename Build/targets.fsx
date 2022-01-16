@@ -1034,7 +1034,7 @@ _Target
                               WorkingDirectory = working
                               Severity = Gendarme.Severity.All
                               Confidence = Gendarme.Confidence.All
-                              Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/common-rules.xml")
+                              Configuration = (Path.GetFullPath "./gendarme/FSharpExamples/fsharp-rules.xml")
                               Console = true
                               Log = Path.GetFullPath "./_Reports/gendarme-tool.html"
                               LogKind = Gendarme.LogKind.Html
@@ -1045,7 +1045,7 @@ _Target
                               ToolType = ToolType.CreateGlobalTool()
                               FailBuildOnDefect = true })
             |> ignore // (printfn "%A")
-            // System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\common-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release\netstandard2.0\FSharpExamples.dll"
+            // System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\fsharp-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release\netstandard2.0\FSharpExamples.dll"
 
             // self-test
             let targets =
@@ -1074,7 +1074,7 @@ _Target
                       WorkingDirectory = working
                       Severity = Gendarme.Severity.All
                       Confidence = Gendarme.Confidence.All
-                      Configuration = (Path.GetFullPath "./Build/common-rules.xml")
+                      Configuration = (Path.GetFullPath "./Build/fsharp-rules.xml")
                       Console = true
                       Log = Path.GetFullPath "./_Reports/gendarme-tool-fsselftest.html"
                       LogKind = Gendarme.LogKind.Html
