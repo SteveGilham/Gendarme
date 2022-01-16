@@ -22,8 +22,9 @@
     <AssemblyOriginatorKeyFile>$(InfrastructureKey)</AssemblyOriginatorKeyFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <DeterministicSourcePaths>false</DeterministicSourcePaths>
     <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
     <WarningLevel>4</WarningLevel>
@@ -36,5 +37,4 @@
     <DeterministicSourcePaths>true</DeterministicSourcePaths>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
-  
 </Project>

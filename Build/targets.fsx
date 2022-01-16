@@ -91,6 +91,19 @@ let altcover =
      + "/tools/net472/AltCover.exe")
     |> Path.getFullName
 
+let (fxcop, dixon) =
+    if Environment.isWindows then
+        let expect =
+            "./packages/fxcop/FxCopCmd.exe"
+            |> Path.getFullName
+
+        if File.Exists expect then
+            (Some expect, Some ("./packages/fxcop/DixonCmd.exe" |> Path.getFullName))
+        else
+            (None, None)
+    else
+        (None, None)
+
 let frameworkAltcover =
     Fake.DotNet.ToolType.CreateFullFramework()
 
@@ -319,6 +332,227 @@ _Target
 _Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
 
 _Target "UnitTest" ignore
+
+_Target
+    "FxCop"
+    (fun _ ->
+        Directory.ensure "./_Reports"
+
+        let dumpSuppressions (report: String) =
+            let x = XDocument.Load report
+            let messages = x.Descendants(XName.Get "Message")
+
+            messages
+            |> Seq.iter
+                (fun m ->
+                    let mpp = m.Parent.Parent
+                    let target = mpp.Name.LocalName
+                    let tname = mpp.Attribute(XName.Get "Name").Value
+
+                    let (text, fqn) =
+                        match target with
+                        | "Namespace" -> ("namespace", tname)
+                        | "Resource" -> ("resource", tname)
+                        | "File"
+                        | "Module" -> ("module", String.Empty)
+                        | "Type" ->
+                            let spp = mpp.Parent.Parent
+
+                            ("type",
+                             spp.Attribute(XName.Get "Name").Value
+                             + "."
+                             + tname)
+                        | _ ->
+                            let spp = mpp.Parent.Parent
+                            let sp4 = spp.Parent.Parent
+
+                            ("member",
+                             sp4.Attribute(XName.Get "Name").Value
+                             + "."
+                             + spp.Attribute(XName.Get "Name").Value
+                             + "."
+                             + tname)
+
+                    let text2 = "[<assembly: SuppressMessage("
+
+                    let id = m.Attribute(XName.Get "Id")
+
+                    let text3 =
+                        (if id |> isNull |> not then
+                             ", MessageId=\"" + id.Value + "\""
+                         else
+                             String.Empty)
+                        + ", Justification=\"\")>]"
+
+                    let category = m.Attribute(XName.Get "Category").Value
+                    let checkId = m.Attribute(XName.Get "CheckId").Value
+                    let name = m.Attribute(XName.Get "TypeName").Value
+
+                    let finish t t2 =
+                        let t5 =
+                            t2
+                            + "\""
+                            + category
+                            + "\", \""
+                            + checkId
+                            + ":"
+                            + name
+                            + "\""
+
+                        if t |> isNull || t = "module" then
+                            t5 + text3
+                        else
+                            t5
+                            + ", Scope=\""
+                            + t
+                            + "\", Target=\""
+                            + fqn
+                            + "\""
+                            + text3
+
+                    printfn "%s" (finish text text2))
+
+        let deprecatedRules = [ "-Microsoft.Usage#CA2202" ] // double dispose
+
+        let nonFsharpRules =
+            [ "-Microsoft.Design#CA1006" // nested generics
+              "-Microsoft.Design#CA1034" // nested classes being visible
+              "-Microsoft.Design#CA1062" // null checks,  In F#!
+              "-Microsoft.Naming#CA1709" // defer to the Gendarme casing rule for implicit 'a
+              "-Microsoft.Naming#CA1715" // defer to the Gendarme naming rule for implicit 'a
+              "-Microsoft.Usage#CA2235" // closures being serializable
+              "-Microsoft.Maintainability#CA1506" ] // AvoidExcessiveClassCoupling
+
+        let standardRules =
+            [ "-Microsoft.Design#CA1020"
+              "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ] // small namespaces
+
+        let cantStrongName = [ "-Microsoft.Design#CA2210" ] // should strongname
+
+        let defaultRules =
+            List.concat [ deprecatedRules
+                          standardRules
+                          nonFsharpRules ]
+
+        let workInProgressRules = [
+                                     "-Microsoft.Design#CA1004" //:GenericMethodsShouldProvideTypeParameter"
+                                     "-Microsoft.Design#CA1011" //:ConsiderPassingBaseTypesAsParameters"
+                                     "-Microsoft.Design#CA1012"// :AbstractTypesShouldNotHaveConstructors"
+                                     "-Microsoft.Design#CA1019"// :DefineAccessorsForAttributeArguments"
+                                     "-Microsoft.Design#CA1021" //:AvoidOutParameters"
+                                     "-Microsoft.Design#CA1027"// :MarkEnumsWithFlags"
+                                     "-Microsoft.Design#CA1031"// :DoNotCatchGeneralExceptionTypes"
+                                     "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
+                                     "-Microsoft.Design#CA1062" //:Validate arguments of public methods"
+                                     "-Microsoft.Globalization#CA1303" //:Do not pass literals as localized parameters"
+                                     "-Microsoft.Globalization#CA1305" //:SpecifyIFormatProvider"
+                                     "-Microsoft.Globalization#CA1307" //:SpecifyStringComparison"
+                                     "-Microsoft.Globalization#CA1308" //:NormalizeStringsToUppercase"
+                                     "-Microsoft.Globalization#CA1309" //:UseOrdinalStringComparison"
+                                     "-Microsoft.Maintainability#CA1500" //:VariableNamesShouldNotMatchFieldNames"
+                                     "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity"
+                                     "-Microsoft.Maintainability#CA1506" //:AvoidExcessiveClassCoupling"
+                                     "-Microsoft.Naming#CA1704"// :IdentifiersShouldBeSpelledCorrectly"
+                                     "-Microsoft.Naming#CA1702"// :CompoundWordsShouldBeCasedCorrectly"
+                                     "-Microsoft.Naming#CA1707"// :IdentifiersShouldNotContainUnderscores"
+                                     "-Microsoft.Naming#CA1709" //:IdentifiersShouldBeCasedCorrectly"
+                                     "-Microsoft.Naming#CA1726" //:UsePreferredTerms"
+                                     "-Microsoft.Performance#CA1800" //:DoNotCastUnnecessarily"
+                                     "-Microsoft.Usage#CA1806" //:DoNotIgnoreMethodResults"
+                                     "-Microsoft.Performance#CA1810" //:InitializeReferenceTypeStaticFieldsInline"
+                                     "-Microsoft.Performance#CA1811" //:AvoidUncalledPrivateCode"
+                                     "-Microsoft.Performance#CA1815" //:OverrideEqualsAndOperatorEqualsOnValueTypes"
+                                     "-Microsoft.Performance#CA1802" //:UseLiteralsWhereAppropriate"
+                                     "-Microsoft.Performance#CA1823" //:AvoidUnusedPrivateFields",
+                                     "-Microsoft.Performance#CA1824" //:MarkAssembliesWithNeutralResourcesLanguage",
+                                     "-Microsoft.Security#CA2104"// :DoNotDeclareReadOnlyMutableReferenceTypes"
+                                     "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
+                                     "-Microsoft.Usage#CA2208"// :InstantiateArgumentExceptionsCorrectly"
+                                  ]
+
+        let defaultCSharpRules =
+            List.concat [ deprecatedRules
+                          standardRules
+                          [ "-Microsoft.Design#CA1026:DefaultParametersShouldNotBeUsed" ] ]
+
+        let wipCSharpRules =
+            List.concat [ defaultCSharpRules
+                          workInProgressRules ]
+
+        let refdir = @"C:\Program Files\dotnet\sdk\6.0.101\ref" // TODO generate
+
+        try
+            [ Path.GetFullPath "./_Binaries/gendarme/Debug/net472/gendarme.exe" ]
+            |> FxCop.run
+                { FxCop.Params.Create() with
+                      WorkingDirectory = "."
+                      DependencyDirectories = [
+                                                nugetCache @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                                              ]
+                      ToolPath = Option.get fxcop
+                      UseGAC = true
+                      Verbose = false
+                      ReportFileName = "_Reports/FxCopReport.xml"
+                      Types = []
+                      Rules = defaultCSharpRules
+                      FailOnError = FxCop.ErrorLevel.Warning
+                      IgnoreGeneratedCode = true }
+        with
+        | _ ->
+            dumpSuppressions "_Reports/FxCopReport.xml"
+            reraise ()
+
+        try
+            [ Path.GetFullPath "./_Binaries/CecilExtensions/Debug/netstandard2.0/CecilExtensions.dll" ]
+            |> FxCop.run
+                { FxCop.Params.Create() with
+                      WorkingDirectory = "."
+                      DependencyDirectories = [
+                                                nugetCache @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                                                nugetCache @@ "fsharp.core/6.0.1/lib/netstandard2.0"
+                                              ]
+                      ToolPath = Option.get dixon
+                      PlatformDirectory = refdir
+                      UseGAC = true
+                      Verbose = false
+                      ReportFileName = "_Reports/FxCopReport.xml"
+                      Types = []
+                      Rules = defaultRules
+                      FailOnError = FxCop.ErrorLevel.Warning
+                      IgnoreGeneratedCode = true }
+
+        with
+        | _ ->
+            dumpSuppressions "_Reports/FxCopReport.xml"
+            reraise ()
+
+        let targets =
+            !!("./_Binaries/Gendarme.*/Debug/netstandard2.0/Gendarme.*.dll")
+            |> Seq.map Path.GetFullPath
+            |> Seq.distinctBy Path.GetFileName
+            |> Seq.toList
+        try
+            targets
+            |> FxCop.run
+                { FxCop.Params.Create() with
+                      WorkingDirectory = "."
+                      DependencyDirectories = [
+                                                nugetCache @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                                                nugetCache @@ "system.resources.extensions/6.0.0/lib/netstandard2.0"
+                                              ]
+                      ToolPath = Option.get dixon
+                      PlatformDirectory = refdir
+                      UseGAC = true
+                      Verbose = false
+                      ReportFileName = "_Reports/FxCopReport.xml"
+                      Types = []
+                      Rules = wipCSharpRules
+                      FailOnError = FxCop.ErrorLevel.Warning
+                      IgnoreGeneratedCode = true }
+        with
+        | _ ->
+            dumpSuppressions "_Reports/FxCopReport.xml"
+            reraise ())
 
 _Target
     "JustUnitTest"
@@ -838,8 +1072,7 @@ _Target
                       Log = Path.GetFullPath "./_Reports/gendarme-tool-fsselftest.html"
                       LogKind = Gendarme.LogKind.Html
                       Targets =
-                          [ Path.GetFullPath "./_Binaries/CecilExtensions/Debug/netstandard2.0"
-                            @@ "CecilExtensions.dll" ]
+                          [ Path.GetFullPath "./_Binaries/CecilExtensions/Debug/netstandard2.0/CecilExtensions.dll" ]
                       ToolPath = "gendarme"
                       ToolType = ToolType.CreateGlobalTool()
                       FailBuildOnDefect = true }
@@ -900,36 +1133,6 @@ _Target
         |> Seq.exists (fun x -> x <> 0)
         |> failOnIssuesFound)
 
-//let failOnIssuesFound (issuesFound : bool) =
-//  Assert.That(issuesFound, Is.False, "Lint issues were found")
-//try
-//  let options =
-//    { Lint.OptionalLintParameters.Default with
-//        Configuration = FromFile(Path.getFullName "./fsharplint.json") }
-
-//  [
-//    !!"**/*.fsproj"
-//    |> Seq.collect (fun n -> !!(Path.GetDirectoryName n @@ "*.fs"))
-//    |> Seq.distinct;
-//    !!"./Build/*.fsx"
-//    |> Seq.map Path.GetFullPath
-//  ]
-//  |> Seq.concat
-//  |> Seq.collect (fun f ->
-//       match Lint.lintFile options f with
-//       | Lint.LintResult.Failure x -> failwithf "%A" x
-//       | Lint.LintResult.Success w ->
-//           w
-//           |> Seq.filter (fun x -> x.Details.SuggestedFix |> Option.isSome))
-//  |> Seq.fold (fun _ x ->
-//       printfn "Info: %A\r\n Range: %A\r\n Fix: %A\r\n====" x.Details.Message
-//         x.Details.Range x.Details.SuggestedFix
-//       true) false
-//  |> failOnIssuesFound
-//with ex ->
-//  printfn "%A" ex
-//  reraise()
-
 _Target "All" ignore
 
 let resetColours _ =
@@ -947,6 +1150,8 @@ Target.activateFinal "ResetConsoleColours"
 "Preparation" ==> "BuildDebug" ==> "Compilation"
 
 "BuildDebug" ==> "Lint" ==> "All"
+"BuildDebug" ==> "FxCop"
+=?> ("All", Environment.isWindows && fxcop |> Option.isSome) // not supported
 
 "Preparation" ==> "BuildRelease" ==> "Compilation"
 
