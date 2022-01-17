@@ -60,10 +60,11 @@ namespace Tests.Rules.Globalization {
             }
         }
         
+#if NET472
+    
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
-#if NETCOREAPP2_1
-#else        /// </summary>
+        /// </summary>
         internal static System.Drawing.Bitmap ImageInBothCultures {
             get {
                 object obj = ResourceManager.GetObject("ImageInBothCultures", resourceCulture);

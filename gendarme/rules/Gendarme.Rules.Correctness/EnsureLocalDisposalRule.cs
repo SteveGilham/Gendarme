@@ -116,8 +116,8 @@ namespace Gendarme.Rules.Correctness
   [EngineDependency(typeof(OpCodeEngine))]
   public sealed class EnsureLocalDisposalRule : Rule, IMethodRule
   {
-    private OpCodeBitmask callsAndNewobjBitmask = BuildCallsAndNewobjOpCodeBitmask();
-    private Bitmask<ulong> locals = new Bitmask<ulong>();
+    private readonly OpCodeBitmask callsAndNewobjBitmask = BuildCallsAndNewobjOpCodeBitmask();
+    private readonly Bitmask<ulong> locals = new Bitmask<ulong>();
 
     private static bool IsDispose(MethodReference call)
     {
@@ -126,7 +126,7 @@ namespace Gendarme.Rules.Correctness
       return MethodSignatures.Dispose.Matches(call) || MethodSignatures.DisposeExplicit.Matches(call);
     }
 
-    private readonly static TypeName idisposable = new TypeName
+    private static readonly TypeName idisposable = new TypeName
     {
       Namespace = "System",
       Name = "IDisposable"
@@ -306,7 +306,6 @@ namespace Gendarme.Rules.Correctness
               else continue;
             }
             else continue;
-            break;
 
           default:
             if (!callsAndNewobjBitmask.Get(code))

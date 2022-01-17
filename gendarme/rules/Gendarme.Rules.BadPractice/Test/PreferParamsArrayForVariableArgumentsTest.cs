@@ -46,30 +46,24 @@ namespace Test.Rules.BadPractice
     // special case, this return false for HasParameters
     private void ShowItems_NoParameter(__arglist)
     {
-#if NETCOREAPP2_1
-#else
-			ArgIterator args = new ArgIterator (__arglist);
-			for (int i = 0; i < args.GetRemainingCount (); i++) {
-// gmcs cannot compile __refvalue correctly - bnc 569539
-#if !__MonoCS__
-				Console.WriteLine (__refvalue (args.GetNextArg (), string));
-#endif
+#if NET472
+      ArgIterator args = new ArgIterator(__arglist);
+      for (int i = 0; i < args.GetRemainingCount(); i++)
+      {
+        Console.WriteLine(__refvalue(args.GetNextArg(), string));
       }
 #endif
     }
 
     public void ShowItems_Bad(string header, __arglist)
     {
-#if NETCOREAPP2_1
-#else
+#if NET472
       Console.WriteLine(header);
       ArgIterator args = new ArgIterator(__arglist);
       for (int i = 0; i < args.GetRemainingCount(); i++)
       {
         // gmcs cannot compile __refvalue correctly - bnc 569539
-#if !__MonoCS__
         Console.WriteLine(__refvalue(args.GetNextArg(), string));
-#endif
       }
 #endif
     }

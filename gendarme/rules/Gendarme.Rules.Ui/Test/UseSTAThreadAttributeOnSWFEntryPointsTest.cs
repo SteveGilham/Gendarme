@@ -40,7 +40,8 @@ using Test.Rules.Helpers;
 
 namespace Test.Rules.Ui
 {
-  internal class CommonMainClass { }
+  internal class CommonMainClass
+  { }
 
   internal class NoAttributesMain : CommonMainClass
   {
@@ -99,8 +100,10 @@ namespace Test.Rules.Ui
       if (SWF)
       {
         ass.MainModule.Kind = ModuleKind.Windows;
-        AssemblyNameReference winFormsRef = new AssemblyNameReference("System.Windows.Forms", new Version(2, 0, 0, 0));
-        winFormsRef.PublicKeyToken = new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };
+        var winFormsRef = new AssemblyNameReference("System.Windows.Forms", new Version(2, 0, 0, 0))
+        {
+          PublicKeyToken = new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 }
+        };
         ass.MainModule.AssemblyReferences.Add(winFormsRef);
       }
       TypeDefinition mainClass = Inject(assembly.MainModule.GetType(fullClassName), ass);
@@ -117,7 +120,7 @@ namespace Test.Rules.Ui
     private static TypeDefinition Inject(TypeDefinition type, AssemblyDefinition target)
     {
       var module = ModuleDefinition.ReadModule(
-        type.Module.FullyQualifiedName,
+        type.Module.FileName,
         new ReaderParameters { ReadingMode = ReadingMode.Immediate });
 
       type = module.GetType(type.FullName);

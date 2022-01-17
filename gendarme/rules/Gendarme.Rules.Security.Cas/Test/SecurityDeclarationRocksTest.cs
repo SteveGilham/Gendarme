@@ -47,20 +47,4 @@ namespace Tests.Rules.Security.Cas
   public abstract class UnrestrictedFalse
   {
   }
-
-  [TestFixture]
-  public class SecurityDeclarationRocksTest
-  {
-    [Test]
-    public void Unrestricted_Boolean()
-    {
-      TypeDefinition t = DefinitionLoader.GetTypeDefinition<UnrestrictedTrue>();
-      PermissionSet ps = t.SecurityDeclarations[0].ToPermissionSet();
-      Assert.IsTrue(ps.IsUnrestricted(), "IsUnrestricted");
-
-      t = DefinitionLoader.GetTypeDefinition<UnrestrictedFalse>();
-      ps = t.SecurityDeclarations[0].ToPermissionSet();
-      Assert.IsFalse(ps.IsUnrestricted(), "!IsUnrestricted");
-    }
-  }
 }

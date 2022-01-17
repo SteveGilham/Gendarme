@@ -1,0 +1,69 @@
+<gendarme>
+  <ruleset name="default">
+    <!-- AvoidAssemblyVersionMismatchRule is silly as assembly version is a contract,
+         and many file versions can satisfy it -->
+    <rules include="*"
+           exclude="AvoidCallingProblematicMethodsRule | DoNotForgetNotImplementedMethodsRule | EqualsShouldHandleNullArgRule | DisableDebuggingCodeRule | PreferEmptyInstanceOverNullRule | AvoidAssemblyVersionMismatchRule"
+           from="Gendarme.Rules.BadPractice.dll" />
+    <rules include="*"
+           exclude="ProtectCallToEventDelegatesRule"
+           from="Gendarme.Rules.Concurrency.dll" />
+    <rules include="*"
+           exclude="ProvideCorrectArgumentsToFormattingMethodsRule | AvoidMethodsWithSideEffectsInConditionalCodeRule | EnsureLocalDisposalRule | CheckParametersNullityInVisibleMethodsRule"
+           from="Gendarme.Rules.Correctness.dll" />
+    <!-- AvoidSmallNamespaceRule doesn't account for specialized code -->
+    <rules include="*"
+           exclude="AbstractTypesShouldNotHavePublicConstructorsRule | AvoidVisibleFieldsRule | AvoidRefAndOutParametersRule | AvoidSmallNamespaceRule"
+           from="Gendarme.Rules.Design.dll" />
+    <!-- DoNotExposeNestedGenericSignaturesRule is a rule for morts at best and
+         doesn't really make any problems for F# -->
+    <rules include="*"
+           exclude="AvoidDeclaringCustomDelegatesRule | DoNotExposeGenericListsRule | PreferGenericsOverRefObjectRule | AvoidMethodWithUnusedGenericTypeRule | DoNotExposeNestedGenericSignaturesRule"
+           from="Gendarme.Rules.Design.Generic.dll" />
+    <rules include="*"
+           from="Gendarme.Rules.Design.Linq.dll" />
+    <rules include="*"
+           exclude="InstantiateArgumentExceptionCorrectlyRule | DoNotSwallowErrorsCatchingNonSpecificExceptionsRule | UseObjectDisposedExceptionRule"
+           from="Gendarme.Rules.Exceptions.dll" />
+    <rules include="*"
+           exclude="NewLineLiteralRule"
+           from="Gendarme.Rules.Interoperability.dll" />
+    <rules include="*"
+           from="Gendarme.Rules.Interoperability.Com.dll" />
+    <rules include="*"
+           exclude="AvoidNonAlphanumericIdentifierRule | AvoidRedundancyInTypeNameRule | UseCorrectSuffixRule | UseCorrectCasingRule | AvoidRedundancyInMethodNameRule"
+           from="Gendarme.Rules.Naming.dll" />
+    <rules include="*"
+           exclude="AvoidUncalledPrivateCodeRule | DoNotIgnoreMethodResultRule | PreferLiteralOverInitOnlyFieldsRule | AvoidRepetitiveCastsRule | AvoidReturningArraysOnPropertiesRule | AvoidUnneededFieldInitializationRule | AvoidUnneededUnboxingRule | AvoidUnsealedUninheritedInternalTypeRule| AvoidUnusedPrivateFieldsRule| PreferCharOverloadRule | AvoidRepetitiveCallsToPropertiesRule | OverrideValueTypeDefaultsRule"
+           from="Gendarme.Rules.Performance.dll" />
+    <!-- AltCover is operationally tested on Mono;
+         System.Xml.Schema.Extensions::Validate seems to be there now -->
+    <rules include="*"
+           exclude="DoNotHardcodePathsRule | NewLineLiteralRule | ExitCodeIsLimitedOnUnixRule"
+           from="Gendarme.Rules.Portability.dll" />
+    <rules include="*"
+           from="Gendarme.Rules.Security.dll" />
+    <rules include="*"
+           from="Gendarme.Rules.Security.Cas.dll" />
+    <!-- I have no real use for serialization -->
+    <rules include="*"
+           exclude="MissingSerializableAttributeOnISerializableTypeRule | MissingSerializationConstructorRule | MarkEnumerationsAsSerializableRule"
+           from="Gendarme.Rules.Serialization.dll" />
+    <!-- Use the relaxed variant -->
+    <rules include="*"
+           exclude="AvoidCodeDuplicatedInSiblingClassesRule | AvoidLongMethodsRule | RelaxedAvoidCodeDuplicatedInSameClassRule | AvoidLargeClassesRule | AvoidSpeculativeGeneralityRule | AbstractTypesShouldNotHavePublicConstructorsRule | AvoidSwitchStatementsRule | AvoidCodeDuplicatedInSameClassRule"
+           from="Gendarme.Rules.Smells.dll" />
+    <rules include="*"
+           from="Gendarme.Rules.Ui.dll" />
+    <rules include="*"
+           exclude="AvoidUncalledPrivateCodeRule | AvoidUnnecessarySpecializationRule | AvoidUnnecessarySpecializationRule | VariableNamesShouldNotMatchFieldNamesRule | AvoidComplexMethodsRule | AvoidLackOfCohesionOfMethodsRule"
+           from="Gendarme.Rules.Maintainability.dll" />
+    <rules include="*"
+           exclude="DefectsMustBeReportedRule | DoNotThrowExceptionRule | UseCorrectSuffixRule"
+           from="Gendarme.Rules.Gendarme.dll" />
+    <!-- SatelliteResourceMismatchRule cannot yet work -->
+    <rules include="*"
+           exclude="PreferIFormatProviderOverrideRule | PreferStringComparisonOverrideRule | SatelliteResourceMismatchRule" 
+           from="Gendarme.Rules.Globalization.dll" />
+  </ruleset>
+</gendarme>

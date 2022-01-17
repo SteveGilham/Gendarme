@@ -1,26 +1,6 @@
 
 # altcode.gendarme
-A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can load assemblies built with current compilers.
-
-### Badges
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme-tool?includePreReleases=true) Global tool for .net core 2.1 and later](https://www.nuget.org/packages/altcode.gendarme-tool)
-
-| | | |
-| --- | --- | --- | 
-| **Build** | <sup>AppVeyor</sup> [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme) | ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme) 
-| |<sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
-
-
-## Build process from trunk as per the CI YAML
-
-Assumes net50 build environment
-
-* `dotnet tool restore`
-* `dotnet fake run .\Build\setup.fsx`
-* `dotnet fake run .\Build\build.fsx`
-
-The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests
+A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can load assemblies built with current compilers.  Can be used with the [Fake.build plugin](https://www.nuget.org/packages/altcode.fake.dotnet.gendarme/). 
 
 ## Features
 See [the head of the (pre-)release branch](https://github.com/SteveGilham/Gendarme/blob/release/pre-release/README.md) for the features in the latest actual release.
@@ -31,7 +11,9 @@ In this branch
   * Will search the nuget cache for dependencies, though this can take some time as an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
-* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
+* Depending whether the Framework or dotnet tool version is used, the results may differ when faced with the same assembly, because of the different runtime being consulted
+  * e.g. several types marked `[Serializable]` in the Framework are not so marked at `dotnet`, so serialization rules will give different answers
+* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in this fork:
   * `AddMissingTypeInheritanceDemandRule`
   * `DoNotExposeMethodsProtectedByLinkDemandRule`
   * `DoNotReduceTypeSecurityOnMethodsRule`
@@ -45,8 +27,7 @@ After having achieved the first objective, of being able to analyze code from th
 
 ## Known Issues
 
-
-#### Unit test fixing
+### Unit test fixing
 
 Having resolved many issues stemming from a Cecil change to what the name and namespace properties of a nested type returned, the next major sources of test failure have been compiler changes (from pre-Roslyn to now) and differences in behaviour under `.netstandard` compared with the .net Framework.  In particular, the `AvoidSwitchStatements` rule needs some serious decompiler code to recognise Roslyn's mangled switch constructs (compiled as multiple conditional branches) so some tests have just been set to `[Ignore]`
 
@@ -56,8 +37,7 @@ The following rule suites have unit test failures
   * TestMultipleCatch()
   * TestTryCatchFinally()
 * Concurrency -- 6 failures
-  * Do not lock on Static Type/This/Type (false negatives)
-  * `ProtectCallToEventDelegatesRule` (3 * false positives)
+  * `ProtectCallToEventDelegatesRule` (false positives)
 * Correctness -- 5 failures (false negatives)
   * `ProvideCorrectArgumentsToFormattingMethods` * 3 -- changed IL : `call Array.Empty` used instead of an explict load
   * `TestNativeFieldsArray` -- changed IL
@@ -74,6 +54,19 @@ The following rule suites have unit test failures
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
 
+* In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
+  * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
+  * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
+  * The emitted section looks like this:
+```
+Global Suppression Attribute:
+[<assembly: SuppressMessage("Gendarme.Rules.Correctness",
+                            "MethodCanBeMadeStaticRule",
+                            Scope = "member", // MethodDefinition
+                            Target = "ParameterNamesShouldMatch.Handler::ShowMessage(a,System.String)",
+                            Justification = "")>]
+
+```
 * Fix `AvoidMultidimensionalIndexerRule` for F# generated parameterless methods called `get_Item`
 * Fix comparison of nested type names in parameters against supplied types
 * Ignore [CompilerGenerated] methods for `AvoidSwitchStatementsRule` and `CheckParametersNullityInVisibleMethodsRule`
@@ -115,3 +108,23 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 * Skip types called `<PrivateImplementationDetails>`
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
 * Don't apply `DoNotDeclareVirtualMethodsInSealedTypeRule` to F# closure types
+* Don't apply `PreferStringComparisonOverrideRule` to generated code
+
+## Badges
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme-tool?includePreReleases=true) Global tool for .net core 2.1 and later](https://www.nuget.org/packages/altcode.gendarme-tool)
+
+| | | |
+| --- | --- | --- | 
+| **Build** | <sup>AppVeyor</sup> [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme) | ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme) 
+| |<sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
+
+## Build process from trunk as per the CI YAML
+
+Assumes net60/VS2022 build environment
+
+* `dotnet tool restore`
+* `dotnet fake run .\Build\setup.fsx`
+* `dotnet fake run .\Build\build.fsx`
+
+The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests

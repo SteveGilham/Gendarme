@@ -28,7 +28,7 @@
 //
 
 using System;
-using System.Reflection;
+using System.IO;
 
 using Gendarme.Framework;
 using Test.Rules.Helpers;
@@ -129,6 +129,18 @@ namespace Test.Rules.Fixtures
     /// </summary>
     private RuleResult RunRule(TMetadataToken token)
     {
+      void SearchBeside(ModuleDefinition m)
+      {
+        var file = m.FileName;
+        if (!String.IsNullOrWhiteSpace(file))
+        {
+          var dir = Path.GetDirectoryName(file);
+          AltCode.CecilExtensions.NetCoreResolver.AddSearchLocation(dir);
+        }
+      }
+
+      AltCode.CecilExtensions.NetCoreResolver.ClearSearchLocations();
+
       if (token == null)
         throw new ArgumentNullException("token");
 
@@ -141,7 +153,9 @@ namespace Test.Rules.Fixtures
           runner.OnType(md.DeclaringType);
           runner.OnMethod(md);
         }
-        return runner.CheckMethod(token as MethodDefinition);
+
+        SearchBeside(md.DeclaringType.Module);
+        return runner.CheckMethod(md);
       }
 
       TypeDefinition td = (token as TypeDefinition);
@@ -152,6 +166,7 @@ namespace Test.Rules.Fixtures
           runner.OnAssembly(md.DeclaringType.Module.Assembly);
           runner.OnType(md.DeclaringType);
         }
+        SearchBeside(td.Module);
         return runner.CheckType(td);
       }
 
@@ -159,7 +174,8 @@ namespace Test.Rules.Fixtures
       if (ad != null)
       {
         if (FireEvents)
-          runner.OnAssembly(td.Module.Assembly);
+          runner.OnAssembly(ad);
+        SearchBeside(ad.MainModule);
         return runner.CheckAssembly(ad);
       }
 

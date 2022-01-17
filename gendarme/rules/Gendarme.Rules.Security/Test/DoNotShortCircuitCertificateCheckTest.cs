@@ -51,71 +51,70 @@ namespace Test.Rules.Security
       AssertRuleDoesNotApply<DoNotShortCircuitCertificateCheckTest>("NonBoolReturnValue");
     }
 
-#if NETCOREAPP2_1
-#else
+#if NET472
 
-		// e.g. an application where the local time source cannot be trusted
-		public class AllowExpiredCertificatePolicy : ICertificatePolicy {
+    // e.g. an application where the local time source cannot be trusted
+    public class AllowExpiredCertificatePolicy : ICertificatePolicy
+    {
+      public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return ((uint)certificateProblem == ((uint)0x800B0101));
+      }
+    }
 
-			public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return ((uint) certificateProblem == ((uint) 0x800B0101));
-			}
-		}
+    // e.g. an application that is specific to a (service using a) specific certificate
+    public class AllowSpecificCertificatePolicy : ICertificatePolicy
+    {
+      bool ICertificatePolicy.CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return (certificate.GetCertHashString() == "D62F48D013EE7FB58B79074512670D9C5B3A5DA9");
+      }
+    }
 
-		// e.g. an application that is specific to a (service using a) specific certificate
-		public class AllowSpecificCertificatePolicy : ICertificatePolicy {
+    [Test]
+    public void PolicySuccess()
+    {
+      AssertRuleSuccess<AllowExpiredCertificatePolicy>("CheckValidationResult");
+      AssertRuleSuccess<AllowSpecificCertificatePolicy>("System.Net.ICertificatePolicy.CheckValidationResult");
+    }
 
-			bool ICertificatePolicy.CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return (certificate.GetCertHashString () == "D62F48D013EE7FB58B79074512670D9C5B3A5DA9");
-			}
-		}
+    public class NotImplementedCertificatePolicy : ICertificatePolicy
+    {
+      public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        throw new NotImplementedException();
+      }
+    }
 
-		[Test]
-		public void PolicySuccess ()
-		{
-			AssertRuleSuccess<AllowExpiredCertificatePolicy> ("CheckValidationResult");
-			AssertRuleSuccess<AllowSpecificCertificatePolicy> ("System.Net.ICertificatePolicy.CheckValidationResult");
-		}
+    public class NullCertificatePolicy : ICertificatePolicy
+    {
+      public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return true;
+      }
+    }
 
-		public class NotImplementedCertificatePolicy : ICertificatePolicy {
+    public class DualCertificatePolicy : ICertificatePolicy
+    {
+      public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return true;
+      }
 
-			public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				throw new NotImplementedException ();
-			}
-		}
+      bool ICertificatePolicy.CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return (request != null);
+      }
+    }
 
-		public class NullCertificatePolicy : ICertificatePolicy {
-
-			public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return true;
-			}
-		}
-
-		public class DualCertificatePolicy : ICertificatePolicy {
-
-			public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return true;
-			}
-
-			bool ICertificatePolicy.CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return (request != null);
-			}
-		}
-
-		[Test]
-		public void PolicyFailure ()
-		{
-			AssertRuleFailure<NotImplementedCertificatePolicy> ("CheckValidationResult", 1);
-			AssertRuleFailure<NullCertificatePolicy> ("CheckValidationResult", 1);
-			AssertRuleFailure<DualCertificatePolicy> ("CheckValidationResult", 1);
-			AssertRuleFailure<DualCertificatePolicy> ("System.Net.ICertificatePolicy.CheckValidationResult", 1);
-		}
+    [Test]
+    public void PolicyFailure()
+    {
+      AssertRuleFailure<NotImplementedCertificatePolicy>("CheckValidationResult", 1);
+      AssertRuleFailure<NullCertificatePolicy>("CheckValidationResult", 1);
+      AssertRuleFailure<DualCertificatePolicy>("CheckValidationResult", 1);
+      AssertRuleFailure<DualCertificatePolicy>("System.Net.ICertificatePolicy.CheckValidationResult", 1);
+    }
 
 #endif
 
@@ -127,72 +126,76 @@ namespace Test.Rules.Security
       }
     }
 
-#if NETCOREAPP2_1
-#else
+#if NET472
 
-		public class ImplementICertificatePolicy : ICertificatePolicy {
+    public class ImplementICertificatePolicy : ICertificatePolicy
+    {
+      public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return true;
+      }
 
-			public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return true;
-			}
+      public bool CheckValidationResultFalse(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return false;
+      }
+    }
 
-			public bool CheckValidationResultFalse (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return false;
-			}
-		}
+    [Test]
+    public void PolicyMisnamed()
+    {
+      AssertRuleSuccess<DoesNotImplementICertificatePolicy>("CheckValidationResult");
+      AssertRuleSuccess<ImplementICertificatePolicy>("CheckValidationResultFalse");
+    }
 
-		[Test]
-		public void PolicyMisnamed ()
-		{
-			AssertRuleSuccess<DoesNotImplementICertificatePolicy> ("CheckValidationResult");
-			AssertRuleSuccess<ImplementICertificatePolicy> ("CheckValidationResultFalse");
-		}
+    public interface IMyPolicy : ICertificatePolicy
+    {
+      string Name { get; }
+    }
 
-		public interface IMyPolicy : ICertificatePolicy {
-			string Name { get; }
-		}
+    public abstract class AbstractIndirectPolicy : IMyPolicy
+    {
+#pragma warning disable IDE0044 // Add readonly modifier
+      private bool result;
+#pragma warning restore IDE0044 // Add readonly modifier
 
-		abstract public class AbstractIndirectPolicy : IMyPolicy
-		{
-			private bool result;
+      public AbstractIndirectPolicy(bool value)
+      {
+        result = value;
+      }
 
-			public AbstractIndirectPolicy (bool value)
-			{
-				result = value;
-			}
+      public string Name
+      {
+        get { return "My Policy"; }
+      }
 
-			public string Name {
-				get { return "My Policy"; }
-			}
+      protected bool Result
+      {
+        get { return result; }
+      }
 
-			protected bool Result {
-				get { return result; }
-			}
+      public abstract bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem);
+    }
 
-			abstract public bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem);
-		}
+    public class IndirectPolicy : AbstractIndirectPolicy
+    {
+      public IndirectPolicy()
+        : base(false)
+      {
+      }
 
-		public class IndirectPolicy : AbstractIndirectPolicy {
+      public override bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+      {
+        return Result;
+      }
+    }
 
-			public IndirectPolicy ()
-				: base (false)
-			{
-			}
-
-			public override bool CheckValidationResult (ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
-			{
-				return Result;
-			}
-		}
-
-		[Test]
-		public void PolicyIndirect ()
-		{
-			AssertRuleDoesNotApply<AbstractIndirectPolicy> ("CheckValidationResult");
-			AssertRuleFailure<IndirectPolicy> ("CheckValidationResult", 1);
-		}
+    [Test]
+    public void PolicyIndirect()
+    {
+      AssertRuleDoesNotApply<AbstractIndirectPolicy>("CheckValidationResult");
+      AssertRuleFailure<IndirectPolicy>("CheckValidationResult", 1);
+    }
 
 #endif
 

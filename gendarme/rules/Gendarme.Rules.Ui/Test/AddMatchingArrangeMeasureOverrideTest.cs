@@ -36,26 +36,9 @@ using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 
-// Mono 2.8 does not provide the PresentationFramework.dll assembly so we fake what we need to test (when compiled with xMCS)
-#if __MonoCS__
-namespace System.Windows {
-	public class FrameworkElement {
-		protected virtual Size ArrangeOverride (Size finalSize)
-		{
-			return new Size ();
-		}
-		protected virtual Size MeasureOverride (Size availableSize)
-		{
-			return new Size ();
-		}
-	}
-}
-#endif
-
 namespace Test.Rules.Ui
 {
-#if NETCOREAPP2_1
-#else
+#if NET472
 
   public class BasicFrameworkElement : FrameworkElement
   {
@@ -105,15 +88,13 @@ namespace Test.Rules.Ui
       AssertRuleDoesNotApply(SimpleTypes.Delegate);
       AssertRuleDoesNotApply(SimpleTypes.Enum);
       AssertRuleDoesNotApply(SimpleTypes.Interface);
-#if NETCOREAPP2_1
-#else
+#if NET472
       // Doesn't implement either method.
       AssertRuleDoesNotApply<BasicFrameworkElement>();
 #endif
     }
 
-#if NETCOREAPP2_1
-#else
+#if NET472
 
     [Test]
     public void Good()

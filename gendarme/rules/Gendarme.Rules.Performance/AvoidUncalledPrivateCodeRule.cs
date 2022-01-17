@@ -117,7 +117,7 @@ namespace Gendarme.Rules.Performance
       return false;
     }
 
-    static private bool Applicable(MethodDefinition method)
+    private static bool Applicable(MethodDefinition method)
     {
       // rule doesn't apply to static ctor (called by the runtime)
       if (method.IsStatic && method.IsConstructor)
@@ -291,7 +291,7 @@ namespace Gendarme.Rules.Performance
       return false;
     }
 
-    private static Dictionary<TypeDefinition, HashSet<ulong>> cache = new Dictionary<TypeDefinition, HashSet<ulong>>();
+    private static readonly Dictionary<TypeDefinition, HashSet<ulong>> cache = new Dictionary<TypeDefinition, HashSet<ulong>>();
 
     private static ulong GetToken(MethodReference method)
     {
@@ -321,8 +321,7 @@ namespace Gendarme.Rules.Performance
 
     private static HashSet<ulong> GetCache(TypeDefinition type)
     {
-      HashSet<ulong> methods;
-      if (!cache.TryGetValue(type, out methods))
+      if (!cache.TryGetValue(type, out HashSet<ulong> methods))
       {
         methods = new HashSet<ulong>();
         cache.Add(type, methods);
@@ -351,14 +350,8 @@ namespace Gendarme.Rules.Performance
         TypeReference type = mr.DeclaringType;
         if (!type.IsArray)
         {
-#if NETSTANDARD2_0
           // Band-aid based on the pre-existing comment
           if (type.GetElementType().HasGenericParameters)
-#else
-          // the simpler ^^^ does not work under Mono but works on MS
-          type = type.Resolve();
-          if (type != null && type.HasGenericParameters)
-#endif
           {
             methods.Add(GetToken(type.GetMethod(mr.Name)));
           }

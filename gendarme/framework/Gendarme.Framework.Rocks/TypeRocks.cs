@@ -343,17 +343,21 @@ namespace Gendarme.Framework.Rocks
         if (current.IsNamed(systemObject))
           return false;
 
-        AltCode.CecilExtensions.NetCoreResolver.HookResolver(
-            current.Module.AssemblyResolver);
         TypeDefinition td = current.Resolve();
         if (td == null)
-          return false;   // could not resolve type
+        {
+          AltCode.CecilExtensions.NetCoreResolver.HookResolver(
+              current.Module.AssemblyResolver);
+          td = current.Resolve();
+          if (td == null)
+            return false;   // could not resolve type
+        }
         current = td.BaseType;
       }
       return false;
     }
 
-    private readonly static TypeName systemObject = new TypeName
+    private static readonly TypeName systemObject = new TypeName
     {
       Namespace = "System",
       Name = "Object"
@@ -376,7 +380,7 @@ namespace Gendarme.Framework.Rocks
               || def.HasAttribute(compilationMapping));
     }
 
-    private readonly static TypeName compilationMapping = new TypeName
+    private static readonly TypeName compilationMapping = new TypeName
     {
       Namespace = "Microsoft.FSharp.Core",
       Name = "CompilationMappingAttribute"
@@ -509,7 +513,7 @@ namespace Gendarme.Framework.Rocks
       return self.Inherits(systemAttribute);
     }
 
-    private readonly static TypeName systemAttribute = new TypeName
+    private static readonly TypeName systemAttribute = new TypeName
     {
       Namespace = "System",
       Name = "Attribute"
@@ -554,7 +558,7 @@ namespace Gendarme.Framework.Rocks
       return type.HasAttribute(flags);
     }
 
-    private readonly static TypeName flags = new TypeName
+    private static readonly TypeName flags = new TypeName
     {
       Namespace = "System",
       Name = "FlagsAttribute"
@@ -632,7 +636,7 @@ namespace Gendarme.Framework.Rocks
       return self.IsNamed(handleRef);
     }
 
-    private readonly static TypeName handleRef = new TypeName
+    private static readonly TypeName handleRef = new TypeName
     {
       Namespace = "System.Runtime.InteropServices",
       Name = "HandleRef"

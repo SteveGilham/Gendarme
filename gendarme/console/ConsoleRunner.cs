@@ -29,12 +29,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Xml;
+using System.Resources;
 
 using Mono.Cecil;
 
@@ -42,6 +42,29 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 
 using NDesk.Options;
+
+[assembly: NeutralResourcesLanguageAttribute("en-GB")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly",
+  MessageId = "gendarme",
+  Justification = "design decision")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1701:ResourceStringCompoundWordsShouldBeCasedCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "TearDown",
+  Justification = "Like, that's your opinion, man")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "Gilham",
+  Justification = "That's my name")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "github",
+  Justification = "It's a name")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "configfile",
+  Justification = "product jargon")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "ruleset",
+  Justification = "product jargon")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly",
+  Scope = "resource", Target = "Gendarme.Strings.resources", MessageId = "stdout",
+  Justification = "industry jargon")]
 
 namespace Gendarme
 {
@@ -67,6 +90,8 @@ namespace Gendarme
 
     // parse severity filter
     // e.g. Audit,High+ == Audit, High and Critical
+    [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
+      Justification = "Roslyn switch on string generates complexity")]
     private bool ParseSeverity(string filter)
     {
       SeverityBitmask.ClearAll();
@@ -132,6 +157,8 @@ namespace Gendarme
       return true;
     }
 
+    [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
+      Justification = "Roslyn switch on string generates complexity")]
     private bool ParseConfidence(string filter)
     {
       ConfidenceBitmask.ClearAll();
@@ -278,7 +305,7 @@ namespace Gendarme
       }
       catch (OptionException e)
       {
-        Console.WriteLine("Error parsing option '{0}' : {1}", e.OptionName, e.Message);
+        Console.WriteLine(Strings.ErrorParsingOption, e.OptionName, e.Message);
         Console.WriteLine();
         return 1;
       }
@@ -353,10 +380,12 @@ namespace Gendarme
         // if a .netmodule is missing (otherwise this exception will occur later in several places)
         if (ad.Modules.Count > 0)
           Assemblies.Add(ad);
+        var dir = Path.GetDirectoryName(assembly_name);
+        AltCode.CecilExtensions.NetCoreResolver.AddSearchLocation(dir);
       }
       catch (BadImageFormatException)
       {
-        warning = "Invalid assembly format";
+        warning = Strings.InvalidAssemblyFormat;
       }
       catch (FileNotFoundException fnfe)
       {
@@ -415,6 +444,8 @@ namespace Gendarme
       return (byte)((0 == Defects.Count) ? 0 : 1);
     }
 
+    [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+      Justification = "Top of call tree")]
     private byte Execute(string[] args)
     {
       try
@@ -442,7 +473,7 @@ namespace Gendarme
             validationErrorsCounter++;
           }
           if (validationErrorsCounter == 0)
-            Console.WriteLine("Configuration parameters does not match any known rule.");
+            Console.WriteLine(Strings.UnmatchedConfigurationParameters);
           return 3;
         }
 
@@ -470,13 +501,11 @@ namespace Gendarme
         {
           if (e is AssemblyResolutionException)
           {
-            Console.WriteLine("If, and only if, this message refers to an assembly mentioned");
-            Console.WriteLine("in a 'Resolved assembly reference' message above, then it is a bug.");
-            Console.WriteLine("If so, please report the entire stack trace.");
+            Console.WriteLine(Strings.MaybeBugReport);
             WriteUnhandledExceptionMessage(e);
           }
           else
-            Console.Error.WriteLine("ERROR: {0}", e.Message);
+            Console.Error.WriteLine(Strings.ERROR, e.Message);
           return 2;
         }
         else
@@ -495,12 +524,12 @@ namespace Gendarme
     private void WriteUnhandledExceptionMessage(Exception e)
     {
       Console.WriteLine();
-      Console.WriteLine("An uncaught exception occured. Please fill a bug report at https://github.com/SteveGilham/altcode.fake/issues");
+      Console.WriteLine(Strings.UncaughtException);
       if (CurrentRule != null)
-        Console.WriteLine("Rule:\t{0}", CurrentRule);
+        Console.WriteLine(Strings.Rule.Replace("`t", "\t"), CurrentRule);
       if (CurrentTarget != null)
-        Console.WriteLine("Target:\t{0} ({1})", CurrentTarget, CurrentAssembly);
-      Console.WriteLine("Stack trace: {0}", e);
+        Console.WriteLine(Strings.Target.Replace("`t", "\t"), CurrentTarget, CurrentAssembly);
+      Console.WriteLine(Strings.StackTrace, e);
     }
 
     private Stopwatch total = new Stopwatch();
@@ -509,16 +538,16 @@ namespace Gendarme
     private static string TimeToString(TimeSpan time)
     {
       if (time >= TimeSpan.FromMilliseconds(100))
-        return String.Format(CultureInfo.CurrentCulture, "{0:0.0} seconds", time.TotalSeconds);
+        return String.Format(CultureInfo.CurrentCulture, Strings.TimeToString, time.TotalSeconds);
       else
-        return "<0.1 seconds";
+        return Strings.Fast;
     }
 
     public override void Initialize()
     {
       if (!quiet)
       {
-        Console.Write("Initialization");
+        Console.Write(Strings.Initialization);
         total.Start();
         local.Start();
       }
@@ -528,7 +557,7 @@ namespace Gendarme
       if (!quiet)
       {
         local.Stop();
-        Console.WriteLine(": {0}", TimeToString(local.Elapsed));
+        Console.WriteLine(Strings.ColonValue, TimeToString(local.Elapsed));
         local.Reset();
       }
     }
@@ -537,7 +566,7 @@ namespace Gendarme
     {
       if (Assemblies.Count == 0)
       {
-        Console.WriteLine("No assemblies were specified to be analyzed.");
+        Console.WriteLine(Strings.NoAssembliesSpecified);
         return;
       }
 
@@ -551,7 +580,7 @@ namespace Gendarme
     {
       if (!quiet)
       {
-        Console.WriteLine(": {0}", TimeToString(local.Elapsed));
+        Console.WriteLine(Strings.ColonValue, TimeToString(local.Elapsed));
         local.Start();
         local.Reset();
       }
@@ -562,13 +591,13 @@ namespace Gendarme
       {
         local.Stop();
         total.Stop();
-        Console.WriteLine("TearDown: {0}", TimeToString(local.Elapsed));
+        Console.WriteLine(Strings.TearDown, TimeToString(local.Elapsed));
         Console.WriteLine();
         if (Assemblies.Count == 1)
-          Console.WriteLine("One assembly processed in {0}.",
+          Console.WriteLine(Strings.OneAssemblyProcessed,
             TimeToString(total.Elapsed));
         else
-          Console.WriteLine("{0} assemblies processed in {1}.",
+          Console.WriteLine(Strings.AssembliesProcessed,
             Assemblies.Count, TimeToString(total.Elapsed));
 
         string hint = string.Empty;
@@ -576,21 +605,23 @@ namespace Gendarme
         {
           List<string> files = new List<string>(new string[] { log_file, xml_file, html_file });
           files.RemoveAll(string.IsNullOrEmpty);
-          hint = String.Format(CultureInfo.CurrentCulture, "Report{0} written to: {1}.",
+          hint = String.Format(CultureInfo.CurrentCulture, Strings.ReportWrittenTo,
             (files.Count > 1) ? "s" : string.Empty,
             string.Join(",", files.Select(file =>
             String.Format(CultureInfo.CurrentCulture, "`{0}'", file)).ToArray()));
         }
 
         if (Defects.Count == 0)
-          Console.WriteLine("No defect found. {0}", hint);
+          Console.WriteLine(Strings.NoDefectsFound, hint);
         else if (Defects.Count == 1)
-          Console.WriteLine("One defect found. {0}", hint);
+          Console.WriteLine(Strings.OneDefectFound, hint);
         else
-          Console.WriteLine("{0} defects found. {1}", Defects.Count, hint);
+          Console.WriteLine(Strings.DefectsFound, Defects.Count, hint);
       }
     }
 
+    [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
+      Justification = "work in progress")]
     protected override void OnAssembly(RunnerEventArgs e)
     {
       if (!quiet)
@@ -598,7 +629,7 @@ namespace Gendarme
         if (local.IsRunning)
         {
           local.Stop();
-          Console.WriteLine(": {0}", TimeToString(local.Elapsed));
+          Console.WriteLine(Strings.ColonValue, TimeToString(local.Elapsed));
           local.Reset();
         }
 
@@ -619,11 +650,11 @@ namespace Gendarme
       Version v = a.GetName().Version;
       if (v.ToString() != "0.0.0.0")
       {
-        Console.WriteLine("Gendarme v{0}", v);
+        Console.WriteLine(Strings.GendarmeVersion, v);
       }
       else
       {
-        Console.WriteLine("Gendarme - Development Snapshot");
+        Console.WriteLine(Strings.GendarmeSnapshot);
       }
 
       object[] attr = a.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
@@ -635,7 +666,7 @@ namespace Gendarme
 
     private static Assembly runner_assembly;
 
-    static public Assembly Assembly
+    public static Assembly Assembly
     {
       get
       {
@@ -647,26 +678,7 @@ namespace Gendarme
 
     private static void Help()
     {
-      Console.WriteLine("Usage: gendarme [--config file] [--set ruleset] [--{log|xml|html} file] assemblies");
-      Console.WriteLine("Where");
-      Console.WriteLine("  --config file\t\tSpecify the rule sets and rule settings. Default is 'rules.xml'.");
-      Console.WriteLine("  --set ruleset\t\tSpecify a rule set from configfile. Default is 'default'.");
-      Console.WriteLine("  --log file\t\tSave the report to the specified file.");
-      Console.WriteLine("  --xml file\t\tSave the report, as XML, to the specified file.");
-      Console.WriteLine("  --html file\t\tSave the report, as HTML, to the specified file.");
-      Console.WriteLine("  --ignore file\t\tDo not report defects listed in the specified file.");
-      Console.WriteLine("  --limit N\t\tStop reporting after N defects are found.");
-      Console.WriteLine("  --severity [all | [[audit | low | medium | high | critical][+|-]]],...");
-      Console.WriteLine("\t\t\tFilter defects for the specified severity levels.");
-      Console.WriteLine("\t\t\tDefault is 'medium+'");
-      Console.WriteLine("  --confidence [all | [[low | normal | high | total][+|-]],...");
-      Console.WriteLine("\t\t\tFilter defects for the specified confidence levels.");
-      Console.WriteLine("\t\t\tDefault is 'normal+'");
-      Console.WriteLine("  --console\t\tShow defects on the console even if --log, --xml or --html are specified.");
-      Console.WriteLine("  --quiet\t\tUsed to disable progress and other information which is normally written to stdout.");
-      Console.WriteLine("  --v\t\t\tWhen present additional progress information is written to stdout (can be used multiple times).");
-      Console.WriteLine("  assemblies\t\tSpecify the assemblies to verify.");
-      Console.WriteLine();
+      Console.WriteLine(Strings.HelpText.Replace("`t", "\t"));
     }
 
     /// <summary>

@@ -69,7 +69,7 @@ namespace Tests.Rules.Globalization {
             }
         }
 
-#if NETCOREAPP2_1
+#if !NET472
     internal static Object ImageUnused
     {
 #else
@@ -78,7 +78,7 @@ namespace Tests.Rules.Globalization {
       get
       {
         object obj = ResourceManager.GetObject("ImageUnused", resourceCulture);
-#if NETCOREAPP2_1
+#if !NET472
         return obj;
 #else
         return ((System.Drawing.Bitmap)(obj));
@@ -86,7 +86,7 @@ namespace Tests.Rules.Globalization {
       }
     }
 
-#if NETCOREAPP2_1
+#if !NET472
     internal static Object ImageUsed
     {
 #else
@@ -95,7 +95,7 @@ namespace Tests.Rules.Globalization {
       get
       {
         object obj = ResourceManager.GetObject("ImageUsed", resourceCulture);
-#if NETCOREAPP2_1
+#if !NET472
         return obj;
 #else
         return ((System.Drawing.Bitmap)(obj));

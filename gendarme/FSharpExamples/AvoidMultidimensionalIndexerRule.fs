@@ -15,6 +15,6 @@ module DotNet =
       | FailFast _ -> false
       | Many s -> s |> Seq.exists (fun f -> f.ForceDelete)
 
-[<assembly:System.Runtime.InteropServices.ComVisible(false)>]
-[<assembly:System.CLSCompliantAttribute(true)>]
+[<assembly: System.Runtime.InteropServices.ComVisible(false)>]
+[<assembly: System.CLSCompliantAttribute(true)>]
 ()

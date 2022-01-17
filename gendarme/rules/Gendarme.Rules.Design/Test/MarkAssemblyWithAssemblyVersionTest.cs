@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for MarkAssemblyWithAssemblyVersionRule
 //
 // Authors:
@@ -35,73 +35,73 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+  [TestFixture]
+  public class MarkAssemblyWithAssemblyVersionTest : AssemblyRuleTestFixture<MarkAssemblyWithAssemblyVersionRule>
+  {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      Runner.Engines.Subscribe("Gendarme.Framework.Engines.SuppressMessageEngine");
+    }
 
-	[TestFixture]
-	public class MarkAssemblyWithAssemblyVersionTest : AssemblyRuleTestFixture<MarkAssemblyWithAssemblyVersionRule> {
+    private static AssemblyDefinition CreateAssembly(string name, ModuleKind kind)
+    {
+      return AssemblyDefinition.CreateAssembly(
+        new AssemblyNameDefinition(name, new Version(0, 0)),
+        name, kind);
+    }
 
-		[OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
-		}
+    [Test]
+    public void Good()
+    {
+      AssemblyDefinition assembly = CreateAssembly("GoodVersion", ModuleKind.Dll);
+      assembly.Name.Version = new Version(1, 2, 3, 4);
+      AssertRuleSuccess(assembly);
+    }
 
-		static AssemblyDefinition CreateAssembly (string name, ModuleKind kind)
-		{
-			return AssemblyDefinition.CreateAssembly (
-				new AssemblyNameDefinition (name, new Version (0, 0)),
-				name, kind);
-		}
+    [Test]
+    public void Bad()
+    {
+      AssemblyDefinition assembly = CreateAssembly("BadVersion", ModuleKind.Dll);
+      assembly.Name.Version = new Version();
+      AssertRuleFailure(assembly, 1);
+    }
 
-		[Test]
-		public void Good ()
-		{
-			AssemblyDefinition assembly = CreateAssembly ("GoodVersion", ModuleKind.Dll);
-			assembly.Name.Version = new Version (1, 2, 3, 4);
-			AssertRuleSuccess (assembly);
-		}
+    [Test]
+    public void FxCop_ManuallySuppressed()
+    {
+      AssemblyDefinition assembly = CreateAssembly("SuppressedVersion", ModuleKind.Dll);
+      TypeDefinition type = DefinitionLoader.GetTypeDefinition<SuppressMessageAttribute>();
 
-		[Test]
-		public void Bad ()
-		{
-			AssemblyDefinition assembly = CreateAssembly ("BadVersion", ModuleKind.Dll);
-			assembly.Name.Version = new Version ();
-			AssertRuleFailure (assembly, 1);
-		}
+      MethodDefinition ctor = DefinitionLoader.GetMethodDefinition(type, ".ctor",
+        new Type[] { typeof(string), typeof(string) });
+      CustomAttribute ca = new CustomAttribute(assembly.MainModule.ImportReference(ctor));
+      ca.ConstructorArguments.Add(
+        new CustomAttributeArgument(
+          assembly.MainModule.TypeSystem.String, "Microsoft.Design"));
+      ca.ConstructorArguments.Add(
+        new CustomAttributeArgument(
+          assembly.MainModule.TypeSystem.String, "CA1016:MarkAssembliesWithAssemblyVersion"));
+      assembly.CustomAttributes.Add(ca);
 
-		[Test]
-		public void FxCop_ManuallySuppressed ()
-		{
-			AssemblyDefinition assembly = CreateAssembly ("SuppressedVersion", ModuleKind.Dll);
-			TypeDefinition type = DefinitionLoader.GetTypeDefinition<SuppressMessageAttribute> ();
+      var stream = new MemoryStream();
+      assembly.Write(stream);
 
-			MethodDefinition ctor = DefinitionLoader.GetMethodDefinition (type, ".ctor",
-				new Type [] { typeof (string), typeof (string) });
-			CustomAttribute ca = new CustomAttribute (assembly.MainModule.Import (ctor));
-			ca.ConstructorArguments.Add (
-				new CustomAttributeArgument (
-					assembly.MainModule.TypeSystem.String, "Microsoft.Design"));
-			ca.ConstructorArguments.Add (
-				new CustomAttributeArgument (
-					assembly.MainModule.TypeSystem.String, "CA1016:MarkAssembliesWithAssemblyVersion"));
-			assembly.CustomAttributes.Add (ca);
+      stream.Position = 0;
 
-			var stream = new MemoryStream ();
-			assembly.Write (stream);
+      assembly = AssemblyDefinition.ReadAssembly(stream);
 
-			stream.Position = 0;
+      AssertRuleDoesNotApply(assembly);
+    }
 
-			assembly = AssemblyDefinition.ReadAssembly (stream);
-
-			AssertRuleDoesNotApply (assembly);
-		}
-
-		[Test]
-		public void FxCop_GloballySuppressed ()
-		{
-			AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition (this.GetType ());
-			// see GlobalSuppressions.cs
-			AssertRuleDoesNotApply (assembly);
-		}
-	}
+    [Test]
+    public void FxCop_GloballySuppressed()
+    {
+      AssemblyDefinition assembly = DefinitionLoader.GetAssemblyDefinition(this.GetType());
+      // see GlobalSuppressions.cs
+      AssertRuleDoesNotApply(assembly);
+    }
+  }
 }

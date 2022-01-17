@@ -35,132 +35,153 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Concurrency {
+namespace Gendarme.Rules.Concurrency
+{
+  /// <summary>
+  /// This rule checks if you're using <c>lock</c> on the current instance (<c>this</c>) or
+  /// on a <c>Type</c>. This can cause
+  /// problems because anyone can acquire a lock on the instance or type. And if another
+  /// thread does acquire a lock then deadlocks become a very real possibility. The preferred way to
+  /// handle this is to create a private <c>System.Object</c> instance field and <c>lock</c> that. This
+  /// greatly reduces the scope of the code which may acquire the lock which makes it much easier
+  /// to ensure that the locking is done correctly.
+  /// </summary>
+  /// <example>
+  /// Bad example (this):
+  /// <code>
+  /// public void MethodLockingOnThis ()
+  /// {
+  /// 	lock (this) {
+  ///		producer++;
+  ///     }
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (type):
+  /// <code>
+  /// public void MethodLockingOnType ()
+  /// {
+  /// 	lock (this.GetType ()) {
+  ///		producer++;
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class ClassWithALocker {
+  /// 	object locker = new object ();
+  ///	int producer = 0;
+  ///
+  ///	public void MethodLockingLocker ()
+  ///	{
+  ///		lock (locker) {
+  ///			producer++;
+  ///		}
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule checks if you're using <c>lock</c> on the current instance (<c>this</c>) or
-	/// on a <c>Type</c>. This can cause
-	/// problems because anyone can acquire a lock on the instance or type. And if another
-	/// thread does acquire a lock then deadlocks become a very real possibility. The preferred way to
-	/// handle this is to create a private <c>System.Object</c> instance field and <c>lock</c> that. This
-	/// greatly reduces the scope of the code which may acquire the lock which makes it much easier
-	/// to ensure that the locking is done correctly.
-	/// </summary>
-	/// <example>
-	/// Bad example (this):
-	/// <code>
-	/// public void MethodLockingOnThis ()
-	/// {
-	/// 	lock (this) {
-	///		producer++;
-	///     }	
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (type):
-	/// <code>
-	/// public void MethodLockingOnType ()
-	/// {
-	/// 	lock (this.GetType ()) {
-	///		producer++;
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class ClassWithALocker {
-	/// 	object locker = new object ();
-	///	int producer = 0;
-	/// 
-	///	public void MethodLockingLocker ()
-	///	{
-	///		lock (locker) {
-	///			producer++;
-	///		}
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This method uses lock(this) or lock(typeof(X)) which makes it very difficult to ensure that the locking is done correctly.")]
+  [Solution("Instead lock a private object so that you have better control of when the locking is done.")]
+  public class DoNotLockOnThisOrTypesRule : LockAnalyzerRule
+  {
+    private const string LockThis = "Monitor.Enter(this) or lock(this) in C#";
+    private const string LockType = "Monitor.Enter(typeof({0})) or lock(typeof({0})) in C#";
 
-	[Problem ("This method uses lock(this) or lock(typeof(X)) which makes it very difficult to ensure that the locking is done correctly.")]
-	[Solution ("Instead lock a private object so that you have better control of when the locking is done.")]
-	public class DoNotLockOnThisOrTypesRule : LockAnalyzerRule {
+    public override void Analyze(MethodDefinition method, MethodReference enter, Instruction ins)
+    {
+      Instruction locker = ins.TraceBack(method);
+      if (locker.OpCode.Code == Code.Dup)
+        locker = locker.TraceBack(method);
 
-		private const string LockThis = "Monitor.Enter(this) or lock(this) in C#";
-		private const string LockType = "Monitor.Enter(typeof({0})) or lock(typeof({0})) in C#";
+      string msg = CheckLocker(method, locker);
+      if (msg.Length > 0)
+        Runner.Report(method, ins, Severity.High, Confidence.High, msg);
+    }
 
-		public override void Analyze (MethodDefinition method, MethodReference enter, Instruction ins)
-		{
-			Instruction locker = ins.TraceBack (method);
-			if (locker.OpCode.Code == Code.Dup)
-				locker = locker.TraceBack (method);
+    private static string CheckLocker(MethodDefinition method, Instruction ins)
+    {
+      string msg = String.Empty;
 
-			string msg = CheckLocker (method, locker);
-			if (msg.Length > 0)
-				Runner.Report (method, ins, Severity.High, Confidence.High, msg);
-		}
+      switch (ins.OpCode.Code)
+      {
+        case Code.Ldarg_0:
+          if (!method.IsStatic)
+            msg = LockThis;
+          break;
 
-		private static string CheckLocker (MethodDefinition method, Instruction ins)
-		{
-			string msg = String.Empty;
+        case Code.Ldarg:
+        case Code.Ldarg_S:
+          if (!method.IsStatic)
+          {
+            ParameterDefinition pd = (ins.Operand as ParameterDefinition);
+            if ((pd == null) || (pd.Index == 0))
+              msg = LockThis;
+          }
+          break;
 
-			switch (ins.OpCode.Code) {
-			case Code.Ldarg_0:
-				if (!method.IsStatic)
-					msg = LockThis;
-				break;
-			case Code.Ldarg:
-			case Code.Ldarg_S:
-				if (!method.IsStatic) {
-					ParameterDefinition pd = (ins.Operand as ParameterDefinition);
-					if ((pd == null) || (pd.Index == 0))
-						msg = LockThis;
-				}
-				break;
-			case Code.Call:
-			case Code.Callvirt:
-				MethodReference mr = (ins.Operand as MethodReference);
-				if (!mr.ReturnType.IsNamed (type))
-					return String.Empty;
+        case Code.Call:
+        case Code.Callvirt:
+          MethodReference mr = (ins.Operand as MethodReference);
+          if (!mr.ReturnType.IsNamed(type))
+            return String.Empty;
 
-				if ((mr.Name == "GetTypeFromHandle") && (mr.DeclaringType.Name == "Type")) {
-					// ldtoken
-					msg = String.Format (CultureInfo.InvariantCulture, LockType, (ins.Previous.Operand as TypeReference).Name);
-				} else {
-					msg = mr.ToString ();
-				}
-				break;
-			default:
-				// [g]mcs commonly do a stloc.x ldloc.x just before 
-				// (a) an ldarg.0 (for instance methods); or
-				// (b) an ldtoken (for static methods)
-				// and this throws off TraceBack
-				Instruction locker = StoreLoadLocal (method, ins);
-				if (locker == null)
-					return String.Empty;
+          if ((mr.Name == "GetTypeFromHandle") && (mr.DeclaringType.Name == "Type"))
+          {
+            // ldtoken
+            msg = String.Format(CultureInfo.InvariantCulture, LockType, (ins.Previous.Operand as TypeReference).Name);
+          }
+          else
+          {
+            msg = mr.ToString();
+          }
+          break;
 
-				return CheckLocker (method, locker);
-			}
-			return msg;
-		}
-        private readonly static TypeName type = new TypeName
-        {
-            Namespace = "System",
-            Name = "Type"
-        };
+        default:
+          // [g]mcs commonly do a stloc.x ldloc.x just before
+          // (a) an ldarg.0 (for instance methods); or
+          // (b) an ldtoken (for static methods)
+          // and this throws off TraceBack
+          Instruction locker = StoreLoadLocal(method, ins);
+          if (locker == null)
+            return String.Empty;
 
-		private static Instruction StoreLoadLocal (MethodDefinition method, Instruction ins)
-		{
-			// check for a STLOC followed by a LDLOC
-			if (!ins.IsLoadLocal () || !ins.Previous.IsStoreLocal ())
-				return null;
-			// make sure it's about the same local variable
-			if (ins.GetVariable (method) != ins.Previous.GetVariable (method))
-				return null;
-			return ins.Previous.Previous;
-		}
-	}
+          return CheckLocker(method, locker);
+      }
+      return msg;
+    }
+
+    private static readonly TypeName type = new TypeName
+    {
+      Namespace = "System",
+      Name = "Type"
+    };
+
+    private static Instruction StoreLoadLocal(MethodDefinition method, Instruction ins)
+    {
+      var prev = ins.Previous;
+
+      /*
+			 * newer compilers like to insert a ldc.i4.0, stloc.#
+			 */
+
+      if (prev.Previous != null &&
+          prev.Previous.OpCode == OpCodes.Ldc_I4_0
+          && prev.IsStoreLocal()
+          && ins.GetVariable(method) != prev.GetVariable(method))
+        prev = prev.Previous.Previous;
+
+      // check for a STLOC followed by a LDLOC
+      if (!ins.IsLoadLocal() || !prev.IsStoreLocal())
+        return null;
+      // make sure it's about the same local variable
+      if (ins.GetVariable(method) != prev.GetVariable(method))
+        return null;
+      return prev.Previous;
+    }
+  }
 }

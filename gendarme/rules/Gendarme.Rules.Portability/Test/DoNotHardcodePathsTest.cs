@@ -40,8 +40,6 @@ using NUnit.Framework;
 
 namespace Test.Rules.Portability
 {
-#pragma warning disable 169, 219, 414
-
   [TestFixture]
   public class DoNotHardcodePathsTest : MethodRuleTestFixture<DoNotHardcodePathsRule>
   {
@@ -161,7 +159,7 @@ namespace Test.Rules.Portability
 
     private void DontReportRegistryKeys()
     {
-#if !NETCOREAPP2_1
+#if NET472
 
       // they look like paths but they aren't
       Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine
@@ -197,7 +195,7 @@ namespace Test.Rules.Portability
 
     private void DontReportRegexes()
     {
-      System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(
+      var r = new System.Text.RegularExpressions.Regex(
           @"^\s*"
           + @"(((?<ORIGIN>(((\d+>)?[a-zA-Z]?:[^:]*)|([^:]*))):)"
           + "|())"
@@ -266,7 +264,7 @@ namespace Test.Rules.Portability
       {
         GetType();
 
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml("<a><b><c/></b></a>");
 
         AddVariable("a/b/c", doc);
@@ -284,7 +282,7 @@ namespace Test.Rules.Portability
       {
         GetType();
 
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.LoadXml("<a><b><c/></b></a>");
 
         doc.SelectSingleNode("b/c/d");

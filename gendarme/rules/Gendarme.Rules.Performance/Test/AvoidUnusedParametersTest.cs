@@ -184,15 +184,15 @@ namespace Test.Rules.Performance
     [Test]
     public void DelegateMethodTest()
     {
-      SimpleCallback callback = new SimpleCallback(SimpleCallbackImpl);
+      var callback = new SimpleCallback(SimpleCallbackImpl);
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl");
     }
 
     [Test]
     public void DelegateMethodTestWithMultipleDelegates()
     {
-      SimpleCallback callback = new SimpleCallback(SimpleCallbackImpl);
-      SimpleCallback callback2 = new SimpleCallback(SimpleCallbackImpl2);
+      var callback = new SimpleCallback(SimpleCallbackImpl);
+      var callback2 = new SimpleCallback(SimpleCallbackImpl2);
 
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl");
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl2");
@@ -386,24 +386,24 @@ namespace Test.Rules.Performance
       // CA1801
       public class ReviewUnusedParameters
       {
-        static public void Fail(int count)
+        public static void Fail(int count)
         {
         }
 
         // manually suppressed - no MessageId
         [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        static public void ManuallySuppressed(int count)
+        public static void ManuallySuppressed(int count)
         {
         }
 
         // automatically suppressed using VS2010
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "count")]
-        static public void AutomaticallySuppressed(int count)
+        public static void AutomaticallySuppressed(int count)
         {
         }
 
         // automatically suppressed using VS2010 (see GlobalSupressions.cs)
-        static public void GloballySuppressed(int count)
+        public static void GloballySuppressed(int count)
         {
         }
       }

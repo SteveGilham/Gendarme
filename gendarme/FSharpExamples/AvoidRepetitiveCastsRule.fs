@@ -1,4 +1,5 @@
 ﻿module AvoidRepetitiveCasts
+
 open System
 open System.Globalization
 
@@ -16,7 +17,4 @@ type Context =
   member self.AsStrings() =
     match self with
     | NoContext -> List.empty<String>
-    | Context c ->
-        c
-        |> Seq.map (fun a -> a.AsString())
-        |> Seq.toList
+    | Context c -> c |> Seq.map (fun a -> a.AsString()) |> Seq.toList

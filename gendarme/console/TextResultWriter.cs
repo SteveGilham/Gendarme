@@ -29,13 +29,15 @@
 //
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
 using Mono.Cecil;
 
 using Gendarme.Framework;
+
+[assembly: SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Scope = "member", Target = "Gendarme.TextResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)", Justification = "work in progress")]
 
 namespace Gendarme
 {
@@ -152,6 +154,41 @@ namespace Gendarme
       writer.Write("Solution: ");
       EndColor();
       writer.Write(rule.Solution);
+      writer.WriteLine();
+      writer.WriteLine();
+
+      BeginColor(ConsoleColor.DarkYellow);
+      writer.WriteLine("Global Suppression Attribute: ");
+      EndColor();
+
+      var category = defect.Rule.FullName;
+      var length = category.Length - (defect.Rule.Name.Length + 1);
+      category = category.Substring(0, length);
+      writer.WriteLine("[<assembly: SuppressMessage(\"{0}\",", category);
+      writer.WriteLine("                            \"{0}\",", defect.Rule.Name);
+
+      var target = defect.Target;
+      // member, module, namespace, namespaceanddescendants or type
+      // Rukes should only have MethodDefinition, TypeDefinition or
+      // Assembly definition, as per types expected in
+      // https://github.com/SteveGilham/Gendarme/blob/3929474f0228b16ca9a9e0e8739583fd622a9cac/gendarme/rules/Test.Rules/Fixtures/RuleTestFixture.cs#L130
+      // but hew to the safe side anyway.
+      var scope = "member"; // fail-safe; no namespace provider
+      if (target is AssemblyDefinition ||
+          target is ModuleReference)
+        scope = "module";
+      if (target is TypeReference)
+        scope = "type";
+      writer.WriteLine("                            Scope = \"{0}\", // {1}", scope, target.GetType().Name);
+
+      var targetName = target.ToString();
+      if (target is MethodReference)
+        targetName = targetName.Substring(targetName.IndexOf(' ')).Trim();
+
+      writer.WriteLine("                            Target = \"{0}\",", targetName);
+      writer.WriteLine("                            Justification = \"\")>]");
+
+      writer.WriteLine();
       writer.WriteLine();
 
       writer.WriteLine("More info available at: {0}", rule.Uri.ToString());

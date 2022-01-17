@@ -1,4 +1,4 @@
-// 
+//
 // Tests.Rules.BadPractice.DoNotDecreaseVisibilityTest
 //
 // Authors:
@@ -27,85 +27,88 @@
 using System;
 
 using Mono.Cecil;
-using Gendarme.Rules.BadPractice ;
+using Gendarme.Rules.BadPractice;
 
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class DoNotDecreaseVisibilityTest : MethodRuleTestFixture<DoNotDecreaseVisibilityRule>
+  {
+    public class TestCase
+    {
+      public class Base
+      {
+        public void Public()
+        {
+        }
 
-	[TestFixture]
-	public class DoNotDecreaseVisibilityTest : MethodRuleTestFixture<DoNotDecreaseVisibilityRule> {
+        protected bool Protected(int x)
+        {
+          return x == 0;
+        }
 
-		public class TestCase {
+        internal int Internal()
+        {
+          return -1;
+        }
 
-			public class Base {
-				public void Public ()
-				{
-				}
+        private float Private(float f)
+        {
+          return f;
+        }
+      }
 
-				protected bool Protected (int x)
-				{
-					return x == 0;
-				}
+      public class BadInheritor : Base
+      {
+        private new void Public()
+        {
+        }
 
-				internal int Internal ()
-				{
-					return -1;
-				}
+        private new bool Protected(int x)
+        {
+          return x == 1;
+        }
 
-				private float Private (float f)
-				{
-					return f;
-				}
-			}
+        private new int Internal()
+        {
+          return -1;
+        }
 
-			public class BadInheritor : Base {
-				private new void Public ()
-				{
-				}
+        private float Private(float f)
+        {
+          return -f;
+        }
+      }
 
-				private new bool Protected (int x)
-				{
-					return x == 1;
-				}
+      public class NoInheritance
+      {
+        private void Public()
+        {
+        }
 
-				private new int Internal ()
-				{
-					return -1;
-				}
+        private bool Protected(int x)
+        {
+          return x == 1;
+        }
 
-				private new float Private (float f)
-				{
-					return -f;
-				}
-			}
+        private int Internal()
+        {
+          return -1;
+        }
 
-			public class NoInheritance {
-				private new void Public ()
-				{
-				}
+        private float Private(float f)
+        {
+          return -f;
+        }
+      }
 
-				private new bool Protected (int x)
-				{
-					return x == 1;
-				}
-
-				private new int Internal ()
-				{
-					return -1;
-				}
-
-				private new float Private (float f)
-				{
-					return -f;
-				}
-			}
-
-			// c# cannot seal the method without making it an override
-			// and an override cannot change visibility
+      // c# cannot seal the method without making it an override
+      // and an override cannot change visibility
 #if false
 			public class FinalInheritor : Base {
 				private new sealed void Public ()
@@ -128,47 +131,51 @@ namespace Test.Rules.BadPractice {
 				}
 			}
 #endif
-			public sealed class Sealed : Base {
-				private new void Public ()
-				{
-				}
 
-				private new bool Protected (int x)
-				{
-					return x == 1;
-				}
+      public sealed class Sealed : Base
+      {
+        private new void Public()
+        {
+        }
 
-				private new int Internal ()
-				{
-					return -1;
-				}
+        private new bool Protected(int x)
+        {
+          return x == 1;
+        }
 
-				private new float Private (float f)
-				{
-					return -f;
-				}
-			}
+        private new int Internal()
+        {
+          return -1;
+        }
 
-			public class StaticCtor {
-				static StaticCtor ()
-				{
-				}
-			}
+        private float Private(float f)
+        {
+          return -f;
+        }
+      }
 
-			public class StaticCtorInheritor : StaticCtor {
-				static StaticCtorInheritor ()
-				{
-				}
-			}
-		}
+      public class StaticCtor
+      {
+        static StaticCtor()
+        {
+        }
+      }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// not private
-			AssertRuleDoesNotApply<TestCase.Base> ("Public");
-			AssertRuleDoesNotApply<TestCase.Base> ("Protected");
-			AssertRuleDoesNotApply<TestCase.Base> ("Internal");
+      public class StaticCtorInheritor : StaticCtor
+      {
+        static StaticCtorInheritor()
+        {
+        }
+      }
+    }
+
+    [Test]
+    public void DoesNotApply()
+    {
+      // not private
+      AssertRuleDoesNotApply<TestCase.Base>("Public");
+      AssertRuleDoesNotApply<TestCase.Base>("Protected");
+      AssertRuleDoesNotApply<TestCase.Base>("Internal");
 #if false
 			// method is sealed (final)
 			AssertRuleDoesNotApply<TestCase.FinalInheritor> ("Public");
@@ -176,35 +183,35 @@ namespace Test.Rules.BadPractice {
 			AssertRuleDoesNotApply<TestCase.FinalInheritor> ("Internal");
 			AssertRuleDoesNotApply<TestCase.FinalInheritor> ("Private");
 #endif
-			// type is sealed
-			AssertRuleDoesNotApply<TestCase.Sealed> ("Public");
-			AssertRuleDoesNotApply<TestCase.Sealed> ("Protected");
-			AssertRuleDoesNotApply<TestCase.Sealed> ("Internal");
-			AssertRuleDoesNotApply<TestCase.Sealed> ("Private");
-		}
+      // type is sealed
+      AssertRuleDoesNotApply<TestCase.Sealed>("Public");
+      AssertRuleDoesNotApply<TestCase.Sealed>("Protected");
+      AssertRuleDoesNotApply<TestCase.Sealed>("Internal");
+      AssertRuleDoesNotApply<TestCase.Sealed>("Private");
+    }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<TestCase.Base> ("Private");
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<TestCase.Base>("Private");
 
-			AssertRuleSuccess<TestCase.NoInheritance> ("Public");
-			AssertRuleSuccess<TestCase.NoInheritance> ("Protected");
-			AssertRuleSuccess<TestCase.NoInheritance> ("Internal");
-			AssertRuleSuccess<TestCase.NoInheritance> ("Private");
+      AssertRuleSuccess<TestCase.NoInheritance>("Public");
+      AssertRuleSuccess<TestCase.NoInheritance>("Protected");
+      AssertRuleSuccess<TestCase.NoInheritance>("Internal");
+      AssertRuleSuccess<TestCase.NoInheritance>("Private");
 
-			AssertRuleSuccess<TestCase.BadInheritor> ("Internal");
-			AssertRuleSuccess<TestCase.BadInheritor> ("Private");
+      AssertRuleSuccess<TestCase.BadInheritor>("Internal");
+      AssertRuleSuccess<TestCase.BadInheritor>("Private");
 
-			AssertRuleSuccess<TestCase.StaticCtor> (".cctor");
-			AssertRuleSuccess<TestCase.StaticCtorInheritor> (".cctor");
-		}
+      AssertRuleSuccess<TestCase.StaticCtor>(".cctor");
+      AssertRuleSuccess<TestCase.StaticCtorInheritor>(".cctor");
+    }
 
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<TestCase.BadInheritor> ("Public");
-			AssertRuleFailure<TestCase.BadInheritor> ("Protected");
-		}
-	}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<TestCase.BadInheritor>("Public");
+      AssertRuleFailure<TestCase.BadInheritor>("Protected");
+    }
+  }
 }

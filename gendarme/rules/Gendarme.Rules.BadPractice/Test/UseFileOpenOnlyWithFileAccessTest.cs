@@ -82,14 +82,14 @@ namespace Test.Rules.BadPractice
       var h = new IsolatedStorageFileStream("HelloWorld.cs", FileMode.Create, FileAccess.Write);
 
       // unrelated code
-      List<string> ls = new List<string> { "a", "b" };
+      var ls = new List<string> { "a", "b" };
       ls.Clear();
 
       var i = new FileStream("HelloWorld.cs", FileMode.Open,
-#if NETCOREAPP2_1
+#if !NET472
         FileAccess.Read,
 #else
-				FileSystemRights.Read,
+        FileSystemRights.Read,
 #endif
           FileShare.Read, 8, FileOptions.None);
     }

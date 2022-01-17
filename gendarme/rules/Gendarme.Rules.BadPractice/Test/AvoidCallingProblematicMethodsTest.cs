@@ -55,9 +55,11 @@ namespace Test.Rules.BadPractice
 
     public void MethodWithGCCall()
     {
-      List<string> list = new List<string>();
-      list.Add("foo");
-      list.Add("bar");
+      var list = new List<string>
+      {
+        "foo",
+        "bar"
+      };
       list = null;
       GC.Collect();
       GC.Collect(1);
@@ -71,7 +73,7 @@ namespace Test.Rules.BadPractice
 
     public void MethodWithThreadSuspendCall()
     {
-      Thread thread = new Thread(delegate ()
+      var thread = new Thread(delegate ()
       {
         Console.WriteLine("Stupid code");
       });
@@ -87,7 +89,7 @@ namespace Test.Rules.BadPractice
 
     public void MethodWithThreadResumeCall()
     {
-      Thread thread = new Thread(delegate ()
+      var thread = new Thread(delegate ()
       {
         Console.WriteLine("Useless code");
       });
@@ -154,7 +156,7 @@ namespace Test.Rules.BadPractice
 
     public void MethodWithSafeHandleDangerousGetHandleCall()
     {
-      MySafeHandle myHandle = new MySafeHandle();
+      var myHandle = new MySafeHandle();
       IntPtr handlePtr = myHandle.DangerousGetHandle();
     }
 
@@ -167,8 +169,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFromCall()
     {
       Assembly.LoadFrom("myAssembly.dll");
-#if NETCOREAPP2_1
-#else
+#if NET472
       Assembly.LoadFrom("myAssembly.dll", new Evidence());
       Assembly.LoadFrom("myAssembly.dll", new Evidence(), null, AssemblyHashAlgorithm.None);
 #endif
@@ -178,18 +179,17 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFromCallTest()
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFromCall",
-#if NETCOREAPP2_1
-        1);
-#else
+#if NET472
         3);
+#else
+        1);
 #endif
     }
 
     public void MethodWithAssemblyLoadFileCall()
     {
       Assembly.LoadFile("myAssembly.dll");
-#if NETCOREAPP2_1
-#else
+#if NET472
       Assembly.LoadFile("myAssembly.dll", new Evidence());
 #endif
     }
@@ -198,18 +198,17 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadFileCallTest()
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadFileCall",
-#if NETCOREAPP2_1
-        1);
-#else
+#if NET472
         2);
+#else
+        1);
 #endif
     }
 
     public void MethodWithAssemblyLoadWithPartialNameCall()
     {
       Assembly.LoadWithPartialName("MyAssembly");
-#if NETCOREAPP2_1
-#else
+#if NET472
       Assembly.LoadWithPartialName("MyAssembly", new Evidence());
 #endif
     }
@@ -218,7 +217,7 @@ namespace Test.Rules.BadPractice
     public void MethodWithAssemblyLoadWithPartialNameCallTest()
     {
       AssertRuleFailure<AvoidCallingProblematicMethodsTest>("MethodWithAssemblyLoadWithPartialNameCall",
-#if NETCOREAPP2_1
+#if !NET472
         1);
 #else
         2);
@@ -227,7 +226,7 @@ namespace Test.Rules.BadPractice
 
     public void MethodWithouAnyDangerousCall()
     {
-      List<string> list = new List<string>();
+      var list = new List<string>();
       list.Add("Foo");
       list.Add("Bar");
     }
