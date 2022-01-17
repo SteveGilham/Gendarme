@@ -24,9 +24,6 @@ open AltCode.Fake.DotNet
 open AltCoverFake.DotNet.DotNet
 open AltCoverFake.DotNet.Testing
 
-open FSharpLint.Application
-open FSharpLint.Framework
-
 open NUnit.Framework
 
 let Copyright = ref String.Empty
@@ -892,8 +889,51 @@ _Target
                               Copyright = (!Copyright).Replace("©", "(c)")
                               Publish = false
                               ReleaseNotes =
-                                  Path.getFullName "ReleaseNotes.md"
-                                  |> File.ReadAllText
+                                  let source =
+                                      Path.getFullName "ReleaseNotes.md"
+                                      |> File.ReadAllLines
+                                      |> Seq.map
+                                          (fun s ->
+                                              let t =
+                                                  System.Text.RegularExpressions.Regex.Replace(s, "^\*\s", "* •\u00A0")
+
+                                              let u =
+                                                  System.Text.RegularExpressions.Regex.Replace(
+                                                      t,
+                                                      "^\s\s\*\s", // ◦ U+25E6 WHITE BULLET
+                                                      "  * \u00A0\u00A0\u25E6\u00A0"
+                                                  )
+
+                                              let v =
+                                                  System.Text.RegularExpressions.Regex.Replace(
+                                                      u,
+                                                      "^\s\s\s+\*\s", // ⁃ U+2043 HYPHEN BULLET,
+                                                      "    * \u00A0\u00A0\u00A0\u00A0\u2043\u00A0"
+                                                  )
+
+                                              System.Text.RegularExpressions.Regex.Replace(
+                                                  v,
+                                                  "^#\s", // ⁋ U+204B REVERSED PILCROW SIGN
+                                                  "# \u204B"
+                                              ))
+                                      |> (fun s -> String.Join(Environment.NewLine, s))
+
+                                  use w = new StringWriter()
+                                  // printfn "tweaked = %A" source
+                                  Markdig.Markdown.ToPlainText(source, w) |> ignore
+
+                                  let releaseNotes =
+                                      "This build from https://github.com/SteveGilham/Gendarme/tree/"
+                                      + commitHash
+                                      + Environment.NewLine
+                                      + Environment.NewLine
+                                      + w
+                                          .ToString()
+                                          .Replace("\u204B", Environment.NewLine)
+
+                                  printfn "release notes are %A characters" releaseNotes.Length
+                                  Assert.That(releaseNotes.Length, Is.LessThan 35000)
+                                  releaseNotes
                               ToolPath =
                                   ("./packages/"
                                    + (packageVersion "NuGet.CommandLine")

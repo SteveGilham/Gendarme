@@ -10,7 +10,6 @@ open Fake.IO.FileSystemOperators
 open Fake.IO
 open Fake.IO.Globbing.Operators
 
-open HeyRed.MarkdownSharp
 open NUnit.Framework
 
 module Actions =

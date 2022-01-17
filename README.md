@@ -1,26 +1,6 @@
 
 # altcode.gendarme
-A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can load assemblies built with current compilers.
-
-### Badges
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)
-* [![Nuget](https://buildstats.info/nuget/altcode.gendarme-tool?includePreReleases=true) Global tool for .net core 2.1 and later](https://www.nuget.org/packages/altcode.gendarme-tool)
-
-| | | |
-| --- | --- | --- | 
-| **Build** | <sup>AppVeyor</sup> [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme) | ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme) 
-| |<sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
-
-
-## Build process from trunk as per the CI YAML
-
-Assumes net50 build environment
-
-* `dotnet tool restore`
-* `dotnet fake run .\Build\setup.fsx`
-* `dotnet fake run .\Build\build.fsx`
-
-The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests
+A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can load assemblies built with current compilers.  Can be used with the [Fake.build plugin](https://www.nuget.org/packages/altcode.fake.dotnet.gendarme/). 
 
 ## Features
 See [the head of the (pre-)release branch](https://github.com/SteveGilham/Gendarme/blob/release/pre-release/README.md) for the features in the latest actual release.
@@ -47,8 +27,7 @@ After having achieved the first objective, of being able to analyze code from th
 
 ## Known Issues
 
-
-#### Unit test fixing
+### Unit test fixing
 
 Having resolved many issues stemming from a Cecil change to what the name and namespace properties of a nested type returned, the next major sources of test failure have been compiler changes (from pre-Roslyn to now) and differences in behaviour under `.netstandard` compared with the .net Framework.  In particular, the `AvoidSwitchStatements` rule needs some serious decompiler code to recognise Roslyn's mangled switch constructs (compiled as multiple conditional branches) so some tests have just been set to `[Ignore]`
 
@@ -130,3 +109,22 @@ Global Suppression Attribute:
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
 * Don't apply `DoNotDeclareVirtualMethodsInSealedTypeRule` to F# closure types
 * Don't apply `PreferStringComparisonOverrideRule` to generated code
+
+## Badges
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)
+* [![Nuget](https://buildstats.info/nuget/altcode.gendarme-tool?includePreReleases=true) Global tool for .net core 2.1 and later](https://www.nuget.org/packages/altcode.gendarme-tool)
+
+| | | |
+| --- | --- | --- | 
+| **Build** | <sup>AppVeyor</sup> [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme) | ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme) 
+| |<sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
+
+## Build process from trunk as per the CI YAML
+
+Assumes net60/VS2022 build environment
+
+* `dotnet tool restore`
+* `dotnet fake run .\Build\setup.fsx`
+* `dotnet fake run .\Build\build.fsx`
+
+The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests

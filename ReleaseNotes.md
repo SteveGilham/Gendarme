@@ -1,4 +1,4 @@
-# 2022.x.x.xxxxx-pre-release
+# 2022.1.17.12xxx-pre-release
 
 * `net40` build removed; the Framework tool now uses shared `netstandard2.0` assemblies with a `net472` executable.  This also means that the stale code access security rules are now removed --
   * `AddMissingTypeInheritanceDemandRule`
@@ -24,4 +24,4 @@ Global Suppression Attribute:
   * exception rule `DoNotThrowInNonCatchClausesRule`
   * globalization rules `PreferIFormatProviderOverrideRule` and `PreferStringComparisonOverrideRule`
 
-For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md
+⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md
