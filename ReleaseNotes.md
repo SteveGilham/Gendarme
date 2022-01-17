@@ -1,4 +1,4 @@
-# 2022.1.17.12xxx-pre-release
+# 2022.1.17.12282-pre-release
 
 * `net40` build removed; the Framework tool now uses shared `netstandard2.0` assemblies with a `net472` executable.  This also means that the stale code access security rules are now removed --
   * `AddMissingTypeInheritanceDemandRule`
