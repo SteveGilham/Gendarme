@@ -1,7 +1,5 @@
-# 2022.1.19.15132-pre-release 
+# 2022.1.20.xxxxx-pre-release 
 
-* Fix intermittent/environmentally dependent bugs in --
-  * Globalization rules `PreferIFormatProviderOverrideRule` and `PreferStringComparisonOverrideRule`
-  * Correctness rule `BadRecursiveInvocationRule` 
+* Fix false positives in globalization rules `PreferIFormatProviderOverrideRule` and `PreferStringComparisonOverrideRule` in a net6.0-only environment
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md
