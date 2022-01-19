@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -109,6 +110,9 @@ namespace Gendarme.Rules.Globalization
         if (name != md.Name)
           continue;
 
+        if (!md.IsPublic)
+          continue;
+
         // compare parameters and return value
         TypeReference rtype = md.ReturnType;
         var rtypeName = new TypeName
@@ -118,8 +122,18 @@ namespace Gendarme.Rules.Globalization
         };
         if (!method.ReturnType.IsNamed(rtypeName))
           continue;
-          
+
         Collection<ParameterDefinition> pdc = md.Parameters;
+
+        if (pcount > 0)
+        {
+          var others = pdc.Where(p => !IsPrefered(p.ParameterType)).ToList();
+          if (others.Count != pcount)
+            continue;
+          if (others.Zip(mparams, (l, r) =>
+            l.ParameterType.FullName != r.ParameterType.FullName).Any(x => x))
+            continue;
+        }
 
         // last parameter could be our "prefered" type
         if (IsPrefered(pdc[pdc.Count - 1].ParameterType))
@@ -143,11 +157,9 @@ namespace Gendarme.Rules.Globalization
 
     private MethodReference GetPreferedOverride(MethodReference method)
     {
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
       if (!prefered_overloads.TryGetValue(method, out MethodReference prefered))
       {
         prefered = LookForPreferredOverride(method);
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
         prefered_overloads.Add(method, null);
       }
       return prefered;
