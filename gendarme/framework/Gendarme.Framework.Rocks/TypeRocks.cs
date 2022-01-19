@@ -70,8 +70,10 @@ namespace Gendarme.Framework.Rocks
     /// <returns>An IEnumerable to traverse all base classes and interfaces.</returns>
     public static IEnumerable<TypeDefinition> AllSuperTypes(this TypeReference self)
     {
-      var types = new List<TypeReference>();
-      types.Add(self);
+      var types = new List<TypeReference>
+      {
+        self
+      };
 
       int i = 0;
       while (i < types.Count)
@@ -104,7 +106,7 @@ namespace Gendarme.Framework.Rocks
     public static MethodDefinition GetMethod(this TypeReference self, MethodSignature signature)
     {
       if (signature == null)
-        throw new ArgumentNullException("signature");
+        throw new ArgumentNullException(nameof(signature));
       if (self == null)
         return null;
 
@@ -263,10 +265,12 @@ namespace Gendarme.Framework.Rocks
     /// does not implement it, or we could not find where it does).</returns>
     public static bool Implements(this TypeReference self, TypeName typename)
     {
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
       if (typename.Namespace == null)
-        throw new ArgumentNullException("nameSpace");
+        throw new ArgumentNullException("typename.Namespace");
       if (typename.Name == null)
-        throw new ArgumentNullException("name");
+        throw new ArgumentNullException("typename.Name");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
       if (self == null)
         return false;
 
