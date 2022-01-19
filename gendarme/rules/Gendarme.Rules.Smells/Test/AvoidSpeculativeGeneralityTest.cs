@@ -177,7 +177,7 @@ namespace Test.Rules.Smells
     {
       var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
       var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-      var type = def.MainModule.GetType("MethodCanBeMadeStatic.Instrument/hookResolveHandler@13");
+      var type = def.MainModule.GetType("MethodCanBeMadeStatic.Instrument/hookResolveHandler@18");
       AssertRuleDoesNotApply(type);
     }
   }
