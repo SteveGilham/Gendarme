@@ -103,10 +103,9 @@ namespace Gendarme.Rules.Globalization
       foreach (MethodDefinition md in methods)
       {
         // has one more parameter, so non-zero
-        if (!md.HasParameters)
+        if (!md.HasParameters || md.Parameters.Count != pcount + 1)
           continue;
 
-        Collection<ParameterDefinition> pdc = md.Parameters;
         if (name != md.Name)
           continue;
 
@@ -119,6 +118,8 @@ namespace Gendarme.Rules.Globalization
         };
         if (!method.ReturnType.IsNamed(rtypeName))
           continue;
+          
+        Collection<ParameterDefinition> pdc = md.Parameters;
 
         // last parameter could be our "prefered" type
         if (IsPrefered(pdc[pdc.Count - 1].ParameterType))
@@ -149,7 +150,7 @@ namespace Gendarme.Rules.Globalization
 #pragma warning restore IDE0059 // Unnecessary assignment of a value
         prefered_overloads.Add(method, null);
       }
-      return null;
+      return prefered;
     }
 
     public RuleResult CheckMethod(MethodDefinition method)
