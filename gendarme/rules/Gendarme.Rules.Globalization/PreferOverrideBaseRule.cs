@@ -138,17 +138,18 @@ namespace Gendarme.Rules.Globalization
       return null;
     }
 
-    private Dictionary<MethodReference, MethodReference> prefered_overloads = new Dictionary<MethodReference, MethodReference>();
+    private readonly Dictionary<MethodReference, MethodReference> prefered_overloads = new Dictionary<MethodReference, MethodReference>();
 
     private MethodReference GetPreferedOverride(MethodReference method)
     {
-      MethodReference prefered = null;
-      if (!prefered_overloads.TryGetValue(method, out prefered))
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+      if (!prefered_overloads.TryGetValue(method, out MethodReference prefered))
       {
         prefered = LookForPreferredOverride(method);
-        prefered_overloads.Add(method, prefered);
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
+        prefered_overloads.Add(method, null);
       }
-      return prefered;
+      return null;
     }
 
     public RuleResult CheckMethod(MethodDefinition method)
