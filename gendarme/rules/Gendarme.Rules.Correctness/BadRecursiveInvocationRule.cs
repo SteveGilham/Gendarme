@@ -125,7 +125,7 @@ namespace Gendarme.Rules.Correctness {
 
 		private static bool CheckParams (MethodDefinition method, ref int index, int paramNum)
 		{
-			Instruction insn = method.Body.Instructions [index - 1];
+			Instruction insn = method.Body.Instructions [index].Previous;
 			while (insn != null) {
 				switch (insn.OpCode.Code) {
 				case Code.Ldarg:

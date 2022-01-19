@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,183 +37,239 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Globalization {
+namespace Tests.Rules.Globalization
+{
+  internal class IFormatProviderTestCases
+  {
+#pragma warning disable CA1822 // Mark members as static
+    public void Empty()
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-	class IFormatProviderTestCases {
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0060 // Remove unused parameter
+    public void Empty(IFormatProvider format)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-		public void Empty ()
-		{
-		}
+    public void BadEmpty()
+    {
+      Empty();
+    }
 
-		public void Empty (IFormatProvider format)
-		{
-		}
+    public void CorrectEmpty()
+    {
+      Empty(null);
+    }
 
-		public void BadEmpty ()
-		{
-			Empty ();
-		}
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0060 // Remove unused parameter
+    public void First(object obj)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-		public void CorrectEmpty ()
-		{
-			Empty (null);
-		}
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1822 // Mark members as static
+    public void First(IFormatProvider format, object obj)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore IDE0060 // Remove unused parameter
+    {
+    }
 
-		public void First (object obj)
-		{
-		}
+    public void BadFirst()
+    {
+      First(null);
+    }
 
-		public void First (IFormatProvider format, object obj)
-		{
-		}
+    public void CorrectFirst()
+    {
+      First(null, null);
+    }
 
-		public void BadFirst ()
-		{
-			First (null);
-		}
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1822 // Mark members as static
+    public void Last(object obj)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore IDE0060 // Remove unused parameter
+    {
+    }
 
-		public void CorrectFirst ()
-		{
-			First (null, null);
-		}
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0060 // Remove unused parameter
+    public void Last(object obj, IFormatProvider format)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-		public void Last (object obj)
-		{
-		}
+    public void BadLast()
+    {
+      Last(null);
+    }
 
-		public void Last (object obj, IFormatProvider format)
-		{
-		}
+    public void CorrectLast()
+    {
+      Last(null, null);
+    }
+  }
 
-		public void BadLast ()
-		{
-			Last (null);
-		}
+  internal class CultureInfoTestCases
+  {
+#pragma warning disable CA1822 // Mark members as static
+    public void Empty()
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-		public void CorrectLast ()
-		{
-			Last (null, null);
-		}
-	}
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0060 // Remove unused parameter
+    public void Empty(CultureInfo info)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-	class CultureInfoTestCases {
+    public void BadEmpty()
+    {
+      Empty();
+    }
 
-		public void Empty ()
-		{
-		}
+    public void CorrectEmpty()
+    {
+      Empty(null);
+    }
 
-		public void Empty (CultureInfo info)
-		{
-		}
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0060 // Remove unused parameter
+    public void First(object obj)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-		public void BadEmpty ()
-		{
-			Empty ();
-		}
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0060 // Remove unused parameter
+    public void First(CultureInfo info, object obj)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-		public void CorrectEmpty ()
-		{
-			Empty (null);
-		}
+    public void BadFirst()
+    {
+      First(null);
+    }
 
-		public void First (object obj)
-		{
-		}
+    public void CorrectFirst()
+    {
+      First(null, null);
+    }
 
-		public void First (CultureInfo info, object obj)
-		{
-		}
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0060 // Remove unused parameter
+    public void Last(object obj)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Mark members as static
+    {
+    }
 
-		public void BadFirst ()
-		{
-			First (null);
-		}
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1822 // Mark members as static
+    public void Last(object obj, CultureInfo info)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore IDE0060 // Remove unused parameter
+    {
+    }
 
-		public void CorrectFirst ()
-		{
-			First (null, null);
-		}
+    public void BadLast()
+    {
+      Last(null);
+    }
 
-		public void Last (object obj)
-		{
-		}
+    public void CorrectLast()
+    {
+      Last(null, null);
+    }
+  }
 
-		public void Last (object obj, CultureInfo info)
-		{
-		}
+  [TestFixture]
+  public class PreferIFormatProviderOverrideTest : MethodRuleTestFixture<PreferIFormatProviderOverrideRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+    }
 
-		public void BadLast ()
-		{
-			Last (null);
-		}
+    [Test]
+    public void Success()
+    {
+      AssertRuleSuccess<IFormatProviderTestCases>("CorrectEmpty");
+      AssertRuleSuccess<IFormatProviderTestCases>("CorrectFirst");
+      AssertRuleSuccess<IFormatProviderTestCases>("CorrectLast");
 
-		public void CorrectLast ()
-		{
-			Last (null, null);
-		}
-	}
+      AssertRuleSuccess<CultureInfoTestCases>("CorrectEmpty");
+      AssertRuleSuccess<CultureInfoTestCases>("CorrectFirst");
+      AssertRuleSuccess<CultureInfoTestCases>("CorrectLast");
+    }
 
-	[TestFixture]
-	public class PreferIFormatProviderOverrideTest : MethodRuleTestFixture<PreferIFormatProviderOverrideRule> {
+    [Test]
+    public void Failure()
+    {
+      AssertRuleFailure<IFormatProviderTestCases>("BadEmpty", 1);
+      AssertRuleFailure<IFormatProviderTestCases>("BadFirst", 1);
+      AssertRuleFailure<IFormatProviderTestCases>("BadLast", 1);
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-		}
+      AssertRuleFailure<CultureInfoTestCases>("BadEmpty", 1);
+      AssertRuleFailure<CultureInfoTestCases>("BadFirst", 1);
+      AssertRuleFailure<CultureInfoTestCases>("BadLast", 1);
+    }
 
-		[Test]
-		public void Success ()
-		{
-			AssertRuleSuccess<IFormatProviderTestCases> ("CorrectEmpty");
-			AssertRuleSuccess<IFormatProviderTestCases> ("CorrectFirst");
-			AssertRuleSuccess<IFormatProviderTestCases> ("CorrectLast");
+#pragma warning disable IDE0051 // Remove unused private members
+#pragma warning disable CA1822 // Mark members as static
+    private void Ignored(ResourceManager rm)
+#pragma warning restore CA1822 // Mark members as static
+#pragma warning restore IDE0051 // Remove unused private members
+    {
+      rm.GetObject("a");
+      rm.GetObject("a", CultureInfo.CurrentCulture);
+      rm.GetString("b");
+      rm.GetString("b", CultureInfo.InvariantCulture);
+    }
 
-			AssertRuleSuccess<CultureInfoTestCases> ("CorrectEmpty");
-			AssertRuleSuccess<CultureInfoTestCases> ("CorrectFirst");
-			AssertRuleSuccess<CultureInfoTestCases> ("CorrectLast");
-		}
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0051 // Remove unused private members
+    private string Params()
+#pragma warning restore IDE0051 // Remove unused private members
+#pragma warning restore CA1822 // Mark members as static
+    {
+      // the overload to use is: Format(IFormatProvider, string, params object []);
+      return String.Format("{0} {1} {2}", 1, 2, 3);
+    }
 
-		[Test]
-		public void Failure ()
-		{
-			AssertRuleFailure<IFormatProviderTestCases> ("BadEmpty", 1);
-			AssertRuleFailure<IFormatProviderTestCases> ("BadFirst", 1);
-			AssertRuleFailure<IFormatProviderTestCases> ("BadLast", 1);
+#pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0051 // Remove unused private members
+    private void NoSimpleOverload(FieldInfo fi)
+#pragma warning restore IDE0051 // Remove unused private members
+#pragma warning restore CA1822 // Mark members as static
+    {
+      // the overload with a CultureInfo is SetValue (object, object, BindingFlags, Binder, CultureInfo);
+      // and is not simply an "extra" parameter
+      fi.SetValue(new object(), 1);
+    }
 
-			AssertRuleFailure<CultureInfoTestCases> ("BadEmpty", 1);
-			AssertRuleFailure<CultureInfoTestCases> ("BadFirst", 1);
-			AssertRuleFailure<CultureInfoTestCases> ("BadLast", 1);
-		}
-
-		void Ignored (ResourceManager rm)
-		{
-			rm.GetObject ("a");
-			rm.GetObject ("a", CultureInfo.CurrentCulture);
-			rm.GetString ("b");
-			rm.GetString ("b", CultureInfo.InvariantCulture);
-		}
-
-		string Params ()
-		{
-			// the overload to use is: Format(IFormatProvider, string, params object []);
-			return String.Format ("{0} {1} {2}", 1, 2, 3);
-		}
-
-		void NoSimpleOverload (FieldInfo fi)
-		{
-			// the overload with a CultureInfo is SetValue (object, object, BindingFlags, Binder, CultureInfo);
-			// and is not simply an "extra" parameter
-			fi.SetValue (new object (), 1);
-		}
-
-		[Test]
-		public void SpecialCases ()
-		{
-			AssertRuleSuccess<PreferIFormatProviderOverrideTest> ("Ignored");
-			AssertRuleFailure<PreferIFormatProviderOverrideTest> ("Params", 1);
-			AssertRuleSuccess<PreferIFormatProviderOverrideTest> ("NoSimpleOverload");
-		}
-	}
+    [Test]
+    public void SpecialCases()
+    {
+      AssertRuleSuccess<PreferIFormatProviderOverrideTest>("Ignored");
+      AssertRuleFailure<PreferIFormatProviderOverrideTest>("Params", 1);
+      AssertRuleSuccess<PreferIFormatProviderOverrideTest>("NoSimpleOverload");
+    }
+  }
 }

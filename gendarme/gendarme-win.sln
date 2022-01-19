@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.config\dotnet-tools.json = ..\.config\dotnet-tools.json
 		..\Build\fsharp-rules.xml = ..\Build\fsharp-rules.xml
 		..\global.json = ..\global.json
+		..\.github\workflows\main.yml = ..\.github\workflows\main.yml
 		..\NuGet.md = ..\NuGet.md
 		OutputBuildProps.props = OutputBuildProps.props
 		..\README.md = ..\README.md

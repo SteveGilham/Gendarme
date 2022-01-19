@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for EqualsShouldHandleNullArgRule
 //
 // Authors:
@@ -36,213 +36,255 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
-
+namespace Test.Rules.BadPractice
+{
 #pragma warning disable 114, 649, 659
 
-	[TestFixture]
-	public class EqualsShouldHandleNullArgTest : TypeRuleTestFixture<EqualsShouldHandleNullArgRule> {
+  [TestFixture]
+  public class EqualsShouldHandleNullArgTest : TypeRuleTestFixture<EqualsShouldHandleNullArgRule>
+  {
+    public class EqualsChecksForNullArg
+    {
+      public override bool Equals(object obj)
+      {
+        if (obj == null)
+          return false;
+        else
+          return this == obj;
+      }
+    }
 
-		public class EqualsChecksForNullArg {
-			public override bool Equals (object obj)
-			{
-				if (obj == null)
-					return false;
-				else
-					return this == obj;
-			}
-		}
-		
-		public class EqualsDoesNotReturnFalseForNullArg {
-			public override bool Equals (object obj)
-			{
-				if (obj == null)
-					return true;
+    public class EqualsDoesNotReturnFalseForNullArg
+    {
+      public override bool Equals(object obj)
+      {
+        if (obj == null)
+          return true;
 
-				return this == obj;
-			}
-		}
-		
-		public class EqualsNotOverriddenNotCheckingNull {
-			public bool Equals (object obj)
-			{
-				return this == obj;
-			}
-		}
-		
-		public class EqualsNotOverriddenNotReturningFalseForNull {
-			public new bool Equals (object obj)
-			{
-				if (obj != null)
-					return this == obj;
+        return this == obj;
+      }
+    }
 
-				return true;
-			}
-		}
+    public class EqualsNotOverriddenNotCheckingNull
+    {
+      public bool Equals(object obj)
+      {
+        return this == obj;
+      }
+    }
 
-		[Test]
-		public void Basic ()
-		{
-			AssertRuleSuccess<EqualsChecksForNullArg> ();
-			AssertRuleFailure<EqualsDoesNotReturnFalseForNullArg> (1);
-			AssertRuleSuccess<EqualsNotOverriddenNotCheckingNull> ();
-			AssertRuleFailure<EqualsNotOverriddenNotReturningFalseForNull> ();
-		}
+    public class EqualsNotOverriddenNotReturningFalseForNull
+    {
+      public new bool Equals(object obj)
+      {
+        if (obj != null)
+          return this == obj;
 
-		public class EqualsReturnsFalse {
-			public override bool Equals (object obj)
-			{
-				return false;
-			}
-		}
+        return true;
+      }
+    }
 
-		public class EqualsReturnsTrue {
-			public override bool Equals (object obj)
-			{
-				return true;
-			}
-		}
+    [Test]
+    public void Basic()
+    {
+      AssertRuleSuccess<EqualsChecksForNullArg>();
+      AssertRuleFailure<EqualsDoesNotReturnFalseForNullArg>(1);
+      AssertRuleSuccess<EqualsNotOverriddenNotCheckingNull>();
+      AssertRuleFailure<EqualsNotOverriddenNotReturningFalseForNull>();
+    }
 
-		[Test]
-		public void Constants ()
-		{
-			AssertRuleSuccess<EqualsReturnsFalse> ();
-			AssertRuleFailure<EqualsReturnsTrue> (1);
-		}
+    public class EqualsReturnsFalse
+    {
+      public override bool Equals(object obj)
+      {
+        return false;
+      }
+    }
 
-		public struct EqualsUsingIsReturnFalse {
-			public override bool Equals (object obj)
-			{
-				if (obj is EqualsUsingIsReturnFalse)
-					return Object.ReferenceEquals (this, obj);
-				return false;
-			}
-		}
+    public class EqualsReturnsTrue
+    {
+      public override bool Equals(object obj)
+      {
+        return true;
+      }
+    }
 
-		public struct EqualsUsingIsReturnTrue {
-			public override bool Equals (object obj)
-			{
-				if (obj is EqualsUsingIsReturnTrue)
-					return Object.ReferenceEquals (this, obj);
-				return true;
-			}
-		}
+    [Test]
+    public void Constants()
+    {
+      AssertRuleSuccess<EqualsReturnsFalse>();
+      AssertRuleFailure<EqualsReturnsTrue>(1);
+    }
 
-		// from /mcs/class/corlib/System.Reflection.Emit/SignatureToken.cs
-		public struct EqualsUsingIsReturnVariable {
-			internal int tokValue;
-			public override bool Equals (object obj)
-			{
-				bool res = obj is EqualsUsingIsReturnVariable;
-				if (res) {
-					EqualsUsingIsReturnVariable that = (EqualsUsingIsReturnVariable) obj;
-					res = (this.tokValue == that.tokValue);
-				}
-				return res;
-			}
-		}
+#pragma warning disable CA2231 // Overload operator equals on overriding value type Equals
 
-		[Test]
-		public void EqualsUsingIs ()
-		{
-			AssertRuleSuccess<EqualsUsingIsReturnFalse> ();
-			AssertRuleFailure<EqualsUsingIsReturnTrue> (1);
-			AssertRuleSuccess<EqualsUsingIsReturnVariable> ();
-		}
+    public struct EqualsUsingIsReturnFalse
+#pragma warning restore CA2231 // Overload operator equals on overriding value type Equals
+    {
+      public override bool Equals(object obj)
+      {
+        if (obj is EqualsUsingIsReturnFalse)
+#pragma warning disable CA2013 // Do not use ReferenceEquals with value types
+          return Object.ReferenceEquals(this, obj);
+#pragma warning restore CA2013 // Do not use ReferenceEquals with value types
+        return false;
+      }
+    }
 
-		public class EqualsCallBase : EqualsReturnsTrue {
-			public override bool Equals (object obj)
-			{
-				return base.Equals (obj);
-			}
-		}
+#pragma warning disable CA2231 // Overload operator equals on overriding value type Equals
 
-		public class EqualsCheckThis {
-			// System.Object does this
-			public override bool Equals (object obj)
-			{
-				return (this == obj);
-			}
-		}
+    public struct EqualsUsingIsReturnTrue
+#pragma warning restore CA2231 // Overload operator equals on overriding value type Equals
+    {
+      public override bool Equals(object obj)
+      {
+        if (obj is EqualsUsingIsReturnTrue)
+#pragma warning disable CA2013 // Do not use ReferenceEquals with value types
+          return Object.ReferenceEquals(this, obj);
+#pragma warning restore CA2013 // Do not use ReferenceEquals with value types
+        return true;
+      }
+    }
 
-		public class EqualsCheckType {
-			// common pattern in corlib
-			public override bool Equals (object obj)
-			{
-				if (obj == null || GetType () != obj.GetType ())
-					return false;
-				return true;
-			}
-		}
+    // from /mcs/class/corlib/System.Reflection.Emit/SignatureToken.cs
+#pragma warning disable CA2231 // Overload operator equals on overriding value type Equals
 
-		// from /mcs/class/System/System.ComponentModel/DisplayNameAttribute.cs
-		public class CheckThisFirst {
-			string DisplayName;
-			public override bool Equals (object obj)
-			{
-				if (obj == this)
-					return true;
+    public struct EqualsUsingIsReturnVariable
+#pragma warning restore CA2231 // Overload operator equals on overriding value type Equals
+    {
+      internal int tokValue;
 
-				CheckThisFirst dna = obj as CheckThisFirst;
+      public override bool Equals(object obj)
+      {
+        bool res = obj is EqualsUsingIsReturnVariable;
+        if (res)
+        {
+          EqualsUsingIsReturnVariable that = (EqualsUsingIsReturnVariable)obj;
+          res = (this.tokValue == that.tokValue);
+        }
+        return res;
+      }
+    }
 
-				if (dna == null)
-					return false;
-				return dna.DisplayName == DisplayName;
-			}
-		}
+    [Test]
+    public void EqualsUsingIs()
+    {
+      AssertRuleSuccess<EqualsUsingIsReturnFalse>();
+      AssertRuleFailure<EqualsUsingIsReturnTrue>(1);
+      AssertRuleSuccess<EqualsUsingIsReturnVariable>();
+    }
 
-		[Test]
-		public void CommonPatterns ()
-		{
-			AssertRuleSuccess<EqualsCheckThis> ();
-			AssertRuleSuccess<EqualsCheckType> ();
-			AssertRuleSuccess<CheckThisFirst> ();
-		}
+    public class EqualsCallBase : EqualsReturnsTrue
+    {
+      public override bool Equals(object obj)
+      {
+        return base.Equals(obj);
+      }
+    }
 
-		public class StaticEquals {
+    public class EqualsCheckThis
+    {
+      // System.Object does this
+      public override bool Equals(object obj)
+      {
+        return (this == obj);
+      }
+    }
 
-			static public bool Equals (object obj)
-			{
-				return false;
-			}
-		}
+    public class EqualsCheckType
+    {
+      // common pattern in corlib
+      public override bool Equals(object obj)
+      {
+        if (obj == null || GetType() != obj.GetType())
+          return false;
+        return true;
+      }
+    }
 
-		public class EqualsTwoParameters {
+    // from /mcs/class/System/System.ComponentModel/DisplayNameAttribute.cs
+    public class CheckThisFirst
+    {
+#pragma warning disable IDE0044 // Add readonly modifier
+      private string DisplayName;
+#pragma warning restore IDE0044 // Add readonly modifier
 
-			public new bool Equals (object left, object right)
-			{
-				return (left == right);
-			}
-		}
+      public override bool Equals(object obj)
+      {
+        if (obj == this)
+          return true;
 
-		public class EqualsReference {
+#pragma warning disable IDE0019 // Use pattern matching
+        CheckThisFirst dna = obj as CheckThisFirst;
+#pragma warning restore IDE0019 // Use pattern matching
 
-			public bool Equals (EqualsReference obj)
-			{
-				return this == obj;
-			}
-		}
+        if (dna == null)
+          return false;
+        return dna.DisplayName == DisplayName;
+      }
+    }
 
-		[Test]
-		public void NotApplicable ()
-		{
-			AssertRuleDoesNotApply<StaticEquals> ();
-			AssertRuleDoesNotApply<EqualsTwoParameters> ();
-			AssertRuleDoesNotApply<EqualsReference> ();
-		}
+    [Test]
+    public void CommonPatterns()
+    {
+      AssertRuleSuccess<EqualsCheckThis>();
+      AssertRuleSuccess<EqualsCheckType>();
+      AssertRuleSuccess<CheckThisFirst>();
+    }
 
-		public class Throw {
+    public class StaticEquals
+    {
+#pragma warning disable IDE0060 // Remove unused parameter
 
-			public bool Equals (object obj)
-			{
-				throw new NotSupportedException ();
-			}
-		}
+      public static bool Equals(object obj)
+#pragma warning restore IDE0060 // Remove unused parameter
+      {
+        return false;
+      }
+    }
 
-		[Test]
-		public void Special ()
-		{
-			AssertRuleSuccess<Throw> ();
-		}
-	}
+    public class EqualsTwoParameters
+    {
+#pragma warning disable CA1822 // Mark members as static
+
+      public new bool Equals(object left, object right)
+#pragma warning restore CA1822 // Mark members as static
+      {
+        return (left == right);
+      }
+    }
+
+    public class EqualsReference
+    {
+      public bool Equals(EqualsReference obj)
+      {
+        return this == obj;
+      }
+    }
+
+    [Test]
+    public void NotApplicable()
+    {
+      AssertRuleDoesNotApply<StaticEquals>();
+      AssertRuleDoesNotApply<EqualsTwoParameters>();
+      AssertRuleDoesNotApply<EqualsReference>();
+    }
+
+    public class Throw
+    {
+#pragma warning disable IDE0060 // Remove unused parameter
+
+      public bool Equals(object obj)
+#pragma warning restore IDE0060 // Remove unused parameter
+      {
+        throw new NotSupportedException();
+      }
+    }
+
+    [Test]
+    public void Special()
+    {
+      AssertRuleSuccess<Throw>();
+    }
+  }
 }
