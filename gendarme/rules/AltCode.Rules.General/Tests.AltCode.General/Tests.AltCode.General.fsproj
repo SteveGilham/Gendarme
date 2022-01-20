@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
+    <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
+    <Compile Include="UnitTest1.fs" />
+  </ItemGroup>
+
+</Project>
