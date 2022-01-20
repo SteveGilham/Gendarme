@@ -40,7 +40,7 @@ namespace Gendarme.Framework
 {
   public class AssemblyResolver : BaseAssemblyResolver
   {
-    private Dictionary<string, AssemblyDefinition> assemblies;
+    private readonly Dictionary<string, AssemblyDefinition> assemblies;
 
     private AssemblyResolver()
     {
@@ -56,11 +56,10 @@ namespace Gendarme.Framework
     public override AssemblyDefinition Resolve(AssemblyNameReference name)
     {
       if (name == null)
-        throw new ArgumentNullException("name");
+        throw new ArgumentNullException(nameof(name));
 
       string aname = name.FullName;
-      AssemblyDefinition asm = null;
-      if (!assemblies.TryGetValue(aname, out asm))
+      if (!assemblies.TryGetValue(aname, out AssemblyDefinition asm))
       {
         try
         {
@@ -80,16 +79,16 @@ namespace Gendarme.Framework
     public void CacheAssembly(AssemblyDefinition assembly)
     {
       if (assembly == null)
-        throw new ArgumentNullException("assembly");
+        throw new ArgumentNullException(nameof(assembly));
 
       assemblies.Add(assembly.Name.Name, assembly);
       string location = Path.GetDirectoryName(assembly.MainModule.FileName);
       AddSearchDirectory(location);
     }
 
-    static private AssemblyResolver resolver;
+    private static AssemblyResolver resolver;
 
-    static public AssemblyResolver Resolver
+    public static AssemblyResolver Resolver
     {
       get
       {

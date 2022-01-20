@@ -142,7 +142,7 @@ namespace Test.Rules.Fixtures
       AltCode.CecilExtensions.NetCoreResolver.ClearSearchLocations();
 
       if (token == null)
-        throw new ArgumentNullException("token");
+        throw new ArgumentNullException(nameof(token));
 
       MethodDefinition md = (token as MethodDefinition);
       if (md != null)
