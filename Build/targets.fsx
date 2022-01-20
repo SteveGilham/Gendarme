@@ -579,19 +579,29 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        try
-            !!(@"./**/Tests.*.csproj")
-            |> Seq.iter (
-                DotNet.test
-                    (fun p ->
-                        { p.WithCommon dotnetOptions with
-                              Configuration = DotNet.BuildConfiguration.Debug
-                              Framework = Some "net6.0"
-                              NoBuild = true }
-                        |> withCLIArgs)
-            )
-        with
-        | x -> printfn "%A" x) //reraise()) // while fixing
+        !!(@"./**/Tests.*.csproj")
+        |> Seq.iter
+            (fun proj ->
+                try
+                    DotNet.test
+                        (fun p ->
+                            { p.WithCommon dotnetOptions with
+                                  Configuration = DotNet.BuildConfiguration.Debug
+                                  Framework = Some "net6.0"
+                                  NoBuild = true }
+                            |> withCLIArgs)
+                        proj
+                with
+                | x -> // while fixing
+                    match Path.GetFileNameWithoutExtension proj with
+                    | "Tests.Framework"
+                    | "Tests.Rules.Concurrency"
+                    | "Tests.Rules.Correctness"
+                    | "Tests.Rules.Globalization"
+                    | "Tests.Rules.Interoperability"
+                    | "Tests.Rules.Maintainability"
+                    | "Tests.Rules.Smells" -> printfn "%A" x
+                    | _ -> reraise ()))
 
 _Target "Coverage" ignore
 
