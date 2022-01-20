@@ -756,6 +756,7 @@ _Target
                         AltCover.PrepareOptions.Primitive( // FSApi
                             { Primitive.PrepareOptions.Create() with
                                   Report = altReport
+                                  StrongNameKey = Path.getFullName "./Build/Infrastructure.snk"
                                   SingleVisit = true }
                             |> AltCoverFilter
                         )
@@ -787,8 +788,16 @@ _Target
                                       MSBuildParams = cliArguments })
                             test
                     with
-                    | x -> printfn "%A" x
-                    // reraise()) // while fixing
+                    | x -> // while fixing
+                        match tname with
+                        | "Tests.Framework"
+                        | "Tests.Rules.Concurrency"
+                        | "Tests.Rules.Correctness"
+                        | "Tests.Rules.Globalization"
+                        | "Tests.Rules.Interoperability"
+                        | "Tests.Rules.Maintainability"
+                        | "Tests.Rules.Smells" -> printfn "%A" x
+                        | _ -> reraise ()
 
                     altReport2 :: l)
                 []
