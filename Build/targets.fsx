@@ -115,9 +115,10 @@ let AltCoverFilter (p: Primitive.PrepareOptions) =
     { p with
           //MethodFilter = "WaitForExitCustom" :: (p.MethodFilter |> Seq.toList)
           AssemblyExcludeFilter =
-              @"NUnit3\."
-              :: (@"Tests\."
-                  :: (p.AssemblyExcludeFilter |> Seq.toList))
+              @"Examples\."
+              :: @"NUnit3\."
+                 :: @"Tests\."
+                    :: (p.AssemblyExcludeFilter |> Seq.toList)
           AssemblyFilter =
               "FSharp"
               :: @"Test\.Rules" :: (p.AssemblyFilter |> Seq.toList)
@@ -629,6 +630,7 @@ _Target
                     let prep =
                         AltCover.PrepareOptions.Primitive(
                             { Primitive.PrepareOptions.Create() with
+                                  StrongNameKey = Path.getFullName "./Build/Infrastructure.snk"
                                   Report = altReport
                                   OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
                                   SingleVisit = true
@@ -677,10 +679,27 @@ _Target
                               WorkingDirectory = "." }
                         |> AltCoverCommand.run
                     with
-                    | x -> printfn "%A" x
+                    | x -> // while fixing
+                        let exitCode () =
+                            if x.Message.Contains("'") then
+                                let m = x.Message.Split('\'').[1]
+                                let (ok, n) = m |> Int32.TryParse
+                                if ok then n else Int32.MaxValue
+                            else
+                                Int32.MaxValue
+
+                        match tname with
+                        | "Tests.Framework" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | "Tests.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
+                        | "Tests.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
+                        | "Tests.Rules.Globalization" when exitCode () <= 1 -> printfn "%A" x.Message
+                        | "Tests.Rules.Interoperability" when exitCode () <= 17 -> printfn "%A" x.Message
+                        | "Tests.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
+                        | "Tests.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | _ -> reraise ()
 
                     altReport :: l)
-                [] //reraise()) // while fixing
+                []
 
         ReportGenerator.generateReports
             (fun p ->
