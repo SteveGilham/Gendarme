@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for AvoidVisibleConstantFieldRule
 //
 // Authors:
@@ -33,97 +33,107 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class AvoidVisibleConstantFieldTest : TypeRuleTestFixture<AvoidVisibleConstantFieldRule>
+  {
+    public class PublicBad
+    {
+      public const double ZeroDouble = 0.0;     // 1
+      protected const int ZeroInteger = 0;      // 2
+      protected const ulong MaxUInt64 = UInt64.MaxValue;  // 3
 
-	[TestFixture]
-	public class AvoidVisibleConstantFieldTest : TypeRuleTestFixture<AvoidVisibleConstantFieldRule> {
+      // ok, since it can only be null
+      public const object Null = null;
 
-		public class PublicBad {
-			public const double ZeroDouble = 0.0;			// 1
-			protected const int ZeroInteger = 0;			// 2
-			protected const ulong MaxUInt64 = UInt64.MaxValue;	// 3
+      // not a const
+      public static readonly object ReadOnlyNullObject = null;
 
-			// ok, since it can only be null
-			public const object Null = null;
-
-			// not a const
-			public static readonly object ReadOnlyNullObject = null;
-
-			private const string Message = "Ok since it's not visible";
-		}
-
-		public class PublicGood {
-			public static readonly double ZeroDouble = 0.0;
-			public const object Null = null;
-		}
-
-		public class PublicEmpty {
-			// no fields
-		}
-
-		[Test]
-		public void PublicType ()
-		{
-			AssertRuleFailure<PublicBad> (3);
-			AssertRuleSuccess<PublicGood> ();
-			AssertRuleDoesNotApply<PublicEmpty> ();
-		}
-
-		public class ProtectedBad {
-			public const string Message = "Oops";		// 1
-
-			// ok, since it can only be null
-			public const ProtectedBad Reference = null;
-
-			// not a const
-			public static readonly float Pi = 3.14f;
-		}
-
-		public class ProtectedGood {
-			public static readonly string Empty = String.Empty;
-			public const object Null = null;
-			protected int count = 1;
-		}
-
-		public class ProtectedEmpty {
-			// no fields
-		}
-
-		[Test]
-		public void ProtectedType ()
-		{
-			AssertRuleFailure<ProtectedBad> (1);
-			AssertRuleSuccess<ProtectedGood> ();
-			AssertRuleDoesNotApply<ProtectedEmpty> ();
-		}
-
-		private class Private {
-			public const double ZeroDouble = 0.0;
-		}
-
-		private class Internal {
-			protected const int ZeroInteger = 0;
-		}
-
-		[Test]
-		public void NonVisibleType ()
-		{
-			AssertRuleDoesNotApply<Private> ();
-			AssertRuleDoesNotApply<Internal> ();
-		}
-
-		[Test]
-		public void Others ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-		}
-
-        [Test]
-        public void FSharpTagsAreIgnored()
-        {
-            string unit = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs).Assembly.Location;
-            var type = AssemblyDefinition.ReadAssembly(unit).MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/CLIArgs/Tags");
-            AssertRuleDoesNotApply(type);
-        }
+#pragma warning disable IDE0051 // Remove unused private members
+      private const string Message = "Ok since it's not visible";
+#pragma warning restore IDE0051 // Remove unused private members
     }
+
+    public class PublicGood
+    {
+      public static readonly double ZeroDouble = 0.0;
+      public const object Null = null;
+    }
+
+    public class PublicEmpty
+    {
+      // no fields
+    }
+
+    [Test]
+    public void PublicType()
+    {
+      AssertRuleFailure<PublicBad>(3);
+      AssertRuleSuccess<PublicGood>();
+      AssertRuleDoesNotApply<PublicEmpty>();
+    }
+
+    public class ProtectedBad
+    {
+      public const string Message = "Oops";   // 1
+
+      // ok, since it can only be null
+      public const ProtectedBad Reference = null;
+
+      // not a const
+      public static readonly float Pi = 3.14f;
+    }
+
+    public class ProtectedGood
+    {
+      public static readonly string Empty = String.Empty;
+      public const object Null = null;
+      protected int count = 1;
+    }
+
+    public class ProtectedEmpty
+    {
+      // no fields
+    }
+
+    [Test]
+    public void ProtectedType()
+    {
+      AssertRuleFailure<ProtectedBad>(1);
+      AssertRuleSuccess<ProtectedGood>();
+      AssertRuleDoesNotApply<ProtectedEmpty>();
+    }
+
+    private class Private
+    {
+      public const double ZeroDouble = 0.0;
+    }
+
+    private class Internal
+    {
+      protected const int ZeroInteger = 0;
+    }
+
+    [Test]
+    public void NonVisibleType()
+    {
+      AssertRuleDoesNotApply<Private>();
+      AssertRuleDoesNotApply<Internal>();
+    }
+
+    [Test]
+    public void Others()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+    }
+
+    [Test]
+    public void FSharpTagsAreIgnored()
+    {
+      string unit = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs).Assembly.Location;
+      var type = AssemblyDefinition.ReadAssembly(unit).MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/CLIArgs/Tags");
+      AssertRuleDoesNotApply(type);
+    }
+  }
 }
