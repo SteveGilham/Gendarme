@@ -115,9 +115,10 @@ let AltCoverFilter (p: Primitive.PrepareOptions) =
     { p with
           //MethodFilter = "WaitForExitCustom" :: (p.MethodFilter |> Seq.toList)
           AssemblyExcludeFilter =
-              @"NUnit3\."
-              :: (@"Tests\."
-                  :: (p.AssemblyExcludeFilter |> Seq.toList))
+              @"Examples\."
+              :: @"NUnit3\."
+                 :: @"Tests\."
+                    :: (p.AssemblyExcludeFilter |> Seq.toList)
           AssemblyFilter =
               "FSharp"
               :: @"Test\.Rules" :: (p.AssemblyFilter |> Seq.toList)
@@ -563,35 +564,75 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        try
-            !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
-            |> NUnit3.run
-                (fun p ->
-                    { p with
+        !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+        |> Seq.iter
+            (fun p ->
+                let tname = Path.GetFileNameWithoutExtension p
+
+                let nunitparams =
+                    { NUnit3Defaults with
                           ToolPath = nunitConsole
                           WorkingDir = "."
-                          ResultSpecs = [ "./_Reports/JustUnitTestReport.xml" ] })
-        with
-        | x -> printfn "%A" x) //reraise()) // while fixing
+                          ResultSpecs = [ "./_Reports/JustUnitTestReport." + tname + ".xml" ] }
+
+                let nunitcmd = NUnit3.buildArgs nunitparams [ p ]
+
+                let result =
+                    CreateProcess.fromRawCommandLine nunitConsole nunitcmd
+                    |> CreateProcess.withWorkingDirectory "."
+                    |> CreateProcess.withFramework
+                    |> Proc.run
+
+                // while fixing
+                let maxFail =
+                    match tname with
+                    | "Tests.Framework" -> 2
+                    | "Tests.Rules.Concurrency" -> 6
+                    | "Tests.Rules.Correctness" -> 5
+                    | "Tests.Rules.Globalization" -> 1
+                    | "Tests.Rules.Interoperability" -> 17
+                    | "Tests.Rules.Maintainability" -> 1
+                    | "Tests.Rules.Smells" -> 2
+                    | _ -> 0
+
+                Assert.That(
+                    result.ExitCode,
+                    Is
+                        .GreaterThanOrEqualTo(0)
+                        .And.LessThanOrEqualTo(maxFail),
+                    "Unexpected failures in " + tname
+                )
+
+                ))
 
 _Target
     "UnitTestDotNet"
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        try
-            !!(@"./**/Tests.*.csproj")
-            |> Seq.iter (
-                DotNet.test
-                    (fun p ->
-                        { p.WithCommon dotnetOptions with
-                              Configuration = DotNet.BuildConfiguration.Debug
-                              Framework = Some "net6.0"
-                              NoBuild = true }
-                        |> withCLIArgs)
-            )
-        with
-        | x -> printfn "%A" x) //reraise()) // while fixing
+        !!(@"./**/Tests.*.csproj")
+        |> Seq.iter
+            (fun proj ->
+                try
+                    DotNet.test
+                        (fun p ->
+                            { p.WithCommon dotnetOptions with
+                                  Configuration = DotNet.BuildConfiguration.Debug
+                                  Framework = Some "net6.0"
+                                  NoBuild = true }
+                            |> withCLIArgs)
+                        proj
+                with
+                | x -> // while fixing
+                    match Path.GetFileNameWithoutExtension proj with
+                    | "Tests.Framework"
+                    | "Tests.Rules.Concurrency"
+                    | "Tests.Rules.Correctness"
+                    | "Tests.Rules.Globalization"
+                    | "Tests.Rules.Interoperability"
+                    | "Tests.Rules.Maintainability"
+                    | "Tests.Rules.Smells" -> printfn "%A" x
+                    | _ -> reraise ()))
 
 _Target "Coverage" ignore
 
@@ -619,6 +660,7 @@ _Target
                     let prep =
                         AltCover.PrepareOptions.Primitive(
                             { Primitive.PrepareOptions.Create() with
+                                  StrongNameKey = Path.getFullName "./Build/Infrastructure.snk"
                                   Report = altReport
                                   OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
                                   SingleVisit = true
@@ -667,10 +709,27 @@ _Target
                               WorkingDirectory = "." }
                         |> AltCoverCommand.run
                     with
-                    | x -> printfn "%A" x
+                    | x -> // while fixing
+                        let exitCode () =
+                            if x.Message.Contains("'") then
+                                let m = x.Message.Split('\'').[1]
+                                let (ok, n) = m |> Int32.TryParse
+                                if ok then n else Int32.MaxValue
+                            else
+                                Int32.MaxValue
+
+                        match tname with
+                        | "Tests.Framework" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | "Tests.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
+                        | "Tests.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
+                        | "Tests.Rules.Globalization" when exitCode () <= 1 -> printfn "%A" x.Message
+                        | "Tests.Rules.Interoperability" when exitCode () <= 17 -> printfn "%A" x.Message
+                        | "Tests.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
+                        | "Tests.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | _ -> reraise ()
 
                     altReport :: l)
-                [] //reraise()) // while fixing
+                []
 
         ReportGenerator.generateReports
             (fun p ->
@@ -727,6 +786,7 @@ _Target
                         AltCover.PrepareOptions.Primitive( // FSApi
                             { Primitive.PrepareOptions.Create() with
                                   Report = altReport
+                                  StrongNameKey = Path.getFullName "./Build/Infrastructure.snk"
                                   SingleVisit = true }
                             |> AltCoverFilter
                         )
@@ -758,8 +818,16 @@ _Target
                                       MSBuildParams = cliArguments })
                             test
                     with
-                    | x -> printfn "%A" x
-                    // reraise()) // while fixing
+                    | x -> // while fixing
+                        match tname with
+                        | "Tests.Framework"
+                        | "Tests.Rules.Concurrency"
+                        | "Tests.Rules.Correctness"
+                        | "Tests.Rules.Globalization"
+                        | "Tests.Rules.Interoperability"
+                        | "Tests.Rules.Maintainability"
+                        | "Tests.Rules.Smells" -> printfn "%A" x
+                        | _ -> reraise ()
 
                     altReport2 :: l)
                 []
@@ -1204,7 +1272,7 @@ Target.activateFinal "ResetConsoleColours"
 "Preparation" ==> "BuildRelease" ==> "Compilation"
 
 "BuildDebug" ==> "JustUnitTest"
-//==> "UnitTest"
+==> "UnitTest"
 
 "BuildDebug" ==> "UnitTestDotNet" ==> "UnitTest"
 
