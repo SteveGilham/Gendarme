@@ -17,15 +17,15 @@ type DefineCmdletInTheCorrectNamespaceRule() =
   inherit TypeRuleTestFixture<AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule>()
 
   [<Test>]
-  member this.DoesNotApply () =
-    base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule> ()
+  member this.DoesNotApply() =
+    base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>()
 
   [<Test>]
-  member this.Good () =
+  member this.Good() =
     // AssertRuleSuccess<type> ()
     ()
 
   [<Test>]
-  member this.Bad () =
+  member this.Bad() =
     // AssertRuleFailure<type> ()
     ()

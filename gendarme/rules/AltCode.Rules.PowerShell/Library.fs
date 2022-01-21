@@ -3,10 +3,6 @@
 open Mono.Cecil
 
 module Tools =
-  let IsCmdlet (td:TypeDefinition) =
+  let IsCmdlet (td: TypeDefinition) =
     // TODO
     false
-
-module Say =
-    let hello name =
-        sprintf "Hello %s" name
