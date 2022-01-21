@@ -1,6 +1,7 @@
 module Tests.AltCode.PowerShell
 
 open NUnit.Framework
+open AltCode.Rules.PowerShell
 
 [<SetUp>]
 let Setup () =
@@ -8,4 +9,5 @@ let Setup () =
 
 [<Test>]
 let Test1 () =
-    Assert.Pass()
+    let v = Say.hello "PowerShell"
+    Assert.That(v, Is.EqualTo "Hello PowerShell")

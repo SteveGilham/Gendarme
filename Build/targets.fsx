@@ -529,6 +529,33 @@ _Target
             dumpSuppressions "_Reports/FxCopReport.xml"
             reraise ()
 
+        try
+            !!("./_Binaries/AltCode.*/Debug/netstandard2.0/AltCode.*.dll")
+            |> Seq.map Path.GetFullPath
+            |> Seq.distinctBy Path.GetFileName
+            |> Seq.toList
+            |> FxCop.run
+                { FxCop.Params.Create() with
+                      WorkingDirectory = "."
+                      DependencyDirectories =
+                          [ nugetCache
+                            @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                            nugetCache
+                            @@ "fsharp.core/6.0.1/lib/netstandard2.0" ]
+                      ToolPath = Option.get dixon
+                      PlatformDirectory = refdir
+                      UseGAC = true
+                      Verbose = false
+                      ReportFileName = "_Reports/FxCopReport.xml"
+                      Types = []
+                      Rules = defaultFSharpRules
+                      FailOnError = FxCop.ErrorLevel.Warning
+                      IgnoreGeneratedCode = true }
+        with
+        | _ ->
+            dumpSuppressions "_Reports/FxCopReport.xml"
+            reraise ()
+
         let targets =
             !!("./_Binaries/Gendarme.*/Debug/netstandard2.0/Gendarme.*.dll")
             |> Seq.map Path.GetFullPath
@@ -610,7 +637,7 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        !!(@"./**/Tests.*.csproj")
+        !!(@"./**/Tests.*.*sproj")
         |> Seq.iter
             (fun proj ->
                 try
@@ -760,7 +787,7 @@ _Target
         Directory.ensure report
 
         let coverage =
-            !!(@"gendarme/**/Tests.*.csproj")
+            !!(@"gendarme/**/Tests.*.*sproj")
             |> Seq.fold
                 (fun l test ->
                     printfn "%A" test
@@ -1171,6 +1198,26 @@ _Target
                       Configuration = (Path.GetFullPath "./Build/csharp-rules.xml")
                       Console = true
                       Log = Path.GetFullPath "./_Reports/gendarme-tool-selftest.html"
+                      LogKind = Gendarme.LogKind.Html
+                      Targets = targets
+                      ToolPath = "gendarme"
+                      ToolType = ToolType.CreateGlobalTool()
+                      FailBuildOnDefect = true }
+
+            let targets =
+                !!("./_Binaries/AltCode.*/Debug/*/AltCode.*.dll")
+                |> Seq.map Path.GetFullPath
+                |> Seq.distinctBy Path.GetFileName
+                |> Seq.toList
+
+            Gendarme.run
+                { Gendarme.Params.Create() with
+                      WorkingDirectory = working
+                      Severity = Gendarme.Severity.All
+                      Confidence = Gendarme.Confidence.All
+                      Configuration = (Path.GetFullPath "./Build/fsharp-rules.xml")
+                      Console = true
+                      Log = Path.GetFullPath "./_Reports/gendarme-tool-acselftest.html"
                       LogKind = Gendarme.LogKind.Html
                       Targets = targets
                       ToolPath = "gendarme"

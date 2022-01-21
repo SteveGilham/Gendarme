@@ -12,5 +12,11 @@
     <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
     <Compile Include="UnitTest1.fs" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj" />
+    <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
+    <ProjectReference Include="..\AltCode.Rules.General.fsproj" />
+  </ItemGroup>
 
 </Project>
