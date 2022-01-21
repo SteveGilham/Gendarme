@@ -2,24 +2,29 @@
 
 [assembly: SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
 
-namespace AltCode.Dixon.TestData
+namespace Examples.AltCode.General
 {
+  [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
   public class Justifications
   {
     /// <summary>
-    /// Used in a unit test -- should be covered
-    /// Should generate a "No Justification given" FxCop message
+    /// Should generate a "No Justification given" analysis warning
     /// </summary>
     /// <returns>A constant string</returns>
+    [SuppressMessage("Microsoft.Naming",
+                     "CA1704:IdentifiersShouldBeSpelledCorrectly",
+                     Justification = "Generated code")]
     [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+    [SuppressMessage("Microsoft.Naming",
+                     "CA1724:TypeNamesShouldNotMatchNamespaces",
+                     Justification = "That's life I'm afraid")]
     public string Token()
     {
       return "Canary";
     }
 
     /// <summary>
-    /// Used in a unit test -- should be covered
-    /// Should generate a "No Justification given" FxCop message
+    /// Should generate a "No Justification given" analysis warning
     /// </summary>
     /// <returns>A constant string</returns>
     [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic",
@@ -30,8 +35,7 @@ namespace AltCode.Dixon.TestData
     }
 
     /// <summary>
-    /// Used in a unit test -- should be covered
-    /// Should generate a "No Justification given" FxCop message
+    /// Should generate a "No Justification given" analysis warning
     /// </summary>
     /// <returns>A constant string</returns>
     [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic",
@@ -42,7 +46,7 @@ namespace AltCode.Dixon.TestData
     }
 
     /// <summary>
-    /// Used in a unit test -- should be covered
+    /// Should not generate a "No Justification given" analysis warning
     /// </summary>
     /// <returns>A constant string</returns>
     [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic",
@@ -53,7 +57,7 @@ namespace AltCode.Dixon.TestData
     }
 
     /// <summary>
-    /// Used in a unit test -- should be covered
+    /// Should not generate a "No Justification given" analysis warning
     /// </summary>
     /// <returns>A constant string</returns>
     [ExcludeFromCodeCoverage]

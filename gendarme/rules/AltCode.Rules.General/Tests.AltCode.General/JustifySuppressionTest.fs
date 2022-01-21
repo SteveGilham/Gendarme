@@ -12,59 +12,68 @@ open Test.Rules.Fixtures
 open Test.Rules.Helpers
 open Test.Rules.Definitions
 
+open Examples.AltCode.General
+
 [<TestFixture>]
 type TypeJustifySuppressionTest() =
   inherit TypeRuleTestFixture<AltCode.Rules.General.JustifySuppressionRule>()
 
-  [<Test>]
-  member this.DoesNotApply() =
-    //base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>
-    ()
+  // [<Test>]
+  // member this.DoesNotApply() =
+  //   //base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>
+  //   ()
 
   [<Test>]
   member this.Good() =
-    // AssertRuleSuccess<type> ()
-    ()
+    base.AssertRuleSuccess<TypeJustifySuppressionTest>()
 
   [<Test>]
   member this.Bad() =
-    // AssertRuleFailure<type> ()
-    ()
+    base.AssertRuleFailure<Justifications>()
 
 [<TestFixture>]
 type MethodJustifySuppressionRule() =
   inherit MethodRuleTestFixture<AltCode.Rules.General.JustifySuppressionRule>()
 
-  [<Test>]
-  member this.DoesNotApply() =
-    //base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>
-    ()
+  // [<Test>]
+  // member this.DoesNotApply() =
+  //   //base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>
+  //   ()
 
   [<Test>]
   member this.Good() =
-    // AssertRuleSuccess<type> ()
-    ()
+    base.AssertRuleSuccess<Justifications>("YetAnotherToken")
+    base.AssertRuleSuccess<Justifications>("Token4")
 
   [<Test>]
   member this.Bad() =
-    // AssertRuleFailure<type> ()
-    ()
+    base.AssertRuleFailure<Justifications>("Token")
+    base.AssertRuleFailure<Justifications>("EmptyToken")
+    base.AssertRuleFailure<Justifications>("AnotherToken")
 
 [<TestFixture>]
 type AssemblyJustifySuppressionRule() =
   inherit AssemblyRuleTestFixture<AltCode.Rules.General.JustifySuppressionRule>()
 
-  [<Test>]
-  member this.DoesNotApply() =
-    //base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>
-    ()
+  // [<Test>]
+  // member this.DoesNotApply() =
+  //   //base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>
+  //   ()
 
   [<Test>]
   member this.Good() =
-    // AssertRuleSuccess<type> ()
-    ()
+    let a =
+      System
+        .Reflection
+        .Assembly
+        .GetExecutingAssembly()
+        .Location
+
+    use assembly = AssemblyDefinition.ReadAssembly(a)
+    base.AssertRuleSuccess(assembly)
 
   [<Test>]
   member this.Bad() =
-    // AssertRuleFailure<type> ()
-    ()
+    let a = typeof<Justifications>.Assembly.Location
+    use assembly = AssemblyDefinition.ReadAssembly(a)
+    base.AssertRuleFailure(assembly)

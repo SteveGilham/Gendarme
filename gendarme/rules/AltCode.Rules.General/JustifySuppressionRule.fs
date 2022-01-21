@@ -12,8 +12,8 @@ open Gendarme.Framework.Engines
 open Gendarme.Framework.Helpers
 open Gendarme.Framework.Rocks
 
-[<Problem("The namespace in which the cmdlet class is defined must have a name in the following format: '<Product>.Commands'.>")>]
-[<Solution("Move or rename the class to a namespace that identifies the product and ends in '.Commands'.")>]
+[<Problem("If an analysis warning is to be overridden, there should be a reason why.")>]
+[<Solution("Specify a reason why the code could not be brought into conformance with the appropriate rule.  Must be > 10 characters.")>]
 [<Sealed>]
 type JustifySuppressionRule() =
   inherit Rule()
@@ -25,14 +25,17 @@ type JustifySuppressionRule() =
     member this.CheckType(``type``: TypeDefinition) : RuleResult =
       this.VerifyAttributes ``type``.CustomAttributes ``type`` ``type``
 
-      ``type``.Events
-      |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f ``type``)
+      // // not scanned at this level by Gendarme or FxCop
+      // ``type``.Events
+      // |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f ``type``)
 
-      ``type``.Fields
-      |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f ``type``)
+      // // not scanned at this level by Gendarme or FxCop
+      // ``type``.Fields
+      // |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f ``type``)
 
-      ``type``.Properties
-      |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f ``type``)
+      // // not scanned at this level by Gendarme or FxCop
+      // ``type``.Properties
+      // |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f ``type``)
 
       this.Runner.CurrentRuleResult
 
@@ -43,8 +46,9 @@ type JustifySuppressionRule() =
     member this.CheckMethod(method: MethodDefinition) : RuleResult =
       this.VerifyAttributes method.CustomAttributes method method
 
-      method.Parameters
-      |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f method)
+      // // not scanned at this level by Gendarme or FxCop
+      // method.Parameters
+      // |> Seq.iter (fun f -> this.VerifyAttributes f.CustomAttributes f method)
 
       this.Runner.CurrentRuleResult
 
@@ -53,6 +57,7 @@ type JustifySuppressionRule() =
                       "CA1048:DoNotDeclareVirtualMembersInSealedTypes",
                       Justification = "F# interfaces are like that")>]
     member this.CheckAssembly(assembly: AssemblyDefinition) : RuleResult =
+      // no namespace scan available here, even if FxCop allows namespace scope
       this.VerifyAttributes assembly.CustomAttributes assembly assembly
       this.Runner.CurrentRuleResult
 
@@ -80,18 +85,25 @@ type JustifySuppressionRule() =
 
   // Separates sheep from goats so far as Justification strings go
   member private self.CheckJustification location target (attribute: CustomAttribute) =
-    attribute.Properties
-    |> Seq.filter (fun a -> a.Name = "Justification")
-    |> Seq.iter
-         (fun a ->
-           match a.Argument.Value :?> string with
-           | y when String.IsNullOrWhiteSpace(y) -> self.Violation location target y
-           | x when x.Trim().Length < 10 -> self.Violation location target x
-           | _ -> ())
+    let j =
+      attribute.Properties
+      |> Seq.tryFind (fun a -> a.Name = "Justification")
+
+    match j with
+    | Some a ->
+      match a.Argument.Value :?> string with
+      | y when String.IsNullOrWhiteSpace(y) -> self.Violation location target y
+      | x when x.Trim().Length < 10 -> self.Violation location target x
+      | _ -> ()
+    | _ -> self.Violation location target String.Empty
 
   member private self.Violation location target just =
     let msg =
-      String.Format(CultureInfo.InvariantCulture, "Insufficient justification {0}", just)
+      String.Format(
+        CultureInfo.InvariantCulture,
+        "Insufficient justification '{0}'",
+        just
+      )
 
     let defect =
       Defect(self, target, location, Severity.Medium, Confidence.High, msg)

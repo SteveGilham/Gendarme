@@ -14,7 +14,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj" />
+    <ProjectReference Include=".\Examples\Examples.AltCode.General.csproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\AltCode.Rules.General.fsproj" />
   </ItemGroup>
