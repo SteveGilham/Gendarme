@@ -564,16 +564,46 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        try
-            !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
-            |> NUnit3.run
-                (fun p ->
-                    { p with
+        !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+        |> Seq.iter
+            (fun p ->
+                let tname = Path.GetFileNameWithoutExtension p
+
+                let nunitparams =
+                    { NUnit3Defaults with
                           ToolPath = nunitConsole
                           WorkingDir = "."
-                          ResultSpecs = [ "./_Reports/JustUnitTestReport.xml" ] })
-        with
-        | x -> printfn "%A" x) //reraise()) // while fixing
+                          ResultSpecs = [ "./_Reports/JustUnitTestReport." + tname + ".xml" ] }
+
+                let nunitcmd = NUnit3.buildArgs nunitparams [ p ]
+
+                let result =
+                    CreateProcess.fromRawCommandLine nunitConsole nunitcmd
+                    |> CreateProcess.withWorkingDirectory "."
+                    |> CreateProcess.withFramework
+                    |> Proc.run
+
+                // while fixing
+                let maxFail =
+                    match tname with
+                    | "Tests.Framework" -> 2
+                    | "Tests.Rules.Concurrency" -> 6
+                    | "Tests.Rules.Correctness" -> 5
+                    | "Tests.Rules.Globalization" -> 1
+                    | "Tests.Rules.Interoperability" -> 17
+                    | "Tests.Rules.Maintainability" -> 1
+                    | "Tests.Rules.Smells" -> 2
+                    | _ -> 0
+
+                Assert.That(
+                    result.ExitCode,
+                    Is
+                        .GreaterThanOrEqualTo(0)
+                        .And.LessThanOrEqualTo(maxFail),
+                    "Unexpected failures in " + tname
+                )
+
+                ))
 
 _Target
     "UnitTestDotNet"
@@ -1242,7 +1272,7 @@ Target.activateFinal "ResetConsoleColours"
 "Preparation" ==> "BuildRelease" ==> "Compilation"
 
 "BuildDebug" ==> "JustUnitTest"
-//==> "UnitTest"
+==> "UnitTest"
 
 "BuildDebug" ==> "UnitTestDotNet" ==> "UnitTest"
 
