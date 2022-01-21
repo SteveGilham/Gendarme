@@ -62,5 +62,9 @@
     <rules include="*"
            exclude="PreferStringComparisonOverrideRule"
            from="Gendarme.Rules.Globalization.dll" />
+    <rules include="*"
+           from="AltCode.Rules.General.dll" />
+    <rules include="*"
+           from="AltCode.Rules.PowerShell.dll" />
   </ruleset>
 </gendarme>

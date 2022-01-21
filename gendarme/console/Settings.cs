@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -36,6 +37,12 @@ using System.Xml;
 using System.Xml.Schema;
 
 using Gendarme.Framework;
+
+[assembly: SuppressMessage("AltCode.Rules.General",
+                            "JustifySuppressionRule",
+                            Scope = "member", // MethodDefinition
+                            Target = "Gendarme.Strings::.ctor()",
+                            Justification = "Generated code")]
 
 namespace Gendarme
 {
@@ -215,12 +222,12 @@ namespace Gendarme
 
         IRule rule = GetRule(ruleName);
         if (rule == null)
-          ThrowException(Strings.RuleDoesNotExist, ruleName, String.Empty, String.Empty);
+          throw GetException(Strings.RuleDoesNotExist, ruleName, String.Empty, String.Empty);
         PropertyInfo property = rule.GetType().GetProperty(propertyName);
         if (property == null)
-          ThrowException(Strings.PropertyNotInRule, ruleName, propertyName, String.Empty);
+          throw GetException(Strings.PropertyNotInRule, ruleName, propertyName, String.Empty);
         if (!property.CanWrite)
-          ThrowException(Strings.PropertyUnwriteableInRule, ruleName, propertyName, String.Empty);
+          throw GetException(Strings.PropertyUnwriteableInRule, ruleName, propertyName, String.Empty);
 
         string value = GetAttribute(parameter, "value", String.Empty);
         if (String.IsNullOrEmpty(value))
@@ -247,18 +254,17 @@ namespace Gendarme
         }
 
         if (values[0] == null)
-          ThrowException(Strings.ValueCannotBeConverted, ruleName, propertyName, value);
+          throw GetException(Strings.ValueCannotBeConverted, ruleName, propertyName, value);
 
         property.GetSetMethod().Invoke(rule, values);
       }
     }
 
-    private static void ThrowException(string message, string ruleName, string propertyName, string value)
+    private static Exception GetException(string message, string ruleName, string propertyName, string value)
     {
-      var composed = message
-        + Strings.ReviewConfigurationFile;
+      var composed = message + Strings.ReviewConfigurationFile;
 
-      throw new XmlException(String.Format(CultureInfo.CurrentCulture,
+      return new XmlException(String.Format(CultureInfo.CurrentCulture,
         composed, ruleName, propertyName, value));
     }
 

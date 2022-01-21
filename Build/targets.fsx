@@ -910,10 +910,15 @@ _Target
             |> List.distinctBy Path.GetFileName
 
         //rules |> List.iter (printfn "%A")
+        let altrules =
+            !!("./_Binaries/AltCode.Rules.*/Release/netstandard2.0/AltCode.Rules.*.dll")
+            |> Seq.map Path.getFullName
+            |> Seq.toList
 
         let net472 =
             List.concat [ !! "./_Binaries/gendarme/Release/net472/*.*"
                           |> Seq.toList
+                          altrules
                           rules ]
             |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
 
@@ -931,7 +936,7 @@ _Target
 
         let netcore =
             List.concat [ netcoremain
-                          rules
+                          (rules @ altrules)
                           |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
 
         let files = List.concat [ net472; housekeeping ]
