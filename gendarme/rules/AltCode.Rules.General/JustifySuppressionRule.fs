@@ -41,11 +41,6 @@ type JustifySuppressionRule() =
     member this.TearDown () = ()
 
 [<assembly: SuppressMessage("Gendarme.Rules.Gendarme",
-                            "UseCorrectSuffixRule",
-                            Scope = "type", // TypeDefinition
-                            Target = "<StartupCode$AltCode-Rules-General>.$JustifySuppressionRule",
-                            Justification = "Rule needs fixing")>]
-[<assembly: SuppressMessage("Gendarme.Rules.Gendarme",
                             "DefectsMustBeReportedRule",
                             Scope = "type", // TypeDefinition
                             Target = "AltCode.Rules.General.JustifySuppressionRule",

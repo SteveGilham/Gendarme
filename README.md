@@ -109,6 +109,7 @@ Global Suppression Attribute:
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
 * Don't apply `DoNotDeclareVirtualMethodsInSealedTypeRule` to F# closure types
 * Don't apply `PreferStringComparisonOverrideRule` to generated code
+* Don't apply `Gendarme.Rules.Gendarme.UseCorrectSuffixRule` to types in namespaces beginning "`<StartupCode$`"
 
 ## Badges
 * [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)

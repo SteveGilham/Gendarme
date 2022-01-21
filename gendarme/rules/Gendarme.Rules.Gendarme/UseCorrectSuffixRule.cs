@@ -68,13 +68,16 @@ namespace Gendarme.Rules.Gendarme {
 	[Problem ("Types implementing IRule should have the 'Rule' suffix. Other types should not have this suffix.")]
 	[Solution ("Change type name to follow this rule.")]
 	public class UseCorrectSuffixRule : GendarmeRule, ITypeRule {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		public RuleResult CheckType (TypeDefinition type)
 		{
+			if (type.Namespace.StartsWith("<StartupCode$", StringComparison.Ordinal))
+				return RuleResult.DoesNotApply;
+
 			bool endsWithRule = type.Name.EndsWith ("Rule", StringComparison.Ordinal);
 			bool implementsIRule = type.Implements (irule);
 
@@ -85,10 +88,11 @@ namespace Gendarme.Rules.Gendarme {
 			
 			return Runner.CurrentRuleResult;
 		}
-        private readonly static TypeName irule = new TypeName
-        {
-            Namespace = "Gendarme.Framework",
-            Name = "IRule"
-        };
-    }
+
+		private readonly static TypeName irule = new TypeName
+		{
+			Namespace = "Gendarme.Framework",
+			Name = "IRule"
+		};
+	}
 }

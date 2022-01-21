@@ -27,13 +27,6 @@ type DefineCmdletInTheCorrectNamespaceRule() =
           RuleResult.Success
         else
           this.Runner.Report (td, Severity.High, Confidence.High, td.FullName)
-          RuleResult.Failure
+          this.Runner.CurrentRuleResult
       else
         RuleResult.DoesNotApply
-
-[<assembly: SuppressMessage("Gendarme.Rules.Gendarme",
-                            "UseCorrectSuffixRule",
-                            Scope = "type", // TypeDefinition
-                            Target = "<StartupCode$AltCode-Rules-PowerShell>.$DefineCmdletInTheCorrectNamespaceRule",
-                            Justification = "Rule needs fixing")>]
-()
