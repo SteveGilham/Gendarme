@@ -18,8 +18,7 @@ type DefineCmdletInTheCorrectNamespaceRule() =
 
   [<Test>]
   member this.DoesNotApply () =
-    // AssertRuleDoesNotApply<type> ()
-    ()
+    base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule> ()
 
   [<Test>]
   member this.Good () =
