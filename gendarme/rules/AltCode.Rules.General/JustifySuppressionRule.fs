@@ -48,3 +48,4 @@ type JustifySuppressionRule() =
 ()
 // to implement
 // "Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes"
+// "Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes"
