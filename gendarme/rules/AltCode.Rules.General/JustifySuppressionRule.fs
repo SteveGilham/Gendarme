@@ -1,4 +1,4 @@
-﻿namespace AltCode.Rules.PowerShell
+﻿namespace AltCode.Rules.General
 
 open System
 
@@ -13,15 +13,20 @@ open Gendarme.Framework.Rocks
 [<Problem("The namespace in which the cmdlet class is defined must have a name in the following format: '<Product>.Commands'.>")>]
 [<Solution("Move or rename the class to a namespace that identifies the product and ends in '.Commands'.")>]
 [<Sealed>]
-type DefineCmdletInTheCorrectNamespaceRule() =
+type JustifySuppressionRule() =
   inherit Rule()
 
   interface ITypeRule with
     member this.CheckType(td: TypeDefinition) : RuleResult =
-      if Tools.IsCmdlet td then
-        if td.Namespace.EndsWith(".Commands", StringComparison.Ordinal) then
-          RuleResult.Success
-        else
-          RuleResult.Failure
-      else
         RuleResult.DoesNotApply
+
+  interface IMethodRule with
+    member this.CheckMethod(md: MethodDefinition) : RuleResult =
+        RuleResult.DoesNotApply
+
+  interface IAssemblyRule with
+    member this.CheckAssembly(ad: AssemblyDefinition) : RuleResult =
+        RuleResult.DoesNotApply
+
+  interface IRule with // keep compiler happy
+    member this.TearDown () = ()

@@ -10,7 +10,7 @@
   <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
     <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
-    <Compile Include="UnitTest1.fs" />
+    <Compile Include="JustifySuppressionRule.fs" />
   </ItemGroup>
   
   <ItemGroup>
