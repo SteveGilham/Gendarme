@@ -7,8 +7,8 @@
   <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
     <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
-    <Compile Include="DefineCmdletInTheCorrectNamespaceRule.fs" />
     <Compile Include="Library.fs" />
+    <Compile Include="DefineCmdletInTheCorrectNamespaceRule.fs" />
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,14 @@
-module Tests.AltCode.PowerShell
+namespace Tests.AltCode.PowerShell
 
 open NUnit.Framework
 open AltCode.Rules.PowerShell
 
-[<SetUp>]
-let Setup () =
-    ()
+module Tests =
+  [<SetUp>]
+  let Setup () =
+      ()
 
-[<Test>]
-let Test1 () =
-    let v = Say.hello "PowerShell"
-    Assert.That(v, Is.EqualTo "Hello PowerShell")
+  [<Test>]
+  let Test1 () =
+      let v = Say.hello "PowerShell"
+      Assert.That(v, Is.EqualTo "Hello PowerShell")
