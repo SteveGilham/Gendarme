@@ -13,7 +13,7 @@ open Test.Rules.Helpers
 open Test.Rules.Definitions
 
 [<TestFixture>]
-type TypeJustifySuppressionRule() =
+type TypeJustifySuppressionTest() =
   inherit TypeRuleTestFixture<AltCode.Rules.General.JustifySuppressionRule>()
 
   [<Test>]

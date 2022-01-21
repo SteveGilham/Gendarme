@@ -9,6 +9,7 @@ open Gendarme.Framework
 open Gendarme.Framework.Engines
 open Gendarme.Framework.Helpers
 open Gendarme.Framework.Rocks
+open System.Diagnostics.CodeAnalysis
 
 [<Problem("The namespace in which the cmdlet class is defined must have a name in the following format: '<Product>.Commands'.>")>]
 [<Solution("Move or rename the class to a namespace that identifies the product and ends in '.Commands'.")>]
@@ -17,11 +18,22 @@ type DefineCmdletInTheCorrectNamespaceRule() =
   inherit Rule()
 
   interface ITypeRule with
-    member this.CheckType(td: TypeDefinition) : RuleResult =
+    [<SuppressMessage("Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes",
+                      Justification="F# interfaces are like that")>]
+    member this.CheckType(``type``: TypeDefinition) : RuleResult =
+      let td = ``type``
       if Tools.IsCmdlet td then
         if td.Namespace.EndsWith(".Commands", StringComparison.Ordinal) then
           RuleResult.Success
         else
+          this.Runner.Report (td, Severity.High, Confidence.High, td.FullName)
           RuleResult.Failure
       else
         RuleResult.DoesNotApply
+
+[<assembly: SuppressMessage("Gendarme.Rules.Gendarme",
+                            "UseCorrectSuffixRule",
+                            Scope = "type", // TypeDefinition
+                            Target = "<StartupCode$AltCode-Rules-PowerShell>.$DefineCmdletInTheCorrectNamespaceRule",
+                            Justification = "Rule needs fixing")>]
+()

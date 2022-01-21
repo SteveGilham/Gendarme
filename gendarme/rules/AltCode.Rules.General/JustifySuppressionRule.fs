@@ -1,6 +1,7 @@
 ﻿namespace AltCode.Rules.General
 
 open System
+open System.Diagnostics.CodeAnalysis
 
 open Mono.Cecil
 open Mono.Cecil.Cil
@@ -17,16 +18,38 @@ type JustifySuppressionRule() =
   inherit Rule()
 
   interface ITypeRule with
-    member this.CheckType(td: TypeDefinition) : RuleResult =
+    [<SuppressMessage("Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes",
+                      Justification="F# interfaces are like that")>]
+    member this.CheckType(``type``: TypeDefinition) : RuleResult =
         RuleResult.DoesNotApply
 
   interface IMethodRule with
-    member this.CheckMethod(md: MethodDefinition) : RuleResult =
+    [<SuppressMessage("Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes",
+                      Justification="F# interfaces are like that")>]
+    member this.CheckMethod(``method``: MethodDefinition) : RuleResult =
         RuleResult.DoesNotApply
 
   interface IAssemblyRule with
-    member this.CheckAssembly(ad: AssemblyDefinition) : RuleResult =
+    [<SuppressMessage("Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes",
+                      Justification="F# interfaces are like that")>]
+    member this.CheckAssembly(assembly: AssemblyDefinition) : RuleResult =
         RuleResult.DoesNotApply
 
   interface IRule with // keep compiler happy
+    [<SuppressMessage("Microsoft.Design", "CA1048:DoNotDeclareVirtualMembersInSealedTypes",
+                      Justification="F# interfaces are like that")>]
     member this.TearDown () = ()
+
+[<assembly: SuppressMessage("Gendarme.Rules.Gendarme",
+                            "UseCorrectSuffixRule",
+                            Scope = "type", // TypeDefinition
+                            Target = "<StartupCode$AltCode-Rules-General>.$JustifySuppressionRule",
+                            Justification = "Rule needs fixing")>]
+[<assembly: SuppressMessage("Gendarme.Rules.Gendarme",
+                            "DefectsMustBeReportedRule",
+                            Scope = "type", // TypeDefinition
+                            Target = "AltCode.Rules.General.JustifySuppressionRule",
+                            Justification = "Work in progress")>]
+()
+// to implement
+// "Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes"

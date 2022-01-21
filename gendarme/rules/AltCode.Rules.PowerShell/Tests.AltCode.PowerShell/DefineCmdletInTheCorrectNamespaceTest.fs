@@ -13,7 +13,7 @@ open Test.Rules.Helpers
 open Test.Rules.Definitions
 
 [<TestFixture>]
-type DefineCmdletInTheCorrectNamespaceRule() =
+type DefineCmdletInTheCorrectNamespaceTest() =
   inherit TypeRuleTestFixture<AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule>()
 
   [<Test>]
