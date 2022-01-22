@@ -21,6 +21,11 @@ In this branch
 * The obsolete `Gendarme.Rules.Portability.MonoCompatibilityReviewRule` is not implemented in this fork.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 * Due to IL changes `UseIsOperatorRule` has been tuned to avoid false positives at the cost of missing some failure cases
+* New rule categories
+  * `AltCode.Rules.General` for general purpose rules, starting with `JustifySuppressionRule` to check the `Justification` sproperty on `SuppressMessage` attribute
+  * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules, starting with `DefineCmdletInTheCorrectNamespaceRule`to check the naming convention
+* Fix the Gendarme.Rules.Gendarme.UseCorrectSuffixRule to ignore unutterable classes in namespaces starting with "`<StartupCode$`".
+
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
