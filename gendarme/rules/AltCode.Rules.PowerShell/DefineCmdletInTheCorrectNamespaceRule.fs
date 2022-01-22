@@ -13,6 +13,7 @@ open System.Diagnostics.CodeAnalysis
 
 [<Problem("The namespace in which the cmdlet class is defined must have a name in the following format: '<Product>.Commands'.>")>]
 [<Solution("Move or rename the class to a namespace that identifies the product and ends in '.Commands'.")>]
+[<FxCopCompatibility ("Microsoft.PowerShell", "PS1011:DefineCmdletInTheCorrectNamespace")>]
 [<Sealed>]
 type DefineCmdletInTheCorrectNamespaceRule() =
   inherit Rule()

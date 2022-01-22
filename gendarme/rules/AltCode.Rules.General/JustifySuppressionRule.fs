@@ -14,6 +14,7 @@ open Gendarme.Framework.Rocks
 
 [<Problem("If an analysis warning is to be overridden, there should be a reason why.")>]
 [<Solution("Specify a reason why the code could not be brought into conformance with the appropriate rule.  Must be > 10 characters.")>]
+[<FxCopCompatibility ("Dixon.Design", "DX0001:JustifySuppression")>]
 [<Sealed>]
 type JustifySuppressionRule() =
   inherit Rule()
