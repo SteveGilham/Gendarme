@@ -31,6 +31,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Resources;
+using System.Resources.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -102,18 +103,18 @@ namespace Gendarme.Rules.Globalization
       }
     }
 
-    private static IResourceReader MakeResourceReader(Stream resourceStream)
+    private static DeserializingResourceReader MakeResourceReader(Stream resourceStream)
     {
       var safeStream = new BlobReadingStream(resourceStream);
-      return new System.Resources.Extensions.DeserializingResourceReader(safeStream);
+      return new DeserializingResourceReader(safeStream);
     }
 
     private void CheckSatelliteResource(EmbeddedResource mainResource, EmbeddedResource satelliteResource, IMetadataTokenProvider satelliteAssembly)
     {
       using (Stream resourceStream = satelliteResource.GetResourceStream())
-      using (ResourceSet resourceSet = new ResourceSet(resourceStream))
+      using(var reader = MakeResourceReader(resourceStream))
       {
-        foreach (DictionaryEntry entry in resourceSet)
+        foreach (DictionaryEntry entry in reader)
         {
           string resourceName = (string)entry.Key;
           object satelliteValue = entry.Value;
@@ -288,9 +289,9 @@ namespace Gendarme.Rules.Globalization
         {
           fileResources = new Dictionary<string, object>();
           using (Stream resourceStream = embeddedResource.GetResourceStream())
-          using (ResourceSet resourceSet = new ResourceSet(resourceStream))
+          using(var reader = MakeResourceReader(resourceStream))
           {
-            foreach (DictionaryEntry entry in resourceSet)
+            foreach (DictionaryEntry entry in reader)
               fileResources.Add((string)entry.Key, entry.Value);
           }
           values.Add(embeddedResource, fileResources);
