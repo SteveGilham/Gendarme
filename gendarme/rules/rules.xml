@@ -62,7 +62,7 @@
 		<rules include="IDisposableWithDesctuctorWithoutSupressFinalizeRule | DontIgnoreMethodResultRule |
 			UseStringEmptyRule | AvoidToStringOnStringsRule | UsingStringLengthInsteadOfCheckingEmptyStringRule"
 			from="Gendarme.Rules.Performance.dll"/>
-		<rules include="*" exclude="MonoCompatibilityReviewRule" from="Gendarme.Rules.Portability.dll"/>
+		<rules include="*" from="Gendarme.Rules.Portability.dll"/>
 		<rules include="*" exclude="ArrayFieldsShouldNotBeReadOnlyRule | NativeFieldsShouldNotBeVisibleRule" 
 			from="Gendarme.Rules.Security.dll"/>
 		<!-- no rule from Ui is included in this set -->
