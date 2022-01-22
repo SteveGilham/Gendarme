@@ -12,20 +12,27 @@ open Test.Rules.Fixtures
 open Test.Rules.Helpers
 open Test.Rules.Definitions
 
+open Examples.AltCode.PowerShell
+open Examples.AltCode.Commands
+
 [<TestFixture>]
 type DefineCmdletInTheCorrectNamespaceTest() =
   inherit TypeRuleTestFixture<AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule>()
 
   [<Test>]
   member this.DoesNotApply() =
-    base.AssertRuleDoesNotApply<DefineCmdletInTheCorrectNamespaceRule>()
+    base.AssertRuleDoesNotApply<UndecoratedClassesAreNotCmdlets>()
+    base.AssertRuleDoesNotApply<StructsAreNotCmdlets>()
+
+    let probe =
+      UndecoratedClassesAreNotCmdlets.Internal()
+
+    base.AssertRuleDoesNotApply(DefinitionLoader.GetTypeDefinition probe)
+    base.AssertRuleDoesNotApply<UnattributedTypesAreNotCmdlets>()
 
   [<Test>]
-  member this.Good() =
-    // AssertRuleSuccess<type> ()
-    ()
+  member this.Good() = base.AssertRuleSuccess<MergeThings>()
 
   [<Test>]
   member this.Bad() =
-    // AssertRuleFailure<type> ()
-    ()
+    base.AssertRuleFailure<WrongNamespace>()

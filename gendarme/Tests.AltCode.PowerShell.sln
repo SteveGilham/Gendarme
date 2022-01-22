@@ -7,7 +7,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests.AltCode.PowerShell", 
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AltCode.Rules.PowerShell", "rules\AltCode.Rules.PowerShell\AltCode.Rules.PowerShell.fsproj", "{9E0DCD89-5587-436F-B99A-D2D502E93EF2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.General", "rules\AltCode.Rules.General\Tests.AltCode.General\Examples\Examples.AltCode.General.csproj", "{72906C86-4446-43BE-BEED-B6BF9256F053}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.PowerShell", "rules\AltCode.Rules.PowerShell\Tests.AltCode.PowerShell\Examples\Examples.AltCode.PowerShell.csproj", "{CB529448-DC8C-4147-AE0F-D6D52FB219C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{9E0DCD89-5587-436F-B99A-D2D502E93EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E0DCD89-5587-436F-B99A-D2D502E93EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E0DCD89-5587-436F-B99A-D2D502E93EF2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72906C86-4446-43BE-BEED-B6BF9256F053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72906C86-4446-43BE-BEED-B6BF9256F053}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72906C86-4446-43BE-BEED-B6BF9256F053}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72906C86-4446-43BE-BEED-B6BF9256F053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB529448-DC8C-4147-AE0F-D6D52FB219C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB529448-DC8C-4147-AE0F-D6D52FB219C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB529448-DC8C-4147-AE0F-D6D52FB219C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB529448-DC8C-4147-AE0F-D6D52FB219C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

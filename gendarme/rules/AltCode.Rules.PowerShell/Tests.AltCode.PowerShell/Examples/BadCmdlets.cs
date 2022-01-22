@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Examples.AltCode.General
+namespace Examples.AltCode.PowerShell
 {
-  internal class BadCmdlets
+  [Cmdlet("Wrong", "NameSpace")]
+  public class WrongNamespace : Cmdlet
   {
   }
 }
