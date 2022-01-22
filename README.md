@@ -24,7 +24,20 @@ In this branch
 * New rule categories
   * `AltCode.Rules.General` for general purpose rules, starting with `JustifySuppressionRule` to check the `Justification` sproperty on `SuppressMessage` attribute
   * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules, starting with `DefineCmdletInTheCorrectNamespaceRule`to check the naming convention
-* Fix the Gendarme.Rules.Gendarme.UseCorrectSuffixRule to ignore unutterable classes in namespaces starting with "`<StartupCode$`".
+* In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
+  * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
+  * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
+  * The emitted section looks like this:
+```
+Global Suppression Attribute:
+[<assembly: SuppressMessage("Gendarme.Rules.Correctness",
+                            "MethodCanBeMadeStaticRule",
+                            Scope = "member", // MethodDefinition
+                            Target = "ParameterNamesShouldMatch.Handler::ShowMessage(a,System.String)",
+                            Justification = "")>]
+
+```
+
 
 
 ## Direction
@@ -59,23 +72,10 @@ The following rule suites have unit test failures
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
 
-* In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
-  * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
-  * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
-  * The emitted section looks like this:
-```
-Global Suppression Attribute:
-[<assembly: SuppressMessage("Gendarme.Rules.Correctness",
-                            "MethodCanBeMadeStaticRule",
-                            Scope = "member", // MethodDefinition
-                            Target = "ParameterNamesShouldMatch.Handler::ShowMessage(a,System.String)",
-                            Justification = "")>]
-
-```
 * Fix `AvoidMultidimensionalIndexerRule` for F# generated parameterless methods called `get_Item`
 * Fix comparison of nested type names in parameters against supplied types
-* Ignore [CompilerGenerated] methods for `AvoidSwitchStatementsRule` and `CheckParametersNullityInVisibleMethodsRule`
-* Ignore [CompilerGenerated] fields and methods for `VariableNamesShouldNotMatchFieldNamesRule`
+* Ignore `[CompilerGenerated]` methods for `AvoidSwitchStatementsRule` and `CheckParametersNullityInVisibleMethodsRule`
+* Ignore `[CompilerGenerated]` fields and methods for `VariableNamesShouldNotMatchFieldNamesRule`
 * Ignore `<StartupCode$` names in `UseCorrectCasingRule`
 * Ignore generated types containg `@` in their names for `AvoidUnsealedUninheritedInternalTypesRule`
 * Ignore the `Tags` generated type inside union types for `AvoidVisibleConstantFieldRule`
