@@ -20,6 +20,8 @@
 		<rules include="*" from="Gendarme.Rules.Maintainability.dll"/>
 		<rules include="*" from="Gendarme.Rules.Gendarme.dll"/>
 		<rules include="*" from="Gendarme.Rules.Globalization.dll"/>
+    	<rules include="*" from="AltCode.Rules.General.dll" />
+    	<rules include="*" from="AltCode.Rules.PowerShell.dll" />
 	</ruleset>
 
 	<ruleset name="default">
@@ -44,6 +46,8 @@
 		<!-- no rule from Gendarme.Rules.Interoperability.Com is included in this set -->
 		<!-- no rule from Gendarme.Rules.NUnit is included in this set -->
 		<!-- no rule from Gendarme.Rules.Smells is included in this set -->
+		<!-- no rule from AltCode.Rules.General is included in this set -->
+		<!-- no rule from AltCode.Rules.PowerShell is included in this set -->
 	</ruleset>
 
 	<ruleset name="mono-bcl">
@@ -62,6 +66,8 @@
 		<rules include="*" exclude="ArrayFieldsShouldNotBeReadOnlyRule | NativeFieldsShouldNotBeVisibleRule" 
 			from="Gendarme.Rules.Security.dll"/>
 		<!-- no rule from Ui is included in this set -->
+		<!-- no rule from AltCode.Rules.General is included in this set -->
+		<!-- no rule from AltCode.Rules.PowerShell is included in this set -->
 	</ruleset>
 
 	<ruleset name="concurrency">
@@ -126,5 +132,11 @@
 	</ruleset>
 	<ruleset name="globalization">
 		<rules include="*" from="Gendarme.Rules.Globalization.dll"/>
+	</ruleset>
+	<ruleset name="general">
+    	<rules include="*" from="AltCode.Rules.General.dll" />
+	</ruleset>
+	<ruleset name="powershell">
+    	<rules include="*" from="AltCode.Rules.PowerShell.dll" />
 	</ruleset>
 </gendarme>
