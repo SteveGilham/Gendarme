@@ -57,10 +57,10 @@ The following rule suites have unit test failures
 * Concurrency -- 6 failures
   * `ProtectCallToEventDelegatesRule` (false positives)
 * Correctness -- 5 failures (false negatives)
-  * `ProvideCorrectArgumentsToFormattingMethods` * 3 -- changed IL : `call Array.Empty` used instead of an explict load
+  * `ProvideCorrectArgumentsToFormattingMethods` × 3 -- changed IL : `call Array.Empty` used instead of an explict load
   * `TestNativeFieldsArray` -- changed IL
   * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
-* Globalization -- 1 failure (Cannot read satellite resources with available reader)
+* Globalization -- 1 failure (netcore only -- Cannot read bitmap resources)
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
 * Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` possibly Stack entry analysis)

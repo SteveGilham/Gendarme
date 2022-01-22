@@ -616,7 +616,6 @@ _Target
                     | "Tests.Framework" -> 2
                     | "Tests.Rules.Concurrency" -> 6
                     | "Tests.Rules.Correctness" -> 5
-                    | "Tests.Rules.Globalization" -> 1
                     | "Tests.Rules.Interoperability" -> 17
                     | "Tests.Rules.Maintainability" -> 1
                     | "Tests.Rules.Smells" -> 2
@@ -749,7 +748,6 @@ _Target
                         | "Tests.Framework" when exitCode () <= 2 -> printfn "%A" x.Message
                         | "Tests.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
                         | "Tests.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
-                        | "Tests.Rules.Globalization" when exitCode () <= 1 -> printfn "%A" x.Message
                         | "Tests.Rules.Interoperability" when exitCode () <= 17 -> printfn "%A" x.Message
                         | "Tests.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
                         | "Tests.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
