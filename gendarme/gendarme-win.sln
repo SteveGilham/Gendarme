@@ -150,13 +150,13 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AltCode.Rules.General", "ru
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AltCode.Rules.PowerShell", "rules\AltCode.Rules.PowerShell\AltCode.Rules.PowerShell.fsproj", "{9497128E-467E-4324-B059-4FF3AF1274E4}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests.AltCode.General", "rules\AltCode.Rules.General\Tests.AltCode.General\Tests.AltCode.General.fsproj", "{35947F94-0389-4E47-8061-CBCB84669156}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests.AltCode.General", "rules\AltCode.Rules.General\Test\Tests.AltCode.General.fsproj", "{35947F94-0389-4E47-8061-CBCB84669156}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests.AltCode.PowerShell", "rules\AltCode.Rules.PowerShell\Tests.AltCode.PowerShell\Tests.AltCode.PowerShell.fsproj", "{209103FA-F558-4C5D-AC95-70C1D49926BC}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests.AltCode.PowerShell", "rules\AltCode.Rules.PowerShell\Test\Tests.AltCode.PowerShell.fsproj", "{209103FA-F558-4C5D-AC95-70C1D49926BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.General", "rules\AltCode.Rules.General\Tests.AltCode.General\Examples\Examples.AltCode.General.csproj", "{5A313BAE-0E7D-4316-8C73-CC69619285DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.General", "rules\AltCode.Rules.General\Test\Examples\Examples.AltCode.General.csproj", "{5A313BAE-0E7D-4316-8C73-CC69619285DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.PowerShell", "rules\AltCode.Rules.PowerShell\Tests.AltCode.PowerShell\Examples\Examples.AltCode.PowerShell.csproj", "{D8517766-D79C-47A0-9BE8-13E0D10D0B0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.PowerShell", "rules\AltCode.Rules.PowerShell\Test\Examples\Examples.AltCode.PowerShell.csproj", "{D8517766-D79C-47A0-9BE8-13E0D10D0B0B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltCode.Mocker", "AltCode.Mocker\AltCode.Mocker.csproj", "{1977DBF1-0C6C-4BEC-9507-161D36BDF349}"
 EndProject
