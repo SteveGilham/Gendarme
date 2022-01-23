@@ -21,6 +21,24 @@ In this branch
 * The obsolete `Gendarme.Rules.Portability.MonoCompatibilityReviewRule` is not implemented in this fork.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 * Due to IL changes `UseIsOperatorRule` has been tuned to avoid false positives at the cost of missing some failure cases
+* New rule categories
+  * `AltCode.Rules.General` for general purpose rules, starting with `JustifySuppressionRule` to check the `Justification` sproperty on `SuppressMessage` attribute
+  * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules, starting with `DefineCmdletInTheCorrectNamespaceRule`to check the naming convention
+* In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
+  * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
+  * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
+  * The emitted section looks like this:
+```
+Global Suppression Attribute:
+[<assembly: SuppressMessage("Gendarme.Rules.Correctness",
+                            "MethodCanBeMadeStaticRule",
+                            Scope = "member", // MethodDefinition
+                            Target = "ParameterNamesShouldMatch.Handler::ShowMessage(a,System.String)",
+                            Justification = "")>]
+
+```
+
+
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
@@ -39,10 +57,9 @@ The following rule suites have unit test failures
 * Concurrency -- 6 failures
   * `ProtectCallToEventDelegatesRule` (false positives)
 * Correctness -- 5 failures (false negatives)
-  * `ProvideCorrectArgumentsToFormattingMethods` * 3 -- changed IL : `call Array.Empty` used instead of an explict load
+  * `ProvideCorrectArgumentsToFormattingMethods` × 3 -- changed IL : `call Array.Empty` used instead of an explict load
   * `TestNativeFieldsArray` -- changed IL
   * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
-* Globalization -- 1 failure (Cannot read satellite resources with available reader)
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
 * Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` possibly Stack entry analysis)
@@ -54,23 +71,10 @@ The following rule suites have unit test failures
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
 
-* In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
-  * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
-  * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
-  * The emitted section looks like this:
-```
-Global Suppression Attribute:
-[<assembly: SuppressMessage("Gendarme.Rules.Correctness",
-                            "MethodCanBeMadeStaticRule",
-                            Scope = "member", // MethodDefinition
-                            Target = "ParameterNamesShouldMatch.Handler::ShowMessage(a,System.String)",
-                            Justification = "")>]
-
-```
 * Fix `AvoidMultidimensionalIndexerRule` for F# generated parameterless methods called `get_Item`
 * Fix comparison of nested type names in parameters against supplied types
-* Ignore [CompilerGenerated] methods for `AvoidSwitchStatementsRule` and `CheckParametersNullityInVisibleMethodsRule`
-* Ignore [CompilerGenerated] fields and methods for `VariableNamesShouldNotMatchFieldNamesRule`
+* Ignore `[CompilerGenerated]` methods for `AvoidSwitchStatementsRule` and `CheckParametersNullityInVisibleMethodsRule`
+* Ignore `[CompilerGenerated]` fields and methods for `VariableNamesShouldNotMatchFieldNamesRule`
 * Ignore `<StartupCode$` names in `UseCorrectCasingRule`
 * Ignore generated types containg `@` in their names for `AvoidUnsealedUninheritedInternalTypesRule`
 * Ignore the `Tags` generated type inside union types for `AvoidVisibleConstantFieldRule`
@@ -109,6 +113,7 @@ Global Suppression Attribute:
 * Don't apply `ParameterNamesShouldMatchOverridenMethodRule` to cases where the base method has a null or empty parameter name (e.g. F# interfaces)
 * Don't apply `DoNotDeclareVirtualMethodsInSealedTypeRule` to F# closure types
 * Don't apply `PreferStringComparisonOverrideRule` to generated code
+* Don't apply `Gendarme.Rules.Gendarme.UseCorrectSuffixRule` to types in namespaces beginning "`<StartupCode$`"
 
 ## Badges
 * [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)

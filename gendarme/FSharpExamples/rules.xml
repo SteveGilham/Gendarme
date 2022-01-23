@@ -34,5 +34,9 @@
            from="Gendarme.Rules.Maintainability.dll" />
     <rules include="*" from="Gendarme.Rules.Gendarme.dll" />
     <rules include="*" from="Gendarme.Rules.Globalization.dll"/>
+    <rules include="*"
+           from="AltCode.Rules.General.dll" />
+    <rules include="*"
+           from="AltCode.Rules.PowerShell.dll" />
   </ruleset>
 </gendarme>

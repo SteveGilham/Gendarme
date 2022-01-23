@@ -1,3 +1,7 @@
+# 2022.1.20.8043-pre-release 
+
+* Fix false positives in globalization rules `PreferIFormatProviderOverrideRule` and `PreferStringComparisonOverrideRule` in a net6.0-only environment
+
 # 2022.1.19.15132-pre-release 
 
 * Fix intermittent/environmentally dependent bugs in --
