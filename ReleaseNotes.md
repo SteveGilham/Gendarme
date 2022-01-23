@@ -1,9 +1,9 @@
-# 2022.1.23.20xxx-pre-release 
+# 2022.1.23.20210-pre-release 
 
 * New rule categories
   * `AltCode.Rules.General` for general purpose rules, starting with `JustifySuppressionRule` to check the `Justification` sproperty on `SuppressMessage` attribute
-  * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules, starting with `DefineCmdletInTheCorrectNamespaceRule`to check the naming convention
+  * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules, starting with `DefineCmdletInTheCorrectNamespaceRule` to check the naming convention
 * Fix the Gendarme.Rules.Gendarme.UseCorrectSuffixRule to ignore unutterable classes in namespaces starting with "`<StartupCode$`".
-* Fix where the Gendarme.Rules.Globalization reads bitmaps from resource assemblies, providing a dummy type as needed.
+* Fix where the Gendarme.Rules.Globalization.SatelliteResourceMismatchRule reads bitmaps from resource assemblies, providing a dummy type as needed.
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md
