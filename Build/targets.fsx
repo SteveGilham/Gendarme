@@ -319,6 +319,23 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
+            (Some AssemblyInfoFileConfig.Default)
+
+        AssemblyInfoFile.create
+            "./_Generated/MockerAssemblyStaticInfo.cs"
+            [ AssemblyInfo.Title "Gendarme"
+              AssemblyInfo.Version "1.0.0.0"
+              AssemblyInfo.FileVersion v'
+              AssemblyInfo.InformationalVersion(commitHash + " " + currentBranch)
+              AssemblyInfo.Company "Novell, Inc."
+              AssemblyInfo.Trademark ""
+              AssemblyInfo.Description "Rule-based assembly analyzer"
+              AssemblyInfo.CLSCompliant false
+              AssemblyInfo.ComVisible false
+              AssemblyInfo.Copyright copy2
+              AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
+              AssemblyInfo.Metadata("CommitHash", commitHash)
+              AssemblyInfo.Metadata("Branch", currentBranch) ]
             (Some AssemblyInfoFileConfig.Default))
 
 // Basic compilation
@@ -654,7 +671,6 @@ _Target
                     | "Tests.Framework"
                     | "Tests.Rules.Concurrency"
                     | "Tests.Rules.Correctness"
-                    | "Tests.Rules.Globalization"
                     | "Tests.Rules.Interoperability"
                     | "Tests.Rules.Maintainability"
                     | "Tests.Rules.Smells" -> printfn "%A" x
@@ -848,7 +864,6 @@ _Target
                         | "Tests.Framework"
                         | "Tests.Rules.Concurrency"
                         | "Tests.Rules.Correctness"
-                        | "Tests.Rules.Globalization"
                         | "Tests.Rules.Interoperability"
                         | "Tests.Rules.Maintainability"
                         | "Tests.Rules.Smells" -> printfn "%A" x

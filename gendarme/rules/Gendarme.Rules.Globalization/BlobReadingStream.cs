@@ -40,14 +40,24 @@ namespace Gendarme.Rules.Globalization
       var num = inner.Read(buffer, offset, count);
       if (num > 0)
       {
-	      var tname = "System.Drawing.Bitmap,";
-	      if (num > tname.Length)
-	      {
-		      var maybe = new String(buffer.Skip(offset).Take(num).Select(b => (char)b).ToArray());
-		      if (maybe.StartsWith(tname))
-			Console.WriteLine(maybe);
-	      }
-	      
+        var tname = "System.Drawing.Bitmap,";
+        if (num > tname.Length)
+        {
+          var maybe = new String(buffer.Skip(offset).Take(num).Select(b => (char)b).ToArray());
+
+          if (maybe.StartsWith(tname, StringComparison.Ordinal))
+          {
+            var rtype = Type.GetType(maybe, false);
+            if (rtype == null)
+            {
+              //Console.WriteLine(maybe);
+
+              var sub = typeof(AltCode.Mocker.Bitmap).AssemblyQualifiedName;
+              var bits = System.Text.Encoding.ASCII.GetBytes(sub);
+              Array.Copy(bits, 0, buffer, offset, num);
+            }
+          }
+        }
       }
       return num;
     }
