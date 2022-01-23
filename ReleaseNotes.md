@@ -1,4 +1,4 @@
-# 2022.x.xx.xxxxx-pre-release 
+# 2022.1.23.20xxx-pre-release 
 
 * New rule categories
   * `AltCode.Rules.General` for general purpose rules, starting with `JustifySuppressionRule` to check the `Justification` sproperty on `SuppressMessage` attribute
