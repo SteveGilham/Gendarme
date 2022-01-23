@@ -1,27 +1,32 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace AltCode.Mocker
 {
-  public class Bitmap : ISerializable
+  [Serializable]
+  public sealed class Bitmap : ISerializable
   {
     public Bitmap()
     { }
 
 #pragma warning disable IDE0060 // Remove unused parameter
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", 
+      Justification="Called by deserializer")]
     public Bitmap(Stream dummy)
 #pragma warning restore IDE0060 // Remove unused parameter
     { }
 
+#pragma warning disable IDE0060 // Remove unused parameter
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", 
+      Justification="Meets interface")]
     public void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-      throw new NotImplementedException();
-    }
+#pragma warning restore IDE0060 // Remove unused parameter
+    { }
 
-#if false
-    public Bitmap(SerializationInfo info, StreamingContext context)
+    private Bitmap(SerializationInfo info, StreamingContext context)
     {
       SerializationInfoEnumerator enumerator = info.GetEnumerator();
       if (enumerator == null)
@@ -58,6 +63,5 @@ namespace AltCode.Mocker
         }
       }
     }
-#endif
   }
 }

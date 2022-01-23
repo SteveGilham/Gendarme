@@ -346,7 +346,20 @@ _Target
     "BuildRelease"
     (fun _ ->
         "./gendarme/gendarme-win.sln"
-        |> dotnetBuildRelease)
+        |> dotnetBuildRelease
+
+        let publish = Path.getFullName "./_Publish.Globalization"
+
+        DotNet.publish
+            (fun options ->
+                { options with
+                      OutputPath = Some publish
+                      Configuration = DotNet.BuildConfiguration.Release
+                      MSBuildParams =
+                          { options.MSBuildParams with
+                                Properties = options.MSBuildParams.Properties }
+                      Framework = Some "netstandard2.0" })
+            "./gendarme/rules/Gendarme.Rules.Globalization/Gendarme.Rules.Globalization.csproj")
 
 _Target "BuildDebug" (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
 
@@ -923,14 +936,20 @@ _Target
             |> List.distinctBy Path.GetFileName
 
         //rules |> List.iter (printfn "%A")
-        let altrules =
-            !!("./_Binaries/AltCode.Rules.*/Release/netstandard2.0/AltCode.Rules.*.dll")
+        let altrules = // plus mocker
+            !!("./_Binaries/AltCode.*/Release/netstandard2.0/AltCode.*.dll")
+            |> Seq.map Path.getFullName
+            |> Seq.toList
+
+        let syslibs =
+            !!("./_Publish.Globalization/System.*.dll")
             |> Seq.map Path.getFullName
             |> Seq.toList
 
         let net472 =
             List.concat [ !! "./_Binaries/gendarme/Release/net472/*.*"
                           |> Seq.toList
+                          syslibs
                           altrules
                           rules ]
             |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
@@ -949,8 +968,9 @@ _Target
 
         let netcore =
             List.concat [ netcoremain
-                          (rules @ altrules)
-                          |> List.map (fun f -> (f |> Path.getFullName, Some "tools/netcoreapp2.1/any", None)) ]
+                          [ syslibs; rules; altrules ]
+                          |> List.concat 
+                          |> List.map (fun f -> (f, Some "tools/netcoreapp2.1/any", None)) ]
 
         let files = List.concat [ net472; housekeeping ]
         let globalfiles = List.concat [ netcore; housekeeping ]
@@ -1059,6 +1079,7 @@ _Target "OperationalTest" ignore
 _Target
     "Unpack"
     (fun _ ->
+        Directory.ensure "./_Reports"
         let unpack = Path.getFullName "./_Unpack"
         let config = unpack @@ ".config"
         Directory.ensure unpack

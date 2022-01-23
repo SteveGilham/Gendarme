@@ -11,18 +11,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineConstants>TRACE;RELEASE</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\framework\Gendarme.Framework.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <!-- nice idea, doesn't work Compile Remove="Test\**\*.cs" / -->
-    <EmbeddedResource Remove="Test\**" />
-    <None Remove="Test\**" />
   </ItemGroup>
 </Project>
