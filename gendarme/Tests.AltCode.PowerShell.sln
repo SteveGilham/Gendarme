@@ -9,6 +9,18 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AltCode.Rules.PowerShell", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.PowerShell", "rules\AltCode.Rules.PowerShell\Test\Examples\Examples.AltCode.PowerShell.csproj", "{CB529448-DC8C-4147-AE0F-D6D52FB219C1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{E70D5196-A32D-489C-A216-6C10D4AD7072}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		rules\Directory.Build.props = rules\Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		..\NuGet.md = ..\NuGet.md
+		OutputBuildProps.props = OutputBuildProps.props
+		OutputBuildTargets.props = OutputBuildTargets.props
+		..\README.md = ..\README.md
+		..\ReleaseNotes.md = ..\ReleaseNotes.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

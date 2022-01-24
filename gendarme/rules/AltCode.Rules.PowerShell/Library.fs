@@ -15,6 +15,19 @@ module Tools =
   let cmdletAttribute =
     TypeName(Namespace = "System.Management.Automation", Name = "CmdletAttribute")
 
+  let standardVerbs = [|
+                        "Add"; "Clear"; "Close"; "Copy"; "Enter"; "Exit"; "Find"; "Format"; "Get"; "Hide";
+                        "Join"; "Lock"; "Move"; "New"; "Open"; "Pop"; "Push"; "Redo"; "Remove"; "Rename";
+                        "Reset"; "Search"; "Select"; "Set"; "Show"; "Skip"; "Split"; "Step"; "Switch"; "Undo";
+                        "Unlock"; "Watch"; "Backup"; "Checkpoint"; "Compare"; "Compress"; "Convert"; "ConvertFrom"; "ConvertTo"; "Dismount";
+                        "Edit"; "Expand"; "Export"; "Group"; "Import"; "Initialize"; "Limit"; "Merge"; "Mount"; "Out";
+                        "Publish"; "Restore"; "Save"; "Sync"; "Unpublish"; "Update"; "Approve"; "Assert"; "Complete"; "Confirm";
+                        "Deny"; "Disable"; "Enable"; "Install"; "Invoke"; "Register"; "Request"; "Restart"; "Resume"; "Start";
+                        "Stop"; "Submit"; "Suspend"; "Uninstall"; "Unregister"; "Wait"; "Debug"; "Measure"; "Ping"; "Repair";
+                        "Resolve"; "Test"; "Trace"; "Connect"; "Disconnect"; "Read"; "Receive"; "Send"; "Write"; "Block";
+                        "Grant"; "Protect"; "Revoke"; "Unblock"; "Unprotect"; "Use"
+                      |]
+
   let IsCmdlet (td: TypeDefinition) =
     Some td
     |> Option.filter (fun t -> t.IsClass)

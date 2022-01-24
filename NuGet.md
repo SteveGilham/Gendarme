@@ -21,7 +21,8 @@ A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can lo
 * New rules/categories
   * `AltCode.Rules.General.JustifySuppressionRule` to check the `Justification` property on `SuppressMessage` attribute
   * `AltCode.Rules.General.PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210
-  * `AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule`to check the naming convention
+  * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
+  * `AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule` to replace "Microsoft.PowerShell#PS1011:DefineCmdletInTheCorrectNamespace"
 * In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
   * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
   * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details

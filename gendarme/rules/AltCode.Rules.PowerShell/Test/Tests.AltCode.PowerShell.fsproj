@@ -11,6 +11,7 @@
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
     <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
     <Compile Include="DefineCmdletInTheCorrectNamespaceTest.fs" />
+    <Compile Include="UseOnlyStandardVerbsTest.fs" />
   </ItemGroup>
   
   <ItemGroup>
