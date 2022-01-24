@@ -348,7 +348,8 @@ _Target
         "./gendarme/gendarme-win.sln"
         |> dotnetBuildRelease
 
-        let publish = Path.getFullName "./_Publish.Globalization"
+        let publish =
+            Path.getFullName "./_Publish.Globalization"
 
         DotNet.publish
             (fun options ->
@@ -969,7 +970,7 @@ _Target
         let netcore =
             List.concat [ netcoremain
                           [ syslibs; rules; altrules ]
-                          |> List.concat 
+                          |> List.concat
                           |> List.map (fun f -> (f, Some "tools/netcoreapp2.1/any", None)) ]
 
         let files = List.concat [ net472; housekeeping ]
@@ -1357,8 +1358,7 @@ Target.activateFinal "ResetConsoleColours"
 
 "Preparation" ==> "BuildRelease" ==> "Compilation"
 
-"BuildDebug" ==> "JustUnitTest"
-==> "UnitTest"
+"BuildDebug" ==> "JustUnitTest" ==> "UnitTest"
 
 "BuildDebug" ==> "UnitTestDotNet" ==> "UnitTest"
 

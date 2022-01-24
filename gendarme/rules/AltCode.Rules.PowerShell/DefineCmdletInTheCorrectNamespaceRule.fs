@@ -26,7 +26,9 @@ type DefineCmdletInTheCorrectNamespaceRule() =
       let td = ``type``
 
       if Tools.IsCmdlet td then
-        if td.Namespace.EndsWith(".Commands", StringComparison.Ordinal) |> not
+        if
+          td.Namespace.EndsWith(".Commands", StringComparison.Ordinal)
+          |> not
         then
           this.Runner.Report(td, Severity.High, Confidence.High, td.FullName)
 

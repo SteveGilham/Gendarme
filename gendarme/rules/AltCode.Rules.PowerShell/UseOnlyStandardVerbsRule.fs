@@ -27,16 +27,24 @@ type UseOnlyStandardVerbsRule() =
       let td = ``type``
 
       if Tools.IsCmdlet td then
-        let attr = td.CustomAttributes
-                   |> Seq.find (fun a -> a.AttributeType.Inherits Tools.cmdletAttribute)
-        let verb = (attr.ConstructorArguments |> Seq.head).Value.ToString()
+        let attr =
+          td.CustomAttributes
+          |> Seq.find (fun a -> a.AttributeType.Inherits Tools.cmdletAttribute)
+
+        let verb =
+          (attr.ConstructorArguments |> Seq.head)
+            .Value.ToString()
+
         if Tools.standardVerbs
            |> Seq.exists (fun v -> v.Equals(verb, StringComparison.OrdinalIgnoreCase))
-           |> not
-        then
-          let msg = String.Format(CultureInfo.InvariantCulture,
-                                  "Non-standard verb {0} used here.",
-                                  verb)
+           |> not then
+          let msg =
+            String.Format(
+              CultureInfo.InvariantCulture,
+              "Non-standard verb {0} used here.",
+              verb
+            )
+
           this.Runner.Report(td, Severity.High, Confidence.High, msg)
 
         this.Runner.CurrentRuleResult
