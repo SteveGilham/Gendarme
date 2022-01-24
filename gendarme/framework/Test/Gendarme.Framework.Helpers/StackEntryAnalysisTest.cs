@@ -685,8 +685,7 @@ namespace Test.Framework {
 			Assert.AreEqual (Code.Callvirt, result [1].Instruction.OpCode.Code, "result[1]-Opcode-Callvirt");
 		}
 
-/*	Cecil doesn't support Calli instructions atm.
-		[Test] 
+		[Test]
 		public void TestCalli ()
 		{
 			//ldftn Calli
@@ -694,17 +693,23 @@ namespace Test.Framework {
 			//ret
 
 			MethodDefinition m = new MethodDefinition ("Calli", Mono.Cecil.MethodAttributes.Public, this.type);
+			var cilWorker = m.Body.GetILProcessor();
+			cilWorker.Emit (OpCodes.Ldftn, m);
+			cilWorker.Emit (OpCodes.Calli, new CallSite (GetTest ("TestCalli").ReturnType));
+			cilWorker.Emit (OpCodes.Ret);
 
-			m.Body.CilWorker.Emit (OpCodes.Ldftn, m);
-		
-			m.Body.CilWorker.Create (OpCodes.Calli, new CallSite (false, false, MethodCallingConvention.Default, GetTest ("TestCalli").ReturnType));
-			m.Body.CilWorker.Emit (OpCodes.Ret);
+			//foreach (var ins in m.Body.Instructions)
+			//Console.WriteLine("{0}", ins);
+
+			//IL_0000: ldftn Test.Framework.StackEntryAnalysisTest Calli()
+			//IL_0000: calli System.Void()
+			//IL_0000: ret
 
 			StackEntryAnalysis sea = new StackEntryAnalysis (m);
 			StackEntryUsageResult [] result = sea.GetStackEntryUsage (m.Body.Instructions[0]);
 
 			Assert.AreEqual (1, result.Length);
 			Assert.AreEqual (OpCodes.Calli, result [0].Instruction.OpCode);
-		}*/
+		}
 	}
 }

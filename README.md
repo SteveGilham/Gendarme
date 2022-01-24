@@ -55,9 +55,10 @@ Having resolved many issues stemming from a Cecil change to what the name and na
 
 The following rule suites have unit test failures
 
-* Framework -- 2 failures for Stack entry analysis (Roslyn, most likely)
+* Framework -- 3 failures for Stack entry analysis (Roslyn, most likely)
   * TestMultipleCatch()
   * TestTryCatchFinally()
+  * TestCalli() -- activated now Cecil can support the long commented-out test
 * Concurrency -- 6 failures
   * `ProtectCallToEventDelegatesRule` (false positives)
 * Correctness -- 5 failures (false negatives)
@@ -66,7 +67,7 @@ The following rule suites have unit test failures
   * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
-* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` possibly Stack entry analysis)
+* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` System.Void Test.Rules.Maintainability.SpecializedClass::GenericMethod(T): result should be Failure but got Success.  CheckParameters -- uses StackEntryAnalysis for parameter usage)
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
