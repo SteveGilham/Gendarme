@@ -144,9 +144,9 @@ namespace Test.Framework.Rocks
     [Test]
     public void HasAttribute()
     {
-      MethodDefinition method = GetMethod("HasAttribute");
-      Assert.IsTrue(method.HasAttribute(TN("NUnit.Framework", "TestAttribute")), "NUnit.Framework.TestAttribute");
-      Assert.IsFalse(method.HasAttribute(TN("NUnit.Framework", "Test")), "NUnit.Framework.Test");
+      MethodDefinition method = GetMethod("FixtureSetUp");
+      Assert.IsTrue(method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUpAttribute")), "NUnit.Framework.OneTimeSetUpAttribute");
+      Assert.IsFalse(method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUp")), "NUnit.Framework.OneTimeSetUp");
     }
 
     [Test]
