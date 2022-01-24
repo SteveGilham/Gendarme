@@ -26,7 +26,7 @@ module Tools =
                         "Stop"; "Submit"; "Suspend"; "Uninstall"; "Unregister"; "Wait"; "Debug"; "Measure"; "Ping"; "Repair";
                         "Resolve"; "Test"; "Trace"; "Connect"; "Disconnect"; "Read"; "Receive"; "Send"; "Write"; "Block";
                         "Grant"; "Protect"; "Revoke"; "Unblock"; "Unprotect"; "Use"
-                      |]
+                      |] |> Array.toList
 
   let IsCmdlet (td: TypeDefinition) =
     Some td

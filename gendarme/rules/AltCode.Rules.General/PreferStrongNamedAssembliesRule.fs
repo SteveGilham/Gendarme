@@ -14,7 +14,7 @@ open Gendarme.Framework.Rocks
 
 [<Problem("The assembly is not strong-named.  It is better for code that is to be linked by third parties to strongnamed as it permits them a choice as to whether or not to strongname.")>]
 [<Solution("Sign the assembly during build.")>]
-[<FxCopCompatibility ("-Microsoft.Design", "CA2210")>]
+[<FxCopCompatibility ("Microsoft.Design", "CA2210:Assemblies should have valid strong names")>]
 [<Sealed>]
 type PreferStrongNamedAssembliesRule() =
   inherit Rule()
