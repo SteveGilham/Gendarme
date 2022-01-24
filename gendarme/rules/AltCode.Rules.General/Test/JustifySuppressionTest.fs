@@ -32,7 +32,7 @@ type TypeJustifySuppressionTest() =
     base.AssertRuleFailure<Justifications>()
 
 [<TestFixture>]
-type MethodJustifySuppressionRule() =
+type MethodJustifySuppressionTest() =
   inherit MethodRuleTestFixture<AltCode.Rules.General.JustifySuppressionRule>()
 
   // [<Test>]
@@ -52,7 +52,7 @@ type MethodJustifySuppressionRule() =
     base.AssertRuleFailure<Justifications>("AnotherToken")
 
 [<TestFixture>]
-type AssemblyJustifySuppressionRule() =
+type AssemblyJustifySuppressionTest() =
   inherit AssemblyRuleTestFixture<AltCode.Rules.General.JustifySuppressionRule>()
 
   // [<Test>]

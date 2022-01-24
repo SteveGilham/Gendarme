@@ -9,6 +9,7 @@
     <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
     <Compile Include="Library.fs" />
     <Compile Include="JustifySuppressionRule.fs" />
+    <Compile Include="PreferStrongNamedAssembliesRule.fs" />
   </ItemGroup>
 
 </Project>
