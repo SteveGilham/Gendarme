@@ -643,7 +643,7 @@ _Target
                 // while fixing
                 let maxFail =
                     match tname with
-                    | "Tests.Framework" -> 2
+                    | "Tests.Framework" -> 3
                     | "Tests.Rules.Concurrency" -> 6
                     | "Tests.Rules.Correctness" -> 5
                     | "Tests.Rules.Interoperability" -> 17
@@ -774,7 +774,7 @@ _Target
                                 Int32.MaxValue
 
                         match tname with
-                        | "Tests.Framework" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | "Tests.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
                         | "Tests.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
                         | "Tests.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
                         | "Tests.Rules.Interoperability" when exitCode () <= 17 -> printfn "%A" x.Message
