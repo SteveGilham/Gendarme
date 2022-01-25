@@ -947,13 +947,55 @@ _Target
             |> Seq.map Path.getFullName
             |> Seq.toList
 
+        let obsolete =
+            !!("./_Binaries/Obsolete.*/Release/net472/Obsolete.*.dll")
+            |> Seq.map Path.getFullName
+            |> Seq.toList
+
+        do
+            let rulesXml =
+                "./_Binaries/gendarme/Release/net472/rules.xml"
+                |> Path.getFullName
+
+            let rulesDoc = rulesXml |> XDocument.Load
+
+            let g =
+                rulesDoc.Descendants(XName.Get("gendarme"))
+                |> Seq.head
+
+            g.Add(XElement(XName.Get "ruleset", XAttribute(XName.Get "name", "obsolete-cas")))
+            let sets = g.Descendants(XName.Get("ruleset"))
+
+            sets
+            |> Seq.iter
+                (fun s ->
+                    let name = s.Attribute(XName.Get("name")).Value
+
+                    match name with
+                    | "obsolete-cas"
+                    | "self-test"
+                    | "default" ->
+                        let rule =
+                            XElement(
+                                XName.Get "rules",
+                                XAttribute(XName.Get "include", "*"),
+                                XAttribute(XName.Get "from", "Obsolete.Rules.Security.Cas.dll")
+                            )
+
+                        s.Add rule
+                    | _ -> ())
+
+            rulesDoc.Save rulesXml
+
         let net472 =
             List.concat [ !! "./_Binaries/gendarme/Release/net472/*.*"
+                          |> Seq.map Path.getFullName
                           |> Seq.toList
                           syslibs
                           altrules
+                          obsolete
                           rules ]
-            |> List.map (fun f -> (f |> Path.getFullName, Some "tools", None))
+            |> List.map (fun f -> (f, Some "tools", None))
 
         let leadstring = publish.Length
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <BuildDir>$(ProjectDir)\..\_Binaries\</BuildDir>
-<BaseIntermediateOutputPath>$(ProjectDir)\..\_Intermediate/$(MSBuildProjectName)/$(Configuration)</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>$(ProjectDir)\..\_Intermediate/$(MSBuildProjectName)/$(Configuration)</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <ProjectBuildDirectoryName>$(GendarmeTag)$(MSBuildProjectName)/$(Configuration)</ProjectBuildDirectoryName>
     <OutputPathWithoutEndSlash>$(BuildDir)$(ProjectBuildDirectoryName)</OutputPathWithoutEndSlash>
@@ -22,6 +22,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="coveralls.io" Version="1.4.2" />
-    <PackageReference Include="NUnit.ConsoleRunner" Version="3.13.2" />
+    <PackageReference Include="NUnit.ConsoleRunner" Version="3.14.0" />
   </ItemGroup>
 </Project>
