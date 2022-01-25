@@ -17,12 +17,6 @@ open Mono.Cecil.Pdb
 module ProgramDatabase =
   let internal symbolFolders = List<String>()
 
-  // start retrofit
-  let internal optionFilter predicate option = // Option.filter
-    match option with
-    | Some x -> if predicate x then option else None
-    | _ -> None
-
   // We no longer have to violate Cecil encapsulation to get the PDB path
   // but we do to get the embedded PDB info
   let internal getEmbed =
@@ -37,12 +31,12 @@ module ProgramDatabase =
 
   let internal getPdbFromImage (assembly: AssemblyDefinition) =
     Some assembly.MainModule
-    |> optionFilter (fun x -> x.HasDebugHeader)
+    |> Option.filter (fun x -> x.HasDebugHeader)
     |> Option.map (fun x -> x.GetDebugHeader())
-    |> optionFilter (fun x -> x.HasEntries)
+    |> Option.filter (fun x -> x.HasEntries)
     |> Option.bind (fun x -> x.Entries |> Seq.tryFind (fun t -> true))
     |> Option.map (fun x -> x.Data)
-    |> optionFilter (fun x -> x.Length > 0x18)
+    |> Option.filter (fun x -> x.Length > 0x18)
     |> Option.map
          (fun x ->
            x
@@ -50,8 +44,8 @@ module ProgramDatabase =
            |> Seq.takeWhile (fun x -> x <> byte 0)
            |> Seq.toArray
            |> System.Text.Encoding.UTF8.GetString)
-    |> optionFilter (fun s -> s.Length > 0)
-    |> optionFilter
+    |> Option.filter (fun s -> s.Length > 0)
+    |> Option.filter
          (fun s ->
            File.Exists s
            || (s = (assembly.Name.Name + ".pdb")
@@ -114,7 +108,7 @@ module ProgramDatabase =
 [<assembly: SuppressMessage("Microsoft.Naming",
                             "CA1704:IdentifiersShouldBeSpelledCorrectly",
                             Scope = "member",
-                            Target = "AltCode.CecilExtensions.ProgramDatabase.#optionFilter`1(Microsoft.FSharp.Core.FSharpFunc`2<!!0,System.Boolean>,Microsoft.FSharp.Core.FSharpOption`1<!!0>)",
+                            Target = "AltCode.CecilExtensions.ProgramDatabase.#Option.filter`1(Microsoft.FSharp.Core.FSharpFunc`2<!!0,System.Boolean>,Microsoft.FSharp.Core.FSharpOption`1<!!0>)",
                             MessageId = "a",
                             Justification = "Compiler generated")>]
 ()

@@ -1,9 +1,13 @@
-# 2022.1.23.20xxx-pre-release 
+# 2022.1.25.121xx-pre-release 
 
-* New rule categories
-  * `AltCode.Rules.General` for general purpose rules, starting with `JustifySuppressionRule` to check the `Justification` sproperty on `SuppressMessage` attribute
-  * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules, starting with `DefineCmdletInTheCorrectNamespaceRule`to check the naming convention
-* Fix the Gendarme.Rules.Gendarme.UseCorrectSuffixRule to ignore unutterable classes in namespaces starting with "`<StartupCode$`".
-* Fix where the Gendarme.Rules.Globalization reads bitmaps from resource assemblies, providing a dummy type as needed.
+* Reinstate `Gendarme.Rules.Security.Cas.DoNotExposeFieldsInSecuredTypeRule`, mistakenly deleted
+* New rules
+  * `AltCode.Rules.General.PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210:AssembliesShouldHaveValidStrongNames
+  * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
+* [net472] Reinstate the obsolescing code access security rules as the assembly `Obsolete.Rules.Security.Cas.dll`; is covers rules
+  * `AddMissingTypeInheritanceDemandRule`
+  * `DoNotExposeMethodsProtectedByLinkDemandRule`
+  * `DoNotReduceTypeSecurityOnMethodsRule`
+  * `SecureGetObjectDataOverridesRule`
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md

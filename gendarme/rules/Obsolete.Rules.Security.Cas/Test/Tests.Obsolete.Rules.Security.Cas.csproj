@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472</TargetFrameworks>
+    <NoWarn>$(NoWarn);1701;1702;SYSLIB0003;618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
+    <ProjectReference Include="..\Obsolete.Rules.Security.Cas.csproj" />
+  </ItemGroup>
+</Project>

@@ -13,7 +13,7 @@ In this branch
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 * Depending whether the Framework or dotnet tool version is used, the results may differ when faced with the same assembly, because of the different runtime being consulted
   * e.g. several types marked `[Serializable]` in the Framework are not so marked at `dotnet`, so serialization rules will give different answers
-* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in this fork:
+* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are only present in the Framework tool build, under the `Obsolete.Rules.Security.Cas` name:
   * `AddMissingTypeInheritanceDemandRule`
   * `DoNotExposeMethodsProtectedByLinkDemandRule`
   * `DoNotReduceTypeSecurityOnMethodsRule`
@@ -22,8 +22,12 @@ In this branch
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 * Due to IL changes `UseIsOperatorRule` has been tuned to avoid false positives at the cost of missing some failure cases
 * New rule categories
-  * `AltCode.Rules.General` for general purpose rules, starting with `JustifySuppressionRule` to check the `Justification` sproperty on `SuppressMessage` attribute
-  * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules, starting with `DefineCmdletInTheCorrectNamespaceRule`to check the naming convention
+  * `AltCode.Rules.General` for general purpose rules
+    * `JustifySuppressionRule` to check the `Justification` property on `SuppressMessage` attribute
+    * `PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210
+  * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules
+    * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
+    * `AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule` to replace "Microsoft.PowerShell#PS1011:DefineCmdletInTheCorrectNamespace"
 * In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
   * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
   * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
@@ -51,9 +55,10 @@ Having resolved many issues stemming from a Cecil change to what the name and na
 
 The following rule suites have unit test failures
 
-* Framework -- 2 failures for Stack entry analysis (Roslyn, most likely)
+* Framework -- 3 failures for Stack entry analysis (Roslyn, most likely)
   * TestMultipleCatch()
   * TestTryCatchFinally()
+  * TestCalli() -- activated now Cecil can support the long commented-out test
 * Concurrency -- 6 failures
   * `ProtectCallToEventDelegatesRule` (false positives)
 * Correctness -- 5 failures (false negatives)
@@ -62,7 +67,7 @@ The following rule suites have unit test failures
   * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
 * Interoperability -- 17 failures (false negatives)
   * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
-* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` possibly Stack entry analysis)
+* Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` System.Void Test.Rules.Maintainability.SpecializedClass::GenericMethod(T): result should be Failure but got Success.  CheckParameters -- uses StackEntryAnalysis for parameter usage)
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`

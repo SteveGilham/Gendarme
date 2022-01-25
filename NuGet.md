@@ -8,7 +8,9 @@ A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can lo
   * Will search the nuget cache for dependencies, though this can take some time as an alternative to using `dotnet publish` to get all the code you want to analyse in one place.
 * Will load debug information from embedded symbols or actual `.pdb` files if available even on non-Windows platforms.
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
-* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in the global tool version (so if this is relevant to you, use the .net Framework build):
+* Depending whether the Framework or dotnet tool version is used, the results may differ when faced with the same assembly, because of the different runtime being consulted
+  * e.g. several types marked `[Serializable]` in the Framework are not so marked at `dotnet`, so serialization rules will give different answers
+* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are only present in the Framework tool build, under the `Obsolete.Rules.Security.Cas` name:
   * `AddMissingTypeInheritanceDemandRule`
   * `DoNotExposeMethodsProtectedByLinkDemandRule`
   * `DoNotReduceTypeSecurityOnMethodsRule`
@@ -16,6 +18,24 @@ A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can lo
 * The obsolete `Gendarme.Rules.Portability.MonoCompatibilityReviewRule` is not implemented in this fork.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 * Due to IL changes `UseIsOperatorRule` has been tuned to avoid false positives at the cost of missing some failure cases
+* New rules/categories
+  * `AltCode.Rules.General.JustifySuppressionRule` to check the `Justification` property on `SuppressMessage` attribute
+  * `AltCode.Rules.General.PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210
+  * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
+  * `AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule` to replace "Microsoft.PowerShell#PS1011:DefineCmdletInTheCorrectNamespace"
+* In the text output, include a specimen global suppression attribute for each issue, for convenience when dealing with remaining intractable issues e.g. arising from code generation
+  * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
+  * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
+  * The emitted section looks like this:
+```
+Global Suppression Attribute:
+[<assembly: SuppressMessage("Gendarme.Rules.Correctness",
+                            "MethodCanBeMadeStaticRule",
+                            Scope = "member", // MethodDefinition
+                            Target = "ParameterNamesShouldMatch.Handler::ShowMessage(a,System.String)",
+                            Justification = "")>]
+
+```
 
 ## Known Issues
 

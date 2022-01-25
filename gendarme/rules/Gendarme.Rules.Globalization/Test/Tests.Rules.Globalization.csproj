@@ -3,7 +3,6 @@
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <NoWarn>$(NoWarn);SYSLIB0012</NoWarn>
-    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Resources.Extensions">

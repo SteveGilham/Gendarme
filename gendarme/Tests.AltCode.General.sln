@@ -3,11 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests.AltCode.General", "rules\AltCode.Rules.General\Tests.AltCode.General\Tests.AltCode.General.fsproj", "{109BEEDD-43C2-4770-89AD-B8545397B223}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tests.AltCode.General", "rules\AltCode.Rules.General\Test\Tests.AltCode.General.fsproj", "{109BEEDD-43C2-4770-89AD-B8545397B223}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "AltCode.Rules.General", "rules\AltCode.Rules.General\AltCode.Rules.General.fsproj", "{87A85DD4-D93C-4AD9-A4BE-CA86797AD9AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.General", "rules\AltCode.Rules.General\Tests.AltCode.General\Examples\Examples.AltCode.General.csproj", "{C48AEA80-5EDD-4ECA-9A18-1D634C30B5BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.AltCode.General", "rules\AltCode.Rules.General\Test\Examples\Examples.AltCode.General.csproj", "{C48AEA80-5EDD-4ECA-9A18-1D634C30B5BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{E70D5196-A32D-489C-A216-6C10D4AD7072}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		rules\Directory.Build.props = rules\Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		..\NuGet.md = ..\NuGet.md
+		OutputBuildProps.props = OutputBuildProps.props
+		OutputBuildTargets.props = OutputBuildTargets.props
+		..\README.md = ..\README.md
+		..\ReleaseNotes.md = ..\ReleaseNotes.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

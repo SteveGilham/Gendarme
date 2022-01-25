@@ -142,12 +142,11 @@ namespace Test.Framework.Rocks
     }
 
     [Test]
-    [Ignore("TestFixtureSetUp is obsolete")]
     public void HasAttribute()
     {
       MethodDefinition method = GetMethod("FixtureSetUp");
-      Assert.IsTrue(method.HasAttribute(TN("NUnit.Framework", "TestFixtureSetUpAttribute")), "NUnit.Framework.TestFixtureSetUpAttribute");
-      Assert.IsFalse(method.HasAttribute(TN("NUnit.Framework", "TestFixtureSetUp")), "NUnit.Framework.TestFixtureSetUp");
+      Assert.IsTrue(method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUpAttribute")), "NUnit.Framework.OneTimeSetUpAttribute");
+      Assert.IsFalse(method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUp")), "NUnit.Framework.OneTimeSetUp");
     }
 
     [Test]
