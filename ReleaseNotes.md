@@ -1,4 +1,4 @@
-# 2022.x.x.xxxxx-pre-release 
+# 2022.1.25.121xx-pre-release 
 
 * Reinstate `Gendarme.Rules.Security.Cas.DoNotExposeFieldsInSecuredTypeRule`, mistakenly deleted
 * New rules
