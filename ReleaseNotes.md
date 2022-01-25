@@ -2,7 +2,7 @@
 
 * Reinstate `Gendarme.Rules.Security.Cas.DoNotExposeFieldsInSecuredTypeRule`, mistakenly deleted
 * New rules
-  * `AltCode.Rules.General.PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210
+  * `AltCode.Rules.General.PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210:AssembliesShouldHaveValidStrongNames
   * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
 * [net472] Reinstate the obsolescing code access security rules as the assembly `Obsolete.Rules.Security.Cas.dll`; is covers rules
   * `AddMissingTypeInheritanceDemandRule`

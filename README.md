@@ -13,7 +13,7 @@ In this branch
   *  The main impact is that the `AvoidLongMethodsRule` works by LoC and not IL against .net core code on all platforms.
 * Depending whether the Framework or dotnet tool version is used, the results may differ when faced with the same assembly, because of the different runtime being consulted
   * e.g. several types marked `[Serializable]` in the Framework are not so marked at `dotnet`, so serialization rules will give different answers
-* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are not implemented in this fork:
+* Because they use obsolescing functions not present in `netstandard2.0` the following `Gendarme.Rules.Security.Cas` rules are only present in the Framework tool build, under the `Obsolete.Rules.Security.Cas` name:
   * `AddMissingTypeInheritanceDemandRule`
   * `DoNotExposeMethodsProtectedByLinkDemandRule`
   * `DoNotReduceTypeSecurityOnMethodsRule`
