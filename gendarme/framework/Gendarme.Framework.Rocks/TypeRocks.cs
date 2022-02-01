@@ -37,6 +37,7 @@ using System.Linq;
 using Mono.Cecil;
 
 using Gendarme.Framework.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework.Rocks
 {
@@ -70,6 +71,9 @@ namespace Gendarme.Framework.Rocks
     /// <returns>An IEnumerable to traverse all base classes and interfaces.</returns>
     public static IEnumerable<TypeDefinition> AllSuperTypes(this TypeReference self)
     {
+      if (self == null)
+        yield break;
+
       var types = new List<TypeReference>
       {
         self
@@ -135,6 +139,10 @@ namespace Gendarme.Framework.Rocks
     /// <param name="parameters">An array of full names (Namespace.Type) of parameter types. Ignored if null. Null entries act as wildcards.</param>
     /// <param name="customCondition">A custom condition that is called for each MethodDefinition that satisfies all other conditions. Ignored if null.</param>
     /// <returns>The first MethodDefinition that satisfies all conditions.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Correctness",
+                     "CheckParametersNullityInVisibleMethodsRule",
+                     Justification = "Handled w/o throw")]
     public static MethodDefinition GetMethod(this TypeReference self, MethodAttributes attributes, string name, string returnType, string[] parameters, Func<MethodDefinition, bool> customCondition)
     {
       if (self == null)
@@ -332,10 +340,12 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type inherits from specified class, False otherwise</returns>
     public static bool Inherits(this TypeReference self, TypeName typename)
     {
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
       if (typename.Namespace == null)
         throw new ArgumentNullException("nameSpace");
       if (typename.Name == null)
         throw new ArgumentNullException("name");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
       if (self == null)
         return false;
 
@@ -400,10 +410,12 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type is namespace and name match the arguments, False otherwise</returns>
     public static bool IsNamed(this TypeReference self, TypeName typename)
     {
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
       if (typename.Namespace == null)
         throw new ArgumentNullException("nameSpace");
       if (typename.Name == null)
         throw new ArgumentNullException("name");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
       if (self == null)
         return false;
 
@@ -474,7 +486,7 @@ namespace Gendarme.Framework.Rocks
     public static bool IsNamed(this TypeReference self, string fullName)
     {
       if (fullName == null)
-        throw new ArgumentNullException("fullName");
+        throw new ArgumentNullException(nameof(fullName));
       if (self == null)
         return false;
 

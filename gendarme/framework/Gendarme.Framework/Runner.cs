@@ -39,15 +39,15 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Framework
 {
-  abstract public class Runner : IRunner
+  public abstract class Runner : IRunner
   {
-    private Collection<Defect> defect_list = new Collection<Defect>();
+    private readonly Collection<Defect> defect_list = new Collection<Defect>();
     private int defects_limit = Int32.MaxValue;
-    private Bitmask<Severity> severity_bitmask = new Bitmask<Severity>(true);
-    private Bitmask<Confidence> confidence_bitmask = new Bitmask<Confidence>(true);
+    private readonly Bitmask<Severity> severity_bitmask = new Bitmask<Severity>(true);
+    private readonly Bitmask<Confidence> confidence_bitmask = new Bitmask<Confidence>(true);
 
-    private Collection<IRule> rules = new Collection<IRule>();
-    private Collection<AssemblyDefinition> assemblies = new Collection<AssemblyDefinition>();
+    private readonly Collection<IRule> rules = new Collection<IRule>();
+    private readonly Collection<AssemblyDefinition> assemblies = new Collection<AssemblyDefinition>();
     private int verbose_level;
 
     private IEnumerable<IAssemblyRule> assembly_rules;
@@ -230,7 +230,7 @@ namespace Gendarme.Framework
     public virtual void Report(Defect defect)
     {
       if (defect == null)
-        throw new ArgumentNullException("defect");
+        throw new ArgumentNullException(nameof(defect));
 
       if (!Filter(defect.Severity, defect.Confidence, defect.Location))
         return;
@@ -291,8 +291,7 @@ namespace Gendarme.Framework
 
     private void OnEvent(EventHandler<RunnerEventArgs> handler, RunnerEventArgs e)
     {
-      if (handler != null)
-        handler(this, e);
+      handler?.Invoke(this, e);
     }
 
     private static bool VisibilityCheck(ApplicabilityScope scope, bool visible)

@@ -36,63 +36,65 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 
-namespace Gendarme.Rules.Performance {
+namespace Gendarme.Rules.Performance
+{
+  /// <summary>
+  /// This rule looks for complex cast operations (e.g. a <c>as</c>
+  /// with a <c>null</c> check) that can be simplified using the <c>is</c> operator
+  /// (C# syntax). Note: in some case a compiler, like [g]mcs, can optimize the code and
+  /// generate IL identical to a <c>is</c> operator. In this case the rule will not report
+  /// an error even if you could see one while looking the at source code.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// bool is_my_type = (my_instance as MyType) != null;
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// bool is_my_type = (my_instance is MyType);
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule looks for complex cast operations (e.g. a <c>as</c>
-	/// with a <c>null</c> check) that can be simplified using the <c>is</c> operator 
-	/// (C# syntax). Note: in some case a compiler, like [g]mcs, can optimize the code and
-	/// generate IL identical to a <c>is</c> operator. In this case the rule will not report 
-	/// an error even if you could see one while looking the at source code.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// bool is_my_type = (my_instance as MyType) != null;
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// bool is_my_type = (my_instance is MyType);
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("The method should use the \"is\" operator and avoid the cast and comparison to null.")]
+  [Solution("Replace the cast and compare to null with the simpler \"is\" operator.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class UseIsOperatorRule : Rule, IMethodRule
+  {
+    private readonly OpCodeBitmask bitmask = new OpCodeBitmask(0x100000, 0x10000000000000, 0x0, 0x1);
 
-	[Problem ("The method should use the \"is\" operator and avoid the cast and comparison to null.")]
-	[Solution ("Replace the cast and compare to null with the simpler \"is\" operator.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class UseIsOperatorRule : Rule, IMethodRule {
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-		OpCodeBitmask bitmask = new OpCodeBitmask (0x100000, 0x10000000000000, 0x0, 0x1);
+      // check if the method contains a Isinst, Ldnull *and* Ceq instruction
+      if (!bitmask.IsSubsetOf(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+      IList<Instruction> instructions = method.Body.Instructions;
+      int n = instructions.Count - 2;
+      for (int i = 0; i < n; i++)
+      {
+        Code code0 = instructions[i].OpCode.Code;
+        if (code0 != Code.Isinst)
+          continue;
+        Code code1 = instructions[i + 1].OpCode.Code;
+        if (code1 != Code.Ldnull)
+          continue;
+        Code code2 = instructions[i + 2].OpCode.Code;
+        if (code2 != Code.Ceq)
+          continue;
 
-			// check if the method contains a Isinst, Ldnull *and* Ceq instruction
-			if (!bitmask.IsSubsetOf (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+        Runner.Report(method, instructions[i], Severity.High, Confidence.High);
+      }
 
-			IList<Instruction> instructions = method.Body.Instructions;
-			int n = instructions.Count - 2;
-			for (int i = 0; i < n; i++) {
-				Code code0 = instructions [i].OpCode.Code;
-				if (code0 != Code.Isinst)
-					continue;
-				Code code1 = instructions [i + 1].OpCode.Code;
-				if (code1 != Code.Ldnull)
-					continue;
-				Code code2 = instructions [i + 2].OpCode.Code;
-				if (code2 != Code.Ceq)
-					continue;
+      return Runner.CurrentRuleResult;
+    }
 
-				Runner.Report (method, instructions[i], Severity.High, Confidence.High);
-			}
-
-			return Runner.CurrentRuleResult;
-		}
 #if false
 		public void Bitmask ()
 		{
@@ -103,5 +105,5 @@ namespace Gendarme.Rules.Performance {
 			Console.WriteLine (bitmask);
 		}
 #endif
-	}
+  }
 }

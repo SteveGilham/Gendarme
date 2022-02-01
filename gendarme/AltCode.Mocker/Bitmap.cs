@@ -13,18 +13,22 @@ namespace AltCode.Mocker
     { }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", 
-      Justification="Called by deserializer")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters",
+      Justification = "Called by deserializer")]
     public Bitmap(Stream dummy)
 #pragma warning restore IDE0060 // Remove unused parameter
     { }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0060 // Remove unused parameter
-    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", 
-      Justification="Meets interface")]
+    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters",
+      Justification = "Meets interface")]
     public void GetObjectData(SerializationInfo info, StreamingContext context)
 #pragma warning restore IDE0060 // Remove unused parameter
     { }
+
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 
     private Bitmap(SerializationInfo info, StreamingContext context)
     {

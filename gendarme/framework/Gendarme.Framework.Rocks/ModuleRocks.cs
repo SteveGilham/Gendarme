@@ -97,7 +97,7 @@ namespace Gendarme.Framework.Rocks
       // can be affected). The HasDebuggingInformation extension method let them adjust themselves
     }
 
-    private static readonly TypeDefinition[] Empty = new TypeDefinition[0];
+    private static readonly TypeDefinition[] Empty = Array.Empty<TypeDefinition>();
 
     /// <summary>
     /// Return an IEnumerable that allows a single loop (like a foreach) to
