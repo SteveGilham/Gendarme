@@ -5,10 +5,11 @@
     <rules include="*"
            exclude="AvoidAssemblyVersionMismatchRule"
            from="Gendarme.Rules.BadPractice.dll" />
-    <!-- False positives all around -->
+    <!-- False positives all around in old code -->
     <rules include="*"
-           exclude="ProtectCallToEventDelegatesRule"
            from="Gendarme.Rules.Concurrency.dll" />
+    <!-- False positive/off by one in ProvideCorrectArgumentsToFormattingMethodsRule -->
+    <!-- Array::Empty in AvoidMethodsWithSideEffectsInConditionalCodeRule -->
     <rules include="*"
            exclude="ProvideCorrectArgumentsToFormattingMethodsRule | AvoidMethodsWithSideEffectsInConditionalCodeRule | EnsureLocalDisposalRule | CheckParametersNullityInVisibleMethodsRule"
            from="Gendarme.Rules.Correctness.dll" />
@@ -26,8 +27,9 @@
     <rules include="*"
            exclude="InstantiateArgumentExceptionCorrectlyRule | DoNotSwallowErrorsCatchingNonSpecificExceptionsRule | UseObjectDisposedExceptionRule"
            from="Gendarme.Rules.Exceptions.dll" />
+    <!-- DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule false positives from handler.?Fire type construct -->
     <rules include="*"
-           exclude="NewLineLiteralRule"
+           exclude="NewLineLiteralRule | DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule"
            from="Gendarme.Rules.Interoperability.dll" />
     <rules include="*"
            from="Gendarme.Rules.Interoperability.Com.dll" />
