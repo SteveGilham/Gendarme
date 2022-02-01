@@ -38,11 +38,13 @@ using System.Xml.Schema;
 
 using Gendarme.Framework;
 
+#pragma warning disable IDE0076 // Invalid global 'SuppressMessageAttribute'
 [assembly: SuppressMessage("AltCode.Rules.General",
                             "JustifySuppressionRule",
                             Scope = "member", // MethodDefinition
                             Target = "Gendarme.Strings::.ctor()",
                             Justification = "Generated code")]
+#pragma warning restore IDE0076 // Invalid global 'SuppressMessageAttribute'
 
 namespace Gendarme
 {
@@ -58,7 +60,7 @@ namespace Gendarme
     public Settings(IRunner runner, string configurationFile, string ruleSet)
     {
       if (runner == null)
-        throw new ArgumentNullException("runner");
+        throw new ArgumentNullException(nameof(runner));
 
       rules = runner.Rules;
       rule_set = ruleSet;
@@ -128,6 +130,10 @@ namespace Gendarme
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.BadPractice",
+                     "AvoidCallingProblematicMethodsRule",
+                     Justification = "Necessary to load rules")]
     private int LoadRulesFromAssembly(string assembly, string includeMask, string excludeMask, string applicabilityScope)
     {
       Assembly a = null;

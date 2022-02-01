@@ -11,5 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Test\**\*.cs" />
+    <EmbeddedResource Remove="Test\**\*.resx" />
   </ItemGroup>
 </Project>

@@ -48,4 +48,7 @@
     <Compile Remove="Nullity.cs" />
     <Compile Remove="DeclareEventsExplicitlyRule.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Test\**\*.resx" />
+  </ItemGroup>
 </Project>

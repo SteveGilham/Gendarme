@@ -14,4 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\AltCode.Mocker\AltCode.Mocker.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Test\**\*.resx" />
+  </ItemGroup>
 </Project>

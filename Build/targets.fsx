@@ -1182,7 +1182,7 @@ _Target
                           Console = true
                           Log = Path.GetFullPath "./_Reports/gendarme.html"
                           LogKind = Gendarme.LogKind.Html
-                          Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Debug/net472/FSharpExamples.dll" ]
+                          Targets = [ Path.GetFullPath "./_Binaries/FSharpExamples/Release/net472/FSharpExamples.dll" ]
                           ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
                           FailBuildOnDefect = true })
         |> ignore)
@@ -1257,7 +1257,7 @@ _Target
                               LogKind = Gendarme.LogKind.Html
                               Targets =
                                   [ Path.GetFullPath
-                                        "./_Binaries/FSharpExamples/Debug/netstandard2.0/FSharpExamples.dll" ]
+                                        "./_Binaries/FSharpExamples/Release/netstandard2.0/FSharpExamples.dll" ]
                               ToolPath = "gendarme"
                               ToolType = ToolType.CreateGlobalTool()
                               FailBuildOnDefect = true })

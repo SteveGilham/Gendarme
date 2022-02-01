@@ -3,7 +3,7 @@
     <!-- AvoidAssemblyVersionMismatchRule is silly as assembly version is a contract,
          and many file versions can satisfy it -->
     <rules include="*"
-           exclude="AvoidCallingProblematicMethodsRule | DoNotForgetNotImplementedMethodsRule | EqualsShouldHandleNullArgRule | DisableDebuggingCodeRule | PreferEmptyInstanceOverNullRule | AvoidAssemblyVersionMismatchRule"
+           exclude="EqualsShouldHandleNullArgRule | DisableDebuggingCodeRule | PreferEmptyInstanceOverNullRule | AvoidAssemblyVersionMismatchRule"
            from="Gendarme.Rules.BadPractice.dll" />
     <rules include="*"
            exclude="ProtectCallToEventDelegatesRule"
@@ -61,9 +61,8 @@
     <rules include="*"
            exclude="DefectsMustBeReportedRule | DoNotThrowExceptionRule | UseCorrectSuffixRule"
            from="Gendarme.Rules.Gendarme.dll" />
-    <!-- SatelliteResourceMismatchRule cannot yet work -->
     <rules include="*"
-           exclude="PreferIFormatProviderOverrideRule | PreferStringComparisonOverrideRule | SatelliteResourceMismatchRule" 
+           exclude="PreferIFormatProviderOverrideRule | PreferStringComparisonOverrideRule"
            from="Gendarme.Rules.Globalization.dll" />
     <rules include="*"
            from="AltCode.Rules.General.dll" />
