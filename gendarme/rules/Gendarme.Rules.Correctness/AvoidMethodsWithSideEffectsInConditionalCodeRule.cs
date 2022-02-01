@@ -360,7 +360,7 @@ namespace Gendarme.Rules.Correctness
 
     private static readonly MethodSignature StringConstructor = new MethodSignature(".ctor", "System.Void", new string[] { "System.String" });
 
-    private static HashSet<string> types_considered_pure = new HashSet<string> {
+    private static readonly HashSet<string> types_considered_pure = new HashSet<string> {
       "System.Math",
       "System.Object",
       "System.String",
@@ -369,7 +369,7 @@ namespace Gendarme.Rules.Correctness
       "System.Linq.Enumerable",
     };
 
-    private static HashSet<string> methods_considered_pure = new HashSet<string> {
+    private static readonly HashSet<string> methods_considered_pure = new HashSet<string> {
       "AsReadOnly",
       "BinarySearch",
       "Clone",

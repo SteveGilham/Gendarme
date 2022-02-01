@@ -71,8 +71,8 @@ namespace Gendarme.Rules.Correctness
   [EngineDependency(typeof(OpCodeEngine))]
   public class ProvideCorrectArgumentsToFormattingMethodsRule : Rule, IMethodRule
   {
-    private static MethodSignature formatSignature = new MethodSignature("Format", "System.String");
-    private static BitArray results = new BitArray(16);
+    private static readonly MethodSignature formatSignature = new MethodSignature("Format", "System.String");
+    private static readonly BitArray results = new BitArray(16);
 
     private static string GetLoadStringFormatInstruction(Instruction call, MethodDefinition method,
       int formatPosition)

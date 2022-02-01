@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.EngineController
 //
 // Authors:
@@ -33,196 +33,207 @@ using Mono.Cecil;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  public class EngineController
+  {
+    private readonly Dictionary<string, Engine> engines;
 
-	public class EngineController {
+    public EngineController(IRunner runner)
+    {
+      Runner = runner;
+      engines = new Dictionary<string, Engine>();
+    }
 
-		private Dictionary<string, Engine> engines;
+    public IRunner Runner
+    {
+      get;
+      private set;
+    }
 
-		public EngineController (IRunner runner)
-		{
-			Runner = runner;
-			engines = new Dictionary<string, Engine> ();
-		}
+    public void Subscribe(string engineName)
+    {
+      if (!engines.TryGetValue(engineName, out Engine engine))
+      {
+        Type type = Type.GetType(engineName);
+        engine = (Engine)Activator.CreateInstance(type);
+        engines.Add(type.FullName, engine);
+      }
+      engine.Initialize(this);
+    }
 
-		public IRunner Runner {
-			get;
-			private set;
-		}
+    public void Unsubscribe(string engineName)
+    {
+      if (engines.TryGetValue(engineName, out Engine engine))
+      {
+        engine.TearDown();
+        engines.Remove(engineName);
+      }
+    }
 
-		public void Subscribe (string engineName)
-		{
-			Engine engine;
-			if (!engines.TryGetValue (engineName, out engine)) {
-				Type type = Type.GetType (engineName);
-				engine = (Engine) Activator.CreateInstance (type);
-				engines.Add (type.FullName, engine);
-			}
-			engine.Initialize (this);
-		}
+    public event EventHandler<EngineEventArgs> BuildingCustomAttributes;
 
-		public void Unsubscribe (string engineName)
-		{
-			Engine engine;
-			if (engines.TryGetValue (engineName, out engine)) {
-				engine.TearDown ();
-				engines.Remove (engineName);
-			}
-		}
+    public event EventHandler<EngineEventArgs> BuildingMethodBody;
 
-		public event EventHandler<EngineEventArgs> BuildingCustomAttributes;
-		public event EventHandler<EngineEventArgs> BuildingMethodBody;
-		public event EventHandler<EngineEventArgs> BuildingType;
-		public event EventHandler<EngineEventArgs> BuildingModule;
-		public event EventHandler<EngineEventArgs> BuildingAssembly;
+    public event EventHandler<EngineEventArgs> BuildingType;
 
-		public void Build (IList<AssemblyDefinition> list)
-		{
-			if (list == null)
-				throw new ArgumentNullException ("list");
+    public event EventHandler<EngineEventArgs> BuildingModule;
 
-			EngineEventArgs e = new EngineEventArgs (this);
+    public event EventHandler<EngineEventArgs> BuildingAssembly;
 
-			foreach (AssemblyDefinition assembly in list) {
-				Build (assembly, e);
+    public void Build(IList<AssemblyDefinition> list)
+    {
+      if (list == null)
+        throw new ArgumentNullException(nameof(list));
 
-				foreach (ModuleDefinition module in assembly.Modules) {
-					Build (module, e);
+      EngineEventArgs e = new EngineEventArgs(this);
 
-					foreach (TypeDefinition type in module.GetAllTypes ()) {
-						Build (type, e);
+      foreach (AssemblyDefinition assembly in list)
+      {
+        Build(assembly, e);
 
-						if (type.HasMethods) {
-							foreach (MethodDefinition method in type.Methods)
-								Build (method, e);
-						}
-					}
-				}
-			}
-		}
+        foreach (ModuleDefinition module in assembly.Modules)
+        {
+          Build(module, e);
 
-		private void BuildCustomAttributes (ICustomAttributeProvider custom, EngineEventArgs e)
-		{
-			if (custom.HasCustomAttributes) {
-				EventHandler<EngineEventArgs> handler = BuildingCustomAttributes;
-				if (handler != null)
-					handler (custom, e);
-			}
-		}
+          foreach (TypeDefinition type in module.GetAllTypes())
+          {
+            Build(type, e);
 
-		private void Build (MethodDefinition method, EngineEventArgs e)
-		{
-			e.CurrentMethod = method;
+            if (type.HasMethods)
+            {
+              foreach (MethodDefinition method in type.Methods)
+                Build(method, e);
+            }
+          }
+        }
+      }
+    }
 
-			BuildCustomAttributes (method, e);
+    private void BuildCustomAttributes(ICustomAttributeProvider custom, EngineEventArgs e)
+    {
+      if (custom.HasCustomAttributes)
+      {
+        BuildingCustomAttributes?.Invoke(custom, e);
+      }
+    }
 
-			if (method.HasGenericParameters) {
-				// TODO: incomplete - only covers custom attributes
-				foreach (GenericParameter gp in method.GenericParameters)
-					BuildCustomAttributes (gp, e);
-			}
+    private void Build(MethodDefinition method, EngineEventArgs e)
+    {
+      e.CurrentMethod = method;
 
-			if (method.HasParameters) {
-				// TODO: incomplete - only covers custom attributes
-				foreach (ParameterDefinition parameter in method.Parameters)
-					BuildCustomAttributes (parameter, e);
-			}
+      BuildCustomAttributes(method, e);
 
-			// TODO: incomplete - only covers custom attributes
-			BuildCustomAttributes (method.MethodReturnType, e);
+      if (method.HasGenericParameters)
+      {
+        // TODO: incomplete - only covers custom attributes
+        foreach (GenericParameter gp in method.GenericParameters)
+          BuildCustomAttributes(gp, e);
+      }
 
-			if (method.HasBody) {
-				EventHandler<EngineEventArgs> handler = BuildingMethodBody;
-				if (handler != null)
-					handler (method.Body, e);
-			}
-		}
+      if (method.HasParameters)
+      {
+        // TODO: incomplete - only covers custom attributes
+        foreach (ParameterDefinition parameter in method.Parameters)
+          BuildCustomAttributes(parameter, e);
+      }
 
-		private void Build (TypeDefinition type, EngineEventArgs e)
-		{
-			e.CurrentType = type;
+      // TODO: incomplete - only covers custom attributes
+      BuildCustomAttributes(method.MethodReturnType, e);
 
-			EventHandler<EngineEventArgs> handler = BuildingType;
-			if (handler != null)
-				handler (type, e);
+      if (method.HasBody)
+      {
+        BuildingMethodBody?.Invoke(method.Body, e);
+      }
+    }
 
-			BuildCustomAttributes (type, e);
+    private void Build(TypeDefinition type, EngineEventArgs e)
+    {
+      e.CurrentType = type;
 
-			if (type.HasEvents) {
-				// TODO: incomplete - only covers custom attributes
-				foreach (EventDefinition evnt in type.Events)
-					BuildCustomAttributes (evnt, e);
-			}
+      BuildingType?.Invoke(type, e);
 
-			if (type.HasFields) {
-				// TODO: incomplete - only covers custom attributes
-				foreach (FieldDefinition field in type.Fields)
-					BuildCustomAttributes (field, e);
-			}
+      BuildCustomAttributes(type, e);
 
-			if (type.HasGenericParameters) {
-				// TODO: incomplete - only covers custom attributes
-				foreach (GenericParameter gp in type.GenericParameters)
-					BuildCustomAttributes (gp, e);
-			}
+      if (type.HasEvents)
+      {
+        // TODO: incomplete - only covers custom attributes
+        foreach (EventDefinition evnt in type.Events)
+          BuildCustomAttributes(evnt, e);
+      }
 
-			if (type.HasProperties) {
-				// TODO: incomplete - only covers custom attributes
-				foreach (PropertyDefinition prop in type.Properties)
-					BuildCustomAttributes (prop, e);
-			}
-		}
+      if (type.HasFields)
+      {
+        // TODO: incomplete - only covers custom attributes
+        foreach (FieldDefinition field in type.Fields)
+          BuildCustomAttributes(field, e);
+      }
 
-		private void Build (ModuleDefinition module, EngineEventArgs e)
-		{
-			e.CurrentModule = module;
+      if (type.HasGenericParameters)
+      {
+        // TODO: incomplete - only covers custom attributes
+        foreach (GenericParameter gp in type.GenericParameters)
+          BuildCustomAttributes(gp, e);
+      }
 
-			EventHandler<EngineEventArgs> handler = BuildingModule;
-			if (handler != null)
-				handler (module, e);
+      if (type.HasProperties)
+      {
+        // TODO: incomplete - only covers custom attributes
+        foreach (PropertyDefinition prop in type.Properties)
+          BuildCustomAttributes(prop, e);
+      }
+    }
 
-			BuildCustomAttributes (module, e);
-		}
+    private void Build(ModuleDefinition module, EngineEventArgs e)
+    {
+      e.CurrentModule = module;
 
-		private void Build (AssemblyDefinition assembly, EngineEventArgs e)
-		{
-			e.CurrentAssembly = assembly;
+      BuildingModule?.Invoke(module, e);
 
-			EventHandler<EngineEventArgs> handler = BuildingAssembly;
-			if (handler != null)
-				handler (assembly, e);
+      BuildCustomAttributes(module, e);
+    }
 
-			BuildCustomAttributes (assembly, e);
-		}
+    private void Build(AssemblyDefinition assembly, EngineEventArgs e)
+    {
+      e.CurrentAssembly = assembly;
 
-		public void TearDown ()
-		{
-			BuildingCustomAttributes = null;
-			BuildingMethodBody = null;
-			BuildingType = null;
-			BuildingModule = null;
-			BuildingAssembly = null;
+      BuildingAssembly?.Invoke(assembly, e);
 
-			foreach (Engine engine in engines.Values) {
-				engine.TearDown ();
-			}
-		}
+      BuildCustomAttributes(assembly, e);
+    }
 
-		public Engine this [string name] {
-			get {
-				Engine engine = null;
-				engines.TryGetValue (name, out engine);
-				return engine;
-			}
-		}
+    public void TearDown()
+    {
+      BuildingCustomAttributes = null;
+      BuildingMethodBody = null;
+      BuildingType = null;
+      BuildingModule = null;
+      BuildingAssembly = null;
 
-		// shortcuts to well known engines
-		// this avoid casting inside the rules
+      foreach (Engine engine in engines.Values)
+      {
+        engine.TearDown();
+      }
+    }
 
-		public OpCodeEngine OpCode {
-			get {
-				return (OpCodeEngine) this ["Gendarme.Framework.OpCodeEngine"];
-			}
-		}
-	}
+    public Engine this[string name]
+    {
+      get
+      {
+        engines.TryGetValue(name, out Engine engine);
+        return engine;
+      }
+    }
+
+    // shortcuts to well known engines
+    // this avoid casting inside the rules
+
+    public OpCodeEngine OpCode
+    {
+      get
+      {
+        return (OpCodeEngine)this["Gendarme.Framework.OpCodeEngine"];
+      }
+    }
+  }
 }

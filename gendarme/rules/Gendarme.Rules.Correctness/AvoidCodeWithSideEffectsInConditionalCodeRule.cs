@@ -190,6 +190,6 @@ namespace Gendarme.Rules.Correctness
 		}
 #endif
 
-    private static OpCodeBitmask mask = new OpCodeBitmask(0x93C00, 0x2400000000000000, 0x0, 0x1200);
+    private static readonly OpCodeBitmask mask = new OpCodeBitmask(0x93C00, 0x2400000000000000, 0x0, 0x1200);
   }
 }
