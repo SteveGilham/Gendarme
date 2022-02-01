@@ -3,8 +3,9 @@
     <!-- AvoidAssemblyVersionMismatchRule is silly as assembly version is a contract,
          and many file versions can satisfy it -->
     <rules include="*"
-           exclude="EqualsShouldHandleNullArgRule | DisableDebuggingCodeRule | PreferEmptyInstanceOverNullRule | AvoidAssemblyVersionMismatchRule"
+           exclude="AvoidAssemblyVersionMismatchRule"
            from="Gendarme.Rules.BadPractice.dll" />
+    <!-- False positives all around -->
     <rules include="*"
            exclude="ProtectCallToEventDelegatesRule"
            from="Gendarme.Rules.Concurrency.dll" />
