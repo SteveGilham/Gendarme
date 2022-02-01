@@ -647,7 +647,7 @@ _Target
                     | "Tests.Framework" -> 3
                     | "Tests.Rules.Concurrency" -> 6
                     | "Tests.Rules.Correctness" -> 5
-                    | "Tests.Rules.Interoperability" -> 17
+                    | "Tests.Rules.Interoperability" -> 18
                     | "Tests.Rules.Maintainability" -> 1
                     | "Tests.Rules.Smells" -> 2
                     | _ -> 0
@@ -778,7 +778,7 @@ _Target
                         | "Tests.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
                         | "Tests.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
                         | "Tests.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
-                        | "Tests.Rules.Interoperability" when exitCode () <= 17 -> printfn "%A" x.Message
+                        | "Tests.Rules.Interoperability" when exitCode () <= 18 -> printfn "%A" x.Message
                         | "Tests.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
                         | "Tests.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
                         | _ -> reraise ()
