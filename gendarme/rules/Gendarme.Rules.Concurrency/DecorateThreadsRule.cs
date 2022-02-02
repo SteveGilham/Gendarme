@@ -37,6 +37,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
@@ -180,6 +181,11 @@ namespace Gendarme.Rules.Concurrency
   [Problem("Threaded code is not decorated as threaded, a threading attribute is improperly used, or the assembly does not use ThreadModelAttribute.")]
   [Solution("Use the correct threading attribute or disable the defect.")]
   [EngineDependency(typeof(OpCodeEngine))]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                   "AvoidLackOfCohesionOfMethodsRule",
+                   Justification = "Maybe refactor")]
   public sealed class DecorateThreadsRule : Rule, IMethodRule
   {
     public override void Initialize(IRunner runner)
@@ -242,6 +248,10 @@ namespace Gendarme.Rules.Concurrency
 
     public int DefectCount { get; private set; }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 27")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (ThreadRocks.ThreadedNamespace(method.DeclaringType.GetTypeName().Namespace))
@@ -367,6 +377,10 @@ namespace Gendarme.Rules.Concurrency
 
     #region Private Methods
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 41")]
     private void CheckMethodBody(MethodDefinition method)
     {
       var synchronizedEvents = new Dictionary<MethodReference, List<MethodReference>>();

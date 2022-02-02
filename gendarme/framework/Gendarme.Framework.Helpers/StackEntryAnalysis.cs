@@ -380,6 +380,10 @@ namespace Gendarme.Framework.Helpers
     /// <param name="insWithLeave">The first instruction to start the search at.</param>
     /// <param name="slot">The slot to search.</param>
     /// <returns>An array of instructions that load from the slot.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 29")]
     private List<InstructionWithLeave> FindLoad(InstructionWithLeave insWithLeave, StoreSlot slot)
     {
       LoadAlternatives.Clear();

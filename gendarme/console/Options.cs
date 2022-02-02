@@ -390,11 +390,7 @@ namespace NDesk.Options
 
   public abstract class Option
   {
-    private readonly string prototype;
-    private readonly string description;
     private readonly string[] names;
-    private readonly OptionValueType type;
-    private readonly int count;
     private string[] separators;
 
     protected Option(string prototype, string description)
@@ -411,40 +407,35 @@ namespace NDesk.Options
       if (maxValueCount < 0)
         throw new ArgumentOutOfRangeException(nameof(maxValueCount));
 
-      this.prototype = prototype;
+      this.Prototype = prototype;
       this.names = prototype.Split('|');
-      this.description = description;
-      this.count = maxValueCount;
-      this.type = ParsePrototype();
+      this.Description = description;
+      this.MaxValueCount = maxValueCount;
+      this.OptionValueType = ParsePrototype();
 
-      if (this.count == 0 && type != OptionValueType.None)
+      if (this.MaxValueCount == 0 && OptionValueType != OptionValueType.None)
         throw new ArgumentException(
             "Cannot provide maxValueCount of 0 for OptionValueType.Required or " +
               "OptionValueType.Optional.",
             nameof(maxValueCount));
-      if (this.type == OptionValueType.None && maxValueCount > 1)
+      if (this.OptionValueType == OptionValueType.None && maxValueCount > 1)
         throw new ArgumentException(
             string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
             nameof(maxValueCount));
       if (Array.IndexOf(names, "<>") >= 0 &&
-          ((names.Length == 1 && this.type != OptionValueType.None) ||
+          ((names.Length == 1 && this.OptionValueType != OptionValueType.None) ||
            (names.Length > 1 && this.MaxValueCount > 1)))
         throw new ArgumentException(
             "The default option handler '<>' cannot require values.",
             nameof(prototype));
     }
 
-    public string Prototype
-    { get { return prototype; } }
+    public string Prototype { get; private set; }
+    public string Description { get; private set; }
 
-    public string Description
-    { get { return description; } }
+    public OptionValueType OptionValueType { get; private set; }
 
-    public OptionValueType OptionValueType
-    { get { return type; } }
-
-    public int MaxValueCount
-    { get { return count; } }
+    public int MaxValueCount { get; private set; }
 
     public string[] GetNames()
     {
@@ -515,11 +506,11 @@ namespace NDesk.Options
       if (type == '\0')
         return OptionValueType.None;
 
-      if (count <= 1 && seps.Count != 0)
+      if (MaxValueCount <= 1 && seps.Count != 0)
         throw new ArgumentException(
-            string.Format("Cannot provide key/value separators for Options taking {0} value(s).", count),
+            string.Format("Cannot provide key/value separators for Options taking {0} value(s).", MaxValueCount),
             "prototype");
-      if (count > 1)
+      if (MaxValueCount > 1)
       {
         if (seps.Count == 0)
           this.separators = new string[] { ":", "=" };
@@ -637,15 +628,10 @@ namespace NDesk.Options
 
     public OptionSet(Converter<string, string> localizer)
     {
-      this.localizer = localizer;
+      this.MessageLocalizer = localizer;
     }
 
-    private readonly Converter<string, string> localizer;
-
-    public Converter<string, string> MessageLocalizer
-    {
-      get { return localizer; }
-    }
+    public Converter<string, string> MessageLocalizer { get; private set; }
 
     [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly",
      Justification = "refers to user-level name (constrained here by inheritance)")]
@@ -729,17 +715,17 @@ namespace NDesk.Options
 
     private sealed class ActionOption : Option
     {
-      private readonly Action<OptionValueCollection> action;
+      private readonly Action<OptionValueCollection> optionAction;
 
       public ActionOption(string prototype, string description, int count, Action<OptionValueCollection> action)
         : base(prototype, description, count)
       {
-        this.action = action ?? throw new ArgumentNullException(nameof(action));
+        this.optionAction = action ?? throw new ArgumentNullException(nameof(action));
       }
 
       protected override void OnParseComplete(OptionContext c)
       {
-        action(c.OptionValues);
+        optionAction(c.OptionValues);
       }
     }
 
@@ -775,33 +761,33 @@ namespace NDesk.Options
 
     private sealed class ActionOption<T> : Option
     {
-      private readonly Action<T> action;
+      private readonly Action<T> optionAction;
 
       public ActionOption(string prototype, string description, Action<T> action)
         : base(prototype, description, 1)
       {
-        this.action = action ?? throw new ArgumentNullException(nameof(action));
+        this.optionAction = action ?? throw new ArgumentNullException(nameof(action));
       }
 
       protected override void OnParseComplete(OptionContext c)
       {
-        action(Parse<T>(c.OptionValues[0], c));
+        optionAction(Parse<T>(c.OptionValues[0], c));
       }
     }
 
     private sealed class ActionOption<TKey, TValue> : Option
     {
-      private readonly OptionAction<TKey, TValue> action;
+      private readonly OptionAction<TKey, TValue> optionAction;
 
       public ActionOption(string prototype, string description, OptionAction<TKey, TValue> action)
         : base(prototype, description, 2)
       {
-        this.action = action ?? throw new ArgumentNullException(nameof(action));
+        this.optionAction = action ?? throw new ArgumentNullException(nameof(action));
       }
 
       protected override void OnParseComplete(OptionContext c)
       {
-        action(
+        optionAction(
             Parse<TKey>(c.OptionValues[0], c),
             Parse<TValue>(c.OptionValues[1], c));
       }
@@ -984,7 +970,7 @@ namespace NDesk.Options
         c.Option.Invoke(c);
       else if (c.OptionValues.Count > c.Option.MaxValueCount)
       {
-        throw new OptionException(localizer(string.Format(
+        throw new OptionException(MessageLocalizer(string.Format(
                 "Error: Found {0} option values when expecting {1}.",
                 c.OptionValues.Count, c.Option.MaxValueCount)),
             c.OptionName);
@@ -1022,7 +1008,7 @@ namespace NDesk.Options
         {
           if (i == 0)
             return false;
-          throw new OptionException(string.Format(localizer(
+          throw new OptionException(string.Format(MessageLocalizer(
                   "Cannot bundle unregistered option '{0}'."), opt), opt);
         }
         p = this[rn];
@@ -1074,7 +1060,7 @@ namespace NDesk.Options
           o.Write(new string(' ', OptionWidth));
         }
 
-        List<string> lines = GetLines(localizer(GetDescription(p.Description)));
+        List<string> lines = GetLines(MessageLocalizer(GetDescription(p.Description)));
         o.WriteLine(lines[0]);
         string prefix = new string(' ', OptionWidth + 2);
         for (int i = 1; i < lines.Count; ++i)
@@ -1117,19 +1103,19 @@ namespace NDesk.Options
       {
         if (p.OptionValueType == OptionValueType.Optional)
         {
-          Write(o, ref written, localizer("["));
+          Write(o, ref written, MessageLocalizer("["));
         }
-        Write(o, ref written, localizer("=" + GetArgumentName(0, p.MaxValueCount, p.Description)));
+        Write(o, ref written, MessageLocalizer("=" + GetArgumentName(0, p.MaxValueCount, p.Description)));
         string sep = p.ValueSeparators != null && p.ValueSeparators.Length > 0
           ? p.ValueSeparators[0]
           : " ";
         for (int c = 1; c < p.MaxValueCount; ++c)
         {
-          Write(o, ref written, localizer(sep + GetArgumentName(c, p.MaxValueCount, p.Description)));
+          Write(o, ref written, MessageLocalizer(sep + GetArgumentName(c, p.MaxValueCount, p.Description)));
         }
         if (p.OptionValueType == OptionValueType.Optional)
         {
-          Write(o, ref written, localizer("]"));
+          Write(o, ref written, MessageLocalizer("]"));
         }
       }
       return true;

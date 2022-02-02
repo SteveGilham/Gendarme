@@ -32,116 +32,117 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.BadPractice {
+namespace Gendarme.Rules.BadPractice
+{
+  /// <summary>
+  /// This rule checks for calls to <c>typeof (Enum).IsAssignableFrom (type)</c> that
+  /// can be simplified to <c>type.IsEnum</c>.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// if (typeof (Enum).IsAssignableFrom (type))  {
+  ///	// then the type is an enum
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// if (type.IsEnum) {
+  ///	// then the type is an enum.
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.6</remarks>
 
-	/// <summary>
-	/// This rule checks for calls to <c>typeof (Enum).IsAssignableFrom (type)</c> that
-	/// can be simplified to <c>type.IsEnum</c>.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// if (typeof (Enum).IsAssignableFrom (type))  {
-	///	// then the type is an enum
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// if (type.IsEnum) {
-	///	// then the type is an enum.
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.6</remarks>
+  [Problem("This method uses typeof (Enum).IsAssignableFrom to check if a type is an enum.")]
+  [Solution("Use the Type.IsEnum property instead.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class DoNotUseEnumIsAssignableFromRule : Rule, IMethodRule
+  {
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // rule does not apply if there's no IL code
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-	[Problem ("This method uses typeof (Enum).IsAssignableFrom to check if a type is an enum.")]
-	[Solution ("Use the Type.IsEnum property instead.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class DoNotUseEnumIsAssignableFromRule : Rule, IMethodRule {
+      // avoid looping if we're sure there's no call in the method
+      if (!OpCodeBitmask.Calls.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// rule does not apply if there's no IL code
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+      foreach (Instruction instruction in method.Body.Instructions)
+      {
+        if (!IsCallToTypeIsAssignableFrom(instruction))
+          continue;
 
-			// avoid looping if we're sure there's no call in the method
-			if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+        // get the previous expression's last instruction
+        var previous = instruction.TraceBack(method);
 
-			foreach (Instruction instruction in method.Body.Instructions) {
-				if (!IsCallToTypeIsAssignableFrom (instruction))
-					continue;
+        if (!IsCallToTypeGetTypeFromHandle(previous))
+          continue;
 
-				// get the previous expression's last instruction
-				var previous = instruction.TraceBack (method);
+        if (!IsLoadEnumToken(previous.Previous))
+          continue;
 
-				if (!IsCallToTypeGetTypeFromHandle (previous))
-					continue;
+        Runner.Report(method, instruction, Severity.Medium, Confidence.Normal);
+      }
 
-				if (!IsLoadEnumToken (previous.Previous))
-					continue;
+      return Runner.CurrentRuleResult;
+    }
 
-				Runner.Report (method, instruction, Severity.Medium, Confidence.Normal);
-			}
+    private static bool IsLoadEnumToken(Instruction instruction)
+    {
+      if (instruction.OpCode.Code != Code.Ldtoken)
+        return false;
 
-			return Runner.CurrentRuleResult;
-		}
+      var tr = instruction.Operand as TypeReference;
+      if (tr == null)
+        return false;
 
-		static bool IsLoadEnumToken (Instruction instruction)
-		{
-			if (instruction.OpCode.Code != Code.Ldtoken)
-				return false;
+      return tr.IsNamed(enumType);
+    }
 
-			var type = instruction.Operand as TypeReference;
-			if (type == null)
-				return false;
+    private static readonly TypeName enumType = new TypeName
+    {
+      Namespace = "System",
+      Name = "Enum"
+    };
 
-			return type.IsNamed (enumType);
-		}
+    private static bool IsCallToTypeIsAssignableFrom(Instruction instruction)
+    {
+      return IsCallToTypeMethod(instruction, "IsAssignableFrom");
+    }
 
-        private readonly static TypeName enumType = new TypeName
-        {
-            Namespace = "System",
-            Name = "Enum"
-        };
+    private static bool IsCallToTypeGetTypeFromHandle(Instruction instruction)
+    {
+      return IsCallToTypeMethod(instruction, "GetTypeFromHandle");
+    }
 
+    private static bool IsCallToTypeMethod(Instruction instruction, string name)
+    {
+      if (!IsCall(instruction.OpCode))
+        return false;
 
-		static bool IsCallToTypeIsAssignableFrom (Instruction instruction)
-		{
-			return IsCallToTypeMethod (instruction, "IsAssignableFrom");
-		}
+      var operand = instruction.Operand as MethodReference;
+      if (operand == null)
+        return false;
 
-		static bool IsCallToTypeGetTypeFromHandle (Instruction instruction)
-		{
-			return IsCallToTypeMethod (instruction, "GetTypeFromHandle");
-		}
+      if (operand.Name != name)
+        return false;
 
-		static bool IsCallToTypeMethod (Instruction instruction, string name)
-		{
-			if (!IsCall (instruction.OpCode))
-				return false;
+      return operand.DeclaringType.IsNamed(type);
+    }
 
-			var operand = instruction.Operand as MethodReference;
-			if (operand == null)
-				return false;
+    private static readonly TypeName type = new TypeName
+    {
+      Namespace = "System",
+      Name = "Type"
+    };
 
-			if (operand.Name != name)
-				return false;
-
-			return operand.DeclaringType.IsNamed (type);
-		}
-        private readonly static TypeName type = new TypeName
-        {
-            Namespace = "System",
-            Name = "Type"
-        };
-
-		static bool IsCall (OpCode opcode)
-		{
-			return opcode.Code == Code.Call || opcode.Code == Code.Callvirt;
-		}
-	}
+    private static bool IsCall(OpCode opcode)
+    {
+      return opcode.Code == Code.Call || opcode.Code == Code.Callvirt;
+    }
+  }
 }

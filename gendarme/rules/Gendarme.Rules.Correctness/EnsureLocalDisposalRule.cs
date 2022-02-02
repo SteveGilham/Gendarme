@@ -37,6 +37,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Correctness
 {
@@ -257,6 +258,10 @@ namespace Gendarme.Rules.Correctness
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 27")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (!method.HasBody)

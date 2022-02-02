@@ -11,9 +11,9 @@ namespace Gendarme.Rules.Globalization
   {
     private readonly Stream inner;
 
-    public BlobReadingStream(Stream inner)
+    public BlobReadingStream(Stream stream)
     {
-      this.inner = inner;
+      this.inner = stream;
     }
 
     public override bool CanRead => inner.CanRead;

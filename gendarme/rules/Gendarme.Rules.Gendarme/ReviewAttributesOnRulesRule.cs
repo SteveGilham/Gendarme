@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.ReviewAttributesOnRulesRule
 //
 // Authors:
@@ -36,264 +36,274 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Gendarme {
+namespace Gendarme.Rules.Gendarme
+{
+  /// <summary>
+  /// This rule checks if attribute usage match the following rules:
+  /// <list>
+  /// <item>
+  /// <term>[Problem] and [Solution] attributes</term>
+  /// <description>should be used on rules only, every concrete rule must have both
+  /// attributes (or inherit them), and their arguments cannot be null or empty
+  /// </description>
+  /// </item>
+  /// <item>
+  /// <term>[FxCopCompatibility] attribute</term>
+  /// <description>should be used on rules only, its arguments cannot be null or empty,
+  /// and second argument should match this format: AB1234:FxCopRuleName</description>
+  /// </item>
+  /// <item>
+  /// <term>[EngineDependency] attribute</term>
+  /// <description>should be used on rules only, its argument cannot be null or empty,
+  /// and its argument should inherit from Gendarme.Framework.Engine</description>
+  /// </item>
+  /// <item>
+  /// <term>[DocumentationUri] attribute</term>
+  /// <description>should be used on rules only</description>
+  /// </item>
+  /// <item>
+  /// <term>[Description] and [DefaultValue] attributes</term>
+  /// <description>should be used on rules' public properties only,
+  /// Description attribute argument cannot be null or empty</description>
+  /// </item>
+  /// </list>
+  /// </summary>
 
-	/// <summary>
-	/// This rule checks if attribute usage match the following rules:	
-	/// <list>
-	/// <item>
-	/// <term>[Problem] and [Solution] attributes</term>
-	/// <description>should be used on rules only, every concrete rule must have both 
-	/// attributes (or inherit them), and their arguments cannot be null or empty
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <term>[FxCopCompatibility] attribute</term>
-	/// <description>should be used on rules only, its arguments cannot be null or empty,
-	/// and second argument should match this format: AB1234:FxCopRuleName</description>
-	/// </item>
-	/// <item>
-	/// <term>[EngineDependency] attribute</term>
-	/// <description>should be used on rules only, its argument cannot be null or empty,
-	/// and its argument should inherit from Gendarme.Framework.Engine</description>
-	/// </item>
-	/// <item>
-	/// <term>[DocumentationUri] attribute</term>
-	/// <description>should be used on rules only</description>
-	/// </item>
-	/// <item>
-	/// <term>[Description] and [DefaultValue] attributes</term>
-	/// <description>should be used on rules' public properties only,
-	/// Description attribute argument cannot be null or empty</description>
-	/// </item>
-	/// </list>
-	/// </summary>
+  [Problem("Attributes should be correctly placed and have correct values provided in their arguments")]
+  [Solution("Change the code so that it satisfies attribute usage rules")]
+  public class ReviewAttributesOnRulesRule : GendarmeRule, ITypeRule
+  {
+    private Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>> attributes;
 
-	[Problem ("Attributes should be correctly placed and have correct values provided in their arguments")]
-	[Solution ("Change the code so that it satisfies attribute usage rules")]
-	public class ReviewAttributesOnRulesRule : GendarmeRule, ITypeRule {
+    private Dictionary<string, bool> typeIsRule = new Dictionary<string, bool>();
 
-		Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>> attributes;
+    /// <summary>
+    ///
+    /// </summary>
+    public ReviewAttributesOnRulesRule()
+    {
+      attributes = new Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>>
+      {
+        {"Gendarme.Framework.ProblemAttribute", CheckProblemAndSolutionAttributes},
+        {"Gendarme.Framework.SolutionAttribute", CheckProblemAndSolutionAttributes},
+        {"Gendarme.Framework.FxCopCompatibilityAttribute", CheckFxCopCompatibilityAttribute},
+        {"Gendarme.Framework.EngineDependencyAttribute", CheckEngineDependencyAttribute},
+        {"Gendarme.Framework.DocumentationUriAttribute", CheckIfAttributeUsedOnRule},
+        {"System.ComponentModel.DescriptionAttribute", CheckDescriptionAttribute},
+        {"System.ComponentModel.DefaultValueAttribute", CheckIfAttributeUsedOnRulesProperty},
+      };
+    }
 
-		Dictionary<string, bool> typeIsRule = new Dictionary<string, bool> ();
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="td"></param>
+    /// <returns></returns>
+    public RuleResult CheckType(TypeDefinition td)
+    {
+      CheckAttributes(td);
 
-        /// <summary>
-        /// 
-        /// </summary>
-		public ReviewAttributesOnRulesRule ()
-		{
-			attributes = new Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>>
-			{
-				{"Gendarme.Framework.ProblemAttribute", CheckProblemAndSolutionAttributes},
-				{"Gendarme.Framework.SolutionAttribute", CheckProblemAndSolutionAttributes},
-				{"Gendarme.Framework.FxCopCompatibilityAttribute", CheckFxCopCompatibilityAttribute},
-				{"Gendarme.Framework.EngineDependencyAttribute", CheckEngineDependencyAttribute},
-				{"Gendarme.Framework.DocumentationUriAttribute", CheckIfAttributeUsedOnRule},
-				{"System.ComponentModel.DescriptionAttribute", CheckDescriptionAttribute},
-				{"System.ComponentModel.DefaultValueAttribute", CheckIfAttributeUsedOnRulesProperty},
-			};
-		}
+      if (td.HasMethods)
+        foreach (MethodDefinition method in td.Methods)
+          CheckAttributes(method);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			CheckAttributes (type);
+      if (td.HasProperties)
+        foreach (PropertyDefinition property in td.Properties)
+          CheckAttributes(property);
+      if (td.HasFields)
+        foreach (FieldDefinition field in td.Fields)
+          CheckAttributes(field);
 
-			if (type.HasMethods)
-				foreach (MethodDefinition method in type.Methods)
-					CheckAttributes (method);
+      // finally check if this is a rule and either has all required attributes
+      // or inherits from a td that has all required attributes
+      CheckIfRuleHasAllRequiredAttributes(td);
 
-			if (type.HasProperties)
-				foreach (PropertyDefinition property in type.Properties)
-					CheckAttributes (property);
-			if (type.HasFields)
-				foreach (FieldDefinition field in type.Fields)
-					CheckAttributes (field);
+      return Runner.CurrentRuleResult;
+    }
 
-			// finally check if this is a rule and either has all required attributes
-			// or inherits from a type that has all required attributes
-			CheckIfRuleHasAllRequiredAttributes (type);
-
-			return Runner.CurrentRuleResult;
-		}
-
-		private void CheckIfRuleHasAllRequiredAttributes (TypeDefinition type)
-		{
-			if (!type.IsAbstract && IsRule (type)) {
-				bool foundSolution = false;
-				bool foundProblem = false;
-				TypeDefinition td = type;
-				while (!foundSolution || !foundProblem) {
-					if (td.HasCustomAttributes)
-						foreach (CustomAttribute attribute in td.CustomAttributes) {
-							TypeReference atype = attribute.AttributeType;
-							if (atype.Namespace != "Gendarme.Framework") //OK
-								continue;
-
-							string name = atype.Name;
-							if (name == "SolutionAttribute")
-								foundSolution = true;
-							else if (name == "ProblemAttribute")
-								foundProblem = true;
-						}
-
-					TypeReference tr = td.BaseType;
-					if (tr == null)
-						break;
-					TypeDefinition resolved = tr.Resolve ();
-					if (resolved == null)
-						break;
-					td = resolved;
-				}
-				if (!foundProblem || !foundSolution)
-					Runner.Report (type, Severity.High, Confidence.High,
-						"Rules should have both Problem and Solution attributes");
-			}
-		}
-
-		private void CheckAttributes (ICustomAttributeProvider provider)
-		{
-			if (!provider.HasCustomAttributes)
-				return;
-
-			foreach (CustomAttribute attribute in provider.CustomAttributes) {
-				var attributeTypeName = attribute.AttributeType.GetFullName ();
-				Action<CustomAttribute, ICustomAttributeProvider> f;
-				if (attributes.TryGetValue (attributeTypeName, out f))
-					f (attribute, provider);
-			}
-		}
-
-		private bool IsRule (TypeReference type)
-		{
-			var typeName = type.GetFullName ();
-			bool result;
-			if (!typeIsRule.TryGetValue (typeName, out result)) {
-				result = type.Implements (irule);
-				typeIsRule [typeName] = result;
-			}
-			return result;
-		}
-        private readonly static TypeName irule = new TypeName
+    private void CheckIfRuleHasAllRequiredAttributes(TypeDefinition td)
+    {
+      if (!td.IsAbstract && IsRule(td))
+      {
+        bool foundSolution = false;
+        bool foundProblem = false;
+        while (!foundSolution || !foundProblem)
         {
-            Namespace = "Gendarme.Framework",
-            Name = "IRule"
-        };
+          if (td.HasCustomAttributes)
+            foreach (CustomAttribute attribute in td.CustomAttributes)
+            {
+              TypeReference atype = attribute.AttributeType;
+              if (atype.Namespace != "Gendarme.Framework") //OK
+                continue;
 
-		private void CheckProblemAndSolutionAttributes (CustomAttribute attribute, ICustomAttributeProvider provider)
-		{
-			CheckIfAttributeUsedOnRule (attribute, provider);
-			CheckIfStringArgumentsAreNotNullOrEmpty (attribute, provider);
-		}
+              string name = atype.Name;
+              if (name == "SolutionAttribute")
+                foundSolution = true;
+              else if (name == "ProblemAttribute")
+                foundProblem = true;
+            }
 
-		private void CheckFxCopCompatibilityAttribute (CustomAttribute attribute, ICustomAttributeProvider provider)
-		{
-			CheckIfAttributeUsedOnRule (attribute, provider);
-			if (!CheckIfStringArgumentsAreNotNullOrEmpty (attribute, provider))
-				return;
+          TypeReference tr = td.BaseType;
+          if (tr == null)
+            break;
+          TypeDefinition resolved = tr.Resolve();
+          if (resolved == null)
+            break;
+          td = resolved;
+        }
+        if (!foundProblem || !foundSolution)
+          Runner.Report(td, Severity.High, Confidence.High,
+            "Rules should have both Problem and Solution attributes");
+      }
+    }
 
-			// check if second argument has correct format
-			if (!attribute.HasConstructorArguments)
-				return;
-			var attributeTypeName = attribute.AttributeType.GetFullName ();
-			var argumentValue = attribute.ConstructorArguments [1].Value.ToString ();
-			var length = argumentValue.Length;
-			if (!((length == 6 || (length > 8 && argumentValue [6] == ':')) && 
-				Char.IsLetter (argumentValue [0]) && Char.IsLetter(argumentValue[1]) && 
-				Char.IsDigit(argumentValue[2]) && Char.IsDigit(argumentValue[3]) && 
-				Char.IsDigit(argumentValue[4])  && Char.IsDigit(argumentValue[5]))) 
-				Runner.Report (provider, Severity.Medium, Confidence.High,
-					attributeTypeName + " second argument should match the followint format: XX9999:Name");
-			else if (length == 6)
-				Runner.Report (provider, Severity.Medium, Confidence.High,
-					attributeTypeName + " second argument should contain both rule ID and name");
-		}
+    private void CheckAttributes(ICustomAttributeProvider provider)
+    {
+      if (!provider.HasCustomAttributes)
+        return;
 
-        private readonly static TypeName irunner = new TypeName
+      foreach (CustomAttribute attribute in provider.CustomAttributes)
+      {
+        var attributeTypeName = attribute.AttributeType.GetFullName();
+        Action<CustomAttribute, ICustomAttributeProvider> f;
+        if (attributes.TryGetValue(attributeTypeName, out f))
+          f(attribute, provider);
+      }
+    }
+
+    private bool IsRule(TypeReference tr)
+    {
+      var typeName = tr.GetFullName();
+      bool result;
+      if (!typeIsRule.TryGetValue(typeName, out result))
+      {
+        result = tr.Implements(irule);
+        typeIsRule[typeName] = result;
+      }
+      return result;
+    }
+
+    private static readonly TypeName irule = new TypeName
+    {
+      Namespace = "Gendarme.Framework",
+      Name = "IRule"
+    };
+
+    private void CheckProblemAndSolutionAttributes(CustomAttribute attribute, ICustomAttributeProvider provider)
+    {
+      CheckIfAttributeUsedOnRule(attribute, provider);
+      CheckIfStringArgumentsAreNotNullOrEmpty(attribute, provider);
+    }
+
+    private void CheckFxCopCompatibilityAttribute(CustomAttribute attribute, ICustomAttributeProvider provider)
+    {
+      CheckIfAttributeUsedOnRule(attribute, provider);
+      if (!CheckIfStringArgumentsAreNotNullOrEmpty(attribute, provider))
+        return;
+
+      // check if second argument has correct format
+      if (!attribute.HasConstructorArguments)
+        return;
+      var attributeTypeName = attribute.AttributeType.GetFullName();
+      var argumentValue = attribute.ConstructorArguments[1].Value.ToString();
+      var length = argumentValue.Length;
+      if (!((length == 6 || (length > 8 && argumentValue[6] == ':')) &&
+        Char.IsLetter(argumentValue[0]) && Char.IsLetter(argumentValue[1]) &&
+        Char.IsDigit(argumentValue[2]) && Char.IsDigit(argumentValue[3]) &&
+        Char.IsDigit(argumentValue[4]) && Char.IsDigit(argumentValue[5])))
+        Runner.Report(provider, Severity.Medium, Confidence.High,
+          attributeTypeName + " second argument should match the followint format: XX9999:Name");
+      else if (length == 6)
+        Runner.Report(provider, Severity.Medium, Confidence.High,
+          attributeTypeName + " second argument should contain both rule ID and name");
+    }
+
+    private static readonly TypeName irunner = new TypeName
+    {
+      Namespace = "Gendarme.Framework",
+      Name = "IRunner"
+    };
+
+    private static readonly TypeName engine = new TypeName
+    {
+      Namespace = "Gendarme.Framework",
+      Name = "Engine"
+    };
+
+    private static readonly TypeName type = new TypeName
+    {
+      Namespace = "System",
+      Name = "Type"
+    };
+
+    private void CheckEngineDependencyAttribute(CustomAttribute attribute, ICustomAttributeProvider provider)
+    {
+      TypeDefinition td = (provider as TypeDefinition);
+      if (td == null || !(IsRule(td) || td.Implements(irunner)))
+        Runner.Report(td, Severity.Medium, Confidence.High, "[EngineDependency] can only be used on rules and runners");
+
+      CheckIfStringArgumentsAreNotNullOrEmpty(attribute, provider);
+
+      if (!attribute.HasConstructorArguments)
+        return;
+      var argument = attribute.ConstructorArguments[0];
+
+      // if possible, check if argument td implements IEngine
+      if (argument.Type.IsNamed(type))
+      {
+        TypeReference tr = (argument.Value as TypeReference);
+        if (tr == null || !tr.Inherits(engine)) // IEngine does not exist yet
+          Runner.Report(provider, Severity.Medium, Confidence.High,
+            "EngineDependency attribute argument should implement IEngine interface");
+      }
+    }
+
+    private void CheckDescriptionAttribute(CustomAttribute attribute, ICustomAttributeProvider provider)
+    {
+      CheckIfStringArgumentsAreNotNullOrEmpty(attribute, provider);
+      CheckIfAttributeUsedOnRulesProperty(attribute, provider);
+    }
+
+    private void CheckIfAttributeUsedOnRule(ICustomAttribute attribute, ICustomAttributeProvider provider)
+    {
+      TypeDefinition td = (provider as TypeDefinition);
+      if (td == null || !IsRule(td))
+        Runner.Report(td, Severity.Medium, Confidence.High,
+          attribute.AttributeType.GetFullName() + " can be used on rules only");
+    }
+
+    private void CheckIfAttributeUsedOnRulesProperty(ICustomAttribute attribute, ICustomAttributeProvider provider)
+    {
+      PropertyDefinition property = (provider as PropertyDefinition);
+      if (property == null || !IsRule(property.DeclaringType) ||
+        !property.GetMethod.IsPublic || !property.SetMethod.IsPublic)
+        Runner.Report(provider, Severity.High, Confidence.High,
+          attribute.AttributeType.GetFullName() + " should be used only on rules' public properties");
+    }
+
+    private static readonly TypeName str = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
+
+    // returns true when all arguments are fine, false otherwise
+    private bool CheckIfStringArgumentsAreNotNullOrEmpty(CustomAttribute attribute, ICustomAttributeProvider provider)
+    {
+      if (!attribute.HasConstructorArguments)
+        return true;
+      foreach (CustomAttributeArgument argument in attribute.ConstructorArguments)
+      {
+        if (!argument.Type.IsNamed(str))
+          continue;
+        if (String.IsNullOrEmpty((string)argument.Value))
         {
-            Namespace = "Gendarme.Framework",
-            Name = "IRunner"
-        };
-        private readonly static TypeName engine = new TypeName
-        {
-            Namespace = "Gendarme.Framework",
-            Name = "Engine"
-        };
-        private readonly static TypeName type = new TypeName
-        {
-            Namespace = "System",
-            Name = "Type"
-        };
-
-        private void CheckEngineDependencyAttribute(CustomAttribute attribute, ICustomAttributeProvider provider)
-		{
-			TypeDefinition td = (provider as TypeDefinition);
-			if (td == null || !(IsRule (td) || td.Implements (irunner)))
-				Runner.Report (td, Severity.Medium, Confidence.High, "[EngineDependency] can only be used on rules and runners");
-
-			CheckIfStringArgumentsAreNotNullOrEmpty (attribute, provider);
-
-			if (!attribute.HasConstructorArguments)
-				return;
-			var argument = attribute.ConstructorArguments [0];
-
-			// if possible, check if argument type implements IEngine
-			if (argument.Type.IsNamed (type)) {
-				TypeReference tr = (argument.Value as TypeReference);
-				if (tr == null || !tr.Inherits (engine)) // IEngine does not exist yet
-					Runner.Report (provider, Severity.Medium, Confidence.High,
-						"EngineDependency attribute argument should implement IEngine interface");
-
-			}
-		}
-
-		private void CheckDescriptionAttribute (CustomAttribute attribute, ICustomAttributeProvider provider)
-		{
-			CheckIfStringArgumentsAreNotNullOrEmpty (attribute, provider);
-			CheckIfAttributeUsedOnRulesProperty (attribute, provider);
-		}
-
-		private void CheckIfAttributeUsedOnRule (ICustomAttribute attribute, ICustomAttributeProvider provider)
-		{
-			TypeDefinition td = (provider as TypeDefinition);
-			if (td == null || !IsRule (td))
-				Runner.Report (td, Severity.Medium, Confidence.High,
-					attribute.AttributeType.GetFullName () + " can be used on rules only");
-		}
-
-		private void CheckIfAttributeUsedOnRulesProperty (ICustomAttribute attribute, ICustomAttributeProvider provider)
-		{
-			PropertyDefinition property = (provider as PropertyDefinition);
-			if (property == null || !IsRule (property.DeclaringType) || 
-				!property.GetMethod.IsPublic || !property.SetMethod.IsPublic)
-				Runner.Report (provider, Severity.High, Confidence.High,
-					attribute.AttributeType.GetFullName () + " should be used only on rules' public properties");
-		}
-
-        private readonly static TypeName str = new TypeName
-        {
-            Namespace = "System",
-            Name = "String"
-        };
-        // returns true when all arguments are fine, false otherwise
-		private bool CheckIfStringArgumentsAreNotNullOrEmpty (CustomAttribute attribute, ICustomAttributeProvider provider)
-		{
-			if (!attribute.HasConstructorArguments)
-				return true;
-			foreach (CustomAttributeArgument argument in attribute.ConstructorArguments) {
-				if (!argument.Type.IsNamed (str))
-					continue;
-				if (String.IsNullOrEmpty ((string) argument.Value)) {
-					Runner.Report (provider, Severity.Medium, Confidence.High,
-						attribute.AttributeType.GetFullName () + " argument cannot be null or empty");
-					return false;
-				}
-			}
-			return true;
-		}
-	}
+          Runner.Report(provider, Severity.Medium, Confidence.High,
+            attribute.AttributeType.GetFullName() + " argument cannot be null or empty");
+          return false;
+        }
+      }
+      return true;
+    }
+  }
 }

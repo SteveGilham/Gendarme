@@ -39,9 +39,10 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Correctness {
-
+namespace Gendarme.Rules.Correctness
+{
   /// <summary>
   /// This rule verifies that valid XML string arguments are passed as arguments.
   /// </summary>
@@ -96,79 +97,97 @@ namespace Gendarme.Rules.Correctness {
       };
     }
 
-		void CheckString (MethodDefinition method, Instruction ins, int argumentOffset)
+    private void CheckString(MethodDefinition method, Instruction ins, int argumentOffset)
     {
       Instruction ld = ins.TraceBack(method, argumentOffset);
       if (null == ld)
         return;
 
-			switch (ld.OpCode.Code) {
+      switch (ld.OpCode.Code)
+      {
         case Code.Ldstr:
           CheckString(method, ins, (string)ld.Operand);
           break;
+
         case Code.Ldsfld:
           FieldReference f = (FieldReference)ld.Operand;
           if (f.Name == "Empty" && f.DeclaringType.IsNamed(systemString))
             CheckString(method, ins, null);
           break;
+
         case Code.Ldnull:
           CheckString(method, ins, null);
           break;
       }
     }
 
-		void CheckString (MethodDefinition method, Instruction ins, string xml)
+    private void CheckString(MethodDefinition method, Instruction ins, string xml)
+    {
+      if (string.IsNullOrEmpty(xml))
       {
-			if (string.IsNullOrEmpty (xml)) {
         Runner.Report(method, ins, Severity.High, Confidence.Total, "XML string is null or empty.");
         return;
       }
 
-			try {
+      try
+      {
         (new XmlDocument()).LoadXml(xml);
-			} catch (XmlException e) {
+      }
+      catch (XmlException e)
+      {
         string msg = String.Format(CultureInfo.InvariantCulture,
           "XML string '{0}' is invalid. Details: {1}", xml, e.Message);
         Runner.Report(method, ins, Severity.High, Confidence.High, msg);
       }
     }
 
-    private readonly static TypeName xpn = new TypeName
+    private static readonly TypeName xpn = new TypeName
     {
       Namespace = "System.Xml.XPath",
       Name = "XPathNavigator"
     };
-    private readonly static TypeName systemString = new TypeName
+
+    private static readonly TypeName systemString = new TypeName
     {
       Namespace = "System",
       Name = "String"
     };
-    private readonly static TypeName node = new TypeName
+
+    private static readonly TypeName node = new TypeName
     {
       Namespace = "System.Xml",
       Name = "XmlNode"
     };
-    private readonly static TypeName document = new TypeName
+
+    private static readonly TypeName document = new TypeName
     {
       Namespace = "System.Xml",
       Name = "XmlDocument"
     };
-        void CheckCall(MethodDefinition method, Instruction ins, MethodReference mref)
+
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 25")]
+    private void CheckCall(MethodDefinition method, Instruction ins, MethodReference mref)
     {
       if (null == mref || !mref.HasParameters)
         return;
 
-			switch (mref.Name) {
+      switch (mref.Name)
+      {
         case "LoadXml":
           if (mref.DeclaringType.IsNamed(document))
             CheckString(method, ins, -1);
           break;
+
         case "set_InnerXml":
         case "set_OuterXml":
           TypeReference tr = mref.DeclaringType;
           if (tr.Inherits(node) || tr.Inherits(xpn))
             CheckString(method, ins, -1);
           break;
+
         case "AppendChild":
         case "PrependChild":
         case "InsertAfter":
@@ -192,7 +211,8 @@ namespace Gendarme.Rules.Correctness {
       if (!calls.Intersect(OpCodeEngine.GetBitmask(method)))
         return RuleResult.DoesNotApply;
 
-			foreach (Instruction ins in method.Body.Instructions) {
+      foreach (Instruction ins in method.Body.Instructions)
+      {
         if (!calls.Get(ins.OpCode.Code))
           continue;
 

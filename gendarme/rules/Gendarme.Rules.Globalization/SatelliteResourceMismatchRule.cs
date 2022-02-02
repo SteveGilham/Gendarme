@@ -116,7 +116,7 @@ namespace Gendarme.Rules.Globalization
     private void CheckSatelliteResource(EmbeddedResource mainResource, EmbeddedResource satelliteResource, IMetadataTokenProvider satelliteAssembly)
     {
       using (Stream resourceStream = satelliteResource.GetResourceStream())
-      using(var reader = MakeResourceReader(resourceStream))
+      using (var reader = MakeResourceReader(resourceStream))
       {
         foreach (DictionaryEntry entry in reader)
         {
@@ -254,6 +254,11 @@ namespace Gendarme.Rules.Globalization
       return resource.Name.EndsWith(resXResourcesExtension, StringComparison.Ordinal);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "AvoidLackOfCohesionOfMethodsRule",
+                     Justification = "Maybe refactor")]
     private sealed class AssemblyResourceCache
     {
       private readonly AssemblyDefinition assembly;
@@ -293,7 +298,7 @@ namespace Gendarme.Rules.Globalization
         {
           fileResources = new Dictionary<string, object>();
           using (Stream resourceStream = embeddedResource.GetResourceStream())
-          using(var reader = MakeResourceReader(resourceStream))
+          using (var reader = MakeResourceReader(resourceStream))
           {
             foreach (DictionaryEntry entry in reader)
               fileResources.Add((string)entry.Key, entry.Value);

@@ -38,6 +38,7 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Smells
 {
@@ -47,6 +48,11 @@ namespace Gendarme.Rules.Smells
     Modern
   }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                   "AvoidLackOfCohesionOfMethodsRule",
+                   Justification = "Maybe refactor")]
   internal sealed class CodeDuplicatedLocator
   {
     private static readonly ReadOnlyCollection<Pattern> Empty = new ReadOnlyCollection<Pattern>(new List<Pattern>());
@@ -165,7 +171,7 @@ namespace Gendarme.Rules.Smells
     //TODO: Still needs some testing in order to get the best size
     //for every case:
     //  The idea is get two overlapped statements in high level language
-    private static IList<Pattern> GeneratePatterns(MethodDefinition method, DetectionMode mode)
+    private static IList<Pattern> GeneratePatterns(MethodDefinition method, DetectionMode detectionMode)
     {
       Stack<Stack<Instruction>> result = new Stack<Stack<Instruction>>();
       Stack<Instruction> current = new Stack<Instruction>();
@@ -201,7 +207,7 @@ namespace Gendarme.Rules.Smells
                 result.Select(stack => stack.ToArray())
                       .Where(stack =>
                       {
-                        if (mode == DetectionMode.Classic)
+                        if (detectionMode == DetectionMode.Classic)
                           return true;
 
                         // ignore "throw new ArgumentNullException" boilerplate

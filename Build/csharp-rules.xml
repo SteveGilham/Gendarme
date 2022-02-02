@@ -56,7 +56,6 @@
     <rules include="*"
            from="Gendarme.Rules.Ui.dll" />
     <rules include="*"
-           exclude="VariableNamesShouldNotMatchFieldNamesRule | AvoidComplexMethodsRule | AvoidLackOfCohesionOfMethodsRule"
            from="Gendarme.Rules.Maintainability.dll" />
     <rules include="*"
            from="Gendarme.Rules.Gendarme.dll" />

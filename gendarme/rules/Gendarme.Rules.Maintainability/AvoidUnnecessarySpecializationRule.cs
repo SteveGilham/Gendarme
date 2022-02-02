@@ -36,6 +36,7 @@ using Gendarme.Framework.Rocks;
 using Gendarme.Framework.Helpers;
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Maintainability
 {
@@ -244,6 +245,10 @@ namespace Gendarme.Rules.Maintainability
       return method.ReturnType.GetFullName();
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 28")]
     private static bool IsSystemObjectMethod(MethodReference method)
     {
       string name = method.Name;

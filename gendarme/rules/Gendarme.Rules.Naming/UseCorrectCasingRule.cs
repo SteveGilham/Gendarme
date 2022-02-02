@@ -39,6 +39,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Naming
 {
@@ -229,6 +230,10 @@ namespace Gendarme.Rules.Naming
     private static readonly MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
       MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 29")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // ignore constructors (.ctor or .cctor) and compiler/tool-generated code

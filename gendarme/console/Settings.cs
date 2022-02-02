@@ -49,6 +49,11 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                   "AvoidLackOfCohesionOfMethodsRule",
+                   Justification = "Maybe refactor")]
   public class Settings
   {
     private const string DefaultRulesFile = "rules.xml";
@@ -292,8 +297,8 @@ namespace Gendarme
         {
           if (ruleset.Attributes["name"].Value != rule_set)
             continue;
-          using (var rules = ruleset.SelectNodes("rules"))
-            foreach (XmlElement assembly in rules)
+          using (var xrules = ruleset.SelectNodes("rules"))
+            foreach (XmlElement assembly in xrules)
             {
               string include = GetAttribute(assembly, "include", "*");
               string exclude = GetAttribute(assembly, "exclude", String.Empty);
