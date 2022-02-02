@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using Mono.Cecil;
 using Mono.Cecil.Metadata;
@@ -47,6 +48,9 @@ namespace Gendarme.Framework.Rocks
     /// <param name="self">The IMetadataTokenProvider instance where the method is applied.</param>
     /// <returns>The AssemblyDefinition associated with the IMetadataTokenProvider or null
     /// if none can be found</returns>
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
     public static AssemblyDefinition GetAssembly(this IMetadataTokenProvider self)
     {
       if (self == null)
@@ -99,6 +103,9 @@ namespace Gendarme.Framework.Rocks
       }
     }
 
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
     private static AssemblyDefinition GetAssemblyUsingCasts(IMetadataTokenProvider metadata)
     {
       AssemblyDefinition ad = (metadata as AssemblyDefinition);
@@ -146,6 +153,9 @@ namespace Gendarme.Framework.Rocks
     /// <param name="self">The IMetadataTokenProvider instance where the method is applied.</param>
     /// <param name="other">The IMetadataTokenProvider instance to compare to</param>
     /// <returns>True if the metadata tokens and assembly are identical, False otherwise</returns>
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
     public static bool Equals(this IMetadataTokenProvider self, IMetadataTokenProvider other)
     {
       if (self == other)

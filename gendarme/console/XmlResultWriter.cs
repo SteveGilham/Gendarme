@@ -43,7 +43,16 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-[assembly: SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Scope = "member", Target = "Gendarme.XmlResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)", Justification = "work in progress")]
+[assembly: SuppressMessage("Microsoft.Reliability", 
+                           "CA2000:Dispose objects before losing scope", 
+                           Scope = "member", 
+                           Target = "Gendarme.XmlResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)",
+                           Justification = "Disposed implicitly with the instance")]
+[assembly: SuppressMessage("Gendarme.Rules.Correctness",
+                            "EnsureLocalDisposalRule",
+                            Scope = "member", // MethodDefinition
+                            Target = "Gendarme.XmlResultWriter/<>c::<CreateDefects>b__10_4(System.Linq.IGrouping`2<Mono.Cecil.IMetadataTokenProvider,Gendarme.Framework.Defect>)",
+                            Justification = "Not locally owned")]
 
 namespace Gendarme
 {
@@ -130,6 +139,9 @@ namespace Gendarme
       writer.WriteEndElement();
     }
 
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
     private void CreateDefects()
     {
       var query = from n in Runner.Defects
@@ -176,6 +188,9 @@ namespace Gendarme
       writer.WriteElementString("solution", rule.Solution);
     }
 
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
     private void CreateTargetDetails(IMetadataTokenProvider target)
     {
       AssemblyDefinition assembly = target.GetAssembly();

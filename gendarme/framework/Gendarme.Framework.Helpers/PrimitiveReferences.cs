@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Mono.Cecil;
 using Gendarme.Framework.Rocks;
 
@@ -45,6 +46,9 @@ namespace Gendarme.Framework.Helpers {
 		static TypeReference single_ref;
 		static TypeReference double_ref;
 
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
 		static TypeReference GetReference (Type type, IMetadataTokenProvider metadata)
 		{
 			ModuleDefinition module = metadata.GetAssembly ().MainModule;

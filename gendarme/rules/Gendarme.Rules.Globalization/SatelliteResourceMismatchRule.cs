@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -103,6 +104,9 @@ namespace Gendarme.Rules.Globalization
       }
     }
 
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "Return value")]
     private static DeserializingResourceReader MakeResourceReader(Stream resourceStream)
     {
       var safeStream = new BlobReadingStream(resourceStream);

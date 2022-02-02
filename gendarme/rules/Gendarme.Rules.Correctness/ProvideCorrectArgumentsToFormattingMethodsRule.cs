@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Resources;
@@ -126,6 +127,9 @@ namespace Gendarme.Rules.Correctness
       return null;
     }
 
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
     private static string GetLoadStringFromCall(MethodReference mr)
     {
       MethodDefinition md = mr.Resolve();

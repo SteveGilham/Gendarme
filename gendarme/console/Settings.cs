@@ -221,7 +221,8 @@ namespace Gendarme
 
     private void SetCustomParameters(XmlNode nodes)
     {
-      foreach (XmlElement parameter in nodes.SelectNodes("parameter"))
+      using(var parameters = nodes.SelectNodes("parameter"))
+      foreach (XmlElement parameter in parameters)
       {
         string ruleName = GetAttribute(parameter, "rule", String.Empty);
         string propertyName = GetAttribute(parameter, "property", String.Empty);
@@ -284,11 +285,13 @@ namespace Gendarme
       doc.Load(config_file);
 
       bool result = false;
-      foreach (XmlElement ruleset in doc.DocumentElement.SelectNodes("ruleset"))
+      using (var rulesets = doc.DocumentElement.SelectNodes("ruleset"))
+      foreach (XmlElement ruleset in rulesets)
       {
         if (ruleset.Attributes["name"].Value != rule_set)
           continue;
-        foreach (XmlElement assembly in ruleset.SelectNodes("rules"))
+        using (var rules = ruleset.SelectNodes("rules"))
+        foreach (XmlElement assembly in rules)
         {
           string include = GetAttribute(assembly, "include", "*");
           string exclude = GetAttribute(assembly, "exclude", String.Empty);
