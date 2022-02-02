@@ -37,6 +37,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Portability
 {
@@ -228,6 +229,10 @@ namespace Gendarme.Rules.Portability
         AddPoints(2);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Portability",
+                     "DoNotHardcodePathsRule",
+                     Justification = "Self-reference")]
     private void ProcessUnixProbablyAbsolutePath(string path)
     {
       // check for common prefixes

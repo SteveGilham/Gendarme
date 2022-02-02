@@ -39,10 +39,7 @@
     <rules include="*"
            exclude="DoNotIgnoreMethodResultRule | PreferLiteralOverInitOnlyFieldsRule | AvoidRepetitiveCastsRule | AvoidReturningArraysOnPropertiesRule | AvoidUnneededFieldInitializationRule | AvoidUnneededUnboxingRule | AvoidUnsealedUninheritedInternalTypeRule| AvoidUnusedPrivateFieldsRule| PreferCharOverloadRule | AvoidRepetitiveCallsToPropertiesRule | OverrideValueTypeDefaultsRule"
            from="Gendarme.Rules.Performance.dll" />
-    <!-- AltCover is operationally tested on Mono;
-         System.Xml.Schema.Extensions::Validate seems to be there now -->
     <rules include="*"
-           exclude="DoNotHardcodePathsRule | NewLineLiteralRule | ExitCodeIsLimitedOnUnixRule"
            from="Gendarme.Rules.Portability.dll" />
     <rules include="*"
            from="Gendarme.Rules.Security.dll" />

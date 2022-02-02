@@ -276,7 +276,8 @@ namespace Gendarme.Rules.Interoperability
       locals.Clear();
       stack.Clear();
 
-      Log.WriteLine(this, "\n\nChecking method: {0} on type: {1}", method.Name, method.DeclaringType.GetFullName());
+      Log.WriteLine(this, "{2}{2}Checking method: {0} on type: {1}",
+        method.Name, method.DeclaringType.GetFullName(), Environment.NewLine);
       Log.WriteLine(this, method);
 
       MethodBody body = method.Body;

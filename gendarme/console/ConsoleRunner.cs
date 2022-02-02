@@ -691,6 +691,9 @@ namespace Gendarme
     /// 2 if some parameters are bad,
     /// 3 if a problem is related to the xml configuration file
     /// 4 if an uncaught exception occured</returns>
+    [SuppressMessage("Gendarme.Rules.Portability",
+                     "ExitCodeIsLimitedOnUnixRule",
+                     Justification = "byte values return")]
     private static int Main(string[] args)
     {
       return new ConsoleRunner().Execute(args);
