@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 using Mono.Cecil;
@@ -102,6 +103,9 @@ namespace Gendarme.Rules.Interoperability
   [Problem("Every delegate passed to native code must include an exception block which spans the entire method and has a catch all block.")]
   [Solution("Surround the entire method body with a try/catch block.")]
   [EngineDependency(typeof(OpCodeEngine))]
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidLackOfCohesionOfMethodsRule",
+                    Justification = "Maybe refactor")]
   public sealed class DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule : Rule, IMethodRule
   {
     // A list of methods which have been verified to be safe to call from native code.

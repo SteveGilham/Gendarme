@@ -69,6 +69,9 @@ using NDesk.Options;
 
 namespace Gendarme
 {
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidLackOfCohesionOfMethodsRule",
+                    Justification = "Maybe refactor")]
   [EngineDependency(typeof(SuppressMessageEngine))]
   public class ConsoleRunner : Runner
   {

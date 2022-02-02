@@ -31,6 +31,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 using Mono.Cecil;
@@ -52,6 +53,9 @@ namespace Gendarme.Rules.Maintainability {
 
 	[Problem ("The methods in this class lack cohesion (a higher score is better). This leads to code which is harder to understand and maintain.")]
 	[Solution ("You can apply the Extract Class or Extract Subclass refactoring.")]
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "AvoidLackOfCohesionOfMethodsRule",
+                     Justification = "The biter bit")]
 	public class AvoidLackOfCohesionOfMethodsRule : Rule, ITypeRule {
 
 		private const double DefaultSuccessCoh = 0.5;

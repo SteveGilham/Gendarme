@@ -97,40 +97,40 @@ namespace Gendarme.Rules.Gendarme
     /// <summary>
     ///
     /// </summary>
-    /// <param name="td"></param>
+    /// <param name="type"></param>
     /// <returns></returns>
-    public RuleResult CheckType(TypeDefinition td)
+    public RuleResult CheckType(TypeDefinition type)
     {
-      CheckAttributes(td);
+      CheckAttributes(type);
 
-      if (td.HasMethods)
-        foreach (MethodDefinition method in td.Methods)
+      if (type.HasMethods)
+        foreach (MethodDefinition method in type.Methods)
           CheckAttributes(method);
 
-      if (td.HasProperties)
-        foreach (PropertyDefinition property in td.Properties)
+      if (type.HasProperties)
+        foreach (PropertyDefinition property in type.Properties)
           CheckAttributes(property);
-      if (td.HasFields)
-        foreach (FieldDefinition field in td.Fields)
+      if (type.HasFields)
+        foreach (FieldDefinition field in type.Fields)
           CheckAttributes(field);
 
       // finally check if this is a rule and either has all required attributes
-      // or inherits from a td that has all required attributes
-      CheckIfRuleHasAllRequiredAttributes(td);
+      // or inherits from a type that has all required attributes
+      CheckIfRuleHasAllRequiredAttributes(type);
 
       return Runner.CurrentRuleResult;
     }
 
-    private void CheckIfRuleHasAllRequiredAttributes(TypeDefinition td)
+    private void CheckIfRuleHasAllRequiredAttributes(TypeDefinition type)
     {
-      if (!td.IsAbstract && IsRule(td))
+      if (!type.IsAbstract && IsRule(type))
       {
         bool foundSolution = false;
         bool foundProblem = false;
         while (!foundSolution || !foundProblem)
         {
-          if (td.HasCustomAttributes)
-            foreach (CustomAttribute attribute in td.CustomAttributes)
+          if (type.HasCustomAttributes)
+            foreach (CustomAttribute attribute in type.CustomAttributes)
             {
               TypeReference atype = attribute.AttributeType;
               if (atype.Namespace != "Gendarme.Framework") //OK
@@ -143,16 +143,16 @@ namespace Gendarme.Rules.Gendarme
                 foundProblem = true;
             }
 
-          TypeReference tr = td.BaseType;
+          TypeReference tr = type.BaseType;
           if (tr == null)
             break;
           TypeDefinition resolved = tr.Resolve();
           if (resolved == null)
             break;
-          td = resolved;
+          type = resolved;
         }
         if (!foundProblem || !foundSolution)
-          Runner.Report(td, Severity.High, Confidence.High,
+          Runner.Report(type, Severity.High, Confidence.High,
             "Rules should have both Problem and Solution attributes");
       }
     }
@@ -230,7 +230,7 @@ namespace Gendarme.Rules.Gendarme
       Name = "Engine"
     };
 
-    private static readonly TypeName type = new TypeName
+    private static readonly TypeName typename = new TypeName
     {
       Namespace = "System",
       Name = "Type"
@@ -249,7 +249,7 @@ namespace Gendarme.Rules.Gendarme
       var argument = attribute.ConstructorArguments[0];
 
       // if possible, check if argument td implements IEngine
-      if (argument.Type.IsNamed(type))
+      if (argument.Type.IsNamed(typename))
       {
         TypeReference tr = (argument.Value as TypeReference);
         if (tr == null || !tr.Inherits(engine)) // IEngine does not exist yet

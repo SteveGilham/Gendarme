@@ -27,6 +27,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 using Mono.Cecil;
@@ -145,6 +146,9 @@ namespace Gendarme.Framework.Rocks {
 		/// <param name="self">The Instruction on which the extension method can be called.</param>
 		/// <param name="method">The method inside which the instruction comes from.</param>
 		/// <returns>Return a TypeReference compatible with the instruction operand or null.</returns>
+        [SuppressMessage("Gendarme.Rules.Maintainability",
+                            "AvoidComplexMethodsRule",
+                            Justification = "As simple as can be")]
 		public static TypeReference GetOperandType (this Instruction self, MethodDefinition method)
 		{
 			if ((self == null) || (method == null))

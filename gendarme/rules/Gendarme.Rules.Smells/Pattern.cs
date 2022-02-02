@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -36,7 +37,9 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Smells
 {
-
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidLackOfCohesionOfMethodsRule",
+                    Justification = "Maybe refactor")]
   internal sealed class Pattern
   {
     private Instruction[] instructions;

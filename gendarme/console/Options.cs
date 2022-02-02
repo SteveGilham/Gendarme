@@ -187,9 +187,9 @@ namespace NDesk.Options
     private readonly List<string> values = new List<string>();
     private readonly OptionContext c;
 
-    internal OptionValueCollection(OptionContext c)
+    internal OptionValueCollection(OptionContext context)
     {
-      this.c = c;
+      this.c = context;
     }
 
     #region ICollection
@@ -340,45 +340,21 @@ namespace NDesk.Options
 
   public class OptionContext
   {
-    private Option option;
-    private string name;
-    private int index;
-    private readonly OptionSet set;
-    private readonly OptionValueCollection c;
-
     public OptionContext(OptionSet set)
     {
-      this.set = set;
-      this.c = new OptionValueCollection(this);
+      this.OptionSet = set;
+      this.OptionValues = new OptionValueCollection(this);
     }
 
-    public Option Option
-    {
-      get { return option; }
-      set { option = value; }
-    }
+    public Option Option { get; set; }
 
-    public string OptionName
-    {
-      get { return name; }
-      set { name = value; }
-    }
+    public string OptionName { get; set; }
 
-    public int OptionIndex
-    {
-      get { return index; }
-      set { index = value; }
-    }
+    public int OptionIndex { get; set; }
 
-    public OptionSet OptionSet
-    {
-      get { return set; }
-    }
+    public OptionSet OptionSet { get; private set; }
 
-    public OptionValueCollection OptionValues
-    {
-      get { return c; }
-    }
+    public OptionValueCollection OptionValues { get; private set; }
   }
 
   public enum OptionValueType
