@@ -187,8 +187,8 @@ namespace Gendarme.Framework.Helpers
 
       public override bool Equals(object obj)
       {
-        if (obj is InstructionWithLeave)
-          return Equals((InstructionWithLeave)obj);
+        if (obj is InstructionWithLeave leave)
+          return Equals(leave);
         return false;
       }
 
@@ -229,9 +229,9 @@ namespace Gendarme.Framework.Helpers
     }
 
     //static lists to save allocations.
-    private static List<KeyValuePair<InstructionWithLeave, int>> UsedBy = new List<KeyValuePair<InstructionWithLeave, int>>();
+    private static readonly List<KeyValuePair<InstructionWithLeave, int>> UsedBy = new List<KeyValuePair<InstructionWithLeave, int>>();
 
-    private static List<KeyValuePair<InstructionWithLeave, int>> AlternativePaths = new List<KeyValuePair<InstructionWithLeave, int>>();
+    private static readonly List<KeyValuePair<InstructionWithLeave, int>> AlternativePaths = new List<KeyValuePair<InstructionWithLeave, int>>();
 
     /// <summary>
     /// Searches a method for usage of the value pushed onto the stack by the specified instruction.
@@ -241,7 +241,7 @@ namespace Gendarme.Framework.Helpers
     public StackEntryUsageResult[] GetStackEntryUsage(Instruction ins)
     {
       if (ins == null)
-        throw new ArgumentNullException("ins");
+        throw new ArgumentNullException(nameof(ins));
 
       /* In the main loop we search for all usages of a StackEntry.
 			 * Then we check each usage for a store (to a local variable or an argument), search for corrosponding loads and search for usages of the new Stackentry.
@@ -338,8 +338,7 @@ namespace Gendarme.Framework.Helpers
         stackEntryDistance += push;
 
         //fetch ne next instruction
-        object alternativeNext;
-        Instruction nextInstruction = GetNextInstruction(ins, out alternativeNext);
+        Instruction nextInstruction = GetNextInstruction(ins, out object alternativeNext);
 
         if (nextInstruction == null)
           return new KeyValuePair<InstructionWithLeave, int>(); //return / throw / endfinally
@@ -349,8 +348,7 @@ namespace Gendarme.Framework.Helpers
 
         if (alternativeNext != null)
         { //branch / switch
-          Instruction oneTarget = alternativeNext as Instruction;
-          if (oneTarget != null)
+          if (alternativeNext is Instruction oneTarget)
           { //branch
             AlternativePaths.AddIfNew(new KeyValuePair<InstructionWithLeave, int>(startInstruction.Copy(oneTarget), stackEntryDistance));
           }
@@ -371,9 +369,9 @@ namespace Gendarme.Framework.Helpers
     }
 
     //static lists to save allocations.
-    private static List<InstructionWithLeave> LoadAlternatives = new List<InstructionWithLeave>();
+    private static readonly List<InstructionWithLeave> LoadAlternatives = new List<InstructionWithLeave>();
 
-    private static List<InstructionWithLeave> LoadResults = new List<InstructionWithLeave>();
+    private static readonly List<InstructionWithLeave> LoadResults = new List<InstructionWithLeave>();
 
     /// <summary>
     /// Follows the codeflow starting at a given instruction and finds all loads for a given slot.
@@ -446,15 +444,13 @@ namespace Gendarme.Framework.Helpers
           }
 
           //fetch the next instruction (s)
-          object alternativeNext;
-          ins = GetNextInstruction(ins, out alternativeNext);
+          ins = GetNextInstruction(ins, out object alternativeNext);
           if (ins == null)
             break;
 
           if (alternativeNext != null)
           {
-            Instruction oneTarget = alternativeNext as Instruction;
-            if (oneTarget != null)
+            if (alternativeNext is Instruction oneTarget)
             { //normal branch
               LoadAlternatives.AddIfNew(insWithLeave.Copy(oneTarget));
             }
@@ -491,7 +487,7 @@ namespace Gendarme.Framework.Helpers
     public static Instruction GetNextInstruction(Instruction ins, out object alternative)
     {
       if (ins == null)
-        throw new ArgumentNullException("ins");
+        throw new ArgumentNullException(nameof(ins));
 
       alternative = null;
       switch (ins.OpCode.FlowControl)
