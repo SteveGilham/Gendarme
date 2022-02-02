@@ -29,7 +29,7 @@
            from="Gendarme.Rules.Exceptions.dll" />
     <!-- DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule false positives from handler.?Fire type construct -->
     <rules include="*"
-           exclude="NewLineLiteralRule | DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule"
+           exclude="DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule"
            from="Gendarme.Rules.Interoperability.dll" />
     <rules include="*"
            from="Gendarme.Rules.Interoperability.Com.dll" />
@@ -37,7 +37,7 @@
            exclude="AvoidNonAlphanumericIdentifierRule | AvoidRedundancyInTypeNameRule | UseCorrectSuffixRule | UseCorrectCasingRule | AvoidRedundancyInMethodNameRule"
            from="Gendarme.Rules.Naming.dll" />
     <rules include="*"
-           exclude="AvoidUncalledPrivateCodeRule | DoNotIgnoreMethodResultRule | PreferLiteralOverInitOnlyFieldsRule | AvoidRepetitiveCastsRule | AvoidReturningArraysOnPropertiesRule | AvoidUnneededFieldInitializationRule | AvoidUnneededUnboxingRule | AvoidUnsealedUninheritedInternalTypeRule| AvoidUnusedPrivateFieldsRule| PreferCharOverloadRule | AvoidRepetitiveCallsToPropertiesRule | OverrideValueTypeDefaultsRule"
+           exclude="DoNotIgnoreMethodResultRule | PreferLiteralOverInitOnlyFieldsRule | AvoidRepetitiveCastsRule | AvoidReturningArraysOnPropertiesRule | AvoidUnneededFieldInitializationRule | AvoidUnneededUnboxingRule | AvoidUnsealedUninheritedInternalTypeRule| AvoidUnusedPrivateFieldsRule| PreferCharOverloadRule | AvoidRepetitiveCallsToPropertiesRule | OverrideValueTypeDefaultsRule"
            from="Gendarme.Rules.Performance.dll" />
     <!-- AltCover is operationally tested on Mono;
          System.Xml.Schema.Extensions::Validate seems to be there now -->
