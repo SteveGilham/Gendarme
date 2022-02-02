@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using Mono.Cecil;
 using Gendarme.Framework.Rocks;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace Gendarme.Framework.Helpers
 {
@@ -110,7 +111,7 @@ namespace Gendarme.Framework.Helpers
     public static void WriteLine(string category, string format, params object[] args)
     {
       if (IsEnabled(category))
-        Debug.WriteLine(string.Format(format, args));
+        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, format, args));
     }
 
     [Conditional("DEBUG")]

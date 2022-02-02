@@ -362,7 +362,7 @@ namespace Gendarme.Framework
           continue;
 
         // It means it
-        if (e.CurrentType.Name.Equals("<PrivateImplementationDetails>"))
+        if (e.CurrentType.Name.Equals("<PrivateImplementationDetails>", StringComparison.Ordinal))
           continue;
 
         CurrentRule = rule;
@@ -391,7 +391,8 @@ namespace Gendarme.Framework
           continue;
 
         // It means it
-        if (e.CurrentMethod.DeclaringType.Name.Equals("<PrivateImplementationDetails>"))
+        if (e.CurrentMethod.DeclaringType.Name.Equals(
+          "<PrivateImplementationDetails>", StringComparison.Ordinal))
           continue;
 
         CurrentRule = rule;

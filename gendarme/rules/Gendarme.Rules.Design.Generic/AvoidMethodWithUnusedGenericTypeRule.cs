@@ -34,120 +34,125 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Design.Generic {
+namespace Gendarme.Rules.Design.Generic
+{
+  /// <summary>
+  /// This method will fire if a generic method does not use all of its generic type parameters
+  /// in the formal parameter list. This usually means that either the type parameter is not used at
+  /// all in which case it should be removed or that it's used only for the return type which
+  /// is problematic because that prevents the compiler from inferring the generic type
+  /// when the method is called which is confusing to many developers.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class Bad {
+  ///	public string ToString&lt;T&gt; ()
+  ///	{
+  ///		return typeof (T).ToString ();
+  ///	}
+  ///
+  ///	static void Main ()
+  ///	{
+  ///		// the compiler can't infer int so we need to supply it ourselves
+  ///		Console.WriteLine (ToString&lt;int&gt; ());
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class Good {
+  ///	public string ToString&lt;T&gt; (T obj)
+  ///	{
+  ///		return obj.GetType ().ToString ();
+  ///	}
+  ///
+  ///	static void Main ()
+  ///	{
+  ///		Console.WriteLine (ToString (2));
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule applies only to assemblies targeting .NET 2.0 and later.</remarks>
+  [Problem("One or more generic type parameters are not used in the formal parameter list.")]
+  [Solution("This prevents the compiler from inferring types when the method is used which results in hard to use API definitions.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
+  public class AvoidMethodWithUnusedGenericTypeRule : GenericsBaseRule, IMethodRule
+  {
+    private static bool FindGenericType(IGenericInstance git, TypeName name)
+    {
+      foreach (object o in git.GenericArguments)
+      {
+        if (IsGenericParameter(o, name))
+          return true;
 
-	/// <summary>
-	/// This method will fire if a generic method does not use all of its generic type parameters
-	/// in the formal parameter list. This usually means that either the type parameter is not used at
-	/// all in which case it should be removed or that it's used only for the return type which
-	/// is problematic because that prevents the compiler from inferring the generic type 
-	/// when the method is called which is confusing to many developers.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class Bad {
-	///	public string ToString&lt;T&gt; ()
-	///	{
-	///		return typeof (T).ToString ();
-	///	}
-	///	
-	///	static void Main ()
-	///	{
-	///		// the compiler can't infer int so we need to supply it ourselves
-	///		Console.WriteLine (ToString&lt;int&gt; ());
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class Good {
-	///	public string ToString&lt;T&gt; (T obj)
-	///	{
-	///		return obj.GetType ().ToString ();
-	///	}
-	///	
-	///	static void Main ()
-	///	{
-	///		Console.WriteLine (ToString (2));
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule applies only to assemblies targeting .NET 2.0 and later.</remarks>
-	[Problem ("One or more generic type parameters are not used in the formal parameter list.")]
-	[Solution ("This prevents the compiler from inferring types when the method is used which results in hard to use API definitions.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-	public class AvoidMethodWithUnusedGenericTypeRule : GenericsBaseRule, IMethodRule {
+        GenericInstanceType inner = (o as GenericInstanceType);
+        if ((inner != null) && (FindGenericType(inner, name)))
+          return true;
+      }
+      return false;
+    }
 
-		static bool FindGenericType (IGenericInstance git, TypeName name)
-		{
-			foreach (object o in git.GenericArguments) {
-				if (IsGenericParameter (o, name))
-					return true;
+    private static bool IsGenericParameter(object obj, TypeName name)
+    {
+      return (obj as GenericParameter).IsNamed(name);
+    }
 
-				GenericInstanceType inner = (o as GenericInstanceType);
-				if ((inner != null) && (FindGenericType (inner, name)))
-					return true;
-			}
-			return false;
-		}
+    private static bool IsGenericType(TypeReference type, TypeName name)
+    {
+      if (type.IsNamed(name))
+        return true;
 
-		static bool IsGenericParameter (object obj, TypeName name)
-		{
-			return (obj as GenericParameter).IsNamed (name);
-		}
+      if (type is TypeSpecification type_spec && type_spec.ElementType.IsNamed(name))
+        return true;
 
-		static bool IsGenericType (TypeReference type, TypeName name)
-		{
-			if (type.IsNamed (name))
-				return true;
+      // handle things like ICollection<T>
+      GenericInstanceType git = (type as GenericInstanceType);
+      if (git == null)
+        return false;
 
-			var type_spec = type as TypeSpecification;
-			if (type_spec != null && type_spec.ElementType.IsNamed (name))
-				return true;
+      return FindGenericType(git, name);
+    }
 
-			// handle things like ICollection<T>
-			GenericInstanceType git = (type as GenericInstanceType);
-			if (git == null)
-				return false;
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // rule applies only if the method has generic type parameters
+      if (!method.HasGenericParameters || method.IsGeneratedCode() ||
+                method.DeclaringType.Name.Contains("@", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
 
-			return FindGenericType (git, name);
-		}
-
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// rule applies only if the method has generic type parameters
-			if (!method.HasGenericParameters || method.IsGeneratedCode () ||
-                method.DeclaringType.Name.Contains("@"))
-				return RuleResult.DoesNotApply;
-
-			// look if every generic type parameter...
-			foreach (GenericParameter gp in method.GenericParameters) {
-				Severity severity = Severity.Medium;
-				bool found = false;
-                var name = gp.GetTypeName();
-				// ... is being used by the method parameters
-				foreach (ParameterDefinition pd in method.Parameters) {
-					if (IsGenericType (pd.ParameterType, name)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					// it's a defect when used only for the return value - but we reduce its severity
-					if (IsGenericType (method.ReturnType, name))
-						severity = Severity.Low;
-				}
-				if (!found) {
-					string msg = String.Format (CultureInfo.InvariantCulture,
-						"Generic parameter '{0}.{1}' is not used by the method parameters.", name.Namespace, name.Name);
-					Runner.Report (method, severity, Confidence.High, msg);
-				}
-			}
-			return Runner.CurrentRuleResult;
-		}
-	}
+      // look if every generic type parameter...
+      foreach (GenericParameter gp in method.GenericParameters)
+      {
+        Severity severity = Severity.Medium;
+        bool found = false;
+        var name = gp.GetTypeName();
+        // ... is being used by the method parameters
+        foreach (ParameterDefinition pd in method.Parameters)
+        {
+          if (IsGenericType(pd.ParameterType, name))
+          {
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+        {
+          // it's a defect when used only for the return value - but we reduce its severity
+          if (IsGenericType(method.ReturnType, name))
+            severity = Severity.Low;
+        }
+        if (!found)
+        {
+          string msg = String.Format(CultureInfo.InvariantCulture,
+            "Generic parameter '{0}.{1}' is not used by the method parameters.", name.Namespace, name.Name);
+          Runner.Report(method, severity, Confidence.High, msg);
+        }
+      }
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

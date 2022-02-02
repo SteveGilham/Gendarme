@@ -129,12 +129,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 
+#pragma warning disable IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
 [assembly: SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.Collections.Generic.IEnumerable`1<System.String>)", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#ToList()", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "1#", Justification = "work in progress")]
@@ -170,7 +172,6 @@ using System.Text.RegularExpressions;
 [assembly: SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "flag", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseBundledValue(System.String,System.String,NDesk.Options.OptionContext)", MessageId = "OptionValueType", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#AssertValid(System.Int32)", MessageId = "OptionContext", Justification = "work in progress")]
-
 #if LINQ
 using System.Linq;
 #endif
@@ -183,8 +184,8 @@ namespace NDesk.Options
 {
   public sealed class OptionValueCollection : IList, IList<string>
   {
-    private List<string> values = new List<string>();
-    private OptionContext c;
+    private readonly List<string> values = new List<string>();
+    private readonly OptionContext c;
 
     internal OptionValueCollection(OptionContext c)
     {
@@ -298,7 +299,7 @@ namespace NDesk.Options
       if (c.Option == null)
         throw new InvalidOperationException("OptionContext.Option is null.");
       if (index >= c.Option.MaxValueCount)
-        throw new ArgumentOutOfRangeException("index");
+        throw new ArgumentOutOfRangeException(nameof(index));
       if (c.Option.OptionValueType == OptionValueType.Required &&
           index >= values.Count)
         throw new OptionException(string.Format(
@@ -342,8 +343,8 @@ namespace NDesk.Options
     private Option option;
     private string name;
     private int index;
-    private OptionSet set;
-    private OptionValueCollection c;
+    private readonly OptionSet set;
+    private readonly OptionValueCollection c;
 
     public OptionContext(OptionSet set)
     {
@@ -389,10 +390,11 @@ namespace NDesk.Options
 
   public abstract class Option
   {
-    private string prototype, description;
-    private string[] names;
-    private OptionValueType type;
-    private int count;
+    private readonly string prototype;
+    private readonly string description;
+    private readonly string[] names;
+    private readonly OptionValueType type;
+    private readonly int count;
     private string[] separators;
 
     protected Option(string prototype, string description)
@@ -403,11 +405,11 @@ namespace NDesk.Options
     protected Option(string prototype, string description, int maxValueCount)
     {
       if (prototype == null)
-        throw new ArgumentNullException("prototype");
+        throw new ArgumentNullException(nameof(prototype));
       if (prototype.Length == 0)
-        throw new ArgumentException("Cannot be the empty string.", "prototype");
+        throw new ArgumentException("Cannot be the empty string.", nameof(prototype));
       if (maxValueCount < 0)
-        throw new ArgumentOutOfRangeException("maxValueCount");
+        throw new ArgumentOutOfRangeException(nameof(maxValueCount));
 
       this.prototype = prototype;
       this.names = prototype.Split('|');
@@ -419,17 +421,17 @@ namespace NDesk.Options
         throw new ArgumentException(
             "Cannot provide maxValueCount of 0 for OptionValueType.Required or " +
               "OptionValueType.Optional.",
-            "maxValueCount");
+            nameof(maxValueCount));
       if (this.type == OptionValueType.None && maxValueCount > 1)
         throw new ArgumentException(
             string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
-            "maxValueCount");
+            nameof(maxValueCount));
       if (Array.IndexOf(names, "<>") >= 0 &&
           ((names.Length == 1 && this.type != OptionValueType.None) ||
            (names.Length > 1 && this.MaxValueCount > 1)))
         throw new ArgumentException(
             "The default option handler '<>' cannot require values.",
-            "prototype");
+            nameof(prototype));
     }
 
     public string Prototype
@@ -452,14 +454,14 @@ namespace NDesk.Options
     public string[] GetValueSeparators()
     {
       if (separators == null)
-        return new string[0];
+        return Array.Empty<string>();
       return (string[])separators.Clone();
     }
 
     protected static T Parse<T>(string value, OptionContext c)
     {
       TypeConverter conv = TypeDescriptor.GetConverter(typeof(T));
-      T t = default(T);
+      T t = default;
       try
       {
         if (value != null)
@@ -468,7 +470,7 @@ namespace NDesk.Options
       catch (Exception e)
       {
         throw new OptionException(
-            string.Format(
+            string.Format(CultureInfo.InvariantCulture,
               c.OptionSet.MessageLocalizer("Could not convert string `{0}' to type {1} for option `{2}'."),
               value, typeof(T).Name, c.OptionName),
             c.OptionName, e);
@@ -484,6 +486,7 @@ namespace NDesk.Options
 
     private static readonly char[] NameTerminator = new char[] { '=', ':' };
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly",
      Justification = "refers to user-level name (no parameters)")]
     private OptionValueType ParsePrototype()
@@ -586,7 +589,7 @@ namespace NDesk.Options
   [Serializable]
   public class OptionException : Exception
   {
-    private string option;
+    private readonly string option;
 
     public OptionException()
     {
@@ -637,7 +640,7 @@ namespace NDesk.Options
       this.localizer = localizer;
     }
 
-    private Converter<string, string> localizer;
+    private readonly Converter<string, string> localizer;
 
     public Converter<string, string> MessageLocalizer
     {
@@ -661,7 +664,7 @@ namespace NDesk.Options
     protected Option GetOptionForName(string option)
     {
       if (option == null)
-        throw new ArgumentNullException("option");
+        throw new ArgumentNullException(nameof(option));
       try
       {
         return base[option];
@@ -699,7 +702,7 @@ namespace NDesk.Options
     private void AddImpl(Option option)
     {
       if (option == null)
-        throw new ArgumentNullException("option");
+        throw new ArgumentNullException(nameof(option));
       List<string> added = new List<string>(option.Names.Length);
       try
       {
@@ -726,14 +729,12 @@ namespace NDesk.Options
 
     private sealed class ActionOption : Option
     {
-      private Action<OptionValueCollection> action;
+      private readonly Action<OptionValueCollection> action;
 
       public ActionOption(string prototype, string description, int count, Action<OptionValueCollection> action)
         : base(prototype, description, count)
       {
-        if (action == null)
-          throw new ArgumentNullException("action");
-        this.action = action;
+        this.action = action ?? throw new ArgumentNullException(nameof(action));
       }
 
       protected override void OnParseComplete(OptionContext c)
@@ -750,7 +751,7 @@ namespace NDesk.Options
     public OptionSet Add(string prototype, string description, Action<string> action)
     {
       if (action == null)
-        throw new ArgumentNullException("action");
+        throw new ArgumentNullException(nameof(action));
       Option p = new ActionOption(prototype, description, 1,
           delegate (OptionValueCollection v) { action(v[0]); });
       base.Add(p);
@@ -765,7 +766,7 @@ namespace NDesk.Options
     public OptionSet Add(string prototype, string description, OptionAction<string, string> action)
     {
       if (action == null)
-        throw new ArgumentNullException("action");
+        throw new ArgumentNullException(nameof(action));
       Option p = new ActionOption(prototype, description, 2,
           delegate (OptionValueCollection v) { action(v[0], v[1]); });
       base.Add(p);
@@ -774,14 +775,12 @@ namespace NDesk.Options
 
     private sealed class ActionOption<T> : Option
     {
-      private Action<T> action;
+      private readonly Action<T> action;
 
       public ActionOption(string prototype, string description, Action<T> action)
         : base(prototype, description, 1)
       {
-        if (action == null)
-          throw new ArgumentNullException("action");
-        this.action = action;
+        this.action = action ?? throw new ArgumentNullException(nameof(action));
       }
 
       protected override void OnParseComplete(OptionContext c)
@@ -792,14 +791,12 @@ namespace NDesk.Options
 
     private sealed class ActionOption<TKey, TValue> : Option
     {
-      private OptionAction<TKey, TValue> action;
+      private readonly OptionAction<TKey, TValue> action;
 
       public ActionOption(string prototype, string description, OptionAction<TKey, TValue> action)
         : base(prototype, description, 2)
       {
-        if (action == null)
-          throw new ArgumentNullException("action");
-        this.action = action;
+        this.action = action ?? throw new ArgumentNullException(nameof(action));
       }
 
       protected override void OnParseComplete(OptionContext c)
@@ -914,7 +911,7 @@ namespace NDesk.Options
     protected bool GetOptionParts(string argument, out string flag, out string name, out string sep, out string value)
     {
       if (argument == null)
-        throw new ArgumentNullException("argument");
+        throw new ArgumentNullException(nameof(argument));
 
       flag = name = sep = value = null;
       Match m = ValueOption.Match(argument);
@@ -940,8 +937,7 @@ namespace NDesk.Options
         return true;
       }
 
-      string f, n, s, v;
-      if (!GetOptionParts(argument, out f, out n, out s, out v))
+      if (!GetOptionParts(argument, out string f, out string n, out string s, out string v))
         return false;
 
       Option p;
@@ -1169,7 +1165,7 @@ namespace NDesk.Options
         do
         {
           start = description.IndexOf(nameStart[i], j);
-        } while (start >= 0 && j != 0 ? description[j++ - 1] == '{' : false);
+        } while (start >= 0 && j != 0 && description[j++ - 1] == '{');
         if (start == -1)
           continue;
         int end = description.IndexOf("}", start);
@@ -1206,11 +1202,13 @@ namespace NDesk.Options
               if ((i + 1) == description.Length || description[i + 1] != '}')
                 throw new InvalidOperationException("Invalid option description: " + description);
               ++i;
-              sb.Append("}");
+              sb.Append('}');
             }
             else
             {
+#pragma warning disable CA1846 // Prefer 'AsSpan' over 'Substring'
               sb.Append(description.Substring(start, i - start));
+#pragma warning restore CA1846 // Prefer 'AsSpan' over 'Substring'
               start = -1;
             }
             break;

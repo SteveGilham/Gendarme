@@ -96,7 +96,7 @@ namespace Gendarme.Rules.Naming
       };
     }
 
-    private readonly static TypeName macro = new TypeName
+    private static readonly TypeName macro = new TypeName
     {
       Namespace = "Boo.Lang.Compiler.Ast",
       Name = "MacroStatement"
@@ -178,7 +178,7 @@ namespace Gendarme.Rules.Naming
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedCode() ||
-                method.DeclaringType.Name.Contains("@"))
+                method.DeclaringType.Name.Contains("@", StringComparison.Ordinal))
         return RuleResult.DoesNotApply;
 
       MethodDefinition baseMethod = null;

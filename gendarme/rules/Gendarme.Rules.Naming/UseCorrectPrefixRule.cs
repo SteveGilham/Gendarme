@@ -36,125 +36,135 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Naming {
+namespace Gendarme.Rules.Naming
+{
+  // TODO: It would be nice to replace the C check with a more general hungarian name
+  // rule.
 
-	// TODO: It would be nice to replace the C check with a more general hungarian name
-	// rule.
+  /// <summary>
+  /// This rule ensures that types are prefixed correctly. Interfaces should always be prefixed
+  /// with a <c>I</c>, types should never be prefixed with a <c>C</c> (reminder for MFC folks)
+  /// and generic parameters should be a single, uppercased letter or be prefixed with <c>T</c>.
+  /// </summary>
+  /// <example>
+  /// Bad examples:
+  /// <code>
+  /// public interface Phone {
+  ///	// ...
+  /// }
+  ///
+  /// public class CPhone : Phone {
+  ///	// ...
+  /// }
+  ///
+  /// public class Call&lt;Mechanism&gt; {
+  ///	// ...
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good examples:
+  /// <code>
+  /// public interface IPhone {
+  ///	// ...
+  /// }
+  ///
+  /// public class Phone : IPhone {
+  ///	// ...
+  /// }
+  ///
+  /// public class Call&lt;TMechanism&gt; {
+  ///	// ...
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule ensures that types are prefixed correctly. Interfaces should always be prefixed
-	/// with a <c>I</c>, types should never be prefixed with a <c>C</c> (reminder for MFC folks)
-	/// and generic parameters should be a single, uppercased letter or be prefixed with <c>T</c>.
-	/// </summary>
-	/// <example>
-	/// Bad examples:
-	/// <code>
-	/// public interface Phone {
-	///	// ...
-	/// }
-	/// 
-	/// public class CPhone : Phone {
-	///	// ...
-	/// }
-	/// 
-	/// public class Call&lt;Mechanism&gt; {
-	///	// ...
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good examples:
-	/// <code>
-	/// public interface IPhone {
-	///	// ...
-	/// }
-	/// 
-	/// public class Phone : IPhone {
-	///	// ...
-	/// }
-	/// 
-	/// public class Call&lt;TMechanism&gt; {
-	///	// ...
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This type starts with an incorrect prefix or does not start with the required one. All interface names should start with the 'I' letter, followed by another capital letter. All other type names should not have any specific prefix.")]
+  [Solution("Rename the type to have the correct prefix.")]
+  [FxCopCompatibility("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+  [FxCopCompatibility("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+  public class UseCorrectPrefixRule : Rule, ITypeRule
+  {
+    private static bool IsCorrectTypeName(string name)
+    {
+      if (name.Length < 3)
+        return true;
 
-	[Problem ("This type starts with an incorrect prefix or does not start with the required one. All interface names should start with the 'I' letter, followed by another capital letter. All other type names should not have any specific prefix.")]
-	[Solution ("Rename the type to have the correct prefix.")]
-	[FxCopCompatibility ("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-	[FxCopCompatibility ("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-	public class UseCorrectPrefixRule : Rule, ITypeRule {
+      switch (name[0])
+      {
+        case 'C': // MFC like CMyClass should fail - but works for CLSCompliant
+        case 'I': // interface-like - Classes beginning with In or Is etc should pass, e.g. InMemoryDoohicky
+          return Char.IsLower(name[1]) || Char.IsUpper(name[2]);
 
-		private static bool IsCorrectTypeName (string name)
-		{
-			if (name.Length < 3)
-				return true;
+        default:
+          return true;
+      }
+    }
 
-			switch (name [0]) {
-			case 'C':	// MFC like CMyClass should fail - but works for CLSCompliant
-			case 'I':	// interface-like - Classes beginning with In or Is etc should pass, e.g. InMemoryDoohicky
-				return Char.IsLower (name [1]) ? true : Char.IsUpper (name [2]);
-			default:
-				return true;
-			}
-		}
+    private static bool IsCorrectInterfaceName(string name)
+    {
+      if (name.Length < 3)
+        return false;
+      return ((name[0] == 'I') && Char.IsUpper(name[1]));
+    }
 
-		private static bool IsCorrectInterfaceName (string name)
-		{
-			if (name.Length < 3)
-				return false;
-			return ((name [0] == 'I') && Char.IsUpper (name [1]));
-		}
+    private static bool IsNotCorrectGenericParameterName(string name, bool fsharp)
+    {
+      if (fsharp && name.Length == 1 && Char.IsLower(name[0]))
+        return false;
+      return (((name.Length > 1) && (name[0] != 'T')) || Char.IsLower(name[0]));
+    }
 
-		private static bool IsNotCorrectGenericParameterName (string name, bool fsharp)
-		{
-            if (fsharp && name.Length == 1 && Char.IsLower(name[0]))
-                return false;
-            return (((name.Length > 1) && (name[0] != 'T')) || Char.IsLower(name[0]));
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.IsGeneratedCode())
+        return RuleResult.DoesNotApply;
+
+      string name = type.Name;
+      if (type.IsInterface)
+      {
+        // interfaces should look like 'ISomething'
+        if (!IsCorrectInterfaceName(name))
+        {
+          string s = String.Format(CultureInfo.InvariantCulture,
+            "The '{0}' interface name doesn't have the required 'I' prefix. Acoording to existing naming conventions, all interface names should begin with the 'I' letter followed by another capital letter.",
+            name);
+          Runner.Report(type, Severity.Critical, Confidence.High, s);
         }
+      }
+      else
+      {
+        // class should _not_ look like 'CSomething" or like an interface 'IOops'
+        if (!name.Contains("@", StringComparison.Ordinal) && !IsCorrectTypeName(name))
+        {
+          string s = String.Format(CultureInfo.InvariantCulture,
+            "The '{0}' type name starts with '{1}' prefix but, according to existing naming conventions, type names should not have any specific prefix.",
+            name, name[0]);
+          Runner.Report(type, Severity.Medium, Confidence.High, s);
+        }
+      }
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (type.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
+      if (type.HasGenericParameters)
+      {
+        var fsharp = type.IsFSharpType();
 
-			string name = type.Name;
-			if (type.IsInterface) {
-				// interfaces should look like 'ISomething'
-				if (!IsCorrectInterfaceName (name)) { 
-					string s = String.Format (CultureInfo.InvariantCulture,
-						"The '{0}' interface name doesn't have the required 'I' prefix. Acoording to existing naming conventions, all interface names should begin with the 'I' letter followed by another capital letter.", 
-						name);
-					Runner.Report (type, Severity.Critical, Confidence.High, s);
-				}
-			} else {
-				// class should _not_ look like 'CSomething" or like an interface 'IOops'
-				if (!name.Contains("@") && !IsCorrectTypeName (name)) { 
-					string s = String.Format (CultureInfo.InvariantCulture,
-						"The '{0}' type name starts with '{1}' prefix but, according to existing naming conventions, type names should not have any specific prefix.", 
-						name, name [0]);
-					Runner.Report (type, Severity.Medium, Confidence.High, s);
-				}
-			}
+        // check generic parameters. They are commonly a single letter T, V, K (ok)
+        // but if they are longer (than one char) they should start with a 'T'
+        // e.g. EventHandler<TEventArgs>
+        foreach (GenericParameter parameter in type.GenericParameters)
+        {
+          string param_name = parameter.Name;
+          if (IsNotCorrectGenericParameterName(param_name, fsharp))
+          {
+            string s = String.Format(CultureInfo.InvariantCulture,
+              "The generic parameter '{0}' should be prefixed with 'T' or be a single, uppercased letter.",
+              param_name);
+            Runner.Report(type, Severity.High, Confidence.High, s);
+          }
+        }
+      }
 
-			if (type.HasGenericParameters) {
-                var fsharp = type.IsFSharpType();
-
-				// check generic parameters. They are commonly a single letter T, V, K (ok)
-				// but if they are longer (than one char) they should start with a 'T'
-				// e.g. EventHandler<TEventArgs>
-				foreach (GenericParameter parameter in type.GenericParameters) {
-					string param_name = parameter.Name;
-					if (IsNotCorrectGenericParameterName (param_name, fsharp)) {
-						string s = String.Format (CultureInfo.InvariantCulture,
-							"The generic parameter '{0}' should be prefixed with 'T' or be a single, uppercased letter.", 
-							param_name);
-						Runner.Report (type, Severity.High, Confidence.High, s);
-					}
-				}
-			}
-			
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

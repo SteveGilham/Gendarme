@@ -3,7 +3,7 @@
 //
 // Authors:
 //	N Lum <nol888@gmail.com>
-// 
+//
 // Copyright (C) 2010 N Lum
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,97 +36,101 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Maintainability {
+namespace Gendarme.Rules.Maintainability
+{
+  /// <summary>
+  /// This rule checks for local variables or parameters whose names match (case sensitive) an instance field name.
+  /// Note that variable names can only be verified when debugging symbols (pdb or mdb) are available.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  ///	public class Bad {
+  ///		public int value;
+  ///
+  ///		public void DoSomething (int value)
+  ///		{
+  ///			// without 'this.' the field will never be set
+  ///			this.value = value;
+  ///		}
+  ///	}
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  ///	public class Good {
+  ///		public int value;
+  ///
+  ///		public void DoSomething (int integralValue)
+  ///		{
+  ///			value = integralValue;
+  ///		}
+  ///	}
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule checks for local variables or parameters whose names match (case sensitive) an instance field name.
-	/// Note that variable names can only be verified when debugging symbols (pdb or mdb) are available.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	///	public class Bad {
-	///		public int value;
-	///
-	///		public void DoSomething (int value)
-	///		{
-	///			// without 'this.' the field will never be set
-	///			this.value = value;
-	///		}
-	///	}
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	///	public class Good {
-	///		public int value;
-	///
-	///		public void DoSomething (int integralValue)
-	///		{
-	///			value = integralValue;
-	///		}
-	///	}
-	/// </code>
-	/// </example>
+  [Problem("An instance method declares a parameter or a local variable whose name matches an instance field of the declaring type.")]
+  [Solution("Rename the variable/parameter or the field.")]
+  [FxCopCompatibility("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames")]
+  public class VariableNamesShouldNotMatchFieldNamesRule : Rule, ITypeRule
+  {
+    // Storing all field names in a hashset provides quicker .Contains(), and saves time
+    // in the long run.
+    private readonly HashSet<string> fields;
 
-	[Problem ("An instance method declares a parameter or a local variable whose name matches an instance field of the declaring type.")]
-	[Solution ("Rename the variable/parameter or the field.")]
-	[FxCopCompatibility ("Microsoft.Maintainability", "CA1500:VariableNamesShouldNotMatchFieldNames")]
-	public class VariableNamesShouldNotMatchFieldNamesRule : Rule, ITypeRule {
+    public VariableNamesShouldNotMatchFieldNamesRule()
+    {
+      fields = new HashSet<string>();
+    }
 
-		// Storing all field names in a hashset provides quicker .Contains(), and saves time
-		// in the long run.
-		HashSet<string> fields;
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // We only like types with fields AND methods.
+      if (!type.HasFields || !type.HasMethods || type.IsGeneratedCode() ||
+                 type.Name.Contains("@", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
 
-		public VariableNamesShouldNotMatchFieldNamesRule ()
-		{
-			fields = new HashSet<string> ();
-		}
+      fields.Clear();
+      foreach (FieldDefinition field in type.Fields.Where(f =>
+                      !f.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>()))
+        fields.Add(field.Name);
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// We only like types with fields AND methods.
-			if (!type.HasFields || !type.HasMethods || type.IsGeneratedCode () ||
-                 type.Name.Contains("@"))
-				return RuleResult.DoesNotApply;
+      // Iterate through all the methods. Check parameter names then method bodies.
+      foreach (MethodDefinition method in type.Methods)
+      {
+        // skip compiler generated method
+        if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+          continue;
+        if (method.HasParameters)
+        {
+          foreach (ParameterDefinition param in method.Parameters)
+          {
+            if (fields.Contains(param.Name))
+              Runner.Report(param, Severity.Medium, Confidence.Total);
+          }
+        }
 
-			fields.Clear ();
-            foreach (FieldDefinition field in type.Fields.Where(f => 
-                            !f.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>()))
-				fields.Add (field.Name);
+        // Method bodies w/o variables don't interest me.
+        if (!method.HasBody)
+          continue;
 
-			// Iterate through all the methods. Check parameter names then method bodies.
-			foreach (MethodDefinition method in type.Methods) {
-                // skip compiler generated method
-                if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
-                    continue;
-				if (method.HasParameters) {
-					foreach (ParameterDefinition param in method.Parameters) {
-						if (fields.Contains (param.Name))
-							Runner.Report (param, Severity.Medium, Confidence.Total);
-					}
-				}
+        MethodBody body = method.Body;
+        if (body.HasVariables)
+        {
+          // Iterate through all variables in the method body.
+          foreach (VariableDefinition var in body.Variables)
+          {
+            // if the name is compiler generated or if we do not have debugging symbols...
+            if (var.IsGeneratedName(method.DebugInformation))
+              continue;
+            if (fields.Contains(var.MaybeGetName(method)))
+              Runner.Report(method, Severity.Medium, Confidence.Normal, var.MaybeGetName(method));
+          }
+        }
+      }
 
-				// Method bodies w/o variables don't interest me.
-				if (!method.HasBody)
-					continue;
-
-				MethodBody body = method.Body;
-				if (body.HasVariables) {
-					// Iterate through all variables in the method body.
-					foreach (VariableDefinition var in body.Variables) {
-						// if the name is compiler generated or if we do not have debugging symbols...
-						if (var.IsGeneratedName (method.DebugInformation))
-							continue;
-						if (fields.Contains (var.MaybeGetName(method)))
-                            Runner.Report(method, Severity.Medium, Confidence.Normal, var.MaybeGetName(method));
-					}
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

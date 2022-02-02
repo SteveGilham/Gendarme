@@ -64,7 +64,6 @@
     <rules include="*"
            from="Gendarme.Rules.Gendarme.dll" />
     <rules include="*"
-           exclude="PreferIFormatProviderOverrideRule | PreferStringComparisonOverrideRule"
            from="Gendarme.Rules.Globalization.dll" />
     <rules include="*"
            from="AltCode.Rules.General.dll" />

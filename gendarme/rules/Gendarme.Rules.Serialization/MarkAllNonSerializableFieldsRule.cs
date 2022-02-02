@@ -143,7 +143,7 @@ namespace Gendarme.Rules.Serialization
   {
     protected override bool Inapplicable(TypeDefinition type)
     {
-      return type.Name.Contains("@");
+      return type.Name.Contains("@", StringComparison.Ordinal);
     }
   }
 }

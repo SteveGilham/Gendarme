@@ -113,11 +113,11 @@ namespace Gendarme.Rules.Portability
         return null;
 
       // file paths don't contain //
-      if (str.Contains("//"))
+      if (str.Contains("//", StringComparison.Ordinal))
         return null;
 
       // don't check XML strings
-      if (str.Contains("</") || str.Contains("/>"))
+      if (str.Contains("</", StringComparison.Ordinal) || str.Contains("/>", StringComparison.Ordinal))
         return null;
 
       // files paths don't usually have more than one dot (in extension)

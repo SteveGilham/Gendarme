@@ -89,7 +89,7 @@ namespace Gendarme.Rules.Smells
       }
     }
 
-    private List<FieldDefinition> fields = new List<FieldDefinition>();
+    private readonly List<FieldDefinition> fields = new List<FieldDefinition>();
 
     private int GetNonConstantFieldsCount(TypeDefinition type)
     {
@@ -105,8 +105,8 @@ namespace Gendarme.Rules.Smells
           continue;
 
         // Treat F# function fields in closures as members
-        if (type.Name.Contains("@") &&
-            field.FieldType.Namespace.Equals("Microsoft.FSharp.Core") &&
+        if (type.Name.Contains("@", StringComparison.Ordinal) &&
+            field.FieldType.Namespace.Equals("Microsoft.FSharp.Core", StringComparison.Ordinal) &&
             (field.FieldType.Name.Equals("FSharpFunc`2", StringComparison.Ordinal)) ||
              field.FieldType.Name.Equals("FSharpTypeFunc", StringComparison.Ordinal))
           continue;
@@ -135,14 +135,14 @@ namespace Gendarme.Rules.Smells
     {
       foreach (char character in value)
         if (predicate(character))
-          return value.IndexOf(character);
+          return value.IndexOf(character, StringComparison.Ordinal);
       return -1;
     }
 
     private static int GetIndexOfFirstDash(string value)
     {
       bool valueTruncated = false;
-      if (value.IndexOf('_') == 1)
+      if (value.IndexOf('_', StringComparison.Ordinal) == 1)
       {
         value = value.Substring(2, value.Length - 2);
         valueTruncated = true;
@@ -151,7 +151,7 @@ namespace Gendarme.Rules.Smells
       foreach (char character in value)
       {
         if (character.Equals('_'))
-          return value.IndexOf(character) + (valueTruncated ? 2 : 0);
+          return value.IndexOf(character, StringComparison.Ordinal) + (valueTruncated ? 2 : 0);
       }
       return -1;
     }

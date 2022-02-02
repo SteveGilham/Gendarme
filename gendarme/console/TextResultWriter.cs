@@ -36,8 +36,11 @@ using System.Linq;
 using Mono.Cecil;
 
 using Gendarme.Framework;
+using Gendarme.Framework.Rocks;
 
+#pragma warning disable IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
 [assembly: SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Scope = "member", Target = "Gendarme.TextResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)", Justification = "work in progress")]
+#pragma warning restore IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
 
 namespace Gendarme
 {
@@ -51,8 +54,8 @@ namespace Gendarme
       Dark
     }
 
-    private TextWriter writer;
-    private ColorScheme color_scheme;
+    private readonly TextWriter writer;
+    private readonly ColorScheme color_scheme;
 
     public TextResultWriter(IRunner runner, string fileName)
       : base(runner, fileName)
@@ -183,7 +186,7 @@ namespace Gendarme
 
       var targetName = target.ToString();
       if (target is MethodReference)
-        targetName = targetName.Substring(targetName.IndexOf(' ')).Trim();
+        targetName = targetName.Substring(targetName.IndexOf(' ', StringComparison.Ordinal)).Trim();
 
       writer.WriteLine("                            Target = \"{0}\",", targetName);
       writer.WriteLine("                            Justification = \"\")>]");

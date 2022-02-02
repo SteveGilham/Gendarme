@@ -208,7 +208,7 @@ namespace Gendarme.Rules.Naming
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule does not apply to generated code (outside developer's control)
-      if (type.IsGeneratedCode() || type.Name.Contains("@"))
+      if (type.IsGeneratedCode() || type.Name.Contains("@", StringComparison.Ordinal))
         return RuleResult.DoesNotApply;
 
       // Debugger related methods in F# with just a [CompilerGenerated] constructor
@@ -226,7 +226,7 @@ namespace Gendarme.Rules.Naming
       return Runner.CurrentRuleResult;
     }
 
-    private readonly static MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
+    private static readonly MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
       MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
 
     public RuleResult CheckMethod(MethodDefinition method)
@@ -256,7 +256,7 @@ namespace Gendarme.Rules.Naming
       // extension methods
       if (fsharp && method.HasParameters)
       {
-        var dot = name.IndexOf('.');
+        var dot = name.IndexOf('.', StringComparison.Ordinal);
         var isExtension = dot > 0;
         if (isExtension)
         {
@@ -275,7 +275,7 @@ namespace Gendarme.Rules.Naming
       if ((attrs & mask) != 0)
       {
         // it's something special
-        int underscore = name.IndexOf('_');
+        int underscore = name.IndexOf('_', StringComparison.Ordinal);
         if (underscore != -1)
           name = name.Substring(underscore + 1);
       }

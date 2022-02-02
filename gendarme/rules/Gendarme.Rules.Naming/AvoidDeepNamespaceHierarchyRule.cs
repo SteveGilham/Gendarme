@@ -34,6 +34,7 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
+using System.Globalization;
 
 namespace Gendarme.Rules.Naming
 {
@@ -169,7 +170,8 @@ namespace Gendarme.Rules.Naming
     {
       get
       {
-        return string.Format("Try to keep the depth below {0}, with an additional one for specialization (e.g. Design, Interop, Permissions).", MaxDepth);
+        return string.Format(CultureInfo.InvariantCulture,
+          "Try to keep the depth below {0}, with an additional one for specialization (e.g. Design, Interop, Permissions).", MaxDepth);
       }
     }
   }

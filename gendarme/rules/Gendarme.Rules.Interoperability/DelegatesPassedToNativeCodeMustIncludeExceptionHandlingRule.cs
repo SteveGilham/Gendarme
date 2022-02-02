@@ -693,7 +693,8 @@ namespace Gendarme.Rules.Interoperability
       if (instr == null)
         return "<nil>";
 
-      return string.Format("IL_{0} {1} {2}", instr.Offset, instr.OpCode.Name, instr.Operand);
+      return string.Format(CultureInfo.InvariantCulture,
+        "IL_{0} {1} {2}", instr.Offset, instr.OpCode.Name, instr.Operand);
     }
 
     public static int GetOffset(this Instruction instr)

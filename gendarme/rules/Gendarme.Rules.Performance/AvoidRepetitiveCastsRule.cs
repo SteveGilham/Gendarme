@@ -105,7 +105,7 @@ namespace Gendarme.Rules.Performance
   [FxCopCompatibility("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily")]
   public class AvoidRepetitiveCastsRule : Rule, IMethodRule
   {
-    private List<Instruction> casts = new List<Instruction>();
+    private readonly List<Instruction> casts = new List<Instruction>();
 
     private static Instruction GetOrigin(Instruction ins)
     {
@@ -126,10 +126,7 @@ namespace Gendarme.Rules.Performance
 
     private static bool LocalsMatch(object operand1, object operand2)
     {
-      VariableReference v1 = operand1 as VariableReference;
-      VariableReference v2 = operand2 as VariableReference;
-
-      if (v1 != null && v2 != null)
+      if (operand1 is VariableReference v1 && operand2 is VariableReference v2)
         return v1.Index == v2.Index;
       else if (operand1 != null)
         return operand1.Equals(operand2);
@@ -259,7 +256,7 @@ namespace Gendarme.Rules.Performance
       return count;
     }
 
-    private static OpCodeBitmask Casts = new OpCodeBitmask(0x0, 0x18000000000000, 0x0, 0x0);
+    private static readonly OpCodeBitmask Casts = new OpCodeBitmask(0x0, 0x18000000000000, 0x0, 0x0);
 
     public RuleResult CheckMethod(MethodDefinition method)
     {
@@ -305,7 +302,7 @@ namespace Gendarme.Rules.Performance
           var take = true;
           if (method.IsFSharpCode())
           {
-            take = !name.ToString().StartsWith("V_"); // compiler generated variable
+            take = !name.ToString().StartsWith("V_", StringComparison.Ordinal); // compiler generated variable
           }
 
           if (take)

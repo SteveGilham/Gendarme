@@ -390,7 +390,7 @@ namespace Gendarme.Framework.Rocks
       var def = (self is TypeDefinition) ? (self as TypeDefinition) : self.Resolve();
 
       return def != null &&
-             (def.Name.Contains("@")
+             (def.Name.Contains("@", StringComparison.Ordinal)
               || def.HasAttribute(compilationMapping));
     }
 
@@ -452,7 +452,7 @@ namespace Gendarme.Framework.Rocks
       {
         // Hopefully not a common case
         var fn = self.FullName;
-        var index = fn.LastIndexOf(".");
+        var index = fn.LastIndexOf(".", StringComparison.Ordinal);
         if (index < 0)
           return new TypeName
           {

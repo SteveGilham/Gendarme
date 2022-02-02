@@ -102,7 +102,7 @@ namespace Gendarme.Rules.Naming
     // so we just need to check the presence of underscore in method names
     private static bool CheckName(string name, bool special)
     {
-      int start = special ? name.IndexOf('_') + 1 : 0;
+      int start = special ? name.IndexOf('_', StringComparison.Ordinal) + 1 : 0;
       return (name.IndexOf('_', start) == -1);
     }
 
@@ -112,13 +112,13 @@ namespace Gendarme.Rules.Naming
         type.HasAttribute(ita));
     }
 
-    private readonly static TypeName ga = new TypeName
+    private static readonly TypeName ga = new TypeName
     {
       Namespace = "System.Runtime.InteropServices",
       Name = "GuidAttribute"
     };
 
-    private readonly static TypeName ita = new TypeName
+    private static readonly TypeName ita = new TypeName
     {
       Namespace = "System.Runtime.InteropServices",
       Name = "InterfaceTypeAttribute"
@@ -195,7 +195,7 @@ namespace Gendarme.Rules.Naming
       var name = method.Name;
       if (eh)
       {
-        var chop = name.IndexOf("_");
+        var chop = name.IndexOf("_", StringComparison.Ordinal);
         name = name.Substring(chop + 1);
       }
       else

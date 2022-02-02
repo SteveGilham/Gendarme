@@ -40,6 +40,7 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Engines;
+using Gendarme.Framework.Rocks;
 
 using NDesk.Options;
 
@@ -266,8 +267,7 @@ namespace Gendarme
 
     private static int ValidateLimit(string limit)
     {
-      int defects_limit;
-      if (String.IsNullOrEmpty(limit) || !Int32.TryParse(limit, out defects_limit))
+      if (String.IsNullOrEmpty(limit) || !Int32.TryParse(limit, out int defects_limit))
       {
         string msg = String.Format(CultureInfo.CurrentCulture, "Invalid value '{0}' to limit defects", limit);
         throw new OptionException(msg, "limit");
@@ -444,6 +444,7 @@ namespace Gendarme
       return (byte)((0 == Defects.Count) ? 0 : 1);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
       Justification = "Top of call tree")]
     private byte Execute(string[] args)
@@ -526,14 +527,14 @@ namespace Gendarme
       Console.WriteLine();
       Console.WriteLine(Strings.UncaughtException);
       if (CurrentRule != null)
-        Console.WriteLine(Strings.Rule.Replace("`t", "\t"), CurrentRule);
+        Console.WriteLine(Strings.Rule.Replace("`t", "\t", StringComparison.Ordinal), CurrentRule);
       if (CurrentTarget != null)
-        Console.WriteLine(Strings.Target.Replace("`t", "\t"), CurrentTarget, CurrentAssembly);
+        Console.WriteLine(Strings.Target.Replace("`t", "\t", StringComparison.Ordinal), CurrentTarget, CurrentAssembly);
       Console.WriteLine(Strings.StackTrace, e);
     }
 
-    private Stopwatch total = new Stopwatch();
-    private Stopwatch local = new Stopwatch();
+    private readonly Stopwatch total = new Stopwatch();
+    private readonly Stopwatch local = new Stopwatch();
 
     private static string TimeToString(TimeSpan time)
     {
@@ -678,7 +679,7 @@ namespace Gendarme
 
     private static void Help()
     {
-      Console.WriteLine(Strings.HelpText.Replace("`t", "\t"));
+      Console.WriteLine(Strings.HelpText.Replace("`t", "\t", StringComparison.Ordinal));
     }
 
     /// <summary>

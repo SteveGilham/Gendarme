@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Design.AbstractTypesShouldNotHavePublicConstructorsRule
 //
 // Authors:
@@ -31,62 +31,64 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule fires if an <c>abstract</c> type has a <c>public</c> constructor. This is
+  /// a bit misleading because the constructor can only be called by the constructor of
+  /// a derived type. To make the type's semantics clearer make the constructor
+  /// <c>protected</c>.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// abstract public class MyClass {
+  ///	public MyClass ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// abstract public class MyClass {
+  ///	protected MyClass ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule fires if an <c>abstract</c> type has a <c>public</c> constructor. This is
-	/// a bit misleading because the constructor can only be called by the constructor of
-	/// a derived type. To make the type's semantics clearer make the constructor
-	/// <c>protected</c>.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// abstract public class MyClass {
-	///	public MyClass ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// abstract public class MyClass {
-	///	protected MyClass ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This abstract type defines public constructor(s).")]
+  [Solution("Change the constructor access to protected.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1012:AbstractTypesShouldNotHaveConstructors")]
+  public class AbstractTypesShouldNotHavePublicConstructorsRule : Rule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule apply only on abstract types
+      if (!type.IsAbstract)
+        return RuleResult.DoesNotApply;
 
-	[Problem ("This abstract type defines public constructor(s).")]
-	[Solution ("Change the constructor access to protected.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1012:AbstractTypesShouldNotHaveConstructors")]
-	public class AbstractTypesShouldNotHavePublicConstructorsRule : Rule, ITypeRule {
+      // Obscure F# closure types -- TODO find a simple case for unit test
+      // may be compiler version dependent
+      // see e.g. AltCover.Cobertura/ProcessMethod@46$contract::.ctor()
+      if (type.Name.EndsWith("$contract", StringComparison.Ordinal) &&
+          type.IsClosureType())
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule apply only on abstract types
-			if (!type.IsAbstract)
-				return RuleResult.DoesNotApply;
+      // rule applies!
 
-            // Obscure F# closure types -- TODO find a simple case for unit test
-            // may be compiler version dependent
-            // see e.g. AltCover.Cobertura/ProcessMethod@46$contract::.ctor()
-            if (type.Name.EndsWith("$contract") &&
-                type.IsClosureType())
-                return RuleResult.DoesNotApply;
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.IsConstructor && method.IsPublic)
+        {
+          Runner.Report(method, Severity.Low, Confidence.Total);
+        }
+      }
 
-			// rule applies!
-
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.IsConstructor && method.IsPublic) {
-					Runner.Report (method, Severity.Low, Confidence.Total);
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }
