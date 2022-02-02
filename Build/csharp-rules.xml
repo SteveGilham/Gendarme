@@ -15,7 +15,7 @@
            from="Gendarme.Rules.Correctness.dll" />
     <!-- AvoidSmallNamespaceRule doesn't account for specialized code -->
     <rules include="*"
-           exclude="AvoidVisibleFieldsRule | AvoidRefAndOutParametersRule | AvoidSmallNamespaceRule"
+           exclude="AvoidSmallNamespaceRule"
            from="Gendarme.Rules.Design.dll" />
     <!-- DoNotExposeNestedGenericSignaturesRule is a rule for morts at best and
          doesn't really make any problems for F# -->

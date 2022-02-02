@@ -41,6 +41,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework.Rocks
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Design",
+                    "AvoidVisibleFieldsRule",
+                    Justification = "It's a POD, there is no implementation")]
   public struct TypeName
   {
     public string Namespace;
