@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Exceptions.DoNotThrowReservedExceptionRule
 //
 // Authors:
@@ -26,64 +26,72 @@
 
 using Mono.Cecil;
 using Gendarme.Framework;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Exceptions {
+namespace Gendarme.Rules.Exceptions
+{
+  /// <summary>
+  /// This rule will fire if an <c>System.ExecutionEngineException</c>, <c>System.IndexOutOfRangeException</c>,
+  /// <c>NullReferenceException</c>, or <c>System.OutOfMemoryException</c> class is
+  /// instantiated. These exceptions are for use by the runtime and should not be thrown by
+  /// user code.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public void Add (object obj)
+  /// {
+  ///	if (obj == null) {
+  ///		throw new NullReferenceException ("obj");
+  ///	}
+  ///	Inner.Add (obj);
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public void Add (object obj)
+  /// {
+  ///	if (obj == null) {
+  ///		throw new ArgumentNullException ("obj");
+  ///	}
+  ///	Inner.Add (obj);
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule will fire if an <c>System.ExecutionEngineException</c>, <c>System.IndexOutOfRangeException</c>,
-	/// <c>NullReferenceException</c>, or <c>System.OutOfMemoryException</c> class is
-	/// instantiated. These exceptions are for use by the runtime and should not be thrown by
-	/// user code.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public void Add (object obj)
-	/// {
-	///	if (obj == null) {
-	///		throw new NullReferenceException ("obj");
-	///	}
-	///	Inner.Add (obj);
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public void Add (object obj)
-	/// {
-	///	if (obj == null) {
-	///		throw new ArgumentNullException ("obj");
-	///	}
-	///	Inner.Add (obj);
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("This method creates an ExecutionEngineException, IndexOutOfRangeException, NullReferenceException, or OutOfMemoryException.")]
+  [Solution("Throw an exception which is not reserved by the runtime.")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	[Problem ("This method creates an ExecutionEngineException, IndexOutOfRangeException, NullReferenceException, or OutOfMemoryException.")]
-	[Solution ("Throw an exception which is not reserved by the runtime.")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
-	public class DoNotThrowReservedExceptionRule : NewExceptionsRule {
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See Base class")]
+  public class DoNotThrowReservedExceptionRule : NewExceptionsRule
+  {
+    protected override bool CheckException(TypeReference type)
+    {
+      if (type == null)
+        return false;
 
-		protected override bool CheckException (TypeReference type)
-		{
-			if (type == null)
-				return false;
+      switch (type.Name)
+      {
+        case "ExecutionEngineException":
+        case "IndexOutOfRangeException":
+        case "NullReferenceException":
+        case "OutOfMemoryException":
+          return (type.Namespace == "System"); // OK
+        default:
+          return false;
+      }
+    }
 
-			switch (type.Name) {
-			case "ExecutionEngineException":
-			case "IndexOutOfRangeException":
-			case "NullReferenceException":
-			case "OutOfMemoryException":
-				return (type.Namespace == "System"); // OK
-			default:
-				return false;
-			}
-		}
-
-		protected override Severity Severity {
-			get { return Severity.High; }
-		}
-	}
+    protected override Severity Severity
+    {
+      get { return Severity.High; }
+    }
+  }
 }

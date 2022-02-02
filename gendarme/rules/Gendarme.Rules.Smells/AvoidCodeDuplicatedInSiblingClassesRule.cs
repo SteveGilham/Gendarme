@@ -32,115 +32,123 @@ using System.Collections.Generic;
 using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Smells {
+namespace Gendarme.Rules.Smells
+{
+  /// <summary>
+  /// This rule looks for code duplicated in sibling subclasses.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class BaseClassWithCodeDuplicated {
+  ///	protected IList list;
+  /// }
+  ///
+  /// public class OverriderClassWithCodeDuplicated : BaseClassWithCodeDuplicated {
+  /// 	public void CodeDuplicated ()
+  /// 	{
+  ///		foreach (int i in list) {
+  ///			Console.WriteLine (i);
+  ///		}
+  /// 		list.Add (1);
+  /// 	}
+  /// }
+  ///
+  /// public class OtherOverriderWithCodeDuplicated : BaseClassWithCodeDuplicated {
+  ///	public void OtherMethod ()
+  ///	{
+  ///		foreach (int i in list) {
+  ///			Console.WriteLine (i);
+  ///		}
+  ///		list.Remove (1);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class BaseClassWithoutCodeDuplicated {
+  ///	protected IList list;
+  ///
+  ///	protected void PrintValuesInList ()
+  ///	{
+  ///		foreach (int i in list) {
+  ///			Console.WriteLine (i);
+  ///		}
+  ///	}
+  /// }
+  ///
+  /// public class OverriderClassWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
+  /// 	public void SomeCode ()
+  ///	{
+  ///		PrintValuesInList ();
+  ///		list.Add (1);
+  ///	}
+  /// }
+  ///
+  /// public class OtherOverriderWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
+  /// 	public void MoreCode ()
+  ///	{
+  ///		PrintValuesInList ();
+  ///		list.Remove (1);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule looks for code duplicated in sibling subclasses.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class BaseClassWithCodeDuplicated {
-	///	protected IList list;
-	/// }
-	///
-	/// public class OverriderClassWithCodeDuplicated : BaseClassWithCodeDuplicated {
-	/// 	public void CodeDuplicated ()
-	/// 	{
-	///		foreach (int i in list) {
-	///			Console.WriteLine (i);
-	///		}
-	/// 		list.Add (1);
-	/// 	}
-	/// }
-	/// 
-	/// public class OtherOverriderWithCodeDuplicated : BaseClassWithCodeDuplicated {
-	///	public void OtherMethod ()
-	///	{
-	///		foreach (int i in list) {
-	///			Console.WriteLine (i);
-	///		}
-	///		list.Remove (1);
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class BaseClassWithoutCodeDuplicated {
-	///	protected IList list;
-	/// 
-	///	protected void PrintValuesInList ()
-	///	{
-	///		foreach (int i in list) {
-	///			Console.WriteLine (i);
-	///		}
-	///	}
-	/// }
-	/// 
-	/// public class OverriderClassWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
-	/// 	public void SomeCode ()
-	///	{
-	///		PrintValuesInList ();
-	///		list.Add (1);
-	///	}
-	/// }
-	/// 
-	/// public class OtherOverriderWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
-	/// 	public void MoreCode ()
-	///	{
-	///		PrintValuesInList ();
-	///		list.Remove (1);
-	///	}
-	/// }	
-	/// </code>
-	/// </example>
+  [Problem("There is similar code in various methods in sibling classes.  Your code will be better if you can unify them.")]
+  [Solution("You can apply the Pull Up Method refactoring.")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See CodeDuplicatedLocator")]
+  public class AvoidCodeDuplicatedInSiblingClassesRule : Rule, ITypeRule
+  {
+    private readonly CodeDuplicatedLocator codeDuplicatedLocator;
+    private readonly List<TypeDefinition> siblingClasses;
 
-	[Problem ("There is similar code in various methods in sibling classes.  Your code will be better if you can unify them.")]
-	[Solution ("You can apply the Pull Up Method refactoring.")]
-	public class AvoidCodeDuplicatedInSiblingClassesRule : Rule, ITypeRule {
+    public AvoidCodeDuplicatedInSiblingClassesRule()
+    {
+      codeDuplicatedLocator = new CodeDuplicatedLocator(this, DetectionMode.Classic);
+      siblingClasses = new List<TypeDefinition>();
+    }
 
-		private CodeDuplicatedLocator codeDuplicatedLocator;
-		private List<TypeDefinition> siblingClasses;
+    private void FindCodeDuplicated(TypeDefinition type)
+    {
+      foreach (MethodDefinition method in type.Methods)
+        foreach (TypeDefinition sibling in siblingClasses)
+          codeDuplicatedLocator.CompareMethodAgainstTypeMethods(method, sibling);
+    }
 
-		public AvoidCodeDuplicatedInSiblingClassesRule ()
-		{
-			codeDuplicatedLocator = new CodeDuplicatedLocator (this, DetectionMode.Classic);
-			siblingClasses = new List<TypeDefinition> ();
-		}
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // don't analyze cases where no methods (or body) are available
+      if (type.IsEnum || type.IsInterface)
+        return RuleResult.DoesNotApply;
 
-		private void FindCodeDuplicated (TypeDefinition type)
-		{
-			foreach (MethodDefinition method in type.Methods)
-				foreach (TypeDefinition sibling in siblingClasses)
-					codeDuplicatedLocator.CompareMethodAgainstTypeMethods (method, sibling);
-		}
+      foreach (TypeDefinition module_type in type.Module.GetAllTypes())
+      {
+        if ((module_type.BaseType != null) && module_type.BaseType.Equals(type))
+          siblingClasses.Add(module_type);
+      }
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// don't analyze cases where no methods (or body) are available
-			if (type.IsEnum || type.IsInterface)
-				return RuleResult.DoesNotApply;
+      if (siblingClasses.Count >= 2)
+      {
+        codeDuplicatedLocator.Clear();
 
-			foreach (TypeDefinition module_type in type.Module.GetAllTypes ()) {
-				if ((module_type.BaseType != null) && module_type.BaseType.Equals (type))
-					siblingClasses.Add (module_type);
-			}
+        foreach (TypeDefinition sibling in siblingClasses)
+        {
+          FindCodeDuplicated(sibling);
+          codeDuplicatedLocator.CheckedTypes.AddIfNew(sibling.Name);
+        }
+      }
 
-			if (siblingClasses.Count >= 2) {
-				codeDuplicatedLocator.Clear ();
+      siblingClasses.Clear();
 
-				foreach (TypeDefinition sibling in siblingClasses) {
-					FindCodeDuplicated (sibling);
-					codeDuplicatedLocator.CheckedTypes.AddIfNew (sibling.Name);
-				}
-			}
-
-			siblingClasses.Clear ();
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

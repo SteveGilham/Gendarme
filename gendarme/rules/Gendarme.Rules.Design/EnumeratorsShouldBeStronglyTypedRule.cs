@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.EnumeratorsShouldBeStronglyTypedRule
 //
 // Authors:
@@ -33,93 +33,104 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule checks that types which implements <c>System.Collections.IEnumerator</c> interface
+  /// have strongly typed version of the IEnumerator.Current property.
+  /// This is needed to avoid casting every time this property is used.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// class Bad : IEnumerator {
+  ///	object Current
+  ///	{
+  ///		get { return current; }
+  ///	}
+  ///	// other IEnumerator members
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class Good : IEnumerator {
+  ///	object IEnumerator.Current
+  ///	{
+  ///		get { return current; }
+  ///	}
+  ///	public Exception Current
+  ///	{
+  ///		get { return (Exception)current; }
+  ///	}
+  ///	// other IEnumerator members
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>
+  /// Types inheriting from <c>System.Collections.CollectionBase</c>, <c>System.Collections.DictionaryBase</c>
+  /// or <c>System.Collections.ReadOnlyCollectionBase</c> are exceptions to this rule.</remarks>
 
-	/// <summary>
-	/// This rule checks that types which implements <c>System.Collections.IEnumerator</c> interface
-	/// have strongly typed version of the IEnumerator.Current property.
-	/// This is needed to avoid casting every time this property is used.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// class Bad : IEnumerator {
-	///	object Current
-	///	{
-	///		get { return current; }
-	///	}
-	///	// other IEnumerator members
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class Good : IEnumerator {
-	///	object IEnumerator.Current
-	///	{
-	///		get { return current; }
-	///	}
-	///	public Exception Current
-	///	{
-	///		get { return (Exception)current; }
-	///	}
-	///	// other IEnumerator members
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>
-	/// Types inheriting from <c>System.Collections.CollectionBase</c>, <c>System.Collections.DictionaryBase</c> 
-	/// or <c>System.Collections.ReadOnlyCollectionBase</c> are exceptions to this rule.</remarks>
+  [Problem("Types that implement IEnumerator interface should have strongly typed version of IEnumerator.Current property")]
+  [Solution("Explicitly implement IEnumerator.Current and add strongly typed alternative to it")]
+  [FxCopCompatibility("Microsoft.Design", "CA1038:EnumeratorsShouldBeStronglyTyped")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	[Problem ("Types that implement IEnumerator interface should have strongly typed version of IEnumerator.Current property")]
-	[Solution ("Explicitly implement IEnumerator.Current and add strongly typed alternative to it")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1038:EnumeratorsShouldBeStronglyTyped")]
-	public class EnumeratorsShouldBeStronglyTypedRule : StronglyTypedRule, ITypeRule {
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See Base class")]
+  public class EnumeratorsShouldBeStronglyTypedRule : StronglyTypedRule, ITypeRule
+  {
+    private readonly MethodSignature[] Empty = Array.Empty<MethodSignature>();
+    private static readonly string[] Current = { "Current" };
 
-		private MethodSignature [] Empty = { };
-		private static string [] Current = { "Current" };
+    protected override MethodSignature[] GetMethods()
+    {
+      return Empty;
+    }
 
-		protected override MethodSignature [] GetMethods ()
-		{
-			return Empty;
-		}
+    protected override string[] GetProperties()
+    {
+      return Current;
+    }
 
-		protected override string [] GetProperties ()
-		{
-			return Current;
-		}
+    protected override string InterfaceName
+    {
+      get { return "IEnumerator"; }
+    }
 
-		protected override string InterfaceName {
-			get { return "IEnumerator"; }
-		}
+    protected override string InterfaceNamespace
+    {
+      get { return "System.Collections"; }
+    }
 
-		protected override string InterfaceNamespace {
-			get { return "System.Collections"; }
-		}
+    public override RuleResult CheckType(TypeDefinition type)
+    {
+      TypeReference baseType = type;
+      while (baseType != null)
+      {
+        if (baseType.Namespace == "System.Collections")
+        { // OK
+          switch (baseType.Name)
+          {
+            case "CollectionBase":
+            case "DictionaryBase":
+            case "ReadOnlyCollectionBase":
+              return RuleResult.DoesNotApply;
+          }
+        }
 
-		override public RuleResult CheckType (TypeDefinition type)
-		{
-			TypeReference baseType = type;
-			while (baseType != null) {
-				if (baseType.Namespace == "System.Collections") { // OK
-					switch (baseType.Name) {
-					case "CollectionBase":
-					case "DictionaryBase":
-					case "ReadOnlyCollectionBase":
-						return RuleResult.DoesNotApply;
-					}
-				}
+        TypeDefinition td = baseType.Resolve();
+        if (td != null)
+          baseType = td.BaseType;
+        else
+          baseType = null;
+      }
 
-				TypeDefinition td = baseType.Resolve ();
-				if (td != null)
-					baseType = td.BaseType;
-				else
-					baseType = null;
-			}
-
-			return base.CheckType (type);
-		}
-	}
+      return base.CheckType(type);
+    }
+  }
 }

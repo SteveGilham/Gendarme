@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
@@ -71,9 +72,9 @@ namespace Gendarme.Rules.Serialization
   [Problem("This type is Serializable, but contains fields that aren't serializable which can cause runtime errors when instances are serialized.")]
   [Solution("Make sure you are marking all non-serializable fields with the NonSerialized attribute or implement custom serialization.")]
   [FxCopCompatibility("Microsoft.Usage", "CA2235:MarkAllNonSerializableFields")]
-  public abstract class MarkAllNonSerializableFieldsRuleBase : Rule, ITypeRule
+  public abstract class AbstractMarkAllNonSerializableFieldsRule : Rule, ITypeRule
   {
-    private readonly static TypeName iserializable = new TypeName
+    private static readonly TypeName iserializable = new TypeName
     {
       Namespace = "System.Runtime.Serialization",
       Name = "ISerializable"
@@ -120,7 +121,12 @@ namespace Gendarme.Rules.Serialization
     }
   }
 
-  public class MarkAllNonSerializableFieldsRule : MarkAllNonSerializableFieldsRuleBase
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See Base class")]
+  public class MarkAllNonSerializableFieldsRule : AbstractMarkAllNonSerializableFieldsRule
   {
     protected override bool Inapplicable(TypeDefinition type)
     {
@@ -128,7 +134,12 @@ namespace Gendarme.Rules.Serialization
     }
   }
 
-  public class RelaxedMarkAllNonSerializableFieldsRule : MarkAllNonSerializableFieldsRuleBase
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See Base class")]
+  public class RelaxedMarkAllNonSerializableFieldsRule : AbstractMarkAllNonSerializableFieldsRule
   {
     protected override bool Inapplicable(TypeDefinition type)
     {

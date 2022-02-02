@@ -62,7 +62,6 @@
            exclude="AvoidUncalledPrivateCodeRule | AvoidUnnecessarySpecializationRule | AvoidUnnecessarySpecializationRule | VariableNamesShouldNotMatchFieldNamesRule | AvoidComplexMethodsRule | AvoidLackOfCohesionOfMethodsRule"
            from="Gendarme.Rules.Maintainability.dll" />
     <rules include="*"
-           exclude="DefectsMustBeReportedRule | DoNotThrowExceptionRule | UseCorrectSuffixRule"
            from="Gendarme.Rules.Gendarme.dll" />
     <rules include="*"
            exclude="PreferIFormatProviderOverrideRule | PreferStringComparisonOverrideRule"

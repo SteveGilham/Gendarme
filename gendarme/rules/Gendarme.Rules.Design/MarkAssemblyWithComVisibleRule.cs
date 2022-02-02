@@ -33,38 +33,47 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule fires if an assembly does not contain a <c>[ComVisible]</c> attribute.
+  /// Unless the assembly is designed with COM interoperability in mind it is better to declare
+  /// it as non-COM visible, i.e. <c>[ComVisible (false)]</c>.
+  /// </summary>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// // by default everything in this assembly is not visible to COM consumers
+  /// [assembly: ComVisible (false)]
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.2</remarks>
 
-	/// <summary>
-	/// This rule fires if an assembly does not contain a <c>[ComVisible]</c> attribute. 
-	/// Unless the assembly is designed with COM interoperability in mind it is better to declare
-	/// it as non-COM visible, i.e. <c>[ComVisible (false)]</c>.
-	/// </summary>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// // by default everything in this assembly is not visible to COM consumers
-	/// [assembly: ComVisible (false)]
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.2</remarks>
+  [Problem("This assembly is not decorated with the [ComVisible] attribute.")]
+  [Solution("Add this attribute to ease the use (or non-use) of your assembly by COM consumers.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1017:MarkAssembliesWithComVisible")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	[Problem ("This assembly is not decorated with the [ComVisible] attribute.")]
-	[Solution ("Add this attribute to ease the use (or non-use) of your assembly by COM consumers.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1017:MarkAssembliesWithComVisible")]
-	public class MarkAssemblyWithComVisibleRule : MarkAssemblyWithAttributeRule {
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See Base class")]
+  public class MarkAssemblyWithComVisibleRule : MarkAssemblyWithAttributeRule
+  {
+    protected override string AttributeNamespace
+    {
+      get { return "System.Runtime.InteropServices"; }
+    }
 
-		protected override string AttributeNamespace	{
-			get { return "System.Runtime.InteropServices"; }
-		}
+    protected override string AttributeName
+    {
+      get { return "ComVisibleAttribute"; }
+    }
 
-		protected override string AttributeName	{
-			get { return "ComVisibleAttribute"; }
-		}
-
-		protected override Severity Severity {
-			get { return Severity.Medium; }
-		}
-	}
+    protected override Severity Severity
+    {
+      get { return Severity.Medium; }
+    }
+  }
 }

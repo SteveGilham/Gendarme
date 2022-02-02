@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Exceptions.AvoidThrowingBasicExceptionsRule
 //
 // Authors:
@@ -28,56 +28,63 @@
 
 using Mono.Cecil;
 using Gendarme.Framework;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Exceptions {
+namespace Gendarme.Rules.Exceptions
+{
+  /// <summary>
+  /// This rule checks for methods that create basic exceptions like <c>System.Exception</c>,
+  /// <c>System.ApplicationException</c> or <c>System.SystemException</c>. Those exceptions
+  /// do not provide enough information about the error to be helpful to the consumer
+  /// of the library.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public void Add (object obj)
+  /// {
+  ///	if (obj == null) {
+  ///		throw new Exception ();
+  ///	}
+  ///	Inner.Add (obj);
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public void Add (object obj)
+  /// {
+  ///	if (obj == null) {
+  ///		throw new ArgumentNullException ("obj");
+  ///	}
+  ///	Inner.Add (obj);
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule checks for methods that create basic exceptions like <c>System.Exception</c>,
-	/// <c>System.ApplicationException</c> or <c>System.SystemException</c>. Those exceptions
-	/// do not provide enough information about the error to be helpful to the consumer
-	/// of the library.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public void Add (object obj)
-	/// {
-	///	if (obj == null) {
-	///		throw new Exception ();
-	///	}
-	///	Inner.Add (obj);
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public void Add (object obj)
-	/// {
-	///	if (obj == null) {
-	///		throw new ArgumentNullException ("obj");
-	///	}
-	///	Inner.Add (obj);
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("This method creates (and probably throws) an exception of Exception, ApplicationException or SystemException type.")]
+  [Solution("Try to use a more specific exception type. If none of existing types meet your needs, create a custom exception class that inherits from System.Exception or any appropriate descendant of it.")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	[Problem ("This method creates (and probably throws) an exception of Exception, ApplicationException or SystemException type.")]
-	[Solution ("Try to use a more specific exception type. If none of existing types meet your needs, create a custom exception class that inherits from System.Exception or any appropriate descendant of it.")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
-	public class AvoidThrowingBasicExceptionsRule : NewExceptionsRule {
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See Base class")]
+  public class AvoidThrowingBasicExceptionsRule : NewExceptionsRule
+  {
+    protected override bool CheckException(TypeReference type)
+    {
+      if ((type == null) || (type.Namespace != "System")) // OK
+        return false;
+      string name = type.Name;
+      return ((name == "Exception") || (name == "ApplicationException") || (name == "SystemException"));
+    }
 
-		protected override bool CheckException (TypeReference type)
-		{
-			if ((type == null) || (type.Namespace != "System")) // OK
-				return false;
-			string name = type.Name;
-			return ((name == "Exception") || (name == "ApplicationException") || (name == "SystemException"));
-		}
-
-		protected override Severity Severity {
-			get { return Severity.Medium; }
-		}
-	}
+    protected override Severity Severity
+    {
+      get { return Severity.Medium; }
+    }
+  }
 }
