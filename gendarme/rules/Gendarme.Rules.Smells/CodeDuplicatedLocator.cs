@@ -42,6 +42,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Smells
 {
+  [Serializable]
   public enum DetectionMode
   {
     Classic,

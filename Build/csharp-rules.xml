@@ -47,11 +47,10 @@
            from="Gendarme.Rules.Security.Cas.dll" />
     <!-- I have no real use for serialization -->
     <rules include="*"
-           exclude="MissingSerializableAttributeOnISerializableTypeRule | MissingSerializationConstructorRule | MarkEnumerationsAsSerializableRule"
            from="Gendarme.Rules.Serialization.dll" />
     <!-- Use the relaxed variant -->
     <rules include="*"
-           exclude="AvoidCodeDuplicatedInSiblingClassesRule | AvoidLongMethodsRule | RelaxedAvoidCodeDuplicatedInSameClassRule | AvoidLargeClassesRule | AvoidSpeculativeGeneralityRule | AbstractTypesShouldNotHavePublicConstructorsRule | AvoidSwitchStatementsRule | AvoidCodeDuplicatedInSameClassRule"
+           exclude="AvoidCodeDuplicatedInSiblingClassesRule | AvoidLongMethodsRule | RelaxedAvoidCodeDuplicatedInSameClassRule | AvoidLargeClassesRule | AvoidSpeculativeGeneralityRule | AvoidSwitchStatementsRule | AvoidCodeDuplicatedInSameClassRule"
            from="Gendarme.Rules.Smells.dll" />
     <rules include="*"
            from="Gendarme.Rules.Ui.dll" />

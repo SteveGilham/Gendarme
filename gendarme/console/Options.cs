@@ -302,7 +302,7 @@ namespace NDesk.Options
         throw new ArgumentOutOfRangeException(nameof(index));
       if (c.Option.OptionValueType == OptionValueType.Required &&
           index >= values.Count)
-        throw new OptionException(string.Format(
+        throw new OptionException(string.Format(CultureInfo.InvariantCulture,
               c.OptionSet.MessageLocalizer("Missing required value for option '{0}'."), c.OptionName),
             c.OptionName);
     }
@@ -357,6 +357,7 @@ namespace NDesk.Options
     public OptionValueCollection OptionValues { get; private set; }
   }
 
+  [Serializable]
   public enum OptionValueType
   {
     None,
@@ -474,7 +475,8 @@ namespace NDesk.Options
           type = name[end];
         else
           throw new ArgumentException(
-              string.Format("Conflicting option types: '{0}' vs. '{1}'.", type, name[end]),
+              string.Format(CultureInfo.InvariantCulture,
+                "Conflicting option types: '{0}' vs. '{1}'.", type, name[end]),
               "prototype");
         AddSeparators(name, end, seps);
       }
@@ -527,7 +529,7 @@ namespace NDesk.Options
 
           default:
             if (start == -1)
-              seps.Add(name[i].ToString());
+              seps.Add(name[i].ToString(CultureInfo.InvariantCulture));
             break;
         }
       }
@@ -1112,10 +1114,13 @@ namespace NDesk.Options
       o.Write(s);
     }
 
+    [SuppressMessage("Gendarme.Rules.Globalization",
+                    "PreferStringComparisonOverrideRule",
+                    Justification = "IndexOf overrides not available")]
     private static string GetArgumentName(int index, int maxIndex, string description)
     {
       if (description == null)
-        return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
+        return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1).ToString(CultureInfo.InvariantCulture);
       string[] nameStart;
       if (maxIndex == 1)
         nameStart = new string[] { "{0:", "{" };
