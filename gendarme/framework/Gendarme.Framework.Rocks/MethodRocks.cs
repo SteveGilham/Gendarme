@@ -34,6 +34,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Mono.Cecil;
@@ -63,7 +64,7 @@ namespace Gendarme.Framework.Rocks
     public static bool IsNamed(this MemberReference self, TypeName typeName, string methodName)
     {
       if (methodName == null)
-        throw new ArgumentNullException("methodName");
+        throw new ArgumentNullException(nameof(methodName));
       if (self == null)
         return false;
       return ((self.Name == methodName) && self.DeclaringType.IsNamed(typeName));
@@ -74,6 +75,10 @@ namespace Gendarme.Framework.Rocks
     /// </summary>
     /// <param name="self">The MethodReference on which the extension method can be called.</param>
     /// <returns>True if the method is defined as the entry point of it's assembly, False otherwise</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodReference")]
     public static bool IsEntryPoint(this MethodReference self)
     {
       return ((self != null) && (self == self.Module.Assembly.EntryPoint));
@@ -93,7 +98,7 @@ namespace Gendarme.Framework.Rocks
         self.ReturnType.IsNamed(systemVoid));
     }
 
-    private readonly static TypeName systemVoid = new TypeName
+    private static readonly TypeName systemVoid = new TypeName
     {
       Namespace = "System",
       Name = "Void"
@@ -104,6 +109,10 @@ namespace Gendarme.Framework.Rocks
     /// </summary>
     /// <param name="self">The MethodReference on which the extension method can be called.</param>
     /// <returns>True if the method is in F# code, False otherwise.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodReference")]
     public static bool IsFSharpCode(this MethodReference self)
     {
       if (self == null)
@@ -195,7 +204,7 @@ namespace Gendarme.Framework.Rocks
         return false;
 
       TypeDefinition declaring = method.DeclaringType;
-      TypeDefinition parent = declaring.BaseType != null ? declaring.BaseType.Resolve() : null;
+      TypeDefinition parent = declaring.BaseType?.Resolve();
       while (parent != null)
       {
         string name = method.Name;
@@ -208,7 +217,7 @@ namespace Gendarme.Framework.Rocks
 
           return md.IsVirtual;
         }
-        parent = parent.BaseType != null ? parent.BaseType.Resolve() : null;
+        parent = parent.BaseType?.Resolve();
       }
       return false;
     }
@@ -314,7 +323,7 @@ namespace Gendarme.Framework.Rocks
       return false;
     }
 
-    private readonly static TypeName eventArgs = new TypeName
+    private static readonly TypeName eventArgs = new TypeName
     {
       Namespace = "System",
       Name = "EventArgs"

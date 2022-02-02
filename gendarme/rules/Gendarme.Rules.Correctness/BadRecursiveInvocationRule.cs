@@ -39,6 +39,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Correctness
 {
@@ -73,6 +74,10 @@ namespace Gendarme.Rules.Correctness
   [EngineDependency(typeof(OpCodeEngine))]
   public class BadRecursiveInvocationRule : Rule, IMethodRule
   {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "2nd arg is always a MethodDefinition")]
     private static bool CompareMethods(MethodReference method1, MethodReference method2, bool virtual_call)
     {
       if (method1 == null)

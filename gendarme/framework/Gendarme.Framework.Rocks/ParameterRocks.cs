@@ -25,27 +25,31 @@
 // THE SOFTWARE.
 
 using System;
-
+using System.Diagnostics.CodeAnalysis;
 using Mono.Cecil;
 
-namespace Gendarme.Framework.Rocks {
-
-	public static class ParameterRocks {
-
-		/// <summary>
-		/// Check if the parameter represents a list of parameters (<c>params</c> keyword in C#)
-		/// </summary>
-		/// <param name="self">The ParameterDefinition on which the extension method can be called.</param>
-		/// <returns>True if the parameter represents a list of parameters, false otherwise.</returns>
-		public static bool IsParams (this ParameterDefinition self)
-		{
-			return self.HasAttribute (paramArray);
-		}
-
-        private readonly static TypeName paramArray = new TypeName
-        {
-            Namespace = "System",
-            Name = "ParamArrayAttribute"
-        };
+namespace Gendarme.Framework.Rocks
+{
+  public static class ParameterRocks
+  {
+    /// <summary>
+    /// Check if the parameter represents a list of parameters (<c>params</c> keyword in C#)
+    /// </summary>
+    /// <param name="self">The ParameterDefinition on which the extension method can be called.</param>
+    /// <returns>True if the parameter represents a list of parameters, false otherwise.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a ParameterDefinition")]
+    public static bool IsParams(this ParameterDefinition self)
+    {
+      return self.HasAttribute(paramArray);
     }
+
+    private static readonly TypeName paramArray = new TypeName
+    {
+      Namespace = "System",
+      Name = "ParamArrayAttribute"
+    };
+  }
 }

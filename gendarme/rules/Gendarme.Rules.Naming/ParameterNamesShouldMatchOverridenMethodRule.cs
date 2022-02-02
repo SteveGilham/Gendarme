@@ -36,6 +36,7 @@ using System.Linq;
 using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Naming
 {
@@ -102,6 +103,10 @@ namespace Gendarme.Rules.Naming
       Name = "MacroStatement"
     };
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodReference pair")]
     private static bool SignatureMatches(MethodReference method, MethodReference baseMethod, bool explicitInterfaceCheck)
     {
       string name = method.Name;

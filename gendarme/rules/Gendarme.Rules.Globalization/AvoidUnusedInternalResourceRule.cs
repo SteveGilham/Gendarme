@@ -34,173 +34,183 @@ using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 using Gendarme.Framework.Helpers;
 
-namespace Gendarme.Rules.Globalization {
+namespace Gendarme.Rules.Globalization
+{
+  /// <summary>
+  /// This rule will check for internally visible resources (resx) which are never called.
+  /// You should remove unused internal resources to avoid useless translations.
+  /// </summary>
+  [Problem("This internal (assembly-level) resource (resx) does not have callers in the assembly.")]
+  [Solution("Remove the unused resource or add code to call it.")]
+  public class AvoidUnusedInternalResourceRule : Rule, IMethodRule
+  {
+    private static bool Applicable(MethodDefinition method)
+    {
+      // only internal resources
+      if (!method.IsAssembly)
+        return false;
 
-	/// <summary>
-	/// This rule will check for internally visible resources (resx) which are never called.
-	/// You should remove unused internal resources to avoid useless translations.
-	/// </summary>
-	[Problem ("This internal (assembly-level) resource (resx) does not have callers in the assembly.")]
-	[Solution ("Remove the unused resource or add code to call it.")]
-	public class AvoidUnusedInternalResourceRule : Rule, IMethodRule {
+      // resources are static getters
+      if (!method.IsStatic || !method.IsGetter)
+        return false;
 
-		static private bool Applicable (MethodDefinition method)
-		{
-			// only internal resources
-			if (!method.IsAssembly)
-				return false;
+      // Ignore well known static getters of resources classes
+      string name = method.Name;
+      if ("get_Culture".Equals(name, StringComparison.InvariantCulture) ||
+        "get_ResourceManager".Equals(name, StringComparison.InvariantCulture))
+        return false;
 
-			// resources are static getters
-			if (!method.IsStatic || !method.IsGetter)
-				return false;
+      // rule apply only to static getters in a generated resx class
+      TypeDefinition typeDefinition = method.DeclaringType;
+      if (!typeDefinition.HasCustomAttributes)
+        return false;
 
-			// Ignore well known static getters of resources classes
-			string name = method.Name;
-			if ("get_Culture".Equals (name, StringComparison.InvariantCulture) ||
-				"get_ResourceManager".Equals (name, StringComparison.InvariantCulture))
-				return false;
+      if (typeDefinition.HasAttribute(gca))
+        return true;
+      if (typeDefinition.HasAttribute(dnuca))
+        return true;
+      if (typeDefinition.HasAttribute(cga))
+        return true;
 
-			// rule apply only to static getters in a generated resx class
-			TypeDefinition typeDefinition = method.DeclaringType;
-			if (!typeDefinition.HasCustomAttributes)
-				return false;
+      return false;
+    }
 
-			if (typeDefinition.HasAttribute (gca))
-				return true;
-			if (typeDefinition.HasAttribute (dnuca))
-				return true;
-			if (typeDefinition.HasAttribute (cga))
-				return true;
+    private static readonly TypeName gca = new TypeName
+    {
+      Namespace = "System.CodeDom.Compiler",
+      Name = "GeneratedCodeAttribute"
+    };
 
-			return false;
-		}
-        private readonly static TypeName gca = new TypeName
+    private static readonly TypeName dnuca = new TypeName
+    {
+      Namespace = "System.Diagnostics",
+      Name = "DebuggerNonUserCodeAttribute"
+    };
+
+    private static readonly TypeName cga = new TypeName
+    {
+      Namespace = "System.Runtime.CompilerServices",
+      Name = "CompilerGeneratedAttribute"
+    };
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // check if the the rule applies to this method
+      if (!Applicable(method))
+        return RuleResult.DoesNotApply;
+
+      if (CheckAssemblyForMethodUsage(method))
+        return RuleResult.Success;
+
+      // resource is unused and unneeded
+      Runner.Report(method, Severity.Medium, Confidence.Normal, "The resource is not visible outside its declaring assembly, nor used within.");
+      return RuleResult.Failure;
+    }
+
+    #region FIXME (following code is a copy of AvoidUncalledPrivateCodeRule)
+
+    /// <summary>
+    ///
+    /// </summary>
+    public override void TearDown()
+    {
+      // reusing the cache (e.g. the wizard) is not a good thing if an exception
+      // occured while building it (future analysis results would be bad)
+      cache.Clear();
+      base.TearDown();
+    }
+
+    private static bool CheckAssemblyForMethodUsage(MethodReference method)
+    {
+      // scan each module in the assembly that defines the method
+      AssemblyDefinition assembly = method.DeclaringType.Module.Assembly;
+      foreach (ModuleDefinition module in assembly.Modules)
+      {
+        // scan each type
+        foreach (TypeDefinition type in module.GetAllTypes())
         {
-            Namespace = "System.CodeDom.Compiler",
-            Name = "GeneratedCodeAttribute"
-        };
-        private readonly static TypeName dnuca = new TypeName
+          if (CheckTypeForMethodUsage(type, method))
+            return true;
+        }
+      }
+      return false;
+    }
+
+    private static readonly Dictionary<TypeDefinition, HashSet<ulong>> cache = new Dictionary<TypeDefinition, HashSet<ulong>>();
+
+    private static ulong GetToken(MethodReference method)
+    {
+      return (ulong)method.DeclaringType.Module.Assembly.GetHashCode() << 32 | method.GetElementMethod().MetadataToken.ToUInt32();
+    }
+
+    private static bool CheckTypeForMethodUsage(TypeDefinition type, MethodReference method)
+    {
+      if (type.HasGenericParameters)
+        type = type.GetElementType().Resolve();
+
+      HashSet<ulong> methods = GetCache(type);
+      if (methods.Contains(GetToken(method)))
+        return true;
+
+      MethodDefinition md = method.Resolve();
+      if ((md != null) && md.HasOverrides)
+      {
+        foreach (MethodReference mr in md.Overrides)
         {
-            Namespace = "System.Diagnostics",
-            Name = "DebuggerNonUserCodeAttribute"
-        };
-        private readonly static TypeName cga = new TypeName
+          if (methods.Contains(GetToken(mr)))
+            return true;
+        }
+      }
+      return false;
+    }
+
+    private static HashSet<ulong> GetCache(TypeDefinition type)
+    {
+      if (!cache.TryGetValue(type, out HashSet<ulong> methods))
+      {
+        methods = new HashSet<ulong>();
+        cache.Add(type, methods);
+        if (type.HasMethods)
         {
-            Namespace = "System.Runtime.CompilerServices",
-            Name = "CompilerGeneratedAttribute"
-        };
+          foreach (MethodDefinition md in type.Methods)
+          {
+            if (!md.HasBody)
+              continue;
+            BuildMethodUsage(methods, md);
+          }
+        }
+      }
+      return methods;
+    }
 
+    private static void BuildMethodUsage(ISet<ulong> methods, MethodDefinition method)
+    {
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        MethodReference mr = (ins.Operand as MethodReference);
+        if (mr == null)
+          continue;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// check if the the rule applies to this method
-			if (!Applicable (method))
-				return RuleResult.DoesNotApply;
+        TypeReference type = mr.DeclaringType;
+        if (!type.IsArray)
+        {
+          // if (type.GetElementType ().HasGenericParameters)
+          // the simpler ^^^ does not work under Mono but works on MS
+          type = type.Resolve();
+          if (type != null && type.HasGenericParameters)
+          {
+            methods.Add(GetToken(type.GetMethod(mr.Name)));
+          }
+        }
+        methods.Add(GetToken(mr));
+      }
+    }
 
-			if (CheckAssemblyForMethodUsage (method))
-				return RuleResult.Success;
-
-			// resource is unused and unneeded
-			Runner.Report (method, Severity.Medium, Confidence.Normal, "The resource is not visible outside its declaring assembly, nor used within.");
-			return RuleResult.Failure;
-		}
-
-		#region FIXME (following code is a copy of AvoidUncalledPrivateCodeRule)
-
-        /// <summary>
-        /// 
-        /// </summary>
-		public override void TearDown ()
-		{
-			// reusing the cache (e.g. the wizard) is not a good thing if an exception
-			// occured while building it (future analysis results would be bad)
-			cache.Clear ();
-			base.TearDown ();
-		}
-
-		private static bool CheckAssemblyForMethodUsage (MethodReference method)
-		{
-			// scan each module in the assembly that defines the method
-			AssemblyDefinition assembly = method.DeclaringType.Module.Assembly;
-			foreach (ModuleDefinition module in assembly.Modules) {
-				// scan each type
-				foreach (TypeDefinition type in module.GetAllTypes ()) {
-					if (CheckTypeForMethodUsage (type, method))
-						return true;
-				}
-			}
-			return false;
-		}
-
-		static Dictionary<TypeDefinition, HashSet<ulong>> cache = new Dictionary<TypeDefinition, HashSet<ulong>> ();
-
-		private static ulong GetToken (MethodReference method)
-		{
-			return (ulong) method.DeclaringType.Module.Assembly.GetHashCode () << 32 | method.GetElementMethod ().MetadataToken.ToUInt32 ();
-		}
-
-		private static bool CheckTypeForMethodUsage (TypeDefinition type, MethodReference method)
-		{
-			if (type.HasGenericParameters)
-				type = type.GetElementType ().Resolve ();
-
-			HashSet<ulong> methods = GetCache (type);
-			if (methods.Contains (GetToken (method)))
-				return true;
-
-			MethodDefinition md = method.Resolve ();
-			if ((md != null) && md.HasOverrides) {
-				foreach (MethodReference mr in md.Overrides) {
-					if (methods.Contains (GetToken (mr)))
-						return true;
-				}
-			}
-			return false;
-		}
-
-		private static HashSet<ulong> GetCache (TypeDefinition type)
-		{
-			HashSet<ulong> methods;
-			if (!cache.TryGetValue (type, out methods)) {
-				methods = new HashSet<ulong> ();
-				cache.Add (type, methods);
-				if (type.HasMethods) {
-					foreach (MethodDefinition md in type.Methods) {
-						if (!md.HasBody)
-							continue;
-						BuildMethodUsage (methods, md);
-					}
-				}
-			}
-			return methods;
-		}
-
-		private static void BuildMethodUsage (HashSet<ulong> methods, MethodDefinition method)
-		{
-			foreach (Instruction ins in method.Body.Instructions) {
-				MethodReference mr = (ins.Operand as MethodReference);
-				if (mr == null)
-					continue;
-
-				TypeReference type = mr.DeclaringType;
-				if (!type.IsArray) {
-					// if (type.GetElementType ().HasGenericParameters)
-					// the simpler ^^^ does not work under Mono but works on MS
-					type = type.Resolve ();
-					if (type != null && type.HasGenericParameters) {
-						methods.Add (GetToken (type.GetMethod (mr.Name)));
-					}
-				}
-				methods.Add (GetToken (mr));
-			}
-		}
-
-		#endregion
-	}
+    #endregion FIXME (following code is a copy of AvoidUncalledPrivateCodeRule)
+  }
 }
-
