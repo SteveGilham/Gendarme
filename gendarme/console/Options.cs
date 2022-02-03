@@ -131,6 +131,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
@@ -855,25 +856,26 @@ namespace NDesk.Options
       Justification = "multi-return; F# would be simpler")]
     [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
       Justification = "It *is* a flag")]
-    protected bool GetOptionParts(string argument, out string flag, out string name, out string sep, out string value)
+    protected (string, string, string, string)[] GetOptionParts(string argument)//, out string flag, out string name, out string sep, out string value)
     {
       if (argument == null)
         throw new ArgumentNullException(nameof(argument));
 
-      flag = name = sep = value = null;
       Match m = ValueOption.Match(argument);
       if (!m.Success)
       {
-        return false;
+        return Array.Empty<(string, string, string, string)>();
       }
-      flag = m.Groups["flag"].Value;
-      name = m.Groups["name"].Value;
+      var flag = m.Groups["flag"].Value;
+      var name = m.Groups["name"].Value;
+      string sep = null;
+      string value = null;
       if (m.Groups["sep"].Success && m.Groups["value"].Success)
       {
         sep = m.Groups["sep"].Value;
         value = m.Groups["value"].Value;
       }
-      return true;
+      return new[] { (flag, name, sep, value) };
     }
 
     protected virtual bool Parse(string argument, OptionContext context)
@@ -885,8 +887,10 @@ namespace NDesk.Options
         return true;
       }
 
-      if (!GetOptionParts(argument, out string f, out string n, out string s, out string v))
+      var parts = GetOptionParts(argument);
+      if (!parts.Any())
         return false;
+      (string f, string n, string s, string v) = parts[0];
 
       Option p;
       if (Contains(n))

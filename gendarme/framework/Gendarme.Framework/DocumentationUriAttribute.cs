@@ -27,19 +27,25 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Framework {
-	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-	public sealed class DocumentationUriAttribute : Attribute {
-		
-		public DocumentationUriAttribute (string documentationUri) 
-		{
-			DocumentationUri = new Uri (documentationUri);
-		}
+namespace Gendarme.Framework
+{
+  [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments",
+    Justification = "There as Uri, not string")]
+  public sealed class DocumentationUriAttribute : Attribute
+  {
+    public DocumentationUriAttribute(string documentationUri)
+    {
+      DocumentationUri = new Uri(documentationUri);
+    }
 
-		public Uri DocumentationUri {
-			get;
-			private set;
-		}
-	}
+    public Uri DocumentationUri
+    {
+      get;
+      private set;
+    }
+  }
 }

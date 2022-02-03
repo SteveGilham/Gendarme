@@ -338,7 +338,7 @@ namespace Gendarme.Framework.Helpers
         stackEntryDistance += push;
 
         //fetch ne next instruction
-        Instruction nextInstruction = GetNextInstruction(ins, out object alternativeNext);
+        (var nextInstruction, var alternativeNext) = GetNextInstruction(ins);
 
         if (nextInstruction == null)
           return new KeyValuePair<InstructionWithLeave, int>(); //return / throw / endfinally
@@ -448,7 +448,8 @@ namespace Gendarme.Framework.Helpers
           }
 
           //fetch the next instruction (s)
-          ins = GetNextInstruction(ins, out object alternativeNext);
+          object alternativeNext;
+          (ins, alternativeNext) = GetNextInstruction(ins);
           if (ins == null)
             break;
 
@@ -484,34 +485,28 @@ namespace Gendarme.Framework.Helpers
     /// <param name="ins">The instruction</param>
     /// <param name="alternative">If the instruction is a branch, the branch target is returned. For a switch statemant an array of targets is returned.</param>
     /// <returns>The next instruction that would be executed by the runtime.</returns>
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-    [SuppressMessage("Gendarme.Rules.Design",
-                      "AvoidRefAndOutParametersRule",
-                      Justification = "Multi-return")]
-    public static Instruction GetNextInstruction(Instruction ins, out object alternative)
+    public static (Instruction, object) GetNextInstruction(Instruction ins)
     {
       if (ins == null)
         throw new ArgumentNullException(nameof(ins));
 
-      alternative = null;
       switch (ins.OpCode.FlowControl)
       {
         case FlowControl.Branch:
-          return (Instruction)ins.Operand;
+          return ((Instruction)ins.Operand, null);
 
         case FlowControl.Cond_Branch:
-          alternative = ins.Operand;
-          return ins.Next;
+          return (ins.Next, ins.Operand);
 
         case FlowControl.Call:
         case FlowControl.Next:
         case FlowControl.Meta:
         case FlowControl.Break: //debugging breakpoint
-          return ins.Next;
+          return (ins.Next, null);
 
         case FlowControl.Return:
         case FlowControl.Throw:
-          return null;
+          return (null, null);
 
         default:
           throw new NotImplementedException("FlowControl: " + ins.OpCode.FlowControl.ToString() + " is not supported.");

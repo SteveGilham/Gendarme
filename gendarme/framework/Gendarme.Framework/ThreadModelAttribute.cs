@@ -27,114 +27,122 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 // Note that these types are extended version of what we recommend
 // that users use. See DecorateThreadsRule documentation for a smaller version
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  /// <summary>Used with <see cref = "ThreadModelAttribute"/>.</summary>
+  [Serializable]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags",
+    Justification = "Hybrid use model")]
+  public enum ThreadModel
+  {
+    /// <summary>The code may run safely only under the main thread.</summary>
+    /// <remarks>This is the default for code in the assemblies being checked.</remarks>
+    MainThread = 0x0000,
 
-	/// <summary>Used with <see cref = "ThreadModelAttribute"/>.</summary>
-	[Serializable]
-	public enum ThreadModel {
-		/// <summary>The code may run safely only under the main thread.</summary>
-		/// <remarks>This is the default for code in the assemblies being checked.</remarks>
-		MainThread = 0x0000,
-		
-		/// <summary>The code may run under a single arbitrary thread.</summary>
-		SingleThread = 0x0001,
-		
-		/// <summary>The code may run under multiple threads, but only if the 
-		/// execution is serialized (e.g. by user level locking).</summary>
-		Serializable = 0x0002,
-		
-		/// <summary>The code may run under multiple threads concurrently without user 
-		/// locking.</summary>
-		/// <remarks>This is the default for code in the System/Mono namespaces.</remarks>
-		Concurrent = 0x0003,
-		
-		/// <summary>Or this with the above for the rare cases where the code cannot be
-		/// shown to be correct using a static analysis.</summary>
-		AllowEveryCaller = 0x0008,
-	}
-	
-	/// <summary>Used to precisely specify the threading semantics of code.</summary>
-	[Serializable]
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct |
-	AttributeTargets.Interface | AttributeTargets.Delegate |
-	AttributeTargets.Method | AttributeTargets.Event | AttributeTargets.Property,
-	AllowMultiple = false, Inherited = false)]
-	public sealed class ThreadModelAttribute : Attribute, IEquatable<ThreadModelAttribute> {
+    /// <summary>The code may run under a single arbitrary thread.</summary>
+    SingleThread = 0x0001,
 
-		public ThreadModelAttribute (ThreadModel model)
-		{
-			ThreadModel value = model & ~ThreadModel.AllowEveryCaller;
-			if ((value < ThreadModel.MainThread) || (value > ThreadModel.Concurrent))
-				throw new ArgumentException (model.ToString () + " is not a valid ThreadModel value.");
-			
-			Model = model & (ThreadModel) 0x0007;
-			AllowsEveryCaller = (model & ThreadModel.AllowEveryCaller) != 0;
-		}
-				
-		public ThreadModel Model { get; set; }
-		
-		public bool AllowsEveryCaller { get; set; }
-		
-		#region Overrides and Operators
-		public override string ToString ()
-		{
-			if (AllowsEveryCaller)
-				return String.Format (CultureInfo.InvariantCulture, "{0} | AllowEveryCaller", Model);
-				
-			return Model.ToString ();
-		}
-		
-		public override bool Equals (object obj)
-		{
-			if (obj == null)
-				return false;
-			
-			ThreadModelAttribute rhs = obj as ThreadModelAttribute;
-			return this == rhs;
-		}
-		
-		public bool Equals (ThreadModelAttribute other)
-		{
-			return this == other;
-		}
-		
-		public static bool operator== (ThreadModelAttribute lhs, ThreadModelAttribute rhs)
-		{
-			if (object.ReferenceEquals (lhs, rhs))
-				return true;
-			
-			if ((object) lhs == null || (object) rhs == null)
-				return false;
-			
-			if (lhs.Model != rhs.Model)
-				return false;
-			
-			if (lhs.AllowsEveryCaller != rhs.AllowsEveryCaller)
-				return false;
-			
-			return true;
-		}
-		
-		public static bool operator!= (ThreadModelAttribute lhs, ThreadModelAttribute rhs)
-		{
-			return !(lhs == rhs);
-		}
-		
-		public override int GetHashCode ()
-		{
-			int hash = 0;
-			
-			unchecked {
-				hash += Model.GetHashCode ();
-				hash += AllowsEveryCaller.GetHashCode ();
-			}
-			
-			return hash;
-		}
-		#endregion
-	}
+    /// <summary>The code may run under multiple threads, but only if the
+    /// execution is serialized (e.g. by user level locking).</summary>
+    Serializable = 0x0002,
+
+    /// <summary>The code may run under multiple threads concurrently without user
+    /// locking.</summary>
+    /// <remarks>This is the default for code in the System/Mono namespaces.</remarks>
+    Concurrent = 0x0003,
+
+    /// <summary>Or this with the above for the rare cases where the code cannot be
+    /// shown to be correct using a static analysis.</summary>
+    AllowEveryCaller = 0x0008,
+  }
+
+  /// <summary>Used to precisely specify the threading semantics of code.</summary>
+  [Serializable]
+  [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
+  AttributeTargets.Interface | AttributeTargets.Delegate |
+  AttributeTargets.Method | AttributeTargets.Event | AttributeTargets.Property,
+  AllowMultiple = false, Inherited = false)]
+  public sealed class ThreadModelAttribute : Attribute, IEquatable<ThreadModelAttribute>
+  {
+    public ThreadModelAttribute(ThreadModel model)
+    {
+      ThreadModel value = model & ~ThreadModel.AllowEveryCaller;
+      if ((value < ThreadModel.MainThread) || (value > ThreadModel.Concurrent))
+        throw new ArgumentException(model.ToString() + " is not a valid ThreadModel value.");
+
+      Model = model & (ThreadModel)0x0007;
+      AllowsEveryCaller = (model & ThreadModel.AllowEveryCaller) != 0;
+    }
+
+    public ThreadModel Model { get; private set; }
+
+    public bool AllowsEveryCaller { get; set; }
+
+    #region Overrides and Operators
+
+    public override string ToString()
+    {
+      if (AllowsEveryCaller)
+        return String.Format(CultureInfo.InvariantCulture, "{0} | AllowEveryCaller", Model);
+
+      return Model.ToString();
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (obj == null)
+        return false;
+
+      ThreadModelAttribute rhs = obj as ThreadModelAttribute;
+      return this == rhs;
+    }
+
+    public bool Equals(ThreadModelAttribute other)
+    {
+      return this == other;
+    }
+
+    public static bool operator ==(ThreadModelAttribute lhs, ThreadModelAttribute rhs)
+    {
+      if (object.ReferenceEquals(lhs, rhs))
+        return true;
+
+      if (lhs is null || rhs as object == null)
+        return false;
+
+      if (lhs.Model != rhs.Model)
+        return false;
+
+      if (lhs.AllowsEveryCaller != rhs.AllowsEveryCaller)
+        return false;
+
+      return true;
+    }
+
+    public static bool operator !=(ThreadModelAttribute lhs, ThreadModelAttribute rhs)
+    {
+      return !(lhs == rhs);
+    }
+
+    public override int GetHashCode()
+    {
+      int hash = 0;
+
+      unchecked
+      {
+        hash += Model.GetHashCode();
+        hash += AllowsEveryCaller.GetHashCode();
+      }
+
+      return hash;
+    }
+
+    #endregion Overrides and Operators
+  }
 }

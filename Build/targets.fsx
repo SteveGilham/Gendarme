@@ -448,14 +448,17 @@ _Target
         let deprecatedRules = [ "-Microsoft.Usage#CA2202" ] // double dispose
 
         let gendarmeRules =
-            [ "-Microsoft.Design#CA1016" // :MarkAssembliesWithAssemblyVersion"
-              "-Microsoft.Performance#CA1822" // :MarkMembersAsStatic"
+            [ "-Microsoft.Design#CA1002" // :DoNotExposeGenericLists"
+              "-Microsoft.Design#CA1011" // :ConsiderPassingBaseTypesAsParameters"
+              "-Microsoft.Design#CA1016" // :MarkAssembliesWithAssemblyVersion"
+              "-Microsoft.Design#CA1021" //:AvoidOutParameters"
               "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
-              "-Microsoft.Usage#CA2208" // :InstantiateArgumentExceptionsCorrectly"
               "-Microsoft.Usage#CA1801" // :ReviewUnusedParameters"
-              "-Microsoft.Globalization#CA1307" // :SpecifyStringComparison"
               "-Microsoft.Design#CA1028" // :EnumStorageShouldBeInt32"
-              "-Microsoft.Design#CA1002" ] // :DoNotExposeGenericLists"
+              "-Microsoft.Globalization#CA1305" // :SpecifyIFormatProvider"
+              "-Microsoft.Globalization#CA1307" // :SpecifyStringComparison"
+              "-Microsoft.Performance#CA1822" // :MarkMembersAsStatic"
+              "-Microsoft.Usage#CA2208" ] // :InstantiateArgumentExceptionsCorrectly"
 
         let nonFsharpRules =
             [ "-Microsoft.Design#CA1006" // nested generics
@@ -479,13 +482,7 @@ _Target
                           nonFsharpRules ]
 
         let workInProgressRules =
-            [ "-Microsoft.Design#CA1004" //:GenericMethodsShouldProvideTypeParameter"
-              "-Microsoft.Design#CA1011" //:ConsiderPassingBaseTypesAsParameters"
-              "-Microsoft.Design#CA1012" // :AbstractTypesShouldNotHaveConstructors"
-              "-Microsoft.Design#CA1019" // :DefineAccessorsForAttributeArguments"
-              "-Microsoft.Design#CA1021" //:AvoidOutParameters"
-              "-Microsoft.Design#CA1027" // :MarkEnumsWithFlags"
-              "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
+            [ "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
               "-Microsoft.Design#CA1062" //:Validate arguments of public methods"
               "-Microsoft.Maintainability#CA1500" //:VariableNamesShouldNotMatchFieldNames"
               "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity"

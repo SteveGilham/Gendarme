@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Mono.Cecil;
@@ -101,6 +102,9 @@ namespace Gendarme.Framework.Rocks
       return false;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+      Justification = "The alternative is also provided where more convenient")]
     public static bool HasAttribute<T>(this ICustomAttributeProvider self)
     {
       if ((self == null) || !self.HasCustomAttributes)
