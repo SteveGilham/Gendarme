@@ -9,5 +9,6 @@
 // You do not need to add suppressions to this file manually.
 
 #pragma warning disable IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "count", Scope = "member", Target = "Test.Rules.Performance.AvoidUnusedParametersTest+FxCopTest+ReviewUnusedParameters.#GloballySuppressed(System.Int32)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes", Scope = "type", Target = "Test.Rules.Performance.AvoidUnsealedConcreteAttributesTest+FxCopTest+AvoidUnsealedAttributes+GloballySuppressed")]
 #pragma warning restore IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'

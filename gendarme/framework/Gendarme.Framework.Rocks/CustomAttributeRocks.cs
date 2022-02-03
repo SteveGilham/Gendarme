@@ -86,10 +86,7 @@ namespace Gendarme.Framework.Rocks
     /// False otherwise.</returns>
     public static bool HasAttribute(this ICustomAttributeProvider self, TypeName typename)
     {
-      if (typename.Namespace == null)
-        throw new ArgumentException("typename.Namespace");
-      if (typename.Name == null)
-        throw new ArgumentException("typename.Name");
+      typename.Validate();
 
       if ((self == null) || !self.HasCustomAttributes)
         return false;

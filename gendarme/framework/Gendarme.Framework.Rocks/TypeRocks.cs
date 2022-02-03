@@ -52,6 +52,17 @@ namespace Gendarme.Framework.Rocks
   {
     public string Namespace;
     public string Name;
+    public void Validate()
+    {
+      Validate(Namespace, Name);
+    }
+    private static void Validate(string @namespace, string name)
+    {
+      if (@namespace == null)
+        throw new ArgumentNullException(nameof(@namespace));
+      if (name == null)
+        throw new ArgumentNullException(nameof(@name));
+    }
   }
 
   // add Type[Definition|Reference] extensions methods here
@@ -280,10 +291,7 @@ namespace Gendarme.Framework.Rocks
     /// does not implement it, or we could not find where it does).</returns>
     public static bool Implements(this TypeReference self, TypeName typename)
     {
-      if (typename.Namespace == null)
-        throw new ArgumentException("typename.Namespace");
-      if (typename.Name == null)
-        throw new ArgumentException("typename.Name");
+      typename.Validate();
       if (self == null)
         return false;
 
@@ -345,10 +353,7 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type inherits from specified class, False otherwise</returns>
     public static bool Inherits(this TypeReference self, TypeName typename)
     {
-      if (typename.Namespace == null)
-        throw new ArgumentException("nameSpace");
-      if (typename.Name == null)
-        throw new ArgumentException("name");
+      typename.Validate();
       if (self == null)
         return false;
 
@@ -413,10 +418,7 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type is namespace and name match the arguments, False otherwise</returns>
     public static bool IsNamed(this TypeReference self, TypeName typename)
     {
-      if (typename.Namespace == null)
-        throw new ArgumentException("nameSpace");
-      if (typename.Name == null)
-        throw new ArgumentException("name");
+      typename.Validate();
 
       if (self == null)
         return false;
