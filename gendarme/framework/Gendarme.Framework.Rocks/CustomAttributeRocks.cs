@@ -85,12 +85,10 @@ namespace Gendarme.Framework.Rocks
     /// False otherwise.</returns>
     public static bool HasAttribute(this ICustomAttributeProvider self, TypeName typename)
     {
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
       if (typename.Namespace == null)
-        throw new ArgumentNullException("typename.Namespace");
+        throw new ArgumentException("typename.Namespace");
       if (typename.Name == null)
-        throw new ArgumentNullException("typename.Name");
-#pragma warning restore CA2208 // Instantiate argument exceptions correctly
+        throw new ArgumentException("typename.Name");
 
       if ((self == null) || !self.HasCustomAttributes)
         return false;

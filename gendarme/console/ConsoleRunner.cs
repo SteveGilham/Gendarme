@@ -69,9 +69,12 @@ using NDesk.Options;
 
 namespace Gendarme
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
   [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidLackOfCohesionOfMethodsRule",
                     Justification = "Maybe refactor")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
   [EngineDependency(typeof(SuppressMessageEngine))]
   public class ConsoleRunner : Runner
   {
@@ -447,9 +450,6 @@ namespace Gendarme
       return (byte)((0 == Defects.Count) ? 0 : 1);
     }
 
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-    [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
-      Justification = "Top of call tree")]
     private byte Execute(string[] args)
     {
       try
@@ -624,6 +624,7 @@ namespace Gendarme
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
       Justification = "work in progress")]
     protected override void OnAssembly(RunnerEventArgs e)

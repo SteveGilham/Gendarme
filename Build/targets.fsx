@@ -447,6 +447,16 @@ _Target
 
         let deprecatedRules = [ "-Microsoft.Usage#CA2202" ] // double dispose
 
+        let gendarmeRules =
+            [ "-Microsoft.Design#CA1016" // :MarkAssembliesWithAssemblyVersion"
+              "-Microsoft.Performance#CA1822" // :MarkMembersAsStatic"
+              "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
+              "-Microsoft.Usage#CA2208" // :InstantiateArgumentExceptionsCorrectly"
+              "-Microsoft.Usage#CA1801" // :ReviewUnusedParameters"
+              "-Microsoft.Globalization#CA1307" // :SpecifyStringComparison"
+              "-Microsoft.Design#CA1028" // :EnumStorageShouldBeInt32"
+              "-Microsoft.Design#CA1002" ] // :DoNotExposeGenericLists"
+
         let nonFsharpRules =
             [ "-Microsoft.Design#CA1006" // nested generics
               "-Microsoft.Design#CA1034" // nested classes being visible
@@ -464,6 +474,7 @@ _Target
 
         let defaultFSharpRules =
             List.concat [ deprecatedRules
+                          gendarmeRules
                           standardRules
                           nonFsharpRules ]
 
@@ -474,12 +485,10 @@ _Target
               "-Microsoft.Design#CA1019" // :DefineAccessorsForAttributeArguments"
               "-Microsoft.Design#CA1021" //:AvoidOutParameters"
               "-Microsoft.Design#CA1027" // :MarkEnumsWithFlags"
-              "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
               "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
               "-Microsoft.Design#CA1062" //:Validate arguments of public methods"
               "-Microsoft.Globalization#CA1303" //:Do not pass literals as localized parameters"
               "-Microsoft.Globalization#CA1305" //:SpecifyIFormatProvider"
-              "-Microsoft.Globalization#CA1307" //:SpecifyStringComparison"
               "-Microsoft.Globalization#CA1308" //:NormalizeStringsToUppercase"
               "-Microsoft.Globalization#CA1309" //:UseOrdinalStringComparison"
               "-Microsoft.Maintainability#CA1500" //:VariableNamesShouldNotMatchFieldNames"
@@ -499,11 +508,11 @@ _Target
               "-Microsoft.Performance#CA1823" //:AvoidUnusedPrivateFields",
               "-Microsoft.Performance#CA1824" //:MarkAssembliesWithNeutralResourcesLanguage",
               "-Microsoft.Security#CA2104" // :DoNotDeclareReadOnlyMutableReferenceTypes"
-              "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
-              "-Microsoft.Usage#CA2208" ] // :InstantiateArgumentExceptionsCorrectly"
+              "-Microsoft.Naming#CA2204" ] // Literals should be spelled correctly
 
         let defaultCSharpRules =
             List.concat [ deprecatedRules
+                          gendarmeRules
                           standardRules
                           [ "-Microsoft.Design#CA1026:DefaultParametersShouldNotBeUsed" ] ]
 

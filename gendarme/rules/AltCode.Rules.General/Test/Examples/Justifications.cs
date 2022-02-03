@@ -4,6 +4,8 @@
 
 namespace Examples.AltCode.General
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
   [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
   public class Justifications
   {

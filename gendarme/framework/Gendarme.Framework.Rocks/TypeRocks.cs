@@ -278,12 +278,10 @@ namespace Gendarme.Framework.Rocks
     /// does not implement it, or we could not find where it does).</returns>
     public static bool Implements(this TypeReference self, TypeName typename)
     {
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
       if (typename.Namespace == null)
-        throw new ArgumentNullException("typename.Namespace");
+        throw new ArgumentException("typename.Namespace");
       if (typename.Name == null)
-        throw new ArgumentNullException("typename.Name");
-#pragma warning restore CA2208 // Instantiate argument exceptions correctly
+        throw new ArgumentException("typename.Name");
       if (self == null)
         return false;
 
@@ -345,12 +343,10 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type inherits from specified class, False otherwise</returns>
     public static bool Inherits(this TypeReference self, TypeName typename)
     {
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
       if (typename.Namespace == null)
-        throw new ArgumentNullException("nameSpace");
+        throw new ArgumentException("nameSpace");
       if (typename.Name == null)
-        throw new ArgumentNullException("name");
-#pragma warning restore CA2208 // Instantiate argument exceptions correctly
+        throw new ArgumentException("name");
       if (self == null)
         return false;
 
@@ -415,12 +411,11 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type is namespace and name match the arguments, False otherwise</returns>
     public static bool IsNamed(this TypeReference self, TypeName typename)
     {
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
       if (typename.Namespace == null)
-        throw new ArgumentNullException("nameSpace");
+        throw new ArgumentException("nameSpace");
       if (typename.Name == null)
-        throw new ArgumentNullException("name");
-#pragma warning restore CA2208 // Instantiate argument exceptions correctly
+        throw new ArgumentException("name");
+
       if (self == null)
         return false;
 

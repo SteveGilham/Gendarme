@@ -137,8 +137,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 #pragma warning disable IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
-[assembly: SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.Collections.Generic.IEnumerable`1<System.String>)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#ToList()", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "1#", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "2#", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "3#", Justification = "work in progress")]
@@ -161,7 +159,6 @@ using System.Text.RegularExpressions;
 [assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseBundledValue(System.String,System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseValue(System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object,System.Object)", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#AssertValid(System.Int32)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1307:SpecifyStringComparison", Scope = "member", Target = "NDesk.Options.OptionSet.#GetArgumentName(System.Int32,System.Int32,System.String)", MessageId = "System.String.IndexOf(System.String,System.Int32)", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#Invoke(NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
 [assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#Parse`1(System.String,NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
@@ -454,9 +451,6 @@ namespace NDesk.Options
 
     private static readonly char[] NameTerminator = new char[] { '=', ':' };
 
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-    [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly",
-     Justification = "refers to user-level name (no parameters)")]
     private OptionValueType ParsePrototype()
     {
       char type = '\0';
@@ -501,8 +495,6 @@ namespace NDesk.Options
       return type == '=' ? OptionValueType.Required : OptionValueType.Optional;
     }
 
-    [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly",
-     Justification = "refers to user-level name")]
     private static void AddSeparators(string name, int end, ICollection<string> seps)
     {
       int start = -1;
@@ -512,17 +504,21 @@ namespace NDesk.Options
         {
           case '{':
             if (start != -1)
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
               throw new ArgumentException(
                   string.Format("Ill-formed name/value separator found in \"{0}\".", name),
                   "prototype");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
             start = i + 1;
             break;
 
           case '}':
             if (start == -1)
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
               throw new ArgumentException(
                   string.Format("Ill-formed name/value separator found in \"{0}\".", name),
                   "prototype");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
             seps.Add(name.Substring(start, i - start));
             start = -1;
             break;
@@ -534,9 +530,11 @@ namespace NDesk.Options
         }
       }
       if (start != -1)
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
         throw new ArgumentException(
             string.Format("Ill-formed name/value separator found in \"{0}\".", name),
             "prototype");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
     }
 
     public void Invoke(OptionContext c)
@@ -611,12 +609,12 @@ namespace NDesk.Options
 
     public Converter<string, string> MessageLocalizer { get; private set; }
 
-    [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly",
-     Justification = "refers to user-level name (constrained here by inheritance)")]
     protected override string GetKeyForItem(Option item)
     {
       if (item == null)
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
         throw new ArgumentNullException("option");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
       if (item.Names != null && item.Names.Length > 0)
         return item.Names[0];
       // This should never happen, as it's invalid for Option to be
@@ -1114,6 +1112,7 @@ namespace NDesk.Options
       o.Write(s);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Globalization",
                     "PreferStringComparisonOverrideRule",
                     Justification = "IndexOf overrides not available")]
