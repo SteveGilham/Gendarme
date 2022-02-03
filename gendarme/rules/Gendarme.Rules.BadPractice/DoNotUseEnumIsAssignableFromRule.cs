@@ -96,8 +96,7 @@ namespace Gendarme.Rules.BadPractice
       if (instruction.OpCode.Code != Code.Ldtoken)
         return false;
 
-      var tr = instruction.Operand as TypeReference;
-      if (tr == null)
+      if (!(instruction.Operand is TypeReference tr))
         return false;
 
       return tr.IsNamed(enumType);
@@ -124,8 +123,7 @@ namespace Gendarme.Rules.BadPractice
       if (!IsCall(instruction.OpCode))
         return false;
 
-      var operand = instruction.Operand as MethodReference;
-      if (operand == null)
+      if (!(instruction.Operand is MethodReference operand))
         return false;
 
       if (operand.Name != name)

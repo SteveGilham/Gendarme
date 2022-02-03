@@ -37,25 +37,23 @@ using Gendarme.Framework.Rocks;
 
 namespace Gendarme.Rules.Smells
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
   [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidLackOfCohesionOfMethodsRule",
                     Justification = "Maybe refactor")]
   internal sealed class Pattern
   {
-    private Instruction[] instructions;
+    private readonly Instruction[] instructions;
     private int[] prefixes;
     private bool? compilerGeneratedBlock;
     private bool? extractableToMethodBlock;
-    private MethodDefinition method;
+    private readonly MethodDefinition method;
 
     internal Pattern(Instruction[] block, MethodDefinition source)
     {
-      if (block == null)
-        throw new ArgumentNullException("block");
-      if (source == null)
-        throw new ArgumentNullException("source");
-      this.instructions = block;
-      this.method = source;
+      this.instructions = block ?? throw new ArgumentNullException(nameof(block));
+      this.method = source ?? throw new ArgumentNullException(nameof(source));
     }
 
     public override string ToString()

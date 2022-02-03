@@ -73,9 +73,9 @@ namespace Gendarme.Rules.Gendarme
   [Solution("Change the code so that it satisfies attribute usage rules")]
   public class ReviewAttributesOnRulesRule : GendarmeRule, ITypeRule
   {
-    private Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>> attributes;
+    private readonly Dictionary<string, Action<CustomAttribute, ICustomAttributeProvider>> attributes;
 
-    private Dictionary<string, bool> typeIsRule = new Dictionary<string, bool>();
+    private readonly Dictionary<string, bool> typeIsRule = new Dictionary<string, bool>();
 
     /// <summary>
     ///
@@ -165,8 +165,7 @@ namespace Gendarme.Rules.Gendarme
       foreach (CustomAttribute attribute in provider.CustomAttributes)
       {
         var attributeTypeName = attribute.AttributeType.GetFullName();
-        Action<CustomAttribute, ICustomAttributeProvider> f;
-        if (attributes.TryGetValue(attributeTypeName, out f))
+        if (attributes.TryGetValue(attributeTypeName, out Action<CustomAttribute, ICustomAttributeProvider> f))
           f(attribute, provider);
       }
     }
@@ -174,8 +173,7 @@ namespace Gendarme.Rules.Gendarme
     private bool IsRule(TypeReference tr)
     {
       var typeName = tr.GetFullName();
-      bool result;
-      if (!typeIsRule.TryGetValue(typeName, out result))
+      if (!typeIsRule.TryGetValue(typeName, out bool result))
       {
         result = tr.Implements(irule);
         typeIsRule[typeName] = result;
