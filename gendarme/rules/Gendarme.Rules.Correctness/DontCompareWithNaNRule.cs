@@ -36,107 +36,120 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Correctness {
+namespace Gendarme.Rules.Correctness
+{
+  /// <summary>
+  /// As defined in IEEE 754 it's impossible to compare any floating-point value, even
+  /// another <c>NaN</c>, with <c>NaN</c>. Such comparison will always return <c>false</c>
+  /// (more information on [http://en.wikipedia.org/wiki/NaN wikipedia]). The framework
+  /// provides methods, <c>Single.IsNaN</c> and <c>Double.IsNaN</c>, to check for
+  /// <c>NaN</c> values.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// double d = ComplexCalculation ();
+  /// if (d == Double.NaN) {
+  ///	// this will never be reached, even if d is NaN
+  ///	Console.WriteLine ("No solution exists!");
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// double d = ComplexCalculation ();
+  /// if (Double.IsNaN (d)) {
+  ///	Console.WriteLine ("No solution exists!");
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// As defined in IEEE 754 it's impossible to compare any floating-point value, even 
-	/// another <c>NaN</c>, with <c>NaN</c>. Such comparison will always return <c>false</c>
-	/// (more information on [http://en.wikipedia.org/wiki/NaN wikipedia]). The framework 
-	/// provides methods, <c>Single.IsNaN</c> and <c>Double.IsNaN</c>, to check for 
-	/// <c>NaN</c> values.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// double d = ComplexCalculation ();
-	/// if (d == Double.NaN) {
-	///	// this will never be reached, even if d is NaN
-	///	Console.WriteLine ("No solution exists!");
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// double d = ComplexCalculation ();
-	/// if (Double.IsNaN (d)) {
-	///	Console.WriteLine ("No solution exists!");
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This method compares a floating point value with NaN (Not a Number) which always return false, even for (NaN == NaN).")]
+  [Solution("Replace the code with a call to the appropriate Single.IsNaN(value) or Double.IsNaN(value).")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2242:TestForNaNCorrectly")]
+  public class DoNotCompareWithNaNRule : FloatingComparisonRule, IMethodRule
+  {
+    private const string EqualityMessage = "A floating point value is compared (== or !=) with [Single|Double].NaN.";
+    private const string EqualsMessage = "[Single|Double].Equals is called using NaN.";
 
-	[Problem ("This method compares a floating point value with NaN (Not a Number) which always return false, even for (NaN == NaN).")]
-	[Solution ("Replace the code with a call to the appropriate Single.IsNaN(value) or Double.IsNaN(value).")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2242:TestForNaNCorrectly")]
-	public class DoNotCompareWithNaNRule : FloatingComparisonRule, IMethodRule {
+    private static bool CheckPrevious(IList<Instruction> il, int index)
+    {
+      for (int i = index; i >= 0; i--)
+      {
+        Instruction ins = il[i];
+        switch (ins.OpCode.Code)
+        {
+          case Code.Ldc_R4:
+            // return false, invalid, is NaN is detected
+            return !Single.IsNaN((float)ins.Operand);
 
-		private const string EqualityMessage = "A floating point value is compared (== or !=) with [Single|Double].NaN.";
-		private const string EqualsMessage = "[Single|Double].Equals is called using NaN.";
+          case Code.Ldc_R8:
+            // return false, invalid, is NaN is detected
+            return !Double.IsNaN((double)ins.Operand);
 
-		private static bool CheckPrevious (IList<Instruction> il, int index)
-		{
-			for (int i = index; i >= 0; i--) {
-				Instruction ins = il [i];
-				switch (ins.OpCode.Code) {
-				case Code.Ldc_R4:
-					// return false, invalid, is NaN is detected
-					return !Single.IsNaN ((float) ins.Operand);
-				case Code.Ldc_R8:
-					// return false, invalid, is NaN is detected
-					return !Double.IsNaN ((double) ins.Operand);
-				case Code.Nop:
-				case Code.Ldarg:
-				case Code.Ldarg_1:
-				case Code.Ldloca:
-				case Code.Ldloca_S:
-				case Code.Stloc:
-				case Code.Stloc_0:
-				case Code.Stloc_1:
-					// continue
-					break;
-				default:
-					return true;
-				}
-			}
-			return true;
-		}
+          case Code.Nop:
+          case Code.Ldarg:
+          case Code.Ldarg_1:
+          case Code.Ldloca:
+          case Code.Ldloca_S:
+          case Code.Stloc:
+          case Code.Stloc_0:
+          case Code.Stloc_1:
+            // continue
+            break;
 
-		// contains LDC_R4 and LDC_R8
-		static OpCodeBitmask Ldc_R = new OpCodeBitmask (0xC00000000, 0x0, 0x0, 0x0);
+          default:
+            return true;
+        }
+      }
+      return true;
+    }
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!IsApplicable (method))
-				return RuleResult.DoesNotApply;
+    // contains LDC_R4 and LDC_R8
+    private static readonly OpCodeBitmask Ldc_R = new OpCodeBitmask(0xC00000000, 0x0, 0x0, 0x0);
 
-			// extra check - rule applies only if the method contains Ldc_R4 or Ldc_R8
-			if (!Ldc_R.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!IsApplicable(method))
+        return RuleResult.DoesNotApply;
 
-			IList<Instruction> il = method.Body.Instructions;
-			for (int i = 0; i < il.Count; i++) {
-				Instruction ins = il [i];
-				switch (ins.OpCode.Code) {
-				// handle == and !=
-				case Code.Ceq:
-					if (!CheckPrevious (il, i - 1)) {
-						Runner.Report (method, ins, Severity.Critical, Confidence.Total, EqualityMessage);
-					}
-					break;
-				// handle calls to [Single|Double].Equals
-				case Code.Call:
-				case Code.Callvirt:
-					MemberReference callee = ins.Operand as MemberReference;
-					if ((callee != null) && (callee.Name == "Equals") && callee.DeclaringType.IsFloatingPoint ()) {
-						if (!CheckPrevious (il, i - 1)) {
-							Runner.Report (method, ins, Severity.Critical, Confidence.Total, EqualsMessage);
-						}
-					}
-					break;
-				}
-			}
-			return Runner.CurrentRuleResult;
-		}
-	}
+      // extra check - rule applies only if the method contains Ldc_R4 or Ldc_R8
+      if (!Ldc_R.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
+
+      IList<Instruction> il = method.Body.Instructions;
+      for (int i = 0; i < il.Count; i++)
+      {
+        Instruction ins = il[i];
+        switch (ins.OpCode.Code)
+        {
+          // handle == and !=
+          case Code.Ceq:
+            if (!CheckPrevious(il, i - 1))
+            {
+              Runner.Report(method, ins, Severity.Critical, Confidence.Total, EqualityMessage);
+            }
+            break;
+          // handle calls to [Single|Double].Equals
+          case Code.Call:
+          case Code.Callvirt:
+            if ((ins.Operand is MemberReference callee) && (callee.Name == "Equals") && callee.DeclaringType.IsFloatingPoint())
+            {
+              if (!CheckPrevious(il, i - 1))
+              {
+                Runner.Report(method, ins, Severity.Critical, Confidence.Total, EqualsMessage);
+              }
+            }
+            break;
+        }
+      }
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

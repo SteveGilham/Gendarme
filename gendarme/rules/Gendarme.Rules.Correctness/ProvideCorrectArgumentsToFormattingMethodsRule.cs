@@ -127,6 +127,7 @@ namespace Gendarme.Rules.Correctness
       return null;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Correctness",
          "EnsureLocalDisposalRule",
          Justification = "not locally owned")]
@@ -258,6 +259,8 @@ namespace Gendarme.Rules.Correctness
       Name = "String"
     };
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckCallToFormatter(Instruction call, MethodDefinition method)
     {
       MethodReference mr = (call.Operand as MethodReference);

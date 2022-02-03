@@ -72,9 +72,9 @@ namespace Gendarme.Rules.Correctness
                    Justification = "Maybe refactor")]
   public sealed class ReviewInconsistentIdentityRule : Rule, ITypeRule
   {
-    private HashSet<MethodInfo> methods = new HashSet<MethodInfo>();
-    private MethodInfo hash = new MethodInfo();
-    private MethodInfo clone = new MethodInfo();
+    private readonly HashSet<MethodInfo> methods = new HashSet<MethodInfo>();
+    private readonly MethodInfo hash = new MethodInfo();
+    private readonly MethodInfo clone = new MethodInfo();
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 
@@ -167,8 +167,8 @@ namespace Gendarme.Rules.Correctness
       hash.Method = type.GetMethod(MethodSignatures.GetHashCode);
     }
 
-    private HashSet<MemberReference> stored_fields = new HashSet<MemberReference>();
-    private HashSet<MemberReference> property_setters = new HashSet<MemberReference>();
+    private readonly HashSet<MemberReference> stored_fields = new HashSet<MemberReference>();
+    private readonly HashSet<MemberReference> property_setters = new HashSet<MemberReference>();
 
     private void ProcessMethod(TypeDefinition type, MethodInfo info)
     {
@@ -274,10 +274,10 @@ namespace Gendarme.Rules.Correctness
 
     // It's a bit silly to stick these into fields, but it does save some
     // allocations in a highly used code path...
-    private HashSet<MemberReference> fields = new HashSet<MemberReference>();
+    private readonly HashSet<MemberReference> fields = new HashSet<MemberReference>();
 
-    private HashSet<MemberReference> getters = new HashSet<MemberReference>();
-    private List<MemberReference> badNames = new List<MemberReference>();
+    private readonly HashSet<MemberReference> getters = new HashSet<MemberReference>();
+    private readonly List<MemberReference> badNames = new List<MemberReference>();
 
     private void CheckMethods()
     {
@@ -291,6 +291,8 @@ namespace Gendarme.Rules.Correctness
       }
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckBadNames()
     {
       // If an equality or comparison method uses a subset of the
@@ -321,6 +323,8 @@ namespace Gendarme.Rules.Correctness
       }
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckHashMethod()
     {
       // We also have a problem if GetHashCode does not check a
@@ -350,6 +354,8 @@ namespace Gendarme.Rules.Correctness
       hash.Clear();
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckCloneMethod()
     {
       // We also have a problem if Clone does not use a

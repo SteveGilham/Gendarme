@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.ListsAreStronglyTypedRule
 //
 // Authors:
@@ -34,138 +34,162 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  public abstract class StronglyTypedRule : Rule, ITypeRule
+  {
+    protected abstract MethodSignature[] GetMethods();
 
-	abstract public class StronglyTypedRule : Rule, ITypeRule {
+    protected abstract string[] GetProperties();
 
-		abstract protected MethodSignature [] GetMethods ();
-		abstract protected string [] GetProperties ();
-		abstract protected string InterfaceName { get; }
-		abstract protected string InterfaceNamespace { get; }
-        private Func<TypeName> builder()
+    protected abstract string InterfaceName { get; }
+    protected abstract string InterfaceNamespace { get; }
+    private Func<TypeName> Builder()
+    {
+      return () => new TypeName
+      {
+        Name = InterfaceName,
+        Namespace = InterfaceNamespace
+      };
+    }
+
+    private Lazy<TypeName> lazyTypeName = null;
+
+    protected TypeName InterfaceTypeName
+    {
+      get
+      {
+        lazyTypeName = new Lazy<TypeName>(Builder());
+        return lazyTypeName.Value;
+      }
+    }
+
+    private MethodSignature[] signatures;
+    private string[] propertyNames;
+    private int methodsLeft, propertiesLeft;
+
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public virtual RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.IsAbstract || type.IsGeneratedCode() || !type.Implements(this.InterfaceTypeName))
+        return RuleResult.DoesNotApply;
+
+      signatures = GetMethods();
+      propertyNames = GetProperties();
+
+      methodsLeft = signatures.Length;
+      propertiesLeft = propertyNames.Length;
+
+      TypeDefinition baseType = type;
+      while (methodsLeft > 0 || propertiesLeft > 0)
+      {
+        ProcessType(baseType);
+        if (baseType.BaseType == null)
+          break;
+        TypeDefinition td = baseType.BaseType.Resolve();
+        if (td == null)
+          break;
+        baseType = td;
+      }
+
+      if (propertiesLeft > 0)
+      {
+        foreach (string propertyName in propertyNames)
         {
-            return () => new TypeName 
-            {
-                Name = InterfaceName,
-                Namespace = InterfaceNamespace
-            };
+          if (propertyName == null)
+            continue;
+          Runner.Report(type, Severity.Medium, Confidence.High,
+            "Type does not have strongly typed version of property " + propertyName);
         }
-        private Lazy<TypeName> lazyTypeName = null;
-        protected TypeName InterfaceTypeName { get {
-            lazyTypeName = new Lazy<TypeName>(builder());
-            return lazyTypeName.Value;  } }
+      }
 
-		MethodSignature [] signatures;
-		string [] propertyNames;
-		int methodsLeft, propertiesLeft;
+      if (methodsLeft > 0)
+      {
+        foreach (MethodSignature signature in signatures)
+        {
+          if (signature == null)
+            continue;
+          Runner.Report(type, Severity.Medium, Confidence.High,
+            "Type does not have strongly typed version of method " + signature.Name);
+        }
+      }
 
-		virtual public RuleResult CheckType (TypeDefinition type)
-		{
-            if (type.IsAbstract || type.IsGeneratedCode() || !type.Implements(this.InterfaceTypeName))
-				return RuleResult.DoesNotApply;
+      return Runner.CurrentRuleResult;
+    }
 
-			signatures = GetMethods ();
-			propertyNames = GetProperties ();
+    private void ProcessType(TypeDefinition baseType)
+    {
+      if (baseType.HasMethods && methodsLeft > 0)
+        ProcessMethods(baseType);
 
-			methodsLeft = signatures.Length;
-			propertiesLeft = propertyNames.Length;
+      if (baseType.HasProperties && propertiesLeft > 0)
+        ProcessProperties(baseType);
+    }
 
-			TypeDefinition baseType = type;
-			while (methodsLeft > 0 || propertiesLeft > 0) {
-				ProcessType (baseType);
-				if (baseType.BaseType == null)
-					break;
-				TypeDefinition td = baseType.BaseType.Resolve ();
-				if (td == null)
-					break;
-				baseType = td;
+    private static bool IsWeak(TypeReference type)
+    {
+      if (type.Namespace != "System") // OK
+        return false;
+      string name = type.Name;
+      return ((name == "Object") || (name == "Array") || (name == "Object[]"));
+    }
 
-			}
+    private static bool IsWeak(string typeName)
+    {
+      return ((typeName == "System.Object") || (typeName == "System.Array") || (typeName == "System.Object[]"));
+    }
 
-			if (propertiesLeft > 0) {
-				foreach (string propertyName in propertyNames) {
-					if (propertyName == null)
-						continue;
-					Runner.Report (type, Severity.Medium, Confidence.High,
-						"Type does not have strongly typed version of property " + propertyName);
-				}
-			}
+    private void ProcessProperties(TypeDefinition baseType)
+    {
+      foreach (PropertyDefinition property in baseType.Properties)
+      {
+        for (int i = 0; i < propertyNames.Length; i++)
+        {
+          if (propertyNames[i] == null || propertyNames[i] != property.Name)
+            continue;
+          if (!IsWeak(property.PropertyType))
+          {
+            propertiesLeft--;
+            propertyNames[i] = null;
+          }
+        }
+      }
+    }
 
-			if (methodsLeft > 0) {
-				foreach (MethodSignature signature in signatures) {
-					if (signature == null)
-						continue;
-					Runner.Report (type, Severity.Medium, Confidence.High,
-						"Type does not have strongly typed version of method " + signature.Name);
-				}
-			}
+    private void ProcessMethods(TypeDefinition baseType)
+    {
+      foreach (MethodDefinition method in baseType.Methods)
+      {
+        if (!method.HasParameters || method.IsProperty())
+          continue;
+        for (int i = 0; i < signatures.Length; i++)
+        {
+          var methodParameters = method.Parameters;
+          if (signatures[i] == null || method.Name != signatures[i].Name ||
+            methodParameters.Count != signatures[i].Parameters.Count)
+            continue;
 
-			return Runner.CurrentRuleResult;
-		}
+          bool foundStrong = true;
+          for (int j = 0; j < methodParameters.Count; j++)
+          {
+            if (!IsWeak(signatures[i].Parameters[j]))
+              continue;
+            if (IsWeak(methodParameters[j].ParameterType))
+              foundStrong = false;
+          }
 
-		private void ProcessType (TypeDefinition baseType)
-		{
-			if (baseType.HasMethods && methodsLeft > 0)
-				ProcessMethods (baseType);
-
-			if (baseType.HasProperties && propertiesLeft > 0)
-				ProcessProperties (baseType);
-		}
-
-		static bool IsWeak (TypeReference type)
-		{
-			if (type.Namespace != "System") // OK
-				return false;
-			string name = type.Name;
-			return ((name == "Object") || (name == "Array") || (name == "Object[]"));
-		}
-
-		static bool IsWeak (string typeName)
-		{
-			return ((typeName == "System.Object") || (typeName == "System.Array") || (typeName == "System.Object[]"));
-		}
-
-		private void ProcessProperties (TypeDefinition baseType)
-		{
-			foreach (PropertyDefinition property in baseType.Properties) {
-				for (int i = 0; i < propertyNames.Length; i++) {
-					if (propertyNames [i] == null || propertyNames [i] != property.Name)
-						continue;
-					if (!IsWeak (property.PropertyType)) {
-						propertiesLeft--;
-						propertyNames [i] = null;
-					}
-				}
-			}
-		}
-
-		private void ProcessMethods (TypeDefinition baseType)
-		{
-			foreach (MethodDefinition method in baseType.Methods) {
-				if (!method.HasParameters || method.IsProperty ())
-					continue;
-				for (int i = 0; i < signatures.Length; i++) {
-					var methodParameters = method.Parameters;
-					if (signatures [i] == null || method.Name != signatures [i].Name ||
-						methodParameters.Count != signatures [i].Parameters.Count)
-						continue;
-
-					bool foundStrong = true;
-					for (int j = 0; j < methodParameters.Count; j++) {
-						if (!IsWeak (signatures [i].Parameters [j]))
-							continue;
-						if (IsWeak (methodParameters [j].ParameterType))
-							foundStrong = false;
-					}
-
-					if (foundStrong) {
-						methodsLeft--;
-						// null means strongly typed version of this signature was found
-						signatures [i] = null;
-					}
-				}
-			}
-		}
-	}
+          if (foundStrong)
+          {
+            methodsLeft--;
+            // null means strongly typed version of this signature was found
+            signatures[i] = null;
+          }
+        }
+      }
+    }
+  }
 }

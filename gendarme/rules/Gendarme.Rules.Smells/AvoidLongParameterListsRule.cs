@@ -34,6 +34,7 @@ using System.Linq;
 using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Smells
 {
@@ -133,6 +134,9 @@ namespace Gendarme.Rules.Smells
       return (method.HasParameters ? method.Parameters.Count : 0) >= MaxParameters;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckConstructor(IMethodSignature constructor)
     {
       //Skip enums, interfaces, <Module>, static classes ...
@@ -143,6 +147,8 @@ namespace Gendarme.Rules.Smells
         Runner.Report(constructor, Severity.Medium, Confidence.High, "This constructor contains a long parameter list.");
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckMethod(IMethodSignature method)
     {
       if (HasMoreParametersThanAllowed(method))
@@ -189,6 +195,8 @@ namespace Gendarme.Rules.Smells
       return has_methods;
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private RuleResult CheckDelegate(TypeReference type)
     {
       MethodDefinition method = type.GetMethod("Invoke");

@@ -33,6 +33,7 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 using Gendarme.Framework.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Globalization
 {
@@ -56,8 +57,8 @@ namespace Gendarme.Rules.Globalization
 
       // Ignore well known static getters of resources classes
       string name = method.Name;
-      if ("get_Culture".Equals(name, StringComparison.InvariantCulture) ||
-        "get_ResourceManager".Equals(name, StringComparison.InvariantCulture))
+      if ("get_Culture".Equals(name, StringComparison.Ordinal) ||
+        "get_ResourceManager".Equals(name, StringComparison.Ordinal))
         return false;
 
       // rule apply only to static getters in a generated resx class
@@ -98,6 +99,9 @@ namespace Gendarme.Rules.Globalization
     /// </summary>
     /// <param name="method"></param>
     /// <returns></returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // check if the the rule applies to this method

@@ -91,6 +91,8 @@ namespace Gendarme.Rules.Smells
       types.Clear();
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     internal void CompareMethodAgainstTypeMethods(MethodDefinition current, TypeDefinition targetType)
     {
       if (CheckedTypes.Contains(targetType.Name))

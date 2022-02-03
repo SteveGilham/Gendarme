@@ -121,6 +121,9 @@ namespace Gendarme.Rules.Correctness
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckString(MethodDefinition method, Instruction ins, string xml)
     {
       if (string.IsNullOrEmpty(xml))

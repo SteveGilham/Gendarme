@@ -35,6 +35,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Interoperability.Com
 {
@@ -96,6 +97,9 @@ namespace Gendarme.Rules.Interoperability.Com
 
     // Ensures the interface has a InterfaceTypeAttribute with
     // ComInterfaceType.InterfaceIsIDispatch passed to it.
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckInterface(TypeDefinition def)
     {
       if (def == null)

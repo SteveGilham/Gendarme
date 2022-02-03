@@ -34,6 +34,7 @@ using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Gendarme.Framework.Rocks;
+using System.Globalization;
 
 namespace Gendarme.Rules.Smells
 {
@@ -67,7 +68,8 @@ namespace Gendarme.Rules.Smells
         extra = string.Join(Environment.NewLine, instructions.Select(i =>
         {
           var sp = dbg.GetSequencePoint(i);
-          return (sp == null) ? "." : String.Format("sl={0} sc={1} - el={2} ec={3} : {4}",
+          return (sp == null) ? "." : String.Format(CultureInfo.InvariantCulture,
+                                              "sl={0} sc={1} - el={2} ec={3} : {4}",
                                               sp.StartLine, sp.StartColumn,
                                               sp.EndLine, sp.EndColumn, sp.Document.Url);
         }));

@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Interoperability.Com.ReviewComRegistrationMethodsRule
 //
 // Authors:
@@ -33,123 +33,134 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Interoperability.Com {
+namespace Gendarme.Rules.Interoperability.Com
+{
+  /// <summary>
+  /// This rule checks the correctness of COM register and unregister methods,
+  /// i.e. they should not be externally visible and they should be matched
+  /// (both or none of them should exist ).
+  /// </summary>
+  /// <example>
+  /// Bad example (public methods):
+  /// <code>
+  /// [ComVisible (true)
+  /// class Bad {
+  ///	[ComRegisterFunction]
+  ///	public void Register ()
+  ///	{
+  ///	}
+  ///
+  ///	[ComUnregisterFunction]
+  ///	public void Unregister ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (only one of the methods exist)
+  /// <code>
+  /// [ComVisible (true)]
+  /// class Bad {
+  ///	[ComRegisterFunction]
+  ///	public void Register ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [ComVisible (true)]
+  /// class Good {
+  ///	[ComRegisterFunction]
+  ///	private void Register ()
+  ///	{
+  ///	}
+  ///
+  ///	[ComUnregisterFunction]
+  ///	private void Unregister ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule checks the correctness of COM register and unregister methods,
-	/// i.e. they should not be externally visible and they should be matched 
-	/// (both or none of them should exist ).
-	/// </summary>
-	/// <example>
-	/// Bad example (public methods):
-	/// <code>
-	/// [ComVisible (true)
-	/// class Bad {
-	///	[ComRegisterFunction]
-	///	public void Register ()
-	///	{
-	///	}
-	///	
-	///	[ComUnregisterFunction]
-	///	public void Unregister ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (only one of the methods exist)
-	/// <code>
-	/// [ComVisible (true)]
-	/// class Bad {
-	///	[ComRegisterFunction]
-	///	public void Register ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [ComVisible (true)]
-	/// class Good {
-	///	[ComRegisterFunction]
-	///	private void Register ()
-	///	{
-	///	}
-	///	
-	///	[ComUnregisterFunction]
-	///	private void Unregister ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("COM registration methods should be matched (i.e. both or none of them should exist) and should not be externally visible.")]
+  [Solution("Add a missing method or change methods visibility to private or internal.")]
+  [FxCopCompatibility("Microsoft.Interoperability", "CA1410:ComRegistrationMethodsShouldBeMatched")]
+  [FxCopCompatibility("Microsoft.Interoperability", "CA1411:ComRegistrationMethodsShouldNotBeVisible")]
+  public class ReviewComRegistrationMethodsRule : Rule, ITypeRule
+  {
+    private static readonly TypeName comreg = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "ComRegisterFunctionAttribute"
+    };
 
-	[Problem ("COM registration methods should be matched (i.e. both or none of them should exist) and should not be externally visible.")]
-	[Solution ("Add a missing method or change methods visibility to private or internal.")]
-	[FxCopCompatibility ("Microsoft.Interoperability", "CA1410:ComRegistrationMethodsShouldBeMatched")]
-	[FxCopCompatibility ("Microsoft.Interoperability", "CA1411:ComRegistrationMethodsShouldNotBeVisible")]
-	public class ReviewComRegistrationMethodsRule : Rule, ITypeRule {
+    private static readonly TypeName comunreg = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "ComUnregisterFunctionAttribute"
+    };
 
-        private readonly static TypeName comreg = new TypeName
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.HasGenericParameters || !type.IsVisible() || !type.IsTypeComVisible())
+        return RuleResult.DoesNotApply;
+
+      bool foundRegister = false; // type level variables
+      bool foundUnregister = false;
+
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (!method.HasCustomAttributes)
+          continue;
+
+        bool foundRegisterUnregisterMethod = false; // method level variable
+        foreach (CustomAttribute attribute in method.CustomAttributes)
         {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "ComRegisterFunctionAttribute"
-        };
-        private readonly static TypeName comunreg = new TypeName
+          TypeReference atype = attribute.AttributeType;
+          if (!foundRegister && atype.IsNamed(comreg))
+          {
+            foundRegister = true;
+            foundRegisterUnregisterMethod = true;
+          }
+          if (!foundUnregister && atype.IsNamed(comunreg))
+          {
+            foundUnregister = true;
+            foundRegisterUnregisterMethod = true;
+          }
+        }
+        if (foundRegisterUnregisterMethod && method.IsVisible())
         {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "ComUnregisterFunctionAttribute"
-        };
+          Runner.Report(method, Severity.High, Confidence.High,
+            "Method is marked with the ComRegisterFunctionAttribute or with the ComUnregisterFunctionAttribute and is externally visible");
+        }
+      }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (type.HasGenericParameters || !type.IsVisible () || !type.IsTypeComVisible ())
-				return RuleResult.DoesNotApply;
+      if (foundRegister ^ foundUnregister)
+      { // only one of them is true
+        if (foundRegister)
+          Runner.Report(type, Severity.High, Confidence.High,
+            "Type contains has a method with ComRegisterFunctionAttribute but it doesn't contain a method with ComUnregisterFunctionAttribute");
+        if (foundUnregister)
+          Runner.Report(type, Severity.High, Confidence.High,
+            "Type contains has a method with ComUnregisterFunctionAttribute but it doesn't contain a method with ComRegisterFunctionAttribute");
+      }
 
-			bool foundRegister = false; // type level variables
-			bool foundUnregister = false;
-
-			foreach (MethodDefinition method in type.Methods) {
-				if (!method.HasCustomAttributes)
-					continue;
-
-				bool foundRegisterUnregisterMethod = false; // method level variable
-				foreach (CustomAttribute attribute in method.CustomAttributes) {
-					TypeReference atype = attribute.AttributeType;
-					if (!foundRegister && atype.IsNamed ( comreg )) {
-						foundRegister = true;
-						foundRegisterUnregisterMethod = true;
-					}
-					if (!foundUnregister && atype.IsNamed ( comunreg )) {
-						foundUnregister = true;
-						foundRegisterUnregisterMethod = true;
-					}
-				}
-				if (foundRegisterUnregisterMethod && method.IsVisible ()) {
-					Runner.Report (method, Severity.High, Confidence.High,
-						"Method is marked with the ComRegisterFunctionAttribute or with the ComUnregisterFunctionAttribute and is externally visible");
-				}
-			}
-
-			if (foundRegister ^ foundUnregister) { // only one of them is true
-				if (foundRegister)
-					Runner.Report (type, Severity.High, Confidence.High,
-						"Type contains has a method with ComRegisterFunctionAttribute but it doesn't contain a method with ComUnregisterFunctionAttribute");
-				if (foundUnregister)
-					Runner.Report (type, Severity.High, Confidence.High,
-						"Type contains has a method with ComUnregisterFunctionAttribute but it doesn't contain a method with ComRegisterFunctionAttribute");
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

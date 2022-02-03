@@ -119,6 +119,9 @@ namespace Gendarme.Rules.Naming
     }
 
     // convert name to camelCase
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
+      Justification = "Camel casing")]
     private static string CamelCase(string name)
     {
       if (String.IsNullOrEmpty(name))
@@ -145,6 +148,8 @@ namespace Gendarme.Rules.Naming
       Runner.Report(metadata, Severity.Medium, Confidence.High, message);
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
+      Justification = "Camel casing")]
     private void CheckNamespace(string nspace)
     {
       if (String.IsNullOrEmpty(nspace))

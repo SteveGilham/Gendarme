@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Serialization.MissingSerializationConstructorRule
 //
 // Authors:
@@ -31,105 +31,117 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Serialization {
+namespace Gendarme.Rules.Serialization
+{
+  /// <summary>
+  /// This rule checks for types that implement <c>System.ISerializable</c> but don't provide a
+  /// serialization constructor. The constructor is required in order to make the type
+  /// serializeable but cannot be enforced by the interface.
+  /// The serialization constructor should be <c>private</c> for <c>sealed</c> types and
+  /// <c>protected</c> for unsealed types.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [Serializable]
+  /// public class Bad : ISerializable {
+  /// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (sealed):
+  /// <code>
+  /// [Serializable]
+  /// public sealed class Good : ISerializable {
+  /// 	private ClassWithConstructor (SerializationInfo info, StreamingContext context)
+  /// 	{
+  /// 	}
+  ///
+  /// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [Serializable]
+  /// public class Good : ISerializable {
+  /// 	protected ClassWithConstructor (SerializationInfo info, StreamingContext context)
+  /// 	{
+  /// 	}
+  ///
+  /// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule checks for types that implement <c>System.ISerializable</c> but don't provide a
-	/// serialization constructor. The constructor is required in order to make the type
-	/// serializeable but cannot be enforced by the interface. 
-	/// The serialization constructor should be <c>private</c> for <c>sealed</c> types and
-	/// <c>protected</c> for unsealed types.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [Serializable]
-	/// public class Bad : ISerializable {
-	/// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (sealed):
-	/// <code>
-	/// [Serializable]
-	/// public sealed class Good : ISerializable {
-	/// 	private ClassWithConstructor (SerializationInfo info, StreamingContext context)
-	/// 	{
-	/// 	}
-	/// 	
-	/// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [Serializable]
-	/// public class Good : ISerializable {
-	/// 	protected ClassWithConstructor (SerializationInfo info, StreamingContext context)
-	/// 	{
-	/// 	}
-	/// 	
-	/// 	public void GetObjectData (SerializationInfo info, StreamingContext context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("The required constructor for ISerializable is not present in this type.")]
+  [Solution("Add a (private for sealed, protected otherwise) serialization constructor for this type.")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2229:ImplementSerializationConstructors")]
+  public class MissingSerializationConstructorRule : Rule, ITypeRule
+  {
+    // localizable
+    private const string NoSerializationCtorText = "The required constructor for ISerializable is not present in this type.";
 
-	[Problem ("The required constructor for ISerializable is not present in this type.")]
-	[Solution ("Add a (private for sealed, protected otherwise) serialization constructor for this type.")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2229:ImplementSerializationConstructors")]
-	public class MissingSerializationConstructorRule : Rule, ITypeRule {
+    private const string CtorSealedTypeText = "The serialization constructor should be private since this type is sealed.";
+    private const string CtorUnsealedTypeText = "The serialization constructor should be protected (family) since this type is not sealed.";
 
-		// localizable
-		private const string NoSerializationCtorText = "The required constructor for ISerializable is not present in this type.";
-		private const string CtorSealedTypeText = "The serialization constructor should be private since this type is sealed.";
-		private const string CtorUnsealedTypeText = "The serialization constructor should be protected (family) since this type is not sealed.";
+    private static readonly TypeName iserializable = new TypeName
+    {
+      Namespace = "System.Runtime.Serialization",
+      Name = "ISerializable"
+    };
 
-        private readonly static TypeName iserializable = new TypeName
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule does not apply to interfaces, delegates or types that does not implement ISerializable
+      if (type.IsInterface || type.IsDelegate() || !type.Implements(iserializable))
+        return RuleResult.DoesNotApply;
+
+      // rule applies, only Success or Failure from the point on
+
+      // check if the type implements the serialization constructor
+      MethodDefinition ctor = type.GetMethod(MethodSignatures.SerializationConstructor);
+      if (ctor == null)
+      {
+        // no serialization ctor
+        Runner.Report(type, Severity.High, Confidence.Total, NoSerializationCtorText);
+        return RuleResult.Failure;
+      }
+      else if (type.IsSealed)
+      {
+        // with ctor: on a sealed type the ctor must be private
+        if (!ctor.IsPrivate)
         {
-            Namespace = "System.Runtime.Serialization",
-            Name = "ISerializable"
-        };
-        
-        public RuleResult CheckType(TypeDefinition type)
-		{
-			// rule does not apply to interfaces, delegates or types that does not implement ISerializable
-			if (type.IsInterface || type.IsDelegate () || !type.Implements (iserializable))
-				return RuleResult.DoesNotApply;
+          Runner.Report(type, Severity.Low, Confidence.Total, CtorSealedTypeText);
+          return RuleResult.Failure;
+        }
+      }
+      else
+      {
+        // with ctor: on a unsealed type the ctor must be family
+        if (!ctor.IsFamily)
+        {
+          Runner.Report(type, Severity.Low, Confidence.Total, CtorUnsealedTypeText);
+          return RuleResult.Failure;
+        }
+      }
 
-			// rule applies, only Success or Failure from the point on
-
-			// check if the type implements the serialization constructor
-			MethodDefinition ctor = type.GetMethod (MethodSignatures.SerializationConstructor);
-			if (ctor == null) {
-				// no serialization ctor
-				Runner.Report (type, Severity.High, Confidence.Total, NoSerializationCtorText);
-				return RuleResult.Failure;
-			} else if (type.IsSealed) {
-				// with ctor: on a sealed type the ctor must be private
-				if (!ctor.IsPrivate) {
-					Runner.Report (type, Severity.Low, Confidence.Total, CtorSealedTypeText);
-					return RuleResult.Failure;
-				}
-			} else {
-				// with ctor: on a unsealed type the ctor must be family
-				if (!ctor.IsFamily) {
-					Runner.Report (type, Severity.Low, Confidence.Total, CtorUnsealedTypeText);
-					return RuleResult.Failure;
-				}
-			}
-
-			// everything is fine
-			return RuleResult.Success;
-		}
-	}
+      // everything is fine
+      return RuleResult.Success;
+    }
+  }
 }

@@ -628,6 +628,8 @@ namespace Gendarme.Rules.Concurrency
       }
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckForLegalCall(MethodDefinition caller, Instruction ins)
     {
       MethodDefinition target = ((MethodReference)ins.Operand).Resolve();

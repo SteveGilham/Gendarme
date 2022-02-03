@@ -38,6 +38,7 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Correctness
 {
@@ -117,12 +118,15 @@ namespace Gendarme.Rules.Correctness
       }
     }
 
-    private readonly static TypeName systemString = new TypeName
+    private static readonly TypeName systemString = new TypeName
     {
       Namespace = "System",
       Name = "String"
     };
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckString(MethodDefinition method, Instruction ins, string expression)
     {
       if (string.IsNullOrEmpty(expression))
@@ -143,19 +147,19 @@ namespace Gendarme.Rules.Correctness
       }
     }
 
-    private readonly static TypeName xpe = new TypeName
+    private static readonly TypeName xpe = new TypeName
     {
       Namespace = "System.Xml.XPath",
       Name = "XPathExpression"
     };
 
-    private readonly static TypeName xpn = new TypeName
+    private static readonly TypeName xpn = new TypeName
     {
       Namespace = "System.Xml.XPath",
       Name = "XPathNavigator"
     };
 
-    private readonly static TypeName node = new TypeName
+    private static readonly TypeName node = new TypeName
     {
       Namespace = "System.Xml",
       Name = "XmlNode"

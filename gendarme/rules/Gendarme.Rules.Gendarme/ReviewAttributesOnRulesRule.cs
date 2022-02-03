@@ -35,6 +35,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Gendarme
 {
@@ -121,6 +122,9 @@ namespace Gendarme.Rules.Gendarme
       return Runner.CurrentRuleResult;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckIfRuleHasAllRequiredAttributes(TypeDefinition type)
     {
       if (!type.IsAbstract && IsRule(type))
@@ -193,6 +197,9 @@ namespace Gendarme.Rules.Gendarme
       CheckIfStringArgumentsAreNotNullOrEmpty(attribute, provider);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckFxCopCompatibilityAttribute(CustomAttribute attribute, ICustomAttributeProvider provider)
     {
       CheckIfAttributeUsedOnRule(attribute, provider);
@@ -234,6 +241,9 @@ namespace Gendarme.Rules.Gendarme
       Name = "Type"
     };
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckEngineDependencyAttribute(CustomAttribute attribute, ICustomAttributeProvider provider)
     {
       TypeDefinition td = (provider as TypeDefinition);
@@ -262,6 +272,8 @@ namespace Gendarme.Rules.Gendarme
       CheckIfAttributeUsedOnRulesProperty(attribute, provider);
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckIfAttributeUsedOnRule(ICustomAttribute attribute, ICustomAttributeProvider provider)
     {
       TypeDefinition td = (provider as TypeDefinition);
@@ -270,6 +282,8 @@ namespace Gendarme.Rules.Gendarme
           attribute.AttributeType.GetFullName() + " can be used on rules only");
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckIfAttributeUsedOnRulesProperty(ICustomAttribute attribute, ICustomAttributeProvider provider)
     {
       PropertyDefinition property = (provider as PropertyDefinition);
@@ -286,6 +300,8 @@ namespace Gendarme.Rules.Gendarme
     };
 
     // returns true when all arguments are fine, false otherwise
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private bool CheckIfStringArgumentsAreNotNullOrEmpty(CustomAttribute attribute, ICustomAttributeProvider provider)
     {
       if (!attribute.HasConstructorArguments)

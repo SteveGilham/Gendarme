@@ -34,6 +34,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Gendarme.Rules.Correctness
@@ -135,6 +136,9 @@ namespace Gendarme.Rules.Correctness
   [EngineDependency(typeof(OpCodeEngine))]
   public class AvoidMethodsWithSideEffectsInConditionalCodeRule : Rule, IMethodRule
   {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (!method.HasBody)

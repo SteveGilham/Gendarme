@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.MissingEngineDependencyRule
 //
 // Authors:
@@ -34,119 +34,127 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Gendarme {
+namespace Gendarme.Rules.Gendarme
+{
+  /// <summary>
+  /// Rules should not use engines' features without subscribing to them
+  /// using EngineDependency attribute because it will not work unless
+  /// another rule has subscribed to the same engine.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// class BadRule : Rule, IMethodRule {
+  ///	public RuleResult CheckMethod (MethodDefinition method)
+  ///	{
+  ///		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
+  ///			return RuleResult.DoesNotApply;
+  ///		// rule code
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [EngineDependency (typeof (OpCodeEngine))]
+  /// class BadRule : Rule, IMethodRule {
+  ///	public RuleResult CheckMethod (MethodDefinition method)
+  ///	{
+  ///		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
+  ///			return RuleResult.DoesNotApply;
+  ///		// rule code
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// Rules should not use engines' features without subscribing to them
-	/// using EngineDependency attribute because it will not work unless
-	/// another rule has subscribed to the same engine.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// class BadRule : Rule, IMethodRule {
-	///	public RuleResult CheckMethod (MethodDefinition method) 
-	///	{
-	///		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-	///			return RuleResult.DoesNotApply;
-	///		// rule code
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [EngineDependency (typeof (OpCodeEngine))]
-	/// class BadRule : Rule, IMethodRule {
-	///	public RuleResult CheckMethod (MethodDefinition method) 
-	///	{
-	///		if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-	///			return RuleResult.DoesNotApply;
-	///		// rule code
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("Rules uses engines' features without subscribing to it, thus these features will not work correctly.")]
+  [Solution("Add EngineDependency attribute to the rule.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class MissingEngineDependencyRule : GendarmeRule, ITypeRule
+  {
+    private readonly HashSet<string> engines = new HashSet<string> {
+      "Gendarme.Framework.Engines.OpCodeEngine",
+      "Gendarme.Framework.Engines.NamespaceEngine"
+    };
 
-	[Problem ("Rules uses engines' features without subscribing to it, thus these features will not work correctly.")]
-	[Solution ("Add EngineDependency attribute to the rule.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class MissingEngineDependencyRule : GendarmeRule, ITypeRule {
+    private readonly HashSet<string> declaredEngines = new HashSet<string>();
 
-		HashSet<string> engines = new HashSet<string> {
-			"Gendarme.Framework.Engines.OpCodeEngine",
-			"Gendarme.Framework.Engines.NamespaceEngine"
-		};
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (!type.HasMethods)
+        return RuleResult.DoesNotApply;
 
-		private HashSet<string> declaredEngines = new HashSet<string> ();
+      GetEngineDependencyValue(type);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (!type.HasMethods)
-				return RuleResult.DoesNotApply;
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (!method.HasBody || !OpCodeBitmask.Calls.Intersect(OpCodeEngine.GetBitmask(method)))
+          continue;
 
-			GetEngineDependencyValue (type);
-
-			foreach (MethodDefinition method in type.Methods) {
-				if (!method.HasBody || !OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-					continue;
-
-				foreach (Instruction instruction in method.Body.Instructions) {
-					MethodReference m = (instruction.Operand as MethodReference);
-					if (m == null)
-						continue;
-
-					TypeReference dtype = m.DeclaringType;
-					// short-cut to avoid FullName - will work as long as all Engines comes from the same namespace (otherwise remove it)
-					if (dtype.Namespace != "Gendarme.Framework.Engines") //OK
-						continue;
-
-					string declaringType = dtype.GetFullName ();
-					if (!engines.Contains (declaringType) || declaredEngines.Contains (declaringType))
-						continue;
-					Runner.Report (method, instruction, Severity.High, Confidence.High, 
-						"An engine " + declaringType + " is being used without type being subscribed to it with EngineDependency attribute.");
-				}
-				
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-        private readonly static TypeName eda = new TypeName
+        foreach (Instruction instruction in method.Body.Instructions)
         {
-            Namespace = "Gendarme.Framework",
-            Name = "EngineDependencyAttribute"
-        };
+          MethodReference m = (instruction.Operand as MethodReference);
+          if (m == null)
+            continue;
 
-		private void GetEngineDependencyValue (TypeDefinition type)
-		{
-			declaredEngines.Clear ();
-			TypeDefinition td = type;
-			while (declaredEngines.Count < engines.Count) {
-				if (td.HasCustomAttributes)
-					foreach (CustomAttribute attribute in td.CustomAttributes) {
-						if (!attribute.HasConstructorArguments ||
-							!attribute.AttributeType.IsNamed (eda))
-							continue;
+          TypeReference dtype = m.DeclaringType;
+          // short-cut to avoid FullName - will work as long as all Engines comes from the same namespace (otherwise remove it)
+          if (dtype.Namespace != "Gendarme.Framework.Engines") //OK
+            continue;
 
-						object value = attribute.ConstructorArguments [0].Value;
-						MemberReference mr = (value as MemberReference);
-						declaredEngines.Add (mr == null ? value.ToString () : mr.GetFullName ());
-					}
-				if (td.BaseType == null)
-					break;
-				TypeDefinition baseType = td.BaseType.Resolve ();
-				if (baseType == null)
-					break;
-				td = baseType;
-			}
-		}
-	}
+          string declaringType = dtype.GetFullName();
+          if (!engines.Contains(declaringType) || declaredEngines.Contains(declaringType))
+            continue;
+          Runner.Report(method, instruction, Severity.High, Confidence.High,
+            "An engine " + declaringType + " is being used without type being subscribed to it with EngineDependency attribute.");
+        }
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+
+    private static readonly TypeName eda = new TypeName
+    {
+      Namespace = "Gendarme.Framework",
+      Name = "EngineDependencyAttribute"
+    };
+
+    private void GetEngineDependencyValue(TypeDefinition type)
+    {
+      declaredEngines.Clear();
+      TypeDefinition td = type;
+      while (declaredEngines.Count < engines.Count)
+      {
+        if (td.HasCustomAttributes)
+          foreach (CustomAttribute attribute in td.CustomAttributes)
+          {
+            if (!attribute.HasConstructorArguments ||
+              !attribute.AttributeType.IsNamed(eda))
+              continue;
+
+            object value = attribute.ConstructorArguments[0].Value;
+            MemberReference mr = (value as MemberReference);
+            declaredEngines.Add(mr == null ? value.ToString() : mr.GetFullName());
+          }
+        if (td.BaseType == null)
+          break;
+        TypeDefinition baseType = td.BaseType.Resolve();
+        if (baseType == null)
+          break;
+        td = baseType;
+      }
+    }
+  }
 }

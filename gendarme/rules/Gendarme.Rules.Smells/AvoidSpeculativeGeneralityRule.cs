@@ -38,6 +38,7 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 using Gendarme.Rules.Performance;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Smells
 {
@@ -138,6 +139,9 @@ namespace Gendarme.Rules.Smells
       return (count == expected);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckAbstractClassWithoutResponsability(TypeDefinition type)
     {
       if (type.IsAbstract)
@@ -201,6 +205,8 @@ namespace Gendarme.Rules.Smells
       return methodCount / 2 + 1 <= delegationCounter;
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckUnnecesaryDelegation(TypeDefinition type)
     {
       if (MostlyMethodsDelegatesCall(type) && InheritsOnlyFromObject(type))
