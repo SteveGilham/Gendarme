@@ -101,8 +101,7 @@ namespace Gendarme.Rules.Performance
         if (fr.DeclaringType != type)
           continue;
         // if it's this one then we have a FieldDefinition available
-        FieldDefinition field = (fr is FieldDefinition) ?
-                                 fr as FieldDefinition : fr.Resolve();
+        FieldDefinition field = fr as FieldDefinition ?? fr.Resolve();
         // check for static (we already know with Stsfld) and readonly
         if (!field.IsInitOnly)
           continue;
@@ -125,7 +124,7 @@ namespace Gendarme.Rules.Performance
       return Runner.CurrentRuleResult;
     }
 
-    private readonly static TypeName systemString = new TypeName
+    private static readonly TypeName systemString = new TypeName
     {
       Namespace = "System",
       Name = "String"

@@ -269,7 +269,7 @@ namespace Gendarme.Tools
         { "h|?|help",   v => help = v != null },
       };
 
-      List<string> files = p.Parse(args);
+      IList<string> files = p.Parse(args);
       if (files.Count != 2)
         return (byte)1;
 

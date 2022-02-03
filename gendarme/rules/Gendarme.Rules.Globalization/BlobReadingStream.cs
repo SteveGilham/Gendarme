@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Globalization
 {
-  internal class BlobReadingStream : Stream
+  internal sealed class BlobReadingStream : Stream
   {
     private readonly Stream inner;
 
@@ -24,17 +25,28 @@ namespace Gendarme.Rules.Globalization
 
     public override long Length => inner.Length;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "UseObjectDisposedExceptionRule",
+                     Justification = "Defer to wrapped stream")]
     public override long Position
     {
       get => inner.Position;
       set { inner.Position = value; }
     }
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "UseObjectDisposedExceptionRule",
+                     Justification = "Defer to wrapped stream")]
     public override void Flush()
     {
       inner.Flush();
     }
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "UseObjectDisposedExceptionRule",
+                     Justification = "Defer to wrapped stream")]
     public override int Read(byte[] buffer, int offset, int count)
     {
       var num = inner.Read(buffer, offset, count);
@@ -62,16 +74,25 @@ namespace Gendarme.Rules.Globalization
       return num;
     }
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "UseObjectDisposedExceptionRule",
+                     Justification = "Defer to wrapped stream")]
     public override long Seek(long offset, SeekOrigin origin)
     {
       return inner.Seek(offset, origin);
     }
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "UseObjectDisposedExceptionRule",
+                     Justification = "Defer to wrapped stream")]
     public override void SetLength(long value)
     {
       inner.SetLength(value);
     }
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "UseObjectDisposedExceptionRule",
+                     Justification = "Defer to wrapped stream")]
     public override void Write(byte[] buffer, int offset, int count)
     {
       inner.Write(buffer, offset, count);

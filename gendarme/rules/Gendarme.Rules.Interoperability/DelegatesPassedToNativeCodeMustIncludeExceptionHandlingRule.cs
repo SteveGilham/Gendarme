@@ -103,6 +103,7 @@ namespace Gendarme.Rules.Interoperability
   [Problem("Every delegate passed to native code must include an exception block which spans the entire method and has a catch all block.")]
   [Solution("Surround the entire method body with a try/catch block.")]
   [EngineDependency(typeof(OpCodeEngine))]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
   [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidLackOfCohesionOfMethodsRule",
                     Justification = "Maybe refactor")]
@@ -244,6 +245,9 @@ namespace Gendarme.Rules.Interoperability
 		}
 #endif
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                     Justification = "See comment below")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // Rule does not apply if the method has no IL

@@ -228,6 +228,9 @@ namespace Gendarme.Rules.Correctness
       return prevInstr;
     }
 
+    [SuppressMessage("Gendarme.Rules.Naming",
+                     "AvoidRedundancyInMethodNameRule",
+                     Justification = "Makes sense in context")]
     private static bool CheckFloatConstants(float value)
     {
       // IsInfinity covers both positive and negative infinity
@@ -236,6 +239,9 @@ namespace Gendarme.Rules.Correctness
         (Single.MaxValue.CompareTo(value) == 0));
     }
 
+    [SuppressMessage("Gendarme.Rules.Naming",
+                     "AvoidRedundancyInMethodNameRule",
+                     Justification = "Makes sense in context")]
     private static bool CheckDoubleConstants(double value)
     {
       // IsInfinity covers both positive and negative infinity

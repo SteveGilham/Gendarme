@@ -88,7 +88,7 @@ namespace Gendarme
     private bool quiet;
     private bool version;
     private bool console;
-    private List<string> assembly_names;
+    private IList<string> assembly_names;
 
     private static string[] SplitOptions(string value)
     {
@@ -450,6 +450,10 @@ namespace Gendarme
       return (byte)((0 == Defects.Count) ? 0 : 1);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                     Justification = "Program reports and exits")]
     private byte Execute(string[] args)
     {
       try
@@ -525,6 +529,9 @@ namespace Gendarme
       }
     }
 
+    [SuppressMessage("Gendarme.Rules.Naming",
+                     "AvoidRedundancyInMethodNameRule",
+                     Justification = "Makes sense in context")]
     private void WriteUnhandledExceptionMessage(Exception e)
     {
       Console.WriteLine();

@@ -232,7 +232,7 @@ namespace Gendarme.Rules.Naming
       return Runner.CurrentRuleResult;
     }
 
-    private static readonly MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
+    private const MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
       MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
@@ -330,6 +330,10 @@ namespace Gendarme.Rules.Naming
         {
           // ignore F# placeholder ("_") arguments
           if (fsharp && param.Name.StartsWith("_arg", StringComparison.Ordinal))
+            continue;
+
+          // allow discards
+          if (param.Name.Equals("_", StringComparison.Ordinal))
             continue;
 
           // params should all be camelCased

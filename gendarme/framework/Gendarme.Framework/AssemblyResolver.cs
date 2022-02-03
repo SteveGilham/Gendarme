@@ -35,6 +35,7 @@ using System.IO;
 using Mono.Cecil;
 
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework
 {
@@ -55,6 +56,9 @@ namespace Gendarme.Framework
 
     public override AssemblyDefinition Resolve(AssemblyNameReference name)
     {
+      if (disposed)
+        throw new ObjectDisposedException("AssemblyResolver");
+
       if (name == null)
         throw new ArgumentNullException(nameof(name));
 
@@ -78,12 +82,22 @@ namespace Gendarme.Framework
 
     public void CacheAssembly(AssemblyDefinition assembly)
     {
+      if (disposed)
+        throw new ObjectDisposedException("AssemblyResolver");
+
       if (assembly == null)
         throw new ArgumentNullException(nameof(assembly));
 
       assemblies.Add(assembly.Name.Name, assembly);
       string location = Path.GetDirectoryName(assembly.MainModule.FileName);
       AddSearchDirectory(location);
+    }
+
+    private bool disposed; // default = false;
+    protected override void Dispose(bool disposing)
+    {
+      base.Dispose(disposing);
+      disposed = true;
     }
 
     private static AssemblyResolver resolver;

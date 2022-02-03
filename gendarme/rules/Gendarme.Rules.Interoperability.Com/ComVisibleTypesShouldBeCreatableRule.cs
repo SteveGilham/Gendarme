@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Nicholas Rioux
-// 
+//
 // Copyright (C) 2010 Nicholas Rioux
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,78 +32,86 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Interoperability.Com {
+namespace Gendarme.Rules.Interoperability.Com
+{
+  /// <summary>
+  /// This rule checks for ComVisible reference types which have a public parameterized constructor,
+  /// but lack a default public constructor.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  ///	[ComVisible (true)]
+  ///	public class BadClass {
+  ///		public BadClass (int param) {
+  ///
+  ///		}
+  ///	}
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  ///	[ComVisible (true)]
+  ///	public class GoodClass {
+  ///		public GoodClass () {
+  ///
+  ///		}
+  ///		public GoodClass (int param) {
+  ///
+  ///		}
+  ///	}
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule checks for ComVisible reference types which have a public parameterized constructor, 
-	/// but lack a default public constructor.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	///	[ComVisible (true)]
-	///	public class BadClass {
-	///		public BadClass (int param) {
-	///		
-	///		}
-	///	}
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	///	[ComVisible (true)]
-	///	public class GoodClass {
-	///		public GoodClass () {
-	///		
-	///		}
-	///		public GoodClass (int param) {
-	///			
-	///		}
-	///	}
-	/// </code>
-	/// </example>
+  [Problem("ComVisible reference types should declare a default public constructor.")]
+  [Solution("Either add a default public constructor, or remove the ComVisibleAttribute from the type.")]
+  [FxCopCompatibility("Microsoft.Interoperability", "CA1409:ComVisibleTypesShouldBeCreatable")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Gendarme.Rules.Naming",
+                    "AvoidRedundancyInTypeNameRule",
+                    Justification = "Makes sense in context")]
+  public class ComVisibleTypesShouldBeCreatableRule : Rule, ITypeRule
+  {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // Check only for reference types with attributes.
+      if (!type.IsClass || type.IsValueType || !type.HasCustomAttributes)
+        return RuleResult.DoesNotApply;
 
-	[Problem ("ComVisible reference types should declare a default public constructor.")]
-	[Solution ("Either add a default public constructor, or remove the ComVisibleAttribute from the type.")]
-	[FxCopCompatibility ("Microsoft.Interoperability", "CA1409:ComVisibleTypesShouldBeCreatable")]
-	public class ComVisibleTypesShouldBeCreatableRule : Rule, ITypeRule {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// Check only for reference types with attributes.
-			if (!type.IsClass || type.IsValueType || !type.HasCustomAttributes)
-				return RuleResult.DoesNotApply;
+      // Ensure class is explicitly ComVisible.
+      if (!type.IsTypeComVisible())
+        return RuleResult.DoesNotApply;
 
-			// Ensure class is explicitly ComVisible.
-			if (!type.IsTypeComVisible ())
-				return RuleResult.DoesNotApply;
+      // Report success if a default public constructor is found or no parameterized constructor is found.
+      bool hasParameterizedCtor = false;
+      bool hasDefaultCtor = false;
+      foreach (var ctor in type.Methods)
+      {
+        if (!ctor.IsConstructor)
+          continue;
 
-			// Report success if a default public constructor is found or no parameterized constructor is found.
-			bool hasParameterizedCtor = false;
-			bool hasDefaultCtor = false;
-			foreach (var ctor in type.Methods) {
-				if (!ctor.IsConstructor)
-					continue;
+        if (ctor.IsPublic && ctor.HasParameters)
+        {
+          hasParameterizedCtor = true;
+          continue;
+        }
+        if (ctor.IsPublic)
+          hasDefaultCtor = true;
+      }
+      if (!hasParameterizedCtor || hasDefaultCtor)
+        return RuleResult.Success;
 
-				if (ctor.IsPublic && ctor.HasParameters) {
-					hasParameterizedCtor = true;
-					continue;
-				}
-				if (ctor.IsPublic)
-					hasDefaultCtor = true;
-			}
-			if (!hasParameterizedCtor || hasDefaultCtor)
-				return RuleResult.Success;
-				
-			Runner.Report (type, Severity.Medium, Confidence.Total);
+      Runner.Report(type, Severity.Medium, Confidence.Total);
 
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

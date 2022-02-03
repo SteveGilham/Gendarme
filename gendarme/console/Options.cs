@@ -290,10 +290,10 @@ namespace NDesk.Options
 
     #endregion IList<T>
 
-    public List<string> ToList()
-    {
-      return new List<string>(values);
-    }
+    //public List<string> ToList()
+    //{
+    //  return new List<string>(values);
+    //}
 
     public string[] ToArray()
     {
@@ -396,6 +396,12 @@ namespace NDesk.Options
       return (string[])separators.Clone();
     }
 
+    [SuppressMessage("Gendarme.Rules.Design.Generic",
+                     "AvoidMethodWithUnusedGenericTypeRule",
+                     Justification = "Converts to type")]
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                 "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                 Justification = "Raises with inner exception rethrow")]
     protected static T Parse<T>(string value, OptionContext context)
     {
       var c = context ?? throw new ArgumentNullException(nameof(context));
@@ -417,11 +423,11 @@ namespace NDesk.Options
       return t;
     }
 
-    internal string[] Names
-    { get { return names; } }
+    internal ReadOnlyCollection<string> Names
+    { get { return new ReadOnlyCollection<string>(names ?? Array.Empty<string>()); } }
 
-    internal string[] ValueSeparators
-    { get { return separators; } }
+    internal ReadOnlyCollection<string> ValueSeparators
+    { get { return new ReadOnlyCollection<string>(separators ?? Array.Empty<string>()); } }
 
     private static readonly char[] NameTerminator = new char[] { '=', ':' };
 
@@ -470,6 +476,9 @@ namespace NDesk.Options
       return type == '=' ? OptionValueType.Required : OptionValueType.Optional;
     }
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "InstantiateArgumentExceptionCorrectlyRule",
+                     Justification = "User level name")]
     private static void AddSeparators(string name, int end, ICollection<string> seps)
     {
       int start = -1;
@@ -572,8 +581,6 @@ namespace NDesk.Options
     }
   }
 
-  public delegate void OptionAction<TKey, TValue>(TKey key, TValue value);
-
   public class OptionCollection : KeyedCollection<string, Option>
   {
     public OptionCollection()
@@ -588,13 +595,16 @@ namespace NDesk.Options
 
     public Converter<string, string> MessageLocalizer { get; private set; }
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "InstantiateArgumentExceptionCorrectlyRule",
+                     Justification = "User level name")]
     protected override string GetKeyForItem(Option item)
     {
       if (item == null)
 #pragma warning disable CA2208 // Instantiate argument exceptions correctly
         throw new ArgumentNullException("option");
 #pragma warning restore CA2208 // Instantiate argument exceptions correctly
-      if (item.Names != null && item.Names.Length > 0)
+      if (item.Names != null && item.Names.Count > 0)
         return item.Names[0];
       // This should never happen, as it's invalid for Option to be
       // constructed w/o any names.
@@ -627,7 +637,7 @@ namespace NDesk.Options
       base.RemoveItem(index);
       Option p = Items[index];
       // KeyedCollection.RemoveItem() handles the 0th item
-      for (int i = 1; i < p.Names.Length; ++i)
+      for (int i = 1; i < p.Names.Count; ++i)
       {
         Dictionary.Remove(p.Names[i]);
       }
@@ -644,11 +654,11 @@ namespace NDesk.Options
     {
       if (option == null)
         throw new ArgumentNullException(nameof(option));
-      List<string> added = new List<string>(option.Names.Length);
+      List<string> added = new List<string>(option.Names.Count);
       try
       {
         // KeyedCollection.InsertItem/SetItem handle the 0th name.
-        for (int i = 1; i < option.Names.Length; ++i)
+        for (int i = 1; i < option.Names.Count; ++i)
         {
           Dictionary.Add(option.Names[i], option);
           added.Add(option.Names[i]);
@@ -678,9 +688,9 @@ namespace NDesk.Options
         this.optionAction = action ?? throw new ArgumentNullException(nameof(action));
       }
 
-      protected override void OnParseComplete(OptionContext c)
+      protected override void OnParseComplete(OptionContext context)
       {
-        optionAction(c?.OptionValues ?? throw new ArgumentNullException(nameof(c)));
+        optionAction(context?.OptionValues ?? throw new ArgumentNullException(nameof(context)));
       }
     }
 
@@ -699,12 +709,12 @@ namespace NDesk.Options
       return this;
     }
 
-    public OptionCollection Add(string prototype, OptionAction<string, string> action)
+    public OptionCollection Add(string prototype, Action<string, string> action)
     {
       return Add(prototype, null, action);
     }
 
-    public OptionCollection Add(string prototype, string description, OptionAction<string, string> action)
+    public OptionCollection Add(string prototype, string description, Action<string, string> action)
     {
       if (action == null)
         throw new ArgumentNullException(nameof(action));
@@ -733,9 +743,9 @@ namespace NDesk.Options
 
     private sealed class ActionOption<TKey, TValue> : Option
     {
-      private readonly OptionAction<TKey, TValue> optionAction;
+      private readonly Action<TKey, TValue> optionAction;
 
-      public ActionOption(string prototype, string description, OptionAction<TKey, TValue> action)
+      public ActionOption(string prototype, string description, Action<TKey, TValue> action)
         : base(prototype, description, 2)
       {
         this.optionAction = action ?? throw new ArgumentNullException(nameof(action));
@@ -760,12 +770,12 @@ namespace NDesk.Options
       return Add(new ActionOption<T>(prototype, description, action));
     }
 
-    public OptionCollection Add<TKey, TValue>(string prototype, OptionAction<TKey, TValue> action)
+    public OptionCollection Add<TKey, TValue>(string prototype, Action<TKey, TValue> action)
     {
       return Add(prototype, null, action);
     }
 
-    public OptionCollection Add<TKey, TValue>(string prototype, string description, OptionAction<TKey, TValue> action)
+    public OptionCollection Add<TKey, TValue>(string prototype, string description, Action<TKey, TValue> action)
     {
       return Add(new ActionOption<TKey, TValue>(prototype, description, action));
     }
@@ -805,7 +815,7 @@ namespace NDesk.Options
     }
 #else
 
-    public List<string> Parse(IEnumerable<string> arguments)
+    public Collection<string> Parse(IEnumerable<string> arguments)
     {
       arguments = arguments ?? Array.Empty<string>();
       OptionContext c = CreateOptionContext();
@@ -831,7 +841,7 @@ namespace NDesk.Options
       }
       if (c.Option != null)
         c.Option.Invoke(c);
-      return unprocessed;
+      return new Collection<string>(unprocessed);
     }
 
 #endif
@@ -925,12 +935,17 @@ namespace NDesk.Options
     private void ParseValue(string option, OptionContext c)
     {
       if (option != null)
-        foreach (string o in c.Option.ValueSeparators != null
-            ? option.Split(c.Option.ValueSeparators, StringSplitOptions.None)
-            : new string[] { option })
+      {
+        var separators = !c.Option.ValueSeparators.Any()
+            ? option.Split(c.Option.ValueSeparators.ToArray(), StringSplitOptions.None)
+            : new string[] { option };
+
+        foreach (string o in separators)
         {
           c.OptionValues.Add(o);
         }
+      }
+
       if (c.OptionValues.Count == c.Option.MaxValueCount ||
           c.Option.OptionValueType == OptionValueType.Optional)
         c.Option.Invoke(c);
@@ -971,8 +986,8 @@ namespace NDesk.Options
       for (int i = 0; i < n.Length; ++i)
       {
         Option p;
-        string opt = f + n[i].ToString();
-        string rn = n[i].ToString();
+        string opt = f + n[i].ToString(CultureInfo.InvariantCulture);
+        string rn = n[i].ToString(CultureInfo.InvariantCulture);
         if (!Contains(rn))
         {
           if (i == 0)
@@ -1045,10 +1060,10 @@ namespace NDesk.Options
 
     private bool WriteOptionPrototype(TextWriter o, Option p, ref int written)
     {
-      string[] names = p.Names;
+      var names = p.Names;
 
       int i = GetNextOptionIndex(names, 0);
-      if (i == names.Length)
+      if (i == names.Count)
         return false;
 
       if (names[i].Length == 1)
@@ -1063,7 +1078,7 @@ namespace NDesk.Options
       }
 
       for (i = GetNextOptionIndex(names, i + 1);
-          i < names.Length; i = GetNextOptionIndex(names, i + 1))
+          i < names.Count; i = GetNextOptionIndex(names, i + 1))
       {
         Write(o, ref written, ", ");
         Write(o, ref written, names[i].Length == 1 ? "-" : "--");
@@ -1078,7 +1093,7 @@ namespace NDesk.Options
           Write(o, ref written, MessageLocalizer("["));
         }
         Write(o, ref written, MessageLocalizer("=" + GetArgumentName(0, p.MaxValueCount, p.Description)));
-        string sep = p.ValueSeparators != null && p.ValueSeparators.Length > 0
+        string sep = p.ValueSeparators != null && p.ValueSeparators.Count > 0
           ? p.ValueSeparators[0]
           : " ";
         for (int c = 1; c < p.MaxValueCount; ++c)
@@ -1093,9 +1108,9 @@ namespace NDesk.Options
       return true;
     }
 
-    private static int GetNextOptionIndex(string[] names, int i)
+    private static int GetNextOptionIndex(ReadOnlyCollection<string> names, int i)
     {
-      while (i < names.Length && names[i] == "<>")
+      while (i < names.Count && names[i] == "<>")
       {
         ++i;
       }

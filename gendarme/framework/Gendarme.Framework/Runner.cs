@@ -36,6 +36,7 @@ using Mono.Cecil.Cil;
 
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework
 {
@@ -166,6 +167,10 @@ namespace Gendarme.Framework
     // once every assembly are loaded *and* all the rules are known -> we initialized all rules.
     // this ensure that the list of assemblies is available at rule initialization time
     // which allows caching information and treating the assemblies as "a set"
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                     Justification = "Handled sufficently")]
     public virtual void Initialize()
     {
       AnalyzeAssembly = null;

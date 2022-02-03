@@ -40,6 +40,11 @@ namespace Gendarme.Rules.Interoperability.Com
   /// <summary>
   /// ComRocks contains extensions methods for COM-related methods.
   /// </summary>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Naming",
+                    "AvoidRedundancyInTypeNameRule",
+                    Justification = "Makes sense in context")]
   public static class ComRocks
   {
     /// <summary>
@@ -89,7 +94,6 @@ namespace Gendarme.Rules.Interoperability.Com
     /// </summary>
     /// <param name="self"></param>
     /// <returns></returns>
-#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Maintainability",
                       "AvoidUnnecessarySpecializationRule",
                       Justification = "Always a TypeDefinition")]

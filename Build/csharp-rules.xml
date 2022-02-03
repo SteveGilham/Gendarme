@@ -20,12 +20,11 @@
     <!-- DoNotExposeNestedGenericSignaturesRule is a rule for morts at best and
          doesn't really make any problems for F# -->
     <rules include="*"
-           exclude="AvoidDeclaringCustomDelegatesRule | DoNotExposeGenericListsRule | PreferGenericsOverRefObjectRule | AvoidMethodWithUnusedGenericTypeRule | DoNotExposeNestedGenericSignaturesRule"
+           exclude="DoNotExposeNestedGenericSignaturesRule"
            from="Gendarme.Rules.Design.Generic.dll" />
     <rules include="*"
            from="Gendarme.Rules.Design.Linq.dll" />
     <rules include="*"
-           exclude="InstantiateArgumentExceptionCorrectlyRule | DoNotSwallowErrorsCatchingNonSpecificExceptionsRule | UseObjectDisposedExceptionRule"
            from="Gendarme.Rules.Exceptions.dll" />
     <!-- DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule false positives from handler.?Fire type construct -->
     <rules include="*"
@@ -34,10 +33,9 @@
     <rules include="*"
            from="Gendarme.Rules.Interoperability.Com.dll" />
     <rules include="*"
-           exclude="AvoidNonAlphanumericIdentifierRule | AvoidRedundancyInTypeNameRule | UseCorrectSuffixRule | UseCorrectCasingRule | AvoidRedundancyInMethodNameRule"
            from="Gendarme.Rules.Naming.dll" />
     <rules include="*"
-           exclude="DoNotIgnoreMethodResultRule | PreferLiteralOverInitOnlyFieldsRule | AvoidRepetitiveCastsRule | AvoidReturningArraysOnPropertiesRule | AvoidUnneededFieldInitializationRule | AvoidUnneededUnboxingRule | AvoidUnsealedUninheritedInternalTypeRule| AvoidUnusedPrivateFieldsRule| PreferCharOverloadRule | AvoidRepetitiveCallsToPropertiesRule | OverrideValueTypeDefaultsRule"
+           exclude="AvoidUnusedPrivateFieldsRule| PreferCharOverloadRule | AvoidRepetitiveCallsToPropertiesRule | OverrideValueTypeDefaultsRule"
            from="Gendarme.Rules.Performance.dll" />
     <rules include="*"
            from="Gendarme.Rules.Portability.dll" />

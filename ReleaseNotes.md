@@ -1,6 +1,6 @@
 # 2022.x.x.xxxxx-pre-release 
 
-* 
+* Update for modern C# dialect e.g. allow discard `_` as a variable name
 
 
 

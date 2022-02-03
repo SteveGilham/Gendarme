@@ -45,7 +45,7 @@ namespace Gendarme.Framework
     private Uri uri;
     private Type type;
     private ApplicabilityScope applicability_scope = ApplicabilityScope.All;
-    private object[] engine_dependencies = null;
+    private object[] engine_dependencies;
 
     /// <summary>
     /// Return true if the rule is currently active, false otherwise.

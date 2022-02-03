@@ -55,7 +55,7 @@ namespace Gendarme.Rules.Design
       };
     }
 
-    private Lazy<TypeName> lazyTypeName = null;
+    private Lazy<TypeName> lazyTypeName;
 
     protected TypeName InterfaceTypeName
     {

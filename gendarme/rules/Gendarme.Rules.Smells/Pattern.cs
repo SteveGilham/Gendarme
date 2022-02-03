@@ -35,6 +35,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Gendarme.Framework.Rocks;
 using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace Gendarme.Rules.Smells
 {
@@ -229,11 +230,11 @@ namespace Gendarme.Rules.Smells
       }
     }
 
-    internal int[] Prefixes
+    internal ReadOnlyCollection<int> Prefixes
     {
       get
       {
-        return prefixes;
+        return new ReadOnlyCollection<int>(prefixes);
       }
     }
   }

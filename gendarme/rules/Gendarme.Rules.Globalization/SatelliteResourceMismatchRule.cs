@@ -147,8 +147,8 @@ namespace Gendarme.Rules.Globalization
 
           if (satelliteType.Equals(typeof(string)))
           {
-            Bitmask<int> mainParameters = GetStringFormatExpectedParameters((string)mainValue);
-            Bitmask<int> satelliteParameters = GetStringFormatExpectedParameters((string)satelliteValue);
+            Bitmask<int> mainParameters = GetFormatExpectedParameters((string)mainValue);
+            Bitmask<int> satelliteParameters = GetFormatExpectedParameters((string)satelliteValue);
 
             if (!mainParameters.Equals(satelliteParameters))
             {
@@ -162,7 +162,7 @@ namespace Gendarme.Rules.Globalization
       }
     }
 
-    private static Bitmask<int> GetStringFormatExpectedParameters(string format)
+    private static Bitmask<int> GetFormatExpectedParameters(string format)
     {
       Bitmask<int> result = new Bitmask<int>(false);
 

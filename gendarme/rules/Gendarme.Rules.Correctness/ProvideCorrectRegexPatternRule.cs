@@ -174,6 +174,9 @@ namespace Gendarme.Rules.Correctness
       Justification = "TODO: Defect constructor message not localized")]
     [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
       Justification = "Success or failure is all that's of interest")]
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                     Justification = "See comment below")]
     private bool CheckPattern(MethodDefinition method, Instruction ins, string pattern, Confidence confidence)
     {
       if (string.IsNullOrEmpty(pattern))
