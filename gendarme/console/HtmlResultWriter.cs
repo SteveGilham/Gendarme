@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -34,46 +34,49 @@ using System.Xml.Xsl;
 
 using Gendarme.Framework;
 
-namespace Gendarme {
+namespace Gendarme
+{
+  public class HtmlResultWriter : ResultWriter
+  {
+    private readonly string temp_filename;
 
-	public class HtmlResultWriter : ResultWriter {
+    public HtmlResultWriter(IRunner runner, string fileName)
+      : base(runner, fileName)
+    {
+      temp_filename = Path.GetTempFileName();
+    }
 
-		private string temp_filename;
+    protected override void Write()
+    {
+      using (XmlResultWriter writer = new XmlResultWriter(Runner, temp_filename))
+      {
+        writer.Report();
+      }
+    }
 
-		public HtmlResultWriter (IRunner runner, string fileName)
-			: base (runner, fileName)
-		{
-			temp_filename = Path.GetTempFileName ();
-		}
+    protected override void Finish()
+    {
+      // load XSL file from embedded resource
+      using (Stream s = Helpers.GetStreamFromResource("gendarme.xsl"))
+      {
+        if (s == null)
+          throw new InvalidDataException("Could not locate XSL style sheet inside resources.");
+        // process the XML result with the XSL file
+        XslCompiledTransform xslt = new XslCompiledTransform();
+        using (XmlTextReader xmlReader = new XmlTextReader(s))
+          xslt.Load(xmlReader);
+        xslt.Transform(temp_filename, FileName);
+      }
+    }
 
-		protected override void Write()
-		{
-			using (XmlResultWriter writer = new XmlResultWriter (Runner, temp_filename)) {
-				writer.Report ();
-			}
-		}
-
-		protected override void Finish ()
-		{
-			// load XSL file from embedded resource
-			using (Stream s = Helpers.GetStreamFromResource ("gendarme.xsl")) {
-				if (s == null)
-					throw new InvalidDataException ("Could not locate XSL style sheet inside resources.");
-				// process the XML result with the XSL file
-				XslCompiledTransform xslt = new XslCompiledTransform ();
-				using (XmlTextReader xmlReader = new XmlTextReader (s))
-					xslt.Load (xmlReader);
-				xslt.Transform (temp_filename, FileName);
-			}
-		}
-
-		[ThreadModel (ThreadModel.SingleThread)]
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing) {
-				if (File.Exists (temp_filename))
-					File.Delete (temp_filename);
-			}
-		}
-	}
+    [ThreadModel(ThreadModel.SingleThread)]
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (File.Exists(temp_filename))
+          File.Delete(temp_filename);
+      }
+    }
+  }
 }

@@ -136,39 +136,6 @@ using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 
-#pragma warning disable IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "1#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "2#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "3#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "4#", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Scope = "type", Target = "NDesk.Options.OptionException", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.Option.#Invoke(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.Option.#Parse`1(System.String,NDesk.Options.OptionContext)", MessageId = "1", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.Collections.Generic.IEnumerable`1<System.String>)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.String,NDesk.Options.OptionContext)", MessageId = "1", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet.#WriteOptionDescriptions(System.IO.TextWriter)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet+ActionOption.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet+ActionOption`1.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Scope = "member", Target = "NDesk.Options.OptionSet+ActionOption`2.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "0", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#.ctor(System.String,System.String,System.Int32)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#AddSeparators(System.String,System.Int32,System.Collections.Generic.ICollection`1<System.String>)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#Parse`1(System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#ParsePrototype()", MessageId = "System.String.Format(System.String,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.Option.#ParsePrototype()", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#GetArgumentName(System.Int32,System.Int32,System.String)", MessageId = "System.Int32.ToString", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseBundledValue(System.String,System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseValue(System.String,NDesk.Options.OptionContext)", MessageId = "System.String.Format(System.String,System.Object,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#AssertValid(System.Int32)", MessageId = "System.String.Format(System.String,System.Object)", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#Invoke(NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#OnParseComplete(NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.Option.#Parse`1(System.String,NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.OptionSet.#Parse(System.String,NDesk.Options.OptionContext)", MessageId = "c", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Scope = "member", Target = "NDesk.Options.OptionSet.#WriteOptionDescriptions(System.IO.TextWriter)", MessageId = "o", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Scope = "type", Target = "NDesk.Options.OptionSet", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", Scope = "type", Target = "NDesk.Options.Option", MessageId = "Option", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", Scope = "member", Target = "NDesk.Options.OptionSet.#GetOptionParts(System.String,System.String&,System.String&,System.String&,System.String&)", MessageId = "flag", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "NDesk.Options.OptionSet.#ParseBundledValue(System.String,System.String,NDesk.Options.OptionContext)", MessageId = "OptionValueType", Justification = "work in progress")]
-[assembly: SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", Scope = "member", Target = "NDesk.Options.OptionValueCollection.#AssertValid(System.Int32)", MessageId = "OptionContext", Justification = "work in progress")]
 #if LINQ
 using System.Linq;
 #endif
@@ -291,6 +258,9 @@ namespace NDesk.Options
     public void RemoveAt(int index)
     { values.RemoveAt(index); }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly",
+      Justification = "OptionContext names a type")]
     private void AssertValid(int index)
     {
       if (c.Option == null)
@@ -337,7 +307,7 @@ namespace NDesk.Options
 
   public class OptionContext
   {
-    public OptionContext(OptionSet set)
+    public OptionContext(OptionCollection set)
     {
       this.OptionSet = set;
       this.OptionValues = new OptionValueCollection(this);
@@ -349,7 +319,7 @@ namespace NDesk.Options
 
     public int OptionIndex { get; set; }
 
-    public OptionSet OptionSet { get; private set; }
+    public OptionCollection OptionSet { get; private set; }
 
     public OptionValueCollection OptionValues { get; private set; }
   }
@@ -362,6 +332,8 @@ namespace NDesk.Options
     Required,
   }
 
+  [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords",
+    Justification = "'Option' has been reserved long enough")]
   public abstract class Option
   {
     private readonly string[] names;
@@ -394,7 +366,7 @@ namespace NDesk.Options
             nameof(maxValueCount));
       if (this.OptionValueType == OptionValueType.None && maxValueCount > 1)
         throw new ArgumentException(
-            string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
+            string.Format(CultureInfo.InvariantCulture, "Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
             nameof(maxValueCount));
       if (Array.IndexOf(names, "<>") >= 0 &&
           ((names.Length == 1 && this.OptionValueType != OptionValueType.None) ||
@@ -423,8 +395,9 @@ namespace NDesk.Options
       return (string[])separators.Clone();
     }
 
-    protected static T Parse<T>(string value, OptionContext c)
+    protected static T Parse<T>(string value, OptionContext context)
     {
+      var c = context ?? throw new ArgumentNullException(nameof(context));
       TypeConverter conv = TypeDescriptor.GetConverter(typeof(T));
       T t = default;
       try
@@ -480,7 +453,8 @@ namespace NDesk.Options
 
       if (MaxValueCount <= 1 && seps.Count != 0)
         throw new ArgumentException(
-            string.Format("Cannot provide key/value separators for Options taking {0} value(s).", MaxValueCount),
+            string.Format(CultureInfo.InvariantCulture,
+              "Cannot provide key/value separators for Options taking {0} value(s).", MaxValueCount),
             "prototype");
       if (MaxValueCount > 1)
       {
@@ -506,7 +480,7 @@ namespace NDesk.Options
             if (start != -1)
 #pragma warning disable CA2208 // Instantiate argument exceptions correctly
               throw new ArgumentException(
-                  string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                  string.Format(CultureInfo.InvariantCulture, "Ill-formed name/value separator found in \"{0}\".", name),
                   "prototype");
 #pragma warning restore CA2208 // Instantiate argument exceptions correctly
             start = i + 1;
@@ -516,7 +490,7 @@ namespace NDesk.Options
             if (start == -1)
 #pragma warning disable CA2208 // Instantiate argument exceptions correctly
               throw new ArgumentException(
-                  string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                  string.Format(CultureInfo.InvariantCulture, "Ill-formed name/value separator found in \"{0}\".", name),
                   "prototype");
 #pragma warning restore CA2208 // Instantiate argument exceptions correctly
             seps.Add(name.Substring(start, i - start));
@@ -532,20 +506,21 @@ namespace NDesk.Options
       if (start != -1)
 #pragma warning disable CA2208 // Instantiate argument exceptions correctly
         throw new ArgumentException(
-            string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+            string.Format(CultureInfo.InvariantCulture, "Ill-formed name/value separator found in \"{0}\".", name),
             "prototype");
 #pragma warning restore CA2208 // Instantiate argument exceptions correctly
     }
 
-    public void Invoke(OptionContext c)
+    public void Invoke(OptionContext context)
     {
-      OnParseComplete(c);
+      var c = context ?? throw new ArgumentNullException(nameof(context));
+      OnParseComplete(context);
       c.OptionName = null;
       c.Option = null;
       c.OptionValues.Clear();
     }
 
-    protected abstract void OnParseComplete(OptionContext c);
+    protected abstract void OnParseComplete(OptionContext context);
 
     public override string ToString()
     {
@@ -554,6 +529,9 @@ namespace NDesk.Options
   }
 
   [Serializable]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors",
+    Justification = "No use case for them")]
   public class OptionException : Exception
   {
     private readonly string option;
@@ -595,14 +573,14 @@ namespace NDesk.Options
 
   public delegate void OptionAction<TKey, TValue>(TKey key, TValue value);
 
-  public class OptionSet : KeyedCollection<string, Option>
+  public class OptionCollection : KeyedCollection<string, Option>
   {
-    public OptionSet()
+    public OptionCollection()
       : this(delegate (string f) { return f; })
     {
     }
 
-    public OptionSet(Converter<string, string> localizer)
+    public OptionCollection(Converter<string, string> localizer)
     {
       this.MessageLocalizer = localizer;
     }
@@ -683,7 +661,7 @@ namespace NDesk.Options
       }
     }
 
-    public new OptionSet Add(Option option)
+    public new OptionCollection Add(Option option)
     {
       base.Add(option);
       return this;
@@ -701,16 +679,16 @@ namespace NDesk.Options
 
       protected override void OnParseComplete(OptionContext c)
       {
-        optionAction(c.OptionValues);
+        optionAction(c?.OptionValues ?? throw new ArgumentNullException(nameof(c)));
       }
     }
 
-    public OptionSet Add(string prototype, Action<string> action)
+    public OptionCollection Add(string prototype, Action<string> action)
     {
       return Add(prototype, null, action);
     }
 
-    public OptionSet Add(string prototype, string description, Action<string> action)
+    public OptionCollection Add(string prototype, string description, Action<string> action)
     {
       if (action == null)
         throw new ArgumentNullException(nameof(action));
@@ -720,12 +698,12 @@ namespace NDesk.Options
       return this;
     }
 
-    public OptionSet Add(string prototype, OptionAction<string, string> action)
+    public OptionCollection Add(string prototype, OptionAction<string, string> action)
     {
       return Add(prototype, null, action);
     }
 
-    public OptionSet Add(string prototype, string description, OptionAction<string, string> action)
+    public OptionCollection Add(string prototype, string description, OptionAction<string, string> action)
     {
       if (action == null)
         throw new ArgumentNullException(nameof(action));
@@ -745,8 +723,9 @@ namespace NDesk.Options
         this.optionAction = action ?? throw new ArgumentNullException(nameof(action));
       }
 
-      protected override void OnParseComplete(OptionContext c)
+      protected override void OnParseComplete(OptionContext context)
       {
+        var c = context ?? throw new ArgumentNullException(nameof(context));
         optionAction(Parse<T>(c.OptionValues[0], c));
       }
     }
@@ -761,30 +740,31 @@ namespace NDesk.Options
         this.optionAction = action ?? throw new ArgumentNullException(nameof(action));
       }
 
-      protected override void OnParseComplete(OptionContext c)
+      protected override void OnParseComplete(OptionContext context)
       {
+        var c = context ?? throw new ArgumentNullException(nameof(context));
         optionAction(
             Parse<TKey>(c.OptionValues[0], c),
             Parse<TValue>(c.OptionValues[1], c));
       }
     }
 
-    public OptionSet Add<T>(string prototype, Action<T> action)
+    public OptionCollection Add<T>(string prototype, Action<T> action)
     {
       return Add(prototype, null, action);
     }
 
-    public OptionSet Add<T>(string prototype, string description, Action<T> action)
+    public OptionCollection Add<T>(string prototype, string description, Action<T> action)
     {
       return Add(new ActionOption<T>(prototype, description, action));
     }
 
-    public OptionSet Add<TKey, TValue>(string prototype, OptionAction<TKey, TValue> action)
+    public OptionCollection Add<TKey, TValue>(string prototype, OptionAction<TKey, TValue> action)
     {
       return Add(prototype, null, action);
     }
 
-    public OptionSet Add<TKey, TValue>(string prototype, string description, OptionAction<TKey, TValue> action)
+    public OptionCollection Add<TKey, TValue>(string prototype, string description, OptionAction<TKey, TValue> action)
     {
       return Add(new ActionOption<TKey, TValue>(prototype, description, action));
     }
@@ -795,37 +775,38 @@ namespace NDesk.Options
     }
 
 #if LINQ
-		public List<string> Parse (IEnumerable<string> arguments)
-		{
-			bool process = true;
-			OptionContext c = CreateOptionContext ();
-			c.OptionIndex = -1;
-			var def = GetOptionForName ("<>");
-			var unprocessed =
-				from argument in arguments
-				where ++c.OptionIndex >= 0 && (process || def != null)
-					? process
-						? argument == "--"
-							? (process = false)
-							: !Parse (argument, c)
-								? def != null
-									? Unprocessed (null, def, c, argument)
-									: true
-								: false
-						: def != null
-							? Unprocessed (null, def, c, argument)
-							: true
-					: true
-				select argument;
-			List<string> r = unprocessed.ToList ();
-			if (c.Option != null)
-				c.Option.Invoke (c);
-			return r;
-		}
+    public List<string> Parse (IEnumerable<string> arguments)
+    {
+      bool process = true;
+      OptionContext c = CreateOptionContext ();
+      c.OptionIndex = -1;
+      var def = GetOptionForName ("<>");
+      var unprocessed =
+        from argument in arguments
+        where ++c.OptionIndex >= 0 && (process || def != null)
+          ? process
+            ? argument == "--"
+              ? (process = false)
+              : !Parse (argument, c)
+                ? def != null
+                  ? Unprocessed (null, def, c, argument)
+                  : true
+                : false
+            : def != null
+              ? Unprocessed (null, def, c, argument)
+              : true
+          : true
+        select argument;
+      List<string> r = unprocessed.ToList ();
+      if (c.Option != null)
+        c.Option.Invoke (c);
+      return r;
+    }
 #else
 
     public List<string> Parse(IEnumerable<string> arguments)
     {
+      arguments = arguments ?? Array.Empty<string>();
       OptionContext c = CreateOptionContext();
       c.OptionIndex = -1;
       bool process = true;
@@ -870,6 +851,10 @@ namespace NDesk.Options
     private readonly Regex ValueOption = new Regex(
       @"^(?<flag>--|-|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
 
+    [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters",
+      Justification = "multi-return; F# would be simpler")]
+    [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+      Justification = "It *is* a flag")]
     protected bool GetOptionParts(string argument, out string flag, out string name, out string sep, out string value)
     {
       if (argument == null)
@@ -891,8 +876,9 @@ namespace NDesk.Options
       return true;
     }
 
-    protected virtual bool Parse(string argument, OptionContext c)
+    protected virtual bool Parse(string argument, OptionContext context)
     {
+      var c = context ?? throw new ArgumentNullException(nameof(context));
       if (c.Option != null)
       {
         ParseValue(argument, c);
@@ -947,6 +933,7 @@ namespace NDesk.Options
       else if (c.OptionValues.Count > c.Option.MaxValueCount)
       {
         throw new OptionException(MessageLocalizer(string.Format(
+          CultureInfo.InvariantCulture,
                 "Error: Found {0} option values when expecting {1}.",
                 c.OptionValues.Count, c.Option.MaxValueCount)),
             c.OptionName);
@@ -971,6 +958,8 @@ namespace NDesk.Options
       return false;
     }
 
+    [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly",
+      Justification = "OptionValueType names a type")]
     private bool ParseBundledValue(string f, string n, OptionContext c)
     {
       if (f != "-")
@@ -984,7 +973,9 @@ namespace NDesk.Options
         {
           if (i == 0)
             return false;
-          throw new OptionException(string.Format(MessageLocalizer(
+          throw new OptionException(string.Format(
+            CultureInfo.InvariantCulture,
+            MessageLocalizer(
                   "Cannot bundle unregistered option '{0}'."), opt), opt);
         }
         p = this[rn];
@@ -1020,29 +1011,30 @@ namespace NDesk.Options
 
     private const int OptionWidth = 29;
 
-    public void WriteOptionDescriptions(TextWriter o)
+    public void WriteOptionDescriptions(TextWriter writer)
     {
+      var w = writer ?? throw new ArgumentNullException(nameof(writer));
       foreach (Option p in this)
       {
         int written = 0;
-        if (!WriteOptionPrototype(o, p, ref written))
+        if (!WriteOptionPrototype(w, p, ref written))
           continue;
 
         if (written < OptionWidth)
-          o.Write(new string(' ', OptionWidth - written));
+          w.Write(new string(' ', OptionWidth - written));
         else
         {
-          o.WriteLine();
-          o.Write(new string(' ', OptionWidth));
+          w.WriteLine();
+          w.Write(new string(' ', OptionWidth));
         }
 
         List<string> lines = GetLines(MessageLocalizer(GetDescription(p.Description)));
-        o.WriteLine(lines[0]);
+        w.WriteLine(lines[0]);
         string prefix = new string(' ', OptionWidth + 2);
         for (int i = 1; i < lines.Count; ++i)
         {
-          o.Write(prefix);
-          o.WriteLine(lines[i]);
+          w.Write(prefix);
+          w.WriteLine(lines[i]);
         }
       }
     }
@@ -1124,7 +1116,7 @@ namespace NDesk.Options
       if (maxIndex == 1)
         nameStart = new string[] { "{0:", "{" };
       else
-        nameStart = new string[] { "{" + index + ":" };
+        nameStart = new string[] { "{" + index.ToString(CultureInfo.InvariantCulture) + ":" };
       for (int i = 0; i < nameStart.Length; ++i)
       {
         int start, j = 0;
@@ -1139,7 +1131,7 @@ namespace NDesk.Options
           continue;
         return description.Substring(start + nameStart[i].Length, end - start - nameStart[i].Length);
       }
-      return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
+      return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1).ToString(CultureInfo.InvariantCulture); ;
     }
 
     private static string GetDescription(string description)

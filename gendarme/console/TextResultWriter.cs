@@ -38,10 +38,6 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-#pragma warning disable IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Scope = "member", Target = "Gendarme.TextResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)", Justification = "work in progress")]
-#pragma warning restore IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
-
 namespace Gendarme
 {
   public class TextResultWriter : ResultWriter, IDisposable
@@ -64,17 +60,17 @@ namespace Gendarme
       {
         writer = System.Console.Out;
 
-        string color_override = Environment.GetEnvironmentVariable("GENDARME_COLOR") ?? "dark";
-        switch (color_override.ToLowerInvariant())
+        string color_override = Environment.GetEnvironmentVariable("GENDARME_COLOR") ?? "DARK";
+        switch (color_override.ToUpperInvariant())
         {
-          case "none":
+          case "NONE":
             break;
 
-          case "light":
+          case "LIGHT":
             color_scheme = ColorScheme.Light;
             break;
 
-          case "dark":
+          //case "dark":
           default:
             color_scheme = ColorScheme.Dark;
             break;

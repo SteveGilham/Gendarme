@@ -43,16 +43,18 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-[assembly: SuppressMessage("Microsoft.Reliability", 
-                           "CA2000:Dispose objects before losing scope", 
-                           Scope = "member", 
+[assembly: SuppressMessage("Microsoft.Reliability",
+                           "CA2000:Dispose objects before losing scope",
+                           Scope = "member",
+#pragma warning disable IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
                            Target = "Gendarme.XmlResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)",
+#pragma warning restore IDE0077 // Avoid legacy format target in 'SuppressMessageAttribute'
                            Justification = "Disposed implicitly with the instance")]
-[assembly: SuppressMessage("Gendarme.Rules.Correctness",
-                            "EnsureLocalDisposalRule",
-                            Scope = "member", // MethodDefinition
-                            Target = "Gendarme.XmlResultWriter/<>c::<CreateDefects>b__10_4(System.Linq.IGrouping`2<Mono.Cecil.IMetadataTokenProvider,Gendarme.Framework.Defect>)",
-                            Justification = "Not locally owned")]
+//[assembly: SuppressMessage("Gendarme.Rules.Correctness",
+//                            "EnsureLocalDisposalRule",
+//                            Scope = "member", // MethodDefinition
+//                            Target = "Gendarme.XmlResultWriter/<>c::<CreateDefects>b__10_4(System.Linq.IGrouping`2<Mono.Cecil.IMetadataTokenProvider,Gendarme.Framework.Defect>)",
+//                            Justification = "Not locally owned")]
 
 namespace Gendarme
 {
@@ -139,6 +141,7 @@ namespace Gendarme
       writer.WriteEndElement();
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Correctness",
          "EnsureLocalDisposalRule",
          Justification = "not locally owned")]

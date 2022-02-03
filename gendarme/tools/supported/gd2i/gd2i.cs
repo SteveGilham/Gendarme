@@ -261,7 +261,7 @@ namespace Gendarme.Tools
 
     private byte Parse(string[] args)
     {
-      var p = new OptionSet() {
+      var p = new OptionCollection() {
         { "syntax-check", v => syntax_errors_warnings = v != null },
         { "extra-check",  v => extra_defects_warnings = v != null },
         { "quiet",    v => quiet = v != null },

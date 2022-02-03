@@ -288,7 +288,7 @@ namespace Gendarme
       // if supplied, use the user limit on defects (otherwise 2^31 is used)
       DefectsLimit = Int32.MaxValue;
 
-      var p = new OptionSet() {
+      var p = new OptionCollection() {
         { "config=",  v => config_file = ValidateInputFile ("config", v) },
         { "set=", v => rule_set = ValidateRuleSet (v) },
         { "log=", v => log_file = ValidateOutputFile ("log", v) },
