@@ -33,65 +33,69 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Naming {
+namespace Gendarme.Rules.Naming
+{
+  /// <summary>
+  /// The rule is used for ensure that the name of enumerations are in singular form unless
+  /// the enumeration is used as flags, i.e. decorated with the <c>[Flags]</c> attribute.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public enum MyCustomValues {
+  ///	Foo,
+  ///	Bar
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (singular):
+  /// <code>
+  /// public enum MyCustomValue {
+  ///	Foo,
+  ///	Bar
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (flags):
+  /// <code>
+  /// [Flags]
+  /// public enum MyCustomValues {
+  ///	Foo,
+  ///	Bar,
+  ///	AllValues = Foo | Bar
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// The rule is used for ensure that the name of enumerations are in singular form unless 
-	/// the enumeration is used as flags, i.e. decorated with the <c>[Flags]</c> attribute.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (singular):
-	/// <code>
-	/// public enum MyCustomValue {
-	///	Foo,
-	///	Bar 
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (flags):
-	/// <code>
-	/// [Flags]
-	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar,
-	///	AllValues = Foo | Bar
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This type is an enumeration and by convention it should have a singular name.")]
+  [Solution("Change the enumeration name from the plural to the singular form.")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+      Justification = "metacontext -- talking about [Flags]")]
+  public class UseSingularNameInEnumsUnlessAreFlagsRule : Rule, ITypeRule
+  {
+    private static bool IsPlural(string typeName)
+    {
+      return (String.Compare(typeName, typeName.Length - 1, "s", 0, 1, true, CultureInfo.CurrentCulture) == 0);
+    }
 
-	[Problem ("This type is an enumeration and by convention it should have a singular name.")]
-	[Solution ("Change the enumeration name from the plural to the singular form.")]
-	public class UseSingularNameInEnumsUnlessAreFlagsRule : Rule, ITypeRule {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule applies only to enums - but not enums marked with [Flags] attribute
+      if (!type.IsEnum || type.IsFlags())
+        return RuleResult.DoesNotApply;
 
-		private static bool IsPlural (string typeName)
-		{
-			return (String.Compare (typeName, typeName.Length - 1, "s", 0, 1, true, CultureInfo.CurrentCulture) == 0);
-		}
+      // rule applies
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule applies only to enums - but not enums marked with [Flags] attribute
-			if (!type.IsEnum || type.IsFlags ())
-				return RuleResult.DoesNotApply;
+      if (!IsPlural(type.Name))
+        return RuleResult.Success;
 
-			// rule applies
-
-			if (!IsPlural (type.Name))
-				return RuleResult.Success;
-
-			Runner.Report (type, Severity.Medium, Confidence.Normal);
-			return RuleResult.Failure;
-		}
-	}
+      Runner.Report(type, Severity.Medium, Confidence.Normal);
+      return RuleResult.Failure;
+    }
+  }
 }

@@ -88,6 +88,9 @@ namespace Gendarme.Rules.UI
   [Problem("The System.Windows.Forms application's entry-point (Main) is missing an [STAThread] attribute.")]
   [Solution("Add a [STAThread] attribute to your application's Main method.")]
   [FxCopCompatibility("Microsoft.Usage", "CA2232:MarkWindowsFormsEntryPointsWithStaThread")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly",
+    Justification = "TLAs are annoying like that")]
   public class UseSTAThreadAttributeOnSWFEntryPointsRule : Rule, IAssemblyRule
   {
     private const string SystemWindowsForms = "System.Windows.Forms";

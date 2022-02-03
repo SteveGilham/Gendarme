@@ -445,16 +445,21 @@ _Target
 
                     printfn "%s" (finish text text2))
 
-        let deprecatedRules = [ "-Microsoft.Usage#CA2202" ] // double dispose
+        let deprecatedRules = [ 
+          "-Microsoft.Usage#CA2202" // double dispose
+          "-Microsoft.Security#CA2104" ] // // :DoNotDeclareReadOnlyMutableReferenceTypes"
 
         let gendarmeRules =
             [ "-Microsoft.Design#CA1002" // :DoNotExposeGenericLists"
               "-Microsoft.Design#CA1011" // :ConsiderPassingBaseTypesAsParameters"
               "-Microsoft.Design#CA1016" // :MarkAssembliesWithAssemblyVersion"
               "-Microsoft.Design#CA1021" //:AvoidOutParameters"
-              "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
-              "-Microsoft.Usage#CA1801" // :ReviewUnusedParameters"
               "-Microsoft.Design#CA1028" // :EnumStorageShouldBeInt32"
+              "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
+              "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"            
+              "-Microsoft.Design#CA1062" //:Validate arguments of public methods" -- candidate
+              "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity" -- candidate
+              "-Microsoft.Usage#CA1801" // :ReviewUnusedParameters"
               "-Microsoft.Globalization#CA1305" // :SpecifyIFormatProvider"
               "-Microsoft.Globalization#CA1307" // :SpecifyStringComparison"
               "-Microsoft.Performance#CA1822" // :MarkMembersAsStatic"
@@ -463,15 +468,17 @@ _Target
         let nonFsharpRules =
             [ "-Microsoft.Design#CA1006" // nested generics
               "-Microsoft.Design#CA1034" // nested classes being visible
-              "-Microsoft.Design#CA1062" // null checks,  In F#!
               "-Microsoft.Naming#CA1709" // defer to the Gendarme casing rule for implicit 'a
               "-Microsoft.Naming#CA1715" // defer to the Gendarme naming rule for implicit 'a
               "-Microsoft.Usage#CA2235" // closures being serializable
               "-Microsoft.Maintainability#CA1506" ] // AvoidExcessiveClassCoupling
 
         let standardRules =
-            [ "-Microsoft.Design#CA1020"
-              "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ] // small namespaces
+            [ "-Microsoft.Design#CA1020"// small namespaces
+              "-Microsoft.Naming#CA1702" // :CompoundWordsShouldBeCasedCorrectly" // too opinionated
+              "-Microsoft.Naming#CA1704" // :IdentifiersShouldBeSpelledCorrectly"
+              "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
+              "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ] 
 
         // let cantStrongName = [ "-Microsoft.Design#CA2210" ] // should strongname
 
@@ -481,37 +488,11 @@ _Target
                           standardRules
                           nonFsharpRules ]
 
-        let workInProgressRules =
-            [ "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
-              "-Microsoft.Design#CA1062" //:Validate arguments of public methods"
-              "-Microsoft.Maintainability#CA1500" //:VariableNamesShouldNotMatchFieldNames"
-              "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity"
-              "-Microsoft.Maintainability#CA1506" //:AvoidExcessiveClassCoupling"
-              "-Microsoft.Naming#CA1704" // :IdentifiersShouldBeSpelledCorrectly"
-              "-Microsoft.Naming#CA1702" // :CompoundWordsShouldBeCasedCorrectly"
-              "-Microsoft.Naming#CA1707" // :IdentifiersShouldNotContainUnderscores"
-              "-Microsoft.Naming#CA1709" //:IdentifiersShouldBeCasedCorrectly"
-              "-Microsoft.Naming#CA1726" //:UsePreferredTerms"
-              "-Microsoft.Performance#CA1800" //:DoNotCastUnnecessarily"
-              "-Microsoft.Usage#CA1806" //:DoNotIgnoreMethodResults"
-              "-Microsoft.Performance#CA1810" //:InitializeReferenceTypeStaticFieldsInline"
-              "-Microsoft.Performance#CA1811" //:AvoidUncalledPrivateCode"
-              "-Microsoft.Performance#CA1815" //:OverrideEqualsAndOperatorEqualsOnValueTypes"
-              "-Microsoft.Performance#CA1802" //:UseLiteralsWhereAppropriate"
-              "-Microsoft.Performance#CA1823" //:AvoidUnusedPrivateFields",
-              "-Microsoft.Performance#CA1824" //:MarkAssembliesWithNeutralResourcesLanguage",
-              "-Microsoft.Security#CA2104" // :DoNotDeclareReadOnlyMutableReferenceTypes"
-              "-Microsoft.Naming#CA2204" ] // Literals should be spelled correctly
-
         let defaultCSharpRules =
             List.concat [ deprecatedRules
                           gendarmeRules
                           standardRules
                           [ "-Microsoft.Design#CA1026:DefaultParametersShouldNotBeUsed" ] ]
-
-        let wipCSharpRules =
-            List.concat [ defaultCSharpRules
-                          workInProgressRules ]
 
         let refdir =
             @"C:\Program Files\dotnet\sdk\6.0.101\ref" // TODO generate
@@ -611,7 +592,7 @@ _Target
                       Verbose = false
                       ReportFileName = "_Reports/FxCopReport.xml"
                       Types = []
-                      Rules = wipCSharpRules
+                      Rules = defaultCSharpRules
                       FailOnError = FxCop.ErrorLevel.Warning
                       IgnoreGeneratedCode = true }
         with

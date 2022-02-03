@@ -60,6 +60,8 @@ namespace Gendarme.Rules.Design
   [SuppressMessage("Gendarme.Rules.Gendarme",
                   "DefectsMustBeReportedRule",
                   Justification = "See Base class")]
+  [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly",
+    Justification = "The TLA problem")]
   public class MarkAssemblyWithCLSCompliantRule : MarkAssemblyWithAttributeRule
   {
     protected override string AttributeNamespace

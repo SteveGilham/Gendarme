@@ -140,10 +140,10 @@ namespace Gendarme.Rules.Design
 
       // type should implement overloads for ==, !=, < and > operators
       // note: report all missing operators as single defect
-      bool equality = type.HasMethod(MethodSignatures.op_Equality);
-      bool inequality = type.HasMethod(MethodSignatures.op_Inequality);
-      bool less_than = type.HasMethod(MethodSignatures.op_LessThan);
-      bool greater_than = type.HasMethod(MethodSignatures.op_GreaterThan);
+      bool equality = type.HasMethod(MethodSignatures.Equality);
+      bool inequality = type.HasMethod(MethodSignatures.Inequality);
+      bool less_than = type.HasMethod(MethodSignatures.LessThan);
+      bool greater_than = type.HasMethod(MethodSignatures.GreaterThan);
       if (!equality || !inequality || !less_than || !greater_than)
       {
         StringBuilder sb = new StringBuilder("Missing operators:");

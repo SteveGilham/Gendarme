@@ -48,6 +48,8 @@ namespace Gendarme.Framework.Rocks
     [SuppressMessage("Gendarme.Rules.Performance",
                  "AvoidUnusedParametersRule",
                  Justification = "Meets expected signature")]
+    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores",
+      Justification = "Placeholder")]
     public static int IndexOf(this string self, char target, StringComparison _)
     {
       return self.IndexOf(target);
@@ -59,6 +61,8 @@ namespace Gendarme.Framework.Rocks
     [SuppressMessage("Gendarme.Rules.Performance",
                  "AvoidUnusedParametersRule",
                  Justification = "Meets expected signature")]
+    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores",
+      Justification = "Placeholder")]
     public static string Replace(this string self, string target, string substitute, StringComparison _)
     {
       return self.Replace(target, substitute);

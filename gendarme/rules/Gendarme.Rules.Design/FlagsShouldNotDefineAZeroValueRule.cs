@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Design.FlagsShouldNotDefineAZeroValueRule
 //
 // Authors:
@@ -30,71 +30,75 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule ensures that enumerations decorated with the [System.Flags]  
+  /// attribute do not contain a 0 value. This value would not be usable  
+  /// with bitwise operators.
+  /// </summary>
+  /// <example>
+  /// Bad example (using 0 for a normal value):
+  /// <code>
+  /// [Flags]
+  /// [Serializable]
+  /// enum Access {
+  /// 	Read = 0,
+  /// 	Write = 1
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (using None):
+  /// <code>
+  /// [Flags]
+  /// [Serializable]
+  /// enum Access {
+  ///	// this is less severe since the name of the 0 value helps
+  /// 	None = 0,
+  /// 	Read = 1,
+  /// 	Write = 2
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [Flags]
+  /// [Serializable]
+  /// enum Access {
+  ///	Read = 1,
+  ///	Write = 2
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule ensures that enumerations decorated with the [System.Flags]  
-	/// attribute do not contain a 0 value. This value would not be usable  
-	/// with bitwise operators.
-	/// </summary>
-	/// <example>
-	/// Bad example (using 0 for a normal value):
-	/// <code>
-	/// [Flags]
-	/// [Serializable]
-	/// enum Access {
-	/// 	Read = 0,
-	/// 	Write = 1
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (using None):
-	/// <code>
-	/// [Flags]
-	/// [Serializable]
-	/// enum Access {
-	///	// this is less severe since the name of the 0 value helps
-	/// 	None = 0,
-	/// 	Read = 1,
-	/// 	Write = 2
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [Flags]
-	/// [Serializable]
-	/// enum Access {
-	///	Read = 1,
-	///	Write = 2
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This enumeration flag defines a value of 0, which cannot be used in boolean operations.")]
+  [Solution("Remove the 0 value(s) from the flag.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+      Justification = "metacontext -- talking about [Flags]")]
+  public class FlagsShouldNotDefineAZeroValueRule : DefineAZeroValueRule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule apply only on [Flags] (this takes care of checking for enums)
+      if (!type.IsFlags())
+        return RuleResult.DoesNotApply;
 
-	[Problem ("This enumeration flag defines a value of 0, which cannot be used in boolean operations.")]
-	[Solution ("Remove the 0 value(s) from the flag.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue")]
-	public class FlagsShouldNotDefineAZeroValueRule : DefineAZeroValueRule, ITypeRule {
+      // rule applies!
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule apply only on [Flags] (this takes care of checking for enums)
-			if (!type.IsFlags ())
-				return RuleResult.DoesNotApply;
+      FieldDefinition field = GetZeroValueField(type);
+      if (field == null)
+        return RuleResult.Success;
 
-			// rule applies!
-
-			FieldDefinition field = GetZeroValueField (type);
-			if (field == null)
-				return RuleResult.Success;
-
-			// it's less likely an error if the field is named "None"
-			Severity s = field.Name == "None" ? Severity.Medium : Severity.High;
-			Runner.Report (field, s, Confidence.Total);
-			return RuleResult.Failure;
-		}
-	}
+      // it's less likely an error if the field is named "None"
+      Severity s = field.Name == "None" ? Severity.Medium : Severity.High;
+      Runner.Report(field, s, Confidence.Total);
+      return RuleResult.Failure;
+    }
+  }
 }

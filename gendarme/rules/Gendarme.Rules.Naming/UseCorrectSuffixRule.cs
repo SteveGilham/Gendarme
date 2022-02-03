@@ -39,6 +39,7 @@ using System.Text;
 using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Naming
 {
@@ -97,6 +98,10 @@ namespace Gendarme.Rules.Naming
       };
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline",
+      Justification = "Non-trivial initialization; too lazy to make lazy")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
     static UseCorrectSuffixRule()
     {
       Add("Attribute", TN("System", "Attribute"), true);

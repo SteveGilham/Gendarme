@@ -299,11 +299,11 @@ namespace Gendarme.Rules.Exceptions
         allowedExceptions = EventExceptions;
         return "Event accessors";
       }
-      else if (MethodSignatures.op_Equality.Matches(method))
+      else if (MethodSignatures.Equality.Matches(method))
       {
         return "operator==";
       }
-      else if (MethodSignatures.op_Inequality.Matches(method))
+      else if (MethodSignatures.Inequality.Matches(method))
       {
         return "operator!=";
       }

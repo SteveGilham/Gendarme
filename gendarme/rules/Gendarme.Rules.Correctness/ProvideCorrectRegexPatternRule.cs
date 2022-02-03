@@ -172,9 +172,9 @@ namespace Gendarme.Rules.Correctness
 #pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
       Justification = "TODO: Defect constructor message not localized")]
-    private
-#pragma warning restore IDE0079 // Remove unnecessary suppression
-    bool CheckPattern(MethodDefinition method, Instruction ins, string pattern, Confidence confidence)
+    [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
+      Justification = "Success or failure is all that's of interest")]
+    private bool CheckPattern(MethodDefinition method, Instruction ins, string pattern, Confidence confidence)
     {
       if (string.IsNullOrEmpty(pattern))
       {

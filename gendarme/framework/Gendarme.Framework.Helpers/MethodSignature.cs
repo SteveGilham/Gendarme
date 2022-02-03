@@ -36,143 +36,151 @@ using System.Text;
 using Mono.Cecil;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework.Helpers {
+namespace Gendarme.Framework.Helpers
+{
+  /// <summary>
+  /// Used to match methods. Properties that are set to null are ignored
+  /// </summary>
+  /// <example>
+  /// <code>
+  /// MethodDefinition method = ...
+  /// MethodSignature sig = new MethodSignature ("Dispose");
+  /// if (sig.Match (method)) {
+  ///     //matches any method named "Dispose" with any (or no) return value and any number of parameters
+  /// }
+  /// </code>
+  /// </example>
+  /// <seealso cref="Gendarme.Framework.Helpers.MethodSignatures"/>
+  public class MethodSignature
+  {
+    /// <summary>
+    /// The name of the method to match. Ignored if null.
+    /// </summary>
+    public string Name { get; private set; }
 
-	/// <summary>
-	/// Used to match methods. Properties that are set to null are ignored
-	/// </summary>
-	/// <example>
-	/// <code>
-	/// MethodDefinition method = ...
-	/// MethodSignature sig = new MethodSignature ("Dispose");
-	/// if (sig.Match (method)) { 
-	///     //matches any method named "Dispose" with any (or no) return value and any number of parameters
-	/// }
-	/// </code>
-	/// </example>
-	/// <seealso cref="Gendarme.Framework.Helpers.MethodSignatures"/>
-	public class MethodSignature {
+    /// <summary>
+    /// The FullName (Namespace.Type) of the return type. Ignored if null.
+    /// </summary>
+    public string ReturnType { get; private set; }
 
-		/// <summary>
-		/// The name of the method to match. Ignored if null.
-		/// </summary>
-		public string Name { get; private set; }
+    /// <summary>
+    /// An array of FullNames (Namespace.Type) of parameter types. Ignored if null. Null entries act as wildcards.
+    /// </summary>
+    public ReadOnlyCollection<string> Parameters { get; private set; }
 
-		/// <summary>
-		/// The FullName (Namespace.Type) of the return type. Ignored if null.
-		/// </summary>
-		public string ReturnType { get; private set; }
+    private readonly Func<MethodReference, bool> extra_match_logic;
 
-		/// <summary>
-		/// An array of FullNames (Namespace.Type) of parameter types. Ignored if null. Null entries act as wildcards.
-		/// </summary>
-		public ReadOnlyCollection<string> Parameters { get; private set; }
+    public MethodSignature()
+    {
+    }
 
-		private Func<MethodReference, bool> extra_match_logic;
+    public MethodSignature(string name)
+      : this(name, null, null, null)
+    {
+    }
 
+    public MethodSignature(string name, Func<MethodReference, bool> extraMatchingLogic)
+      : this(name, null, null, extraMatchingLogic)
+    {
+    }
 
-		public MethodSignature ()
-		{
-		}
+    public MethodSignature(string name, string returnType)
+      : this(name, returnType, null, null)
+    {
+    }
 
-		public MethodSignature (string name)
-			: this (name, null, null, null)
-		{
-		}
+    public MethodSignature(string name, string returnType, Func<MethodReference, bool> extraMatchingLogic)
+      : this(name, returnType, null, extraMatchingLogic)
+    {
+    }
 
-		public MethodSignature (string name, Func<MethodReference, bool> extraMatchingLogic)
-			: this (name, null, null, extraMatchingLogic)
-		{
-		}
+    public MethodSignature(string name, string returnType, string[] parameters)
+      : this(name, returnType, parameters, null)
+    {
+    }
 
-		public MethodSignature (string name, string returnType)
-			: this (name, returnType, null, null)
-		{
-		}
+    public MethodSignature(string name, string returnType, string[] parameters, Func<MethodReference, bool> extraMatchingLogic)
+    {
+      Name = name;
+      ReturnType = returnType;
+      if (parameters != null)
+        Parameters = new ReadOnlyCollection<string>(new List<string>(parameters));
+      extra_match_logic = extraMatchingLogic;
+    }
 
-		public MethodSignature (string name, string returnType, Func<MethodReference, bool> extraMatchingLogic)
-			: this (name, returnType, null, extraMatchingLogic)
-		{
-		}
+    /// <summary>
+    /// Checks if a MethodReference match the signature.
+    /// </summary>
+    /// <param name="method">The method to check.</param>
+    /// <returns>True if the MethodReference matches all aspects of the MethodSignature.</returns>
+    public bool Matches(MethodReference method)
+    {
+      if (method == null)
+        return false;
 
-		public MethodSignature (string name, string returnType, string [] parameters)
-			: this (name, returnType, parameters, null)
-		{
-		}
+      if (Name != null && method.Name != Name)
+        return false;
 
-		public MethodSignature (string name, string returnType, string [] parameters, Func<MethodReference, bool> extraMatchingLogic)
-		{
-			Name = name;
-			ReturnType = returnType;
-			if (parameters != null)
-				Parameters = new ReadOnlyCollection<string> (new List<string> (parameters));
-			extra_match_logic = extraMatchingLogic;
-		}
+      if (ReturnType != null && !method.ReturnType.IsNamed(ReturnType))
+        return false;
 
-		/// <summary>
-		/// Checks if a MethodReference match the signature.
-		/// </summary>
-		/// <param name="method">The method to check.</param>
-		/// <returns>True if the MethodReference matches all aspects of the MethodSignature.</returns>
-		public bool Matches (MethodReference method)
-		{
-			if (method == null)
-				return false;
+      if (Parameters != null)
+      {
+        if (method.HasParameters)
+        {
+          IList<ParameterDefinition> pdc = method.Parameters;
+          if (Parameters.Count != pdc.Count)
+            return false;
+          for (int i = 0; i < Parameters.Count; i++)
+          {
+            if (Parameters[i] == null)
+              continue;//ignore parameter
+            if (!pdc[i].ParameterType.IsNamed(Parameters[i]))
+            {
+              return false;
+            }
+          }
+        }
+        else if (Parameters.Count > 0)
+        {
+          return false;
+        }
+      }
 
-			if (Name != null && method.Name != Name)
-				return false;
+      return (extra_match_logic == null) || extra_match_logic(method);
+    }
 
-			if (ReturnType != null && !method.ReturnType.IsNamed (ReturnType))
-				return false;
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+      // if we do not have enough useful information return an empty string
+      if (Name == null)
+        return String.Empty;
 
-			if (Parameters != null) {
-				if (method.HasParameters) {
-					IList<ParameterDefinition> pdc = method.Parameters;
-					if (Parameters.Count != pdc.Count)
-						return false;
-					for (int i = 0; i < Parameters.Count; i++) {
-						if (Parameters [i] == null)
-							continue;//ignore parameter
-						if (!pdc [i].ParameterType.IsNamed (Parameters [i])) {
-							return false;
-						}
-					}
-				} else if (Parameters.Count > 0) {
-					return false;
-				}
-			}
+      StringBuilder sb = new StringBuilder();
+      if (ReturnType != null)
+      {
+        sb.Append(ReturnType);
+        sb.Append(' ');
+      }
 
-			return (extra_match_logic == null) ? true : extra_match_logic (method);
-		}
+      sb.Append(Name);
+      sb.Append('(');
+      if (Parameters != null)
+      {
+        for (int i = 0; i < Parameters.Count; i++)
+        {
+          sb.Append(Parameters[i]);
+          if (i < Parameters.Count - 1)
+            sb.Append(',');
+        }
+      }
+      sb.Append(')');
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString ()
-		{
-			// if we do not have enough useful information return an empty string
-			if (Name == null)
-				return String.Empty;
-
-			StringBuilder sb = new StringBuilder ();
-			if (ReturnType != null) {
-				sb.Append (ReturnType);
-				sb.Append (' ');
-			}
-
-			sb.Append (Name);
-			sb.Append ('(');
-			if (Parameters != null) {
-				for (int i = 0; i < Parameters.Count; i++) {
-					sb.Append (Parameters [i]);
-					if (i < Parameters.Count - 1)
-						sb.Append (',');
-				}
-			}
-			sb.Append (')');
-
-			return sb.ToString ();
-		}
-	}
+      return sb.ToString();
+    }
+  }
 }

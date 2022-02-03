@@ -33,60 +33,64 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Naming {
+namespace Gendarme.Rules.Naming
+{
+  /// <summary>
+  /// This rule ensures that the name of enumerations decorated with FlagsAttribute are
+  /// in plural form.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [Flags]
+  /// public enum MyCustomValue {
+  ///	Foo,
+  ///	Bar,
+  ///	AllValues = Foo | Bar
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [Flags]
+  /// public enum MyCustomValues {
+  ///	Foo,
+  ///	Bar,
+  ///	AllValues = Foo | Bar
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule ensures that the name of enumerations decorated with FlagsAttribute are
-	/// in plural form.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [Flags]
-	/// public enum MyCustomValue {
-	///	Foo,
-	///	Bar,
-	///	AllValues = Foo | Bar
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [Flags]
-	/// public enum MyCustomValues {
-	///	Foo,
-	///	Bar,
-	///	AllValues = Foo | Bar
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This type is a flags enumeration and, by convention, should have a plural name.")]
+  [Solution("Convert this enumeration type name from singular to plural.")]
+  [FxCopCompatibility("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+      Justification = "metacontext -- talking about [Flags]")]
+  public class UsePluralNameInEnumFlagsRule : Rule, ITypeRule
+  {
+    private static bool IsPlural(string typeName)
+    {
+      return String.Compare(typeName, typeName.Length - 1, "s", 0, 1, true, CultureInfo.CurrentCulture) == 0;
+    }
 
-	[Problem ("This type is a flags enumeration and, by convention, should have a plural name.")]
-	[Solution ("Convert this enumeration type name from singular to plural.")]
-	[FxCopCompatibility ("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames")]
-	public class UsePluralNameInEnumFlagsRule : Rule, ITypeRule {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule applies only to enums with [Flags] attribute
+      if (!type.IsFlags())
+        return RuleResult.DoesNotApply;
 
-		private static bool IsPlural (string typeName)
-		{
-			return String.Compare (typeName, typeName.Length - 1, "s", 0, 1, true, CultureInfo.CurrentCulture) == 0;
-		}
+      // rule applies
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule applies only to enums with [Flags] attribute
-			if (!type.IsFlags ())
-				return RuleResult.DoesNotApply;
+      if (IsPlural(type.Name))
+        return RuleResult.Success;
 
-			// rule applies
-
-			if (IsPlural (type.Name))
-				return RuleResult.Success;
-
-			// Confidence == Normal because valid names may end with 's'
-			Runner.Report (type, Severity.Low, Confidence.Normal);
-			return RuleResult.Failure;
-		}
-	}
+      // Confidence == Normal because valid names may end with 's'
+      Runner.Report(type, Severity.Low, Confidence.Normal);
+      return RuleResult.Failure;
+    }
+  }
 }

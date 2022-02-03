@@ -46,6 +46,8 @@ namespace Gendarme.Framework.Rocks
   [SuppressMessage("Gendarme.Rules.Design",
                     "AvoidVisibleFieldsRule",
                     Justification = "It's a POD, there is no implementation")]
+  [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes",
+    Justification = "no use case for them")]
   public struct TypeName
   {
     public string Namespace;
@@ -388,7 +390,7 @@ namespace Gendarme.Framework.Rocks
       if (self == null)
         return false;
 
-      var def = (self is TypeDefinition) ? (self as TypeDefinition) : self.Resolve();
+      var def = (self as TypeDefinition) ?? self.Resolve();
 
       return def != null &&
              (def.Name.Contains("@", StringComparison.Ordinal)
@@ -562,6 +564,8 @@ namespace Gendarme.Framework.Rocks
     /// </summary>
     /// <param name="self">The TypeReference on which the extension method can be called.</param>
     /// <returns>True if the type as the [Flags] attribute, false otherwise.</returns>
+    [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+      Justification = "metacontext -- talking about [Flags]")]
     public static bool IsFlags(this TypeReference self)
     {
       if (self == null)

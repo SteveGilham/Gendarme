@@ -108,9 +108,9 @@ namespace Gendarme.Rules.Design
       if (type.IsEnum || type.IsInterface || type.IsDelegate())
         return RuleResult.DoesNotApply;
 
-      if (type.HasMethod(MethodSignatures.op_Addition) && type.HasMethod(MethodSignatures.op_Subtraction))
+      if (type.HasMethod(MethodSignatures.Addition) && type.HasMethod(MethodSignatures.Subtraction))
       {
-        if (!type.HasMethod(MethodSignatures.op_Equality))
+        if (!type.HasMethod(MethodSignatures.Equality))
         {
           Runner.Report(type, Severity.Low, Confidence.High, "This type implements the addition (+) and subtraction (-) operators. It should also implement the equality (==) operator.");
         }
@@ -118,7 +118,7 @@ namespace Gendarme.Rules.Design
 
       if (type.IsValueType)
       {
-        if (type.HasMethod(MethodSignatures.Equals) && !type.HasMethod(MethodSignatures.op_Equality))
+        if (type.HasMethod(MethodSignatures.Equals) && !type.HasMethod(MethodSignatures.Equality))
         {
           Runner.Report(type, Severity.Medium, Confidence.High, "This type overrides Object.Equals. It should also implement the equality (==) operator.");
         }
