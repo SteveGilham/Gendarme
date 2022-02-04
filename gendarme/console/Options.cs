@@ -656,10 +656,10 @@ namespace NDesk.Options
     {
       if (option == null)
         throw new ArgumentNullException(nameof(option));
-      List<string> added = new List<string>(option.Names.Count);
+      var names = option.Names;
+      List<string> added = new List<string>(names.Count);
       try
       {
-        var names = option.Names;
         // KeyedCollection.InsertItem/SetItem handle the 0th name.
         for (int i = 1; i < names.Count; ++i)
         {

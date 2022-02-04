@@ -181,6 +181,8 @@ namespace Gendarme.Rules.Correctness
 
       stored_fields.Clear();
       property_setters.Clear();
+      var iFields = info.Fields;
+      var iGetters = info.Getters;
 
       // For each instruction in the method,
       foreach (Instruction ins in method.Body.Instructions)
@@ -197,7 +199,7 @@ namespace Gendarme.Rules.Correctness
               if (pd != null && pd.ParameterType == method.DeclaringType)
               {
                 FieldDefinition field = ins.GetField();
-                info.Fields.Add(field);
+                iFields.Add(field);
               }
             }
           }
@@ -206,7 +208,7 @@ namespace Gendarme.Rules.Correctness
             if (ins.Previous.OpCode.Code == Code.Ldarg_0)
             {
               FieldDefinition field = ins.GetField();
-              info.Fields.Add(field);
+              iFields.Add(field);
             }
           }
 
@@ -230,7 +232,7 @@ namespace Gendarme.Rules.Correctness
           {
             // if it is a getter then save a reference to it,
             if (callee.IsGetter)
-              info.Getters.Add(callee);
+              iGetters.Add(callee);
 
             // if it's a setter then we'll ignore the corresponding getter,
             else if (callee.IsSetter)
@@ -244,28 +246,30 @@ namespace Gendarme.Rules.Correctness
         }
       }
 
-      info.Fields.ExceptWith(stored_fields);
+      iFields.ExceptWith(stored_fields);
       if (property_setters.Count > 0)
       {
         foreach (PropertyDefinition prop in type.Properties)
         {
-          if (prop.GetMethod != null && property_setters.Contains(prop.SetMethod))
-            info.Getters.Remove(prop.GetMethod);
+          var gm = prop.GetMethod;
+          if (gm != null && property_setters.Contains(prop.SetMethod))
+            iGetters.Remove(gm);
         }
       }
 #if DEBUG
+      var name = method.Name;
       if (info.HasFields)
       {
         StringBuilder sb = new StringBuilder();
-        sb.Append(method.Name).Append(" uses fields ");
-        AppendTo(sb, info.Fields);
+        sb.Append(name).Append(" uses fields ");
+        AppendTo(sb, iFields);
         Log.WriteLine(this, sb.ToString());
       }
       if (info.HasGetters)
       {
         StringBuilder sb = new StringBuilder();
-        sb.Append(method.Name).Append(" uses getters ");
-        AppendTo(sb, info.Getters);
+        sb.Append(name).Append(" uses getters ");
+        AppendTo(sb, iGetters);
         Log.WriteLine(this, sb.ToString());
       }
       Log.WriteLine(this);
@@ -336,18 +340,20 @@ namespace Gendarme.Rules.Correctness
         // don't know which state they are checking.
         if (fields.Count > 0 || getters.Count > 0)
         {
+          var hashFields = hash.Fields;
+          var hashGetters = hash.Getters;
           if (!hash.HasFields && !hash.HasGetters)
           {
             Report(hash.Method, "GetHashCode does not use any of the fields and/or properties used by the equality methods.",
               null, null);
           }
-          else if (!hash.Fields.IsSubsetOf(fields) || !hash.Getters.IsSubsetOf(getters))
+          else if (!hashFields.IsSubsetOf(fields) || !hashGetters.IsSubsetOf(getters))
           {
-            hash.Fields.ExceptWith(fields);
-            hash.Getters.ExceptWith(getters);
+            hashFields.ExceptWith(fields);
+            hashGetters.ExceptWith(getters);
 
             Report(hash.Method, "GetHashCode uses fields and/or properties not used by the equality methods:",
-              hash.Fields, hash.Getters);
+              hashFields, hashGetters);
           }
         }
       }
@@ -364,10 +370,12 @@ namespace Gendarme.Rules.Correctness
       {
         if (fields.Count > 0 || getters.Count > 0)
         {
-          if (!clone.Fields.IsSupersetOf(fields) || !clone.Getters.IsSupersetOf(getters))
+          var cGetters = clone.Getters;
+          var cFields = clone.Fields;
+          if (!cFields.IsSupersetOf(fields) || !cGetters.IsSupersetOf(getters))
           {
-            fields.ExceptWith(clone.Fields);
-            getters.ExceptWith(clone.Getters);
+            fields.ExceptWith(cFields);
+            getters.ExceptWith(cGetters);
 
             Report(clone.Method, "Clone does not use fields and/or properties used by the equality methods:",
               fields, getters);
