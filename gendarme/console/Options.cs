@@ -876,14 +876,15 @@ namespace NDesk.Options
       {
         return Array.Empty<(string, string, string, string)>();
       }
-      var flag = m.Groups["flag"].Value;
-      var name = m.Groups["name"].Value;
+      var groups = m.Groups;
+      var flag = groups["flag"].Value;
+      var name = groups["name"].Value;
       string sep = null;
       string value = null;
-      if (m.Groups["sep"].Success && m.Groups["value"].Success)
+      if (groups["sep"].Success && groups["value"].Success)
       {
-        sep = m.Groups["sep"].Value;
-        value = m.Groups["value"].Value;
+        sep = groups["sep"].Value;
+        value = groups["value"].Value;
       }
       return new[] { (flag, name, sep, value) };
     }

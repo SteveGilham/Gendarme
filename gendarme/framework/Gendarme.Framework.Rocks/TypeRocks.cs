@@ -444,13 +444,14 @@ namespace Gendarme.Framework.Rocks
 
     public static TypeName GetTypeName(this TypeReference self)
     {
+      var selfName = self.Name;
       if (self.IsNested)
       {
         var parent = self.DeclaringType.GetTypeName();
         return new TypeName
         {
           Namespace = parent.Namespace,
-          Name = parent.Name + "/" + self.Name
+          Name = parent.Name + "/" + selfName
         };
       }
       else if (self.IsByReference)
@@ -476,7 +477,7 @@ namespace Gendarme.Framework.Rocks
         return new TypeName
         {
           Namespace = self.Namespace,
-          Name = self.Name
+          Name = selfName
         };
       }
     }

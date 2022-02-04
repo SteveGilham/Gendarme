@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Symbols
 //
 // Authors:
@@ -32,166 +32,175 @@ using Mono.Cecil.Cil;
 
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  public static class Symbols
+  {
+    // http://blogs.msdn.com/jmstall/archive/2005/06/19/FeeFee_SequencePoints.aspx
+    private const int PdbHiddenLine = 0xFEEFEE;
 
-	public static class Symbols {
+    private const string AlmostEqualTo = "\u2248";
 
-		// http://blogs.msdn.com/jmstall/archive/2005/06/19/FeeFee_SequencePoints.aspx
-		private const int PdbHiddenLine = 0xFEEFEE;
+    private static Tuple<Instruction, MethodDefinition> ExtractFirst(TypeDefinition type)
+    {
+      if (type == null)
+        return null;
+      foreach (MethodDefinition method in type.Methods)
+      {
+        Instruction ins = ExtractFirst(method);
+        if (ins != null)
+          return Tuple.Create(ins, method);
+      }
+      return null;
+    }
 
-		private const string AlmostEqualTo = "\u2248";
+    private static Instruction ExtractFirst(MethodDefinition method)
+    {
+      if ((method == null) || !method.HasBody)
+        return null;
 
-		private static Tuple<Instruction, MethodDefinition> ExtractFirst (TypeDefinition type)
-		{
-			if (type == null)
-                return null;
-			foreach (MethodDefinition method in type.Methods) {
-				Instruction ins = ExtractFirst (method);
-				if (ins != null)
-					return Tuple.Create(ins, method);
-			}
-            return null;
-		}
+      var instructions = method.Body.Instructions;
+      if (instructions.Count == 0)
+        return null;
 
-		private static Instruction ExtractFirst (MethodDefinition method)
-		{
-			if ((method == null) || !method.HasBody || method.Body.Instructions.Count == 0)
-				return null;
-			Instruction ins = method.Body.Instructions [0];
-            MethodDebugInformation dbg = method.DebugInformation;
-			// note that the first instruction often does not have a sequence point
-			while (ins != null && dbg.GetSequencePoint(ins) == null)
-				ins = ins.Next;
-				
-			return (ins != null && dbg.GetSequencePoint(ins) != null) ? ins : null;
-		}
+      Instruction ins = instructions[0];
+      MethodDebugInformation dbg = method.DebugInformation;
+      // note that the first instruction often does not have a sequence point
+      while (ins != null && dbg.GetSequencePoint(ins) == null)
+        ins = ins.Next;
 
-		private static TypeDefinition FindTypeFromLocation (IMetadataTokenProvider location)
-		{
-			MethodDefinition method = (location as MethodDefinition);
-			if (method != null)
-				return method.DeclaringType;
+      return (ins != null && dbg.GetSequencePoint(ins) != null) ? ins : null;
+    }
 
-			FieldDefinition field = (location as FieldDefinition);
-			if (field != null)
-				return field.DeclaringType;
+    private static TypeDefinition FindTypeFromLocation(IMetadataTokenProvider location)
+    {
+      MethodDefinition method = (location as MethodDefinition);
+      if (method != null)
+        return method.DeclaringType;
 
-			ParameterDefinition parameter = (location as ParameterDefinition);
-			if (parameter != null)
-				return FindTypeFromLocation (parameter.Method);
+      FieldDefinition field = (location as FieldDefinition);
+      if (field != null)
+        return field.DeclaringType;
 
-			return (location as TypeDefinition);
-		}
+      ParameterDefinition parameter = (location as ParameterDefinition);
+      if (parameter != null)
+        return FindTypeFromLocation(parameter.Method);
 
-		private static MethodDefinition FindMethodFromLocation (IMetadataTokenProvider location)
-		{
-			ParameterDefinition parameter = (location as ParameterDefinition);
-			if (parameter != null)
-				return (parameter.Method as MethodDefinition);
+      return (location as TypeDefinition);
+    }
 
-			MethodReturnType return_type = (location as MethodReturnType);
-			if (return_type != null)
-				return (return_type.Method as MethodDefinition);
+    private static MethodDefinition FindMethodFromLocation(IMetadataTokenProvider location)
+    {
+      ParameterDefinition parameter = (location as ParameterDefinition);
+      if (parameter != null)
+        return (parameter.Method as MethodDefinition);
 
-			return (location as MethodDefinition);
-		}
+      MethodReturnType return_type = (location as MethodReturnType);
+      if (return_type != null)
+        return (return_type.Method as MethodDefinition);
 
-		private static string FormatSequencePoint (SequencePoint sp, bool exact)
-		{
-			return FormatSequencePoint (sp.Document.Url, sp.StartLine, sp.StartColumn, exact);
-		}
-		
-		// It would probably be a good idea to move this formatting into
-		// the reporting layer. The XML formatter would ideally not do
-		// any formatting at all so that tools could extract the line
-		// and column information without complex parsing.
-		//
-		// We might also want to allow some sort of customization of the
-		// formatting used by the text reporter. For example, most editors
-		// on the Mac have direct support for paths like foo/bar.cs:10 
-		// which include line numbers and foo/bar.cs:10:5 for paths which
-		// include line and column.
-		private static string FormatSequencePoint (string document, int line, int column, bool exact)
-		{
-			string sline = (line == PdbHiddenLine) ? "unavailable" : line.ToString (CultureInfo.InvariantCulture);
+      return (location as MethodDefinition);
+    }
 
-			// MDB (mono symbols) does not provide any column information (so we don't show any)
-			// there's also no point in showing a column number if we're not totally sure about the line
-			if (exact && (column > 0))
-				return String.Format (CultureInfo.InvariantCulture, "{0}({1},{2})", document, sline, column);
+    private static string FormatSequencePoint(SequencePoint sp, bool exact)
+    {
+      return FormatSequencePoint(sp.Document.Url, sp.StartLine, sp.StartColumn, exact);
+    }
 
-			return String.Format (CultureInfo.InvariantCulture, "{0}({2}{1})", document, sline,
-				exact ? String.Empty : AlmostEqualTo);
-		}
+    // It would probably be a good idea to move this formatting into
+    // the reporting layer. The XML formatter would ideally not do
+    // any formatting at all so that tools could extract the line
+    // and column information without complex parsing.
+    //
+    // We might also want to allow some sort of customization of the
+    // formatting used by the text reporter. For example, most editors
+    // on the Mac have direct support for paths like foo/bar.cs:10
+    // which include line numbers and foo/bar.cs:10:5 for paths which
+    // include line and column.
+    private static string FormatSequencePoint(string document, int line, int column, bool exact)
+    {
+      string sline = (line == PdbHiddenLine) ? "unavailable" : line.ToString(CultureInfo.InvariantCulture);
 
-		private static string GetSource (Instruction ins, MethodDebugInformation dbg)
-		{
-			// try to find the closed sequence point for this instruction
-			Instruction search = ins;
-			bool feefee = false;
-			while (search != null) {
-				// find the first entry, going backward, with a SequencePoint
-                SequencePoint s = dbg.GetSequencePoint(search);
-				if (s != null) {
-					// skip entries that are hidden (0xFEEFEE)
-					if (s.StartLine != PdbHiddenLine)
-						return FormatSequencePoint (s, feefee);
-					// but from here on we're not 100% sure about line numbers
-					feefee = true;
-				}
+      // MDB (mono symbols) does not provide any column information (so we don't show any)
+      // there's also no point in showing a column number if we're not totally sure about the line
+      if (exact && (column > 0))
+        return String.Format(CultureInfo.InvariantCulture, "{0}({1},{2})", document, sline, column);
 
-				search = search.Previous;
-			}
-			// no details, we only have the IL offset to report
-			return String.Format (CultureInfo.InvariantCulture, "debugging symbols unavailable, IL offset 0x{0:x4}", ins.Offset);
-		}
-		
-		static private string FormatSource (Instruction candidate, MethodDebugInformation dbg)
-		{
-            SequencePoint s = dbg.GetSequencePoint(candidate);
-			int line = s.StartLine;
-			// we approximate (line - 1, no column) to get (closer) to the definition
-			// unless we have the special 0xFEEFEE value (used in PDB for hidden source code)
-			if (line != PdbHiddenLine)
-				line--;
-			return FormatSequencePoint (s.Document.Url, line, 0, false);
-		}
+      return String.Format(CultureInfo.InvariantCulture, "{0}({2}{1})", document, sline,
+        exact ? String.Empty : AlmostEqualTo);
+    }
 
-        static public string GetSource(Defect defect, MethodDebugInformation dbg)
-		{
-			if (defect == null || dbg == null)
-				return String.Empty;
+    private static string GetSource(Instruction ins, MethodDebugInformation dbg)
+    {
+      // try to find the closed sequence point for this instruction
+      Instruction search = ins;
+      bool feefee = false;
+      while (search != null)
+      {
+        // find the first entry, going backward, with a SequencePoint
+        SequencePoint s = dbg.GetSequencePoint(search);
+        if (s != null)
+        {
+          // skip entries that are hidden (0xFEEFEE)
+          if (s.StartLine != PdbHiddenLine)
+            return FormatSequencePoint(s, feefee);
+          // but from here on we're not 100% sure about line numbers
+          feefee = true;
+        }
 
-			if (defect.Instruction != null)
-				return GetSource (defect.Instruction, dbg);
+        search = search.Previous;
+      }
+      // no details, we only have the IL offset to report
+      return String.Format(CultureInfo.InvariantCulture, "debugging symbols unavailable, IL offset 0x{0:x4}", ins.Offset);
+    }
 
-			// rule didn't provide an Instruction but we do our best to
-			// find something since this is our only link to the source code
+    private static string FormatSource(Instruction candidate, MethodDebugInformation dbg)
+    {
+      SequencePoint s = dbg.GetSequencePoint(candidate);
+      int line = s.StartLine;
+      // we approximate (line - 1, no column) to get (closer) to the definition
+      // unless we have the special 0xFEEFEE value (used in PDB for hidden source code)
+      if (line != PdbHiddenLine)
+        line--;
+      return FormatSequencePoint(s.Document.Url, line, 0, false);
+    }
 
-			Instruction candidate;
-			TypeDefinition type = null;
+    public static string GetSource(Defect defect, MethodDebugInformation dbg)
+    {
+      if (defect == null || dbg == null)
+        return String.Empty;
 
-			// MethodDefinition, ParameterDefinition
-			//	return the method source file with (approximate) line number
-			MethodDefinition method = FindMethodFromLocation (defect.Location);
-			if (method != null) {
-				candidate = ExtractFirst (method);
-				if (candidate != null) 
-					return FormatSource (candidate, method.DebugInformation);
+      if (defect.Instruction != null)
+        return GetSource(defect.Instruction, dbg);
 
-				// we may still be lucky to find the (a) source file for the type itself
-				type = method.DeclaringType;
-			}
+      // rule didn't provide an Instruction but we do our best to
+      // find something since this is our only link to the source code
 
-			// TypeDefinition, FieldDefinition
-			//	return the type source file (based on the first ctor)
-			if (type == null)
-				type = FindTypeFromLocation (defect.Location);
-			var candidatePair = ExtractFirst (type);
-			if (candidatePair != null)
-				return FormatSource (candidatePair.Item1, candidatePair.Item2.DebugInformation);
+      Instruction candidate;
+      TypeDefinition type = null;
 
-			return String.Empty;
-		}
-	}
+      // MethodDefinition, ParameterDefinition
+      //	return the method source file with (approximate) line number
+      MethodDefinition method = FindMethodFromLocation(defect.Location);
+      if (method != null)
+      {
+        candidate = ExtractFirst(method);
+        if (candidate != null)
+          return FormatSource(candidate, method.DebugInformation);
+
+        // we may still be lucky to find the (a) source file for the type itself
+        type = method.DeclaringType;
+      }
+
+      // TypeDefinition, FieldDefinition
+      //	return the type source file (based on the first ctor)
+      if (type == null)
+        type = FindTypeFromLocation(defect.Location);
+      var candidatePair = ExtractFirst(type);
+      if (candidatePair != null)
+        return FormatSource(candidatePair.Item1, candidatePair.Item2.DebugInformation);
+
+      return String.Empty;
+    }
+  }
 }

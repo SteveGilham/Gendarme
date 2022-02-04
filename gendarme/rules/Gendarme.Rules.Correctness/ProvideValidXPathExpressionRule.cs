@@ -170,16 +170,16 @@ namespace Gendarme.Rules.Correctness
       if (null == mref || !mref.HasParameters)
         return;
 
+      TypeReference tr = mref.DeclaringType;
       switch (mref.Name)
       {
         case "Compile":
-          TypeReference tr = mref.DeclaringType;
           if (tr.IsNamed(xpe) || tr.Inherits(xpn))
             CheckString(method, ins, GetFirstArgumentOffset(mref));
           break;
 
         case "SelectNodes":
-          if (mref.DeclaringType.IsNamed(node))
+          if (tr.IsNamed(node))
             CheckString(method, ins, -1);
           break;
 
@@ -190,7 +190,7 @@ namespace Gendarme.Rules.Correctness
 
         case "SelectSingleNode":
           CheckXPathNavigatorString(method, ins, mref);
-          if (mref.DeclaringType.IsNamed(node))
+          if (tr.IsNamed(node))
             CheckString(method, ins, -1);
           break;
       }

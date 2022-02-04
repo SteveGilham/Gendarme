@@ -252,6 +252,9 @@ namespace Gendarme.Rules.Maintainability
     private static bool IsSystemObjectMethod(MethodReference method)
     {
       string name = method.Name;
+      var hasParameters = method.HasParameters;
+      var pdc = hasParameters ? method.Parameters : null;
+
       if (name.Length < 6 /*Equals*/ || name.Length > 16 /*EqualityOperator*/)
         return false; //no need to do the string comparisons
 
@@ -265,15 +268,14 @@ namespace Gendarme.Rules.Maintainability
           return !method.HasParameters;
 
         case "Equals":
-          IList<ParameterDefinition> pdc = method.Parameters;
-          return (method.HasParameters && (pdc.Count == 1 || pdc.Count == 2));
+          return (hasParameters && (pdc.Count == 1 || pdc.Count == 2));
 
         case "ReferenceEquals":
-          return (method.HasParameters && (method.Parameters.Count == 2));
+          return (hasParameters && (pdc.Count == 2));
 
         //HACK: BOO:
         case "EqualityOperator":
-          return (method.HasParameters && (method.Parameters.Count == 2) &&
+          return (hasParameters && (pdc.Count == 2) &&
             (method.DeclaringType.IsNamed(booHack)));
       }
       return false;

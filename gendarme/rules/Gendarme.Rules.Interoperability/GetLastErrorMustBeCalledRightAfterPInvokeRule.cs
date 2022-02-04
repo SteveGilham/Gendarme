@@ -150,19 +150,19 @@ namespace Gendarme.Rules.Interoperability
             }
 
             string s = (mDef == null) ? String.Empty : mDef.DeclaringType.GetFullName();
+            var mName = mDef.Name;
             switch (s)
             {
               case "System.Runtime.InteropServices.Marshal":
-                getLastErrorFound = (mDef.Name == "GetLastWin32Error");
+                getLastErrorFound = (mName == "GetLastWin32Error");
                 break; //found
               case "System.Runtime.InteropServices.SafeHandle":
-                dirty = (mDef.Name != "get_IsInvalid");
+                dirty = (mName != "get_IsInvalid");
                 break;
 
               case "System.IntPtr":
               case "System.UIntPtr":
-                string name = mDef.Name;
-                dirty = ((name != "op_Inequality") && (name != "op_Equality"));
+                dirty = ((mName != "op_Inequality") && (mName != "op_Equality"));
                 break;
 
               default:

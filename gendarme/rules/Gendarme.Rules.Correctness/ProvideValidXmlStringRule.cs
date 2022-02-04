@@ -177,16 +177,17 @@ namespace Gendarme.Rules.Correctness
       if (null == mref || !mref.HasParameters)
         return;
 
+      TypeReference tr = mref.DeclaringType;
+
       switch (mref.Name)
       {
         case "LoadXml":
-          if (mref.DeclaringType.IsNamed(document))
+          if (tr.IsNamed(document))
             CheckString(method, ins, -1);
           break;
 
         case "set_InnerXml":
         case "set_OuterXml":
-          TypeReference tr = mref.DeclaringType;
           if (tr.Inherits(node) || tr.Inherits(xpn))
             CheckString(method, ins, -1);
           break;
@@ -198,7 +199,7 @@ namespace Gendarme.Rules.Correctness
           IList<ParameterDefinition> pdc = mref.Parameters;
           if (pdc.Count == 1
             && pdc[0].ParameterType.IsNamed(systemString)
-            && mref.DeclaringType.Inherits(xpn))
+            && tr.Inherits(xpn))
             CheckString(method, ins, -1);
           break;
       }

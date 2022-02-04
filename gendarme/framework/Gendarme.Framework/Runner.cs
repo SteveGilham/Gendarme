@@ -207,16 +207,17 @@ namespace Gendarme.Framework
       }
 
       engine_dependencies = GetType().GetCustomAttributes(typeof(EngineDependencyAttribute), true);
+      var engines = Engines;
       if (engine_dependencies.Length > 0)
       {
         // subscribe to each engine the rule depends on
         foreach (EngineDependencyAttribute eda in engine_dependencies)
         {
-          Engines.Subscribe(eda.EngineType);
+          engines.Subscribe(eda.EngineType);
         }
       }
 
-      Engines.Build(assemblies);
+      engines.Build(assemblies);
 
       assembly_rules = rules.OfType<IAssemblyRule>();
       type_rules = rules.OfType<ITypeRule>();

@@ -193,6 +193,9 @@ namespace Gendarme.Rules.Naming
       var fsharp = method.IsFSharpCode();
 
       var name = method.Name;
+      var hasParameters = method.HasParameters;
+      var pdc = hasParameters ? method.Parameters : null;
+
       if (eh)
       {
         var chop = name.IndexOf('_', StringComparison.Ordinal);
@@ -204,11 +207,11 @@ namespace Gendarme.Rules.Naming
         if (method.IsSetter || method.IsGetter)
           name = name.Substring(4);
         else
-        if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
+        if (fsharp && hasParameters && String.IsNullOrEmpty(pdc[0].Name))
         {
-          var typename = method.Parameters[0].ParameterType.Name;
-          if (method.Name.StartsWith(typename + ".get_", StringComparison.Ordinal) ||
-              method.Name.StartsWith(typename + ".set_", StringComparison.Ordinal))
+          var typename = pdc[0].ParameterType.Name;
+          if (name.StartsWith(typename + ".get_", StringComparison.Ordinal) ||
+              name.StartsWith(typename + ".set_", StringComparison.Ordinal))
             name = name.Substring(typename.Length + 5);
         }
       }
@@ -217,9 +220,9 @@ namespace Gendarme.Rules.Naming
       if (!CheckName(name, method.IsSpecialName))
         Runner.Report(method, Severity.Medium, Confidence.High);
 
-      if (method.HasParameters)
+      if (hasParameters)
       {
-        foreach (ParameterDefinition parameter in method.Parameters)
+        foreach (ParameterDefinition parameter in pdc)
         {
           var pname = parameter.Name;
           if (fsharp && pname.StartsWith("_arg", StringComparison.Ordinal))

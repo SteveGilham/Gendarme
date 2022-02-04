@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Exceptions.MissingExceptionConstructorsRule
 //
 // Authors:
@@ -34,168 +34,184 @@ using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Exceptions {
+namespace Gendarme.Rules.Exceptions
+{
+  /// <summary>
+  /// This rule will fire if an exception class is missing one or more of the following
+  /// constructors:
+  /// <list>
+  /// <item><description><c>public E ()</c> is required for XML serialization. Public access is required
+  /// in case the assembly uses CAS to prevent reflection on non-public members.</description></item>
+  /// <item><description><c>public E (string message)</c> is a .NET convention.</description></item>
+  /// <item><description><c>public E (string message, ..., Exception inner)</c> is a .NET convention.</description></item>
+  /// <item><description><c>(non)public E (SerializationInfo info, StreamingContext context)</c> is required for binary serialization.</description></item>
+  /// </list>
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class GeneralException : Exception {
+  ///	// access should be public
+  /// 	private GeneralException ()
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class GeneralException : Exception {
+  /// 	public GeneralException ()
+  /// 	{
+  /// 	}
+  ///
+  /// 	public GeneralException (string message) : base (message)
+  /// 	{
+  /// 	}
+  ///
+  /// 	public GeneralException (string message, Exception inner) : base (message, inner)
+  /// 	{
+  /// 	}
+  ///
+  /// 	protected GeneralException (SerializationInfo info, StreamingContext context) : base (info, context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule will fire if an exception class is missing one or more of the following
-	/// constructors:
-	/// <list>
-	/// <item><description><c>public E ()</c> is required for XML serialization. Public access is required
-	/// in case the assembly uses CAS to prevent reflection on non-public members.</description></item>
-	/// <item><description><c>public E (string message)</c> is a .NET convention.</description></item>
-	/// <item><description><c>public E (string message, ..., Exception inner)</c> is a .NET convention.</description></item>
-	/// <item><description><c>(non)public E (SerializationInfo info, StreamingContext context)</c> is required for binary serialization.</description></item>
-	/// </list>
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class GeneralException : Exception {
-	///	// access should be public
-	/// 	private GeneralException ()
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class GeneralException : Exception {
-	/// 	public GeneralException ()
-	/// 	{
-	/// 	}
-	/// 	
-	/// 	public GeneralException (string message) : base (message)
-	/// 	{
-	/// 	}
-	/// 	
-	/// 	public GeneralException (string message, Exception inner) : base (message, inner)
-	/// 	{
-	/// 	}
-	/// 	
-	/// 	protected GeneralException (SerializationInfo info, StreamingContext context) : base (info, context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("The exception does not provide all of the constructors required by the runtime or by .NET programming conventions.")]
+  [Solution("Add the missing constructor(s).")]
+  [FxCopCompatibility("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+  public class MissingExceptionConstructorsRule : Rule, ITypeRule
+  {
+    // localizable
+    private const string MissingConstructor = "Exception is missing '{0} {1}{2}' constructor.";
 
-	[Problem ("The exception does not provide all of the constructors required by the runtime or by .NET programming conventions.")]
-	[Solution ("Add the missing constructor(s).")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
-	public class MissingExceptionConstructorsRule : Rule, ITypeRule {
+    private static readonly TypeName systemString = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
 
-		// localizable
-		private const string MissingConstructor = "Exception is missing '{0} {1}{2}' constructor.";
-        private readonly static TypeName systemString = new TypeName
+    private static bool CheckForStringConstructor(MethodDefinition ctor)
+    {
+      if (!ctor.IsPublic)
+        return false;
+
+      return (ctor.Parameters[0].ParameterType.IsNamed(systemString));
+    }
+
+    private static readonly TypeName exception = new TypeName
+    {
+      Namespace = "System",
+      Name = "Exception"
+    };
+
+    private static bool CheckForInnerExceptionConstructor(IMethodSignature ctor)
+    {
+      IList<ParameterDefinition> pdc = ctor.Parameters;
+      if (!pdc[0].ParameterType.IsNamed(systemString))
+        return false;
+      return pdc[pdc.Count - 1].ParameterType.IsNamed(exception);
+    }
+
+    private static bool CheckForSerializationConstructor(MethodDefinition ctor)
+    {
+      if (ctor.IsPrivate || ctor.IsFamily)
+        return MethodSignatures.SerializationConstructor.Matches(ctor);
+
+      return false;
+    }
+
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule apply only to type that inherits from System.Exception
+      if (!type.Inherits(exception))
+        return RuleResult.DoesNotApply;
+
+      // rule applies, only Success or Failure from the point on
+
+      // check if the type implements all the needed exception constructors
+
+      bool empty_ctor = false;    // MyException ()
+      bool string_ctor = false;   // MyException (string message)
+      bool inner_exception_ctor = false;  // MyException (string message, Exception innerException)
+      bool serialization_ctor = false;  // MyException (SerializationInfo info, StreamingContext context)
+
+      foreach (MethodDefinition ctor in type.Methods)
+      {
+        // skip non-constructors and cctor
+        if (!ctor.IsConstructor || ctor.IsStatic)
+          continue;
+
+        if (!ctor.HasParameters)
         {
-            Namespace = "System",
-            Name = "String"
-        };
+          // there can be only one so only it's visibility matters
+          empty_ctor = ctor.IsPublic;
+          continue;
+        }
 
-		private static bool CheckForStringConstructor (MethodDefinition ctor)
-		{
-			if (!ctor.IsPublic)
-				return false;
-
-			return (ctor.Parameters [0].ParameterType.IsNamed (systemString));
-		}
-
-        private readonly static TypeName exception = new TypeName
+        switch (ctor.Parameters.Count)
         {
-            Namespace = "System",
-            Name = "Exception"
-        };
-        private static bool CheckForInnerExceptionConstructor(IMethodSignature ctor)
-		{
-			IList<ParameterDefinition> pdc = ctor.Parameters;
-			if (!pdc [0].ParameterType.IsNamed (systemString))
-				return false;
-			return pdc [pdc.Count - 1].ParameterType.IsNamed (exception);
-		}
+          case 1:
+            string_ctor |= CheckForStringConstructor(ctor);
+            break;
 
-		private static bool CheckForSerializationConstructor (MethodDefinition ctor)
-		{
-			if (ctor.IsPrivate || ctor.IsFamily)
-				return MethodSignatures.SerializationConstructor.Matches (ctor);
+          case 2:
+            if (ctor.IsPublic)
+            {
+              if (!inner_exception_ctor)
+              {
+                inner_exception_ctor = CheckForInnerExceptionConstructor(ctor);
+                if (inner_exception_ctor)
+                  break;
+              }
 
-			return false;
-		}
+              string_ctor |= CheckForStringConstructor(ctor);
+            }
+            else
+            {
+              serialization_ctor |= CheckForSerializationConstructor(ctor);
+            }
+            break;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule apply only to type that inherits from System.Exception
-			if (!type.Inherits (exception))
-				return RuleResult.DoesNotApply;
+          default:
+            inner_exception_ctor |= CheckForInnerExceptionConstructor(ctor);
+            break;
+        }
+      }
 
-			// rule applies, only Success or Failure from the point on
+      var tName = type.Name;
+      if (!empty_ctor)
+      {
+        string s = String.Format(CultureInfo.InvariantCulture, MissingConstructor, "public",
+          tName, "()");
+        Runner.Report(type, Severity.High, Confidence.Total, s);
+      }
+      if (!string_ctor)
+      {
+        string s = String.Format(CultureInfo.InvariantCulture, MissingConstructor, "public",
+          tName, "(string message)");
+        Runner.Report(type, Severity.High, Confidence.Total, s);
+      }
+      if (!inner_exception_ctor)
+      {
+        string s = String.Format(CultureInfo.InvariantCulture, MissingConstructor, "public",
+          tName, "(string message, Exception innerException)");
+        Runner.Report(type, Severity.High, Confidence.Total, s);
+      }
+      if (!serialization_ctor)
+      {
+        string s = String.Format(CultureInfo.InvariantCulture, MissingConstructor,
+          (type.IsSealed) ? "private" : "protected", tName,
+          "(SerializationInfo info, StreamingContext context)");
+        Runner.Report(type, Severity.High, Confidence.Total, s);
+      }
 
-			// check if the type implements all the needed exception constructors
-
-			bool empty_ctor = false;		// MyException ()
-			bool string_ctor = false;		// MyException (string message)
-			bool inner_exception_ctor = false;	// MyException (string message, Exception innerException)
-			bool serialization_ctor = false;	// MyException (SerializationInfo info, StreamingContext context)
-
-			foreach (MethodDefinition ctor in type.Methods) {
-				// skip non-constructors and cctor
-				if (!ctor.IsConstructor || ctor.IsStatic)
-					continue;
-
-				if (!ctor.HasParameters) {
-					// there can be only one so only it's visibility matters
-					empty_ctor = ctor.IsPublic;
-					continue;
-				}
-
-				switch (ctor.Parameters.Count) {
-				case 1:
-					string_ctor |= CheckForStringConstructor (ctor);
-					break;
-				case 2:
-					if (ctor.IsPublic) {
-						if (!inner_exception_ctor) {
-							inner_exception_ctor = CheckForInnerExceptionConstructor (ctor);
-							if (inner_exception_ctor)
-								break;
-						}
-
-						string_ctor |= CheckForStringConstructor (ctor);
-					} else {
-						serialization_ctor |= CheckForSerializationConstructor (ctor);
-					}
-					break;
-				default:
-					inner_exception_ctor |= CheckForInnerExceptionConstructor (ctor);
-					break;
-				}
-			}
-
-			if (!empty_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public", 
-					type.Name, "()");
-				Runner.Report (type, Severity.High, Confidence.Total, s);
-			}
-			if (!string_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public", 
-					type.Name, "(string message)");
-				Runner.Report (type, Severity.High, Confidence.Total, s);
-			}
-			if (!inner_exception_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, "public", 
-					type.Name, "(string message, Exception innerException)");
-				Runner.Report (type, Severity.High, Confidence.Total, s);
-			}
-			if (!serialization_ctor) {
-				string s = String.Format (CultureInfo.InvariantCulture, MissingConstructor, 
-					(type.IsSealed) ? "private" : "protected", type.Name, 
-					"(SerializationInfo info, StreamingContext context)");
-				Runner.Report (type, Severity.High, Confidence.Total, s);
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }
