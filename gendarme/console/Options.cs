@@ -604,8 +604,9 @@ namespace NDesk.Options
 #pragma warning disable CA2208 // Instantiate argument exceptions correctly
         throw new ArgumentNullException("option");
 #pragma warning restore CA2208 // Instantiate argument exceptions correctly
-      if (item.Names != null && item.Names.Count > 0)
-        return item.Names[0];
+      var names = item.Names;
+      if (names != null && names.Count > 0)
+        return names[0];
       // This should never happen, as it's invalid for Option to be
       // constructed w/o any names.
       throw new InvalidOperationException("Option has no names!");
@@ -636,10 +637,11 @@ namespace NDesk.Options
     {
       base.RemoveItem(index);
       Option p = Items[index];
+      var names = p.Names;
       // KeyedCollection.RemoveItem() handles the 0th item
-      for (int i = 1; i < p.Names.Count; ++i)
+      for (int i = 1; i < names.Count; ++i)
       {
-        Dictionary.Remove(p.Names[i]);
+        Dictionary.Remove(names[i]);
       }
     }
 
@@ -657,11 +659,12 @@ namespace NDesk.Options
       List<string> added = new List<string>(option.Names.Count);
       try
       {
+        var names = option.Names;
         // KeyedCollection.InsertItem/SetItem handle the 0th name.
-        for (int i = 1; i < option.Names.Count; ++i)
+        for (int i = 1; i < names.Count; ++i)
         {
-          Dictionary.Add(option.Names[i], option);
-          added.Add(option.Names[i]);
+          Dictionary.Add(names[i], option);
+          added.Add(names[i]);
         }
       }
       catch (Exception)
@@ -866,6 +869,9 @@ namespace NDesk.Options
       Justification = "multi-return; F# would be simpler")]
     [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
       Justification = "It *is* a flag")]
+    [SuppressMessage("Gendarme.Rules.Performance",
+                 "AvoidRepetitiveCallsToPropertiesRule",
+                 Justification = "value of different groups")]
     protected (string, string, string, string)[] GetOptionParts(string argument)//, out string flag, out string name, out string sep, out string value)
     {
       if (argument == null)
@@ -937,8 +943,9 @@ namespace NDesk.Options
     {
       if (option != null)
       {
-        var separators = !c.Option.ValueSeparators.Any()
-            ? option.Split(c.Option.ValueSeparators.ToArray(), StringSplitOptions.None)
+        var s = c.Option.ValueSeparators;
+        var separators = !s.Any()
+            ? option.Split(s.ToArray(), StringSplitOptions.None)
             : new string[] { option };
 
         foreach (string o in separators)
@@ -1094,8 +1101,9 @@ namespace NDesk.Options
           Write(o, ref written, MessageLocalizer("["));
         }
         Write(o, ref written, MessageLocalizer("=" + GetArgumentName(0, p.MaxValueCount, p.Description)));
-        string sep = p.ValueSeparators != null && p.ValueSeparators.Count > 0
-          ? p.ValueSeparators[0]
+        var s = p.ValueSeparators;
+        string sep = s != null && s.Any()
+          ? s[0]
           : " ";
         for (int c = 1; c < p.MaxValueCount; ++c)
         {

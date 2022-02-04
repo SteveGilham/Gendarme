@@ -116,6 +116,9 @@ namespace Gendarme.Rules.Correctness
       Name = "IDisposable"
     };
 
+    [SuppressMessage("Gendarme.Rules.Performance",
+                     "AvoidRepetitiveCallsToPropertiesRule",
+                     Justification = "Executed once")]
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule applies only to types and structures (value types)

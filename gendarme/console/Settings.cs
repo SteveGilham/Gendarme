@@ -164,12 +164,14 @@ namespace Gendarme
         if (t.IsAbstract || t.IsInterface)
           continue;
 
+        var name = t.Name;
+
         if (includeMask != "*")
-          if (!IsContainedInRuleSet(t.Name, includeMask))
+          if (!IsContainedInRuleSet(name, includeMask))
             continue;
 
         if ((excludeMask != null) && (excludeMask.Length > 0))
-          if (IsContainedInRuleSet(t.Name, excludeMask))
+          if (IsContainedInRuleSet(name, excludeMask))
             continue;
 
         if (t.FindInterfaces(new TypeFilter(RuleFilter), "Gendarme.Framework.IRule").Length > 0)

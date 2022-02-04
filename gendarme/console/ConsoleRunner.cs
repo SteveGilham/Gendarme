@@ -238,22 +238,23 @@ namespace Gendarme
     private static string ValidateOutputFile(string option, string file)
     {
       string msg = String.Empty;
+      var culture = CultureInfo.CurrentCulture;
       if (file.Length > 0)
       {
         string path = Path.GetDirectoryName(file);
         if (path.Length > 0)
         {
           if (path.IndexOfAny(Path.GetInvalidPathChars()) != -1)
-            msg = String.Format(CultureInfo.CurrentCulture, "Invalid path '{0}'", file);
+            msg = String.Format(culture, "Invalid path '{0}'", file);
           else if (!Directory.Exists(path))
-            msg = String.Format(CultureInfo.CurrentCulture, "Path '{0}' does not exists", file);
+            msg = String.Format(culture, "Path '{0}' does not exists", file);
         }
       }
 
       string fname = Path.GetFileName(file);
       if ((fname.Length == 0) || (fname.IndexOfAny(Path.GetInvalidFileNameChars()) != -1))
       {
-        msg = String.Format(CultureInfo.CurrentCulture, "Filename '{0}' is not valid", fname);
+        msg = String.Format(culture, "Filename '{0}' is not valid", fname);
       }
 
       if (msg.Length > 0)

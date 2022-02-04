@@ -402,12 +402,12 @@ namespace Gendarme.Rules.Concurrency
               if (type.IsDelegate())
               {
                 string nspace = type.GetTypeName().Namespace;
+                string name = type.Name;
                 // ldftn entry-point
                 // newobj System.Void System.Threading.XXX::.ctor (System.Object,System.IntPtr)
                 // i.e. creation of a System.Threading delegate
                 if (nspace == "System.Threading")
                 {
-                  string name = type.Name;
                   if (name == "ThreadStart" ||
                     name == "ParameterizedThreadStart" ||
                     name == "WaitCallback" ||
@@ -423,7 +423,7 @@ namespace Gendarme.Rules.Concurrency
                 }
                 else if (nspace == "System")
                 {
-                  if (type.Name == "AsyncCallback")
+                  if (name == "AsyncCallback")
                   {
                     candidate = (MethodReference)ins.Previous.Operand;
                   }

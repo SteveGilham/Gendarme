@@ -121,11 +121,12 @@ namespace Gendarme
     private void WriteEntry(int index, Defect defect)
     {
       IRule rule = defect.Rule;
+      var name = rule.Name;
 
       BeginColor(
         (Severity.Critical == defect.Severity || Severity.High == defect.Severity)
         ? ConsoleColor.DarkRed : ConsoleColor.DarkYellow);
-      writer.WriteLine("{0}. {1}", index, rule.Name);
+      writer.WriteLine("{0}. {1}", index, name);
       writer.WriteLine();
       EndColor();
 
@@ -161,7 +162,7 @@ namespace Gendarme
       EndColor();
 
       var category = defect.Rule.FullName;
-      var length = category.Length - (defect.Rule.Name.Length + 1);
+      var length = category.Length - (name.Length + 1);
       category = category.Substring(0, length);
       writer.WriteLine("[<assembly: SuppressMessage(\"{0}\",", category);
       writer.WriteLine("                            \"{0}\",", defect.Rule.Name);

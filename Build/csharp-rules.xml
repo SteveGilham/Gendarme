@@ -5,7 +5,6 @@
     <rules include="*"
            exclude="AvoidAssemblyVersionMismatchRule"
            from="Gendarme.Rules.BadPractice.dll" />
-    <!-- False positives all around in old code -->
     <rules include="*"
            from="Gendarme.Rules.Concurrency.dll" />
     <!-- False positive/off by one in ProvideCorrectArgumentsToFormattingMethodsRule -->
