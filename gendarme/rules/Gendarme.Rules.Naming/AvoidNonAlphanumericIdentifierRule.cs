@@ -182,12 +182,12 @@ namespace Gendarme.Rules.Naming
     {
       var eh = method.IsEvent();
 
-      // exclude constrcutors, non-visible methods and generated code
+      // exclude constructors, non-visible methods and generated code
       if (method.IsConstructor || !method.IsVisible() || (!eh && method.IsGeneratedCode()))
         return RuleResult.DoesNotApply;
 
       // the rule does not apply if the code is an interface to COM objects
-      if (UsedForComInterop(method.DeclaringType as TypeDefinition))
+      if (UsedForComInterop(method.DeclaringType))
         return RuleResult.DoesNotApply;
 
       var fsharp = method.IsFSharpCode();
@@ -195,7 +195,7 @@ namespace Gendarme.Rules.Naming
       var name = method.Name;
       if (eh)
       {
-        var chop = name.IndexOf("_", StringComparison.Ordinal);
+        var chop = name.IndexOf('_', StringComparison.Ordinal);
         name = name.Substring(chop + 1);
       }
       else

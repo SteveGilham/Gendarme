@@ -1145,7 +1145,7 @@ namespace NDesk.Options
         } while (start >= 0 && j != 0 && description[j++ - 1] == '{');
         if (start == -1)
           continue;
-        int end = description.IndexOf("}", start);
+        int end = description.IndexOf('}', start);
         if (end == -1)
           continue;
         return description.Substring(start + nameStart[i].Length, end - start - nameStart[i].Length);

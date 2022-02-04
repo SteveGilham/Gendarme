@@ -20,7 +20,6 @@
     <!-- DoNotExposeNestedGenericSignaturesRule is a rule for morts at best and
          doesn't really make any problems for F# -->
     <rules include="*"
-           exclude="DoNotExposeNestedGenericSignaturesRule"
            from="Gendarme.Rules.Design.Generic.dll" />
     <rules include="*"
            from="Gendarme.Rules.Design.Linq.dll" />
@@ -35,7 +34,7 @@
     <rules include="*"
            from="Gendarme.Rules.Naming.dll" />
     <rules include="*"
-           exclude="AvoidUnusedPrivateFieldsRule| PreferCharOverloadRule | AvoidRepetitiveCallsToPropertiesRule | OverrideValueTypeDefaultsRule"
+           exclude="AvoidRepetitiveCallsToPropertiesRule"
            from="Gendarme.Rules.Performance.dll" />
     <rules include="*"
            from="Gendarme.Rules.Portability.dll" />
@@ -43,7 +42,6 @@
            from="Gendarme.Rules.Security.dll" />
     <rules include="*"
            from="Gendarme.Rules.Security.Cas.dll" />
-    <!-- I have no real use for serialization -->
     <rules include="*"
            from="Gendarme.Rules.Serialization.dll" />
     <!-- Use the relaxed variant -->

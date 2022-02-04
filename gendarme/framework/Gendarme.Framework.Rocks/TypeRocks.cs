@@ -56,6 +56,7 @@ namespace Gendarme.Framework.Rocks
     {
       Validate(Namespace, Name);
     }
+
     private static void Validate(string @namespace, string name)
     {
       if (@namespace == null)
@@ -456,7 +457,7 @@ namespace Gendarme.Framework.Rocks
       {
         // Hopefully not a common case
         var fn = self.FullName;
-        var index = fn.LastIndexOf(".", StringComparison.Ordinal);
+        var index = fn.LastIndexOf('.');
         if (index < 0)
           return new TypeName
           {
