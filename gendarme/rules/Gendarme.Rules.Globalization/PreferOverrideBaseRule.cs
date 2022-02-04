@@ -160,7 +160,7 @@ namespace Gendarme.Rules.Globalization
       if (!prefered_overloads.TryGetValue(method, out MethodReference prefered))
       {
         prefered = LookForPreferredOverride(method);
-        prefered_overloads.Add(method, null);
+        prefered_overloads.Add(method, prefered);
       }
       return prefered;
     }

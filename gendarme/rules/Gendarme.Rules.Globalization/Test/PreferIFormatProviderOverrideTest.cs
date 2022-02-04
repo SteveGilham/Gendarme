@@ -247,8 +247,8 @@ namespace Tests.Rules.Globalization
       AssertRuleFailure<CultureInfoTestCases>("BadEmpty", 1);
       AssertRuleFailure<CultureInfoTestCases>("BadFirst", 1);
       AssertRuleFailure<CultureInfoTestCases>("BadLast", 1);
-      AssertRuleFailure<CultureInfoTestCases>("ImplicitIntToString", 1);
-      AssertRuleFailure<CultureInfoTestCases>("NestedCall", 1);
+      AssertRuleFailure<CultureInfoTestCases>("ImplicitIntToString", 2);
+      AssertRuleFailure<CultureInfoTestCases>("NestedCall", 2);
       AssertRuleFailure<CultureInfoTestCases>("ImplicitIntToString2", 1);
       AssertRuleFailure<CultureInfoTestCases>("NestedCall2", 1);
     }
