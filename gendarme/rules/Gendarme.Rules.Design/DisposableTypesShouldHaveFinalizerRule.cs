@@ -78,6 +78,9 @@ namespace Gendarme.Rules.Design
 #pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
       Justification = "TODO: Defect constructor message not localized")]
+    [SuppressMessage("Gendarme.Rules.Performance",
+                 "AvoidRepetitiveCallsToPropertiesRule",
+                 Justification = "Rule result returned")]
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule applies only to types, interfaces and structures (value types)

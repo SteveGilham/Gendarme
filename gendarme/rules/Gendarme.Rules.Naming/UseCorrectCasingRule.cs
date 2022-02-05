@@ -213,16 +213,19 @@ namespace Gendarme.Rules.Naming
 
     public RuleResult CheckType(TypeDefinition type)
     {
+      string name = type.Name;
+
       // rule does not apply to generated code (outside developer's control)
-      if (type.IsGeneratedCode() || type.Name.Contains("@", StringComparison.Ordinal))
+      if (type.IsGeneratedCode() || name.Contains("@", StringComparison.Ordinal))
         return RuleResult.DoesNotApply;
 
+      var methods = type.Methods;
+
       // Debugger related methods in F# with just a [CompilerGenerated] constructor
-      if (type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+      if (methods.Count == 1 && methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
         return RuleResult.DoesNotApply;
 
       // types should all be PascalCased
-      string name = type.Name;
       if (!IsPascalCase(name))
       {
         ReportCasingError(type, String.Format(CultureInfo.InvariantCulture,
@@ -263,8 +266,10 @@ namespace Gendarme.Rules.Naming
           return RuleResult.DoesNotApply;
       }
 
+      var hasParameters = method.HasParameters;
+
       // extension methods
-      if (fsharp && method.HasParameters)
+      if (fsharp && hasParameters)
       {
         var dot = name.IndexOf('.', StringComparison.Ordinal);
         var isExtension = dot > 0;
@@ -324,7 +329,7 @@ namespace Gendarme.Rules.Naming
       }
 
       // check parameters
-      if (method.HasParameters)
+      if (hasParameters)
       {
         foreach (ParameterDefinition param in method.Parameters)
         {

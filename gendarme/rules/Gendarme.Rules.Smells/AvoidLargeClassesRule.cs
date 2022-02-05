@@ -104,11 +104,13 @@ namespace Gendarme.Rules.Smells
         if (field.IsGeneratedCode())
           continue;
 
+        var fieldTypeName = field.FieldType.Name;
+
         // Treat F# function fields in closures as members
         if (type.Name.Contains("@", StringComparison.Ordinal) &&
             field.FieldType.Namespace.Equals("Microsoft.FSharp.Core", StringComparison.Ordinal) &&
-            (field.FieldType.Name.Equals("FSharpFunc`2", StringComparison.Ordinal)) ||
-             field.FieldType.Name.Equals("FSharpTypeFunc", StringComparison.Ordinal))
+            (fieldTypeName.Equals("FSharpFunc`2", StringComparison.Ordinal)) ||
+             fieldTypeName.Equals("FSharpTypeFunc", StringComparison.Ordinal))
           continue;
 
         fields.Add(field);

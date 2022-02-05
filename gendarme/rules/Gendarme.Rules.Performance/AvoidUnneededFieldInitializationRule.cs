@@ -36,101 +36,102 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Performance {
+namespace Gendarme.Rules.Performance
+{
+  /// <summary>
+  /// This rule looks for constructors that assign fields to their default value
+  /// (e.g. 0 for an integer, null for an object or a string). Since the CLR zero initializes
+  /// all values there is no need, under most circumstances, to assign default values.
+  /// Doing so only adds size to source code and in IL.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class Bad {
+  ///	int i;
+  ///	string s;
+  ///
+  ///	public Bad ()
+  ///	{
+  ///		i = 0;
+  ///		s = null;
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class Good {
+  ///	int i;
+  ///	string s;
+  ///
+  ///	public Good ()
+  ///	{
+  ///		// don't assign 'i' since it's already 0
+  ///		// but we might prefer to assign a string to String.Empty
+  ///		s = String.Empty;
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.2</remarks>
 
-	/// <summary>
-	/// This rule looks for constructors that assign fields to their default value
-	/// (e.g. 0 for an integer, null for an object or a string). Since the CLR zero initializes
-	/// all values there is no need, under most circumstances, to assign default values.
-	/// Doing so only adds size to source code and in IL.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class Bad {
-	///	int i;
-	///	string s;
-	///	
-	///	public Bad ()
-	///	{
-	///		i = 0;
-	///		s = null;
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class Good {
-	///	int i;
-	///	string s;
-	///	
-	///	public Good ()
-	///	{
-	///		// don't assign 'i' since it's already 0
-	///		// but we might prefer to assign a string to String.Empty
-	///		s = String.Empty;
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.2</remarks>
+  [Problem("This constructor needlessly initializes zero initializes some fields.")]
+  [Solution("Remove the unneeded initialization from the constructors.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  [FxCopCompatibility("Microsoft.Performance", "CA1805:DoNotInitializeUnnecessarily")]
+  public class AvoidUnneededFieldInitializationRule : Rule, IMethodRule
+  {
+    // note: it's tempting to use IType rule here, since it would avoid iterating
+    // all non-constructors methods. However the reporting would be less precise
+    // since we want to report which source line inside a ctor is problematic
 
-	[Problem ("This constructor needlessly initializes zero initializes some fields.")]
-	[Solution ("Remove the unneeded initialization from the constructors.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	[FxCopCompatibility ("Microsoft.Performance", "CA1805:DoNotInitializeUnnecessarily")]
-	public class AvoidUnneededFieldInitializationRule : Rule, IMethodRule {
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.IsConstructor || !method.HasBody || method.IsGeneratedCode())
+        return RuleResult.DoesNotApply;
 
-		// note: it's tempting to use IType rule here, since it would avoid iterating
-		// all non-constructors methods. However the reporting would be less precise
-		// since we want to report which source line inside a ctor is problematic
+      TypeReference type = method.DeclaringType;
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.IsConstructor || !method.HasBody || method.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        // check for assignation on instance or static fields
+        Code code = ins.OpCode.Code;
+        bool is_static = (code == Code.Stsfld);
+        bool is_instance = (code == Code.Stfld);
+        if (!is_static && !is_instance)
+          continue;
 
-			TypeReference type = method.DeclaringType;
+        // special case: a struct ctor MUST assign every instance fields
+        if (type.IsValueType && is_instance)
+          continue;
 
-			foreach (Instruction ins in method.Body.Instructions) {
-				// check for assignation on instance or static fields
-				Code code = ins.OpCode.Code;
-				bool is_static = (code == Code.Stsfld);
-				bool is_instance = (code == Code.Stfld);
-				if (!is_static && !is_instance)
-					continue;
+        // make sure we assign to this type (and not another one)
+        FieldReference fr = (ins.Operand as FieldReference);
+        var frName = fr.Name;
+        if (fr.DeclaringType != type)
+          continue;
+        // skip F# property backing fields
+        if (frName.EndsWith("@", StringComparison.Ordinal))
+          continue;
 
-				// special case: a struct ctor MUST assign every instance fields
-				if (type.IsValueType && is_instance)
-					continue;
+        bool unneeded =
+          fr.FieldType.IsValueType ?
+          ins.Previous.IsOperandZero() :
+          ins.Previous.OpCode.Code == Code.Ldnull;
 
-				// make sure we assign to this type (and not another one)
-				FieldReference fr = (ins.Operand as FieldReference);
-				if (fr.DeclaringType != type)
-					continue;
-                // skip F# property backing fields
-                if (fr.Name.EndsWith("@", StringComparison.Ordinal))
-                    continue;
+        if (unneeded)
+        {
+          // we're more confident about the unneeded initialization
+          // on static ctor, since another (previous) ctor, can't set
+          // the values differently
+          Confidence c = method.IsStatic ? Confidence.High : Confidence.Normal;
+          Runner.Report(method, ins, Severity.Medium, c, frName);
+        }
+      }
 
-				bool unneeded = false;
-				if (fr.FieldType.IsValueType) {
-					unneeded = ins.Previous.IsOperandZero ();
-				} else {
-					unneeded = ins.Previous.OpCode.Code == Code.Ldnull;
-				}
-
-				if (unneeded) {
-					// we're more confident about the unneeded initialization
-					// on static ctor, since another (previous) ctor, can't set
-					// the values differently
-					Confidence c = method.IsStatic ? Confidence.High : Confidence.Normal;
-					Runner.Report (method, ins, Severity.Medium, c, fr.Name);
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

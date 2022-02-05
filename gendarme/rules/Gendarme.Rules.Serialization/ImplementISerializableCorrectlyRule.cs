@@ -216,11 +216,13 @@ namespace Gendarme.Rules.Serialization
         return RuleResult.DoesNotApply;
 
       MethodDefinition getObjectData = type.GetMethod(MethodSignatures.GetObjectData);
+      var hasFields = type.HasFields;
+
       if (getObjectData == null)
       {
         // no GetObjectData means that the type's ancestor does the job but
         // are we introducing new instance fields that need to be serialized ?
-        if (!type.HasFields)
+        if (!hasFields)
           return RuleResult.Success;
         // there are some, but they could be static
         foreach (FieldDefinition field in type.Fields)
@@ -231,7 +233,7 @@ namespace Gendarme.Rules.Serialization
       }
       else
       {
-        if (type.HasFields)
+        if (hasFields)
           CheckUnusedFieldsIn(type, getObjectData);
 
         if (!type.IsSealed && getObjectData.IsFinal)

@@ -68,13 +68,13 @@ namespace Gendarme.Rules.Performance
   {
     // see inactive code to regenerate the bitmask if needed
 
-    private static OpCodeBitmask GreaterOrLesserThan = new OpCodeBitmask(0x787BC00000000000, 0xF, 0x0, 0x0);
+    private static readonly OpCodeBitmask GreaterOrLesserThan = new OpCodeBitmask(0x787BC00000000000, 0xF, 0x0, 0x0);
 
     // note: does not include Ldind_Ref
-    private static OpCodeBitmask LoadIndirect = new OpCodeBitmask(0x0, 0x7FE0, 0x0, 0x0);
+    private static readonly OpCodeBitmask LoadIndirect = new OpCodeBitmask(0x0, 0x7FE0, 0x0, 0x0);
 
     // note: does not include Ldind_Ref
-    private static OpCodeBitmask StoreIndirect = new OpCodeBitmask(0x0, 0x7E0000, 0x2000000000000000, 0x0);
+    private static readonly OpCodeBitmask StoreIndirect = new OpCodeBitmask(0x0, 0x7E0000, 0x2000000000000000, 0x0);
 
     // Math.[Min|Max] has overloads for Byte, Double, Int16,
     // Int32, Int64, SByte, Single, UInt16, UInt32 and Uint64
@@ -123,23 +123,26 @@ namespace Gendarme.Rules.Performance
         return GetPrevious(method, ref ins);
       }
 
+      var hasThis = method.HasThis;
+      var p = method.Parameters;
+
       switch (code)
       {
         case Code.Ldarg_0:
-          if (method.HasThis)
+          if (hasThis)
           {
             ins = ins.Previous;
             return GetPrevious(method, ref ins);
           }
-          if (IsSupported(method.Parameters[0].ParameterType))
+          if (IsSupported(p[0].ParameterType))
             return ins.OpCode.Name;
           break;
 
         case Code.Ldarg_1:
         case Code.Ldarg_2:
         case Code.Ldarg_3:
-          int index = code - (method.HasThis ? Code.Ldarg_1 : Code.Ldarg_0);
-          if (IsSupported(method.Parameters[index].ParameterType))
+          int index = code - (hasThis ? Code.Ldarg_1 : Code.Ldarg_0);
+          if (IsSupported(p[index].ParameterType))
             return ins.OpCode.Name;
           break;
 

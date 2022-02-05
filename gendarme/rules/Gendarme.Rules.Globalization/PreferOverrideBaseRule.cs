@@ -103,8 +103,10 @@ namespace Gendarme.Rules.Globalization
 
       foreach (MethodDefinition md in methods)
       {
+        Collection<ParameterDefinition> pdc = md.Parameters;
+
         // has one more parameter, so non-zero
-        if (!md.HasParameters || md.Parameters.Count != pcount + 1)
+        if (!md.HasParameters || pdc.Count != pcount + 1)
           continue;
 
         if (name != md.Name)
@@ -122,8 +124,6 @@ namespace Gendarme.Rules.Globalization
         };
         if (!method.ReturnType.IsNamed(rtypeName))
           continue;
-
-        Collection<ParameterDefinition> pdc = md.Parameters;
 
         if (pcount > 0)
         {

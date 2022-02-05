@@ -71,16 +71,16 @@ namespace Gendarme.Rules.Performance
   {
     public RuleResult CheckType(TypeDefinition type)
     {
+      var methods = type.Methods;
       if (type.IsAbstract || type.IsSealed || type.IsVisible() || type.IsGeneratedCode()
                 || type.Name.Contains("@", StringComparison.Ordinal)// F# uses '@' e.g in <Type>@DebugTypeProxy
                                                                     // Debugger related methods in F# with just a [CompilerGenerated] constructor
-                || (type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+                || (methods.Count == 1 && methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
                 )
         return RuleResult.Success;
 
       // Union cases are unsealed and not usually inherited
-      if (type.DeclaringType != null &&
-          type.DeclaringType.IsSumType())
+      if (type.DeclaringType?.IsSumType() ?? false)
         return RuleResult.Success;
 
       ModuleDefinition module = type.Module;

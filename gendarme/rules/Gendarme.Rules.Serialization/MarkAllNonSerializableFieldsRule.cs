@@ -99,19 +99,19 @@ namespace Gendarme.Rules.Serialization
           TypeDefinition fieldType = field.FieldType.Resolve();
           if (fieldType == null)
             continue;
-
+          var name = field.Name;
           if (fieldType.IsInterface)
           {
             string msg = String.Format(CultureInfo.InvariantCulture,
               "Serialization of interface {0} as field {1} unknown until runtime",
-              fieldType, field.Name);
+              fieldType, name);
             Runner.Report(field, Severity.Critical, Confidence.Low, msg);
             continue;
           }
           if (!fieldType.IsEnum && !fieldType.IsSerializable)
           {
             string msg = String.Format(CultureInfo.InvariantCulture,
-              "The field {0} isn't serializable.", field.Name);
+              "The field {0} isn't serializable.", name);
             Runner.Report(field, Severity.Critical, Confidence.High, msg);
           }
         }

@@ -284,13 +284,16 @@ namespace Gendarme.Rules.Interoperability
       locals.Clear();
       stack.Clear();
 
+      var name = method.Name;
+
       Log.WriteLine(this, "{2}{2}Checking method: {0} on type: {1}",
-        method.Name, method.DeclaringType.GetFullName(), Environment.NewLine);
+        name, method.DeclaringType.GetFullName(), Environment.NewLine);
       Log.WriteLine(this, method);
 
       MethodBody body = method.Body;
+      var handlers = body.ExceptionHandlers;
 #if DEBUG
-      foreach (ExceptionHandler e in body.ExceptionHandlers)
+      foreach (ExceptionHandler e in handlers)
         Log.WriteLine(this, " HandlerType: {6}, TryStart: {3:X}, TryEnd: {4:X}, HandlerStart: {0:X}, HandlerEnd: {1:X}, FilterStart: {2:X}, CatchType: {5}",
                            e.HandlerStart.GetOffset(), e.HandlerEnd.GetOffset(), e.FilterStart.GetOffset(),
                            e.TryStart.GetOffset(), e.TryEnd.GetOffset(), e.CatchType, e.HandlerType);
@@ -332,7 +335,7 @@ namespace Gendarme.Rules.Interoperability
 
         if ((stack_count == 0) && body.HasExceptionHandlers)
         {
-          foreach (ExceptionHandler eh in body.ExceptionHandlers)
+          foreach (ExceptionHandler eh in handlers)
           {
             if (eh.HandlerStart != null && eh.HandlerStart.Offset == ins.Offset)
             {
@@ -345,7 +348,8 @@ namespace Gendarme.Rules.Interoperability
         }
 
         int push = ins.GetPushCount();
-        Log.WriteLine(this, " {0:X} {5} prev stack: {1}, pop: {2}, push: {3}, post stack: {4}", ins.Offset, stack_count, pop, push, stack_count + push - pop, ins.OpCode.Name);
+        Log.WriteLine(this, " {0:X} {5} prev stack: {1}, pop: {2}, push: {3}, post stack: {4}",
+          ins.Offset, stack_count, pop, push, stack_count + push - pop, ins.OpCode.Name);
 
         if (stack_count == 1 && stack[stack_count - 1] == null)
         {
@@ -375,9 +379,11 @@ namespace Gendarme.Rules.Interoperability
           stack[stack_count - 1].Last = ins;
       }
 
-      Log.WriteLine(this, "Checking method: {0} [Done], result: {1}", method.Name, Runner.CurrentRuleResult);
+      var result = Runner.CurrentRuleResult;
 
-      return Runner.CurrentRuleResult;
+      Log.WriteLine(this, "Checking method: {0} [Done], result: {1}", name, result);
+
+      return result;
     }
 
     private void VerifyStoreLocalInstruction(Instruction ins, int stack_count)
@@ -470,13 +476,15 @@ namespace Gendarme.Rules.Interoperability
     private bool VerifyCallbackSafety(MethodDefinition callback)
     {
       bool valid_ex_handler;
-      MethodBody body;
-      IList<Instruction> instructions;
 
       if (callback == null)
         return true;
 
-      Log.WriteLine(this, " Verifying: {0} with code size: {1} instruction count: {2}", callback.Name, callback.Body.CodeSize, callback.Body.Instructions.Count);
+      var callbackName = callback.Name;
+      var body = callback.Body;
+      var instructions = body.Instructions;
+      int icount = instructions.Count;
+      Log.WriteLine(this, " Verifying: {0} with code size: {1} instruction count: {2}", callbackName, body.CodeSize, icount);
 
       if (!callback.HasBody)
         return true;
@@ -484,9 +492,6 @@ namespace Gendarme.Rules.Interoperability
       if (verified_methods.TryGetValue(callback, out bool result))
         return result;
 
-      body = callback.Body;
-      instructions = body.Instructions;
-      int icount = instructions.Count;
       is_safe.Clear();
       is_safe.Capacity = icount;
 
@@ -517,9 +522,11 @@ namespace Gendarme.Rules.Interoperability
       // Given that this is the normal case (otherwise you'd have to put the attribute in the assembly), we accept 2) as safe too.
       //
 
+      var handlers = body.ExceptionHandlers;
+
       if (body.HasExceptionHandlers)
       {
-        foreach (ExceptionHandler eh in body.ExceptionHandlers)
+        foreach (ExceptionHandler eh in handlers)
         {
           // We only care about catch clauses.
           if (eh.HandlerType != ExceptionHandlerType.Catch)
@@ -537,7 +544,8 @@ namespace Gendarme.Rules.Interoperability
           // Mark the code this exception handler handles as safe.
           int start_index = instructions.IndexOf(eh.TryStart);
           int end_index = instructions.IndexOf(eh.TryEnd);
-          Log.WriteLine(this, " Catch all block found, marking instruction at index {0} to index {1} (included) as safe.", start_index, end_index - 1);
+          Log.WriteLine(this, " Catch all block found, marking instruction at index {0} to index {1} (included) as safe.",
+            start_index, end_index - 1);
           for (int j = start_index; j < end_index; j++)
             is_safe[j] = true;
         }
@@ -547,14 +555,14 @@ namespace Gendarme.Rules.Interoperability
       valid_ex_handler = !is_safe.Contains(false);
 
 #if DEBUG
-      Log.WriteLine(this, " Method {0} verified: {1}.", callback.Name, valid_ex_handler);
+      Log.WriteLine(this, " Method {0} verified: {1}.", callbackName, valid_ex_handler);
       for (int i = 0; i < is_safe.Count; i++)
       {
         // Console.ForegroundColor = safe [i] ? ConsoleColor.DarkGreen : ConsoleColor.Red;
         Log.WriteLine(this, " {1} {0}", instructions[i].ToPrettyString(), is_safe[i] ? "Y" : "N");
         // Console.ResetColor ();
       }
-      foreach (ExceptionHandler e in body.ExceptionHandlers)
+      foreach (ExceptionHandler e in handlers)
         Log.WriteLine(this, " HandlerType: {6}, TryStart: {3}, TryEnd: {4}, HandlerStart: {0}, HandlerEnd: {1}, FilterStart: {2}, CatchType: {5}",
                            e.HandlerStart.GetOffset(), e.HandlerEnd.GetOffset(), e.FilterStart.GetOffset(),
                            e.TryStart.GetOffset(), e.TryEnd.GetOffset(), e.CatchType, e.HandlerType);
@@ -677,6 +685,7 @@ namespace Gendarme.Rules.Interoperability
     // Reports the result from verifying the method.
     private void ReportVerifiedMethod(MethodDefinition pointer, bool safe)
     {
+      var name = pointer.Name;
       if (!safe)
       {
         if (reported_methods.Contains(pointer))
@@ -684,12 +693,12 @@ namespace Gendarme.Rules.Interoperability
 
         reported_methods.Add(pointer);
 
-        Log.WriteLine(this, " Reporting: {0}", pointer.Name);
+        Log.WriteLine(this, " Reporting: {0}", name);
         Runner.Report(pointer, Severity.High, Confidence.High);
       }
       else
       {
-        Log.WriteLine(this, " Safe: {0}", pointer.Name);
+        Log.WriteLine(this, " Safe: {0}", name);
       }
     }
   }

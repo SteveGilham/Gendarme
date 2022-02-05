@@ -178,22 +178,28 @@ namespace Gendarme.Rules.Maintainability
         if (!DoesAllSignaturesMatchType(candidate, signatures))
           continue;
 
+        var ipCount = ifaceDef?.GenericParameters.Count;
+        var cpCount = candidate.GenericParameters.Count;
+
+        var iiCount = ifaceDef?.Interfaces.Count;
+        var ciCount = candidate.Interfaces.Count;
+
         if (null == ifaceDef)
         {
           ifaceDef = candidate;
         }
-        else if (ifaceDef.GenericParameters.Count < candidate.GenericParameters.Count)
+        else if (ipCount < cpCount)
         {
           //prefer the most generic interface
           ifaceDef = candidate;
         }
-        else if (ifaceDef.Interfaces.Count < candidate.Interfaces.Count)
+        else if (iiCount < ciCount)
         {
           //prefer the most specific interface
           ifaceDef = candidate;
         }
-        else if (ifaceDef.Interfaces.Count >= candidate.Interfaces.Count
-        || ifaceDef.GenericParameters.Count >= candidate.GenericParameters.Count)
+        else if (iiCount >= ciCount
+        || ipCount >= cpCount)
         {
           continue; //we already have a better match
         }
@@ -265,7 +271,7 @@ namespace Gendarme.Rules.Maintainability
         case "GetType":
         case "MemberwiseClone":
         case "ToString":
-          return !method.HasParameters;
+          return !hasParameters;
 
         case "Equals":
           return (hasParameters && (pdc.Count == 1 || pdc.Count == 2));
@@ -352,7 +358,8 @@ namespace Gendarme.Rules.Maintainability
             if (IsFromNonGenericCollectionNamespace(type.GetTypeName().Namespace))
               continue;
 
-            int pcount = method.HasParameters ? method.Parameters.Count : 0;
+            var p = method.Parameters;
+            int pcount = method.HasParameters ? p.Count : 0;
             if (usage.StackOffset == pcount)
             {
               //argument is used as `this` in the call
@@ -363,7 +370,7 @@ namespace Gendarme.Rules.Maintainability
             else
             {
               //argument is also used as an argument in the call
-              currentLeastType = method.Parameters[pcount - usage.StackOffset - 1].ParameterType;
+              currentLeastType = p[pcount - usage.StackOffset - 1].ParameterType;
 
               //if parameter type is a generic, find the 'real' constructed type
               GenericParameter gp = (currentLeastType as GenericParameter);

@@ -43,6 +43,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Exceptions
 {
@@ -360,6 +361,10 @@ namespace Gendarme.Rules.Exceptions
     // the reason here (for example foreach can generate castclass or unbox
     // instructions and assemblies compiled with checked arithmetic can
     // throw even if the code doesn't explicitly use an arithmetic operator).
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Performance",
+                     "AvoidRepetitiveCallsToPropertiesRule",
+                     Justification = "Separate paths for operand name")]
     private static string ExplainThrow(Instruction ins)
     {
       switch (ins.OpCode.Code)

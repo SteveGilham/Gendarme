@@ -31,7 +31,6 @@
     <rules include="*"
            from="Gendarme.Rules.Naming.dll" />
     <rules include="*"
-           exclude="AvoidRepetitiveCallsToPropertiesRule"
            from="Gendarme.Rules.Performance.dll" />
     <rules include="*"
            from="Gendarme.Rules.Portability.dll" />

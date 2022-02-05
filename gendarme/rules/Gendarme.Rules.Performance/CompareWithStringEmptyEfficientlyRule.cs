@@ -36,107 +36,115 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Performance {
+namespace Gendarme.Rules.Performance
+{
+  /// <summary>
+  /// This rule will fire if a string is compared to <c>""</c> or <c>String.Empty</c>.
+  /// Instead use a <c>String.Length</c> test which should be a bit faster. Another
+  /// possibility (with .NET 2.0) is to use the static <c>String.IsNullOrEmpty</c> method.
+  /// <c>String.IsNullOrEmpty</c>.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public void SimpleMethod (string myString)
+  /// {
+  ///	if (myString.Equals (String.Empty)) {
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public void SimpleMethod (string myString)
+  /// {
+  ///	if (myString.Length == 0) {
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule will fire if a string is compared to <c>""</c> or <c>String.Empty</c>.
-	/// Instead use a <c>String.Length</c> test which should be a bit faster. Another
-	/// possibility (with .NET 2.0) is to use the static <c>String.IsNullOrEmpty</c> method.
-	/// <c>String.IsNullOrEmpty</c>.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public void SimpleMethod (string myString)
-	/// {
-	///	if (myString.Equals (String.Empty)) {
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public void SimpleMethod (string myString)
-	/// {
-	///	if (myString.Length == 0) {
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This method compares a string with an empty string by using the Equals method or the equality (==) or inequality (!=) operators.")]
+  [Solution("Compare String.Length with 0 instead. The string length is known and it's faster to compare integers than to compare strings.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  [FxCopCompatibility("Microsoft.Performance", "CA1820:TestForEmptyStringsUsingStringLength")]
+  public class CompareWithEmptyStringEfficientlyRule : Rule, IMethodRule
+  {
+    private static readonly TypeName systemString = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
 
-	[Problem ("This method compares a string with an empty string by using the Equals method or the equality (==) or inequality (!=) operators.")]
-	[Solution ("Compare String.Length with 0 instead. The string length is known and it's faster to compare integers than to compare strings.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	[FxCopCompatibility ("Microsoft.Performance", "CA1820:TestForEmptyStringsUsingStringLength")]
-	public class CompareWithEmptyStringEfficientlyRule : Rule, IMethodRule {
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // rule apply only if the method has a body (e.g. p/invokes, icalls don't)
+      if (!method.HasBody || method.IsGeneratedCode())
+        return RuleResult.DoesNotApply;
 
-        private readonly static TypeName systemString = new TypeName
+      // is there any Call or Callvirt instructions in the method
+      OpCodeBitmask bitmask = OpCodeEngine.GetBitmask(method);
+      if (!OpCodeBitmask.Calls.Intersect(bitmask))
+        return RuleResult.DoesNotApply;
+
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        Code code = ins.OpCode.Code;
+        if ((code != Code.Call) && (code != Code.Callvirt))
+          continue;
+
+        MethodReference mref = (ins.Operand as MethodReference);
+        TypeReference type = mref.DeclaringType;
+
+        // covers Equals(string) method and both == != operators
+        switch (mref.Name)
         {
-            Namespace = "System",
-            Name = "String"
-        };
-        public RuleResult CheckMethod(MethodDefinition method)
-		{
-			// rule apply only if the method has a body (e.g. p/invokes, icalls don't)
-			if (!method.HasBody || method.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
+          case "Equals":
+            if (mref.Parameters.Count > 1)
+              continue;
+            if (type.Namespace != "System") // OK
+              continue;
+            string name = type.Name;
+            if ((name != "String") && (name != "Object"))
+              continue;
+            break;
 
-			// is there any Call or Callvirt instructions in the method
-			OpCodeBitmask bitmask = OpCodeEngine.GetBitmask (method);
-			if (!OpCodeBitmask.Calls.Intersect (bitmask))
-				return RuleResult.DoesNotApply;
+          case "op_Equality":
+          case "op_Inequality":
+            if (!type.IsNamed(systemString))
+              continue;
+            break;
 
-			foreach (Instruction ins in method.Body.Instructions) {
-				Code code = ins.OpCode.Code;
-				if ((code != Code.Call) && (code != Code.Callvirt))
-					continue;
+          default:
+            continue;
+        }
 
-				MethodReference mref = (ins.Operand as MethodReference);
+        Instruction prev = ins.Previous;
+        switch (prev.OpCode.Code)
+        {
+          case Code.Ldstr:
+            if ((prev.Operand as string).Length > 0)
+              continue;
+            break;
 
-				// covers Equals(string) method and both == != operators
-				switch (mref.Name) {
-				case "Equals":
-					if (mref.Parameters.Count > 1)
-						continue;
-					TypeReference type = mref.DeclaringType;
-					if (type.Namespace != "System") // OK
-						continue;
-					string name = type.Name;
-					if ((name != "String") && (name != "Object"))
-						continue;
-					break;
-				case "op_Equality":
-				case "op_Inequality":
-					if (!mref.DeclaringType.IsNamed (systemString))
-						continue;
-					break;
-				default:
-					continue;
-				}
+          case Code.Ldsfld:
+            FieldReference field = (prev.Operand as FieldReference);
+            if (!field.DeclaringType.IsNamed(systemString))
+              continue;
+            // unlikely to be anything else (at least with released fx)
+            if (field.Name != "Empty")
+              continue;
+            break;
 
-				Instruction prev = ins.Previous;
-				switch (prev.OpCode.Code) {
-				case Code.Ldstr:
-					if ((prev.Operand as string).Length > 0)
-						continue;
-					break;
-				case Code.Ldsfld:
-					FieldReference field = (prev.Operand as FieldReference);
-					if (!field.DeclaringType.IsNamed (systemString))
-						continue;
-					// unlikely to be anything else (at least with released fx)
-					if (field.Name != "Empty")
-						continue;
-					break;
-				default:
-					continue;
-				}
+          default:
+            continue;
+        }
 
-				Runner.Report (method, ins, Severity.Medium, Confidence.High);
-			}
+        Runner.Report(method, ins, Severity.Medium, Confidence.High);
+      }
 
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }
