@@ -42,7 +42,9 @@
            from="Gendarme.Rules.Security.Cas.dll" />
     <rules include="*"
            from="Gendarme.Rules.Serialization.dll" />
-    <!-- Use the relaxed variant -->
+    <!-- Use the relaxed variant - needs to relax some more -->
+    <!-- 200 at full strength vs 6 relaxed -->
+    <!-- 29 sibling cases -->
     <rules include="*"
            exclude="AvoidCodeDuplicatedInSiblingClassesRule | RelaxedAvoidCodeDuplicatedInSameClassRule | AvoidCodeDuplicatedInSameClassRule"
            from="Gendarme.Rules.Smells.dll" />
