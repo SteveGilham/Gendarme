@@ -38,6 +38,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Interoperability
 {
@@ -122,6 +123,10 @@ namespace Gendarme.Rules.Interoperability
 
     private readonly List<Branch> branches = new List<Branch>();
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private bool CheckPInvoke(Instruction startInstruction)
     {
       branches.Clear();

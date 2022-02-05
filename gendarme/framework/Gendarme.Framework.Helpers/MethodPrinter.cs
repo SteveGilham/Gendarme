@@ -30,16 +30,13 @@ namespace Gendarme.Framework.Helpers
                    Justification = "Maybe refactor")]
   public sealed class MethodPrinter
   {
-    private IList<Instruction> instructions;
-    private MethodDefinition method;
+    private readonly IList<Instruction> instructions;
+    private readonly MethodDefinition method;
     private IDictionary branchTable;
 
     public MethodPrinter(MethodDefinition m)
     {
-      if (m == null)
-        throw new ArgumentNullException("m");
-
-      method = m;
+      method = m ?? throw new ArgumentNullException(nameof(m));
       if (method.HasBody)
         instructions = method.Body.Instructions;
 
@@ -60,51 +57,57 @@ namespace Gendarme.Framework.Helpers
       {
         foreach (Instruction instr in instructions)
         {
-          if (StartsTryRegion(instr) != null)
-            buffer.AppendLine("Try {");
-          if (StartsHandlerRegion(instr) != null)
-            buffer.AppendLine("Handle {");
-
-          if (IsLeader(instr, prevInstr))
-            buffer.Append("* ");
-          else
-            buffer.Append("  ");
-
-          buffer.Append("  ");
-          buffer.Append(instr.Offset.ToString("X4", CultureInfo.InvariantCulture));
-          buffer.Append(": ");
-          buffer.Append(instr.OpCode.Name);
-
-          int[] targets = BranchTargets(instr);
-          if (targets != null)
-          {
-            foreach (int target in targets)
-            {
-              buffer.Append(' ');
-              buffer.Append(target.ToString("X4", CultureInfo.InvariantCulture));
-            }
-          }
-          else if (instr.Operand is string)
-          {
-            buffer.Append(" \"");
-            buffer.Append(instr.Operand);
-            buffer.Append('"');
-          }
-          else if (instr.Operand != null)
-          {
-            buffer.Append(" ");
-            buffer.Append(instr.Operand);
-          }
-          buffer.AppendLine();
-
-          prevInstr = instr;
-          if (EndsTryRegion(instr) != null)
-            buffer.AppendLine("} (Try)");
-          if (EndsHandlerRegion(instr) != null)
-            buffer.AppendLine("} (Handle)");
+          prevInstr = ProcessInstruction(prevInstr, buffer, instr);
         }
       }
       return buffer.ToString().Trim();
+    }
+
+    private Instruction ProcessInstruction(Instruction prevInstr, StringBuilder buffer, Instruction instr)
+    {
+      if (StartsTryRegion(instr) != null)
+        buffer.AppendLine("Try {");
+      if (StartsHandlerRegion(instr) != null)
+        buffer.AppendLine("Handle {");
+
+      if (IsLeader(instr, prevInstr))
+        buffer.Append("* ");
+      else
+        buffer.Append("  ");
+
+      buffer.Append("  ");
+      buffer.Append(instr.Offset.ToString("X4", CultureInfo.InvariantCulture));
+      buffer.Append(": ");
+      buffer.Append(instr.OpCode.Name);
+
+      int[] targets = BranchTargets(instr);
+      if (targets != null)
+      {
+        foreach (int target in targets)
+        {
+          buffer.Append(' ');
+          buffer.Append(target.ToString("X4", CultureInfo.InvariantCulture));
+        }
+      }
+      else if (instr.Operand is string)
+      {
+        buffer.Append(" \"");
+        buffer.Append(instr.Operand);
+        buffer.Append('"');
+      }
+      else if (instr.Operand != null)
+      {
+        buffer.Append(' ');
+        buffer.Append(instr.Operand);
+      }
+      buffer.AppendLine();
+
+      prevInstr = instr;
+      if (EndsTryRegion(instr) != null)
+        buffer.AppendLine("} (Try)");
+      if (EndsHandlerRegion(instr) != null)
+        buffer.AppendLine("} (Handle)");
+      return prevInstr;
     }
 
     #region Helpers (used by CFG)
@@ -112,7 +115,7 @@ namespace Gendarme.Framework.Helpers
     public static int[] BranchTargets(Instruction instruction)
     {
       if (instruction == null)
-        throw new ArgumentNullException("instruction");
+        throw new ArgumentNullException(nameof(instruction));
 
       int[] result = null;
       switch (instruction.OpCode.OperandType)
@@ -144,7 +147,7 @@ namespace Gendarme.Framework.Helpers
     public bool IsLeader(Instruction instruction, Instruction previous)
     {
       if (instruction == null)
-        throw new ArgumentNullException("instruction");
+        throw new ArgumentNullException(nameof(instruction));
 
       /* First instruction in the method */
       if (previous == null)
@@ -258,8 +261,10 @@ namespace Gendarme.Framework.Helpers
           {
             if (!branchTable.Contains(target))
             {
-              IList sources = new ArrayList();
-              sources.Add(target);
+              IList sources = new ArrayList
+              {
+                target
+              };
               branchTable.Add(target, sources);
             }
             else

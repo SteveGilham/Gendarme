@@ -93,6 +93,10 @@ namespace Gendarme.Rules.Interoperability
       Runner.Report(method, ins, Severity.High, Confidence.Normal, msg);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private static string Convert(Instruction ins)
     {
       if (ins == null)

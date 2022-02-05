@@ -40,6 +40,9 @@ namespace Gendarme.Rules.Design
     [SuppressMessage("Gendarme.Rules.Performance",
                      "AvoidUnneededUnboxingRule",
                      Justification = "Only unboxes once per execution")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "TypeCodes are not types")]
     protected static FieldDefinition GetZeroValueField(TypeDefinition type)
     {
       if (type == null)

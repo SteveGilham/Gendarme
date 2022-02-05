@@ -38,6 +38,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Globalization
 {
@@ -79,7 +80,10 @@ namespace Gendarme.Rules.Globalization
       return (ccount - count <= 1);
     }
 
-    // look for a signature identical to ours but that accept an extra parameter
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private MethodReference LookForPreferredOverride(MethodReference method)
     {
       TypeDefinition type = method.DeclaringType.Resolve();

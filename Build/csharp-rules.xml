@@ -42,7 +42,7 @@
            from="Gendarme.Rules.Serialization.dll" />
     <!-- Use the relaxed variant -->
     <rules include="*"
-           exclude="AvoidCodeDuplicatedInSiblingClassesRule | AvoidLongMethodsRule | RelaxedAvoidCodeDuplicatedInSameClassRule | AvoidLargeClassesRule | AvoidSpeculativeGeneralityRule | AvoidSwitchStatementsRule | AvoidCodeDuplicatedInSameClassRule"
+           exclude="AvoidCodeDuplicatedInSiblingClassesRule | RelaxedAvoidCodeDuplicatedInSameClassRule | AvoidCodeDuplicatedInSameClassRule"
            from="Gendarme.Rules.Smells.dll" />
     <rules include="*"
            from="Gendarme.Rules.Ui.dll" />

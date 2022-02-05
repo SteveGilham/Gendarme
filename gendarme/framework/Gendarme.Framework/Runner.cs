@@ -40,6 +40,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Smells",
+                   "AvoidLargeClassesRule",
+                   Justification = "2 fields prefixed with 'current'")]
+  [SuppressMessage("Gendarme.Rules.Smells",
+                  "AvoidSpeculativeGeneralityRule",
+                  Justification = "One child policy")]
   public abstract class Runner : IRunner
   {
     private readonly Collection<Defect> defect_list = new Collection<Defect>();

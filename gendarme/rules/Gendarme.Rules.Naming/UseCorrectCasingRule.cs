@@ -242,6 +242,9 @@ namespace Gendarme.Rules.Naming
     [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidComplexMethodsRule",
                     Justification = "Maybe refactor from 29")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // ignore constructors (.ctor or .cctor) and compiler/tool-generated code

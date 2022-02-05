@@ -262,6 +262,9 @@ namespace Gendarme.Rules.Correctness
     [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidComplexMethodsRule",
                     Justification = "Maybe refactor from 27")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                 "AvoidLongMethodsRule",
+                 Justification = "Maybe refactor")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (!method.HasBody)

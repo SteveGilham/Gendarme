@@ -122,6 +122,10 @@ namespace Gendarme.Rules.Exceptions
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private void ProcessCatchBlock(Instruction first, Instruction last, MethodDefinition method, ref int exStackPos, ref int localVarPos)
     {
       Instruction cur = null;

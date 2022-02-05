@@ -130,6 +130,10 @@ namespace Gendarme.Rules.Correctness
       return true;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private static bool CheckParams(MethodDefinition method, ref int index, int paramNum)
     {
       Instruction insn = method.Body.Instructions[index].Previous;
@@ -175,6 +179,9 @@ namespace Gendarme.Rules.Correctness
 
     private readonly OpCodeBitmask CallsNew = new OpCodeBitmask(0x8000000000, 0x4400000000000, 0x0, 0x0);
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // rule applies only if the method has a body

@@ -279,6 +279,9 @@ namespace Gendarme.Rules.Interoperability
       }
     }
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private RuleResult CheckMethodUnsafe(MethodDefinition method)
     {
       locals.Clear();
@@ -473,6 +476,9 @@ namespace Gendarme.Rules.Interoperability
     }
 
     // Verifies that the method is safe to call as a callback from native code.
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private bool VerifyCallbackSafety(MethodDefinition callback)
     {
       bool valid_ex_handler;
@@ -614,6 +620,9 @@ namespace Gendarme.Rules.Interoperability
     };
 
     // Parses the ILRange and return all delegate pointers that could end up on the stack as a result of executing that code.
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private List<MethodDefinition> GetDelegatePointers(ILRange range)
     {
       List<MethodDefinition> result = null;
@@ -725,6 +734,9 @@ namespace Gendarme.Rules.Interoperability
 #endif
     // Return the index of the load opcode.
     // This could probably go into InstructionRocks.
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     public static int GetLoadIndex(this Instruction ins)
     {
       switch (ins.OpCode.Code)
@@ -745,6 +757,9 @@ namespace Gendarme.Rules.Interoperability
 
     // Return the index of the store opcode.
     // This could probably go into InstructionRocks.
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     public static int GetStoreIndex(this Instruction ins)
     {
       switch (ins.OpCode.Code)

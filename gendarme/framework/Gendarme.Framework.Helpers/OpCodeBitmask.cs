@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -37,6 +38,11 @@ namespace Gendarme.Framework.Helpers
   /// This is a specialized Bitmask class for the Code enumeration.
   /// Bitmask`1 can't be used since there are more than 64 opcodes defined.
   /// </summary>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Smells",
+                    "AvoidLargeClassesRule",
+                    Justification = "4 fields prefixed with 'load', 2 x 'store', 2 x 'flow'")]
   public sealed class OpCodeBitmask : IEquatable<OpCodeBitmask>
   {
     private readonly ulong[] mask = new ulong[4];

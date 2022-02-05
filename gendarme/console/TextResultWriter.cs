@@ -118,6 +118,10 @@ namespace Gendarme
       writer.WriteLine();
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Single flow of control")]
     private void WriteEntry(int index, Defect defect)
     {
       IRule rule = defect.Rule;

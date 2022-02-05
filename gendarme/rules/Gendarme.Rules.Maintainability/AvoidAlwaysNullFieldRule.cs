@@ -104,6 +104,9 @@ namespace Gendarme.Rules.Maintainability
     [SuppressMessage("Gendarme.Rules.Performance",
                      "AvoidRepetitiveCallsToPropertiesRule",
                      Justification = "Field name only executed once per field at most")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private void CheckMethod(MethodDefinition method)
     {
       Log.WriteLine(this, method);
@@ -195,6 +198,9 @@ namespace Gendarme.Rules.Maintainability
       Name = "Control"
     };
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     public RuleResult CheckType(TypeDefinition type)
     {
       if (type.IsEnum || type.IsInterface || !type.HasFields)

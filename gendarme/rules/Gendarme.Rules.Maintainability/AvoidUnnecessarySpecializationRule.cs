@@ -329,6 +329,9 @@ namespace Gendarme.Rules.Maintainability
       return signatures;
     }
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private void UpdateParameterLeastType(ParameterReference parameter, IEnumerable<StackEntryUsageResult> usageResults)
     {
       int pIndex = parameter.Index;

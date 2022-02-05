@@ -1251,6 +1251,10 @@ namespace NDesk.Options
       return lines;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "chars are not types")]
     private static int GetLineEnd(int start, int length, string description)
     {
       int end = Math.Min(start + length, description.Length);

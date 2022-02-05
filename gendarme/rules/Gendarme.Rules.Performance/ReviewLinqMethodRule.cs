@@ -137,6 +137,9 @@ namespace Gendarme.Rules.Performance
 
     [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
       Justification = "TODO: Defect constructor message not localized")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private void CheckForAny(MethodDefinition method, Instruction ins)
     {
       // call System.Int32 System.Linq.Enumerable::Count<System.String>(System.Collections.Generic.IEnumerable`1<!!0>)
@@ -261,6 +264,9 @@ namespace Gendarme.Rules.Performance
       Name = "Enumerable"
     };
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (!method.HasBody)

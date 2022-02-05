@@ -30,6 +30,11 @@ using Mono.Cecil;
 
 namespace Gendarme.Framework.Rocks
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Smells",
+                   "AvoidSpeculativeGeneralityRule",
+                   Justification = "No speculation here")]
   public static class ParameterRocks
   {
     /// <summary>
@@ -37,7 +42,6 @@ namespace Gendarme.Framework.Rocks
     /// </summary>
     /// <param name="self">The ParameterDefinition on which the extension method can be called.</param>
     /// <returns>True if the parameter represents a list of parameters, false otherwise.</returns>
-#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Maintainability",
                       "AvoidUnnecessarySpecializationRule",
                       Justification = "Always a ParameterDefinition")]

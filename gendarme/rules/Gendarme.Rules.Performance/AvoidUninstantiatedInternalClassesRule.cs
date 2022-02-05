@@ -35,6 +35,7 @@ using Mono.Cecil.Cil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Performance
 {
@@ -138,6 +139,10 @@ namespace Gendarme.Rules.Performance
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private static void ProcessMethod(MethodDefinition method, ISet<TypeReference> typeset)
     {
       // this is needed in case we return an enum, a struct or something mapped

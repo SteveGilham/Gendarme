@@ -33,6 +33,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Exceptions
 {
@@ -152,6 +153,10 @@ namespace Gendarme.Rules.Exceptions
       return Runner.CurrentRuleResult;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private void CheckBody(MethodDefinition method)
     {
       TypeReference type = method.DeclaringType;

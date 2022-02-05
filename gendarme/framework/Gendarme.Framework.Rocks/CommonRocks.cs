@@ -33,6 +33,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace Gendarme.Framework.Rocks
 {
   // Here we keep non-Gendarme/Cecil related rocks
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Smells",
+                   "AvoidSpeculativeGeneralityRule",
+                   Justification = "No speculation here")]
   public static class StringRocks
   {
     // overloads not present in netstandard2.0
@@ -41,7 +46,6 @@ namespace Gendarme.Framework.Rocks
       return self.IndexOf(target, c) >= 0;
     }
 
-#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Globalization",
                      "PreferStringComparisonOverrideRule",
                      Justification = "Not in netstandard2.0")]

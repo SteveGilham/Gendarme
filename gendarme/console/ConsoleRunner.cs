@@ -459,50 +459,7 @@ namespace Gendarme
     {
       try
       {
-        byte result = Parse(args);
-        Header();
-        if (version)
-          return 0;
-
-        if ((result != 0) || help)
-        {
-          Help();
-          return help ? (byte)0 : result;
-        }
-
-        // load configuration, including rules
-        Settings config = new Settings(this, config_file, rule_set);
-        // and continue if there's at least one rule to execute
-        if (!config.Load() || (Rules.Count < 1))
-        {
-          int validationErrorsCounter = 0;
-          foreach (string error in config.ValidationErrors)
-          {
-            Console.WriteLine(error);
-            validationErrorsCounter++;
-          }
-          if (validationErrorsCounter == 0)
-            Console.WriteLine(Strings.UnmatchedConfigurationParameters);
-          return 3;
-        }
-
-        foreach (string name in assembly_names)
-        {
-          result = AddFiles(name);
-          if (result != 0)
-            return result;
-        }
-
-        IgnoreList = new IgnoreFileList(this, ignore_file);
-
-        // now that all rules and assemblies are know, time to initialize
-        Initialize();
-        // before analyzing the assemblies with the rules
-        Run();
-        // and winding down properly
-        TearDown();
-
-        return Report();
+        return DoAnalysis(args);
       }
       catch (IOException e)
       {
@@ -528,6 +485,54 @@ namespace Gendarme
         WriteUnhandledExceptionMessage(e);
         return 4;
       }
+    }
+
+    private byte DoAnalysis(string[] args)
+    {
+      byte result = Parse(args);
+      Header();
+      if (version)
+        return 0;
+
+      if ((result != 0) || help)
+      {
+        Help();
+        return help ? (byte)0 : result;
+      }
+
+      // load configuration, including rules
+      Settings config = new Settings(this, config_file, rule_set);
+      // and continue if there's at least one rule to execute
+      if (!config.Load() || (Rules.Count < 1))
+      {
+        int validationErrorsCounter = 0;
+        foreach (string error in config.ValidationErrors)
+        {
+          Console.WriteLine(error);
+          validationErrorsCounter++;
+        }
+        if (validationErrorsCounter == 0)
+          Console.WriteLine(Strings.UnmatchedConfigurationParameters);
+        return 3;
+      }
+
+      foreach (string name in assembly_names)
+      {
+        result = AddFiles(name);
+        if (result != 0)
+          return result;
+      }
+
+      IgnoreList = new IgnoreFileList(this, ignore_file);
+
+      // now that all rules and assemblies are know, time to initialize
+      Initialize();
+      // before analyzing the assemblies with the rules
+      Run();
+      // and winding down properly
+      TearDown();
+
+      return Report();
     }
 
     [SuppressMessage("Gendarme.Rules.Naming",

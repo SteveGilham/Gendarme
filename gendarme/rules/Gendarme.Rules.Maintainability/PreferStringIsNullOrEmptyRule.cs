@@ -33,6 +33,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Maintainability
 {
@@ -85,6 +86,10 @@ namespace Gendarme.Rules.Maintainability
       };
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private static string GetName(MethodDefinition method, Instruction ins)
     {
       switch (ins.OpCode.Code)

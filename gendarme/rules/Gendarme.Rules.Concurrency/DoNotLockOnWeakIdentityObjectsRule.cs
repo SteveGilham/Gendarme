@@ -28,6 +28,7 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -152,37 +153,27 @@ namespace Gendarme.Rules.Concurrency
         }
       }
 
-      if (type == null)
-        return;
+      if (type != null)
+      {
+        if (IsWeakSealedType(type))
+        {
+          Runner.Report(method, call, Severity.High, Confidence.Normal, type.GetFullName());
+        }
+        else
+        {
+          var reasons = new[]
+          {
+          mbrObject,
+          outOfMemory,
+          memberInfo,
+          paramInfo
+        };
 
-      if (IsWeakSealedType(type))
-      {
-        Runner.Report(method, call, Severity.High, Confidence.Normal, type.GetFullName());
-      }
-      else
-      {
-        string msg = InheritFromWeakType(type, mbrObject);
-        if (msg.Length > 0)
-        {
-          Runner.Report(method, call, Severity.High, Confidence.Normal, msg);
-          return;
-        }
-        msg = InheritFromWeakType(type, outOfMemory);
-        if (msg.Length > 0)
-        {
-          Runner.Report(method, call, Severity.High, Confidence.Normal, msg);
-          return;
-        }
-        msg = InheritFromWeakType(type, memberInfo);
-        if (msg.Length > 0)
-        {
-          Runner.Report(method, call, Severity.High, Confidence.Normal, msg);
-          return;
-        }
-        msg = InheritFromWeakType(type, paramInfo);
-        if (msg.Length > 0)
-        {
-          Runner.Report(method, call, Severity.High, Confidence.Normal, msg);
+          string msg = reasons.Select(x => InheritFromWeakType(type, x)).SkipWhile(m => m.Length == 0).FirstOrDefault();
+          if (!string.IsNullOrWhiteSpace(msg))
+          {
+            Runner.Report(method, call, Severity.High, Confidence.Normal, msg);
+          }
         }
       }
     }

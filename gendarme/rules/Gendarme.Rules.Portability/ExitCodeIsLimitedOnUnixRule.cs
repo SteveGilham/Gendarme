@@ -127,6 +127,9 @@ namespace Gendarme.Rules.Portability
 #pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
       Justification = "TODO: Defect constructor message not localized")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "Enums are not types")]
     private void Report(MethodDefinition method, Instruction ins, InspectionResult result)
     {
       switch (result)
@@ -199,6 +202,9 @@ namespace Gendarme.Rules.Portability
       Name = "Byte"
     };
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private static InspectionResult CheckInstruction(Instruction instruction)
     {
       // checks if an instruction loads an inapproriate value onto the stack

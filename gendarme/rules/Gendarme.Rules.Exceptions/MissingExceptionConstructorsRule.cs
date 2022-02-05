@@ -33,6 +33,7 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Exceptions
 {
@@ -126,6 +127,10 @@ namespace Gendarme.Rules.Exceptions
       return false;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule apply only to type that inherits from System.Exception

@@ -100,6 +100,10 @@ namespace Gendarme.Rules.Portability
       // Console.WriteLine ("// added {0} pts", pts);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private Confidence? CheckIfStringIsHardcodedPath(Instruction ldstr, string str)
     {
       // try to filter out false positives:
@@ -229,7 +233,6 @@ namespace Gendarme.Rules.Portability
         AddPoints(2);
     }
 
-#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Portability",
                      "DoNotHardcodePathsRule",
                      Justification = "Self-reference")]

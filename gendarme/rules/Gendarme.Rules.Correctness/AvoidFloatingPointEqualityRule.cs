@@ -114,6 +114,10 @@ namespace Gendarme.Rules.Correctness
     private const string EqualityMessage = "Floating point values should not be directly compared for equality (e.g. == or !=).";
     private const string EqualsMessage = "Floating point values should not be directly compared for equality using [Single|Double].Equals.";
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private static bool CheckCeqInstruction(Instruction instruction, MethodDefinition method)
     {
       bool problem = false;
@@ -173,7 +177,6 @@ namespace Gendarme.Rules.Correctness
       return problem;
     }
 
-#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
       Justification = "TODO: Defect constructor message not localized")]
     public RuleResult CheckMethod(MethodDefinition method)

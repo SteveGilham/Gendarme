@@ -365,6 +365,9 @@ namespace Gendarme.Rules.Exceptions
     [SuppressMessage("Gendarme.Rules.Performance",
                      "AvoidRepetitiveCallsToPropertiesRule",
                      Justification = "Separate paths for operand name")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private static string ExplainThrow(Instruction ins)
     {
       switch (ins.OpCode.Code)
@@ -407,6 +410,10 @@ namespace Gendarme.Rules.Exceptions
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private void ProcessMethod(MethodDefinition method, string methodLabel)
     {
       bool casts_are_ok = false;

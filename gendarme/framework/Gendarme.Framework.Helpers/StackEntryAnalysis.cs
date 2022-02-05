@@ -384,6 +384,9 @@ namespace Gendarme.Framework.Helpers
     [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidComplexMethodsRule",
                     Justification = "Maybe refactor from 29")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                 "AvoidLongMethodsRule",
+                 Justification = "Maybe refactor")]
     private List<InstructionWithLeave> FindLoad(InstructionWithLeave insWithLeave, StoreSlot slot)
     {
       LoadAlternatives.Clear();
@@ -485,6 +488,9 @@ namespace Gendarme.Framework.Helpers
     /// <param name="ins">The instruction</param>
     /// <param name="alternative">If the instruction is a branch, the branch target is returned. For a switch statemant an array of targets is returned.</param>
     /// <returns>The next instruction that would be executed by the runtime.</returns>
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     public static (Instruction, object) GetNextInstruction(Instruction ins)
     {
       if (ins == null)
@@ -518,6 +524,9 @@ namespace Gendarme.Framework.Helpers
     /// </summary>
     /// <param name="ins">The instruction</param>
     /// <returns>If the instruction is a load returns the slot to load. Check slot.IsNone() to see if this instruction is a load.</returns>
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private StoreSlot GetLoadSlot(Instruction ins)
     {
       switch (ins.OpCode.Code)
@@ -584,6 +593,9 @@ namespace Gendarme.Framework.Helpers
     /// </summary>
     /// <param name="ins">The instruction</param>
     /// <returns>If the instruction is a store returns the slot to store. Check slot.IsNone() to see if this instruction is a store.</returns>
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private StoreSlot GetStoreSlot(Instruction ins)
     {
       switch (ins.OpCode.Code)

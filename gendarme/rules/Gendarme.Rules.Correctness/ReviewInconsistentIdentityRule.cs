@@ -187,63 +187,7 @@ namespace Gendarme.Rules.Correctness
       // For each instruction in the method,
       foreach (Instruction ins in method.Body.Instructions)
       {
-        // If we're loading a field which belongs to our type then
-        // we need to add it to our list of referenced fields.
-        if (ins.OpCode.Code == Code.Ldfld || ins.OpCode.Code == Code.Ldflda)
-        {
-          if (method.IsStatic)
-          {
-            if (ins.Previous.IsLoadArgument())
-            {
-              ParameterDefinition pd = ins.Previous.GetParameter(method);
-              if (pd != null && pd.ParameterType == method.DeclaringType)
-              {
-                FieldDefinition field = ins.GetField();
-                iFields.Add(field);
-              }
-            }
-          }
-          else
-          {
-            if (ins.Previous.OpCode.Code == Code.Ldarg_0)
-            {
-              FieldDefinition field = ins.GetField();
-              iFields.Add(field);
-            }
-          }
-
-          // We'll ignore any fields which we wind up storing into. (These
-          // will typically be something like a GetHashCode cache.)
-        }
-        else if (ins.OpCode.Code == Code.Stfld)
-        {
-          if (!MethodSignatures.Clone.Matches(method))
-          {
-            FieldDefinition field = ins.GetField();
-            stored_fields.Add(field);
-          }
-
-          // If we're calling a method which belongs to our type then,
-        }
-        else if (ins.OpCode.Code == Code.Call || ins.OpCode.Code == Code.Callvirt)
-        {
-          MethodDefinition callee = (ins.Operand as MethodReference).Resolve();
-          if (callee != null && callee.DeclaringType == method.DeclaringType)
-          {
-            // if it is a getter then save a reference to it,
-            if (callee.IsGetter)
-              iGetters.Add(callee);
-
-            // if it's a setter then we'll ignore the corresponding getter,
-            else if (callee.IsSetter)
-              property_setters.Add(callee);
-
-            // anything else is assumed to be some sort of helper method which means
-            // we don't know all of the state which this method may use.
-            else
-              info.Delegates = true;
-          }
-        }
+        ProcessInstruction(info, method, iFields, iGetters, ins);
       }
 
       iFields.ExceptWith(stored_fields);
@@ -274,6 +218,67 @@ namespace Gendarme.Rules.Correctness
       }
       Log.WriteLine(this);
 #endif
+    }
+
+    private void ProcessInstruction(MethodInfo info, MethodDefinition method, ISet<MemberReference> iFields, ISet<MemberReference> iGetters, Instruction ins)
+    {
+      // If we're loading a field which belongs to our type then
+      // we need to add it to our list of referenced fields.
+      if (ins.OpCode.Code == Code.Ldfld || ins.OpCode.Code == Code.Ldflda)
+      {
+        if (method.IsStatic)
+        {
+          if (ins.Previous.IsLoadArgument())
+          {
+            ParameterDefinition pd = ins.Previous.GetParameter(method);
+            if (pd != null && pd.ParameterType == method.DeclaringType)
+            {
+              FieldDefinition field = ins.GetField();
+              iFields.Add(field);
+            }
+          }
+        }
+        else
+        {
+          if (ins.Previous.OpCode.Code == Code.Ldarg_0)
+          {
+            FieldDefinition field = ins.GetField();
+            iFields.Add(field);
+          }
+        }
+
+        // We'll ignore any fields which we wind up storing into. (These
+        // will typically be something like a GetHashCode cache.)
+      }
+      else if (ins.OpCode.Code == Code.Stfld)
+      {
+        if (!MethodSignatures.Clone.Matches(method))
+        {
+          FieldDefinition field = ins.GetField();
+          stored_fields.Add(field);
+        }
+
+        // If we're calling a method which belongs to our type then,
+      }
+      else if (ins.OpCode.Code == Code.Call || ins.OpCode.Code == Code.Callvirt)
+      {
+        MethodDefinition callee = (ins.Operand as MethodReference).Resolve();
+        if (callee != null && callee.DeclaringType == method.DeclaringType)
+        {
+          // if it is a getter then save a reference to it,
+          if (callee.IsGetter)
+            iGetters.Add(callee);
+
+          // if it's a setter then we'll ignore the corresponding getter,
+          else if (callee.IsSetter)
+            property_setters.Add(callee);
+
+          // anything else is assumed to be some sort of helper method which means
+          // we don't know all of the state which this method may use.
+          else
+            info.Delegates = true;
+        }
+      }
     }
 
     // It's a bit silly to stick these into fields, but it does save some

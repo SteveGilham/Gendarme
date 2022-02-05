@@ -88,6 +88,11 @@ namespace Gendarme.Rules.Performance
       if (!OpCodeBitmask.Calls.Intersect(bitmask))
         return RuleResult.DoesNotApply;
 
+      return CheckApplicableMethod(method);
+    }
+
+    private RuleResult CheckApplicableMethod(MethodDefinition method)
+    {
       foreach (Instruction ins in method.Body.Instructions)
       {
         Code code = ins.OpCode.Code;

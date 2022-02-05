@@ -252,6 +252,9 @@ namespace Gendarme.Rules.Concurrency
     [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidComplexMethodsRule",
                     Justification = "Maybe refactor from 27")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                 "AvoidLongMethodsRule",
+                 Justification = "Maybe refactor")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (ThreadRocks.ThreadedNamespace(method.DeclaringType.GetTypeName().Namespace))
@@ -377,12 +380,14 @@ namespace Gendarme.Rules.Concurrency
 
     #region Private Methods
 
-#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidComplexMethodsRule",
                     Justification = "Maybe refactor from 41")]
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling",
       Justification = "Maybe refactor more")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                 "AvoidLongMethodsRule",
+                 Justification = "Maybe refactor")]
     private void CheckMethodBody(MethodDefinition method)
     {
       var synchronizedEvents = new Dictionary<MethodReference, List<MethodReference>>();

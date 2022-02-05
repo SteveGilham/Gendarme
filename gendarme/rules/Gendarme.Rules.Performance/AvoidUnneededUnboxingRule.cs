@@ -37,6 +37,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Performance
 {
@@ -93,6 +94,10 @@ namespace Gendarme.Rules.Performance
   [EngineDependency(typeof(OpCodeEngine))]
   public class AvoidUnneededUnboxingRule : Rule, IMethodRule
   {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
     private static string Previous(MethodDefinition method, Instruction ins)
     {
       string kind, name;
