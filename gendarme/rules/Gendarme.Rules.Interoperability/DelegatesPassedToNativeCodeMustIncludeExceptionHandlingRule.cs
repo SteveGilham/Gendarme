@@ -290,7 +290,7 @@ namespace Gendarme.Rules.Interoperability
       var name = method.Name;
 
       Log.WriteLine(this, "{2}{2}Checking method: {0} on type: {1}",
-        name, method.DeclaringType.GetFullName(), Environment.NewLine);
+        name, method.GetFullTypeName(), Environment.NewLine);
       Log.WriteLine(this, method);
 
       MethodBody body = method.Body;
@@ -712,9 +712,21 @@ namespace Gendarme.Rules.Interoperability
     }
   }
 
+  // rather than compiling #define CONTRACTS_FULL
+  [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+  [SuppressMessage("Gendarme.Rules.Performance",
+                 "AvoidUninstantiatedInternalClassesRule",
+                 Scope = "type", // TypeDefinition
+                 Target = "Gendarme.Rules.Interoperability.PureAttribute",
+                 Justification = "[FIXME] -- handle attribute types properly")]
+  internal sealed class PureAttribute : Attribute
+  {
+  }
+
   internal static class DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRuleHelper
   {
 #if DEBUG
+    [Pure]
     public static string ToPrettyString(this Instruction instr)
     {
       if (instr == null)
@@ -724,6 +736,7 @@ namespace Gendarme.Rules.Interoperability
         "IL_{0} {1} {2}", instr.Offset, instr.OpCode.Name, instr.Operand);
     }
 
+    [Pure]
     public static int GetOffset(this Instruction instr)
     {
       if (instr != null)
@@ -732,6 +745,13 @@ namespace Gendarme.Rules.Interoperability
     }
 
 #endif
+
+    [Pure]
+    public static string GetFullTypeName(this IMemberDefinition method)
+    {
+      return method.DeclaringType.GetFullName();
+    }
+
     // Return the index of the load opcode.
     // This could probably go into InstructionRocks.
     [SuppressMessage("Gendarme.Rules.Smells",

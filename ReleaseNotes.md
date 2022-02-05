@@ -2,6 +2,7 @@
 
 * Update for modern C# dialect e.g. allow discard `_` as a variable name
 * Fix `PreferIFormatProviderOverrideRule` and `PreferStringComparisonOverrideRule` to spot more than one violation of any given method with a preferred override
+* In `AvoidMethodsWithSideEffectsInConditionalCodeRule`, consider `System.Array.Empty<T>()` to be pure.
 
 
 

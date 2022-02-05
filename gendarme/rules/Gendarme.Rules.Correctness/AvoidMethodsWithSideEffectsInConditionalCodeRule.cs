@@ -36,6 +36,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 
 namespace Gendarme.Rules.Correctness
 {
@@ -287,55 +288,23 @@ namespace Gendarme.Rules.Correctness
         string type_name = type.GetFullName();
         string method_name = method.Name;
 
-        // getters
-        if (method.IsGetter)
-          return true;
-
-        // System.String, System.Type, etc methods
-        if (types_considered_pure.Contains(type_name))
-          return true;
-
-        // Equals, GetHashCode, Contains, etc
-        if (methods_considered_pure.Contains(method_name))
-          return true;
-
-        // operators
-        if (method_name.StartsWith("op_", StringComparison.Ordinal) && method_name != "op_Implicit" && method_name != "op_Explicit")
-          return true;
-
-        // Contract methods (skip namespace)
-        if (type_name == "System.Diagnostics.Contracts.Contract")
-          return true;
-
-        // System.Predicate<T> and System.Comparison<T>
-        if (type_name.StartsWith("System.Predicate`1", StringComparison.Ordinal))
-          return true;
-
-        if (type_name.StartsWith("System.Comparison`1", StringComparison.Ordinal))
-          return true;
-
-        // delegate invocation
-        if (MethodSignatures.Invoke.Matches(method))
+        Func<bool>[] predicates =
         {
-          if (type.HasCustomAttributes)
-          {
-            if (HasPureAttribute(type.CustomAttributes))
-            {
-              return true;
-            }
-          }
-        }
+          () => method.IsGetter,// getters
+          () => (type_name + "::" + method_name).StartsWith("System.Array::Empty", StringComparison.Ordinal),
+          () => types_considered_pure.Contains(type_name),// System.String, System.Type, etc methods
+          () => methods_considered_pure.Contains(method_name), // Equals, GetHashCode, Contains, etc
+          () => method_name.StartsWith("op_", StringComparison.Ordinal) && method_name != "op_Implicit" && method_name != "op_Explicit", // operators
+          () => type_name == "System.Diagnostics.Contracts.Contract", // Contract methods (skip namespace)
+          () => type_name.StartsWith("System.Predicate`1", StringComparison.Ordinal),// System.Predicate<T> and System.Comparison<T>
+          () => type_name.StartsWith("System.Comparison`1", StringComparison.Ordinal),
+          () => MethodSignatures.Invoke.Matches(method) && // delegate invocation
+                type.HasCustomAttributes &&
+                HasPureAttribute(type.CustomAttributes),
+          () => method.HasCustomAttributes && HasPureAttribute(method.CustomAttributes) // PureAttribute
+        };
 
-        // PureAttribute
-        if (method.HasCustomAttributes)
-        {
-          if (HasPureAttribute(method.CustomAttributes))
-          {
-            return true;
-          }
-        }
-
-        return false;
+        return predicates.Any(f => f());
       }
 
       // If we can't resolve the method we have to assume it's OK to call.
