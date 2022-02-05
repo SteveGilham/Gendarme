@@ -9,10 +9,12 @@
            from="Gendarme.Rules.Concurrency.dll" />
     <!-- False positive/off by one in ProvideCorrectArgumentsToFormattingMethodsRule -->
     <!-- Array::Empty in AvoidMethodsWithSideEffectsInConditionalCodeRule -->
+    <!-- 230 instances of CheckParametersNullityInVisibleMethodsRule -->
     <rules include="*"
            exclude="ProvideCorrectArgumentsToFormattingMethodsRule | AvoidMethodsWithSideEffectsInConditionalCodeRule | CheckParametersNullityInVisibleMethodsRule"
            from="Gendarme.Rules.Correctness.dll" />
     <!-- AvoidSmallNamespaceRule doesn't account for specialized code -->
+    <!-- and cannot yet be suppressed by attribute -->
     <rules include="*"
            exclude="AvoidSmallNamespaceRule"
            from="Gendarme.Rules.Design.dll" />

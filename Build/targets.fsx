@@ -480,8 +480,6 @@ _Target
               "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
               "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ] 
 
-        // let cantStrongName = [ "-Microsoft.Design#CA2210" ] // should strongname
-
         let defaultFSharpRules =
             List.concat [ deprecatedRules
                           gendarmeRules
