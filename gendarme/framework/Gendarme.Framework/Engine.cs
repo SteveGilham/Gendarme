@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Engine
 //
 // Authors:
@@ -25,36 +25,45 @@
 // THE SOFTWARE.
 //
 
-namespace Gendarme.Framework {
+//using System.Diagnostics.CodeAnalysis;
 
-	// FIXME: do a IEngine interface once this is stable
-	abstract public class Engine {
+//[assembly: SuppressMessage("Gendarme.Rules.Design",
+//                          "AvoidSmallNamespaceRule",
+//                          Scope = "namespace", // NamespaceDefinition
+//                          Target = "Gendarme.Framework.Engines",
+//                          Justification = "Only so many engines")]
 
-		protected Engine ()
-		{
-		}
+namespace Gendarme.Framework
+{
+  // FIXME: do a IEngine interface once this is stable
+  public abstract class Engine
+  {
+    protected Engine()
+    {
+    }
 
-		protected EngineController Controller {
-			get;
-			private set;
-		}
+    protected EngineController Controller
+    {
+      get;
+      private set;
+    }
 
-		/// <summary>
-		/// Override to attach to some of the controller events
-		/// </summary>
-		/// <param name="controller"></param>
-		public virtual void Initialize (EngineController controller)
-		{
-			Controller = controller;
-		}
+    /// <summary>
+    /// Override to attach to some of the controller events
+    /// </summary>
+    /// <param name="controller"></param>
+    public virtual void Initialize(EngineController controller)
+    {
+      Controller = controller;
+    }
 
-		/// <summary>
-		/// Note: TearDown can be called without a call to Engine.Register or 
-		/// Engine.Initialize
-		/// </summary>
-		public virtual void TearDown ()
-		{
-			Controller = null;
-		}
-	}
+    /// <summary>
+    /// Note: TearDown can be called without a call to Engine.Register or
+    /// Engine.Initialize
+    /// </summary>
+    public virtual void TearDown()
+    {
+      Controller = null;
+    }
+  }
 }

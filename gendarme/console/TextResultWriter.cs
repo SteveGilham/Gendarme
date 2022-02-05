@@ -141,7 +141,7 @@ namespace Gendarme
       writer.WriteLine();
 
       writer.WriteLine("* Severity: {0}, Confidence: {1}", defect.Severity, defect.Confidence);
-      writer.WriteLine("* Target:   {0} ({1})", defect.Target, defect.Assembly.FullName);
+      writer.WriteLine("* Target:   {0} ({1})", defect.Target, defect.Assembly?.FullName);
 
       if (defect.Location != defect.Target)
         writer.WriteLine("* Location: {0}", defect.Location);
@@ -181,6 +181,8 @@ namespace Gendarme
       if (target is AssemblyDefinition ||
           target is ModuleReference)
         scope = "module";
+      if (target is Gendarme.Framework.Helpers.NamespaceDefinition)
+        scope = "namespace";
       if (target is TypeReference)
         scope = "type";
       writer.WriteLine("                            Scope = \"{0}\", // {1}", scope, target.GetType().Name);
