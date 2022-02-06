@@ -437,6 +437,8 @@ namespace Test.Rules.Maintainability
     public void GenericMethod()
     {
       AssertRuleSuccess<GeneralizedClass>("GenericMethod");
+
+      // Test failure here -- stack entry analysis again
       AssertRuleFailure<SpecializedClass>("GenericMethod");
     }
 
