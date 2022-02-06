@@ -10,6 +10,7 @@ open Gendarme.Framework.Engines
 open Gendarme.Framework.Helpers
 open Gendarme.Framework.Rocks
 open System.Diagnostics.CodeAnalysis
+open System.Globalization
 
 [<Problem("The namespace in which the cmdlet class is defined must have a name in the following format: '<Product>.Commands'.>")>]
 [<Solution("Move or rename the class to a namespace that identifies the product and ends in '.Commands'.")>]
@@ -24,13 +25,20 @@ type DefineCmdletInTheCorrectNamespaceRule() =
                       Justification = "F# interfaces are like that")>]
     member this.CheckType(``type``: TypeDefinition) : RuleResult =
       let td = ``type``
+      let ns = td.Namespace
 
       if Tools.IsCmdlet td then
         if
-          td.Namespace.EndsWith(".Commands", StringComparison.Ordinal)
+          ns.EndsWith(".Commands", StringComparison.Ordinal)
           |> not
         then
-          this.Runner.Report(td, Severity.High, Confidence.High, td.FullName)
+          let msg =
+            String.Format(
+              CultureInfo.CurrentCulture,
+              Tools.resource "IncorrectNamespace",
+              ns
+            )
+          this.Runner.Report(td, Severity.High, Confidence.High, msg)
 
         this.Runner.CurrentRuleResult
       else

@@ -101,8 +101,8 @@ type JustifySuppressionRule() =
   member private self.Violation location target just =
     let msg =
       String.Format(
-        CultureInfo.InvariantCulture,
-        "Insufficient justification '{0}'",
+        CultureInfo.CurrentCulture,
+        Tools.resource "InsufficientJustification",
         just
       )
 

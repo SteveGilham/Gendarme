@@ -12,4 +12,10 @@
     <Compile Include="UseOnlyStandardVerbsRule.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

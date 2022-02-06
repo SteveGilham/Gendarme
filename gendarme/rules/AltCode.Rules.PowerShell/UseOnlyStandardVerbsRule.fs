@@ -40,8 +40,8 @@ type UseOnlyStandardVerbsRule() =
            |> not then
           let msg =
             String.Format(
-              CultureInfo.InvariantCulture,
-              "Non-standard verb {0} used here.",
+              CultureInfo.CurrentCulture,
+              Tools.resource "NonstandardVerb",
               verb
             )
 

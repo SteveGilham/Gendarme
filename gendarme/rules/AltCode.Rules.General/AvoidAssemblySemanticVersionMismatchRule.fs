@@ -34,7 +34,8 @@ open Gendarme.Framework.Rocks
 
 [<Problem("The assembly version (API contract), from [AssemblyVersion], is not consistent with the file version, from [AssemblyFileVersion].")>]
 [<Solution("This situation can be confusing once deployed. Make the file version is a sub-version of the contract semantic version.") >]
-
+[<Sealed>]
+[<AutoSerializable(false)>]
 type AvoidAssemblySemanticVersionMismatchRule() =
   inherit Rule()
 
@@ -47,15 +48,15 @@ type AvoidAssemblySemanticVersionMismatchRule() =
                       Justification = "F# interfaces are like that")>]
     member this.CheckAssembly(assembly: AssemblyDefinition) : RuleResult =
       // once compiled [AssemblyVersion] is not part of the custom attributes
-      let assembly_version = assembly.Name.Version
+      let assemblyVersion = assembly.Name.Version
 
-      if (assembly.HasCustomAttributes |> not || assembly_version.IsEmpty())
+      if (assembly.HasCustomAttributes |> not || assemblyVersion.IsEmpty())
       then
-        let msg = "Assembly is not completely versioned."
+        let msg = Tools.resource "IncompleteVersioning"
         this.Runner.Report(assembly, Severity.Medium, Confidence.High, msg);
         RuleResult.Failure
       else
-        let file_version =
+        let fileVersion =
           assembly.CustomAttributes
           |> Seq.filter (fun ca -> ca.HasConstructorArguments)
           |> Seq.filter (fun ca -> ca.AttributeType.IsNamed(afva))
@@ -63,26 +64,26 @@ type AvoidAssemblySemanticVersionMismatchRule() =
           |> Seq.filter (isNull >> not)
           |> Seq.map (fun ca -> Version.TryParse(ca.ToString()) |> snd)
           |> Seq.tryHead
-        match file_version with
+        match fileVersion with
         | None ->
-          let msg = "Assembly is not completely versioned."
+          let msg = Tools.resource "IncompleteVersioning"
           this.Runner.Report(assembly, Severity.Medium, Confidence.High, msg);
           RuleResult.Failure
         | Some version ->
-          let s = if assembly_version.Major <> version.Major || //primary sem-ver facets
-                     assembly_version.Minor <> version.Minor
+          let s = if assemblyVersion.Major <> version.Major || //primary sem-ver facets
+                     assemblyVersion.Minor <> version.Minor
                   then Some Severity.Critical
-                  else if (assembly_version.Build > 0) && // if non-default, must match
-                          (assembly_version.Build <> version.Build)
+                  else if (assemblyVersion.Build > 0) && // if non-default, must match
+                          (assemblyVersion.Build <> version.Build)
                   then Some Severity.High
-                  else if (assembly_version.Revision > 0) &&  // if non-default, must match
-                          (assembly_version.Revision <> version.Revision)
+                  else if (assemblyVersion.Revision > 0) &&  // if non-default, must match
+                          (assemblyVersion.Revision <> version.Revision)
                   then Some Severity.Medium
                   else None
           match s with
           | None -> RuleResult.Success
           | Some severity ->
-            let msg = String.Format(CultureInfo.InvariantCulture,
-              "Assembly version is '{0}' while file version is '{1}'.", assembly_version, file_version)
+            let msg = String.Format(CultureInfo.CurrentCulture,
+              Tools.resource "MismatchedVersioning", assemblyVersion, fileVersion)
             this.Runner.Report(assembly, severity, Confidence.High, msg)
             RuleResult.Failure

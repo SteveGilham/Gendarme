@@ -36,7 +36,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
         base.AssertRuleFailure (this.assembly, 1)
         Assert.AreEqual (Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
 
-        this.assembly.Name.Version <- new Version (0, 0, 0, 0)
+        this.assembly.Name.Version <- Version (0, 0, 0, 0)
         base.AssertRuleFailure (this.assembly, 1)
         Assert.AreEqual (Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
@@ -52,7 +52,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
       Assert.AreEqual (Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
       cac
-      |> Seq.iter (fun ca -> this.assembly.CustomAttributes.Add ca)
+      |> Seq.iter this.assembly.CustomAttributes.Add
 
   [<Test>]
   member this.AbsentAssemblyFileVersion () =
@@ -84,6 +84,8 @@ type AvoidAssemblySemanticVersionMismatchTest() =
   member this.VersionMatch () =
     // full 4 facets by construction
     base.AssertRuleSuccess (this.assembly)
+
+// fsharplint:disable  NonPublicValuesNames
 
   [<Test>]
   member this.VersionMismatch () =

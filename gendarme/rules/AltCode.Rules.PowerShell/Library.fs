@@ -7,8 +7,16 @@ open Gendarme.Framework
 open Gendarme.Framework.Engines
 open Gendarme.Framework.Helpers
 open Gendarme.Framework.Rocks
+open System.Resources
+open System.Reflection
 
 module Tools =
+
+  let internal resources =
+    ResourceManager("AltCode.Rules.PowerShell.Strings", Assembly.GetExecutingAssembly())
+
+  let resource x = resources.GetString x
+
   let cmdlet =
     TypeName(Namespace = "System.Management.Automation", Name = "Cmdlet")
 
@@ -130,4 +138,5 @@ module Tools =
                             Scope = "member",
                             Target = "<StartupCode$AltCode-Rules-PowerShell>.$Library.#.cctor()",
                             Justification = "Compiler generated type")>]
+[<assembly: System.Resources.NeutralResourcesLanguageAttribute("en-GB")>]
 ()

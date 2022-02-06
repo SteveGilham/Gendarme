@@ -4,6 +4,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
+[assembly: SuppressMessage("AltCode.Rules.General",
+                           "AvoidAssemblySemanticVersionMismatchRule",
+                           Justification = "Assembly version needed for mocking purposes")]
+
 namespace AltCode.Mocker
 {
   [Serializable]
