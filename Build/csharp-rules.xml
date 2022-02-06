@@ -4,7 +4,7 @@
            from="Gendarme.Rules.BadPractice.dll" />
     <rules include="*"
            from="Gendarme.Rules.Concurrency.dll" />
-    <!-- False positive/off by one in ProvideCorrectArgumentsToFormattingMethodsRule -->
+    <!-- 8 instances of False positive/off by one in ProvideCorrectArgumentsToFormattingMethodsRule -->
     <!-- 230 instances of CheckParametersNullityInVisibleMethodsRule -->
     <rules include="*"
            exclude="ProvideCorrectArgumentsToFormattingMethodsRule | CheckParametersNullityInVisibleMethodsRule"
