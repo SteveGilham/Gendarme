@@ -140,6 +140,7 @@ namespace Gendarme.Rules.Correctness
       Runner.Report(parameter, s, Confidence.Normal);
     }
 
+    // just looks for a check vs null, and not what the outome is (e.g. ArgumentNullException witn correct namw)
     private void CheckArgument(MethodDefinition method, Instruction ins)
     {
       ParameterDefinition parameter = ins.GetParameter(method);
