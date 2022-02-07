@@ -1377,7 +1377,7 @@ Target.activateFinal "ResetConsoleColours"
 "BuildDebug" ==> "Lint" ==> "All"
 
 "BuildDebug" ==> "FxCop"
-=?> ("All", Environment.isWindows && fxcop |> Option.isSome) // not supported
+=?> ("All", Environment.isWindows && fxcop |> Option.isSome) // where supported
 
 "Preparation" ==> "BuildRelease" ==> "Compilation"
 
@@ -1395,7 +1395,7 @@ Target.activateFinal "ResetConsoleColours"
 
 "BuildRelease" ==> "Packaging"
 
-"UnitTest" ==> "All"
+// "UnitTest" ==> "All" // redundant
 
 "Packaging" ==> "Unpack" ==> "OperationalTest"
 
