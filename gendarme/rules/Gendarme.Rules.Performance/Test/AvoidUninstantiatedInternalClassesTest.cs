@@ -39,12 +39,16 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
+[assembly: Test.Rules.Performance.Assembly]
+[module: Test.Rules.Performance.Module]
+
 namespace Test.Rules.Performance
 {
 #pragma warning disable 169, 414
 
   internal class UninstantiatedInternalClass
   {
+    [Method]
     public void display()
     {
     }
@@ -56,9 +60,18 @@ namespace Test.Rules.Performance
 
   internal class InstantiatedInternalClass
   {
+    [Delegate]
+    public delegate void SampleEventHandler(object sender, EventArgs e);
+
+    [Event]
+    public event SampleEventHandler SampleEvent;
+
     public void display()
     {
     }
+
+    [Property]
+    public string P { get; set; }
 
     public static void MainName(string[] args)
     {
@@ -106,6 +119,7 @@ namespace Test.Rules.Performance
     }
   }
 
+  [Struct]
   internal struct InternalInstantiatedStruct
   {
     public void display()
@@ -123,6 +137,7 @@ namespace Test.Rules.Performance
   // static classes in C# 1.
   internal sealed class InternalSealedClassWithPrivateCtor
   {
+    [Constructor]
     private InternalSealedClassWithPrivateCtor()
     {
     }
@@ -159,6 +174,7 @@ namespace Test.Rules.Performance
     }
   }
 
+  [Interface]
   internal interface IFace
   {
     void display();
@@ -210,6 +226,7 @@ namespace Test.Rules.Performance
 
   public class NestedEnumExternOutInstantiated
   {
+    [Enum]
     private enum PrivateEnum
     {
       Good,
@@ -250,6 +267,7 @@ namespace Test.Rules.Performance
   {
     public class Strings
     {
+      [Field]
       public const string Hello = "Allo";
     }
   }
@@ -272,7 +290,7 @@ namespace Test.Rules.Performance
     }
   }
 
-  internal class Item<T>
+  internal class Item<[GenericParameter] T>
   {
     private T item;
 
@@ -285,6 +303,7 @@ namespace Test.Rules.Performance
       this.item = item;
     }
 
+    [return: ReturnValue]
     public T GetItem()
     {
       return item;
@@ -296,14 +315,78 @@ namespace Test.Rules.Performance
     private T item1;
     private V item2;
 
-    public Items(T item1, V item2)
+    public Items(T item1, [Parameter] V item2)
     {
       this.item1 = item1;
       this.item2 = item2;
     }
   }
 
-  [TestFixture]
+  [Sealed, AttributeUsage(AttributeTargets.Assembly)]
+  internal class AssemblyAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Module)]
+  internal class ModuleAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Class)]
+  internal class ClassAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Struct)]
+  internal class StructAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Enum)]
+  internal class EnumAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Constructor)]
+  internal class ConstructorAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Method)]
+  internal class MethodAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Property)]
+  internal class PropertyAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Field)]
+  internal class FieldAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Event)] // TODO
+  internal class EventAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Interface)]
+  internal class InterfaceAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Parameter)]
+  internal class ParameterAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.Delegate)] // TODO
+  internal class DelegateAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.ReturnValue)] // TODO
+  internal class ReturnValueAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.GenericParameter)] // TODO
+  internal class GenericParameterAttribute : Attribute
+  { }
+
+  [Sealed, AttributeUsage(AttributeTargets.All)] // Unused
+  internal class AllAttribute : Attribute
+  { }
+
+  [TestFixture, Class]
   public class AvoidUninstantiatedInternalClassesTest : TypeRuleTestFixture<AvoidUninstantiatedInternalClassesRule>
   {
     private AssemblyDefinition assembly;
@@ -469,6 +552,27 @@ namespace Test.Rules.Performance
     public void MonoDoc()
     {
       AssertRuleDoesNotApply<NamespaceDoc>();
+    }
+
+    [Test]
+    public void TestAttributeTypes()
+    {
+      AssertRuleSuccess<AssemblyAttribute>();
+      AssertRuleSuccess<ModuleAttribute>();
+      AssertRuleSuccess<ClassAttribute>();
+      AssertRuleSuccess<StructAttribute>();
+      AssertRuleSuccess<EnumAttribute>();
+      AssertRuleSuccess<ConstructorAttribute>();
+      AssertRuleSuccess<MethodAttribute>();
+      AssertRuleSuccess<PropertyAttribute>();
+      AssertRuleSuccess<FieldAttribute>();
+      AssertRuleSuccess<EventAttribute>();
+      AssertRuleSuccess<InterfaceAttribute>();
+      AssertRuleSuccess<ParameterAttribute>();
+      AssertRuleSuccess<DelegateAttribute>();
+      AssertRuleSuccess<ReturnValueAttribute>();
+      AssertRuleSuccess<GenericParameterAttribute>();
+      AssertRuleFailure<AllAttribute>();
     }
   }
 }

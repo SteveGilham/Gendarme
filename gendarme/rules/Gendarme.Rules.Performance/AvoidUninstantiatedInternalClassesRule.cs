@@ -224,6 +224,60 @@ namespace Gendarme.Rules.Performance
       return (constructor.IsPrivate && !constructor.HasParameters);
     }
 
+    internal static RuleResult CheckAttributeType(TypeDefinition type)
+    {
+      AssemblyDefinition assembly = type.Module.Assembly;
+      if (CheckAttributes(assembly))
+        return RuleResult.Success;
+
+      foreach (var m in assembly.Modules)
+      {
+        if (CheckModule(m))
+          return RuleResult.Success;
+      }
+
+      return RuleResult.Failure;
+
+      bool CheckAttributes(ICustomAttributeProvider x)
+      {
+        return x.CustomAttributes.Any(a => a.AttributeType.FullName == type.FullName);
+      }
+
+      bool CheckCollection(IEnumerable<ICustomAttributeProvider> x)
+      {
+        return x.Any(CheckAttributes);
+      }
+
+      bool CheckModule(ModuleDefinition m)
+      {
+        if (CheckAttributes(m))
+          return true;
+
+        foreach (var t in m.GetAllTypes())
+        {
+          if (CheckAttributes(t) || CheckCollection(t.GenericParameters))
+            return true;
+
+          foreach (var m2 in t.Methods)
+          {
+            if (CheckAttributes(m2) ||
+              CheckCollection(m2.GenericParameters) ||
+              CheckAttributes(m2.MethodReturnType) ||
+              CheckCollection(m2.Parameters))
+              return true;
+          }
+
+          if (CheckCollection(t.Fields) ||
+              CheckCollection(t.Properties) ||
+              CheckCollection(t.Events)
+              )
+            return true;
+        }
+
+        return false;
+      }
+    }
+
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule apply to internal (non-visible) types
@@ -238,6 +292,13 @@ namespace Gendarme.Rules.Performance
       // used for documentation purpose by monodoc
       if (type.Name == "NamespaceDoc")
         return RuleResult.DoesNotApply;
+
+      if (type.Inherits(attribute))
+      {
+        var result = CheckAttributeType(type);
+        if (result == RuleResult.Success)
+          return result;
+      }
 
       // rule applies
 
@@ -271,6 +332,12 @@ namespace Gendarme.Rules.Performance
     {
       Namespace = "System.Runtime.CompilerServices",
       Name = "InternalsVisibleToAttribute"
+    };
+
+    private static readonly TypeName attribute = new TypeName
+    {
+      Namespace = "System",
+      Name = "Attribute"
     };
   }
 }
