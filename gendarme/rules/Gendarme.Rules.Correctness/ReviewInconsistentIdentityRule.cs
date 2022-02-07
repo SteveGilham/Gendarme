@@ -220,6 +220,9 @@ namespace Gendarme.Rules.Correctness
 #endif
     }
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                 "AvoidLongMethodsRule",
+                 Justification = "Fairly linear")]
     private void ProcessInstruction(MethodInfo info, MethodDefinition method, ISet<MemberReference> iFields, ISet<MemberReference> iGetters, Instruction ins)
     {
       // If we're loading a field which belongs to our type then

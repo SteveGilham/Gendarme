@@ -119,6 +119,9 @@ namespace Gendarme.Rules.Correctness
     [SuppressMessage("Gendarme.Rules.Performance",
                      "AvoidRepetitiveCallsToPropertiesRule",
                      Justification = "Executed once")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                 "AvoidLongMethodsRule",
+                 Justification = "Fairly linear")]
     public RuleResult CheckType(TypeDefinition type)
     {
       // rule applies only to types and structures (value types)
