@@ -37,12 +37,12 @@ namespace Gendarme.Framework
 {
   public class EngineController
   {
-    private readonly Dictionary<string, Engine> engines;
+    private readonly Dictionary<string, IEngine> engines;
 
     public EngineController(IRunner runner)
     {
       Runner = runner;
-      engines = new Dictionary<string, Engine>();
+      engines = new Dictionary<string, IEngine>();
     }
 
     public IRunner Runner
@@ -53,10 +53,10 @@ namespace Gendarme.Framework
 
     public void Subscribe(string engineName)
     {
-      if (!engines.TryGetValue(engineName, out Engine engine))
+      if (!engines.TryGetValue(engineName, out IEngine engine))
       {
         Type type = Type.GetType(engineName);
-        engine = (Engine)Activator.CreateInstance(type);
+        engine = (IEngine)Activator.CreateInstance(type);
         engines.Add(type.FullName, engine);
       }
       engine.Initialize(this);
@@ -64,7 +64,7 @@ namespace Gendarme.Framework
 
     public void Unsubscribe(string engineName)
     {
-      if (engines.TryGetValue(engineName, out Engine engine))
+      if (engines.TryGetValue(engineName, out IEngine engine))
       {
         engine.TearDown();
         engines.Remove(engineName);
@@ -210,17 +210,17 @@ namespace Gendarme.Framework
       BuildingModule = null;
       BuildingAssembly = null;
 
-      foreach (Engine engine in engines.Values)
+      foreach (IEngine engine in engines.Values)
       {
         engine.TearDown();
       }
     }
 
-    public Engine this[string name]
+    public IEngine this[string name]
     {
       get
       {
-        engines.TryGetValue(name, out Engine engine);
+        engines.TryGetValue(name, out IEngine engine);
         return engine;
       }
     }
