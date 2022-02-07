@@ -132,6 +132,11 @@ namespace Gendarme.Rules.Portability
         AddPoints (2 - dots);
 
       // handle different cases
+      if (CanFormattingString(str)) {
+        AddPoints(-5); // remove points (5 because '\:' is less common in paths, but common in formatting string)
+        ProcessFormatString(str);
+      }
+
       if (CanBeWindowsAbsolutePath(str))
       {
         // whoooaaa! most probably we have a windows absolute path here
@@ -196,6 +201,11 @@ namespace Gendarme.Rules.Portability
         return null;
     }
 
+    private static bool CanFormattingString(string s)
+    {
+      return (s.Contains(@"\:"));
+    }
+
     private static bool CanBeWindowsAbsolutePath(string s)
     {
       // true for strings like ?:\*
@@ -214,6 +224,20 @@ namespace Gendarme.Rules.Portability
     {
       // true for strings like /*
       return s[0] == '/';
+    }
+
+    private void ProcessFormatString(string format)
+    {
+      if (format.Contains(@"h\:mm\:s") || format.Contains(@"h\:m\:s")) {
+        AddPoints(-4);
+        this.backslashes -= 2;
+      } else if (format.Contains(@"h\:m")) {
+        AddPoints(-2);
+        this.backslashes--;
+      } if (format.Contains(@"m\:s")) {
+        AddPoints(-2);
+        this.backslashes--;
+      }
     }
 
     private void ProcessWindowsPath()
