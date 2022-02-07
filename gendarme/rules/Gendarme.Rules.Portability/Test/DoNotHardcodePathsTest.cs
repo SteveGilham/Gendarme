@@ -265,7 +265,7 @@ namespace Test.Rules.Portability
       AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportStringsWithManyDots");
       AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportXPath");
       AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportRegexes");
-      AssertRuleSuccess<DoNotHardcodePathsTest> ("DontReportTimeFormats");
+      AssertRuleSuccess<DoNotHardcodePathsTest>("DontReportTimeFormats");
     }
 
     // test case provided by Richard Birkby

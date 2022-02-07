@@ -134,9 +134,9 @@ namespace Gendarme.Rules.Portability
         AddPoints (2 - dots);
 
       // handle different cases
-      if ((relativePathFix == false) && CanFormattingString(str)) {
+      if ((relativePathFix == false) && MaybeFormat(str)) {
         AddPoints(-5); // remove points (5 because '\:' is less common in paths, but common in formatting string)
-        ProcessFormatString(str);
+        ProcessFormat(str);
       }
 
       if (CanBeWindowsAbsolutePath(str))
@@ -203,9 +203,9 @@ namespace Gendarme.Rules.Portability
         return null;
     }
 
-    private static bool CanFormattingString(string s)
+    private static bool MaybeFormat(string s)
     {
-      return (s.Contains(@"\:"));
+      return (s.Contains(@"\:", StringComparison.Ordinal));
     }
 
     private static bool CanBeWindowsAbsolutePath(string s)
@@ -240,20 +240,20 @@ namespace Gendarme.Rules.Portability
     private bool FixRelativePath(ref string path)
     {
       bool relativePathFix = false;
-      if (path.StartsWith(".\\")) {
+      if (path.StartsWith(".\\", StringComparison.Ordinal)) {
         AddPoints(1);
         path = path.Remove(0, 2);
         backslashes--;
         relativePathFix = true;
-      } else if (path.StartsWith("./")) {
+      } else if (path.StartsWith("./", StringComparison.Ordinal)) {
         AddPoints(2);
         path = path.Remove(0, 2);
         slashes--;
         relativePathFix = true;
       } else {
         do {
-           bool slashParrent = (path.StartsWith("../"));
-           bool backSlashParrent = (path.StartsWith("..\\"));
+           bool slashParrent = (path.StartsWith("../", StringComparison.Ordinal));
+           bool backSlashParrent = (path.StartsWith("..\\", StringComparison.Ordinal));
            if (slashParrent || backSlashParrent) {
              AddPoints(3);
              path = path.Remove(0, 3);
@@ -270,15 +270,15 @@ namespace Gendarme.Rules.Portability
       return (relativePathFix);
     }
 
-    private void ProcessFormatString(string format)
+    private void ProcessFormat(string format)
     {
-      if (format.Contains(@"h\:mm\:s") || format.Contains(@"h\:m\:s")) {
+      if (format.Contains(@"h\:mm\:s", StringComparison.Ordinal) || format.Contains(@"h\:m\:s", StringComparison.Ordinal)) {
         AddPoints(-4);
         this.backslashes -= 2;
-      } else if (format.Contains(@"h\:m")) {
+      } else if (format.Contains(@"h\:m", StringComparison.Ordinal)) {
         AddPoints(-2);
         this.backslashes--;
-      } if (format.Contains(@"m\:s")) {
+      } if (format.Contains(@"m\:s", StringComparison.Ordinal)) {
         AddPoints(-2);
         this.backslashes--;
       }
