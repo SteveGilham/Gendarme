@@ -5,7 +5,7 @@
 * In `AvoidMethodsWithSideEffectsInConditionalCodeRule`, consider `System.Array.Empty<T>()` to be pure.
 * [NEW RULE] `AltCode.Rules.General.AvoidAssemblySemanticVersionMismatchRule` to insist that the API contract (major, minor, and optionally build if defined for the assembly) match, but the lesser facets, revision and possibly build are free.
 * `AvoidUninstantiatedInternalClassesRule` checks if `internal` attribute types are used in the assembly, and counts those as instantiation
-* Revive `DeclareEventsExplicitlyRule`
+* Revive Correctness rule `DeclareEventsExplicitlyRule`
 * Include changes from the upstream repo
   * Add more heuristics to `DoNotHardcodePathsRule`
   * Tune the severity and confidence levels of `AvoidUnnecessarySpecializationRule` and the avoid duplicated code rules according to context
