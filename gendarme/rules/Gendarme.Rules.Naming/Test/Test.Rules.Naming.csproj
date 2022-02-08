@@ -7,6 +7,5 @@
     <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Naming.csproj" />
-    <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
   </ItemGroup>
 </Project>

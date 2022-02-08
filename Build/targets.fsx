@@ -288,6 +288,9 @@ module SolutionRoot =
 
         let v' = !Version
 
+        // make the first one `true` if we ever want the static fields
+        let config = new AssemblyInfoFileConfig(false, false, "Gendarme")
+
         AssemblyInfoFile.create
             "./_Generated/AssemblyStaticInfo.fs"
             [ AssemblyInfo.Product "altcode.gendarme"
@@ -302,7 +305,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default)
+            (Some config)
 
         AssemblyInfoFile.create
             "./_Generated/AssemblyStaticInfo.cs"
@@ -319,7 +322,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default)
+            (Some config)
 
         AssemblyInfoFile.create
             "./_Generated/MockerAssemblyStaticInfo.cs"
@@ -336,7 +339,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default))
+            (Some config))
 
 // Basic compilation
 
