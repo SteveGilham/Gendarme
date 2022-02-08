@@ -60,7 +60,7 @@ type AvoidAssemblySemanticVersionMismatchRule() =
           assembly.CustomAttributes
           |> Seq.filter (fun ca -> ca.HasConstructorArguments)
           |> Seq.filter (fun ca -> ca.AttributeType.IsNamed(afva))
-          |> Seq.map (fun ca -> ca.ConstructorArguments [ 0 ].Value)
+          |> Seq.map (fun ca -> ca.ConstructorArguments.[ 0 ].Value)
           |> Seq.filter (isNull >> not)
           |> Seq.map (fun ca -> Version.TryParse(ca.ToString()) |> snd)
           |> Seq.tryHead
