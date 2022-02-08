@@ -147,7 +147,7 @@ namespace Gendarme.Rules.Smells
       if (type.IsAbstract)
       {
         if (HasExpectedInheritedTypeCount(type, 1))
-          Runner.Report(type, Severity.Medium, Confidence.Normal, "This abstract class has only one class inheritting from.  Abstract classes without responsability are a sign for the Speculative Generality smell.");
+          Runner.Report(type, Severity.Medium, Confidence.Normal, "This abstract class has only one class inheriting from it.  Abstract classes without responsability are a sign for the Speculative Generality smell.");
       }
     }
 
@@ -210,7 +210,7 @@ namespace Gendarme.Rules.Smells
     private void CheckUnnecesaryDelegation(TypeDefinition type)
     {
       if (MostlyMethodsDelegatesCall(type) && InheritsOnlyFromObject(type))
-        Runner.Report(type, Severity.Medium, Confidence.Normal, "This class contains a lot of methods that only delegates the call to other.  This kind of Delegation could be a sign for Speculative Generality");
+        Runner.Report(type, Severity.Medium, Confidence.Normal, "This class contains mostly methods that only delegates the call to other.  This kind of Delegation could be a sign for Speculative Generality");
     }
 
     private static bool AvoidUnusedParametersRuleScheduled(IRunner runner)
