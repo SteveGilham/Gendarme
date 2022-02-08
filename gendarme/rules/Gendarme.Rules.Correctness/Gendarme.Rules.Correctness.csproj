@@ -43,7 +43,6 @@
     <Compile Remove="NullDerefFrame.cs" />
     <Compile Remove="NullDerefRule.cs" />
     <Compile Remove="Nullity.cs" />
-    <Compile Remove="DeclareEventsExplicitlyRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Test\**\*.resx" />

@@ -7,7 +7,4 @@
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Serialization.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="MarkEnumerationsAsSerializableTest.cs" />
-  </ItemGroup>
 </Project>
