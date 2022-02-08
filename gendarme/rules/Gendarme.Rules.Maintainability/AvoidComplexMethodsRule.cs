@@ -62,7 +62,7 @@ namespace Gendarme.Rules.Maintainability
     // so people using both tools should not see conflicting results
     private const int DefaultSuccessThreshold = 25;
 
-    private static OpCodeBitmask ld = new OpCodeBitmask(0xFFFF6C3FC, 0x1B0300000000FFE0, 0x400100FFF800, 0xDE0);
+    private static readonly OpCodeBitmask ld = new OpCodeBitmask(0xFFFF6C3FC, 0x1B0300000000FFE0, 0x400100FFF800, 0xDE0);
 
     public AvoidComplexMethodsRule()
     {
@@ -185,11 +185,11 @@ namespace Gendarme.Rules.Maintainability
     private static int GetSwitchCyclomaticComplexity(MethodDefinition method)
     {
       Instruction previous = null;
-      Instruction branch = null;
       int cc = 1;
 
       foreach (Instruction ins in method.Body.Instructions)
       {
+        Instruction branch;
         switch (ins.OpCode.FlowControl)
         {
           case FlowControl.Branch:
