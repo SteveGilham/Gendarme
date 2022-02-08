@@ -445,9 +445,9 @@ _Target
 
                     printfn "%s" (finish text text2))
 
-        let deprecatedRules = [
-          "-Microsoft.Usage#CA2202" // double dispose
-          "-Microsoft.Security#CA2104" ] // // :DoNotDeclareReadOnlyMutableReferenceTypes"
+        let deprecatedRules =
+            [ "-Microsoft.Usage#CA2202" // double dispose
+              "-Microsoft.Security#CA2104" ] // // :DoNotDeclareReadOnlyMutableReferenceTypes"
 
         let gendarmeRules =
             [ "-Microsoft.Design#CA1002" // :DoNotExposeGenericLists"
@@ -474,7 +474,7 @@ _Target
               "-Microsoft.Maintainability#CA1506" ] // AvoidExcessiveClassCoupling
 
         let standardRules =
-            [ "-Microsoft.Design#CA1020"// small namespaces
+            [ "-Microsoft.Design#CA1020" // small namespaces
               "-Microsoft.Naming#CA1702" // :CompoundWordsShouldBeCasedCorrectly" // too opinionated
               "-Microsoft.Naming#CA1704" // :IdentifiersShouldBeSpelledCorrectly"
               "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
@@ -604,7 +604,10 @@ _Target
         Directory.ensure "./_Reports"
 
         !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
-        |> Seq.filter(fun p -> (p |> Path.GetFileNameWithoutExtension) <> "Test.Rules")
+        |> Seq.filter
+            (fun p ->
+                (p |> Path.GetFileNameWithoutExtension)
+                <> "Test.Rules")
         |> Seq.iter
             (fun p ->
                 let tname = Path.GetFileNameWithoutExtension p
@@ -650,7 +653,10 @@ _Target
         Directory.ensure "./_Reports"
 
         !!(@"./**/Test.*.*sproj")
-        |> Seq.filter(fun p -> (p |> Path.GetFileNameWithoutExtension) <> "Test.Rules")
+        |> Seq.filter
+            (fun p ->
+                (p |> Path.GetFileNameWithoutExtension)
+                <> "Test.Rules")
         |> Seq.iter
             (fun proj ->
                 try
@@ -685,7 +691,10 @@ _Target
 
         let coverage =
             !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
-            |> Seq.filter(fun p -> (p |> Path.GetFileNameWithoutExtension) <> "Test.Rules")
+            |> Seq.filter
+                (fun p ->
+                    (p |> Path.GetFileNameWithoutExtension)
+                    <> "Test.Rules")
             |> Seq.fold
                 (fun l test ->
                     let tname = test |> Path.GetFileNameWithoutExtension
@@ -800,7 +809,10 @@ _Target
 
         let coverage =
             !!(@"gendarme/**/Test.*.*sproj")
-            |> Seq.filter(fun p -> (p |> Path.GetFileNameWithoutExtension) <> "Test.Rules")
+            |> Seq.filter
+                (fun p ->
+                    (p |> Path.GetFileNameWithoutExtension)
+                    <> "Test.Rules")
             |> Seq.fold
                 (fun l test ->
                     printfn "%A" test
@@ -1368,17 +1380,18 @@ _Target
         Directory.ensure "./_Reports"
         let packroot = Path.GetFullPath "./_Packaging"
         let working = Path.getFullName "./_Unpack-tool"
-        let altcover = Path.getFullName  "../altcover"
+        let altcover = Path.getFullName "../altcover"
         let mutable set = false
 
         Directory.ensure working
 
         let nugget =
-            !! (packroot @@ "altcode.gendarme-tool.*.nupkg")
+            !!(packroot @@ "altcode.gendarme-tool.*.nupkg")
             |> Seq.last
 
         let nuggetVer =
-            (nugget |> Path.GetFileNameWithoutExtension).Substring("altcode.gendarme-tool.".Length)
+            (nugget |> Path.GetFileNameWithoutExtension)
+                .Substring("altcode.gendarme-tool.".Length)
 
         try
             let config =
@@ -1448,24 +1461,24 @@ _Target
                               Console = true
                               Log = Path.GetFullPath "./_Reports/altcoverCheck.html"
                               LogKind = Gendarme.LogKind.Html
-                              Targets = files |> Seq.map (fun f -> altcover @@  f)
+                              Targets = files |> Seq.map (fun f -> altcover @@ f)
                               ToolType = ToolType.CreateGlobalTool()
                               FailBuildOnDefect = true })
-            finally
-                if set then
-                    Actions.RunDotnet
-                        (fun o' ->
-                            { dotnetOptions o' with
-                                  WorkingDirectory = working })
-                        "tool"
-                        ("uninstall -g altcode.gendarme-tool")
-                        "uninstalled"
+        finally
+            if set then
+                Actions.RunDotnet
+                    (fun o' ->
+                        { dotnetOptions o' with
+                              WorkingDirectory = working })
+                    "tool"
+                    ("uninstall -g altcode.gendarme-tool")
+                    "uninstalled"
 
-                let folder =
-                    nugetCache @@ "altcode.gendarme-tool" @@ nuggetVer
+            let folder =
+                nugetCache @@ "altcode.gendarme-tool" @@ nuggetVer
 
-                Shell.mkdir folder
-                Shell.deleteDir folder)
+            Shell.mkdir folder
+            Shell.deleteDir folder)
 
 _Target "All" ignore
 
@@ -1512,7 +1525,9 @@ Target.activateFinal "ResetConsoleColours"
 ==> "DotnetGlobalIntegration"
 ==> "OperationalTest"
 
-"BuildDebug" ==> "DotnetGlobalIntegration" ==> "CheckAltCover"
+"BuildDebug"
+==> "DotnetGlobalIntegration"
+==> "CheckAltCover"
 
 "OperationalTest" ==> "All"
 

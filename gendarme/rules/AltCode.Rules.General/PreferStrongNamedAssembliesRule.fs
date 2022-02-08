@@ -27,8 +27,14 @@ type PreferStrongNamedAssembliesRule() =
     member self.CheckAssembly(assembly: AssemblyDefinition) : RuleResult =
       if assembly.Name.PublicKeyToken |> Array.isEmpty then
         let defect =
-          Defect(self, assembly, assembly, Severity.Low, Confidence.High,
-                 Tools.resource "NoStrongName")
+          Defect(
+            self,
+            assembly,
+            assembly,
+            Severity.Low,
+            Confidence.High,
+            Tools.resource "NoStrongName"
+          )
 
         self.Runner.Report defect
 
