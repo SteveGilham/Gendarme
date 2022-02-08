@@ -3,7 +3,7 @@
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\framework\Test\Tests.Framework.csproj" />
+    <ProjectReference Include="..\..\..\framework\Test\Test.Framework.csproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Design.Linq.csproj" />
   </ItemGroup>

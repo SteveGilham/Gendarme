@@ -35,66 +35,66 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Design.Linq {
+namespace Test.Rules.Design.Linq
+{
+  public static class Extensions
+  {
+    public static string NotAnExtension(object self)
+    {
+      return String.Empty;
+    }
 
-	public static class Extensions {
+    public static string ExtendObject(this object self)
+    {
+      return String.Format("'{0}', type '{1}', hashcode: {2}",
+        self.ToString(), self.GetType(), self.GetHashCode());
+    }
 
-		public static string NotAnExtension (object self)
-		{
-			return String.Empty;
-		}
+    public static string ExtendValueType(this int self)
+    {
+      return self.ToString();
+    }
 
-		public static string ExtendObject (this object self)
-		{
-			return String.Format ("'{0}', type '{1}', hashcode: {2}", 
-				self.ToString (), self.GetType (), self.GetHashCode ());
-		}
+    public static string ExtendInterface(this ICloneable self)
+    {
+      return self.ToString();
+    }
 
-		public static string ExtendValueType (this int self)
-		{
-			return self.ToString ();
-		}
+    public static string ExtendEnum(this DateTimeKind self)
+    {
+      return self.ToString();
+    }
 
-		public static string ExtendInterface (this ICloneable self)
-		{
-			return self.ToString ();
-		}
+    public static string ExtendType(this OperatingSystem self)
+    {
+      return self.ToString();
+    }
+  }
 
-		public static string ExtendEnum (this DateTimeKind self)
-		{
-			return self.ToString ();
-		}
+  [TestFixture]
+  public class AvoidExtensionMethodOnSystemObjectTest : MethodRuleTestFixture<AvoidExtensionMethodOnSystemObjectRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      AssertRuleDoesNotApply(typeof(Extensions), "NotAnExtension");
+    }
 
-		public static string ExtendType (this OperatingSystem self)
-		{
-			return self.ToString ();
-		}
-	}
+    [Test]
+    public void ExtendingSystemObject()
+    {
+      AssertRuleFailure(typeof(Extensions), "ExtendObject", 1);
+    }
 
-	[TestFixture]
-	public class AvoidExtensionMethodOnSystemObjectTest : MethodRuleTestFixture<AvoidExtensionMethodOnSystemObjectRule> {
-
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			AssertRuleDoesNotApply (typeof (Extensions), "NotAnExtension");
-		}
-
-		[Test]
-		public void ExtendingSystemObject ()
-		{
-			AssertRuleFailure (typeof (Extensions), "ExtendObject", 1);
-		}
-
-		[Test]
-		public void Extending ()
-		{
-			AssertRuleSuccess (typeof (Extensions), "ExtendValueType");
-			AssertRuleSuccess (typeof (Extensions), "ExtendInterface");
-			AssertRuleSuccess (typeof (Extensions), "ExtendEnum");
-			AssertRuleSuccess (typeof (Extensions), "ExtendType");
-		}
-	}
+    [Test]
+    public void Extending()
+    {
+      AssertRuleSuccess(typeof(Extensions), "ExtendValueType");
+      AssertRuleSuccess(typeof(Extensions), "ExtendInterface");
+      AssertRuleSuccess(typeof(Extensions), "ExtendEnum");
+      AssertRuleSuccess(typeof(Extensions), "ExtendType");
+    }
+  }
 }

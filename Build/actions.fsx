@@ -45,13 +45,6 @@ module Actions =
                         printfn "Deleting %s" n
                         Directory.Delete(n, true))
 
-                !!(@"./*Tests/*.tests.core.fsproj")
-                |> Seq.map
-                    (fun f ->
-                        (Path.GetDirectoryName f)
-                        @@ "coverage.opencover.xml")
-                |> Seq.iter File.Delete
-
                 let temp = Environment.environVar "TEMP"
 
                 if not <| String.IsNullOrWhiteSpace temp then
