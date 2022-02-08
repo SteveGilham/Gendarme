@@ -35,6 +35,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Performance
 {
@@ -144,7 +145,11 @@ namespace Gendarme.Rules.Performance
       return Runner.CurrentRuleResult;
     }
 
-    private bool IsGuiGeneratedCode(MethodDefinition method, FieldReference fr)
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "AvoidUnnecessarySpecializationRule",
+                     Justification = "That would be spurious generality")]
+    private static bool IsGuiGeneratedCode(MethodDefinition method, FieldReference fr)
     {
       return (string.Equals(fr.Name, "components", StringComparison.Ordinal)
           && method.DeclaringType.IsDesignable());
