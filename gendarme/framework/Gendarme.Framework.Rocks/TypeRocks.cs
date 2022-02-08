@@ -705,5 +705,30 @@ namespace Gendarme.Framework.Rocks
       }
       return type.IsPublic;
     }
+
+    /// <summary>
+    /// Check if the type may have Visual Studio designer support.
+    /// </summary>
+    /// <param name="self">The TypeReference on which the extension method can be called.</param>
+    /// <returns>True if the type is derived from Form or UserControl, false otherwise.</returns>
+    public static bool IsDesignable(this TypeReference self)
+    {
+      // TODO -- WPF, workflows, ...
+      var types = new[] { form, control };
+
+      return types.Any(self.Inherits);
+    }
+
+    private static readonly TypeName form = new TypeName
+    {
+      Namespace = "System.Windows.Forms",
+      Name = "Form"
+    };
+
+    private static readonly TypeName control = new TypeName
+    {
+      Namespace = "System.Windows.Forms",
+      Name = "UserControl"
+    };
   }
 }
