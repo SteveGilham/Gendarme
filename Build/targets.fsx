@@ -1357,6 +1357,111 @@ _Target
         |> Async.RunSynchronously
         |> Seq.exists (fun x -> x <> 0)
         |> failOnIssuesFound)
+        
+_Target
+    "CheckAltCover"
+    (fun _ -> // Needs debug because release is compiled --standalone which contaminates everything
+        Directory.ensure "./_Reports"
+        let packroot = Path.GetFullPath "./_Packaging"
+        let working = Path.getFullName "./_Unpack-tool"
+        let altcover = Path.getFullName  "../altcover"
+        let mutable set = false
+
+        Directory.ensure working
+
+        let nugget =
+            !! (packroot @@ "altcode.gendarme-tool.*.nupkg")
+            |> Seq.last
+
+        let nuggetVer =
+            (nugget |> Path.GetFileNameWithoutExtension).Substring("altcode.gendarme-tool.".Length)
+
+        try
+            let config =
+                XDocument.Load "./Build/NuGet.config.dotnettest"
+
+            let repo =
+                config.Descendants(XName.Get("add")) |> Seq.head
+
+            repo.SetAttributeValue(XName.Get "value", packroot)
+            config.Save(working @@ "NuGet.config")
+
+            Actions.RunDotnet
+                (fun o' ->
+                    { dotnetOptions o' with
+                          WorkingDirectory = working })
+                "tool"
+                ("install -g altcode.gendarme-tool --add-source "
+                 + (Path.getFullName "./_Packaging")
+                 + " --version "
+                 + nuggetVer)
+                "Installed"
+
+            Actions.RunDotnet
+                (fun o' ->
+                    { dotnetOptions o' with
+                          WorkingDirectory = working })
+                "tool"
+                ("list -g ")
+                "Checked"
+
+            set <- true
+
+            [ ("./Build/common-rules.xml",
+               [ "_Binaries/AltCover.Engine/Debug+AnyCPU/netstandard2.0/AltCover.Engine.dll"
+                 "_Binaries/AltCover/Debug+AnyCPU/netcoreapp2.0/AltCover.dll"
+                 "_Binaries/AltCover.Recorder/Debug+AnyCPU/net20/AltCover.Recorder.dll"
+                 "_Binaries/AltCover.Async/Debug+AnyCPU/net46/AltCover.Async.dll"
+                 "_Binaries/AltCover.PowerShell/Debug+AnyCPU/netstandard2.0/AltCover.PowerShell.dll"
+                 "_Binaries/AltCover.Fake/Debug+AnyCPU/netstandard2.0/AltCover.Fake.dll"
+                 "_Binaries/AltCover.DotNet/Debug+AnyCPU/netstandard2.0/AltCover.DotNet.dll"
+                 "_Binaries/AltCover.Toolkit/Debug+AnyCPU/netstandard2.0/AltCover.Toolkit.dll"
+                 "_Binaries/AltCover.UICommon/Debug+AnyCPU/netstandard2.0/AltCover.UICommon.dll"
+                 "_Binaries/AltCover.Visualizer/Debug+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" // GTK3 (obsolete)
+                 "_Binaries/AltCover.Fake.DotNet.Testing.AltCover/Debug+AnyCPU/netstandard2.0/AltCover.Fake.DotNet.Testing.AltCover.dll" ])
+              ("./Build/common-rules.xml",  // Framework builds
+               [ "_Binaries/AltCover/Debug+AnyCPU/net472/AltCover.exe" // framework builds
+                 "_Binaries/AltCover.Visualizer/Debug+AnyCPU/net472/AltCover.Visualizer.exe" ])
+              ("./Build/common-rules.xml",
+               [ "_Binaries/AltCover/Debug+AnyCPU/netcoreapp2.1/AltCover.dll" // global tool builds
+                 "_Binaries/AltCover.Avalonia/Debug+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" ])
+              ("./Build/csharp-rules.xml",
+               [ "_Binaries/AltCover.DataCollector/Debug+AnyCPU/netstandard2.0/AltCover.DataCollector.dll"
+                 "_Binaries/AltCover.Monitor/Debug+AnyCPU/netstandard2.0/AltCover.Local.Monitor.dll"
+                 "_Binaries/AltCover.FontSupport/Debug+AnyCPU/netstandard2.0/AltCover.FontSupport.dll"
+                 "_Binaries/AltCover.Cake/Debug+AnyCPU/netstandard2.0/AltCover.Cake.dll" ])
+              ("./Build/csharp-rules.xml",  // Framework builds
+               [ "_Binaries/AltCover.Monitor/Debug+AnyCPU/net20/AltCover.Local.Monitor.dll"
+                 "_Binaries/AltCover.FontSupport/Debug+AnyCPU/net472/AltCover.FontSupport.dll" ]) ]
+            |> Seq.iter
+                (fun (ruleset, files) ->
+                    Gendarme.run
+                        { Gendarme.Params.Create() with
+                              WorkingDirectory = working
+                              Severity = Gendarme.Severity.All
+                              Confidence = Gendarme.Confidence.All
+                              Configuration = altcover @@ ruleset
+                              Console = true
+                              Log = Path.GetFullPath "./_Reports/altcoverCheck.html"
+                              LogKind = Gendarme.LogKind.Html
+                              Targets = files |> Seq.map (fun f -> altcover @@  f)
+                              ToolType = ToolType.CreateGlobalTool()
+                              FailBuildOnDefect = true })
+            finally
+                if set then
+                    Actions.RunDotnet
+                        (fun o' ->
+                            { dotnetOptions o' with
+                                  WorkingDirectory = working })
+                        "tool"
+                        ("uninstall -g altcode.gendarme-tool")
+                        "uninstalled"
+
+                let folder =
+                    nugetCache @@ "altcode.gendarme-tool" @@ nuggetVer
+
+                Shell.mkdir folder
+                Shell.deleteDir folder)
 
 _Target "All" ignore
 
@@ -1403,7 +1508,7 @@ Target.activateFinal "ResetConsoleColours"
 ==> "DotnetGlobalIntegration"
 ==> "OperationalTest"
 
-"BuildDebug" ==> "DotnetGlobalIntegration"
+"BuildDebug" ==> "DotnetGlobalIntegration" ==> "CheckAltCover"
 
 "OperationalTest" ==> "All"
 
