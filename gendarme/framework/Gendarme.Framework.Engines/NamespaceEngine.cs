@@ -108,7 +108,7 @@ namespace Gendarme.Framework.Engines
     public static IEnumerable<string> NamespacesInside(AssemblyDefinition assembly)
     {
       if (assembly == null)
-        throw new ArgumentNullException("assembly");
+        throw new ArgumentNullException(nameof(assembly));
 
       if (!assemblies.TryGetValue(assembly, out HashSet<string> namespaces))
         yield return null;
