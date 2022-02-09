@@ -29,7 +29,7 @@
 //
 
 using System;
-
+using System.Diagnostics.CodeAnalysis;
 using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
@@ -156,6 +156,16 @@ namespace Gendarme.Rules.Concurrency
       Name = "Monitor"
     };
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization",
+                     "CA1303:Do not pass literals as localized parameters",
+                     Justification = "TODO -- g10n support")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                 "AvoidLongMethodsRule",
+                 Justification = "maybe refactor")]
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                 "AvoidComplexMethodsRule",
+                 Justification = "maybe refactor from 31")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // rule doesn't apply if the method has no IL and it has no meaning to test generated methods

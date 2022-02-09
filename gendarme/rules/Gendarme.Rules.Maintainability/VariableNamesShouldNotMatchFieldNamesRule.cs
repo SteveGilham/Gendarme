@@ -35,6 +35,7 @@ using Mono.Cecil.Cil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Maintainability
 {
@@ -84,6 +85,10 @@ namespace Gendarme.Rules.Maintainability
       fields = new HashSet<string>();
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization",
+                     "CA1303:Do not pass literals as localized parameters",
+                     Justification = "TODO -- g10n support")]
     public RuleResult CheckType(TypeDefinition type)
     {
       // We only like types with fields AND methods.
