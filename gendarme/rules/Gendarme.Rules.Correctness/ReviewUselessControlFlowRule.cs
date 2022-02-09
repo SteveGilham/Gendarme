@@ -36,92 +36,99 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Correctness {
+namespace Gendarme.Rules.Correctness
+{
+  // rule idea credits to FindBug - http://findbugs.sourceforge.net/
+  // UCF: Useless control flow to next line (UCF_USELESS_CONTROL_FLOW_NEXT_LINE)
+  // UCF: Useless control flow (UCF_USELESS_CONTROL_FLOW)
 
-	// rule idea credits to FindBug - http://findbugs.sourceforge.net/
-	// UCF: Useless control flow to next line (UCF_USELESS_CONTROL_FLOW_NEXT_LINE)
-	// UCF: Useless control flow (UCF_USELESS_CONTROL_FLOW)
+  /// <summary>
+  /// This rule checks for empty blocks that produce useless control flow inside IL.
+  /// This usually occurs when a block is left incomplete or when a typo is made.
+  /// </summary>
+  /// <example>
+  /// Bad example (empty):
+  /// <code>
+  /// if (x == 0) {
+  ///	// TODO - ever seen such a thing ? ;-)
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (typo):
+  /// <code>
+  /// if (x == 0); {
+  ///	Console.WriteLine ("always printed");
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// if (x == 0) {
+  ///	Console.WriteLine ("printed only if x == 0");
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule checks for empty blocks that produce useless control flow inside IL. 
-	/// This usually occurs when a block is left incomplete or when a typo is made.
-	/// </summary>
-	/// <example>
-	/// Bad example (empty):
-	/// <code>
-	/// if (x == 0) {
-	///	// TODO - ever seen such a thing ? ;-)
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (typo):
-	/// <code>
-	/// if (x == 0); {
-	///	Console.WriteLine ("always printed");
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// if (x == 0) {
-	///	Console.WriteLine ("printed only if x == 0");
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("This method contains conditional code which does not change the flow of execution.")]
+  [Solution("Verify the code logic. This is likely a typo (e.g. an extra ';') or dead code (empty condition).")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class ReviewUselessControlFlowRule : Rule, IMethodRule
+  {
+    private static readonly OpCodeBitmask Branches = new OpCodeBitmask(0x8704380000000000, 0x0, 0x0, 0x0);
 
-	[Problem ("This method contains conditional code which does not change the flow of execution.")]
-	[Solution ("Verify the code logic. This is likely a typo (e.g. an extra ';') or dead code (empty condition).")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class ReviewUselessControlFlowRule : Rule, IMethodRule {
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-		private static OpCodeBitmask Branches = new OpCodeBitmask (0x8704380000000000, 0x0, 0x0, 0x0);
+      // exclude methods that don't have any conditional branches
+      if (!Branches.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        switch (ins.OpCode.Code)
+        {
+          case Code.Brfalse:
+          case Code.Brfalse_S:
+          case Code.Brtrue:
+          case Code.Brtrue_S:
+          // BNE is used by [G]MCS
+          case Code.Bne_Un:
+          case Code.Bne_Un_S:
+          case Code.Beq:
+          case Code.Beq_S:
+            Instruction br = (ins.Operand as Instruction);
+            int delta = br.Offset - ins.Next.Offset;
+            if (delta == 0)
+            {
+              // Medium: since compiler already warned about this
+              Runner.Report(method, ins, Severity.Medium, Confidence.Normal);
+            }
+            else if (delta <= 2)
+            {
+              // is the block (between the jumps) small and empty ?
+              // CSC does this, probably to help the debugger.
+              // [G]MCS does not
+              while (delta > 0)
+              {
+                br = br.Previous;
+                if (br.OpCode.Code != Code.Nop)
+                  break;
+                delta--;
+              }
+              if (delta == 0)
+                Runner.Report(method, ins, Severity.Low, Confidence.Normal);
+            }
+            break;
+        }
+      }
+      return Runner.CurrentRuleResult;
+    }
 
-			// exclude methods that don't have any conditional branches
-			if (!Branches.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
-
-			foreach (Instruction ins in method.Body.Instructions) {
-				switch (ins.OpCode.Code) {
-				case Code.Brfalse:
-				case Code.Brfalse_S:
-				case Code.Brtrue:
-				case Code.Brtrue_S:
-				// BNE is used by [G]MCS
-				case Code.Bne_Un:
-				case Code.Bne_Un_S:
-				case Code.Beq:
-				case Code.Beq_S:
-					Instruction br = (ins.Operand as Instruction);
-					int delta = br.Offset - ins.Next.Offset;
-					if (delta == 0) {
-						// Medium: since compiler already warned about this
-						Runner.Report (method, ins, Severity.Medium, Confidence.Normal);
-					}  else if (delta <= 2) {
-						// is the block (between the jumps) small and empty ?
-						// CSC does this, probably to help the debugger.
-						// [G]MCS does not
-						while (delta > 0) {
-							br = br.Previous;
-							if (br.OpCode.Code != Code.Nop)
-								break;
-							delta--;
-						}
-						if (delta == 0)
-							Runner.Report (method, ins, Severity.Low, Confidence.Normal);
-					}
-					break;
-				}
-			}
-			return Runner.CurrentRuleResult;
-		}
 #if false
 		public void Bitmask ()
 		{
@@ -137,5 +144,5 @@ namespace Gendarme.Rules.Correctness {
 			Console.WriteLine (branches);
 		}
 #endif
-	}
+  }
 }

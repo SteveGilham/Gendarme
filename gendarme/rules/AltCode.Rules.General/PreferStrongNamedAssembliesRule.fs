@@ -26,16 +26,15 @@ type PreferStrongNamedAssembliesRule() =
                       Justification = "F# interfaces are like that")>]
     member self.CheckAssembly(assembly: AssemblyDefinition) : RuleResult =
       if assembly.Name.PublicKeyToken |> Array.isEmpty then
-        // cheat "Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters"
-        let cheat =
-          String.Format(
-            CultureInfo.InvariantCulture,
-            "{0}",
-            "Assembly has no strong-name"
-          )
-
         let defect =
-          Defect(self, assembly, assembly, Severity.Low, Confidence.High, cheat)
+          Defect(
+            self,
+            assembly,
+            assembly,
+            Severity.Low,
+            Confidence.High,
+            Tools.resource "NoStrongName"
+          )
 
         self.Runner.Report defect
 

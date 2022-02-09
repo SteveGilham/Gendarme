@@ -36,18 +36,27 @@ using Mono.Cecil.Cil;
 
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework
 {
-  abstract public class Runner : IRunner
-  {
-    private Collection<Defect> defect_list = new Collection<Defect>();
-    private int defects_limit = Int32.MaxValue;
-    private Bitmask<Severity> severity_bitmask = new Bitmask<Severity>(true);
-    private Bitmask<Confidence> confidence_bitmask = new Bitmask<Confidence>(true);
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-    private Collection<IRule> rules = new Collection<IRule>();
-    private Collection<AssemblyDefinition> assemblies = new Collection<AssemblyDefinition>();
+  [SuppressMessage("Gendarme.Rules.Smells",
+                   "AvoidLargeClassesRule",
+                   Justification = "2 fields prefixed with 'current'")]
+  [SuppressMessage("Gendarme.Rules.Smells",
+                  "AvoidSpeculativeGeneralityRule",
+                  Justification = "One child policy")]
+  public abstract class Runner : IRunner
+  {
+    private readonly Collection<Defect> defect_list = new Collection<Defect>();
+    private int defects_limit = Int32.MaxValue;
+    private readonly Bitmask<Severity> severity_bitmask = new Bitmask<Severity>(true);
+    private readonly Bitmask<Confidence> confidence_bitmask = new Bitmask<Confidence>(true);
+
+    private readonly Collection<IRule> rules = new Collection<IRule>();
+    private readonly Collection<AssemblyDefinition> assemblies = new Collection<AssemblyDefinition>();
     private int verbose_level;
 
     private IEnumerable<IAssemblyRule> assembly_rules;
@@ -166,6 +175,10 @@ namespace Gendarme.Framework
     // once every assembly are loaded *and* all the rules are known -> we initialized all rules.
     // this ensure that the list of assemblies is available at rule initialization time
     // which allows caching information and treating the assemblies as "a set"
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                     Justification = "Handled sufficently")]
     public virtual void Initialize()
     {
       AnalyzeAssembly = null;
@@ -202,16 +215,17 @@ namespace Gendarme.Framework
       }
 
       engine_dependencies = GetType().GetCustomAttributes(typeof(EngineDependencyAttribute), true);
+      var engines = Engines;
       if (engine_dependencies.Length > 0)
       {
         // subscribe to each engine the rule depends on
         foreach (EngineDependencyAttribute eda in engine_dependencies)
         {
-          Engines.Subscribe(eda.EngineType);
+          engines.Subscribe(eda.EngineType);
         }
       }
 
-      Engines.Build(assemblies);
+      engines.Build(assemblies);
 
       assembly_rules = rules.OfType<IAssemblyRule>();
       type_rules = rules.OfType<ITypeRule>();
@@ -230,7 +244,7 @@ namespace Gendarme.Framework
     public virtual void Report(Defect defect)
     {
       if (defect == null)
-        throw new ArgumentNullException("defect");
+        throw new ArgumentNullException(nameof(defect));
 
       if (!Filter(defect.Severity, defect.Confidence, defect.Location))
         return;
@@ -291,8 +305,7 @@ namespace Gendarme.Framework
 
     private void OnEvent(EventHandler<RunnerEventArgs> handler, RunnerEventArgs e)
     {
-      if (handler != null)
-        handler(this, e);
+      handler?.Invoke(this, e);
     }
 
     private static bool VisibilityCheck(ApplicabilityScope scope, bool visible)
@@ -363,7 +376,7 @@ namespace Gendarme.Framework
           continue;
 
         // It means it
-        if (e.CurrentType.Name.Equals("<PrivateImplementationDetails>"))
+        if (e.CurrentType.Name.Equals("<PrivateImplementationDetails>", StringComparison.Ordinal))
           continue;
 
         CurrentRule = rule;
@@ -392,7 +405,8 @@ namespace Gendarme.Framework
           continue;
 
         // It means it
-        if (e.CurrentMethod.DeclaringType.Name.Equals("<PrivateImplementationDetails>"))
+        if (e.CurrentMethod.DeclaringType.Name.Equals(
+          "<PrivateImplementationDetails>", StringComparison.Ordinal))
           continue;
 
         CurrentRule = rule;

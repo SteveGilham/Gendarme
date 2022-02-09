@@ -140,6 +140,7 @@ namespace Gendarme.Rules.Correctness
       Runner.Report(parameter, s, Confidence.Normal);
     }
 
+    // just looks for a check vs null, and not what the outome is (e.g. ArgumentNullException witn correct namw)
     private void CheckArgument(MethodDefinition method, Instruction ins)
     {
       ParameterDefinition parameter = ins.GetParameter(method);
@@ -222,11 +223,8 @@ namespace Gendarme.Rules.Correctness
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // p/invoke, abstract methods and method without parameters
-      if (!method.HasBody || !method.HasParameters || !method.IsVisible())
-        return RuleResult.DoesNotApply;
-
-      // skip compiler generated method
-      if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+      if (!method.HasBody || !method.HasParameters ||
+        !method.IsVisible() || method.HasCompilerGeneratedAttribute())
         return RuleResult.DoesNotApply;
 
       has_null_check.ClearAll();

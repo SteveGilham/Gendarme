@@ -73,13 +73,15 @@ namespace Gendarme.Rules.Design {
 			if (method.Name != "get_Item")
 				return RuleResult.DoesNotApply;
 
-            // if there is no argument there is no problem
-            // F# union case destructuring operator is called "get_Item" too!
-            if (!method.HasParameters)
-                return RuleResult.Success;
+			var hasParameters = method.HasParameters;
+
+			// if there is no argument there is no problem
+			// F# union case destructuring operator is called "get_Item" too!
+			if (!hasParameters)
+         return RuleResult.Success;
 
 			// if there is a single argument or if the method is not visible outside the assembly
-			if ((method.HasParameters && (method.Parameters.Count == 1)) || !method.IsVisible ())
+			if ((hasParameters && (method.Parameters.Count == 1)) || !method.IsVisible ())
 				return RuleResult.Success;
 
 			Runner.Report (method, Severity.Medium, Confidence.Total);

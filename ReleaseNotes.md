@@ -1,13 +1,14 @@
-# 2022.1.25.121xx-pre-release 
+# 2022.2.9.17xxx-pre-release 
 
-* Reinstate `Gendarme.Rules.Security.Cas.DoNotExposeFieldsInSecuredTypeRule`, mistakenly deleted
-* New rules
-  * `AltCode.Rules.General.PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210:AssembliesShouldHaveValidStrongNames
-  * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
-* [net472] Reinstate the obsolescing code access security rules as the assembly `Obsolete.Rules.Security.Cas.dll`; is covers rules
-  * `AddMissingTypeInheritanceDemandRule`
-  * `DoNotExposeMethodsProtectedByLinkDemandRule`
-  * `DoNotReduceTypeSecurityOnMethodsRule`
-  * `SecureGetObjectDataOverridesRule`
+* [NEW RULE] `AltCode.Rules.General.AvoidAssemblySemanticVersionMismatchRule` to insist that the API contract (major, minor, and optionally build if defined for the assembly) match, but the lesser facets, revision and possibly build are free.
+* Revive Correctness rule `DeclareEventsExplicitlyRule`
+* Update for modern C# dialect e.g. allow discard `_` as a variable name
+* Fix `PreferIFormatProviderOverrideRule` and `PreferStringComparisonOverrideRule` to spot more than just the first instance of any given method with a preferred override
+* In `AvoidMethodsWithSideEffectsInConditionalCodeRule`, consider `System.Array.Empty<T>()` to be pure.
+* `AvoidUninstantiatedInternalClassesRule` checks if `internal` attribute types are used in the assembly, and counts those as instantiation
+* Include changes from the upstream repo
+  * Add more heuristics to `DoNotHardcodePathsRule`
+  * Tune the severity and confidence levels of `AvoidUnnecessarySpecializationRule` and the "avoid duplicated code" rules according to context
+  * Test a wider set of use cases in `DoNotUseLockedRegionOutsideMethodRule`
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md

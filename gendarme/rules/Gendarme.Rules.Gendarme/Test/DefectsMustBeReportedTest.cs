@@ -1,5 +1,5 @@
-﻿// 
-// Tests.Rules.Gendarme.DefectsMustBeReportedTest
+﻿//
+// Test.Rules.Gendarme.DefectsMustBeReportedTest
 //
 // Authors:
 //	Yuri Stuken <stuken.yuri@gmail.com>
@@ -36,66 +36,71 @@ using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 
-namespace Test.Rules.Gendarme {
+namespace Test.Rules.Gendarme
+{
+  [TestFixture]
+  public class DefectsMustBeReportedTest : TypeRuleTestFixture<DefectsMustBeReportedRule>
+  {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      var def = AssemblyDefinition.ReadAssembly(typeof(Rule).Assembly.Location);
+      AssemblyResolver.Resolver.CacheAssembly(def);
+    }
 
-	[TestFixture]
-	public class DefectsMustBeReportedTest : TypeRuleTestFixture<DefectsMustBeReportedRule> {
-        [OneTimeSetUp]
-        public void FixtureSetUp()
-        {
-            var def = AssemblyDefinition.ReadAssembly(typeof(Rule).Assembly.Location);
-            AssemblyResolver.Resolver.CacheAssembly(def);
-        }
+    private class GoodRule : Rule
+    {
+      public void Test()
+      {
+        Runner.Report(null, Severity.Critical, Confidence.Total);
+      }
+    }
 
-		class GoodRule : Rule {
-			public void Test ()
-			{
-				Runner.Report (null, Severity.Critical, Confidence.Total);
-			}
-		}
+    private class GoodRuleTwoMethods : Rule
+    {
+      public void Test()
+      {
+      }
 
-		class GoodRuleTwoMethods : Rule {
-			public void Test ()
-			{
-			}
+      private void Report()
+      {
+        Runner.Report(null, Severity.Audit, Confidence.Low);
+      }
+    }
 
-			private void Report ()
-			{
-				Runner.Report (null, Severity.Audit, Confidence.Low);
-			}
-		}
+    private class BadRule : Rule, ITypeRule
+    {
+      public RuleResult CheckType(TypeDefinition type)
+      {
+        return RuleResult.Failure;
+      }
+    }
 
-		class BadRule : Rule, ITypeRule {
-			public RuleResult CheckType (TypeDefinition type)
-			{
-				return RuleResult.Failure;
-			}
-		}
+    private abstract class DoesNotApplyAbstract : Rule
+    {
+      public void Test()
+      {
+      }
+    }
 
-		abstract class DoesNotApplyAbstract : Rule {
-			public void Test ()
-			{
-			}
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+      AssertRuleDoesNotApply<DoesNotApplyAbstract>();
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Class);
-			AssertRuleDoesNotApply<DoesNotApplyAbstract> ();
-		}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<GoodRule>();
+      AssertRuleSuccess<GoodRuleTwoMethods>();
+    }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<GoodRule> ();
-			AssertRuleSuccess<GoodRuleTwoMethods> ();
-		}
-
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<BadRule> ();
-		}
-	}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<BadRule>();
+    }
+  }
 }

@@ -1,5 +1,5 @@
-﻿// 
-// Tests.Rules.Interoperability.Com.ReviewComRegistrationMethodsTest
+﻿//
+// Test.Rules.Interoperability.Com.ReviewComRegistrationMethodsTest
 //
 // Authors:
 //	Yuri Stuken <stuken.yuri@gmail.com>
@@ -36,122 +36,129 @@ using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 
-namespace Test.Rules.Interoperability.Com {
+namespace Test.Rules.Interoperability.Com
+{
+  [TestFixture]
+  public class ReviewComRegistrationMethodsTest : TypeRuleTestFixture<ReviewComRegistrationMethodsRule>
+  {
+    [ComVisible(false)]
+    public class ComInvisible
+    {
+      [ComRegisterFunction]
+      public void Register()
+      {
+      }
+    }
 
-	[TestFixture]
-	public class ReviewComRegistrationMethodsTest : TypeRuleTestFixture<ReviewComRegistrationMethodsRule> {
+    [ComVisible(true)]
+    private class ExternallyInvisible
+    {
+      [ComRegisterFunction]
+      public void Register()
+      {
+      }
+    }
 
-		[ComVisible(false)]
-		public class ComInvisible {
-			[ComRegisterFunction]
-			public void Register ()
-			{
-			}
-		}
+    [ComVisible(true)]
+    public class GoodCase
+    {
+      [ComRegisterFunction]
+      private void Register()
+      {
+      }
 
-		[ComVisible (true)]
-		private class ExternallyInvisible {
-			[ComRegisterFunction]
-			public void Register ()
-			{
-			}
-		}
+      [ComUnregisterFunction]
+      internal void Unregister()
+      {
+      }
+    }
 
-		[ComVisible (true)]
-		public class GoodCase {
-			[ComRegisterFunction]
-			private void Register ()
-			{
-			}
+    [ComVisible(true)]
+    public class BadVisibleRegistrators
+    {
+      [ComRegisterFunction]
+      public void Register()
+      {
+      }
 
-			[ComUnregisterFunction]
-			internal void Unregister ()
-			{
-			}
-		}
+      [ComUnregisterFunction]
+      public void Unregister()
+      {
+      }
+    }
 
-		[ComVisible (true)]
-		public class BadVisibleRegistrators {
-			[ComRegisterFunction]
-			public void Register ()
-			{
-			}
+    [ComVisible(true)]
+    public class BadOnlyUnregister
+    {
+      [ComUnregisterFunction]
+      private void Unregister()
+      {
+      }
+    }
 
-			[ComUnregisterFunction]
-			public void Unregister ()
-			{
-			}
-		}
+    [ComVisible(true)]
+    public class BadOnlyPublicUnregister
+    {
+      [ComUnregisterFunction]
+      public void Unregister()
+      {
+      }
+    }
 
+    [ComVisible(true)]
+    public class BadOnlyRegister
+    {
+      [ComRegisterFunction]
+      private void Register()
+      {
+      }
+    }
 
-		[ComVisible (true)]
-		public class BadOnlyUnregister {
-			[ComUnregisterFunction]
-			private void Unregister ()
-			{
-			}
-		}
+    [ComVisible(true)]
+    public class BadOnlyPublicRegister
+    {
+      [ComRegisterFunction]
+      public void Register()
+      {
+      }
+    }
 
-		[ComVisible (true)]
-		public class BadOnlyPublicUnregister {
-			[ComUnregisterFunction]
-			public void Unregister ()
-			{
-			}
-		}
+    [ComVisible(true)]
+    public class BadPublicRegisterPrivateUnregister
+    {
+      [ComRegisterFunction]
+      public void Register()
+      {
+      }
 
-		[ComVisible (true)]
-		public class BadOnlyRegister {
-			[ComRegisterFunction]
-			private void Register ()
-			{
-			}
-		}
+      [ComUnregisterFunction]
+      private void Unregister()
+      {
+      }
+    }
 
-		[ComVisible (true)]
-		public class BadOnlyPublicRegister {
-			[ComRegisterFunction]
-			public void Register ()
-			{
-			}
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<ComInvisible>();
+      AssertRuleDoesNotApply<ExternallyInvisible>();
+    }
 
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<GoodCase>();
+    }
 
-		[ComVisible (true)]
-		public class BadPublicRegisterPrivateUnregister {
-			[ComRegisterFunction]
-			public void Register ()
-			{
-			}
-
-			[ComUnregisterFunction]
-			private void Unregister ()
-			{
-			}
-		}
-
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<ComInvisible> ();
-			AssertRuleDoesNotApply<ExternallyInvisible> ();
-		}
-
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<GoodCase> ();
-		}
-
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<BadVisibleRegistrators> (2);
-			AssertRuleFailure<BadOnlyUnregister> (1);
-			AssertRuleFailure<BadOnlyPublicUnregister> (2);
-			AssertRuleFailure<BadOnlyRegister> (1);
-			AssertRuleFailure<BadOnlyPublicRegister> (2);
-			AssertRuleFailure<BadPublicRegisterPrivateUnregister> (1);
-		}
-	}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<BadVisibleRegistrators>(2);
+      AssertRuleFailure<BadOnlyUnregister>(1);
+      AssertRuleFailure<BadOnlyPublicUnregister>(2);
+      AssertRuleFailure<BadOnlyRegister>(1);
+      AssertRuleFailure<BadOnlyPublicRegister>(2);
+      AssertRuleFailure<BadPublicRegisterPrivateUnregister>(1);
+    }
+  }
 }

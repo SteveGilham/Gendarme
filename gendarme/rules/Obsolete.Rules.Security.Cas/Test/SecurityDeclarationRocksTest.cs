@@ -36,7 +36,7 @@ using Test.Rules.Helpers;
 using Mono.Cecil;
 using Obsolete.Rules.Security.Cas;
 
-namespace Tests.Obsolete.Rules.Security.Cas
+namespace Test.Obsolete.Rules.Security.Cas
 {
   [SSP.PermissionSet(SSP.SecurityAction.InheritanceDemand, Unrestricted = true, UnicodeEncoded = true)]
   public abstract class UnrestrictedTrue

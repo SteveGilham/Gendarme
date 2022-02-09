@@ -11,8 +11,9 @@
     <EmbeddedResource Include="Sample1.exe" />
     <Compile Include="$(SolutionDir)..\_Generated\AssemblyStaticInfo.fs" Link="AssemblyStaticInfo.fs" />
     <Compile Remove="$(SolutionDir)..\_Generated\AssemblyStaticInfo.cs" Link="AssemblyStaticInfo.cs" />
+    <Compile Include="AvoidAssemblySemanticVersionMismatchTest.fs" />
     <Compile Include="JustifySuppressionTest.fs" />
-    <Compile Include="PreferStrongNamedAssembliesRuleTest.fs" />
+    <Compile Include="PreferStrongNamedAssembliesTest.fs" />
   </ItemGroup>
   
   <ItemGroup>

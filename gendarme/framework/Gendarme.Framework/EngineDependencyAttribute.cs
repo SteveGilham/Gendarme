@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.EngineDependencyAttribute
 //
 // Authors:
@@ -26,31 +26,33 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  /// <summary>
+  /// This attribute is needed to declare that a rule depends on an a engine.
+  /// This guarantee that the engine will have done it's job prior to the
+  /// Runner calls into the rules Check* methods
+  /// </summary>
+  [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments",
+    Justification = "It's there already!")]
+  public sealed class EngineDependencyAttribute : Attribute
+  {
+    public EngineDependencyAttribute(Type engineType)
+    {
+      if (engineType == null)
+        throw new ArgumentNullException(nameof(engineType));
+      EngineType = engineType.FullName;
+    }
 
-	/// <summary>
-	/// This attribute is needed to declare that a rule depends on an a engine.
-	/// This guarantee that the engine will have done it's job prior to the 
-	/// Runner calls into the rules Check* methods
-	/// </summary>
-	[AttributeUsage (AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	public sealed class EngineDependencyAttribute : Attribute {
+    public EngineDependencyAttribute(string engineType)
+    {
+      EngineType = engineType ?? throw new ArgumentNullException(nameof(engineType));
+    }
 
-		public EngineDependencyAttribute (Type engineType)
-		{
-			if (engineType == null)
-				throw new ArgumentNullException ("engineType");
-			EngineType = engineType.FullName;
-		}
-
-		public EngineDependencyAttribute (string engineType)
-		{
-			if (engineType == null)
-				throw new ArgumentNullException ("engineType");
-			EngineType = engineType;
-		}
-
-		public string EngineType { get; internal set; }
-	}
+    public string EngineType { get; internal set; }
+  }
 }

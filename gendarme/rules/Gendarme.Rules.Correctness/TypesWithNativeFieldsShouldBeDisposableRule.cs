@@ -36,99 +36,112 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Correctness {
+namespace Gendarme.Rules.Correctness
+{
+  /// <summary>
+  /// This rule will fire if a type contains <c>IntPtr</c>, <c>UIntPtr</c>, or
+  /// <c>HandleRef</c> fields but does not implement <c>System.IDisposable</c>.
+  /// </summary>
+  /// <example>
+  /// Bad examples:
+  /// <code>
+  /// public class DoesNotImplementIDisposable {
+  ///	IntPtr field;
+  /// }
+  ///
+  /// abstract public class AbstractDispose : IDisposable {
+  ///	IntPtr field;
+  ///
+  ///	// the field should be disposed in the type that declares it
+  ///	public abstract void Dispose ();
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class Dispose : IDisposable {
+  ///	IDisposable field;
+  ///
+  ///	public void Dispose ()
+  ///	{
+  ///		UnmanagedFree (field);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule will fire if a type contains <c>IntPtr</c>, <c>UIntPtr</c>, or 
-	/// <c>HandleRef</c> fields but does not implement <c>System.IDisposable</c>.
-	/// </summary>
-	/// <example>
-	/// Bad examples:
-	/// <code>
-	/// public class DoesNotImplementIDisposable {
-	///	IntPtr field;
-	/// }
-	/// 
-	/// abstract public class AbstractDispose : IDisposable {
-	///	IntPtr field;
-	///	
-	///	// the field should be disposed in the type that declares it
-	///	public abstract void Dispose ();
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class Dispose : IDisposable {
-	///	IDisposable field;
-	///	
-	///	public void Dispose ()
-	///	{
-	///		UnmanagedFree (field);
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This type contains native field(s) but doesn't implement IDisposable.")]
+  [Solution("Implement IDisposable and free the native field(s) in the Dispose method.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class TypesWithNativeFieldsShouldBeDisposableRule : TypesShouldBeDisposableBaseRule
+  {
+    private static readonly OpCodeBitmask StoreFieldBitmask = new OpCodeBitmask(0x0, 0x400000000000000, 0x80000000, 0x0);
 
-	[Problem ("This type contains native field(s) but doesn't implement IDisposable.")]
-	[Solution ("Implement IDisposable and free the native field(s) in the Dispose method.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1049:TypesThatOwnNativeResourcesShouldBeDisposable")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class TypesWithNativeFieldsShouldBeDisposableRule : TypesShouldBeDisposableBaseRule {
+    protected override string AbstractTypeMessage
+    {
+      get { return "Field is native. Type should implement a non-abstract Dispose() method"; }
+    }
 
-		static OpCodeBitmask StoreFieldBitmask = new OpCodeBitmask (0x0, 0x400000000000000, 0x80000000, 0x0);
+    protected override string TypeMessage
+    {
+      get { return "Field is native. Type should implement a Dispose() method"; }
+    }
 
-		protected override string AbstractTypeMessage { 
-			get { return "Field is native. Type should implement a non-abstract Dispose() method"; }
-		}
+    protected override string AbstractDisposeMessage
+    {
+      get { return "Some fields are native pointers. Making this method abstract shifts the reponsability of disposing those fields to the inheritors of this class."; }
+    }
 
-		protected override string TypeMessage { 
-			get { return "Field is native. Type should implement a Dispose() method";  }
-		}
+    protected override void CheckMethod(MethodDefinition method, bool abstractWarning)
+    {
+      if ((method == null) || !method.HasBody)
+        return;
 
-		protected override string AbstractDisposeMessage { 
-			get { return "Some fields are native pointers. Making this method abstract shifts the reponsability of disposing those fields to the inheritors of this class."; }
-		}
+      OpCodeBitmask bitmask = OpCodeEngine.GetBitmask(method);
+      // method must have a CALL[VIRT] and either STFLD or STELEM_REF
+      if (!bitmask.Intersect(OpCodeBitmask.Calls) || !bitmask.Intersect(StoreFieldBitmask))
+        return;
 
-		protected override void CheckMethod (MethodDefinition method, bool abstractWarning)
-		{
-			if ((method == null) || !method.HasBody)
-				return;
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        MethodReference mr = (ins.Operand as MethodReference);
+        if (mr == null || mr.DeclaringType.IsNative())
+          continue;
 
-			OpCodeBitmask bitmask = OpCodeEngine.GetBitmask (method);
-			// method must have a CALL[VIRT] and either STFLD or STELEM_REF
-			if (!bitmask.Intersect (OpCodeBitmask.Calls) || !bitmask.Intersect (StoreFieldBitmask))
-				return;
+        FieldDefinition field = null;
+        Instruction next = ins.Next;
 
-			foreach (Instruction ins in method.Body.Instructions) {
-				MethodReference mr = (ins.Operand as MethodReference);
-				if (mr == null || mr.DeclaringType.IsNative ())
-					continue;
+        // failing test reached here with next as a Stelem_I
+        // possible stack entry analysis issue too
 
-				FieldDefinition field = null;
-				Instruction next = ins.Next;
-				if (next.Is (Code.Stfld)) {
-					field = next.Operand as FieldDefinition;
-				} else if (next.Is (Code.Stobj) || next.Is (Code.Stind_I)) {
-					Instruction origin = next.TraceBack (method);
-					if (origin.Is (Code.Ldelema)) {
-						origin = origin.TraceBack (method);
-						if (origin != null)
-							field = origin.Operand as FieldDefinition;
-					}
-				}
+        if (next.Is(Code.Stfld))
+        {
+          field = next.Operand as FieldDefinition;
+        }
+        else if (next.Is(Code.Stobj) || next.Is(Code.Stind_I))
+        {
+          Instruction origin = next.TraceBack(method);
+          if (origin.Is(Code.Ldelema))
+          {
+            origin = origin.TraceBack(method);
+            if (origin != null)
+              field = origin.Operand as FieldDefinition;
+          }
+        }
 
-				if (field != null && FieldCandidates.Contains (field)) {
-					Runner.Report (field, Severity.High, Confidence.High,
-						abstractWarning ? AbstractTypeMessage : TypeMessage);
-				}
-			}
-		}
+        if (field != null && FieldCandidates.Contains(field))
+        {
+          Runner.Report(field, Severity.High, Confidence.High,
+            abstractWarning ? AbstractTypeMessage : TypeMessage);
+        }
+      }
+    }
 
-		protected override bool FieldTypeIsCandidate (TypeDefinition type)
-		{
-			return ((type != null) && type.IsNative ());
-		}
-	}
+    protected override bool FieldTypeIsCandidate(TypeDefinition type)
+    {
+      return ((type != null) && type.IsNative());
+    }
+  }
 }

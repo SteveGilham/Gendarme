@@ -39,6 +39,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Naming
 {
@@ -118,6 +119,9 @@ namespace Gendarme.Rules.Naming
     }
 
     // convert name to camelCase
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
+      Justification = "Camel casing")]
     private static string CamelCase(string name)
     {
       if (String.IsNullOrEmpty(name))
@@ -144,6 +148,8 @@ namespace Gendarme.Rules.Naming
       Runner.Report(metadata, Severity.Medium, Confidence.High, message);
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
+      Justification = "Camel casing")]
     private void CheckNamespace(string nspace)
     {
       if (String.IsNullOrEmpty(nspace))
@@ -207,16 +213,19 @@ namespace Gendarme.Rules.Naming
 
     public RuleResult CheckType(TypeDefinition type)
     {
+      string name = type.Name;
+
       // rule does not apply to generated code (outside developer's control)
-      if (type.IsGeneratedCode() || type.Name.Contains("@"))
+      if (type.IsGeneratedCode() || type.IsFSharpLocalType())
         return RuleResult.DoesNotApply;
 
+      var methods = type.Methods;
+
       // Debugger related methods in F# with just a [CompilerGenerated] constructor
-      if (type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+      if (methods.Count == 1 && methods[0].HasCompilerGeneratedAttribute())
         return RuleResult.DoesNotApply;
 
       // types should all be PascalCased
-      string name = type.Name;
       if (!IsPascalCase(name))
       {
         ReportCasingError(type, String.Format(CultureInfo.InvariantCulture,
@@ -226,9 +235,16 @@ namespace Gendarme.Rules.Naming
       return Runner.CurrentRuleResult;
     }
 
-    private readonly static MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
+    private const MethodSemanticsAttributes mask = MethodSemanticsAttributes.Getter | MethodSemanticsAttributes.Setter |
       MethodSemanticsAttributes.AddOn | MethodSemanticsAttributes.RemoveOn;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidComplexMethodsRule",
+                    Justification = "Maybe refactor from 29")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // ignore constructors (.ctor or .cctor) and compiler/tool-generated code
@@ -253,10 +269,12 @@ namespace Gendarme.Rules.Naming
           return RuleResult.DoesNotApply;
       }
 
+      var hasParameters = method.HasParameters;
+
       // extension methods
-      if (fsharp && method.HasParameters)
+      if (fsharp && hasParameters)
       {
-        var dot = name.IndexOf('.');
+        var dot = name.IndexOf('.', StringComparison.Ordinal);
         var isExtension = dot > 0;
         if (isExtension)
         {
@@ -275,7 +293,7 @@ namespace Gendarme.Rules.Naming
       if ((attrs & mask) != 0)
       {
         // it's something special
-        int underscore = name.IndexOf('_');
+        int underscore = name.IndexOf('_', StringComparison.Ordinal);
         if (underscore != -1)
           name = name.Substring(underscore + 1);
       }
@@ -314,12 +332,16 @@ namespace Gendarme.Rules.Naming
       }
 
       // check parameters
-      if (method.HasParameters)
+      if (hasParameters)
       {
         foreach (ParameterDefinition param in method.Parameters)
         {
           // ignore F# placeholder ("_") arguments
           if (fsharp && param.Name.StartsWith("_arg", StringComparison.Ordinal))
+            continue;
+
+          // allow discards
+          if (param.Name.Equals("_", StringComparison.Ordinal))
             continue;
 
           // params should all be camelCased

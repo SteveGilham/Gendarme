@@ -60,7 +60,7 @@ namespace Gendarme.Rules.Correctness
 
     protected abstract bool FieldTypeIsCandidate(TypeDefinition type);
 
-    private readonly static TypeName idisposable = new TypeName
+    private static readonly TypeName idisposable = new TypeName
     {
       Namespace = "System",
       Name = "IDisposable"
@@ -75,8 +75,6 @@ namespace Gendarme.Rules.Correctness
       // rule doesn't apply to enums, interfaces, structs, delegates or generated code
       if (type.IsEnum || type.IsValueType || type.IsGeneratedCode())
         return RuleResult.DoesNotApply;
-
-      MethodDefinition explicitDisposeMethod = null;
       MethodDefinition implicitDisposeMethod = null;
 
       bool abstractWarning = false;
@@ -84,7 +82,7 @@ namespace Gendarme.Rules.Correctness
       if (type.Implements(idisposable))
       {
         implicitDisposeMethod = type.GetMethod(MethodSignatures.Dispose);
-        explicitDisposeMethod = type.GetMethod(MethodSignatures.DisposeExplicit);
+        MethodDefinition explicitDisposeMethod = type.GetMethod(MethodSignatures.DisposeExplicit);
 
         if (IsAbstract(implicitDisposeMethod) || IsAbstract(explicitDisposeMethod))
         {

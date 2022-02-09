@@ -29,187 +29,213 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Gendarme.Framework.Rocks;
+using System.Globalization;
+using System.Collections.ObjectModel;
 
-namespace Gendarme.Rules.Smells {
-	internal sealed class Pattern {
-		Instruction[] instructions;
-		int[] prefixes;
-		bool? compilerGeneratedBlock;
-		bool? extractableToMethodBlock;
-        MethodDefinition method;
+namespace Gendarme.Rules.Smells
+{
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-		internal Pattern (Instruction[] block, MethodDefinition source)
-		{
-			if (block == null)
-				throw new ArgumentNullException ("block");
-            if (source == null)
-                throw new ArgumentNullException("source");
-            this.instructions = block;
-            this.method = source;
-		}
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidLackOfCohesionOfMethodsRule",
+                    Justification = "Maybe refactor")]
+  internal sealed class Pattern
+  {
+    private readonly Instruction[] instructions;
+    private int[] prefixes;
+    private bool? compilerGeneratedBlock;
+    private bool? extractableToMethodBlock;
+    private readonly MethodDefinition method;
 
-        public override string ToString()
+    internal Pattern(Instruction[] block, MethodDefinition source)
+    {
+      this.instructions = block ?? throw new ArgumentNullException(nameof(block));
+      this.method = source ?? throw new ArgumentNullException(nameof(source));
+    }
+
+    public override string ToString()
+    {
+      var where = instructions[0].GetMethod();
+      var extra = String.Empty;
+
+      var dbg = method.DebugInformation;
+      if (dbg != null)
+      {
+        extra = string.Join(Environment.NewLine, instructions.Select(i =>
         {
-            var where = instructions[0].GetMethod();
-            var extra = String.Empty;
+          var sp = dbg.GetSequencePoint(i);
+          return (sp == null) ? "." : String.Format(CultureInfo.InvariantCulture,
+                                              "sl={0} sc={1} - el={2} ec={3} : {4}",
+                                              sp.StartLine, sp.StartColumn,
+                                              sp.EndLine, sp.EndColumn, sp.Document.Url);
+        }));
+      }
+      else extra = "No Debug Information";
 
-            var dbg = method.DebugInformation;
-            if (dbg != null)
-            {
-                extra = string.Join(Environment.NewLine, instructions.Select(i =>
-                {
-                    var sp = dbg.GetSequencePoint(i);
-                    return (sp == null) ? "." : String.Format("sl={0} sc={1} - el={2} ec={3} : {4}",
-                                                sp.StartLine, sp.StartColumn, 
-                                                sp.EndLine, sp.EndColumn, sp.Document.Url);
-                }));
-            }
-            else extra = "No Debug Information";
+      return extra + Environment.NewLine + String.Join(Environment.NewLine, instructions.Select(i => i.ToString()));
+    }
 
-            return extra + Environment.NewLine + String.Join(Environment.NewLine, instructions.Select(i => i.ToString()));
+    private static readonly TypeName idisposable = new TypeName
+    {
+      Namespace = "System",
+      Name = "IDisposable"
+    };
+
+    // look for: isinst System.IDisposable
+    private static bool IsInstanceOfIDisposable(Instruction ins)
+    {
+      if (ins.OpCode.Code != Code.Isinst)
+        return false;
+      return (ins.Operand as TypeReference).IsNamed(idisposable);
+    }
+
+    // look for:
+    //	callvirt System.Void System.IDisposable::Dispose()
+    //	endfinally
+    private static bool IsIDisposableDisposePattern(Instruction ins)
+    {
+      if (ins.OpCode.Code != Code.Callvirt)
+        return false;
+      if (!(ins.Operand as MethodReference).IsNamed(idisposable, "Dispose"))
+        return false;
+      return ins.Next.Is(Code.Endfinally);
+    }
+
+    // IIRC older xMCS generated that quite often
+    private bool IsDoubleReturn
+    {
+      get
+      {
+        return ((Count > 1) && (instructions[Count - 1].OpCode.Code == Code.Ret) &&
+          (instructions[Count - 2].OpCode.Code == Code.Ret));
+      }
+    }
+
+    // small patterns that highly suggest they were compiler generated
+    private bool ComputeUnlikelyUserPatterns()
+    {
+      bool call = false;
+      for (int i = 0; i < Count; i++)
+      {
+        Instruction ins = instructions[i];
+        // foreach
+        if (ins.OpCode.Code == Code.Callvirt)
+        {
+          MethodReference mr = (ins.Operand as MethodReference);
+          if (mr.IsNamed(ienum, "get_Current"))
+            return true;
+          if (mr.IsNamed(ienum, "MoveNext"))
+            return !call;
         }
+        // if there's a unknown call then it's likely not (totally) compiler generated
+        call |= (ins.OpCode.FlowControl == FlowControl.Call);
+        // foreach
+        if (IsInstanceOfIDisposable(ins))
+          return true;
+        // foreach, using
+        if (IsIDisposableDisposePattern(ins))
+          return true;
+      }
+      return false;
+    }
 
-        private readonly static TypeName idisposable = new TypeName
+    private static readonly TypeName ienum = new TypeName
+    {
+      Namespace = "System",
+      Name = "IEnumerator"
+    };
+
+    internal bool IsCompilerGeneratedBlock
+    {
+      get
+      {
+        if (compilerGeneratedBlock == null)
+          compilerGeneratedBlock = ComputeUnlikelyUserPatterns() || IsDoubleReturn;
+        return (bool)compilerGeneratedBlock;
+      }
+    }
+
+    private bool IsReturningCode
+    {
+      get
+      {
+        return ((Count == 4 &&
+          instructions[0].OpCode.StackBehaviourPush == StackBehaviour.Push1 &&
+          (instructions[1].OpCode.Code == Code.Brtrue || instructions[1].OpCode.Code == Code.Brtrue_S) &&
+          instructions[2].OpCode.StackBehaviourPush == StackBehaviour.Pushi &&
+          instructions[3].OpCode.Code == Code.Ret)
+          ||
+          (Count > 1 &&
+          instructions[Count - 1].OpCode.Code == Code.Ret &&
+          instructions[Count - 2].OpCode.FlowControl == FlowControl.Cond_Branch));
+      }
+    }
+
+    internal bool IsExtractableToMethodBlock
+    {
+      get
+      {
+        if (extractableToMethodBlock == null)
+          extractableToMethodBlock = !IsReturningCode;
+        return (bool)extractableToMethodBlock;
+      }
+    }
+
+    internal void ComputePrefixes(MethodDefinition md)
+    {
+      MethodDefinition target = InstructionMatcher.Target;
+      InstructionMatcher.Target = md;
+      try
+      {
+        int offset = 0;
+        if ((prefixes == null) || (prefixes.Length < instructions.Length))
+          prefixes = new int[instructions.Length];
+
+        for (int index = 1; index < instructions.Length; index++)
         {
-            Namespace = "System",
-            Name = "IDisposable"
-        };
-        // look for: isinst System.IDisposable
-		static bool IsInstanceOfIDisposable (Instruction ins)
-		{
-			if (ins.OpCode.Code != Code.Isinst)
-				return false;
-			return (ins.Operand as TypeReference).IsNamed (idisposable);
-		}
+          while (offset > 0 &&
+            !InstructionMatcher.AreEquivalent(instructions[offset], instructions[index]))
+            offset = prefixes[offset - 1];
 
-		// look for:
-		//	callvirt System.Void System.IDisposable::Dispose()
-		//	endfinally 
-		static bool IsIDisposableDisposePattern (Instruction ins)
-		{
-			if (ins.OpCode.Code != Code.Callvirt)
-				return false;
-			if (!(ins.Operand as MethodReference).IsNamed (idisposable, "Dispose"))
-				return false;
-			return ins.Next.Is (Code.Endfinally);
-		}
+          if (InstructionMatcher.AreEquivalent(instructions[offset], instructions[index]))
+            offset++;
 
-		// IIRC older xMCS generated that quite often
-		bool IsDoubleReturn {
-			get {
-				return ((Count > 1) && (instructions[Count - 1].OpCode.Code == Code.Ret) &&
-					(instructions[Count - 2].OpCode.Code == Code.Ret));
-			}
-		}
+          prefixes[index] = offset;
+        }
+      }
+      finally
+      {
+        InstructionMatcher.Target = target;
+      }
+    }
 
-		// small patterns that highly suggest they were compiler generated
-		bool ComputeUnlikelyUserPatterns ()
-		{
-			bool call = false;
-			for (int i = 0; i < Count; i++) {
-				Instruction ins = instructions [i];
-				// foreach
-				if (ins.OpCode.Code == Code.Callvirt) {
-					MethodReference mr = (ins.Operand as MethodReference);
-					if (mr.IsNamed (ienum, "get_Current"))
-						return true;
-					if (mr.IsNamed (ienum, "MoveNext"))
-						return !call;
-				}
-				// if there's a unknown call then it's likely not (totally) compiler generated
-				call |= (ins.OpCode.FlowControl == FlowControl.Call);
-				// foreach
-				if (IsInstanceOfIDisposable (ins))
-					return true;
-				// foreach, using
-				if (IsIDisposableDisposePattern (ins))
-					return true;
-			}
-			return false;
-		}
+    internal int Count
+    {
+      get
+      {
+        return instructions.Length;
+      }
+    }
 
-        private readonly static TypeName ienum = new TypeName
-        {
-            Namespace = "System",
-            Name = "IEnumerator"
-        };
+    internal Instruction this[int index]
+    {
+      get
+      {
+        return instructions[index];
+      }
+    }
 
-        internal bool IsCompilerGeneratedBlock
-        {
-			get {
-				if (compilerGeneratedBlock == null)
-					compilerGeneratedBlock = ComputeUnlikelyUserPatterns () || IsDoubleReturn;
-				return (bool) compilerGeneratedBlock;
-			}
-		}
-
-		bool IsReturningCode {
-			get {
-				return ((Count == 4 &&
-					instructions[0].OpCode.StackBehaviourPush == StackBehaviour.Push1 &&
-					(instructions [1].OpCode.Code == Code.Brtrue || instructions [1].OpCode.Code == Code.Brtrue_S) &&
-					instructions[2].OpCode.StackBehaviourPush == StackBehaviour.Pushi && 
-					instructions[3].OpCode.Code == Code.Ret)
-					||
-					(Count > 1 &&
-					instructions[Count - 1].OpCode.Code == Code.Ret &&
-					instructions[Count - 2].OpCode.FlowControl == FlowControl.Cond_Branch));
-			}
-		}
-
-		internal bool IsExtractableToMethodBlock {
-			get {
-				if (extractableToMethodBlock == null) 
-					extractableToMethodBlock = !IsReturningCode;
-				return (bool) extractableToMethodBlock;
-			}
-		}
-			
-		internal void ComputePrefixes (MethodDefinition method)
-		{
-			MethodDefinition target = InstructionMatcher.Target;
-			InstructionMatcher.Target = method;
-			try {
-				int offset = 0;
-				if ((prefixes == null) || (prefixes.Length < instructions.Length))
-					prefixes = new int [instructions.Length];
-
-				for (int index = 1; index < instructions.Length; index++) {
-					while (offset > 0 &&
-						!InstructionMatcher.AreEquivalent (instructions [offset], instructions [index]))
-						offset = prefixes [offset - 1];
-
-					if (InstructionMatcher.AreEquivalent (instructions [offset], instructions [index]))
-						offset++;
-
-					prefixes [index] = offset;
-				}
-			}
-			finally {
-				InstructionMatcher.Target = target;
-			}
-		}
-
-		internal int Count {
-			get {
-				return instructions.Length;
-			}
-		}
-		
-		internal Instruction this[int index] {
-			get {
-				return instructions[index];
-			}
-		}
-
-		internal int[] Prefixes {
-			get {
-				return prefixes;
-			}
-		}
-	}
+    internal ReadOnlyCollection<int> Prefixes
+    {
+      get
+      {
+        return new ReadOnlyCollection<int>(prefixes);
+      }
+    }
+  }
 }

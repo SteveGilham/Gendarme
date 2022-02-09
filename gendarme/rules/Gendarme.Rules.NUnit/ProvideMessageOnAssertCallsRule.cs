@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.ProvideMessageOnAssertCallsRule
 //
 // Authors:
@@ -35,114 +35,121 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.NUnit {
+namespace Gendarme.Rules.NUnit
+{
+  /// <summary>
+  /// This rule checks that all Assert.* methods are calling with 'message'
+  /// parameter, which helps to easily identify failing test.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [Test]
+  /// public void TestThings ()
+  /// {
+  ///	Assert.AreEqual(10, 20);
+  ///	Assert.AreEqual(30, 40);
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [Test]
+  /// public void TestThings ()
+  /// {
+  ///	Assert.AreEqual(10, 20, "10 equal to 20 test");
+  ///	Assert.AreEqual(30, 40, "30 equal to 40 test");
+  /// </code>
+  /// </example>
+  /// <remarks>
+  /// This rule will not report any problems if only one Assert.* call was made
+  /// inside a method, because it's easy to identify failing test in this case.</remarks>
 
-	/// <summary>
-	/// This rule checks that all Assert.* methods are calling with 'message'
-	/// parameter, which helps to easily identify failing test.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [Test]
-	/// public void TestThings ()
-	/// {
-	///	Assert.AreEqual(10, 20);
-	///	Assert.AreEqual(30, 40);
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [Test]
-	/// public void TestThings ()
-	/// {
-	///	Assert.AreEqual(10, 20, "10 equal to 20 test");
-	///	Assert.AreEqual(30, 40, "30 equal to 40 test");
-	/// </code>
-	/// </example>
-	/// <remarks>
-	/// This rule will not report any problems if only one Assert.* call was made 
-	/// inside a method, because it's easy to identify failing test in this case.</remarks>
+  [Problem("Assert.* methods being called without 'message' parameter, which helps to easily identify failing test.")]
+  [Solution("Add string 'message' parameter to the calls.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class ProvideMessageOnAssertCallsRule : NUnitRule, IMethodRule
+  {
+    // Assert.* methods that do not have an override with the 'string message'
+    private static readonly HashSet<string> exceptions = new HashSet<string> {
+      "Equals",
+      "ReferenceEquals",
+    };
 
-	[Problem ("Assert.* methods being called without 'message' parameter, which helps to easily identify failing test.")]
-	[Solution ("Add string 'message' parameter to the calls.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class ProvideMessageOnAssertCallsRule : NUnitRule, IMethodRule {
+    private int reportCounter;
+    private Defect defectDelayed;
 
-		// Assert.* methods that do not have an override with the 'string message'
-		HashSet<string> exceptions = new HashSet<string> {
-			"Equals",
-			"ReferenceEquals",
-		};
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      reportCounter = 0;
+      if (!method.HasBody || !method.IsTest())
+        return RuleResult.DoesNotApply;
 
-		private int reportCounter = 0;
-		private Defect defectDelayed;
+      if (!OpCodeBitmask.Calls.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			reportCounter = 0;
-			if (!method.HasBody || !method.IsTest ())
-				return RuleResult.DoesNotApply;
+      foreach (Instruction instruction in method.Body.Instructions)
+      {
+        if (instruction.OpCode.FlowControl != FlowControl.Call)
+          continue;
 
-			if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+        MethodReference m = (instruction.Operand as MethodReference);
+        if (m == null || !m.DeclaringType.IsNamed(nassert) ||
+          exceptions.Contains(m.Name))
+          continue;
 
-
-			foreach (Instruction instruction in method.Body.Instructions) {
-				if (instruction.OpCode.FlowControl != FlowControl.Call)
-					continue;
-
-				MethodReference m = (instruction.Operand as MethodReference);
-				if (m == null || !m.DeclaringType.IsNamed ( nassert ) ||
-					exceptions.Contains (m.Name))
-					continue;
-
-				bool foundMessage = false;
-				if (m.HasParameters) {
-					MethodDefinition resolvedMethod = m.Resolve ();
-					if (resolvedMethod == null)
-						continue;
-					foreach (ParameterDefinition parameter in resolvedMethod.Parameters) {
-						if (parameter.ParameterType.IsNamed (str) &&
-							parameter.Name == "message") {
-							foundMessage = true;
-							break;
-						}
-					}
-				}
-				if (!foundMessage)
-					DelayedReport (new Defect (this, method, method, instruction, Severity.Medium, Confidence.High));
-			}
-			return Runner.CurrentRuleResult;
-		}
-        private readonly static TypeName nassert = new TypeName
+        bool foundMessage = false;
+        if (m.HasParameters)
         {
-            Namespace = "NUnit.Framework",
-            Name = "Assert"
-        };
-        private readonly static TypeName str = new TypeName
-        {
-            Namespace = "System",
-            Name = "String"
-        };
+          MethodDefinition resolvedMethod = m.Resolve();
+          if (resolvedMethod == null)
+            continue;
+          foreach (ParameterDefinition parameter in resolvedMethod.Parameters)
+          {
+            if (parameter.ParameterType.IsNamed(str) &&
+              parameter.Name == "message")
+            {
+              foundMessage = true;
+              break;
+            }
+          }
+        }
+        if (!foundMessage)
+          DelayedReport(new Defect(this, method, method, instruction, Severity.Medium, Confidence.High));
+      }
+      return Runner.CurrentRuleResult;
+    }
 
-		// reports only if it was called more than one time
-		private void DelayedReport (Defect defect)
-		{
-			reportCounter++;
-			if (reportCounter > 1) {
-				if (reportCounter == 2)
-					Runner.Report (defectDelayed);
-				Runner.Report (defect);
-			} else
-				defectDelayed = defect;
-		}
-	}
+    private static readonly TypeName nassert = new TypeName
+    {
+      Namespace = "NUnit.Framework",
+      Name = "Assert"
+    };
+
+    private static readonly TypeName str = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
+
+    // reports only if it was called more than one time
+    private void DelayedReport(Defect defect)
+    {
+      reportCounter++;
+      if (reportCounter > 1)
+      {
+        if (reportCounter == 2)
+          Runner.Report(defectDelayed);
+        Runner.Report(defect);
+      }
+      else
+        defectDelayed = defect;
+    }
+  }
 }

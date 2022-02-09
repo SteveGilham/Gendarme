@@ -33,148 +33,150 @@ using Mono.Cecil.Cil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System;
 
-namespace Gendarme.Rules.Smells { 
+namespace Gendarme.Rules.Smells
+{
+  // TODO: The text in this rule completely confuses me. Is is saying that
+  // all switch statements should be avoided? How exactly do switch statements
+  // lead to code duplication? As far as I can tell, this isn't true at all: switch
+  // statements don't promote code duplication more than any other construct.
+  //
+  // The only real problem with switch statements I am aware of is that they
+  // are sometimes used to dispatch on types which is a bad idea because
+  // virtual methods are normally better for that. The end of the summary
+  // seems to address this but in a rather confusing way. The best way to
+  // clarify the problem IMO is to talk about the Open/Closed Principle.
+  //
+  // In addition this rule looks like it will fire for every single switch statement
+  // in the assembly. The majority of switch statements are going to be fine
+  // so the summary and solution text need to make it very clear that the code
+  // may be perfectly fine.
 
-	// TODO: The text in this rule completely confuses me. Is is saying that
-	// all switch statements should be avoided? How exactly do switch statements
-	// lead to code duplication? As far as I can tell, this isn't true at all: switch
-	// statements don't promote code duplication more than any other construct.
-	//
-	// The only real problem with switch statements I am aware of is that they
-	// are sometimes used to dispatch on types which is a bad idea because
-	// virtual methods are normally better for that. The end of the summary
-	// seems to address this but in a rather confusing way. The best way to
-	// clarify the problem IMO is to talk about the Open/Closed Principle.
-	//	
-	// In addition this rule looks like it will fire for every single switch statement
-	// in the assembly. The majority of switch statements are going to be fine
-	// so the summary and solution text need to make it very clear that the code
-	// may be perfectly fine.
-		
-	/// <summary>
-	/// This rule checks for the Switch Statements smell.  This can
-	/// lead to code duplication, because the same switch could
-	/// be repeated in various places in your program.  Also, if
-	/// need to do a little change, you may have to change every switch
-	/// statement. The preferred way to do this is with virtual methods and polymorphism.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// int balance = 0;
-	/// foreach (Movie movie in movies) {
-	/// 	switch (movie.GetTypeCode ()) {
-	///	 	case MovieType.OldMovie: {
-	/// 			balance += movie.DaysRented * movie.Price / 2;
-	/// 			break;
-	///	 	}
-	/// 		case MovieType.ChildMovie: {
-	///	 		//its an special bargain !!
-	/// 			balance += movie.Price;
-	/// 			break;
-	///		}
-	///		case MovieType.NewMovie: {
-	///			balance += (movie.DaysRented + 1) * movie.Price;
-	///			break:
-	///		}
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// abstract class Movie {
-	///	abstract int GetPrice ();
-	/// }
-	/// class OldMovie : Movie {
-	///	public override int GetPrice ()
-	///	{
-	///		return DaysRented * Price / 2;
-	///	}
-	/// }
-	/// class ChildMovie : Movie {
-	///	public override int GetPrice ()
-	///	{
-	///		return movie.Price;
-	///	}
-	/// }
-	/// class NewMovie : Movie {
-	///	public override int GetPrice ()
-	///	{
-	///		return (DaysRented + 1) * Price;
-	///	}
-	/// }
-	///
-	/// int balance = 0;
-	/// foreach (Movie movie in movies) {
-	/// 	balance += movie.GetPrice ()
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.4</remarks>
+  /// <summary>
+  /// This rule checks for the Switch Statements smell.  This can
+  /// lead to code duplication, because the same switch could
+  /// be repeated in various places in your program.  Also, if
+  /// need to do a little change, you may have to change every switch
+  /// statement. The preferred way to do this is with virtual methods and polymorphism.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// int balance = 0;
+  /// foreach (Movie movie in movies) {
+  /// 	switch (movie.GetTypeCode ()) {
+  ///	 	case MovieType.OldMovie: {
+  /// 			balance += movie.DaysRented * movie.Price / 2;
+  /// 			break;
+  ///	 	}
+  /// 		case MovieType.ChildMovie: {
+  ///	 		//its an special bargain !!
+  /// 			balance += movie.Price;
+  /// 			break;
+  ///		}
+  ///		case MovieType.NewMovie: {
+  ///			balance += (movie.DaysRented + 1) * movie.Price;
+  ///			break:
+  ///		}
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// abstract class Movie {
+  ///	abstract int GetPrice ();
+  /// }
+  /// class OldMovie : Movie {
+  ///	public override int GetPrice ()
+  ///	{
+  ///		return DaysRented * Price / 2;
+  ///	}
+  /// }
+  /// class ChildMovie : Movie {
+  ///	public override int GetPrice ()
+  ///	{
+  ///		return movie.Price;
+  ///	}
+  /// }
+  /// class NewMovie : Movie {
+  ///	public override int GetPrice ()
+  ///	{
+  ///		return (DaysRented + 1) * Price;
+  ///	}
+  /// }
+  ///
+  /// int balance = 0;
+  /// foreach (Movie movie in movies) {
+  /// 	balance += movie.GetPrice ()
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.4</remarks>
 
-	[Problem ("The problem with switch statements is the duplication.  You may find the same switch in several places.")]
-	[Solution ("You should consider polymorphism.")]
-	public class AvoidSwitchStatementsRule : Rule, IMethodRule {
-		public RuleResult CheckMethod (MethodDefinition method) 
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
-			
-			//Perhaps you are checking autogenerated code from a
-			//yield statement
-			if (method.DeclaringType.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
+  [Problem("The problem with switch statements is the duplication.  You may find the same switch in several places.")]
+  [Solution("You should consider polymorphism.")]
+  public class AvoidSwitchStatementsRule : Rule, IMethodRule
+  {
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-            // skip compiler generated method
-            if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
-                return RuleResult.DoesNotApply;
-				
-			foreach (Instruction instruction in method.Body.Instructions) {
-				if (instruction.OpCode == OpCodes.Switch) {
+      //Perhaps you are checking autogenerated code from a
+      //yield statement
+      if (method.DeclaringType.IsGeneratedCode() || method.HasCompilerGeneratedAttribute())
+        return RuleResult.DoesNotApply;
 
-                    // if effectively a single branch, might as well be an `if` statement
-                    var fsharp = method.IsFSharpCode();
-                    if (fsharp && (instruction.Operand as Instruction[]).Select(i => i.Offset).Distinct().Count() < 2)
-                      continue;
+      foreach (Instruction instruction in method.Body.Instructions)
+      {
+        if (instruction.OpCode == OpCodes.Switch)
+        {
+          // if effectively a single branch, might as well be an `if` statement
+          var fsharp = method.IsFSharpCode();
+          if (fsharp && (instruction.Operand as Instruction[]).Select(i => i.Offset).Distinct().Count() < 2)
+            continue;
 
-                    // In F# module-based code is OK
-                    if (method.DeclaringType.IsModuleType() ||
-                       (method.DeclaringType.Name.Contains("@") && method.DeclaringType.DeclaringType.IsModuleType()))
-                    {
-                        continue;
-                    }
+          // In F# module-based code is OK
+          if (method.DeclaringType.IsModuleType() ||
+             (method.DeclaringType.IsFSharpLocalType()
+             && method.DeclaringType.DeclaringType.IsModuleType()))
+          {
+            continue;
+          }
 
-                    // F# match on Union cases is OK
-                    if (instruction.Previous != null && instruction.Previous.OpCode == OpCodes.Call)
-                    {
-                        var prev = instruction.Previous;
-                        var func = prev.Operand as MethodDefinition;
-                        if (func != null && 
-                            func.Name == "get_Tag" &&
-                            func.DeclaringType.IsSumType())
-                            continue;
-                    }
+          // F# match on Union cases is OK
+          if (instruction.Previous != null && instruction.Previous.OpCode == OpCodes.Call)
+          {
+            var prev = instruction.Previous;
+            if (prev.Operand is MethodDefinition func &&
+                func.Name == "get_Tag" &&
+                func.DeclaringType.IsSumType())
+              continue;
+          }
 
-					Runner.Report (method, instruction, Severity.Low, Confidence.Total);
-					return RuleResult.Failure;
-				}
-				
-				//Sometimes the compiler generates a table
-				//driven comparison, there is the code for
-				//handling too.
-				if (instruction.OpCode == OpCodes.Ldsfld) {
-					FieldReference field = (FieldReference) instruction.Operand;
-					if (field.Name.Contains ("switch") && field.IsGeneratedCode ()) {
-						Runner.Report (method, instruction, Severity.Low, Confidence.Total);
-						return RuleResult.Failure;
-					}
-				}
-			}
+          Runner.Report(method, instruction, Severity.Low, Confidence.Total);
+          return RuleResult.Failure;
+        }
 
-			return Runner.CurrentRuleResult;
-		}
-	}
+        //Sometimes the compiler generates a table
+        //driven comparison, there is the code for
+        //handling too.
+        if (instruction.OpCode == OpCodes.Ldsfld)
+        {
+          FieldReference field = (FieldReference)instruction.Operand;
+          if (field.Name.Contains("switch", StringComparison.Ordinal)
+            && field.IsGeneratedCode())
+          {
+            Runner.Report(method, instruction, Severity.Low, Confidence.Total);
+            return RuleResult.Failure;
+          }
+        }
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

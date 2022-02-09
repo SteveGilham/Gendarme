@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Engine
 //
 // Authors:
@@ -25,36 +25,36 @@
 // THE SOFTWARE.
 //
 
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  public abstract class Engine : IEngine
+  {
+    protected Engine()
+    {
+    }
 
-	// FIXME: do a IEngine interface once this is stable
-	abstract public class Engine {
+    protected EngineController Controller
+    {
+      get;
+      private set;
+    }
 
-		protected Engine ()
-		{
-		}
+    /// <summary>
+    /// Override to attach to some of the controller events
+    /// </summary>
+    /// <param name="controller"></param>
+    public virtual void Initialize(EngineController controller)
+    {
+      Controller = controller;
+    }
 
-		protected EngineController Controller {
-			get;
-			private set;
-		}
-
-		/// <summary>
-		/// Override to attach to some of the controller events
-		/// </summary>
-		/// <param name="controller"></param>
-		public virtual void Initialize (EngineController controller)
-		{
-			Controller = controller;
-		}
-
-		/// <summary>
-		/// Note: TearDown can be called without a call to Engine.Register or 
-		/// Engine.Initialize
-		/// </summary>
-		public virtual void TearDown ()
-		{
-			Controller = null;
-		}
-	}
+    /// <summary>
+    /// Note: TearDown can be called without a call to Engine.Register or
+    /// Engine.Initialize
+    /// </summary>
+    public void TearDown()
+    {
+      Controller = null;
+    }
+  }
 }

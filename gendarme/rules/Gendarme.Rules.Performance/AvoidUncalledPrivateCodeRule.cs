@@ -35,6 +35,7 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 using Gendarme.Framework.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Performance
 {
@@ -143,6 +144,9 @@ namespace Gendarme.Rules.Performance
       return true;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // check if the the rule applies to this method

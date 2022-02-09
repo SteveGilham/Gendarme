@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Design.MainShouldNotBePublicRule
 //
 // Authors:
@@ -30,78 +30,85 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule fires if an assembly's entry point (typically named <c>Main</c>) is visible
+  /// to other assemblies. It is better to make this method private so that only the CLR
+  /// can call the method.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public class MainClass {
+  ///	public void Main ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (type is not externally visible):
+  /// <code>
+  /// internal class MainClass {
+  ///	public void Main ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (method is not externally visible):
+  /// <code>
+  /// public class MainClass {
+  ///	internal void Main ()
+  ///	{
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule fires if an assembly's entry point (typically named <c>Main</c>) is visible 
-	/// to other assemblies. It is better to make this method private so that only the CLR
-	/// can call the method.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public class MainClass {
-	///	public void Main ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (type is not externally visible):
-	/// <code>
-	/// internal class MainClass {
-	///	public void Main ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (method is not externally visible):
-	/// <code>
-	/// public class MainClass {
-	///	internal void Main ()
-	///	{
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("The entry point (Main) of this assembly is visible to the outside world (ref: C# Programming Guide).")]
+  [Solution("Reduce the visibility of the method or type if your language allows it. It may not be possible in some language, like VB.NET).")]
+  public class MainShouldNotBePublicRule : Rule, IAssemblyRule
+  {
+    private const string VisualBasic = "Microsoft.VisualBasic";
 
-	[Problem ("The entry point (Main) of this assembly is visible to the outside world (ref: C# Programming Guide).")]
-	[Solution ("Reduce the visibility of the method or type if your language allows it. It may not be possible in some language, like VB.NET).")]
-	public class MainShouldNotBePublicRule : Rule, IAssemblyRule {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckAssembly(AssemblyDefinition assembly)
+    {
+      // assembly must have an entry point to be examined
+      MethodDefinition entry_point = assembly.EntryPoint;
+      if (entry_point == null)
+        return RuleResult.DoesNotApply;
 
-		private const string VisualBasic = "Microsoft.VisualBasic";
+      // RULE APPLIES
 
-		public RuleResult CheckAssembly (AssemblyDefinition assembly)
-		{
-			// assembly must have an entry point to be examined
-			MethodDefinition entry_point = assembly.EntryPoint;
-			if (entry_point == null)
-				return RuleResult.DoesNotApply;
+      // we have to check declaringType's visibility so
+      // if we can't get access to it (is this possible?) we abandon
+      // also, if it is not public, we don't have to continue our work
+      // - we can't reach Main () anyways
+      TypeDefinition type = entry_point.DeclaringType.Resolve();
+      if (type == null || !type.IsPublic)
+        return RuleResult.Success;
 
-			// RULE APPLIES
+      // at last, if Main () is not public, then it's okay
+      if (!entry_point.IsPublic)
+        return RuleResult.Success;
 
-			// we have to check declaringType's visibility so 
-			// if we can't get access to it (is this possible?) we abandon
-			// also, if it is not public, we don't have to continue our work
-			// - we can't reach Main () anyways
-			TypeDefinition type = entry_point.DeclaringType.Resolve ();
-			if (type == null || !type.IsPublic)
-				return RuleResult.Success;
-
-			// at last, if Main () is not public, then it's okay
-			if (!entry_point.IsPublic)
-				return RuleResult.Success;
-
-			if (assembly.References (VisualBasic)) {
-				Runner.Report (type, Severity.Medium, Confidence.High, "Reduce class or module visibility (from public).");
-			} else {
-				Runner.Report (entry_point, Severity.Medium, Confidence.Total, "Change method visibility to private or internal.");
-			}
-			return RuleResult.Failure;
-		}
-	}
+      if (assembly.References(VisualBasic))
+      {
+        Runner.Report(type, Severity.Medium, Confidence.High, "Reduce class or module visibility (from public).");
+      }
+      else
+      {
+        Runner.Report(entry_point, Severity.Medium, Confidence.Total, "Change method visibility to private or internal.");
+      }
+      return RuleResult.Failure;
+    }
+  }
 }

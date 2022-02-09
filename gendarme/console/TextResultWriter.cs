@@ -36,8 +36,7 @@ using System.Linq;
 using Mono.Cecil;
 
 using Gendarme.Framework;
-
-[assembly: SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Scope = "member", Target = "Gendarme.TextResultWriter.#.ctor(Gendarme.Framework.IRunner,System.String)", Justification = "work in progress")]
+using Gendarme.Framework.Rocks;
 
 namespace Gendarme
 {
@@ -51,8 +50,8 @@ namespace Gendarme
       Dark
     }
 
-    private TextWriter writer;
-    private ColorScheme color_scheme;
+    private readonly TextWriter writer;
+    private readonly ColorScheme color_scheme;
 
     public TextResultWriter(IRunner runner, string fileName)
       : base(runner, fileName)
@@ -61,17 +60,17 @@ namespace Gendarme
       {
         writer = System.Console.Out;
 
-        string color_override = Environment.GetEnvironmentVariable("GENDARME_COLOR") ?? "dark";
-        switch (color_override.ToLowerInvariant())
+        string color_override = Environment.GetEnvironmentVariable("GENDARME_COLOR") ?? "DARK";
+        switch (color_override.ToUpperInvariant())
         {
-          case "none":
+          case "NONE":
             break;
 
-          case "light":
+          case "LIGHT":
             color_scheme = ColorScheme.Light;
             break;
 
-          case "dark":
+          //case "dark":
           default:
             color_scheme = ColorScheme.Dark;
             break;
@@ -119,14 +118,19 @@ namespace Gendarme
       writer.WriteLine();
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Single flow of control")]
     private void WriteEntry(int index, Defect defect)
     {
       IRule rule = defect.Rule;
+      var name = rule.Name;
 
       BeginColor(
         (Severity.Critical == defect.Severity || Severity.High == defect.Severity)
         ? ConsoleColor.DarkRed : ConsoleColor.DarkYellow);
-      writer.WriteLine("{0}. {1}", index, rule.Name);
+      writer.WriteLine("{0}. {1}", index, name);
       writer.WriteLine();
       EndColor();
 
@@ -137,7 +141,7 @@ namespace Gendarme
       writer.WriteLine();
 
       writer.WriteLine("* Severity: {0}, Confidence: {1}", defect.Severity, defect.Confidence);
-      writer.WriteLine("* Target:   {0} ({1})", defect.Target, defect.Assembly.FullName);
+      writer.WriteLine("* Target:   {0} ({1})", defect.Target, defect.Assembly?.FullName);
 
       if (defect.Location != defect.Target)
         writer.WriteLine("* Location: {0}", defect.Location);
@@ -162,7 +166,7 @@ namespace Gendarme
       EndColor();
 
       var category = defect.Rule.FullName;
-      var length = category.Length - (defect.Rule.Name.Length + 1);
+      var length = category.Length - (name.Length + 1);
       category = category.Substring(0, length);
       writer.WriteLine("[<assembly: SuppressMessage(\"{0}\",", category);
       writer.WriteLine("                            \"{0}\",", defect.Rule.Name);
@@ -177,13 +181,15 @@ namespace Gendarme
       if (target is AssemblyDefinition ||
           target is ModuleReference)
         scope = "module";
+      if (target is Gendarme.Framework.Helpers.NamespaceDefinition)
+        scope = "namespace";
       if (target is TypeReference)
         scope = "type";
       writer.WriteLine("                            Scope = \"{0}\", // {1}", scope, target.GetType().Name);
 
       var targetName = target.ToString();
       if (target is MethodReference)
-        targetName = targetName.Substring(targetName.IndexOf(' ')).Trim();
+        targetName = targetName.Substring(targetName.IndexOf(' ', StringComparison.Ordinal)).Trim();
 
       writer.WriteLine("                            Target = \"{0}\",", targetName);
       writer.WriteLine("                            Justification = \"\")>]");

@@ -33,121 +33,130 @@ using Gendarme.Rules.Naming;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Naming {
+namespace Test.Rules.Naming
+{
+  internal class Package
+  {
+  }
 
-	class Package {
-	}
+  internal class PostOffice
+  {
+    public PostOffice()
+    { }
 
-	class PostOffice {
-		public PostOffice () {}
-		public virtual void SendPackage (Package package) {}
-		public static bool IsPackageValid (Package package) { return true; }
-		public static void CheckPackageValid (Package package) { }
-		public static void SendPackageTo (Package package, string address) {}
-	}
+    public virtual void SendPackage(Package package)
+    { }
 
-	class DerivedPostOffice : PostOffice {
-		public override void SendPackage (Package package) {}
-	}
+    public static bool IsPackageValid(Package package)
+    { return true; }
 
-	[TestFixture]
-	public class AvoidRedundancyInMethodNameTest : MethodRuleTestFixture<AvoidRedundancyInMethodNameRule> {
+    public static void CheckPackageValid(Package package)
+    { }
 
-		private void NoParam ()
-		{
-		}
+    public static void SendPackageTo(Package package, string address)
+    { }
+  }
 
-		private bool Property
-		{
-			get { return true; }
-		}
+  internal class DerivedPostOffice : PostOffice
+  {
+    public override void SendPackage(Package package)
+    { }
+  }
 
-		private void ByRefParamPackage (ref Package package)
-		{
-		}
+  [TestFixture]
+  public class AvoidRedundancyInMethodNameTest : MethodRuleTestFixture<AvoidRedundancyInMethodNameRule>
+  {
+    private void NoParam()
+    {
+    }
 
-		private void OutParamPackage (out Package package)
-		{
-			package = null;
-		}
+    private bool Property
+    {
+      get { return true; }
+    }
 
-		private void Shorter (Package package)
-		{
-		}
+    private void ByRefParamPackage(ref Package package)
+    {
+    }
 
-		private void ParseString (string text)
-		{
-		}
+    private void OutParamPackage(out Package package)
+    {
+      package = null;
+    }
 
-		private Package GetRealPackage (Package package)
-		{
-			return null;
-		}
+    private void Shorter(Package package)
+    {
+    }
 
-		private void SetPackage (Package package)
-		{
-		}
+    private void ParseString(string text)
+    {
+    }
 
-		private void PackageSomething (Package package, string something)
-		{
-		}
+    private Package GetRealPackage(Package package)
+    {
+      return null;
+    }
 
-		private void Send (Package package)
-		{
-		}
+    private void SetPackage(Package package)
+    {
+    }
 
+    private void PackageSomething(Package package, string something)
+    {
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest> ("NoParam");
-			AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest> ("get_Property");
-			AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest> ("ByRefParamPackage");
-			AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest> ("OutParamPackage");
-			AssertRuleDoesNotApply<PostOffice> (".ctor");//constructor
-			AssertRuleDoesNotApply<DerivedPostOffice> ("SendPackage");//override
-			AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest> ("Shorter");//...than parameter type name
-			AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest> ("SetPackage");//too vague
-			AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest> ("Send");
-		}
+    private void Send(Package package)
+    {
+    }
 
-		[Test]
-		public void Failure1 ()
-		{
-			AssertRuleFailure<PostOffice> ("SendPackage", 1);
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'Send'"), "SendPackage");
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest>("NoParam");
+      AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest>("get_Property");
+      AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest>("ByRefParamPackage");
+      AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest>("OutParamPackage");
+      AssertRuleDoesNotApply<PostOffice>(".ctor");//constructor
+      AssertRuleDoesNotApply<DerivedPostOffice>("SendPackage");//override
+      AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest>("Shorter");//...than parameter type name
+      AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest>("SetPackage");//too vague
+      AssertRuleDoesNotApply<AvoidRedundancyInMethodNameTest>("Send");
+    }
 
-		[Test]
-		public void Failure2 ()
-		{
-			AssertRuleFailure<PostOffice> ("IsPackageValid", 1);
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'Test.Rules.Naming.Package' as property 'IsValid'"), "IsPackageValid");
-		}
+    [Test]
+    public void Failure1()
+    {
+      AssertRuleFailure<PostOffice>("SendPackage", 1);
+      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Send'"), "SendPackage");
+    }
 
-		[Test]
-		public void Failure3 ()
-		{
-			AssertRuleFailure<PostOffice> ("CheckPackageValid", 1);
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'Test.Rules.Naming.Package' as method 'CheckValid'"), "CheckPackageValid");
-		}
+    [Test]
+    public void Failure2()
+    {
+      AssertRuleFailure<PostOffice>("IsPackageValid", 1);
+      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as property 'IsValid'"), "IsPackageValid");
+    }
 
-		[Test]
-		public void Failure4 ()
-		{
-			AssertRuleFailure<PostOffice> ("SendPackageTo", 1);
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'Test.Rules.Naming.Package' as method 'SendTo'"), "SendPackageTo");
-		}
+    [Test]
+    public void Failure3()
+    {
+      AssertRuleFailure<PostOffice>("CheckPackageValid", 1);
+      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as method 'CheckValid'"), "CheckPackageValid");
+    }
 
-		[Test]
-		public void Success ()
-		{
-			AssertRuleSuccess<AvoidRedundancyInMethodNameTest> ("GetRealPackage");//return type is also parameter type
-			AssertRuleSuccess<AvoidRedundancyInMethodNameTest> ("PackageSomething");//starts with parameter type name, most likely on purpose/action naming
-			AssertRuleSuccess<AvoidRedundancyInMethodNameTest> ("ParseString");//third-party type
-		}
+    [Test]
+    public void Failure4()
+    {
+      AssertRuleFailure<PostOffice>("SendPackageTo", 1);
+      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as method 'SendTo'"), "SendPackageTo");
+    }
 
-	}
-
+    [Test]
+    public void Success()
+    {
+      AssertRuleSuccess<AvoidRedundancyInMethodNameTest>("ParseString");//third-party type
+      AssertRuleSuccess<AvoidRedundancyInMethodNameTest>("GetRealPackage");//return type is also parameter type
+      AssertRuleSuccess<AvoidRedundancyInMethodNameTest>("PackageSomething");//starts with parameter type name, most likely on purpose/action naming
+    }
+  }
 }
-

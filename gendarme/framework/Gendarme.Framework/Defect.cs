@@ -31,6 +31,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework
 {
@@ -40,16 +41,9 @@ namespace Gendarme.Framework
 
     public Defect(IRule rule, IMetadataTokenProvider target, IMetadataTokenProvider location, Severity severity, Confidence confidence, string text)
     {
-      if (rule == null)
-        throw new ArgumentNullException("rule");
-      if (target == null)
-        throw new ArgumentNullException("target");
-      if (location == null)
-        throw new ArgumentNullException("location");
-
-      Rule = rule;
-      Target = target;
-      Location = location;
+      Rule = rule ?? throw new ArgumentNullException(nameof(rule));
+      Target = target ?? throw new ArgumentNullException(nameof(target));
+      Location = location ?? throw new ArgumentNullException(nameof(location));
       Confidence = confidence;
       Severity = severity;
       Text = text;
@@ -61,6 +55,10 @@ namespace Gendarme.Framework
     {
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodDefinition")]
     public Defect(IRule rule, IMetadataTokenProvider target, MethodDefinition location, Instruction ins, Severity severity, Confidence confidence, string text)
       : this(rule, target, location, severity, confidence, text)
     {

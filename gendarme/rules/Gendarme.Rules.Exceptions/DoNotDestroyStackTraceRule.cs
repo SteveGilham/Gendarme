@@ -10,10 +10,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -33,173 +33,205 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 using Gendarme.Rules.Exceptions.Impl;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Exceptions {
+namespace Gendarme.Rules.Exceptions
+{
+  /// <summary>
+  /// This rule will fire if a catch handler throws the exception it caught. What it should
+  /// do instead is rethrow the original exception (e.g. use <c>throw</c> instead of
+  /// <c>throw ex</c>). This is helpful because rethrow preserves the stacktrace of the
+  /// original exception.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// try {
+  ///	Int32.Parse ("Broken!");
+  /// }
+  /// catch (Exception ex) {
+  ///	Assert.IsNotNull (ex);
+  ///	throw ex;
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// try {
+  ///	Int32.Parse ("Broken!");
+  /// }
+  /// catch (Exception ex) {
+  ///	Assert.IsNotNull (ex);
+  ///	throw;
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>Prior to Gendarme 2.0 this rule was named  DontDestroyStackTraceRule.</remarks>
 
-	/// <summary>
-	/// This rule will fire if a catch handler throws the exception it caught. What it should
-	/// do instead is rethrow the original exception (e.g. use <c>throw</c> instead of
-	/// <c>throw ex</c>). This is helpful because rethrow preserves the stacktrace of the
-	/// original exception.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// try {
-	///	Int32.Parse ("Broken!");
-	/// }
-	/// catch (Exception ex) {
-	///	Assert.IsNotNull (ex);
-	///	throw ex;
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// try {
-	///	Int32.Parse ("Broken!");
-	/// }
-	/// catch (Exception ex) {
-	///	Assert.IsNotNull (ex);
-	///	throw;
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>Prior to Gendarme 2.0 this rule was named  DontDestroyStackTraceRule.</remarks>
+  [Problem("A catch block throws the exception it caught which destroys the original stack trace.")]
+  [Solution("Use 'throw;' instead of 'throw ex;'")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  [FxCopCompatibility("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
+  public class DoNotDestroyStackTraceRule : Rule, IMethodRule
+  {
+    // all branches instructions except leave[_s]
+    private static readonly OpCodeBitmask branches = new OpCodeBitmask(0xFFFFFC0000000000, 0xF, 0x0, 0x0);
 
-	[Problem ("A catch block throws the exception it caught which destroys the original stack trace.")]
-	[Solution ("Use 'throw;' instead of 'throw ex;'")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2200:RethrowToPreserveStackDetails")]
-	public class DoNotDestroyStackTraceRule : Rule, IMethodRule {
+    private readonly List<int> warned_offsets_in_method = new List<int>();
 
-		// all branches instructions except leave[_s]
-		static OpCodeBitmask branches = new OpCodeBitmask (0xFFFFFC0000000000, 0xF, 0x0, 0x0);
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // rule only applies to methods with IL and exceptions handlers
+      if (!method.HasBody || !method.Body.HasExceptionHandlers)
+        return RuleResult.DoesNotApply;
 
-		private List<int> warned_offsets_in_method = new List<int> ();
+      // and when the IL contains a Throw instruction (Rethrow is fine)
+      OpCodeBitmask mask = OpCodeEngine.GetBitmask(method);
+      if (!mask.Get(Code.Throw))
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// rule only applies to methods with IL and exceptions handlers
-			if (!method.HasBody || !method.Body.HasExceptionHandlers)
-				return RuleResult.DoesNotApply;
+      // we can use a faster code path when no branches are present in the method
+      if (mask.Intersect(branches))
+      {
+        Branches(method);
+      }
+      else
+      {
+        Branchless(method);
+      }
 
-			// and when the IL contains a Throw instruction (Rethrow is fine)
-			OpCodeBitmask mask = OpCodeEngine.GetBitmask (method);
-			if (!mask.Get (Code.Throw))
-				return RuleResult.DoesNotApply;
+      warned_offsets_in_method.Clear();
 
-			// we can use a faster code path when no branches are present in the method
-			if (mask.Intersect (branches)) {
-				Branches (method);
-			} else {
-				Branchless (method);
-			}
+      return Runner.CurrentRuleResult;
+    }
 
-			warned_offsets_in_method.Clear ();
+    private void Branchless(MethodDefinition method)
+    {
+      // Current stack position: 0 = top of stack
+      int exStackPos = 0;
+      // Local variable position: -1 = not stored in local variable
+      int localVarPos = -1;
 
-			return Runner.CurrentRuleResult;
-		}
+      foreach (ExceptionHandler eh in method.Body.ExceptionHandlers)
+      {
+        if (eh.HandlerType != ExceptionHandlerType.Catch)
+          continue;
 
-		private void Branchless (MethodDefinition method)
-		{
-			// Current stack position: 0 = top of stack
-			int exStackPos = 0;
-			// Local variable position: -1 = not stored in local variable
-			int localVarPos = -1;
+        ProcessCatchBlock(eh.HandlerStart, eh.HandlerEnd, method, ref exStackPos, ref localVarPos);
+      }
+    }
 
-			foreach (ExceptionHandler eh in method.Body.ExceptionHandlers) {
-				if (eh.HandlerType != ExceptionHandlerType.Catch)
-					continue;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
+    private void ProcessCatchBlock(Instruction first, Instruction last, MethodDefinition method, ref int exStackPos, ref int localVarPos)
+    {
+      Instruction cur = null;
 
-				ProcessCatchBlock (eh.HandlerStart, eh.HandlerEnd, method, ref exStackPos, ref localVarPos);
-			}
-		}
+      while (cur != last)
+      {
+        if (cur == null)
+          cur = first;
+        else
+          cur = cur.Next;
 
-		private void ProcessCatchBlock (Instruction first, Instruction last, MethodDefinition method, ref int exStackPos, ref int localVarPos)
-		{
-			Instruction cur = null;
-			
-			while (cur != last) {
-				if (cur == null)
-					cur = first;
-				else
-					cur = cur.Next;
+        // Rethrown exception - no problem!
+        if (cur.Is(Code.Rethrow))
+          return;
 
-				// Rethrown exception - no problem!
-				if (cur.Is (Code.Rethrow))
-					return;
+        if (cur.IsStoreLocal())
+        {
+          int varIndex = cur.GetVariable(method).Index;
+          if (exStackPos == 0)
+          {
+            // Storing argument on top of stack in local variable reference
+            localVarPos = varIndex;
+            exStackPos = -1;
+          }
+          else if (localVarPos != -1 && varIndex == localVarPos)
+            // Writing over orignal exception...
+            localVarPos = -1;
+        }
+        else if (localVarPos != -1 && cur.IsLoadLocal())
+        {
+          int varIndex = cur.GetVariable(method).Index;
+          if (varIndex == localVarPos)
+            // Loading exception from local var back onto stack
+            exStackPos = 0;
+        }
+        else if (cur.Is(Code.Throw) && exStackPos == 0)
+        {
+          // If our original exception is on top of the stack,
+          // we're rethrowing it.This is deemed naughty...
+          if (!warned_offsets_in_method.Contains(cur.Offset))
+          {
+            Runner.Report(method, cur, Severity.Critical, Confidence.High);
+            warned_offsets_in_method.Add(cur.Offset);
+          }
+          return;
+        }
+        else if (exStackPos != -1)
+        {
+          // If we're still on the stack, track our position after
+          // this instruction
+          int numPops = cur.GetPopCount(method);
+          if (exStackPos < numPops)
+          {
+            // Popped ex off of stack
+            exStackPos = -1;
+          }
+          else
+          {
+            int numPushes = cur.GetPushCount();
+            exStackPos += numPushes - numPops;
+          }
+        }
+      }
+    }
 
-				if (cur.IsStoreLocal ()) {
-					int varIndex = cur.GetVariable (method).Index;
-					if (exStackPos == 0) {
-						// Storing argument on top of stack in local variable reference
-						localVarPos = varIndex;
-						exStackPos = -1;
-					} else if (localVarPos != -1 && varIndex == localVarPos)
-						// Writing over orignal exception...
-						localVarPos = -1;
-				} else if (localVarPos != -1 && cur.IsLoadLocal ()) {
-					int varIndex = cur.GetVariable (method).Index;
-					if (varIndex == localVarPos)
-						// Loading exception from local var back onto stack
-						exStackPos = 0;
-				} else if (cur.Is (Code.Throw) && exStackPos == 0) {
-					// If our original exception is on top of the stack,
-					// we're rethrowing it.This is deemed naughty...
-					if (!warned_offsets_in_method.Contains (cur.Offset)) {
-						Runner.Report (method, cur, Severity.Critical, Confidence.High);
-						warned_offsets_in_method.Add (cur.Offset);
-					}
-					return;
-				} else if (exStackPos != -1) {
-					// If we're still on the stack, track our position after
-					// this instruction
-					int numPops = cur.GetPopCount (method);
-					if (exStackPos < numPops) {
-						// Popped ex off of stack
-						exStackPos = -1;
-					} else {
-						int numPushes = cur.GetPushCount ();
-						exStackPos += numPushes - numPops;
-					}
-				}
-			}
-		}
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    private void Branches(MethodDefinition method)
+    {
+      ExecutionPathFactory epf = new ExecutionPathFactory();
 
-		private void Branches (MethodDefinition method)
-		{
-			ExecutionPathFactory epf = new ExecutionPathFactory ();
+      foreach (ExceptionHandler eh in method.Body.ExceptionHandlers)
+      {
+        if (eh.HandlerType != ExceptionHandlerType.Catch)
+          continue;
 
-			foreach (ExceptionHandler eh in method.Body.ExceptionHandlers) {
-				if (eh.HandlerType != ExceptionHandlerType.Catch)
-					continue;
+        var list = epf.CreatePaths(eh.HandlerStart, eh.HandlerEnd);
+        if (list.Count == 0)
+        {
+          Runner.Report(method, eh.HandlerStart, Severity.Medium, Confidence.Normal, "Handler too complex for analysis");
+        }
+        else
+        {
+          foreach (ExecutionPathCollection catchPath in list)
+            ProcessCatchPath(catchPath, method);
+        }
+      }
+    }
 
-				var list = epf.CreatePaths (eh.HandlerStart, eh.HandlerEnd);
-				if (list.Count == 0) {
-					Runner.Report (method, eh.HandlerStart, Severity.Medium, Confidence.Normal, "Handler too complex for analysis");
-				} else {
-					foreach (ExecutionPathCollection catchPath in list)
-						ProcessCatchPath (catchPath, method);
-				}
-			}
-		}
+    private void ProcessCatchPath(IEnumerable<ExecutionBlock> catchPath, MethodDefinition method)
+    {
+      // Track original exception (top of stack at start) through to the final
+      // return (be it throw, rethrow, leave, or leave.s)
 
-		private void ProcessCatchPath (IEnumerable<ExecutionBlock> catchPath, MethodDefinition method)
-		{
-			// Track original exception (top of stack at start) through to the final
-			// return (be it throw, rethrow, leave, or leave.s)
+      // Current stack position: 0 = top of stack
+      int exStackPos = 0;
+      // Local variable position: -1 = not stored in local variable
+      int localVarPos = -1;
 
-			// Current stack position: 0 = top of stack
-			int exStackPos = 0;
-			// Local variable position: -1 = not stored in local variable
-			int localVarPos = -1;
+      foreach (ExecutionBlock block in catchPath)
+      {
+        ProcessCatchBlock(block.First, block.Last, method, ref exStackPos, ref localVarPos);
+      }
+    }
 
-			foreach (ExecutionBlock block in catchPath) {
-				ProcessCatchBlock (block.First, block.Last, method, ref exStackPos, ref localVarPos);
-			}
-		}
 #if false
 		public void Bitmask ()
 		{
@@ -233,5 +265,5 @@ namespace Gendarme.Rules.Exceptions {
 			Console.WriteLine (branches);
 		}
 #endif
-	}
+  }
 }

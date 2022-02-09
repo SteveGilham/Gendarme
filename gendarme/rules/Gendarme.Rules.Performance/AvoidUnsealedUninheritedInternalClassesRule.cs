@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Performance.AvoidUnsealedUninheritedInternalClassesRule
 //
 // Authors:
@@ -32,78 +32,78 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Performance {
+namespace Gendarme.Rules.Performance
+{
+  /// <summary>
+  /// This rule will fire for classes which are internal to the assembly and have no derived
+  /// classes, but are not <c>sealed</c>. Sealing the type clarifies the type hierarchy and
+  /// allows the compiler/JIT to perform optimizations such as eliding virtual method calls.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// // this one is correct since MyInheritedStuff inherits from this class
+  /// internal class MyBaseStuff {
+  /// }
+  ///
+  /// // this one is bad, since no other class inherit from MyConcreteStuff
+  /// internal class MyInheritedStuff : MyBaseStuff {
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// // this one is correct since the class is abstract
+  /// internal abstract class MyAbstractStuff {
+  /// }
+  ///
+  /// // this one is correct since the class is sealed
+  /// internal sealed class MyConcreteStuff : MyAbstractStuff {
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0 and, before 2.2, was named AvoidUnsealedUninheritedInternalClassesRule</remarks>
 
-	/// <summary>
-	/// This rule will fire for classes which are internal to the assembly and have no derived
-	/// classes, but are not <c>sealed</c>. Sealing the type clarifies the type hierarchy and
-	/// allows the compiler/JIT to perform optimizations such as eliding virtual method calls.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// // this one is correct since MyInheritedStuff inherits from this class
-	/// internal class MyBaseStuff {
-	/// }
-	/// 
-	/// // this one is bad, since no other class inherit from MyConcreteStuff
-	/// internal class MyInheritedStuff : MyBaseStuff {
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// // this one is correct since the class is abstract
-	/// internal abstract class MyAbstractStuff {
-	/// }
-	/// 
-	/// // this one is correct since the class is sealed
-	/// internal sealed class MyConcreteStuff : MyAbstractStuff {
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0 and, before 2.2, was named AvoidUnsealedUninheritedInternalClassesRule</remarks>
+  [Problem("Due to performance issues, types which are not visible outside of the assembly and which have no derived types should be sealed.")]
+  [Solution("You should seal this type, unless you plan to inherit from this type in the near-future.")]
+  public class AvoidUnsealedUninheritedInternalTypeRule : Rule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      var methods = type.Methods;
+      if (type.IsAbstract || type.IsSealed || type.IsVisible() || type.IsGeneratedCode()
+                || type.IsFSharpLocalType()
+                // Debugger related methods in F# with just a [CompilerGenerated] constructor
+                || (methods.Count == 1 && methods[0].HasCompilerGeneratedAttribute())
+                )
+        return RuleResult.Success;
 
-	[Problem ("Due to performance issues, types which are not visible outside of the assembly and which have no derived types should be sealed.")]
-	[Solution ("You should seal this type, unless you plan to inherit from this type in the near-future.")]
-	public class AvoidUnsealedUninheritedInternalTypeRule : Rule, ITypeRule {
+      // Union cases are unsealed and not usually inherited
+      if (type.DeclaringType?.IsSumType() ?? false)
+        return RuleResult.Success;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (type.IsAbstract || type.IsSealed || type.IsVisible () || type.IsGeneratedCode ()
-                || type.Name.Contains("@")// F# uses '@' e.g in <Type>@DebugTypeProxy
-                  // Debugger related methods in F# with just a [CompilerGenerated] constructor
-                || (type.Methods.Count == 1 && type.Methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
-                )  
-				return RuleResult.Success;
+      ModuleDefinition module = type.Module;
+      var name = type.GetTypeName();
+      foreach (TypeDefinition type_definition in module.GetAllTypes())
+      {
+        // skip ourself
+        if (type_definition.IsNamed(name))
+          continue;
+        if (type_definition.Inherits(name))
+          return RuleResult.Success;
+      }
 
-            // Union cases are unsealed and not usually inherited
-            if (type.DeclaringType != null &&
-                type.DeclaringType.IsSumType())
-                return RuleResult.Success;
+      Confidence c = module.Assembly.HasAttribute(visible) ?
+        Confidence.High : Confidence.Total;
+      Runner.Report(type, Severity.Medium, c);
+      return RuleResult.Failure;
+    }
 
-			ModuleDefinition module = type.Module;
-			var name = type.GetTypeName();
-			foreach (TypeDefinition type_definition in module.GetAllTypes ()) {
-				// skip ourself
-				if (type_definition.IsNamed (name))
-					continue;
-				if (type_definition.Inherits (name))
-					return RuleResult.Success;
-			}
-
-			Confidence c = module.Assembly.HasAttribute (visible) ?
-				Confidence.High : Confidence.Total;
-			Runner.Report (type, Severity.Medium, c);
-			return RuleResult.Failure;
-		}
-
-        private readonly static TypeName visible = new TypeName
-        {
-            Namespace = "System.Runtime.CompilerServices",
-            Name = "InternalsVisibleToAttribute"
-        };
-
-	}
+    private static readonly TypeName visible = new TypeName
+    {
+      Namespace = "System.Runtime.CompilerServices",
+      Name = "InternalsVisibleToAttribute"
+    };
+  }
 }

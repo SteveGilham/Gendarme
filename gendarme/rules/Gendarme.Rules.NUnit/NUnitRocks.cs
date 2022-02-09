@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.NUnit.NUnitRocks
 //
 // Authors:
@@ -25,34 +25,41 @@
 // THE SOFTWARE.
 
 using Mono.Cecil;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.NUnit {
+namespace Gendarme.Rules.NUnit
+{
+  /// <summary>
+  /// NUnitRocks contains extensions methods for NUnit-related methods and types.
+  /// </summary>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	/// <summary>
-	/// NUnitRocks contains extensions methods for NUnit-related methods and types.
-	/// </summary>
-	public static class NUnitRocks {
-		
-		/// <summary>
-		/// Checks if the method is a valid unit test (has corresponding attribute).
-		/// </summary>
-		/// <param name="self">The ICustomAttributeProvider on which the extension method can be called.</param>
-		/// <returns>True if method is a unit test, false otherwise.</returns>
-		public static bool IsTest (this ICustomAttributeProvider self)
-		{
-			if ((self == null) || !self.HasCustomAttributes)
-				return false;
+  [SuppressMessage("Gendarme.Rules.Naming",
+                    "AvoidRedundancyInTypeNameRule",
+                    Justification = "Makes sense in context")]
+  public static class NUnitRocks
+  {
+    /// <summary>
+    /// Checks if the method is a valid unit test (has corresponding attribute).
+    /// </summary>
+    /// <param name="self">The ICustomAttributeProvider on which the extension method can be called.</param>
+    /// <returns>True if method is a unit test, false otherwise.</returns>
+    public static bool IsTest(this ICustomAttributeProvider self)
+    {
+      if ((self == null) || !self.HasCustomAttributes)
+        return false;
 
-			foreach (CustomAttribute attribute in self.CustomAttributes) {
-				TypeReference type = attribute.AttributeType;
-				if (type.Namespace != "NUnit.Framework") // OK
-					continue;
+      foreach (CustomAttribute attribute in self.CustomAttributes)
+      {
+        TypeReference type = attribute.AttributeType;
+        if (type.Namespace != "NUnit.Framework") // OK
+          continue;
 
-				string name = attribute.AttributeType.Name;
-				if (name == "TestAttribute" || name == "TestCaseAttribute" || name == "TestCaseSourceAttribute")
-					return true;
-			}
-			return false;
-		}
-	}
+        string name = attribute.AttributeType.Name;
+        if (name == "TestAttribute" || name == "TestCaseAttribute" || name == "TestCaseSourceAttribute")
+          return true;
+      }
+      return false;
+    }
+  }
 }

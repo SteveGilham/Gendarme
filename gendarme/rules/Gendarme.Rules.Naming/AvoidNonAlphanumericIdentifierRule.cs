@@ -102,7 +102,7 @@ namespace Gendarme.Rules.Naming
     // so we just need to check the presence of underscore in method names
     private static bool CheckName(string name, bool special)
     {
-      int start = special ? name.IndexOf('_') + 1 : 0;
+      int start = special ? name.IndexOf('_', StringComparison.Ordinal) + 1 : 0;
       return (name.IndexOf('_', start) == -1);
     }
 
@@ -112,13 +112,13 @@ namespace Gendarme.Rules.Naming
         type.HasAttribute(ita));
     }
 
-    private readonly static TypeName ga = new TypeName
+    private static readonly TypeName ga = new TypeName
     {
       Namespace = "System.Runtime.InteropServices",
       Name = "GuidAttribute"
     };
 
-    private readonly static TypeName ita = new TypeName
+    private static readonly TypeName ita = new TypeName
     {
       Namespace = "System.Runtime.InteropServices",
       Name = "InterfaceTypeAttribute"
@@ -182,20 +182,23 @@ namespace Gendarme.Rules.Naming
     {
       var eh = method.IsEvent();
 
-      // exclude constrcutors, non-visible methods and generated code
+      // exclude constructors, non-visible methods and generated code
       if (method.IsConstructor || !method.IsVisible() || (!eh && method.IsGeneratedCode()))
         return RuleResult.DoesNotApply;
 
       // the rule does not apply if the code is an interface to COM objects
-      if (UsedForComInterop(method.DeclaringType as TypeDefinition))
+      if (UsedForComInterop(method.DeclaringType))
         return RuleResult.DoesNotApply;
 
       var fsharp = method.IsFSharpCode();
 
       var name = method.Name;
+      var hasParameters = method.HasParameters;
+      var pdc = hasParameters ? method.Parameters : null;
+
       if (eh)
       {
-        var chop = name.IndexOf("_");
+        var chop = name.IndexOf('_', StringComparison.Ordinal);
         name = name.Substring(chop + 1);
       }
       else
@@ -204,11 +207,11 @@ namespace Gendarme.Rules.Naming
         if (method.IsSetter || method.IsGetter)
           name = name.Substring(4);
         else
-        if (fsharp && method.HasParameters && String.IsNullOrEmpty(method.Parameters[0].Name))
+        if (fsharp && hasParameters && String.IsNullOrEmpty(pdc[0].Name))
         {
-          var typename = method.Parameters[0].ParameterType.Name;
-          if (method.Name.StartsWith(typename + ".get_", StringComparison.Ordinal) ||
-              method.Name.StartsWith(typename + ".set_", StringComparison.Ordinal))
+          var typename = pdc[0].ParameterType.Name;
+          if (name.StartsWith(typename + ".get_", StringComparison.Ordinal) ||
+              name.StartsWith(typename + ".set_", StringComparison.Ordinal))
             name = name.Substring(typename.Length + 5);
         }
       }
@@ -217,9 +220,9 @@ namespace Gendarme.Rules.Naming
       if (!CheckName(name, method.IsSpecialName))
         Runner.Report(method, Severity.Medium, Confidence.High);
 
-      if (method.HasParameters)
+      if (hasParameters)
       {
-        foreach (ParameterDefinition parameter in method.Parameters)
+        foreach (ParameterDefinition parameter in pdc)
         {
           var pname = parameter.Name;
           if (fsharp && pname.StartsWith("_arg", StringComparison.Ordinal))

@@ -37,13 +37,33 @@ using System.Linq;
 using Mono.Cecil;
 
 using Gendarme.Framework.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Framework.Rocks
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Design",
+                    "AvoidVisibleFieldsRule",
+                    Justification = "It's a POD, there is no implementation")]
+  [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes",
+    Justification = "no use case for them")]
   public struct TypeName
   {
     public string Namespace;
     public string Name;
+    public void Validate()
+    {
+      Validate(Namespace, Name);
+    }
+
+    private static void Validate(string @namespace, string name)
+    {
+      if (@namespace == null)
+        throw new ArgumentNullException(nameof(@namespace));
+      if (name == null)
+        throw new ArgumentNullException(nameof(@name));
+    }
   }
 
   // add Type[Definition|Reference] extensions methods here
@@ -70,6 +90,9 @@ namespace Gendarme.Framework.Rocks
     /// <returns>An IEnumerable to traverse all base classes and interfaces.</returns>
     public static IEnumerable<TypeDefinition> AllSuperTypes(this TypeReference self)
     {
+      if (self == null)
+        yield break;
+
       var types = new List<TypeReference>
       {
         self
@@ -135,6 +158,10 @@ namespace Gendarme.Framework.Rocks
     /// <param name="parameters">An array of full names (Namespace.Type) of parameter types. Ignored if null. Null entries act as wildcards.</param>
     /// <param name="customCondition">A custom condition that is called for each MethodDefinition that satisfies all other conditions. Ignored if null.</param>
     /// <returns>The first MethodDefinition that satisfies all conditions.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Correctness",
+                     "CheckParametersNullityInVisibleMethodsRule",
+                     Justification = "Handled w/o throw")]
     public static MethodDefinition GetMethod(this TypeReference self, MethodAttributes attributes, string name, string returnType, string[] parameters, Func<MethodDefinition, bool> customCondition)
     {
       if (self == null)
@@ -265,12 +292,7 @@ namespace Gendarme.Framework.Rocks
     /// does not implement it, or we could not find where it does).</returns>
     public static bool Implements(this TypeReference self, TypeName typename)
     {
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
-      if (typename.Namespace == null)
-        throw new ArgumentNullException("typename.Namespace");
-      if (typename.Name == null)
-        throw new ArgumentNullException("typename.Name");
-#pragma warning restore CA2208 // Instantiate argument exceptions correctly
+      typename.Validate();
       if (self == null)
         return false;
 
@@ -332,10 +354,7 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type inherits from specified class, False otherwise</returns>
     public static bool Inherits(this TypeReference self, TypeName typename)
     {
-      if (typename.Namespace == null)
-        throw new ArgumentNullException("nameSpace");
-      if (typename.Name == null)
-        throw new ArgumentNullException("name");
+      typename.Validate();
       if (self == null)
         return false;
 
@@ -377,11 +396,32 @@ namespace Gendarme.Framework.Rocks
       if (self == null)
         return false;
 
-      var def = (self is TypeDefinition) ? (self as TypeDefinition) : self.Resolve();
+      if (self.IsFSharpLocalType())
+        return true;
 
-      return def != null &&
-             (def.Name.Contains("@")
-              || def.HasAttribute(compilationMapping));
+      var def = (self as TypeDefinition) ?? self.Resolve();
+
+      return def != null && def.HasAttribute(compilationMapping);
+    }
+
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "AvoidUnnecessarySpecializationRule",
+                     Justification = "Not valid elsewhere")]
+    public static bool IsFSharpLocalType(this TypeReference self)
+    {
+      return self != null && self.Name.Contains("@", StringComparison.Ordinal);
+    }
+
+    public static bool IsFSharpFunction(this TypeReference self)
+    {
+      if (self == null)
+        return false;
+
+      var name = self.Name;
+      return self.Namespace.Equals("Microsoft.FSharp.Core", StringComparison.Ordinal) &&
+               (name.Equals("FSharpFunc`2", StringComparison.Ordinal)) ||
+                name.Equals("FSharpTypeFunc", StringComparison.Ordinal);
     }
 
     private static readonly TypeName compilationMapping = new TypeName
@@ -400,10 +440,8 @@ namespace Gendarme.Framework.Rocks
     /// <returns>True if the type is namespace and name match the arguments, False otherwise</returns>
     public static bool IsNamed(this TypeReference self, TypeName typename)
     {
-      if (typename.Namespace == null)
-        throw new ArgumentNullException("nameSpace");
-      if (typename.Name == null)
-        throw new ArgumentNullException("name");
+      typename.Validate();
+
       if (self == null)
         return false;
 
@@ -427,20 +465,21 @@ namespace Gendarme.Framework.Rocks
 
     public static TypeName GetTypeName(this TypeReference self)
     {
+      var selfName = self.Name;
       if (self.IsNested)
       {
         var parent = self.DeclaringType.GetTypeName();
         return new TypeName
         {
           Namespace = parent.Namespace,
-          Name = parent.Name + "/" + self.Name
+          Name = parent.Name + "/" + selfName
         };
       }
       else if (self.IsByReference)
       {
         // Hopefully not a common case
         var fn = self.FullName;
-        var index = fn.LastIndexOf(".");
+        var index = fn.LastIndexOf('.');
         if (index < 0)
           return new TypeName
           {
@@ -459,7 +498,7 @@ namespace Gendarme.Framework.Rocks
         return new TypeName
         {
           Namespace = self.Namespace,
-          Name = self.Name
+          Name = selfName
         };
       }
     }
@@ -474,7 +513,7 @@ namespace Gendarme.Framework.Rocks
     public static bool IsNamed(this TypeReference self, string fullName)
     {
       if (fullName == null)
-        throw new ArgumentNullException("fullName");
+        throw new ArgumentNullException(nameof(fullName));
       if (self == null)
         return false;
 
@@ -550,6 +589,8 @@ namespace Gendarme.Framework.Rocks
     /// </summary>
     /// <param name="self">The TypeReference on which the extension method can be called.</param>
     /// <returns>True if the type as the [Flags] attribute, false otherwise.</returns>
+    [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms",
+      Justification = "metacontext -- talking about [Flags]")]
     public static bool IsFlags(this TypeReference self)
     {
       if (self == null)
@@ -685,5 +726,30 @@ namespace Gendarme.Framework.Rocks
       }
       return type.IsPublic;
     }
+
+    /// <summary>
+    /// Check if the type may have Visual Studio designer support.
+    /// </summary>
+    /// <param name="self">The TypeReference on which the extension method can be called.</param>
+    /// <returns>True if the type is derived from Form or UserControl, false otherwise.</returns>
+    public static bool IsDesignable(this TypeReference self)
+    {
+      // TODO -- WPF, workflows, ...
+      var types = new[] { form, control };
+
+      return types.Any(self.Inherits);
+    }
+
+    private static readonly TypeName form = new TypeName
+    {
+      Namespace = "System.Windows.Forms",
+      Name = "Form"
+    };
+
+    private static readonly TypeName control = new TypeName
+    {
+      Namespace = "System.Windows.Forms",
+      Name = "UserControl"
+    };
   }
 }

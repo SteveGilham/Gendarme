@@ -32,60 +32,60 @@ using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule warns when a type overloads the equality <c>==</c> operator but does not
+  /// override the <c>Object.Equals</c> method.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// class DoesNotOverrideEquals {
+  ///	public static bool operator == (DoesNotOverloadOperatorEquals a, DoesNotOverloadOperatorEquals b)
+  ///	{
+  ///		return true;
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class OverridesEquals {
+  ///	public static bool operator == (OverridesEquals a, OverridesEquals b)
+  ///	{
+  ///		return true;
+  ///	}
+  ///
+  ///	public override bool Equals (object obj)
+  ///	{
+  ///		OverridesEquals other = (obj as OverridesEquals);
+  ///		if (other == null) {
+  ///			return false;
+  ///		}
+  ///		return (this == other);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule warns when a type overloads the equality <c>==</c> operator but does not 
-	/// override the <c>Object.Equals</c> method.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// class DoesNotOverrideEquals {
-	///	public static bool operator == (DoesNotOverloadOperatorEquals a, DoesNotOverloadOperatorEquals b)
-	///	{
-	///		return true;
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class OverridesEquals {
-	///	public static bool operator == (OverridesEquals a, OverridesEquals b)
-	///	{
-	///		return true;
-	///	}
-	///	
-	///	public override bool Equals (object obj)
-	///	{
-	///		OverridesEquals other = (obj as OverridesEquals);
-	///		if (other == null) {
-	///			return false;
-	///		}
-	///		return (this == other);
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This type overloads the == operator but doesn't override the Equals method.")]
+  [Solution("Override the Equals method to match the results of the == operator.")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2224:OverrideEqualsOnOverloadingOperatorEquals")]
+  public class OverrideEqualsMethodRule : Rule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.IsEnum || type.IsInterface || type.IsDelegate())
+        return RuleResult.DoesNotApply;
 
-	[Problem ("This type overloads the == operator but doesn't override the Equals method.")]
-	[Solution ("Override the Equals method to match the results of the == operator.")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2224:OverrideEqualsOnOverloadingOperatorEquals")]
-	public class OverrideEqualsMethodRule : Rule, ITypeRule {
+      MethodDefinition equality = type.GetMethod(MethodSignatures.Equality);
+      if ((equality == null) || type.HasMethod(MethodSignatures.Equals))
+        return RuleResult.Success;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (type.IsEnum || type.IsInterface || type.IsDelegate ())
-				return RuleResult.DoesNotApply;
-
-			MethodDefinition equality = type.GetMethod (MethodSignatures.op_Equality);
-			if ((equality == null) || type.HasMethod (MethodSignatures.Equals))
-				return RuleResult.Success;
-			
-			Runner.Report (equality, Severity.High, Confidence.High);
-			return RuleResult.Failure;
-		}
-	}
+      Runner.Report(equality, Severity.High, Confidence.High);
+      return RuleResult.Failure;
+    }
+  }
 }

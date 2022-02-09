@@ -34,84 +34,90 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Interoperability.Com {
+namespace Gendarme.Rules.Interoperability.Com
+{
+  /// <summary>
+  /// This rule checks that the base type of COM visible types is also
+  /// visible from COM. This is needed reduce the chance of breaking
+  /// COM clients as COM invisible types do not have to follow COM versioning rules.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [assemply: ComVisible(false)]
+  /// namespace InteropLibrary {
+  ///	[ComVisible (false)]
+  ///	public class Base {
+  ///	}
+  ///
+  ///	[ComVisible (true)]
+  ///	public class Derived : Base {
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [assemply: ComVisible(false)]
+  /// namespace InteropLibrary {
+  ///	[ComVisible (true)]
+  ///	public class Base {
+  ///	}
+  ///
+  ///	[ComVisible (true)]
+  ///	public class Derived : Base {
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (both types are invisible because of the assembly attribute):
+  /// <code>
+  /// [assemply: ComVisible(false)]
+  /// namespace InteropLibrary {
+  ///	public class Base {
+  ///	}
+  ///
+  ///	public class Derived : Base {
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  [Problem("COM visible class is derived from COM invisible class")]
+  [Solution("Make derived type invisible from COM or make base type visible")]
+  [FxCopCompatibility("Microsoft.Interoperability", "CA1405:ComVisibleTypeBaseTypesShouldBeComVisible")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Gendarme.Rules.Naming",
+                    "AvoidRedundancyInTypeNameRule",
+                    Justification = "Makes sense in context")]
+  public class ComVisibleShouldInheritFromComVisibleRule : Rule, ITypeRule
+  {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.BaseType == null)
+        return RuleResult.DoesNotApply;
 
-	/// <summary>
-	/// This rule checks that the base type of COM visible types is also 
-	/// visible from COM. This is needed reduce the chance of breaking 
-	/// COM clients as COM invisible types do not have to follow COM versioning rules.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [assemply: ComVisible(false)]
-	/// namespace InteropLibrary {
-	///	[ComVisible (false)]
-	///	public class Base {
-	///	}
-	///	
-	///	[ComVisible (true)]
-	///	public class Derived : Base {
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [assemply: ComVisible(false)]
-	/// namespace InteropLibrary {
-	///	[ComVisible (true)]
-	///	public class Base {
-	///	}
-	///	
-	///	[ComVisible (true)]
-	///	public class Derived : Base {
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (both types are invisible because of the assembly attribute):
-	/// <code>
-	/// [assemply: ComVisible(false)]
-	/// namespace InteropLibrary {
-	///	public class Base {
-	///	}
-	///	
-	///	public class Derived : Base {
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	[Problem ("COM visible class is derived from COM invisible class")]
-	[Solution ("Make derived type invisible from COM or make base type visible")]
-	[FxCopCompatibility ("Microsoft.Interoperability", "CA1405:ComVisibleTypeBaseTypesShouldBeComVisible")]
-	public class ComVisibleShouldInheritFromComVisibleRule : Rule, ITypeRule {
+      // Checks whether specific type is COM visible or not
+      // considering nested types, assemblies attributes and default values
+      if (!type.IsTypeComVisible())
+        return RuleResult.DoesNotApply;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (type.BaseType == null)
-				return RuleResult.DoesNotApply;
-
-			// Checks whether specific type is COM visible or not
-			// considering nested types, assemblies attributes and default values
-			if (!type.IsTypeComVisible ())
-				return RuleResult.DoesNotApply;
-
-			TypeDefinition baseType = type.BaseType.Resolve ();
-			if ((baseType != null) && !baseType.IsTypeComVisible ()) {
-				string msg = String.Format (CultureInfo.InvariantCulture, 
-					"Type is derived from invisible from COM type {0}", baseType.GetFullName ());
-				Runner.Report (type, Severity.High, Confidence.Total, msg);
-			}
-			return Runner.CurrentRuleResult;
-		}
-	}
+      TypeDefinition baseType = type.BaseType.Resolve();
+      if ((baseType != null) && !baseType.IsTypeComVisible())
+      {
+        string msg = String.Format(CultureInfo.InvariantCulture,
+          "Type is derived from invisible from COM type {0}", baseType.GetFullName());
+        Runner.Report(type, Severity.High, Confidence.Total, msg);
+      }
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

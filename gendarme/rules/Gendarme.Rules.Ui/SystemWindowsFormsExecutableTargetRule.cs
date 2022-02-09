@@ -27,44 +27,49 @@
 //
 
 using System;
-
+using System.Diagnostics.CodeAnalysis;
 using Gendarme.Framework;
 
-namespace Gendarme.Rules.UI {
+namespace Gendarme.Rules.UI
+{
+  /// <summary>
+  /// An executable assembly, i.e. an .exe, refers to the System.Windows.Forms assembly
+  /// but isn't compiled using <c>-target:winexe</c>. A console window will be created
+  /// and shown under Windows (MS runtime) when the application is executed which is
+  /// probably not desirable for a winforms application.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <c>gmcs swf.cs -pkg:dotnet</c>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <c>gmcs swf.cs -pkg:dotnet -target:winexe</c>
+  /// </example>
 
-	/// <summary>
-	/// An executable assembly, i.e. an .exe, refers to the System.Windows.Forms assembly 
-	/// but isn't compiled using <c>-target:winexe</c>. A console window will be created 
-	/// and shown under Windows (MS runtime) when the application is executed which is
-	/// probably not desirable for a winforms application.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <c>gmcs swf.cs -pkg:dotnet</c>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <c>gmcs swf.cs -pkg:dotnet -target:winexe</c>
-	/// </example>
+  [Problem("The assembly refers to the 'System.Windows.Forms.dll' assembly but isn't compiled using /target:winexe. A console window will be shown under Windows.")]
+  // The base class has the solution text.
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See base class")]
+  public class SystemWindowsFormsExecutableTargetRule : ExecutableTargetRule
+  {
+    /// <summary>
+    ///
+    /// </summary>
+    protected override string AssemblyName
+    {
+      get { return "System.Windows.Forms"; }
+    }
 
-	[Problem ("The assembly refers to the 'System.Windows.Forms.dll' assembly but isn't compiled using /target:winexe. A console window will be shown under Windows.")]
-	// The base class has the solution text.
-	public class SystemWindowsFormsExecutableTargetRule : ExecutableTargetRule {
-
-        /// <summary>
-        /// 
-        /// </summary>
-		protected override string AssemblyName {
-			get { return "System.Windows.Forms"; }
-		}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-		protected override byte[] GetAssemblyPublicKeyToken ()
-		{
-			return new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };
-		}
-	}
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    protected override byte[] GetAssemblyPublicKeyToken()
+    {
+      return new byte[] { 0xb7, 0x7a, 0x5c, 0x56, 0x19, 0x34, 0xe0, 0x89 };
+    }
+  }
 }

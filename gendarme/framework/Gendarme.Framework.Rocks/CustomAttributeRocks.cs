@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Mono.Cecil;
@@ -45,21 +46,25 @@ namespace Gendarme.Framework.Rocks
   /// </summary>
 	public static class CustomAttributeRocks
   {
-    internal static bool HasAnyGeneratedCodeAttribute(this ICustomAttributeProvider self)
+    public static bool HasAnyGeneratedCodeAttribute(this ICustomAttributeProvider self)
     {
       if ((self == null) || !self.HasCustomAttributes)
         return false;
 
-      foreach (CustomAttribute ca in self.CustomAttributes)
+      return self.CustomAttributes.Any(ca =>
       {
         TypeReference cat = ca.AttributeType;
-        if (cat.IsNamed(generatedCode) ||
-          cat.IsNamed(compilerGenerated))
-        {
-          return true;
-        }
-      }
-      return false;
+        return cat.IsNamed(generatedCode) ||
+          cat.IsNamed(compilerGenerated);
+      });
+    }
+
+    public static bool HasCompilerGeneratedAttribute(this ICustomAttributeProvider self)
+    {
+      if ((self == null) || !self.HasCustomAttributes)
+        return false;
+
+      return self.CustomAttributes.Any(ca => ca.AttributeType.IsNamed(compilerGenerated));
     }
 
     private static readonly TypeName generatedCode = new TypeName
@@ -85,35 +90,23 @@ namespace Gendarme.Framework.Rocks
     /// False otherwise.</returns>
     public static bool HasAttribute(this ICustomAttributeProvider self, TypeName typename)
     {
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
-      if (typename.Namespace == null)
-        throw new ArgumentNullException("typename.Namespace");
-      if (typename.Name == null)
-        throw new ArgumentNullException("typename.Name");
-#pragma warning restore CA2208 // Instantiate argument exceptions correctly
+      typename.Validate();
 
       if ((self == null) || !self.HasCustomAttributes)
         return false;
 
-      foreach (CustomAttribute ca in self.CustomAttributes)
-      {
-        if (ca.AttributeType.IsNamed(typename))
-          return true;
-      }
-      return false;
+      return self.CustomAttributes.Any(ca => ca.AttributeType.IsNamed(typename));
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+      Justification = "The alternative is also provided where more convenient")]
     public static bool HasAttribute<T>(this ICustomAttributeProvider self)
     {
       if ((self == null) || !self.HasCustomAttributes)
         return false;
 
-      foreach (CustomAttribute ca in self.CustomAttributes)
-      {
-        if (ca.AttributeType.FullName == typeof(T).FullName)
-          return true;
-      }
-      return false;
+      return self.CustomAttributes.Any(ca => ca.AttributeType.FullName == typeof(T).FullName);
     }
 
     private static bool IsSumType(CustomAttribute a)

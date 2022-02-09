@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Portability.ExitCodeIsLimitedOnUnixRule
 //
 // Authors:
@@ -33,220 +33,251 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Portability {
+namespace Gendarme.Rules.Portability
+{
+  /// <summary>
+  /// This rule applies to all executable (i.e. EXE) assemblies. Something that many Windows
+  /// developers might not be aware of is that on Unix systems, process exit code must be
+  /// between zero and 255, unlike in Windows where it can be any valid integer value.
+  /// This rule warns if the returned value might be out of range either by:
+  /// <list type="bullet">
+  /// <item>
+  /// <description>returning an unknown value from <c>int Main()</c>;</description>
+  /// </item>
+  /// <item>
+  /// <description>setting the <c>Environment.ExitCode</c> property; or</description>
+  /// </item>
+  /// <item>
+  /// <description>calling <c>Environment.Exit(exitCode)</c> method.</description>
+  /// </item>
+  /// </list>
+  /// An error is reported in case a number which is definitely out of range is returned
+  /// as an exit code.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// class MainClass {
+  ///	static int Main ()
+  ///	{
+  ///		Environment.ExitCode = 1000;
+  ///		Environment.Exit (512);
+  ///		return -1;
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class MainClass {
+  ///	static int Main ()
+  ///	{
+  ///		Environment.ExitCode = 42;
+  ///		Environment.Exit (100);
+  ///		return 1;
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule applies to all executable (i.e. EXE) assemblies. Something that many Windows 
-	/// developers might not be aware of is that on Unix systems, process exit code must be 
-	/// between zero and 255, unlike in Windows where it can be any valid integer value. 
-	/// This rule warns if the returned value might be out of range either by:
-	/// <list type="bullet">
-	/// <item>
-	/// <description>returning an unknown value from <c>int Main()</c>;</description>
-	/// </item>
-	/// <item>
-	/// <description>setting the <c>Environment.ExitCode</c> property; or</description>
-	/// </item>
-	/// <item>
-	/// <description>calling <c>Environment.Exit(exitCode)</c> method.</description>
-	/// </item>
-	/// </list>
-	/// An error is reported in case a number which is definitely out of range is returned 
-	/// as an exit code. 
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// class MainClass {
-	///	static int Main ()
-	///	{
-	///		Environment.ExitCode = 1000;
-	///		Environment.Exit (512);
-	///		return -1;
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class MainClass {
-	///	static int Main ()
-	///	{
-	///		Environment.ExitCode = 42;
-	///		Environment.Exit (100);
-	///		return 1;
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("The rule detected a value outside the 0-255 range or couldn't be sure of the returned value.")]
+  [Solution("Review that your return values are all between 0 and 255, this will ensure that they work under both Unix and Windows.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class ExitCodeIsLimitedOnUnixRule : Rule, IAssemblyRule, IMethodRule
+  {
+    [Serializable]
+    private enum InspectionResult
+    {
+      Good,
+      Bad,
+      Unsure
+    }
 
-	[Problem ("The rule detected a value outside the 0-255 range or couldn't be sure of the returned value.")]
-	[Solution ("Review that your return values are all between 0 and 255, this will ensure that they work under both Unix and Windows.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class ExitCodeIsLimitedOnUnixRule : Rule, IAssemblyRule, IMethodRule {
+    private static readonly TypeName env = new TypeName
+    {
+      Namespace = "System",
+      Name = "Environment"
+    };
 
-		[Serializable]
-		private enum InspectionResult {
-			Good,
-			Bad,
-			Unsure
-		}
-        private readonly static TypeName env = new TypeName
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
+
+      // we always want to call CheckAssembly (single call on each assembly)
+      Runner.AnalyzeAssembly += delegate (object o, RunnerEventArgs e)
+      {
+        Active = true;
+      };
+
+      // but we want to avoid checking all methods if the Environment type
+      // isn't referenced in a module (big performance difference)
+      Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e)
+      {
+        Active = e.CurrentModule.AnyTypeReference((TypeReference tr) =>
         {
-            Namespace = "System",
-            Name = "Environment"
-        };
+          return tr.IsNamed(env);
+        });
+      };
+    }
 
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "Enums are not types")]
+    private void Report(MethodDefinition method, Instruction ins, InspectionResult result)
+    {
+      switch (result)
+      {
+        case InspectionResult.Good:
+          // should never occur
+          break;
 
-			// we always want to call CheckAssembly (single call on each assembly)
-			Runner.AnalyzeAssembly += delegate (object o, RunnerEventArgs e) {
-				Active = true;
-			};
+        case InspectionResult.Bad:
+          Runner.Report(method, ins, Severity.Medium, Confidence.High,
+            "Return value is outside the range of valid values (0-255).");
+          break;
 
-			// but we want to avoid checking all methods if the Environment type
-			// isn't referenced in a module (big performance difference)
-			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				Active = e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-					return tr.IsNamed (env);
-				});
-			};
-		}
+        case InspectionResult.Unsure:
+          Runner.Report(method, ins, Severity.Medium, Confidence.Low,
+            "Make sure not to return values that are out of range (0-255).");
+          break;
+      }
+    }
 
-		private void Report (MethodDefinition method, Instruction ins, InspectionResult result)
-		{
-			switch (result) {
-			case InspectionResult.Good:
-				// should never occur
-				break;
-			case InspectionResult.Bad:
-				Runner.Report (method, ins, Severity.Medium, Confidence.High, 
-					"Return value is outside the range of valid values (0-255).");
-				break;
-			case InspectionResult.Unsure:
-				Runner.Report (method, ins, Severity.Medium, Confidence.Low, 
-					"Make sure not to return values that are out of range (0-255).");
-				break;
-			}
-		}
+    private static readonly TypeName i32 = new TypeName
+    {
+      Namespace = "System",
+      Name = "Int32"
+    };
 
-        private readonly static TypeName i32 = new TypeName
+    public RuleResult CheckAssembly(AssemblyDefinition assembly)
+    {
+      MethodDefinition entry_point = assembly.EntryPoint;
+
+      // the rule does not apply if the assembly has no entry point
+      // or if it's entry point has no IL
+      if ((entry_point == null) || !entry_point.HasBody)
+        return RuleResult.DoesNotApply;
+
+      // the rule does not apply of the entry point returns void
+      // FIXME: entryPoint.ReturnType should not be null with void Main ()
+      // either bad unit tests or bug in cecil
+      TypeReference rt = entry_point.ReturnType;
+      if (!rt.IsNamed(i32))
+        return RuleResult.DoesNotApply;
+
+      Instruction previous = null;
+      foreach (Instruction current in entry_point.Body.Instructions)
+      {
+        switch (current.OpCode.Code)
         {
-            Namespace = "System",
-            Name = "Int32"
-        };
-        public RuleResult CheckAssembly(AssemblyDefinition assembly)
-		{
-			MethodDefinition entry_point = assembly.EntryPoint;
+          case Code.Nop:
+            break;
 
-			// the rule does not apply if the assembly has no entry point
-			// or if it's entry point has no IL
-			if ((entry_point == null) || !entry_point.HasBody)
-				return RuleResult.DoesNotApply;
+          case Code.Ret:
+            InspectionResult result = CheckInstruction(previous);
+            if (result == InspectionResult.Good)
+              break;
 
-			// the rule does not apply of the entry point returns void
-			// FIXME: entryPoint.ReturnType should not be null with void Main ()
-			// either bad unit tests or bug in cecil
-			TypeReference rt = entry_point.ReturnType;
-			if (!rt.IsNamed (i32))
-				return RuleResult.DoesNotApply;
+            Report(entry_point, current, result);
+            break;
 
-			Instruction previous = null;
-			foreach (Instruction current in entry_point.Body.Instructions) {
-				switch (current.OpCode.Code) {
-				case Code.Nop:
-					break;
-				case Code.Ret:
-					InspectionResult result = CheckInstruction (previous);
-					if (result == InspectionResult.Good)
-						break;
+          default:
+            previous = current;
+            break;
+        }
+      }
+      return Runner.CurrentRuleResult;
+    }
 
-					Report (entry_point, current, result);
-					break;
-				default:
-					previous = current;
-					break;
-				}
-			}
-			return Runner.CurrentRuleResult;
-		}
+    private static readonly TypeName ubyte = new TypeName
+    {
+      Namespace = "System",
+      Name = "Byte"
+    };
 
-        private readonly static TypeName ubyte = new TypeName
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
+    private static InspectionResult CheckInstruction(Instruction instruction)
+    {
+      // checks if an instruction loads an inapproriate value onto the stack
+      switch (instruction.OpCode.Code)
+      {
+        case Code.Ldc_I4_M1: // -1 is pushed onto stack
+          return InspectionResult.Bad;
+
+        case Code.Ldc_I4_0: // small numbers are pushed onto stack -- all OK
+        case Code.Ldc_I4_1:
+        case Code.Ldc_I4_2:
+        case Code.Ldc_I4_3:
+        case Code.Ldc_I4_4:
+        case Code.Ldc_I4_5:
+        case Code.Ldc_I4_6:
+        case Code.Ldc_I4_7:
+        case Code.Ldc_I4_8:
+          return InspectionResult.Good;
+
+        case Code.Ldc_I4_S: // sbyte ([-128, 127]) - should check >= 0
+          sbyte b = (sbyte)instruction.Operand;
+          return (b >= 0) ? InspectionResult.Good : InspectionResult.Bad;
+
+        case Code.Ldc_I4: // normal int - should check whether is within [0, 255]
+          int a = (int)instruction.Operand;
+          return (a >= 0 && a <= 255) ? InspectionResult.Good : InspectionResult.Bad;
+
+        case Code.Call:
+        case Code.Callvirt:
+          if ((instruction.Operand as MethodReference).ReturnType.IsNamed(ubyte))
+            return InspectionResult.Good;
+          else
+            return InspectionResult.Unsure; // could be within 0-255 or not
+        default:
+          return InspectionResult.Unsure;
+      }
+    }
+
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // rule does not apply if method has no IL
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
+
+      // avoid looping if we're sure there's no call in the method
+      if (!OpCodeBitmask.Calls.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
+
+      // go!
+      Instruction previous = null;
+      foreach (Instruction current in method.Body.Instructions)
+      {
+        switch (current.OpCode.Code)
         {
-            Namespace = "System",
-            Name = "Byte"
-        };
-        private static InspectionResult CheckInstruction(Instruction instruction)
-		{
-			// checks if an instruction loads an inapproriate value onto the stack			
-			switch (instruction.OpCode.Code) {
-			case Code.Ldc_I4_M1: // -1 is pushed onto stack
-				return InspectionResult.Bad;
-			case Code.Ldc_I4_0: // small numbers are pushed onto stack -- all OK
-			case Code.Ldc_I4_1:
-			case Code.Ldc_I4_2:
-			case Code.Ldc_I4_3:
-			case Code.Ldc_I4_4:
-			case Code.Ldc_I4_5:
-			case Code.Ldc_I4_6:
-			case Code.Ldc_I4_7:
-			case Code.Ldc_I4_8:
-				return InspectionResult.Good;
-			case Code.Ldc_I4_S: // sbyte ([-128, 127]) - should check >= 0
-				sbyte b = (sbyte) instruction.Operand;
-				return (b >= 0) ? InspectionResult.Good : InspectionResult.Bad;
-			case Code.Ldc_I4: // normal int - should check whether is within [0, 255]
-				int a = (int) instruction.Operand;
-				return (a >= 0 && a <= 255) ? InspectionResult.Good : InspectionResult.Bad;
-			case Code.Call:
-			case Code.Callvirt:
-				if ((instruction.Operand as MethodReference).ReturnType.IsNamed (ubyte))
-					return InspectionResult.Good;
-				else
-					return InspectionResult.Unsure; // could be within 0-255 or not
-			default:
-				return InspectionResult.Unsure;
-			}
-		}
+          case Code.Call:
+          case Code.Callvirt:
+            MethodReference calledMethod = (MethodReference)current.Operand;
+            string name = calledMethod.Name;
+            if ((name != "set_ExitCode") && (name != "Exit"))
+              break;
+            if (!calledMethod.DeclaringType.IsNamed(env))
+              break;
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// rule does not apply if method has no IL
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+            InspectionResult result = CheckInstruction(previous);
+            if (result == InspectionResult.Good)
+              break;
 
-			// avoid looping if we're sure there's no call in the method
-			if (!OpCodeBitmask.Calls.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
-
-			// go!
-			Instruction previous = null;
-			foreach (Instruction current in method.Body.Instructions) {
-				switch (current.OpCode.Code) {
-				case Code.Call:
-				case Code.Callvirt:
-					MethodReference calledMethod = (MethodReference) current.Operand;
-					string name = calledMethod.Name;
-					if ((name != "set_ExitCode") && (name != "Exit"))
-						break;
-					if (!calledMethod.DeclaringType.IsNamed (env))
-						break;
-
-					InspectionResult result = CheckInstruction (previous);
-					if (result == InspectionResult.Good)
-						break;
-
-					Report (method, current, result);
-					break;
-				}
-				previous = current;
-			}
-			return Runner.CurrentRuleResult;
-		}
-	}
+            Report(method, current, result);
+            break;
+        }
+        previous = current;
+      }
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

@@ -34,13 +34,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Mono.Cecil;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests.Framework, PublicKey=0024000004800000940000000602000000240000525341310004000001000100916443A2EE1D294E8CFA7666FB3F512D998D7CEAC4909E35EDB2AC1E104DE68890A93716D1D1931F7228AAC0523CACF50FD82CDB4CCF4FF4BF0DED95E3A383F4F371E3B82C45502CE74D7D572583495208C1905E0F1E8A3CCE66C4C75E4CA32E9A8F8DEE64E059C0DC0266E8D2CB6D7EBD464B47E062F80B63D390E389217FB7")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests.Rules.Portability, PublicKey=0024000004800000940000000602000000240000525341310004000001000100916443A2EE1D294E8CFA7666FB3F512D998D7CEAC4909E35EDB2AC1E104DE68890A93716D1D1931F7228AAC0523CACF50FD82CDB4CCF4FF4BF0DED95E3A383F4F371E3B82C45502CE74D7D572583495208C1905E0F1E8A3CCE66C4C75E4CA32E9A8F8DEE64E059C0DC0266E8D2CB6D7EBD464B47E062F80B63D390E389217FB7")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Tests.Rules.Ui, PublicKey=0024000004800000940000000602000000240000525341310004000001000100916443A2EE1D294E8CFA7666FB3F512D998D7CEAC4909E35EDB2AC1E104DE68890A93716D1D1931F7228AAC0523CACF50FD82CDB4CCF4FF4BF0DED95E3A383F4F371E3B82C45502CE74D7D572583495208C1905E0F1E8A3CCE66C4C75E4CA32E9A8F8DEE64E059C0DC0266E8D2CB6D7EBD464B47E062F80B63D390E389217FB7")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Test.Framework, PublicKey=0024000004800000940000000602000000240000525341310004000001000100916443A2EE1D294E8CFA7666FB3F512D998D7CEAC4909E35EDB2AC1E104DE68890A93716D1D1931F7228AAC0523CACF50FD82CDB4CCF4FF4BF0DED95E3A383F4F371E3B82C45502CE74D7D572583495208C1905E0F1E8A3CCE66C4C75E4CA32E9A8F8DEE64E059C0DC0266E8D2CB6D7EBD464B47E062F80B63D390E389217FB7")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Test.Rules.Portability, PublicKey=0024000004800000940000000602000000240000525341310004000001000100916443A2EE1D294E8CFA7666FB3F512D998D7CEAC4909E35EDB2AC1E104DE68890A93716D1D1931F7228AAC0523CACF50FD82CDB4CCF4FF4BF0DED95E3A383F4F371E3B82C45502CE74D7D572583495208C1905E0F1E8A3CCE66C4C75E4CA32E9A8F8DEE64E059C0DC0266E8D2CB6D7EBD464B47E062F80B63D390E389217FB7")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Test.Rules.Ui, PublicKey=0024000004800000940000000602000000240000525341310004000001000100916443A2EE1D294E8CFA7666FB3F512D998D7CEAC4909E35EDB2AC1E104DE68890A93716D1D1931F7228AAC0523CACF50FD82CDB4CCF4FF4BF0DED95E3A383F4F371E3B82C45502CE74D7D572583495208C1905E0F1E8A3CCE66C4C75E4CA32E9A8F8DEE64E059C0DC0266E8D2CB6D7EBD464B47E062F80B63D390E389217FB7")]
 
 namespace Gendarme.Framework.Rocks
 {
@@ -63,7 +64,7 @@ namespace Gendarme.Framework.Rocks
     public static bool IsNamed(this MemberReference self, TypeName typeName, string methodName)
     {
       if (methodName == null)
-        throw new ArgumentNullException("methodName");
+        throw new ArgumentNullException(nameof(methodName));
       if (self == null)
         return false;
       return ((self.Name == methodName) && self.DeclaringType.IsNamed(typeName));
@@ -74,6 +75,10 @@ namespace Gendarme.Framework.Rocks
     /// </summary>
     /// <param name="self">The MethodReference on which the extension method can be called.</param>
     /// <returns>True if the method is defined as the entry point of it's assembly, False otherwise</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodReference")]
     public static bool IsEntryPoint(this MethodReference self)
     {
       return ((self != null) && (self == self.Module.Assembly.EntryPoint));
@@ -93,7 +98,7 @@ namespace Gendarme.Framework.Rocks
         self.ReturnType.IsNamed(systemVoid));
     }
 
-    private readonly static TypeName systemVoid = new TypeName
+    private static readonly TypeName systemVoid = new TypeName
     {
       Namespace = "System",
       Name = "Void"
@@ -104,6 +109,10 @@ namespace Gendarme.Framework.Rocks
     /// </summary>
     /// <param name="self">The MethodReference on which the extension method can be called.</param>
     /// <returns>True if the method is in F# code, False otherwise.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodReference")]
     public static bool IsFSharpCode(this MethodReference self)
     {
       if (self == null)
@@ -195,7 +204,7 @@ namespace Gendarme.Framework.Rocks
         return false;
 
       TypeDefinition declaring = method.DeclaringType;
-      TypeDefinition parent = declaring.BaseType != null ? declaring.BaseType.Resolve() : null;
+      TypeDefinition parent = declaring.BaseType?.Resolve();
       while (parent != null)
       {
         string name = method.Name;
@@ -208,7 +217,7 @@ namespace Gendarme.Framework.Rocks
 
           return md.IsVirtual;
         }
-        parent = parent.BaseType != null ? parent.BaseType.Resolve() : null;
+        parent = parent.BaseType?.Resolve();
       }
       return false;
     }
@@ -314,7 +323,7 @@ namespace Gendarme.Framework.Rocks
       return false;
     }
 
-    private readonly static TypeName eventArgs = new TypeName
+    private static readonly TypeName eventArgs = new TypeName
     {
       Namespace = "System",
       Name = "EventArgs"
@@ -391,6 +400,20 @@ namespace Gendarme.Framework.Rocks
           return false;
       }
       return true;
+    }
+
+    /// <summary>
+    /// Check if the method is Visual Studio generated component Initialization method.
+    /// </summary>
+    /// <param name="method">Method to be tested.</param>
+    /// <returns>True if the method is probably auto-generated by Visual Studio, false otherwise.</returns>
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "AvoidUnnecessarySpecializationRule",
+                     Justification = "That would be spurious generality")]
+    public static bool IsDesignMethod(this MethodDefinition method)
+    {
+      return (string.Equals(method.Name, "InitializeComponent", StringComparison.Ordinal)
+          && method.DeclaringType.IsDesignable());
     }
   }
 }

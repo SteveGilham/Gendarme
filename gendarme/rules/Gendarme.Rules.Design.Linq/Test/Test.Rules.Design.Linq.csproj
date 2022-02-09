@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <NoWarn>$(NoWarn);414;168;169;649;628</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\framework\Test\Test.Framework.csproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
-    <ProjectReference Include="..\Gendarme.Rules.Serialization.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="MarkEnumerationsAsSerializableTest.cs" />
+    <ProjectReference Include="..\Gendarme.Rules.Design.Linq.csproj" />
   </ItemGroup>
 </Project>

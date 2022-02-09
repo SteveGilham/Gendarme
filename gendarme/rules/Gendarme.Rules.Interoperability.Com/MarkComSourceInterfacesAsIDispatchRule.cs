@@ -1,8 +1,8 @@
-// 
+//
 // Gendarme.Rules.Interoperability.Com.MarkComSourceInterfacesAsIDispatchRule
 //
 // Authors:
-//	Nicholas Rioux	
+//	Nicholas Rioux
 //
 // Copyright (C) 2010 Nicholas Rioux
 //
@@ -35,143 +35,158 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Interoperability.Com {
+namespace Gendarme.Rules.Interoperability.Com
+{
+  /// <summary>
+  /// When a type is marked with the ComSourceInterfacesAttribute, every specified interface must
+  /// be marked with a InterfaceTypeAttribute set to ComInterfaceType.InterfaceIsIDispatch.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// interface IBadInterface { }
+  /// [ComSourceInterfaces("Project.IBadInterface")]
+  /// class TestClass { }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
+  /// interface IGoodInterface { }
+  /// [ComSourceInterfaces("Project.IGoodInterface")]
+  /// class TestClass { }
+  /// </code>
+  /// </example>
+  [Problem("A type is marked with ComSourceInterfacesAttribute, but a specified interface is not marked with InterfaceTypeAttribute set to InterfaceIsIDispatch.")]
+  [Solution("Add an InterfaceTypeAttribute set to InterfaceIsIDispatch for all specified interfaces.")]
+  [FxCopCompatibility("Microsoft.Interoperability", "CA1412:MarkComSourceInterfacesAsIDispatch")]
+  public class MarkComSourceInterfacesAsIDispatchRule : Rule, ITypeRule
+  {
+    private readonly SortedDictionary<string, TypeDefinition> interfaces = new SortedDictionary<string, TypeDefinition>();
 
-	/// <summary>
-	/// When a type is marked with the ComSourceInterfacesAttribute, every specified interface must
-	/// be marked with a InterfaceTypeAttribute set to ComInterfaceType.InterfaceIsIDispatch.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// interface IBadInterface { }
-	/// [ComSourceInterfaces("Project.IBadInterface")]
-	/// class TestClass { }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
-	/// interface IGoodInterface { }
-	/// [ComSourceInterfaces("Project.IGoodInterface")]
-	/// class TestClass { }
-	/// </code>
-	/// </example>
-	[Problem ("A type is marked with ComSourceInterfacesAttribute, but a specified interface is not marked with InterfaceTypeAttribute set to InterfaceIsIDispatch.")]
-	[Solution ("Add an InterfaceTypeAttribute set to InterfaceIsIDispatch for all specified interfaces.")]
-	[FxCopCompatibility ("Microsoft.Interoperability", "CA1412:MarkComSourceInterfacesAsIDispatch")]
-	public class MarkComSourceInterfacesAsIDispatchRule : Rule, ITypeRule {
-		private SortedDictionary<string, TypeDefinition> interfaces = new SortedDictionary<string, TypeDefinition> ();
-
-		// Iterate through all assemblies and add the interfaces found to a list.
-		private void FindInterfaces ()
-		{
-			foreach (AssemblyDefinition assembly in Runner.Assemblies) {
-				foreach (ModuleDefinition module in assembly.Modules) {
-					foreach (TypeDefinition type in module.GetAllTypes ()) {
-						if (!type.IsInterface)
-							continue;
-						interfaces.Add (type.GetFullName (), type);
-					}
-				}
-			}
-		}
-
-		// Finds a CustomAttribute on a type from the given name.
-		private static CustomAttribute FindCustomAttribute (ICustomAttributeProvider type, TypeName name)
-		{
-			foreach (var attribute in type.CustomAttributes) {
-				if (attribute.AttributeType.IsNamed (name))
-					return attribute;
-			}
-			return null;
-		}
-
-		// Ensures the interface has a InterfaceTypeAttribute with 
-		// ComInterfaceType.InterfaceIsIDispatch passed to it.
-		private void CheckInterface (TypeDefinition def)
-		{
-			if (def == null)
-				return;
-			if (!def.HasCustomAttributes) {
-				Runner.Report (def, Severity.High, Confidence.Total, "No attributes are present on a specified interface");
-				return;
-			}
-
-			var attribute = FindCustomAttribute (def, ita);
-			if (attribute == null) {
-				Runner.Report (def, Severity.High, Confidence.Total, "No [InterfaceType] attribute is present on a specified interface");
-				return;
-			}
-
-			// default to bad value - anything not InterfaceIsIDispatch (2) will be reported
-			// ToString covers both the ComInterfaceType (int) and short ctor variations
-			if (attribute.ConstructorArguments [0].Value.ToString () != "2")
-				Runner.Report (def, Severity.High, Confidence.Total, "The [InterfaceType] attribute is not set to InterfaceIsIDispatch");
-		}
-        private readonly static TypeName ita = new TypeName
+    // Iterate through all assemblies and add the interfaces found to a list.
+    private void FindInterfaces()
+    {
+      foreach (AssemblyDefinition assembly in Runner.Assemblies)
+      {
+        foreach (ModuleDefinition module in assembly.Modules)
         {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "InterfaceTypeAttribute"
-        };
+          foreach (TypeDefinition type in module.GetAllTypes())
+          {
+            if (!type.IsInterface)
+              continue;
+            interfaces.Add(type.GetFullName(), type);
+          }
+        }
+      }
+    }
 
-		private void CheckInterface (string interface_name)
-		{
-			TypeDefinition td;
-			if (interfaces.TryGetValue (interface_name, out td))
-				CheckInterface (td);
-		}
+    // Finds a CustomAttribute on a type from the given name.
+    private static CustomAttribute FindCustomAttribute(ICustomAttributeProvider type, TypeName name)
+    {
+      foreach (var attribute in type.CustomAttributes)
+      {
+        if (attribute.AttributeType.IsNamed(name))
+          return attribute;
+      }
+      return null;
+    }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="runner"></param>
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
+    // Ensures the interface has a InterfaceTypeAttribute with
+    // ComInterfaceType.InterfaceIsIDispatch passed to it.
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    private void CheckInterface(TypeDefinition def)
+    {
+      if (def == null)
+        return;
+      if (!def.HasCustomAttributes)
+      {
+        Runner.Report(def, Severity.High, Confidence.Total, "No attributes are present on a specified interface");
+        return;
+      }
 
-			interfaces.Clear ();
-			FindInterfaces ();
-		}
-        private readonly static TypeName csia = new TypeName
+      var attribute = FindCustomAttribute(def, ita);
+      if (attribute == null)
+      {
+        Runner.Report(def, Severity.High, Confidence.Total, "No [InterfaceType] attribute is present on a specified interface");
+        return;
+      }
+
+      // default to bad value - anything not InterfaceIsIDispatch (2) will be reported
+      // ToString covers both the ComInterfaceType (int) and short ctor variations
+      if (attribute.ConstructorArguments[0].Value.ToString() != "2")
+        Runner.Report(def, Severity.High, Confidence.Total, "The [InterfaceType] attribute is not set to InterfaceIsIDispatch");
+    }
+
+    private static readonly TypeName ita = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "InterfaceTypeAttribute"
+    };
+
+    private void CheckInterface(string interface_name)
+    {
+      if (interfaces.TryGetValue(interface_name, out TypeDefinition td))
+        CheckInterface(td);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="runner"></param>
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
+
+      interfaces.Clear();
+      FindInterfaces();
+    }
+
+    private static readonly TypeName csia = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "ComSourceInterfacesAttribute"
+    };
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (!type.IsClass || !type.HasCustomAttributes)
+        return RuleResult.DoesNotApply;
+
+      var attribute = FindCustomAttribute(type, csia);
+      if (attribute == null)
+        return RuleResult.DoesNotApply;
+      // The attribute's paramemters may be a single null-delimited string, or up to four System.Types.
+      foreach (var arg in attribute.ConstructorArguments)
+      {
+        if (arg.Value is string string_value)
         {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "ComSourceInterfacesAttribute"
-        };
+          if (string_value.IndexOf('\0', StringComparison.Ordinal) == -1)
+            CheckInterface(string_value);
+          else
+          {
+            foreach (var name in string_value.Split('\0'))
+              CheckInterface(name);
+          }
+        }
+        else
+        {
+          if (arg.Value is TypeDefinition def_value)
+            CheckInterface(def_value);
+        }
+      }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (!type.IsClass || !type.HasCustomAttributes)
-				return RuleResult.DoesNotApply;
-
-			var attribute = FindCustomAttribute (type, csia);
-			if (attribute == null)
-				return RuleResult.DoesNotApply;
-			// The attribute's paramemters may be a single null-delimited string, or up to four System.Types.
-			foreach (var arg in attribute.ConstructorArguments) {
-				string string_value = arg.Value as string;
-				if (string_value != null) {
-					if (string_value.IndexOf ('\0') == -1)
-						CheckInterface (string_value);
-					else {
-						foreach (var name in string_value.Split ('\0'))
-							CheckInterface (name);
-					}
-				} else {
-					TypeDefinition def_value = arg.Value as TypeDefinition;
-					if (def_value != null)
-						CheckInterface (def_value);
-				}
-			}
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

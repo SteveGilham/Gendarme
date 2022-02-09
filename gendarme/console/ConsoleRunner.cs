@@ -40,6 +40,7 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Engines;
+using Gendarme.Framework.Rocks;
 
 using NDesk.Options;
 
@@ -68,6 +69,12 @@ using NDesk.Options;
 
 namespace Gendarme
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                    "AvoidLackOfCohesionOfMethodsRule",
+                    Justification = "Maybe refactor")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
   [EngineDependency(typeof(SuppressMessageEngine))]
   public class ConsoleRunner : Runner
   {
@@ -81,7 +88,7 @@ namespace Gendarme
     private bool quiet;
     private bool version;
     private bool console;
-    private List<string> assembly_names;
+    private IList<string> assembly_names;
 
     private static string[] SplitOptions(string value)
     {
@@ -231,22 +238,23 @@ namespace Gendarme
     private static string ValidateOutputFile(string option, string file)
     {
       string msg = String.Empty;
+      var culture = CultureInfo.CurrentCulture;
       if (file.Length > 0)
       {
         string path = Path.GetDirectoryName(file);
         if (path.Length > 0)
         {
           if (path.IndexOfAny(Path.GetInvalidPathChars()) != -1)
-            msg = String.Format(CultureInfo.CurrentCulture, "Invalid path '{0}'", file);
+            msg = String.Format(culture, "Invalid path '{0}'", file);
           else if (!Directory.Exists(path))
-            msg = String.Format(CultureInfo.CurrentCulture, "Path '{0}' does not exists", file);
+            msg = String.Format(culture, "Path '{0}' does not exists", file);
         }
       }
 
       string fname = Path.GetFileName(file);
       if ((fname.Length == 0) || (fname.IndexOfAny(Path.GetInvalidFileNameChars()) != -1))
       {
-        msg = String.Format(CultureInfo.CurrentCulture, "Filename '{0}' is not valid", fname);
+        msg = String.Format(culture, "Filename '{0}' is not valid", fname);
       }
 
       if (msg.Length > 0)
@@ -266,8 +274,7 @@ namespace Gendarme
 
     private static int ValidateLimit(string limit)
     {
-      int defects_limit;
-      if (String.IsNullOrEmpty(limit) || !Int32.TryParse(limit, out defects_limit))
+      if (String.IsNullOrEmpty(limit) || !Int32.TryParse(limit, out int defects_limit))
       {
         string msg = String.Format(CultureInfo.CurrentCulture, "Invalid value '{0}' to limit defects", limit);
         throw new OptionException(msg, "limit");
@@ -282,7 +289,7 @@ namespace Gendarme
       // if supplied, use the user limit on defects (otherwise 2^31 is used)
       DefectsLimit = Int32.MaxValue;
 
-      var p = new OptionSet() {
+      var p = new OptionCollection() {
         { "config=",  v => config_file = ValidateInputFile ("config", v) },
         { "set=", v => rule_set = ValidateRuleSet (v) },
         { "log=", v => log_file = ValidateOutputFile ("log", v) },
@@ -444,56 +451,15 @@ namespace Gendarme
       return (byte)((0 == Defects.Count) ? 0 : 1);
     }
 
-    [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
-      Justification = "Top of call tree")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                     Justification = "Program reports and exits")]
     private byte Execute(string[] args)
     {
       try
       {
-        byte result = Parse(args);
-        Header();
-        if (version)
-          return 0;
-
-        if ((result != 0) || help)
-        {
-          Help();
-          return help ? (byte)0 : result;
-        }
-
-        // load configuration, including rules
-        Settings config = new Settings(this, config_file, rule_set);
-        // and continue if there's at least one rule to execute
-        if (!config.Load() || (Rules.Count < 1))
-        {
-          int validationErrorsCounter = 0;
-          foreach (string error in config.ValidationErrors)
-          {
-            Console.WriteLine(error);
-            validationErrorsCounter++;
-          }
-          if (validationErrorsCounter == 0)
-            Console.WriteLine(Strings.UnmatchedConfigurationParameters);
-          return 3;
-        }
-
-        foreach (string name in assembly_names)
-        {
-          result = AddFiles(name);
-          if (result != 0)
-            return result;
-        }
-
-        IgnoreList = new IgnoreFileList(this, ignore_file);
-
-        // now that all rules and assemblies are know, time to initialize
-        Initialize();
-        // before analyzing the assemblies with the rules
-        Run();
-        // and winding down properly
-        TearDown();
-
-        return Report();
+        return DoAnalysis(args);
       }
       catch (IOException e)
       {
@@ -521,19 +487,70 @@ namespace Gendarme
       }
     }
 
+    private byte DoAnalysis(string[] args)
+    {
+      byte result = Parse(args);
+      Header();
+      if (version)
+        return 0;
+
+      if ((result != 0) || help)
+      {
+        Help();
+        return help ? (byte)0 : result;
+      }
+
+      // load configuration, including rules
+      Settings config = new Settings(this, config_file, rule_set);
+      // and continue if there's at least one rule to execute
+      if (!config.Load() || (Rules.Count < 1))
+      {
+        int validationErrorsCounter = 0;
+        foreach (string error in config.ValidationErrors)
+        {
+          Console.WriteLine(error);
+          validationErrorsCounter++;
+        }
+        if (validationErrorsCounter == 0)
+          Console.WriteLine(Strings.UnmatchedConfigurationParameters);
+        return 3;
+      }
+
+      foreach (string name in assembly_names)
+      {
+        result = AddFiles(name);
+        if (result != 0)
+          return result;
+      }
+
+      IgnoreList = new IgnoreFileList(this, ignore_file);
+
+      // now that all rules and assemblies are know, time to initialize
+      Initialize();
+      // before analyzing the assemblies with the rules
+      Run();
+      // and winding down properly
+      TearDown();
+
+      return Report();
+    }
+
+    [SuppressMessage("Gendarme.Rules.Naming",
+                     "AvoidRedundancyInMethodNameRule",
+                     Justification = "Makes sense in context")]
     private void WriteUnhandledExceptionMessage(Exception e)
     {
       Console.WriteLine();
       Console.WriteLine(Strings.UncaughtException);
       if (CurrentRule != null)
-        Console.WriteLine(Strings.Rule.Replace("`t", "\t"), CurrentRule);
+        Console.WriteLine(Strings.Rule.Replace("`t", "\t", StringComparison.Ordinal), CurrentRule);
       if (CurrentTarget != null)
-        Console.WriteLine(Strings.Target.Replace("`t", "\t"), CurrentTarget, CurrentAssembly);
+        Console.WriteLine(Strings.Target.Replace("`t", "\t", StringComparison.Ordinal), CurrentTarget, CurrentAssembly);
       Console.WriteLine(Strings.StackTrace, e);
     }
 
-    private Stopwatch total = new Stopwatch();
-    private Stopwatch local = new Stopwatch();
+    private readonly Stopwatch total = new Stopwatch();
+    private readonly Stopwatch local = new Stopwatch();
 
     private static string TimeToString(TimeSpan time)
     {
@@ -620,6 +637,7 @@ namespace Gendarme
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
       Justification = "work in progress")]
     protected override void OnAssembly(RunnerEventArgs e)
@@ -678,7 +696,7 @@ namespace Gendarme
 
     private static void Help()
     {
-      Console.WriteLine(Strings.HelpText.Replace("`t", "\t"));
+      Console.WriteLine(Strings.HelpText.Replace("`t", "\t", StringComparison.Ordinal));
     }
 
     /// <summary>
@@ -690,6 +708,9 @@ namespace Gendarme
     /// 2 if some parameters are bad,
     /// 3 if a problem is related to the xml configuration file
     /// 4 if an uncaught exception occured</returns>
+    [SuppressMessage("Gendarme.Rules.Portability",
+                     "ExitCodeIsLimitedOnUnixRule",
+                     Justification = "byte values return")]
     private static int Main(string[] args)
     {
       return new ConsoleRunner().Execute(args);

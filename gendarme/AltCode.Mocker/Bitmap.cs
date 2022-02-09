@@ -4,6 +4,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
+[assembly: SuppressMessage("AltCode.Rules.General",
+                           "AvoidAssemblySemanticVersionMismatchRule",
+                           Justification = "Assembly version needed for mocking purposes")]
+
 namespace AltCode.Mocker
 {
   [Serializable]
@@ -13,17 +17,11 @@ namespace AltCode.Mocker
     { }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", 
-      Justification="Called by deserializer")]
     public Bitmap(Stream dummy)
 #pragma warning restore IDE0060 // Remove unused parameter
     { }
 
-#pragma warning disable IDE0060 // Remove unused parameter
-    [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", 
-      Justification="Meets interface")]
     public void GetObjectData(SerializationInfo info, StreamingContext context)
-#pragma warning restore IDE0060 // Remove unused parameter
     { }
 
     private Bitmap(SerializationInfo info, StreamingContext context)

@@ -204,9 +204,10 @@ namespace Gendarme.Rules.Concurrency
           if ((load != null) && !CheckVariable(method, caller, load))
           {
             string name = String.Empty;
-            if (method.DebugInformation != null)
+            var debug = method.DebugInformation;
+            if (debug != null)
             {
-              method.DebugInformation.TryGetName(load, out name);
+              debug.TryGetName(load, out name);
             }
             string msg = String.Format(CultureInfo.InvariantCulture, "Variable '{0}' does not seems to be checked against null.", name);
             Runner.Report(method, ins, Severity.High, Confidence.Normal, msg);

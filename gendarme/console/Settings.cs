@@ -37,15 +37,23 @@ using System.Xml;
 using System.Xml.Schema;
 
 using Gendarme.Framework;
+using Gendarme.Framework.Rocks;
 
+#pragma warning disable IDE0076 // Invalid global 'SuppressMessageAttribute'
 [assembly: SuppressMessage("AltCode.Rules.General",
                             "JustifySuppressionRule",
                             Scope = "member", // MethodDefinition
                             Target = "Gendarme.Strings::.ctor()",
                             Justification = "Generated code")]
+#pragma warning restore IDE0076 // Invalid global 'SuppressMessageAttribute'
 
 namespace Gendarme
 {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                   "AvoidLackOfCohesionOfMethodsRule",
+                   Justification = "Maybe refactor")]
   public class Settings
   {
     private const string DefaultRulesFile = "rules.xml";
@@ -58,7 +66,7 @@ namespace Gendarme
     public Settings(IRunner runner, string configurationFile, string ruleSet)
     {
       if (runner == null)
-        throw new ArgumentNullException("runner");
+        throw new ArgumentNullException(nameof(runner));
 
       rules = runner.Rules;
       rule_set = ruleSet;
@@ -128,6 +136,10 @@ namespace Gendarme
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.BadPractice",
+                     "AvoidCallingProblematicMethodsRule",
+                     Justification = "Necessary to load rules")]
     private int LoadRulesFromAssembly(string assembly, string includeMask, string excludeMask, string applicabilityScope)
     {
       Assembly a = null;
@@ -152,12 +164,14 @@ namespace Gendarme
         if (t.IsAbstract || t.IsInterface)
           continue;
 
+        var name = t.Name;
+
         if (includeMask != "*")
-          if (!IsContainedInRuleSet(t.Name, includeMask))
+          if (!IsContainedInRuleSet(name, includeMask))
             continue;
 
         if ((excludeMask != null) && (excludeMask.Length > 0))
-          if (IsContainedInRuleSet(t.Name, excludeMask))
+          if (IsContainedInRuleSet(name, excludeMask))
             continue;
 
         if (t.FindInterfaces(new TypeFilter(RuleFilter), "Gendarme.Framework.IRule").Length > 0)
@@ -175,7 +189,8 @@ namespace Gendarme
     private void OnValidationErrors(object sender, ValidationEventArgs args)
     {
       validation_errors.Add(args.Exception.Message.Replace("XmlSchema error",
-        String.Format(CultureInfo.CurrentCulture, "Error in the configuration file {0}", config_file)));
+        String.Format(CultureInfo.CurrentCulture, "Error in the configuration file {0}", config_file),
+        StringComparison.Ordinal));
     }
 
     private void ValidateXmlDocument()
@@ -207,7 +222,7 @@ namespace Gendarme
     {
       foreach (IRule rule in rules)
       {
-        if (rule.GetType().ToString().Contains(name))
+        if (rule.GetType().ToString().Contains(name, StringComparison.Ordinal))
           return rule;
       }
       return null;
@@ -215,49 +230,50 @@ namespace Gendarme
 
     private void SetCustomParameters(XmlNode nodes)
     {
-      foreach (XmlElement parameter in nodes.SelectNodes("parameter"))
-      {
-        string ruleName = GetAttribute(parameter, "rule", String.Empty);
-        string propertyName = GetAttribute(parameter, "property", String.Empty);
-
-        IRule rule = GetRule(ruleName);
-        if (rule == null)
-          throw GetException(Strings.RuleDoesNotExist, ruleName, String.Empty, String.Empty);
-        PropertyInfo property = rule.GetType().GetProperty(propertyName);
-        if (property == null)
-          throw GetException(Strings.PropertyNotInRule, ruleName, propertyName, String.Empty);
-        if (!property.CanWrite)
-          throw GetException(Strings.PropertyUnwriteableInRule, ruleName, propertyName, String.Empty);
-
-        string value = GetAttribute(parameter, "value", String.Empty);
-        if (String.IsNullOrEmpty(value))
-          continue;
-
-        object[] values = new object[1];
-        switch (Type.GetTypeCode(property.PropertyType))
+      using (var parameters = nodes.SelectNodes("parameter"))
+        foreach (XmlElement parameter in parameters)
         {
-          case TypeCode.Int32:
-            int i;
-            if (Int32.TryParse(value, out i))
-              values[0] = i;
-            break;
+          string ruleName = GetAttribute(parameter, "rule", String.Empty);
+          string propertyName = GetAttribute(parameter, "property", String.Empty);
 
-          case TypeCode.Double:
-            double d;
-            if (Double.TryParse(value, out d))
-              values[0] = d;
-            break;
+          IRule rule = GetRule(ruleName);
+          if (rule == null)
+            throw GetException(Strings.RuleDoesNotExist, ruleName, String.Empty, String.Empty);
+          PropertyInfo property = rule.GetType().GetProperty(propertyName);
+          if (property == null)
+            throw GetException(Strings.PropertyNotInRule, ruleName, propertyName, String.Empty);
+          if (!property.CanWrite)
+            throw GetException(Strings.PropertyUnwriteableInRule, ruleName, propertyName, String.Empty);
 
-          case TypeCode.String:
-            values[0] = value;
-            break;
+          string value = GetAttribute(parameter, "value", String.Empty);
+          if (String.IsNullOrEmpty(value))
+            continue;
+
+          object[] values = new object[1];
+          switch (Type.GetTypeCode(property.PropertyType))
+          {
+            case TypeCode.Int32:
+              int i;
+              if (Int32.TryParse(value, out i))
+                values[0] = i;
+              break;
+
+            case TypeCode.Double:
+              double d;
+              if (Double.TryParse(value, out d))
+                values[0] = d;
+              break;
+
+            case TypeCode.String:
+              values[0] = value;
+              break;
+          }
+
+          if (values[0] == null)
+            throw GetException(Strings.ValueCannotBeConverted, ruleName, propertyName, value);
+
+          property.GetSetMethod().Invoke(rule, values);
         }
-
-        if (values[0] == null)
-          throw GetException(Strings.ValueCannotBeConverted, ruleName, propertyName, value);
-
-        property.GetSetMethod().Invoke(rule, values);
-      }
     }
 
     private static Exception GetException(string message, string ruleName, string propertyName, string value)
@@ -278,23 +294,25 @@ namespace Gendarme
       doc.Load(config_file);
 
       bool result = false;
-      foreach (XmlElement ruleset in doc.DocumentElement.SelectNodes("ruleset"))
-      {
-        if (ruleset.Attributes["name"].Value != rule_set)
-          continue;
-        foreach (XmlElement assembly in ruleset.SelectNodes("rules"))
+      using (var rulesets = doc.DocumentElement.SelectNodes("ruleset"))
+        foreach (XmlElement ruleset in rulesets)
         {
-          string include = GetAttribute(assembly, "include", "*");
-          string exclude = GetAttribute(assembly, "exclude", String.Empty);
-          string from = GetFullPath(GetAttribute(assembly, "from", String.Empty));
-          string applicabilityScope = GetAttribute(assembly, "applyTo", String.Empty);
+          if (ruleset.Attributes["name"].Value != rule_set)
+            continue;
+          using (var xrules = ruleset.SelectNodes("rules"))
+            foreach (XmlElement assembly in xrules)
+            {
+              string include = GetAttribute(assembly, "include", "*");
+              string exclude = GetAttribute(assembly, "exclude", String.Empty);
+              string from = GetFullPath(GetAttribute(assembly, "from", String.Empty));
+              string applicabilityScope = GetAttribute(assembly, "applyTo", String.Empty);
 
-          int n = LoadRulesFromAssembly(from, include, exclude, applicabilityScope);
-          result = (result || (n > 0));
-          if (result)
-            SetCustomParameters(assembly);
+              int n = LoadRulesFromAssembly(from, include, exclude, applicabilityScope);
+              result = (result || (n > 0));
+              if (result)
+                SetCustomParameters(assembly);
+            }
         }
-      }
       return result;
     }
   }

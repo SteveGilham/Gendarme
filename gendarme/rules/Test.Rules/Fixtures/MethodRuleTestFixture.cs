@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.Linq;
 
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
@@ -35,15 +36,15 @@ using Test.Rules.Helpers;
 
 using Mono.Cecil;
 
-namespace Test.Rules.Fixtures {
-	
+namespace Test.Rules.Fixtures
+{
   /// <summary>
   /// Abstract class providing various helper methods that method test fixtures should inherit from.
   /// </summary>
   /// <typeparam name="TMethodRule">Type of rule to be tested.</typeparam>
   public abstract class MethodRuleTestFixture<TMethodRule> : RuleTestFixture<TMethodRule, MethodDefinition>
-		where TMethodRule : IMethodRule, new () {
-
+    where TMethodRule : IMethodRule, new()
+  {
     /// <summary>
     /// Asserts that the rule does not apply to all methods of the type.
     /// </summary>
@@ -87,8 +88,16 @@ namespace Test.Rules.Fixtures {
     /// <typeparam name="T">Type containing the methods.</typeparam>
     protected void AssertRuleSuccess<T>()
     {
-			foreach (MethodDefinition method in DefinitionLoader.GetTypeDefinition<T> ().Methods)
-        base.AssertRuleSuccess(method);
+      var success = DefinitionLoader.GetTypeDefinition<T>().Methods.
+        Select(RunRuleAndCheckSuccessOrDoesNotApply).ToList().
+        Any(x => x == RuleResult.Success);
+
+      // Can't all be inapplicable
+      if (!success)
+      {
+        NUnit.Framework.Assert.AreEqual(RuleResult.Success, RuleResult.DoesNotApply, "{0} failed on {1}: result should be {2} but got {3}.",
+            typeof(TMethodRule).Name, typeof(T).Name, RuleResult.Success, RuleResult.DoesNotApply);
+      }
     }
 
     /// <summary>
@@ -98,7 +107,7 @@ namespace Test.Rules.Fixtures {
     /// <param name="method">Method name.</param>
     protected void AssertRuleSuccess<T>(string method)
     {
-			base.AssertRuleSuccess (DefinitionLoader.GetMethodDefinition<T> (method));
+      base.AssertRuleSuccess(DefinitionLoader.GetMethodDefinition<T>(method));
     }
 
     /// <summary>

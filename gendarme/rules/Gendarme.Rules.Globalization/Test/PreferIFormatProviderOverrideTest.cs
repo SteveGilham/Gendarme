@@ -37,21 +37,17 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Globalization
+namespace Test.Rules.Globalization
 {
   internal class IFormatProviderTestCases
   {
-#pragma warning disable CA1822 // Mark members as static
     public void Empty()
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     public void Empty(IFormatProvider format)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
@@ -65,18 +61,14 @@ namespace Tests.Rules.Globalization
       Empty(null);
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     public void First(object obj)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning disable CA1822 // Mark members as static
     public void First(IFormatProvider format, object obj)
-#pragma warning restore CA1822 // Mark members as static
 #pragma warning restore IDE0060 // Remove unused parameter
     {
     }
@@ -92,18 +84,14 @@ namespace Tests.Rules.Globalization
     }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning disable CA1822 // Mark members as static
     public void Last(object obj)
-#pragma warning restore CA1822 // Mark members as static
 #pragma warning restore IDE0060 // Remove unused parameter
     {
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     public void Last(object obj, IFormatProvider format)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
@@ -120,17 +108,13 @@ namespace Tests.Rules.Globalization
 
   internal class CultureInfoTestCases
   {
-#pragma warning disable CA1822 // Mark members as static
     public void Empty()
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     public void Empty(CultureInfo info)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
@@ -144,19 +128,15 @@ namespace Tests.Rules.Globalization
       Empty(null);
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     public void First(object obj)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     public void First(CultureInfo info, object obj)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
@@ -170,18 +150,14 @@ namespace Tests.Rules.Globalization
       First(null, null);
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0060 // Remove unused parameter
     public void Last(object obj)
 #pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning disable CA1822 // Mark members as static
     public void Last(object obj, CultureInfo info)
-#pragma warning restore CA1822 // Mark members as static
 #pragma warning restore IDE0060 // Remove unused parameter
     {
     }
@@ -194,6 +170,48 @@ namespace Tests.Rules.Globalization
     public void CorrectLast()
     {
       Last(null, null);
+    }
+
+    // some bad boys
+    public string ImplicitIntToString(int index, int maxIndex)
+    {
+      var nameStart = new string[] { "{" + index + ":" };
+      return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1) + nameStart;
+    }
+
+    public string ImplicitIntToString2(int index, int maxIndex)
+    {
+      var nameStart = new string[] { "{" + index.ToString(CultureInfo.InvariantCulture) + ":" };
+      return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1) + nameStart;
+    }
+
+    public int NestedCall(int maxValueCount)
+    {
+      if (maxValueCount > 1)
+        throw new ArgumentException(
+            string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
+            nameof(maxValueCount));
+      if (maxValueCount < 0)
+        throw new ArgumentException(
+            string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
+            nameof(maxValueCount));
+
+      return maxValueCount;
+    }
+
+    public int NestedCall2(int maxValueCount)
+    {
+      if (maxValueCount > 1)
+        throw new ArgumentException(
+            string.Format(CultureInfo.InvariantCulture,
+            "Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
+            nameof(maxValueCount));
+      if (maxValueCount < 0)
+        throw new ArgumentException(
+            string.Format("Cannot provide maxValueCount of {0} for OptionValueType.None.", maxValueCount),
+            nameof(maxValueCount));
+
+      return maxValueCount;
     }
   }
 
@@ -229,12 +247,14 @@ namespace Tests.Rules.Globalization
       AssertRuleFailure<CultureInfoTestCases>("BadEmpty", 1);
       AssertRuleFailure<CultureInfoTestCases>("BadFirst", 1);
       AssertRuleFailure<CultureInfoTestCases>("BadLast", 1);
+      AssertRuleFailure<CultureInfoTestCases>("ImplicitIntToString", 2);
+      AssertRuleFailure<CultureInfoTestCases>("NestedCall", 2);
+      AssertRuleFailure<CultureInfoTestCases>("ImplicitIntToString2", 1);
+      AssertRuleFailure<CultureInfoTestCases>("NestedCall2", 1);
     }
 
 #pragma warning disable IDE0051 // Remove unused private members
-#pragma warning disable CA1822 // Mark members as static
     private void Ignored(ResourceManager rm)
-#pragma warning restore CA1822 // Mark members as static
 #pragma warning restore IDE0051 // Remove unused private members
     {
       rm.GetObject("a");
@@ -243,21 +263,17 @@ namespace Tests.Rules.Globalization
       rm.GetString("b", CultureInfo.InvariantCulture);
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0051 // Remove unused private members
     private string Params()
 #pragma warning restore IDE0051 // Remove unused private members
-#pragma warning restore CA1822 // Mark members as static
     {
       // the overload to use is: Format(IFormatProvider, string, params object []);
       return String.Format("{0} {1} {2}", 1, 2, 3);
     }
 
-#pragma warning disable CA1822 // Mark members as static
 #pragma warning disable IDE0051 // Remove unused private members
     private void NoSimpleOverload(FieldInfo fi)
 #pragma warning restore IDE0051 // Remove unused private members
-#pragma warning restore CA1822 // Mark members as static
     {
       // the overload with a CultureInfo is SetValue (object, object, BindingFlags, Binder, CultureInfo);
       // and is not simply an "extra" parameter

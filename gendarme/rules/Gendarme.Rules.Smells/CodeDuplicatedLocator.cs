@@ -38,210 +38,242 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Smells {
+namespace Gendarme.Rules.Smells
+{
+  [Serializable]
+  public enum DetectionMode
+  {
+    Classic,
+    Modern
+  }
 
-    public enum DetectionMode
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+  [SuppressMessage("Gendarme.Rules.Maintainability",
+                   "AvoidLackOfCohesionOfMethodsRule",
+                   Justification = "Maybe refactor")]
+  internal sealed class CodeDuplicatedLocator
+  {
+    private static readonly ReadOnlyCollection<Pattern> Empty = new ReadOnlyCollection<Pattern>(new List<Pattern>());
+    private readonly DetectionMode mode;
+    private readonly HashSet<string> methods = new HashSet<string>();
+    private readonly HashSet<string> types = new HashSet<string>();
+    private readonly Dictionary<MethodDefinition, IList<Pattern>> patternsCached = new Dictionary<MethodDefinition, IList<Pattern>>();
+    private readonly IRule parent_rule;
+
+    internal CodeDuplicatedLocator(IRule rule, DetectionMode kind)
     {
-        Classic,
-        Modern
+      parent_rule = rule;
+      mode = kind;
     }
 
-	internal sealed class CodeDuplicatedLocator {
+    internal ICollection<string> CheckedMethods
+    {
+      get
+      {
+        return methods;
+      }
+    }
 
-		static ReadOnlyCollection<Pattern> Empty = new ReadOnlyCollection<Pattern> (new List<Pattern> ());
-        private readonly DetectionMode mode;
+    internal ICollection<string> CheckedTypes
+    {
+      get
+      {
+        return types;
+      }
+    }
 
-		HashSet<string> methods = new HashSet<string> ();
-		HashSet<string> types = new HashSet<string> ();
-		Dictionary<MethodDefinition, IList<Pattern>> patternsCached = new Dictionary<MethodDefinition, IList<Pattern>> ();
-		IRule parent_rule;
+    internal void Clear()
+    {
+      methods.Clear();
+      types.Clear();
+    }
 
-		internal CodeDuplicatedLocator (IRule rule, DetectionMode kind) 
-		{
-			parent_rule = rule;
-            mode = kind;
-		}
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    internal void CompareMethodAgainstTypeMethods(MethodDefinition current, TypeDefinition targetType)
+    {
+      if (CheckedTypes.Contains(targetType.Name) || current.IsGeneratedCode()) return;
 
-		internal ICollection<string> CheckedMethods {
-			get {
-				return methods;
-			}
-		}
+      bool isContructor = current.IsConstructor;
 
-		internal ICollection<string> CheckedTypes {
-			get {
-				return types;
-			}
-		}
+      foreach (MethodDefinition target in targetType.Methods)
+      {
+        if (target.IsGeneratedCode() || (target.IsConstructor != isContructor))
+          continue;
 
-		internal void Clear ()
-		{
-			methods.Clear ();
-			types.Clear ();
-		}
-
-		internal void CompareMethodAgainstTypeMethods (MethodDefinition current, TypeDefinition targetType)
-		{
-			if (CheckedTypes.Contains (targetType.Name)) 
-				return;
-			
-			foreach (MethodDefinition target in targetType.Methods) {
-				if (target.IsConstructor || target.IsGeneratedCode ())
-					continue;
-
-				Pattern duplicated = GetDuplicatedCode (current, target);
-				if (duplicated != null && duplicated.Count > 0) {
-					parent_rule.Runner.Report (current, duplicated[0], Severity.High, Confidence.Normal, 
-						String.Format (CultureInfo.InvariantCulture, "Duplicated code with {0}{1}{2}{3}",
+        Pattern duplicated = GetDuplicatedCode(current, target);
+        if (duplicated != null && duplicated.Count > 0)
+        {
+          Severity severity = GetSeverityFromPatternCount(duplicated.Count);
+          parent_rule.Runner.Report(current, duplicated[0], severity, ((duplicated.Count < 4) ? Confidence.Low : Confidence.Normal), String.Format(CultureInfo.InvariantCulture, "Duplicated code with {0}{1}{2}{3}",
                         mode == DetectionMode.Classic ? String.Empty : Environment.NewLine,
                         mode == DetectionMode.Classic ? String.Empty : duplicated.ToString(),
                         mode == DetectionMode.Classic ? String.Empty : Environment.NewLine,
                         target.GetFullName()));
-				}
-			}
-		}
-
-		bool CanCompareMethods (MethodDefinition current, MethodDefinition target)
-		{
-			return current.HasBody && target.HasBody &&
-				!CheckedMethods.Contains (target.Name) &&
-				current != target;
-		}
-
-		[Conditional ("DEBUG")]
-		void WriteToOutput (MethodDefinition current, MethodDefinition target, Pattern found) 
-		{
-			Log.WriteLine (this, "Found pattern in {0} and {1}", current, target);
-			Log.WriteLine (this, "\t Pattern");
-			for (int index = 0; index < found.Count; index++)
-				Log.WriteLine (this, "\t\t{0} - {1}",
-                    found[index].OpCode.Code,
-                    found[index].Operand != null ? found[index].Operand : "No operator");
         }
+      }
+    }
 
-		Pattern GetDuplicatedCode (MethodDefinition current, MethodDefinition target)
-		{
-			if (!CanCompareMethods (current, target))
-				return null;
+    private static Severity GetSeverityFromPatternCount(int count)
+    {
+      if (count < 2)
+        return Severity.Audit;
+      else if (count < 5)
+        return Severity.Low;
+      else if (count < 7)
+        return Severity.Medium;
+      else
+        return Severity.High;
+    }
 
-			IList<Pattern> patterns = GetPatterns (current);
-			if (patterns.Count == 0)
-				return null;
-			
-			InstructionMatcher.Current = current;
-			InstructionMatcher.Target = target;
+    private bool CanCompareMethods(MethodDefinition current, MethodDefinition target)
+    {
+      return current.HasBody && target.HasBody &&
+        !CheckedMethods.Contains(target.Name) &&
+        current != target;
+    }
 
-			foreach (Pattern pattern in patterns) {
-				if (pattern.IsCompilerGeneratedBlock || !pattern.IsExtractableToMethodBlock)
-					continue;
+    [Conditional("DEBUG")]
+    private void WriteToOutput(MethodDefinition current, MethodDefinition target, Pattern found)
+    {
+      Log.WriteLine(this, "Found pattern in {0} and {1}", current, target);
+      Log.WriteLine(this, "\t Pattern");
+      for (int index = 0; index < found.Count; index++)
+        Log.WriteLine(this, "\t\t{0} - {1}",
+                    found[index].OpCode.Code,
+                    found[index].Operand ?? "No operator");
+    }
 
-				if (InstructionMatcher.Match (pattern, target.Body.Instructions)) {
-					WriteToOutput (current, target, pattern);
-					return pattern;
-				}
-			}
+    private Pattern GetDuplicatedCode(MethodDefinition current, MethodDefinition target)
+    {
+      if (!CanCompareMethods(current, target))
+        return null;
 
-			return null;
-		}
+      IList<Pattern> patterns = GetPatterns(current);
+      if (patterns.Count == 0)
+        return null;
 
+      InstructionMatcher.Current = current;
+      InstructionMatcher.Target = target;
 
-		IList<Pattern> GetPatterns (MethodDefinition method) 
-		{
-			IList<Pattern> patterns = Empty;
-			if (!patternsCached.TryGetValue (method, out patterns)) {
-				patterns = GeneratePatterns (method, this.mode);
-				patternsCached.Add (method, patterns);
-			}
-			return patterns;
-		}
+      Pattern maxPattern = null;
+      foreach (Pattern pattern in patterns)
+      {
+        if (pattern.IsCompilerGeneratedBlock || !pattern.IsExtractableToMethodBlock)
+          continue;
 
-		//TODO: Still needs some testing in order to get the best size
-		//for every case:
-		//  The idea is get two overlapped statements in high level language
-		static IList<Pattern> GeneratePatterns (MethodDefinition method, DetectionMode mode) 
-		{
-			Stack<Stack<Instruction>> result = new Stack<Stack<Instruction>> ();
-			Stack<Instruction> current = new Stack<Instruction> ();
-			int stackCounter = 0;
+        if (InstructionMatcher.Match(pattern, target.Body.Instructions))
+        {
+          WriteToOutput(current, target, pattern);
+          if ((maxPattern == null) || (maxPattern.Count < pattern.Count))
+            maxPattern = pattern;
+        }
+      }
 
-			var instructions = method.Body.Instructions;
-			for (int index = instructions.Count - 1; index >= 0; index--) {
-				Instruction currentInstruction = instructions [index];
-				stackCounter += currentInstruction.GetPushCount ();
-				stackCounter -= currentInstruction.GetPopCount (method);	
-				
-				if (result.Count != 0)
-					result.Peek ().Push (currentInstruction);
+      return maxPattern;
+    }
 
-				current.Push (currentInstruction);
+    private IList<Pattern> GetPatterns(MethodDefinition method)
+    {
+      if (!patternsCached.TryGetValue(method, out IList<Pattern> patterns))
+      {
+        patterns = GeneratePatterns(method, this.mode);
+        patternsCached.Add(method, patterns);
+      }
+      return patterns;
+    }
 
-				if (stackCounter == 0 && current.Count > 1) {//&& currentInstruction.OpCode.FlowControl != FlowControl.Branch) {  
-					result.Push (current);
-					current = new Stack<Instruction> ();
-				}
-			}
+    //TODO: Still needs some testing in order to get the best size
+    //for every case:
+    //  The idea is get two overlapped statements in high level language
+    private static IList<Pattern> GeneratePatterns(MethodDefinition method, DetectionMode detectionMode)
+    {
+      Stack<Stack<Instruction>> result = new Stack<Stack<Instruction>>();
+      Stack<Instruction> current = new Stack<Instruction>();
+      int stackCounter = 0;
 
-			//We can remove the first ocurrence
-			if (result.Count != 0)
-				result.Pop ();
+      var instructions = method.Body.Instructions;
+      for (int index = instructions.Count - 1; index >= 0; index--)
+      {
+        Instruction currentInstruction = instructions[index];
+        stackCounter += currentInstruction.GetPushCount();
+        stackCounter -= currentInstruction.GetPopCount(method);
 
-			if (result.Count == 0)
-				return Empty;
+        if (result.Count != 0)
+          result.Peek().Push(currentInstruction);
 
-			List<Pattern> res =
+        current.Push(currentInstruction);
+
+        if (stackCounter == 0 && current.Count > 1)
+        {//&& currentInstruction.OpCode.FlowControl != FlowControl.Branch) {
+          result.Push(current);
+          current = new Stack<Instruction>();
+        }
+      }
+
+      //We can remove the first ocurrence
+      if (result.Count != 0)
+        result.Pop();
+
+      if (result.Count == 0)
+        return Empty;
+
+      List<Pattern> res =
                 result.Select(stack => stack.ToArray())
                       .Where(stack =>
                       {
-                          if (mode == DetectionMode.Classic)
-                              return true;
-
-                          // ignore "throw new ArgumentNullException" boilerplate
-                          if (stack.Any(inst =>
-                          {
-                              if (inst.OpCode == OpCodes.Throw &&
-                                  inst.Previous != null &&
-                                  inst.Previous.OpCode == OpCodes.Newobj &&
-                                  inst.Previous.Operand is MethodReference)
-                              {
-                                  var reference = (inst.Previous.Operand as MethodReference).FullName;
-                                  if (reference == "System.Void System.ArgumentNullException::.ctor(System.String)")
-                                      return true;
-                              }
-                              return false;
-                          })) return false;
-
-                          var dbg = method.DebugInformation;
-                          if (dbg == null)
-                              return true;
-
-                          var sp = dbg.GetSequencePoint(stack[0]);
-                          if (sp == null)
-                              return false; // patterns start at a SeqPnt
-
-                          var last = stack.Last();
-                          var next = last.Next;
-                          if (next != null && dbg.GetSequencePoint(next) == null)
-                              return false; // patterns end at the end of a SeqPnt
-
-                          if (stack.Any(inst =>
-                          {
-                              var ss = dbg.GetSequencePoint(inst);
-                              return ss != null && ss.IsHidden;
-                          }))
-                              return false; // patterns don't include hidden lines
-
-                          //// patterns are 2 or more SeqPnts in length (i.e. are not trivial)
-                          //var sp = stack.Where(i => dbg.GetSequencePoint(i)!= null).Count();
-                          //return (sp > 1);
+                        if (detectionMode == DetectionMode.Classic)
                           return true;
+
+                        // ignore "throw new ArgumentNullException" boilerplate
+                        if (stack.Any(inst =>
+                        {
+                          if (inst.OpCode == OpCodes.Throw &&
+                                inst.Previous != null &&
+                                inst.Previous.OpCode == OpCodes.Newobj &&
+                                inst.Previous.Operand is MethodReference)
+                          {
+                            var reference = (inst.Previous.Operand as MethodReference).FullName;
+                            if (reference == "System.Void System.ArgumentNullException::.ctor(System.String)")
+                              return true;
+                          }
+                          return false;
+                        })) return false;
+
+                        var dbg = method.DebugInformation;
+                        if (dbg == null)
+                          return true;
+
+                        var sp = dbg.GetSequencePoint(stack[0]);
+                        if (sp == null)
+                          return false; // patterns start at a SeqPnt
+
+                        var last = stack.Last();
+                        var next = last.Next;
+                        if (next != null && dbg.GetSequencePoint(next) == null)
+                          return false; // patterns end at the end of a SeqPnt
+
+                        if (stack.Any(inst =>
+                        {
+                          var ss = dbg.GetSequencePoint(inst);
+                          return ss != null && ss.IsHidden;
+                        }))
+                          return false; // patterns don't include hidden lines
+
+                        //// patterns are 2 or more SeqPnts in length (i.e. are not trivial)
+                        //var sp = stack.Where(i => dbg.GetSequencePoint(i)!= null).Count();
+                        //return (sp > 1);
+                        return true;
                       })
                       .Select(array => new Pattern(array, method))
                       .ToList();
 
-//            res.ForEach(p => WriteToOutput(method, p));
+      //            res.ForEach(p => WriteToOutput(method, p));
 
-			return res;
-		}
-	}
+      return res;
+    }
+  }
 }

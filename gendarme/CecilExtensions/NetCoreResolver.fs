@@ -32,9 +32,6 @@ module NetCoreResolver =
     | :? BadImageFormatException
     | :? FileLoadException -> String.Empty
 
-  [<SuppressMessage("Microsoft.Usage",
-                    "CA1801:ReviewUnusedParameters",
-                    Justification = "meets interface")>]
   let internal resolveFromNugetCache _ (y: AssemblyNameReference) =
     let name = y.ToString()
 

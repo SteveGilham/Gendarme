@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Rule base class
 //
 // Authors:
@@ -25,175 +25,202 @@
 // THE SOFTWARE.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Gendarme.Framework {
+namespace Gendarme.Framework
+{
+  /// <summary>
+  /// Most rules should be able to inherit from Rule and implement one of the
+  /// <c>IAssemblyRule</c>, <c>ITypeRule</c> or <c>IMethodRule</c> and override
+  /// the Check[Assembly|Type|Method] method.
+  /// </summary>
+  public abstract class Rule : IRule
+  {
+    private bool active = true;
+    private string name;
+    private string full_name;
+    private string problem;
+    private string solution;
+    private Uri uri;
+    private Type type;
+    private ApplicabilityScope applicability_scope = ApplicabilityScope.All;
+    private object[] engine_dependencies;
 
-	/// <summary>
-	/// Most rules should be able to inherit from Rule and implement one of the
-	/// <c>IAssemblyRule</c>, <c>ITypeRule</c> or <c>IMethodRule</c> and override 
-	/// the Check[Assembly|Type|Method] method.
-	/// </summary>
-	abstract public class Rule : IRule {
+    /// <summary>
+    /// Return true if the rule is currently active, false otherwise.
+    /// </summary>
+    public virtual bool Active
+    {
+      get { return active; }
+      set { active = value; }
+    }
 
-		private bool active = true;
-		private string name;
-		private string full_name;
-		private string problem;
-		private string solution;
-		private Uri uri;
-		private Type type;
-		private ApplicabilityScope applicability_scope = ApplicabilityScope.All;
-		private object [] engine_dependencies = null;
+    /// <summary>
+    /// Return the runner executing the rule. This is helpful to get information
+    /// outside the rule, like the list of assemblies being analyzed.
+    /// </summary>
+    public IRunner Runner
+    {
+      get;
+      private set;
+    }
 
-		/// <summary>
-		/// Return true if the rule is currently active, false otherwise.
-		/// </summary>
-		public virtual bool Active {
-			get { return active; }
-			set { active = value; }
-		}
+    /// <summary>
+    /// Return the short name of the rule.
+    /// By default this returns the name of the current class.
+    /// </summary>
+    public virtual string Name
+    {
+      get
+      {
+        if (name == null)
+          name = Type.Name;
+        return name;
+      }
+    }
 
-		/// <summary>
-		/// Return the runner executing the rule. This is helpful to get information
-		/// outside the rule, like the list of assemblies being analyzed.
-		/// </summary>
-		public IRunner Runner {
-			get;
-			private set;
-		}
+    /// <summary>
+    /// Return the full name of the rule.
+    /// By default this returns the full name of the current class.
+    /// </summary>
+    public virtual string FullName
+    {
+      get
+      {
+        if (full_name == null)
+          full_name = Type.FullName;
+        return full_name;
+      }
+    }
 
-		/// <summary>
-		/// Return the short name of the rule.
-		/// By default this returns the name of the current class.
-		/// </summary>
-		public virtual string Name {
-			get {
-				if (name == null)
-					name = Type.Name;
-				return name;
-			}
-		}
+    private Type Type
+    {
+      get
+      {
+        if (type == null)
+          type = GetType();
+        return type;
+      }
+    }
 
-		/// <summary>
-		/// Return the full name of the rule.
-		/// By default this returns the full name of the current class.
-		/// </summary>
-		public virtual string FullName {
-			get {
-				if (full_name == null)
-					full_name = Type.FullName;
-				return full_name;
-			}
-		}
+    private object GetCustomAttribute(Type t)
+    {
+      object[] attributes = Type.GetCustomAttributes(t, true);
+      if (attributes.Length == 0)
+        return null;
+      return attributes[0];
+    }
 
-		private Type Type {
-			get {
-				if (type == null)
-					type = GetType ();
-				return type;
-			}
-		}
+    public virtual string Problem
+    {
+      get
+      {
+        if (problem == null)
+        {
+          object obj = GetCustomAttribute(typeof(ProblemAttribute));
+          if (obj == null)
+            problem = "Missing [Problem] attribute on rule.";
+          else
+            problem = (obj as ProblemAttribute).Problem;
+        }
+        return problem;
+      }
+    }
 
-		private object GetCustomAttribute (Type t)
-		{
-			object [] attributes = Type.GetCustomAttributes (t, true);
-			if (attributes.Length == 0)
-				return null;
-			return attributes [0];
-		}
+    public virtual string Solution
+    {
+      get
+      {
+        if (solution == null)
+        {
+          object obj = GetCustomAttribute(typeof(SolutionAttribute));
+          if (obj == null)
+            solution = "Missing [Solution] attribute on rule.";
+          else
+            solution = (obj as SolutionAttribute).Solution;
+        }
+        return solution;
+      }
+    }
 
-		public virtual string Problem { 
-			get {
-				if (problem == null) {
-					object obj = GetCustomAttribute (typeof (ProblemAttribute));
-					if (obj == null)
-						problem = "Missing [Problem] attribute on rule.";
-					else
-						problem = (obj as ProblemAttribute).Problem;
-				}
-				return problem;
-			}
-		}
+    /// <summary>
+    /// Return an Uri instance to the rule documentation.
+    /// By default, if no [DocumentationUri] attribute is used on the rule, this returns:
+    /// http://www.mono-project.com/{rule name space}#{rule name}
+    /// </summary>
+    public virtual Uri Uri
+    {
+      get
+      {
+        if (uri == null)
+        {
+          object[] attributes = Type.GetCustomAttributes(typeof(DocumentationUriAttribute), true);
+          if (attributes.Length == 0)
+          {
+            string url = String.Format(CultureInfo.InvariantCulture,
+              "https://github.com/spouliot/gendarme/wiki/{0}.{1}({2})",
+              type.Namespace, Name, "2.10");
+            uri = new Uri(url);
+          }
+          else
+          {
+            uri = (attributes[0] as DocumentationUriAttribute).DocumentationUri;
+          }
+        }
+        return uri;
+      }
+    }
 
-		public virtual string Solution { 
-			get {
-				if (solution == null) {
-					object obj = GetCustomAttribute (typeof (SolutionAttribute));
-					if (obj == null)
-						solution = "Missing [Solution] attribute on rule.";
-					else
-						solution = (obj as SolutionAttribute).Solution;
-				}
-				return solution;
-			}
-		}
+    /// <summary>
+    /// Initialize the rule. This is where rule can do it's heavy initialization
+    /// since the assemblies to be analyzed are already known (and accessible thru
+    /// the runner parameter).
+    /// </summary>
+    /// <param name="runner">The runner that will execute this rule.</param>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Gendarme",
+                     "DoNotThrowExceptionRule",
+                     Justification = "CheckParametersNullityInVisibleMethodsRule; if this throws, we have bigger problems")]
+    public virtual void Initialize(IRunner runner)
+    {
+      Runner = runner ?? throw new ArgumentNullException(nameof(runner));
 
-		/// <summary>
-		/// Return an Uri instance to the rule documentation.
-		/// By default, if no [DocumentationUri] attribute is used on the rule, this returns:
-		/// http://www.mono-project.com/{rule name space}#{rule name}
-		/// </summary>
-		public virtual Uri Uri {
-			get {
-				if (uri == null) {
-					object [] attributes = Type.GetCustomAttributes (typeof (DocumentationUriAttribute), true);
-					if (attributes.Length == 0) {
-						string url = String.Format (CultureInfo.InvariantCulture, 
-							"https://github.com/spouliot/gendarme/wiki/{0}.{1}({2})",
-							type.Namespace, Name, "2.10");
-						uri = new Uri (url);
-					} else {
-						uri = (attributes [0] as DocumentationUriAttribute).DocumentationUri;
-					}
-				}
-				return uri;
-			}
-		}
+      // read attribute only once (e.g. the wizard can initialize multiple times)
+      if (engine_dependencies == null)
+        engine_dependencies = Type.GetCustomAttributes(typeof(EngineDependencyAttribute), true);
 
-		/// <summary>
-		/// Initialize the rule. This is where rule can do it's heavy initialization
-		/// since the assemblies to be analyzed are already known (and accessible thru
-		/// the runner parameter).
-		/// </summary>
-		/// <param name="runner">The runner that will execute this rule.</param>
-		public virtual void Initialize (IRunner runner)
-		{
-			if (runner == null)
-				throw new ArgumentNullException ("runner");
+      if (engine_dependencies.Length == 0)
+        return;
 
-			Runner = runner;
+      // subscribe to each engine the rule depends on
+      foreach (EngineDependencyAttribute eda in engine_dependencies)
+      {
+        runner.Engines.Subscribe(eda.EngineType);
+      }
+    }
 
-			// read attribute only once (e.g. the wizard can initialize multiple times)
-			if (engine_dependencies == null)
-				engine_dependencies = Type.GetCustomAttributes (typeof (EngineDependencyAttribute), true);
+    public virtual void TearDown()
+    {
+      if ((engine_dependencies == null) || (engine_dependencies.Length == 0))
+        return;
 
-			if (engine_dependencies.Length == 0)
-				return;
+      foreach (EngineDependencyAttribute eda in engine_dependencies)
+      {
+        Runner.Engines.Unsubscribe(eda.EngineType);
+      }
+    }
 
-			// subscribe to each engine the rule depends on
-			foreach (EngineDependencyAttribute eda in engine_dependencies) {
-				runner.Engines.Subscribe (eda.EngineType);
-			}
-		}
-
-		public virtual void TearDown ()
-		{
-			if ((engine_dependencies == null) || (engine_dependencies.Length == 0))
-				return;
-
-			foreach (EngineDependencyAttribute eda in engine_dependencies) {
-				Runner.Engines.Unsubscribe (eda.EngineType);
-			}
-		}
-
-		public ApplicabilityScope ApplicabilityScope {
-			get {
-				return applicability_scope;
-			}
-			set {
-				applicability_scope = value;
-			}
-		}
-	}
+    public ApplicabilityScope ApplicabilityScope
+    {
+      get
+      {
+        return applicability_scope;
+      }
+      set
+      {
+        applicability_scope = value;
+      }
+    }
+  }
 }

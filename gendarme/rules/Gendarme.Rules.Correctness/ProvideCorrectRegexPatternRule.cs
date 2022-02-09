@@ -38,202 +38,230 @@ using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Correctness {
+namespace Gendarme.Rules.Correctness
+{
+  /// <summary>
+  /// This rule verifies that valid regular expression strings are used as arguments.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// //Invalid end of pattern
+  /// Regex re = new Regex ("^\\");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// Regex re = new Regex (@"^\\");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// //Unterminated [] set
+  /// Regex re = new Regex ("([a-z)*");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// Regex re = new Regex ("([a-z])*");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// //Reference to undefined group number 2
+  /// return Regex.IsMatch (code, @"(\w)-\2");
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// return Regex.IsMatch (code, @"(\w)-\1");
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.4</remarks>
 
-	/// <summary>
-	/// This rule verifies that valid regular expression strings are used as arguments.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// //Invalid end of pattern
-	/// Regex re = new Regex ("^\\");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// Regex re = new Regex (@"^\\");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// //Unterminated [] set
-	/// Regex re = new Regex ("([a-z)*");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// Regex re = new Regex ("([a-z])*");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// //Reference to undefined group number 2
-	/// return Regex.IsMatch (code, @"(\w)-\2");
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// return Regex.IsMatch (code, @"(\w)-\1");
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.4</remarks>
+  [Problem("An invalid regular expression string is provided to a method/constructor.")]
+  [Solution("Fix the invalid regular expression.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class ProvideCorrectRegexPatternRule : Rule, IMethodRule
+  {
+    private static readonly OpCodeBitmask callsAndNewobjBitmask = BuildCallsAndNewobjOpCodeBitmask();
 
-	[Problem ("An invalid regular expression string is provided to a method/constructor.")]
-	[Solution ("Fix the invalid regular expression.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class ProvideCorrectRegexPatternRule : Rule, IMethodRule {
+    private static readonly TypeName regex = new TypeName
+    {
+      Namespace = "System.Text.RegularExpressions",
+      Name = "Regex"
+    };
 
-		static OpCodeBitmask callsAndNewobjBitmask = BuildCallsAndNewobjOpCodeBitmask ();
+    private static readonly TypeName validator = new TypeName
+    {
+      Namespace = "System.Configuration",
+      Name = "RegexStringValidator"
+    };
 
-        private readonly static TypeName regex = new TypeName
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
+
+      Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e)
+      {
+        string assembly_name = e.CurrentAssembly.Name.Name;
+        bool usingRegexClass = (assembly_name == "System");
+        bool usingValidatorClass = (e.CurrentModule.Runtime >= TargetRuntime.Net_2_0) && (assembly_name == "System.Configuration");
+        // if we're not analyzing System.dll or System.Configuration.dll then check if we're using them
+        if (!usingRegexClass && !usingValidatorClass)
         {
-            Namespace = "System.Text.RegularExpressions",
-            Name = "Regex"
-        };
-        private readonly static TypeName validator = new TypeName
+          Active = e.CurrentModule.AnyTypeReference((TypeReference tr) =>
+          {
+            return tr.IsNamed(regex) ||
+              tr.IsNamed(validator);
+          });
+        }
+        else
         {
-            Namespace = "System.Configuration",
-            Name = "RegexStringValidator"
-        };
+          Active = true;
+        }
+      };
+    }
 
-        public override void Initialize(IRunner runner)
-		{
-			base.Initialize (runner);
-
-			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				string assembly_name = e.CurrentAssembly.Name.Name;
-				bool usingRegexClass = (assembly_name == "System");
-				bool usingValidatorClass = (e.CurrentModule.Runtime >= TargetRuntime.Net_2_0) && (assembly_name == "System.Configuration");
-				// if we're not analyzing System.dll or System.Configuration.dll then check if we're using them
-				if (!usingRegexClass && !usingValidatorClass) {
-					Active = e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return tr.IsNamed (regex) ||
-							tr.IsNamed (validator);
-					});
-				} else {
-					Active = true;
-				}
-			};
-		}
-
-		void CheckArguments (MethodDefinition method, Instruction ins, Instruction ld)
-		{
-			// handle things like: boolean_condition ? "string-1" : "string-2"
-			// where the first string (compiler dependent) is ok, while the second is bad
-			if (CheckLoadInstruction (method, ins, ld, Confidence.High)) {
-				Instruction previous = ld.Previous;
-				if ((previous != null) && (previous.Operand == ins)) {
-					CheckLoadInstruction (method, ins, previous.Previous, Confidence.Normal);
-				}
-			}
-		}
-        private readonly static TypeName systemString = new TypeName
+    private void CheckArguments(MethodDefinition method, Instruction ins, Instruction ld)
+    {
+      // handle things like: boolean_condition ? "string-1" : "string-2"
+      // where the first string (compiler dependent) is ok, while the second is bad
+      if (CheckLoadInstruction(method, ins, ld, Confidence.High))
+      {
+        Instruction previous = ld.Previous;
+        if ((previous != null) && (previous.Operand == ins))
         {
-            Namespace = "System",
-            Name = "String"
-        };
+          CheckLoadInstruction(method, ins, previous.Previous, Confidence.Normal);
+        }
+      }
+    }
 
-		bool CheckLoadInstruction (MethodDefinition method, Instruction ins, Instruction ld, Confidence confidence)
-		{
-			switch (ld.OpCode.Code) {
-			case Code.Ldstr:
-				return CheckPattern (method, ins, (string) ld.Operand, confidence);
-			case Code.Ldsfld:
-				FieldReference f = (FieldReference) ld.Operand;
-				if (f.Name != "Empty" || !f.DeclaringType.IsNamed (systemString))
-					return false;
-				return CheckPattern (method, ins, null, confidence);
-			case Code.Ldnull:
-				return CheckPattern (method, ins, null, confidence);
-			}
-			return true;
-		}
+    private static readonly TypeName systemString = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
 
-		bool CheckPattern (MethodDefinition method, Instruction ins, string pattern, Confidence confidence)
-		{
-			if (string.IsNullOrEmpty (pattern)) {
-				Runner.Report (method, ins, Severity.High, Confidence.High, "Pattern is null or empty.");
-				return false;
-			}
+    private bool CheckLoadInstruction(MethodDefinition method, Instruction ins, Instruction ld, Confidence confidence)
+    {
+      switch (ld.OpCode.Code)
+      {
+        case Code.Ldstr:
+          return CheckPattern(method, ins, (string)ld.Operand, confidence);
 
-			try {
-				new Regex (pattern);
-				return true;
-			} catch (Exception e) {
-				/* potential set of exceptions is not well documented and potentially changes with regarts to
+        case Code.Ldsfld:
+          FieldReference f = (FieldReference)ld.Operand;
+          if (f.Name != "Empty" || !f.DeclaringType.IsNamed(systemString))
+            return false;
+          return CheckPattern(method, ins, null, confidence);
+
+        case Code.Ldnull:
+          return CheckPattern(method, ins, null, confidence);
+      }
+      return true;
+    }
+
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
+      Justification = "Success or failure is all that's of interest")]
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
+                     Justification = "See comment below")]
+    private bool CheckPattern(MethodDefinition method, Instruction ins, string pattern, Confidence confidence)
+    {
+      if (string.IsNullOrEmpty(pattern))
+      {
+        Runner.Report(method, ins, Severity.High, Confidence.High, "Pattern is null or empty.");
+        return false;
+      }
+
+      try
+      {
+        _ = new Regex(pattern);
+        return true;
+      }
+      catch (Exception e)
+      {
+        /* potential set of exceptions is not well documented and potentially changes with regarts to
 				   different runtime and/or runtime version. */
-				string msg = String.Format (CultureInfo.InvariantCulture, 
-					"Pattern '{0}' is invalid. Reason: {1}", pattern, e.Message);
-				Runner.Report (method, ins, Severity.High, confidence, msg);
-				return false;
-			}
-		}
+        string msg = String.Format(CultureInfo.InvariantCulture,
+          "Pattern '{0}' is invalid. Reason: {1}", pattern, e.Message);
+        Runner.Report(method, ins, Severity.High, confidence, msg);
+        return false;
+      }
+    }
 
-		void CheckCall (MethodDefinition method, Instruction ins, MethodReference call)
-		{
-			if (null == call) //resolution did not work
-				return;
-			if (!call.HasParameters)
-				return;
+    private void CheckCall(MethodDefinition method, Instruction ins, MethodReference call)
+    {
+      if (null == call) //resolution did not work
+        return;
+      if (!call.HasParameters)
+        return;
 
-			TypeReference type = call.DeclaringType;
-			if (!type.IsNamed (regex) && !type.IsNamed (validator))
-				return;
+      TypeReference type = call.DeclaringType;
+      if (!type.IsNamed(regex) && !type.IsNamed(validator))
+        return;
 
-			MethodDefinition mdef = call.Resolve ();
-			if (null == mdef)
-				return;
-			//check only constructors and static non-property methods
-			if (!mdef.IsConstructor && (mdef.HasThis || mdef.IsProperty ()))
-				return;
+      MethodDefinition mdef = call.Resolve();
+      if (null == mdef)
+        return;
+      //check only constructors and static non-property methods
+      if (!mdef.IsConstructor && (mdef.HasThis || mdef.IsProperty()))
+        return;
 
-			foreach (ParameterDefinition p in mdef.Parameters) {
-				string pname = p.Name;
-				if ((pname == "pattern" || pname == "regex") && p.ParameterType.IsNamed (systemString)) {
-					Instruction ld = ins.TraceBack (method, -(call.HasThis ? 0 : p.Index));
-					if (ld != null)
-						CheckArguments (method, ins, ld);
-					return;
-				}
-			}
-		}
+      foreach (ParameterDefinition p in mdef.Parameters)
+      {
+        string pname = p.Name;
+        if ((pname == "pattern" || pname == "regex") && p.ParameterType.IsNamed(systemString))
+        {
+          Instruction ld = ins.TraceBack(method, -(call.HasThis ? 0 : p.Index));
+          if (ld != null)
+            CheckArguments(method, ins, ld);
+          return;
+        }
+      }
+    }
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-			//is there any interesting opcode in the method?
-			if (!callsAndNewobjBitmask.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+      //is there any interesting opcode in the method?
+      if (!callsAndNewobjBitmask.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
 
-			foreach (Instruction ins in method.Body.Instructions) {
-				if (!callsAndNewobjBitmask.Get (ins.OpCode.Code))
-					continue;
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        if (!callsAndNewobjBitmask.Get(ins.OpCode.Code))
+          continue;
 
-				CheckCall (method, ins, (MethodReference) ins.Operand);
-			}
+        CheckCall(method, ins, (MethodReference)ins.Operand);
+      }
 
-			return Runner.CurrentRuleResult;
-		}
+      return Runner.CurrentRuleResult;
+    }
 
-		static OpCodeBitmask BuildCallsAndNewobjOpCodeBitmask ()
-		{
-			#if true
-				return new OpCodeBitmask (0x8000000000, 0x4400000000000, 0x0, 0x0);
-			#else
+    private static OpCodeBitmask BuildCallsAndNewobjOpCodeBitmask()
+    {
+#if true
+      return new OpCodeBitmask(0x8000000000, 0x4400000000000, 0x0, 0x0);
+#else
 				OpCodeBitmask mask = new OpCodeBitmask ();
 				mask.UnionWith (OpCodeBitmask.Calls);
 				mask.Set (Code.Newobj);
 				return mask;
-			#endif
-		}
-	}
+#endif
+    }
+  }
 }

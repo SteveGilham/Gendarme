@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,154 +35,177 @@ using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme {
+namespace Gendarme
+{
+  public class IgnoreFileList : BasicIgnoreList
+  {
+    private string current_rule;
+    private readonly Dictionary<string, HashSet<string>> assemblies = new Dictionary<string, HashSet<string>>();
+    private readonly Dictionary<string, HashSet<string>> types = new Dictionary<string, HashSet<string>>();
+    private readonly Dictionary<string, HashSet<string>> methods = new Dictionary<string, HashSet<string>>();
+    private readonly Stack<string> files = new Stack<string>();
 
-	public class IgnoreFileList : BasicIgnoreList {
+    public IgnoreFileList(IRunner runner, string fileName)
+      : base(runner)
+    {
+      Push(fileName);
+      Parse();
+    }
 
-		private string current_rule;
-		private Dictionary<string, HashSet<string>> assemblies = new Dictionary<string, HashSet<string>> ();
-		private Dictionary<string, HashSet<string>> types = new Dictionary<string, HashSet<string>> ();
-		private Dictionary<string, HashSet<string>> methods = new Dictionary<string, HashSet<string>> ();
-		private Stack<string> files = new Stack<string> ();
+    private void Push(string fileName)
+    {
+      if (!String.IsNullOrEmpty(fileName) && File.Exists(fileName) && !files.Contains(fileName))
+      {
+        files.Push(fileName);
+      }
+    }
 
-		public IgnoreFileList (IRunner runner, string fileName)
-			: base (runner)
-		{
-			Push (fileName);
-			Parse ();
-		}
+    private void Parse()
+    {
+      char[] buffer = new char[4096];
+      while (files.Count > 0)
+      {
+        string fileName = files.Pop();
+        using (StreamLineReader sr = new StreamLineReader(fileName))
+        {
+          while (!sr.EndOfStream)
+          {
+            int length = sr.ReadLine(buffer, 0, buffer.Length);
+            ProcessLine(buffer, length);
+          }
+        }
+      }
+      Resolve();
+      TearDown();
+    }
 
-		private void Push (string fileName)
-		{
-			if (!String.IsNullOrEmpty (fileName) && File.Exists (fileName) && !files.Contains (fileName)) {
-				files.Push (fileName);
-			}
-		}
+    private static void Add(IDictionary<string, HashSet<string>> list, string rule, string target)
+    {
+      if (!list.TryGetValue(target, out HashSet<string> rules))
+      {
+        rules = new HashSet<string>();
+        list.Add(target, rules);
+      }
 
-		private void Parse ()
-		{
-			char [] buffer = new char [4096];
-			while (files.Count > 0) {
-				string fileName = files.Pop ();
-				using (StreamLineReader sr = new StreamLineReader (fileName)) {
-					while (!sr.EndOfStream) {
-						int length = sr.ReadLine (buffer, 0, buffer.Length);
-						ProcessLine (buffer, length);
-					}
-				}
-			}
-			Resolve ();
-			TearDown ();
-		}
+      rules.Add(rule);
+    }
 
-		static private void Add (IDictionary<string, HashSet<string>> list, string rule, string target)
-		{
-			HashSet<string> rules;
+    private static string GetString(char[] buffer, int length)
+    {
+      // skip the 'type' + ':' characters when looking for whitespace separator(s)
+      int start = 2;
+      while (Char.IsWhiteSpace(buffer[start]) && (start < buffer.Length))
+        start++;
 
-			if (!list.TryGetValue (target, out rules)) {
-				rules = new HashSet<string> ();
-				list.Add (target, rules);
-			}
+      int end = length;
+      while (Char.IsWhiteSpace(buffer[end]) && (end >= start))
+        end--;
 
-			rules.Add (rule);
-		}
+      return new string(buffer, start, end - start);
+    }
 
-		static string GetString (char [] buffer, int length)
-		{
-			// skip the 'type' + ':' characters when looking for whitespace separator(s)
-			int start = 2;
-			while (Char.IsWhiteSpace (buffer [start]) && (start < buffer.Length))
-				start++;
+    private void ProcessLine(char[] buffer, int length)
+    {
+      if (length < 1)
+        return;
 
-			int end = length;
-			while (Char.IsWhiteSpace (buffer [end]) && (end >= start))
-				end--;
+      switch (buffer[0])
+      {
+        case '#': // comment
+          break;
 
-			return new string (buffer, start, end - start);
-		}
+        case 'R': // rule
+          current_rule = GetString(buffer, length);
+          break;
 
-		private void ProcessLine (char [] buffer, int length)
-		{
-			if (length < 1)
-				return;
+        case 'A': // assembly - we support Name, FullName and *
+          string target = GetString(buffer, length);
+          if (target == "*")
+          {
+            foreach (AssemblyDefinition assembly in Runner.Assemblies)
+            {
+              Add(assemblies, current_rule, assembly.Name.FullName);
+            }
+          }
+          else
+          {
+            Add(assemblies, current_rule, target);
+          }
+          break;
 
-			switch (buffer [0]) {
-			case '#': // comment
-				break;
-			case 'R': // rule
-				current_rule = GetString (buffer, length);
-				break;
-			case 'A': // assembly - we support Name, FullName and *
-				string target = GetString (buffer, length);
-				if (target == "*") {
-					foreach (AssemblyDefinition assembly in Runner.Assemblies) {
-						Add (assemblies, current_rule, assembly.Name.FullName);
-					}
-				} else {
-					Add (assemblies, current_rule, target);
-				}
-				break;
-			case 'T': // type (no space allowed)
-				Add (types, current_rule, GetString (buffer, length));
-				break;
-			case 'M': // method
-				Add (methods, current_rule, GetString (buffer, length));
-				break;
-			case 'N': // namespace - special case (no need to resolve)
-				base.Add (current_rule, NamespaceDefinition.GetDefinition (GetString (buffer, length)));
-				break;
-			case '@': // include file
-				files.Push (GetString (buffer, length));
-				break;
-			default:
-				Console.Error.WriteLine ("Bad ignore entry : '{0}'", new string (buffer));
-				break;
-			}
-		}
+        case 'T': // type (no space allowed)
+          Add(types, current_rule, GetString(buffer, length));
+          break;
 
-		private void AddList (IMetadataTokenProvider metadata, IEnumerable<string> rules)
-		{
-			foreach (string rule in rules) {
-				base.Add (rule, metadata);
-			}
-		}
+        case 'M': // method
+          Add(methods, current_rule, GetString(buffer, length));
+          break;
 
-		// scan the analyzed code a single time looking for targets
-		private void Resolve ()
-		{
-			HashSet<string> rules;
+        case 'N': // namespace - special case (no need to resolve)
+          base.Add(current_rule, NamespaceDefinition.GetDefinition(GetString(buffer, length)));
+          break;
 
-			foreach (AssemblyDefinition assembly in Runner.Assemblies) {
-				if (assemblies.TryGetValue (assembly.Name.FullName, out rules)) {
-					AddList (assembly, rules);
-				}
-				if (assemblies.TryGetValue (assembly.Name.Name, out rules)) {
-					AddList (assembly, rules);
-				}
+        case '@': // include file
+          files.Push(GetString(buffer, length));
+          break;
 
-				foreach (ModuleDefinition module in assembly.Modules) {
-					foreach (TypeDefinition type in module.GetAllTypes ()) {
-						if (types.TryGetValue (type.GetFullName (), out rules)) {
-							AddList (type, rules);
-						}
+        default:
+          Console.Error.WriteLine("Bad ignore entry : '{0}'", new string(buffer));
+          break;
+      }
+    }
 
-						if (type.HasMethods) {
-							foreach (MethodDefinition method in type.Methods) {
-								if (methods.TryGetValue (method.GetFullName (), out rules)) {
-									AddList (method, rules);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+    private void AddList(IMetadataTokenProvider metadata, IEnumerable<string> rules)
+    {
+      foreach (string rule in rules)
+      {
+        base.Add(rule, metadata);
+      }
+    }
 
-		private void TearDown ()
-		{
-			assemblies.Clear ();
-			types.Clear ();
-			methods.Clear ();
-		}
-	}
+    // scan the analyzed code a single time looking for targets
+    private void Resolve()
+    {
+      foreach (AssemblyDefinition assembly in Runner.Assemblies)
+      {
+        if (assemblies.TryGetValue(assembly.Name.FullName, out HashSet<string> rules))
+        {
+          AddList(assembly, rules);
+        }
+        if (assemblies.TryGetValue(assembly.Name.Name, out rules))
+        {
+          AddList(assembly, rules);
+        }
+
+        foreach (ModuleDefinition module in assembly.Modules)
+        {
+          foreach (TypeDefinition type in module.GetAllTypes())
+          {
+            if (types.TryGetValue(type.GetFullName(), out rules))
+            {
+              AddList(type, rules);
+            }
+
+            if (type.HasMethods)
+            {
+              foreach (MethodDefinition method in type.Methods)
+              {
+                if (methods.TryGetValue(method.GetFullName(), out rules))
+                {
+                  AddList(method, rules);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    private void TearDown()
+    {
+      assemblies.Clear();
+      types.Clear();
+      methods.Clear();
+    }
+  }
 }

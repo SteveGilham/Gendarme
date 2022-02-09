@@ -1,3 +1,15 @@
+# 2022.1.25.12143-pre-release 
+
+* Reinstate `Gendarme.Rules.Security.Cas.DoNotExposeFieldsInSecuredTypeRule`, mistakenly deleted
+* New rules
+  * `AltCode.Rules.General.PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210:AssembliesShouldHaveValidStrongNames
+  * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
+* [net472] Reinstate the obsolescing code access security rules as the assembly `Obsolete.Rules.Security.Cas.dll`; this covers rules
+  * `AddMissingTypeInheritanceDemandRule`
+  * `DoNotExposeMethodsProtectedByLinkDemandRule`
+  * `DoNotReduceTypeSecurityOnMethodsRule`
+  * `SecureGetObjectDataOverridesRule`
+
 # 2022.1.23.20210-pre-release 
 
 * New rule categories

@@ -27,6 +27,7 @@
 //
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Gendarme.Framework;
@@ -35,157 +36,167 @@ using Gendarme.Framework.Rocks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace Gendarme.Rules.Performance {
+namespace Gendarme.Rules.Performance
+{
+  /// <summary>
+  /// This rule looks for overriding methods which just call the base method, and don't
+  /// define any additional attributes or security declarations.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public override string ToString ()
+  /// {
+  ///	return base.ToString ();
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (different attributes):
+  /// <code>
+  /// [FileIOPermission (SecurityAction.Demand, @"c:\dir\file")]
+  /// public override string ToString ()
+  /// {
+  ///	return base.ToString ();
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (remove override):
+  /// <code>
+  /// /*public override string ToString ()
+  /// {
+  ///	return base.ToString ();
+  /// }*/
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule looks for overriding methods which just call the base method, and don't
-	/// define any additional attributes or security declarations.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public override string ToString ()
-	/// {
-	///	return base.ToString ();
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (different attributes):
-	/// <code>
-	/// [FileIOPermission (SecurityAction.Demand, @"c:\dir\file")]
-	/// public override string ToString ()
-	/// {
-	///	return base.ToString ();
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (remove override):
-	/// <code>
-	/// /*public override string ToString ()
-	/// {
-	///	return base.ToString ();
-	/// }*/
-	/// </code>
-	/// </example>
+  [Problem("This override of a base class method is unnecessary.")]
+  [Solution("Remove the override method or extend the functionality of the method.")]
+  public class AvoidUnnecessaryOverridesRule : Rule, IMethodRule
+  {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodReference pair")]
+    private static bool IsBase(MethodReference method, MethodReference mr)
+    {
+      if (mr.Name != method.Name)
+        return false;
 
-	[Problem ("This override of a base class method is unnecessary.")]
-	[Solution ("Remove the override method or extend the functionality of the method.")]
-	public class AvoidUnnecessaryOverridesRule : Rule, IMethodRule {
+      if (!mr.CompareSignature(method))
+        return false;
 
-		static bool IsBase (MethodReference method, MethodReference mr)
-		{
-			if (mr.Name != method.Name)
-				return false;
+      TypeReference type = mr.DeclaringType;
+      foreach (TypeDefinition baseType in method.DeclaringType.AllSuperTypes())
+      {
+        if (baseType.IsNamed(type.GetTypeName()))
+          return true;
+      }
+      return false;
+    }
 
-			if (!mr.CompareSignature (method))
-				return false;
+    private static bool CompareCustomAttributes(ICustomAttributeProvider a, ICustomAttributeProvider b)
+    {
+      // System.Object has this mysterious attribute, so do this by brute force
+      var aattr = new HashSet<CustomAttribute>(a.CustomAttributes
+          .Where(x => x.AttributeType.FullName != "__DynamicallyInvokableAttribute"));
+      var battr = new HashSet<CustomAttribute>(b.CustomAttributes
+          .Where(x => x.AttributeType.FullName != "__DynamicallyInvokableAttribute"));
 
-			TypeReference type = mr.DeclaringType;
-			foreach (TypeDefinition baseType in method.DeclaringType.AllSuperTypes ()) {
-				if (baseType.IsNamed (type.GetTypeName()))
-					return true;
-			}
-			return false;
-		}
+      return battr.IsSupersetOf(aattr);
+    }
 
-		static bool CompareCustomAttributes (ICustomAttributeProvider a, ICustomAttributeProvider b)
-		{
-            // System.Object has this mysterious attribute, so do this by brute force
-            var aattr = new HashSet<CustomAttribute>(a.CustomAttributes
-                .Where(x => x.AttributeType.FullName != "__DynamicallyInvokableAttribute"));
-            var battr = new HashSet<CustomAttribute>(b.CustomAttributes
-                .Where(x => x.AttributeType.FullName != "__DynamicallyInvokableAttribute"));
+    private static bool CompareSecurityDeclarations(ISecurityDeclarationProvider a, ISecurityDeclarationProvider b)
+    {
+      bool ha = a.HasSecurityDeclarations;
+      bool hb = b.HasSecurityDeclarations;
+      // if only one of them has custom attributes
+      if (ha != hb)
+        return false;
+      // if both do not have custom attributes
+      if (!ha && !hb)
+        return true;
+      // compare attributes
+      foreach (SecurityDeclaration sd in a.SecurityDeclarations)
+      {
+        if (!b.SecurityDeclarations.Contains(sd))
+          return false;
+      }
+      return true;
+    }
 
-            return battr.IsSupersetOf(aattr);
-		}
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // default ctor is non-virtual
+      // static ctor is also not virtual
+      // abstract methods do not have a body
+      if (!method.HasBody || !method.IsVirtual)
+        return RuleResult.DoesNotApply;
 
-		static bool CompareSecurityDeclarations (ISecurityDeclarationProvider a, ISecurityDeclarationProvider b)
-		{
-			bool ha = a.HasSecurityDeclarations;
-			bool hb = b.HasSecurityDeclarations;
-			// if only one of them has custom attributes
-			if (ha != hb)
-				return false;
-			// if both do not have custom attributes
-			if (!ha && !hb)
-				return true;
-			// compare attributes
-			foreach (SecurityDeclaration sd in a.SecurityDeclarations) {
-				if (!b.SecurityDeclarations.Contains (sd))
-					return false;
-			}
-			return true;
-		}
+      // We need to check for a simple IL code pattern.
+      // load args (if necessary), call method, return.
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// default ctor is non-virtual
-			// static ctor is also not virtual
-			// abstract methods do not have a body
-			if (!method.HasBody || !method.IsVirtual)
-				return RuleResult.DoesNotApply;
+      int i = 0;
+      var instrs = method.Body.Instructions;
 
-			// We need to check for a simple IL code pattern.
-			// load args (if necessary), call method, return.
+      Instruction ins = null;
+      // prolog - skip over the nops and load arguments.
+      while (i < instrs.Count)
+      {
+        ins = instrs[i++];
+        if (!ins.Is(Code.Nop) && !ins.IsLoadArgument())
+          break;
+      }
 
-			int i = 0;
-			var instrs = method.Body.Instructions;
+      // If the next instruction is not a call we are good.
+      if (!ins.Is(Code.Call) && !ins.Is(Code.Callvirt))
+        return RuleResult.Success;
+      MethodReference mr = ins.Operand as MethodReference;
 
-			Instruction ins = null;
-			// prolog - skip over the nops and load arguments.
-			while (i < instrs.Count) {
-				ins = instrs [i++];
-				if (!ins.Is (Code.Nop) && !ins.IsLoadArgument ())
-					break;
-			}
+      // check epilog - all we should have are (maybe) NOPs and RETurn
+      // note: checked before 'base call' since it's an heavier check (that we would like to avoid)
+      while (i < instrs.Count)
+      {
+        ins = instrs[i++];
+        switch (ins.OpCode.Code)
+        {
+          case Code.Nop:
+            continue;
+          case Code.Ret:
+            break;
 
-			// If the next instruction is not a call we are good.
-			if (!ins.Is (Code.Call) && !ins.Is (Code.Callvirt))
-				return RuleResult.Success;
-			MethodReference mr = ins.Operand as MethodReference;
+          case Code.Stloc_0:
+          case Code.Br_S:
+          case Code.Ldloc_0:
+            // ignore CSC non-optimized extra (i.e. junk) code
+            continue;
+          default:
+            return RuleResult.Success;
+        }
+      }
 
-			// check epilog - all we should have are (maybe) NOPs and RETurn
-			// note: checked before 'base call' since it's an heavier check (that we would like to avoid)
-			while (i < instrs.Count) {
-				ins = instrs [i++];
-				switch (ins.OpCode.Code) {
-				case Code.Nop:
-					continue;
-				case Code.Ret:
-					break;
-				case Code.Stloc_0:
-				case Code.Br_S:
-				case Code.Ldloc_0:
-					// ignore CSC non-optimized extra (i.e. junk) code
-					continue;
-				default:
-					return RuleResult.Success;
-				}
-			}
+      // Check to make sure the call is to the base class, and the same method name...
+      if (!IsBase(method, mr))
+        return RuleResult.Success;
 
-			// Check to make sure the call is to the base class, and the same method name...
-			if (!IsBase (method, mr))
-				return RuleResult.Success;
+      // If we've gotten this far, that means the code is just a call to the base method.
+      // We need to check for attributes/security declarations that aren't in the
+      // base.
+      MethodDefinition md = mr.Resolve();
+      // If we can't resolve the definition of the original method, we can't get
+      // the original attributes, so we'll say something with low confidence.
+      if (md == null)
+      {
+        Runner.Report(method, Severity.Medium, Confidence.Low);
+        return RuleResult.Success;
+      }
 
-			// If we've gotten this far, that means the code is just a call to the base method.
-			// We need to check for attributes/security declarations that aren't in the
-			// base.
-			MethodDefinition md = mr.Resolve ();
-			// If we can't resolve the definition of the original method, we can't get
-			// the original attributes, so we'll say something with low confidence.
-			if (md == null) {
-				Runner.Report (method, Severity.Medium, Confidence.Low);
-				return RuleResult.Success;
-			}
+      if (!CompareCustomAttributes(method, md) || !CompareSecurityDeclarations(method, md))
+        return RuleResult.Success;
 
-			if (!CompareCustomAttributes (method, md) || !CompareSecurityDeclarations (method, md))
-				return RuleResult.Success;
-			
-			Runner.Report (method, Severity.Medium, Confidence.High);
-			return Runner.CurrentRuleResult;
-		}
-	}
+      Runner.Report(method, Severity.Medium, Confidence.High);
+      return Runner.CurrentRuleResult;
+    }
+  }
 }
-

@@ -28,56 +28,97 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Framework.Rocks {
+namespace Gendarme.Framework.Rocks
+{
+  // Here we keep non-Gendarme/Cecil related rocks
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	// Here we keep non-Gendarme/Cecil related rocks
+  [SuppressMessage("Gendarme.Rules.Smells",
+                   "AvoidSpeculativeGeneralityRule",
+                   Justification = "No speculation here")]
+  public static class StringRocks
+  {
+    // overloads not present in netstandard2.0
+    public static bool Contains(this string self, string target, StringComparison c)
+    {
+      return self.IndexOf(target, c) >= 0;
+    }
 
-	public static class CollectionRocks {
+    [SuppressMessage("Gendarme.Rules.Globalization",
+                     "PreferStringComparisonOverrideRule",
+                     Justification = "Not in netstandard2.0")]
+    [SuppressMessage("Gendarme.Rules.Performance",
+                 "AvoidUnusedParametersRule",
+                 Justification = "Meets expected signature")]
+    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores",
+      Justification = "Placeholder")]
+    public static int IndexOf(this string self, char target, StringComparison _)
+    {
+      return self.IndexOf(target);
+    }
 
-		/// <summary>
-		/// Checks if the list does not contain the item. If so the item is added.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="self">The list.</param>
-		/// <param name="item">The item to add.</param>
-		public static void AddIfNew<T> (this ICollection<T> self, T item)
-		{
-			if (self == null)
-				throw new ArgumentNullException ("self");
-			if (item == null)
-				throw new ArgumentNullException ("item");
+    [SuppressMessage("Gendarme.Rules.Globalization",
+                     "PreferStringComparisonOverrideRule",
+                     Justification = "Not in netstandard2.0")]
+    [SuppressMessage("Gendarme.Rules.Performance",
+                 "AvoidUnusedParametersRule",
+                 Justification = "Meets expected signature")]
+    [SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores",
+      Justification = "Placeholder")]
+    public static string Replace(this string self, string target, string substitute, StringComparison _)
+    {
+      return self.Replace(target, substitute);
+    }
+  }
 
-			if (!self.Contains (item))
-				self.Add (item);
-		}
+  public static class CollectionRocks
+  {
+    /// <summary>
+    /// Checks if the list does not contain the item. If so the item is added.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="self">The list.</param>
+    /// <param name="item">The item to add.</param>
+    public static void AddIfNew<T>(this ICollection<T> self, T item)
+    {
+      if (self == null)
+        throw new ArgumentNullException(nameof(self));
+      if (item == null)
+        throw new ArgumentNullException(nameof(item));
 
-		public static void AddRangeIfNew<T> (this ICollection<T> self, IEnumerable<T> items)
-		{
-			if (self == null)
-				throw new ArgumentNullException ("self");
-			if (items == null)
-				throw new ArgumentNullException ("items");
+      if (!self.Contains(item))
+        self.Add(item);
+    }
 
-			foreach (T item in items) {
-				if (!self.Contains (item))
-					self.Add (item);
-			}
-		}
-	}
+    public static void AddRangeIfNew<T>(this ICollection<T> self, IEnumerable<T> items)
+    {
+      if (self == null)
+        throw new ArgumentNullException(nameof(self));
+      if (items == null)
+        throw new ArgumentNullException(nameof(items));
 
-	public static class SystemRocks {
+      foreach (T item in items)
+      {
+        if (!self.Contains(item))
+          self.Add(item);
+      }
+    }
+  }
 
-		/// <summary>
-		/// Check if a Version is empty (all zeros).
-		/// </summary>
-		/// <param name="self">The Version to check</param>
-		/// <returns>True if empty, False otherwise.</returns>
-		public static bool IsEmpty (this Version self)
-		{
-			if (self == null)
-				return true;
-			return ((self.Major == 0) && (self.Minor == 0) && (self.Build <= 0) && (self.Revision <= 0));
-		}
-	}
+  public static class SystemRocks
+  {
+    /// <summary>
+    /// Check if a Version is empty (all zeros).
+    /// </summary>
+    /// <param name="self">The Version to check</param>
+    /// <returns>True if empty, False otherwise.</returns>
+    public static bool IsEmpty(this Version self)
+    {
+      if (self == null)
+        return true;
+      return ((self.Major == 0) && (self.Minor == 0) && (self.Build <= 0) && (self.Revision <= 0));
+    }
+  }
 }

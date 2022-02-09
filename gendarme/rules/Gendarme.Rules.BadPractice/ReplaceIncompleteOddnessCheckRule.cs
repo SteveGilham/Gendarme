@@ -35,127 +35,143 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.BadPractice {
+namespace Gendarme.Rules.BadPractice
+{
+  // rule idea credits to FindBug - http://findbugs.sourceforge.net/
+  // IM: Check for oddness that won't work for negative numbers (IM_BAD_CHECK_FOR_ODD)
 
-	// rule idea credits to FindBug - http://findbugs.sourceforge.net/
-	// IM: Check for oddness that won't work for negative numbers (IM_BAD_CHECK_FOR_ODD)
+  /// <summary>
+  /// This rule checks for problematic oddness checks. Often this is done by comparing
+  /// a value modulo two (% 2) with one (1). However this will not work if the value is
+  /// negative because negative one will be returned. A better (and faster) approach is
+  /// to check the least significant bit of the integer.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public bool IsOdd (int x)
+  /// {
+  /// 	// (x % 2) won't work for negative numbers (it returns -1)
+  /// 	return ((x % 2) == 1);
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public bool IsOdd (int x)
+  /// {
+  ///	return ((x % 2) != 0);
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (faster):
+  /// <code>
+  /// public bool IsOdd (int x)
+  /// {
+  ///	return ((x &amp; 1) == 1);
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule checks for problematic oddness checks. Often this is done by comparing
-	/// a value modulo two (% 2) with one (1). However this will not work if the value is
-	/// negative because negative one will be returned. A better (and faster) approach is 
-	/// to check the least significant bit of the integer.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public bool IsOdd (int x)
-	/// {
-	/// 	// (x % 2) won't work for negative numbers (it returns -1)
-	/// 	return ((x % 2) == 1);
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public bool IsOdd (int x)
-	/// {
-	///	return ((x % 2) != 0);
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (faster):
-	/// <code>
-	/// public bool IsOdd (int x)
-	/// {
-	///	return ((x &amp; 1) == 1);
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("The method contains code which looks as if it is doing an oddness check, but the code will not work for negative integers.")]
+  [Solution("Verify the code logic and, if required, replace the defective code with code that works for negative values as well.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public class ReplaceIncompleteOddnessCheckRule : Rule, IMethodRule
+  {
+    // Conv_[Ovf_][I|U][1|2|4|8][_Un] - about all except Conv_R[4|8]
+    private static readonly OpCodeBitmask Conversion = new OpCodeBitmask(0x0, 0x800003C000000000, 0xE07F8000001FF, 0x0);
 
-	[Problem ("The method contains code which looks as if it is doing an oddness check, but the code will not work for negative integers.")]
-	[Solution ("Verify the code logic and, if required, replace the defective code with code that works for negative values as well.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public class ReplaceIncompleteOddnessCheckRule : Rule, IMethodRule {
+    // Rem[_Un]
+    private static readonly OpCodeBitmask Remainder = new OpCodeBitmask(0x0, 0x30000000, 0x0, 0x0);
 
-		// Conv_[Ovf_][I|U][1|2|4|8][_Un] - about all except Conv_R[4|8]
-		private static OpCodeBitmask Conversion = new OpCodeBitmask (0x0, 0x800003C000000000, 0xE07F8000001FF, 0x0);
+    // if/when needed this could be refactored (e.g. missing Ldc_I4__#)
+    // and turned into an InstructionRock
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
+    private static bool IsLoadConstant(Instruction ins, int constant)
+    {
+      if (ins == null)
+        return false;
 
-		// Rem[_Un]
-		private static OpCodeBitmask Remainder = new OpCodeBitmask (0x0, 0x30000000, 0x0, 0x0);
+      switch (ins.OpCode.Code)
+      {
+        case Code.Ldc_I4_1:
+          return (constant == 1);
 
-		// if/when needed this could be refactored (e.g. missing Ldc_I4__#) 
-		// and turned into an InstructionRock
-		static bool IsLoadConstant (Instruction ins, int constant)
-		{
-			if (ins == null)
-				return false;
+        case Code.Ldc_I4_2:
+          return (constant == 2);
 
-			switch (ins.OpCode.Code) {
-			case Code.Ldc_I4_1:
-				return (constant == 1);
-			case Code.Ldc_I4_2:
-				return (constant == 2);
-			case Code.Ldc_I4:
-				return ((int) ins.Operand == constant);
-			case Code.Ldc_I4_S:
-				return ((int)(sbyte) ins.Operand == constant);
-			case Code.Ldc_I8:
-				return ((long) ins.Operand == constant);
-			default:
-				// recurse on integer convertion
-				if (Conversion.Get (ins.OpCode.Code))
-					return IsLoadConstant (ins.Previous, constant);
-				return false;
-			}
-		}
+        case Code.Ldc_I4:
+          return ((int)ins.Operand == constant);
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			if (!method.HasBody)
-				return RuleResult.DoesNotApply;
+        case Code.Ldc_I4_S:
+          return ((int)(sbyte)ins.Operand == constant);
 
-			if (!Remainder.Intersect (OpCodeEngine.GetBitmask (method)))
-				return RuleResult.DoesNotApply;
+        case Code.Ldc_I8:
+          return ((long)ins.Operand == constant);
 
-			foreach (Instruction ins in method.Body.Instructions) {
-				Severity severity;
-				// look for a remainder operation
-				switch (ins.OpCode.Code) {
-				case Code.Rem:
-					// this won't work when negative numbers are used
-					severity = Severity.High;
-					break;
-				case Code.Rem_Un:
-					// this will work since it can't be a negative number
-					// but it's a coding bad (practice) example
-					severity = Severity.Low;
-					break;
-				default:
-					continue;
-				}
+        default:
+          // recurse on integer convertion
+          if (Conversion.Get(ins.OpCode.Code))
+            return IsLoadConstant(ins.Previous, constant);
+          return false;
+      }
+    }
 
-				// x % 2
-				if (!IsLoadConstant (ins.Previous, 2))
-					continue;
-				// compared to 1
-				if (!IsLoadConstant (ins.Next, 1))
-					continue;
-				// using equality
-				Instruction cmp = ins.Next.Next;
-				if (Conversion.Get (cmp.OpCode.Code))
-					cmp = cmp.Next;
-				if (cmp.OpCode.Code != Code.Ceq)
-					continue;
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      if (!method.HasBody)
+        return RuleResult.DoesNotApply;
 
-				Runner.Report (method, ins, severity, Confidence.Normal);
-			}
-			return Runner.CurrentRuleResult;
-		}
+      if (!Remainder.Intersect(OpCodeEngine.GetBitmask(method)))
+        return RuleResult.DoesNotApply;
+
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        Severity severity;
+        // look for a remainder operation
+        switch (ins.OpCode.Code)
+        {
+          case Code.Rem:
+            // this won't work when negative numbers are used
+            severity = Severity.High;
+            break;
+
+          case Code.Rem_Un:
+            // this will work since it can't be a negative number
+            // but it's a coding bad (practice) example
+            severity = Severity.Low;
+            break;
+
+          default:
+            continue;
+        }
+
+        // x % 2
+        if (!IsLoadConstant(ins.Previous, 2))
+          continue;
+        // compared to 1
+        if (!IsLoadConstant(ins.Next, 1))
+          continue;
+        // using equality
+        Instruction cmp = ins.Next.Next;
+        if (Conversion.Get(cmp.OpCode.Code))
+          cmp = cmp.Next;
+        if (cmp.OpCode.Code != Code.Ceq)
+          continue;
+
+        Runner.Report(method, ins, severity, Confidence.Normal);
+      }
+      return Runner.CurrentRuleResult;
+    }
+
 #if false
 
 		public void BuildRemainder ()
@@ -202,5 +218,5 @@ namespace Gendarme.Rules.BadPractice {
 			Console.WriteLine (convert);
 		}
 #endif
-	}
+  }
 }

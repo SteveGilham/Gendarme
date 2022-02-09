@@ -25,6 +25,7 @@ In this branch
   * `AltCode.Rules.General` for general purpose rules
     * `JustifySuppressionRule` to check the `Justification` property on `SuppressMessage` attribute
     * `PreferStrongNamedAssembliesRule` to replace deprecated/withdrawn FxCop rule Microsoft.Design#CA2210
+    * `AvoidAssemblySemanticVersionMismatchRule` to insist that the API contract (major, minor, and optionally build if defined for the assembly) match, but the lesser facets, revision and possibly build are free.
   * `AltCode.Rules.PowerShell` for re-implementing the old Microsoft PowerShell FxCop rules
     * `AltCode.Rules.PowerShell.UseOnlyStandardVerbsRule` to replace "Microsoft.PowerShell#PS1001:UseOnlyStandardVerbs"
     * `AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule` to replace "Microsoft.PowerShell#PS1011:DefineCmdletInTheCorrectNamespace"
@@ -41,8 +42,6 @@ Global Suppression Attribute:
                             Justification = "")>]
 
 ```
-
-
 
 ## Direction
 After having achieved the first objective, of being able to analyze code from the new .net, the next goal of this fork has been to make the tool more F# aware, because that's where I personally use it the most.  There are several places where F# code generation emits patterns that are detected by legacy Gendarme as erroneous, but which are not under sufficiently fine control by the developer or cannot be annotated to suppress a warning.
@@ -65,8 +64,8 @@ The following rule suites have unit test failures
   * `ProvideCorrectArgumentsToFormattingMethods` × 3 -- changed IL : `call Array.Empty` used instead of an explict load
   * `TestNativeFieldsArray` -- changed IL
   * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
-* Interoperability -- 17 failures (false negatives)
-  * 17 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change
+* Interoperability -- 18 failures (false negatives)
+  * 18 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change; as the code itself says "Unfortunately it's possible to generate IL this rule will choke on, especially when using non-standard compilers or obfuscators" where Roslyn will count as non-standard
 * Maintainability -- 1 failure (false negative in `AvoidUnnecessarySpecializationRule` System.Void Test.Rules.Maintainability.SpecializedClass::GenericMethod(T): result should be Failure but got Success.  CheckParameters -- uses StackEntryAnalysis for parameter usage)
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`

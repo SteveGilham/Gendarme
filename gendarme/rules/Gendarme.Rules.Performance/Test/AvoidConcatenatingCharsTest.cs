@@ -33,7 +33,7 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Tests.Rules.Performance
+namespace Test.Rule.Performance
 {
   [TestFixture]
   public class AvoidConcatenatingCharsTest : MethodRuleTestFixture<AvoidConcatenatingCharsRule>
@@ -121,7 +121,7 @@ namespace Tests.Rules.Performance
     private string Object_StaticFields()
     {
       // IL_0005: call instance string [mscorlib]System.Char::ToString()
-      // IL_000a: ldsfld string Tests.Rules.Performance.AvoidConcatenatingCharsTest::ss
+      // IL_000a: ldsfld string Test.Rules.Performance.AvoidConcatenatingCharsTest::ss
       // IL_000f: call string[mscorlib] System.String::Concat(string, string)
       return (sc + ss);
     }

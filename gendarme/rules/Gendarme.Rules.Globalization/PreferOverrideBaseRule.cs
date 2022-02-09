@@ -38,6 +38,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Globalization
 {
@@ -79,7 +80,10 @@ namespace Gendarme.Rules.Globalization
       return (ccount - count <= 1);
     }
 
-    // look for a signature identical to ours but that accept an extra parameter
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private MethodReference LookForPreferredOverride(MethodReference method)
     {
       TypeDefinition type = method.DeclaringType.Resolve();
@@ -103,8 +107,10 @@ namespace Gendarme.Rules.Globalization
 
       foreach (MethodDefinition md in methods)
       {
+        Collection<ParameterDefinition> pdc = md.Parameters;
+
         // has one more parameter, so non-zero
-        if (!md.HasParameters || md.Parameters.Count != pcount + 1)
+        if (!md.HasParameters || pdc.Count != pcount + 1)
           continue;
 
         if (name != md.Name)
@@ -122,8 +128,6 @@ namespace Gendarme.Rules.Globalization
         };
         if (!method.ReturnType.IsNamed(rtypeName))
           continue;
-
-        Collection<ParameterDefinition> pdc = md.Parameters;
 
         if (pcount > 0)
         {
@@ -160,7 +164,7 @@ namespace Gendarme.Rules.Globalization
       if (!prefered_overloads.TryGetValue(method, out MethodReference prefered))
       {
         prefered = LookForPreferredOverride(method);
-        prefered_overloads.Add(method, null);
+        prefered_overloads.Add(method, prefered);
       }
       return prefered;
     }

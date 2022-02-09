@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Design.StronglyTypeICollectionMembersRule
 //
 // Authors:
@@ -33,69 +33,77 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule checks that types which implements <c>System.Collections.ICollection</c> interface
+  /// have strongly typed version of the ICollection.CopyTo method.
+  /// This is needed to avoid casting every time this method is used.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// class Bad : ICollection {
+  ///	public void CopyTo (Array array, int index)
+  ///	{
+  ///		// method code
+  ///	}
+  ///	// other ICollection members
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class Good : ICollection {
+  ///	public void ICollection.CopyTo (Array array, int index)
+  ///	{
+  ///		// method code
+  ///	}
+  ///	public void CopyTo (Exception [] array, int index)
+  ///	{
+  ///		((ICollection)this).CopyTo(array, index);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule checks that types which implements <c>System.Collections.ICollection</c> interface
-	/// have strongly typed version of the ICollection.CopyTo method.
-	/// This is needed to avoid casting every time this method is used.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// class Bad : ICollection {
-	///	public void CopyTo (Array array, int index)
-	///	{
-	///		// method code
-	///	}
-	///	// other ICollection members
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class Good : ICollection {
-	///	public void ICollection.CopyTo (Array array, int index)
-	///	{
-	///		// method code
-	///	}
-	///	public void CopyTo (Exception [] array, int index)
-	///	{
-	///		((ICollection)this).CopyTo(array, index);
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("Types that implement ICollection interface should have strongly typed version of ICollection.CopyTo method")]
+  [Solution("Explicitly implement ICollection.CopyTo and add strongly typed alternative to it")]
+  [FxCopCompatibility("Microsoft.Design", "CA1035:ICollectionImplementationsHaveStronglyTypedMembers")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	[Problem ("Types that implement ICollection interface should have strongly typed version of ICollection.CopyTo method")]
-	[Solution ("Explicitly implement ICollection.CopyTo and add strongly typed alternative to it")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1035:ICollectionImplementationsHaveStronglyTypedMembers")]
-	public class StronglyTypeICollectionMembersRule : StronglyTypedRule, ITypeRule {
+  [SuppressMessage("Gendarme.Rules.Gendarme",
+                  "DefectsMustBeReportedRule",
+                  Justification = "See Base class")]
+  public class StronglyTypeICollectionMembersRule : StronglyTypedRule, ITypeRule
+  {
+    private static readonly string[] Empty = Array.Empty<string>();
 
-		private static string [] Empty = new string [] { };
+    private static readonly MethodSignature[] CopyTo = new MethodSignature[] {
+      new MethodSignature ("CopyTo", "System.Void", new string [] { "System.Array", "System.Int32" })
+    };
 
-		private static MethodSignature [] CopyTo = new MethodSignature [] {
-			new MethodSignature ("CopyTo", "System.Void", new string [] { "System.Array", "System.Int32" })
-		};
+    protected override MethodSignature[] GetMethods()
+    {
+      return CopyTo;
+    }
 
-		protected override MethodSignature [] GetMethods ()
-		{
-			return CopyTo;
-		}
+    protected override string[] GetProperties()
+    {
+      return Empty;
+    }
 
-		protected override string [] GetProperties ()
-		{
-			return Empty;
-		}
+    protected override string InterfaceName
+    {
+      get { return "ICollection"; }
+    }
 
-		protected override string InterfaceName {
-			get { return "ICollection"; }
-		}
-
-		protected override string InterfaceNamespace {
-			get { return "System.Collections"; }
-		}
-	}
+    protected override string InterfaceNamespace
+    {
+      get { return "System.Collections"; }
+    }
+  }
 }

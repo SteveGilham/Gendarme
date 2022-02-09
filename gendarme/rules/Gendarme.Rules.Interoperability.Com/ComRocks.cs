@@ -33,64 +33,77 @@
 using Mono.Cecil;
 
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Interoperability.Com {
+namespace Gendarme.Rules.Interoperability.Com
+{
+  /// <summary>
+  /// ComRocks contains extensions methods for COM-related methods.
+  /// </summary>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 
-	/// <summary>
-	/// ComRocks contains extensions methods for COM-related methods.
-	/// </summary>
-	public static class ComRocks {
-		/// <summary>
-		/// Check if the type is explicitly declared to be ComVisible.
-		/// </summary>
-		/// <param name="self">The ICustomAttributeProvider (e.g. AssemblyDefinition, TypeReference, MethodReference,
-		/// FieldReference...) on which the extension method can be called.</param>
-		/// <returns><code>null</code> no ComVisible attribute is present, <code>true</code> if ComVisible is set to true, <code>false</code> otherwise.</returns>
-		public static bool? IsComVisible (this ICustomAttributeProvider self)
-		{
-			if (self == null)
-				return null;
+  [SuppressMessage("Gendarme.Rules.Naming",
+                    "AvoidRedundancyInTypeNameRule",
+                    Justification = "Makes sense in context")]
+  public static class ComRocks
+  {
+    /// <summary>
+    /// Check if the type is explicitly declared to be ComVisible.
+    /// </summary>
+    /// <param name="self">The ICustomAttributeProvider (e.g. AssemblyDefinition, TypeReference, MethodReference,
+    /// FieldReference...) on which the extension method can be called.</param>
+    /// <returns><code>null</code> no ComVisible attribute is present, <code>true</code> if ComVisible is set to true, <code>false</code> otherwise.</returns>
+    public static bool? IsComVisible(this ICustomAttributeProvider self)
+    {
+      if (self == null)
+        return null;
 
-			if (self.HasCustomAttributes) {
-				foreach (CustomAttribute attribute in self.CustomAttributes) {
-					// ComVisibleAttribute has a single ctor taking a boolean value
-					// http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.comvisibleattribute.comvisibleattribute.aspx
-					// any attribute without arguments can be skipped
-					if (!attribute.HasConstructorArguments)
-						continue;
-					if (!attribute.Constructor.DeclaringType.IsNamed (cva))
-						continue;
-					return (bool) attribute.ConstructorArguments[0].Value;
-				}
-			}
-
-			// special case for types, check if this is a nested type inside a [ComVisible] type
-			TypeDefinition type = (self as TypeDefinition);
-			if (type == null)
-				return null;
-
-			return type.DeclaringType.IsComVisible ();
-		}
-        private readonly static TypeName cva = new TypeName
+      if (self.HasCustomAttributes)
+      {
+        foreach (CustomAttribute attribute in self.CustomAttributes)
         {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "ComVisibleAttribute"
-        };
+          // ComVisibleAttribute has a single ctor taking a boolean value
+          // http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.comvisibleattribute.comvisibleattribute.aspx
+          // any attribute without arguments can be skipped
+          if (!attribute.HasConstructorArguments)
+            continue;
+          if (!attribute.Constructor.DeclaringType.IsNamed(cva))
+            continue;
+          return (bool)attribute.ConstructorArguments[0].Value;
+        }
+      }
 
-		// Checks whether specific type is COM visible or not
-		// considering nested types, assemblies attributes and default values
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="self"></param>
-        /// <returns></returns>
-		public static bool IsTypeComVisible (this TypeDefinition self)
-		{
-			// [ComVisible] attribute will be ignored on non-visible types
-			if (!self.IsVisible ())
-				return false;
+      // special case for types, check if this is a nested type inside a [ComVisible] type
+      TypeDefinition type = (self as TypeDefinition);
+      if (type == null)
+        return null;
 
-			return (self.IsComVisible () ?? self.Module.Assembly.IsComVisible () ?? true);
-		}
-	}
+      return type.DeclaringType.IsComVisible();
+    }
+
+    private static readonly TypeName cva = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "ComVisibleAttribute"
+    };
+
+    // Checks whether specific type is COM visible or not
+    // considering nested types, assemblies attributes and default values
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="self"></param>
+    /// <returns></returns>
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a TypeDefinition")]
+    public static bool IsTypeComVisible(this TypeDefinition self)
+    {
+      // [ComVisible] attribute will be ignored on non-visible types
+      if (!self.IsVisible())
+        return false;
+
+      return (self.IsComVisible() ?? self.Module.Assembly.IsComVisible() ?? true);
+    }
+  }
 }

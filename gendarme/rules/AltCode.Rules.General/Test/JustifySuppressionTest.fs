@@ -1,4 +1,4 @@
-﻿namespace Tests.AltCode.General
+﻿namespace Test.AltCode.General
 
 open System
 open System.Reflection

@@ -30,11 +30,19 @@ using Mono.Cecil;
 
 using Gendarme.Framework;
 using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Design
 {
-  abstract public class DefineAZeroValueRule : Rule
+  public abstract class DefineAZeroValueRule : Rule
   {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Performance",
+                     "AvoidUnneededUnboxingRule",
+                     Justification = "Only unboxes once per execution")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "TypeCodes are not types")]
     protected static FieldDefinition GetZeroValueField(TypeDefinition type)
     {
       if (type == null)

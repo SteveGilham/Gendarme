@@ -36,6 +36,7 @@ using System.Linq;
 using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Naming
 {
@@ -96,12 +97,16 @@ namespace Gendarme.Rules.Naming
       };
     }
 
-    private readonly static TypeName macro = new TypeName
+    private static readonly TypeName macro = new TypeName
     {
       Namespace = "Boo.Lang.Compiler.Ast",
       Name = "MacroStatement"
     };
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                      "AvoidUnnecessarySpecializationRule",
+                      Justification = "Always a MethodReference pair")]
     private static bool SignatureMatches(MethodReference method, MethodReference baseMethod, bool explicitInterfaceCheck)
     {
       string name = method.Name;
@@ -178,7 +183,7 @@ namespace Gendarme.Rules.Naming
     public RuleResult CheckMethod(MethodDefinition method)
     {
       if (!method.IsVirtual || !method.HasParameters || method.IsGeneratedCode() ||
-                method.DeclaringType.Name.Contains("@"))
+                method.DeclaringType.IsFSharpLocalType())
         return RuleResult.DoesNotApply;
 
       MethodDefinition baseMethod = null;

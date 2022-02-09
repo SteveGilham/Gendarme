@@ -33,6 +33,7 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Gendarme.Rules.Exceptions
 {
@@ -152,6 +153,10 @@ namespace Gendarme.Rules.Exceptions
       return Runner.CurrentRuleResult;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
     private void CheckBody(MethodDefinition method)
     {
       TypeReference type = method.DeclaringType;
@@ -188,7 +193,8 @@ namespace Gendarme.Rules.Exceptions
             if (!has_dispose_check)
             {
               string tname = target.Name;
-              if (tname.Contains("Check") && tname.Contains("Dispose"))
+              if (tname.Contains("Check", StringComparison.Ordinal) &&
+                  tname.Contains("Dispose", StringComparison.Ordinal))
               {
                 Log.WriteLine(this, "found dispose check at {0:X4}", ins.Offset);
                 has_dispose_check = true;
@@ -229,13 +235,13 @@ namespace Gendarme.Rules.Exceptions
       }
     }
 
-    private readonly static TypeName ode = new TypeName
+    private static readonly TypeName ode = new TypeName
     {
       Namespace = "System",
       Name = "ObjectDisposedException"
     };
 
-    private readonly static TypeName idisposable = new TypeName
+    private static readonly TypeName idisposable = new TypeName
     {
       Namespace = "System",
       Name = "IDisposable"
@@ -316,7 +322,7 @@ namespace Gendarme.Rules.Exceptions
 
     private static readonly OpCodeBitmask CallsAndFields = new OpCodeBitmask(0x8000000000, 0x704400000000000, 0x0, 0x0);
     private static readonly MethodSignature Equals1 = new MethodSignature("Equals", "System.Boolean", new string[1]);
-    private static readonly MethodSignature Close = new MethodSignature("Close", "System.Void", new string[0]);
+    private static readonly MethodSignature Close = new MethodSignature("Close", "System.Void", Array.Empty<string>());
 
     private bool call_using_this;
     private bool field_access_using_this;

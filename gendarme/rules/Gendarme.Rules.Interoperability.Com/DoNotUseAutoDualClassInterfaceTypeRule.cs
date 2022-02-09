@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Interoperability.Com.DoNotUseAutoDualClassInterfaceTypeRule
 //
 // Authors:
@@ -34,111 +34,120 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Interoperability.Com {
+namespace Gendarme.Rules.Interoperability.Com
+{
+  /// <summary>
+  /// Classes should not use ClassInterfaceAttribute with the value of
+  /// ClassInterfaceType.AutoDual because this may break COM clients
+  /// if the class layout changes.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [ComVisible (true)]
+  /// [ClassInterface (ClassInterfaceType.AutoDual)]
+  /// class Bad {
+  ///	// do something
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (ClassInterfaceType.None):
+  /// <code>
+  /// [ComVisible (true)]
+  /// [ClassInterface (ClassInterfaceType.None)]
+  /// class Good : ICloneable {
+  ///	public object Clone ()
+  ///	{
+  ///		return new object ();
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (no ClassInterface attribute, equal to ClassInterfaceType.AutoDispatch):
+  /// <code>
+  /// [ComVisible (true)]
+  /// class Good {
+  ///	// do something
+  /// }
+  /// </code>
+  /// </example>
+  [Problem("Visible to COM class uses ClassInterface attribute with ClassInterfaceType.AutoDual, which may break COM clients if the class layout is chaged.")]
+  [Solution("Change the value of the ClassInterfaceAttribute to the AutoDispatch (default value) or None (and explicitly define an interface in this case).")]
+  [FxCopCompatibility("Microsoft.Interoperability", "CA1408:DoNotUseAutoDualClassInterfaceType")]
+  public class DoNotUseAutoDualClassInterfaceTypeRule : Rule, ITypeRule
+  {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (!type.IsTypeComVisible())
+        return RuleResult.DoesNotApply;
 
-	/// <summary>
-	/// Classes should not use ClassInterfaceAttribute with the value of 
-	/// ClassInterfaceType.AutoDual because this may break COM clients
-	/// if the class layout changes.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [ComVisible (true)]
-	/// [ClassInterface (ClassInterfaceType.AutoDual)]
-	/// class Bad {
-	///	// do something
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (ClassInterfaceType.None):
-	/// <code>
-	/// [ComVisible (true)]
-	/// [ClassInterface (ClassInterfaceType.None)]
-	/// class Good : ICloneable {
-	///	public object Clone ()
-	///	{
-	///		return new object ();
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (no ClassInterface attribute, equal to ClassInterfaceType.AutoDispatch):
-	/// <code>
-	/// [ComVisible (true)]
-	/// class Good {
-	///	// do something
-	/// }
-	/// </code>
-	/// </example>
-	[Problem ("Visible to COM class uses ClassInterface attribute with ClassInterfaceType.AutoDual, which may break COM clients if the class layout is chaged.")]
-	[Solution ("Change the value of the ClassInterfaceAttribute to the AutoDispatch (default value) or None (and explicitly define an interface in this case).")]
-	[FxCopCompatibility ("Microsoft.Interoperability", "CA1408:DoNotUseAutoDualClassInterfaceType")]
-	public class DoNotUseAutoDualClassInterfaceTypeRule : Rule, ITypeRule {
+      ClassInterfaceType? attributeValue = GetClassInterfaceAttributeValue(type);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (!type.IsTypeComVisible ())
-				return RuleResult.DoesNotApply;
+      bool fromAssembly = false;
 
-			ClassInterfaceType? attributeValue = GetClassInterfaceAttributeValue (type);
+      // attribute not found on class, try assembly instead
+      if (attributeValue == null)
+      {
+        attributeValue = GetClassInterfaceAttributeValue(type.Module.Assembly);
+        fromAssembly = true;
+      }
 
-			bool fromAssembly = false;
+      // not found on assembly as well, set default value
+      if (attributeValue == null)
+        attributeValue = ClassInterfaceType.AutoDispatch;
 
-			// attribute not found on class, try assembly instead
-			if (attributeValue == null) {
-				attributeValue = GetClassInterfaceAttributeValue (type.Module.Assembly);
-				fromAssembly = true;
-			}
+      if (attributeValue == ClassInterfaceType.AutoDual)
+      {
+        if (fromAssembly)
+          Runner.Report(type, Severity.High, Confidence.High, "Attribute was set on assembly level");
+        else
+          Runner.Report(type, Severity.High, Confidence.High);
+        return RuleResult.Failure;
+      }
+      else
+        return RuleResult.Success;
+    }
 
-			// not found on assembly as well, set default value
-			if (attributeValue == null)
-				attributeValue = ClassInterfaceType.AutoDispatch;
+    private static readonly TypeName cia = new TypeName
+    {
+      Namespace = "System.Runtime.InteropServices",
+      Name = "ClassInterfaceAttribute"
+    };
 
-			if (attributeValue == ClassInterfaceType.AutoDual) {
-				if (fromAssembly)
-					Runner.Report (type, Severity.High, Confidence.High, "Attribute was set on assembly level");
-				else
-					Runner.Report (type, Severity.High, Confidence.High);
-				return RuleResult.Failure;
-			} else
-				return RuleResult.Success;
-		}
+    private static readonly TypeName i16 = new TypeName
+    {
+      Namespace = "System",
+      Name = "Int16"
+    };
 
-        private readonly static TypeName cia = new TypeName
-        {
-            Namespace = "System.Runtime.InteropServices",
-            Name = "ClassInterfaceAttribute"
-        };
-        private readonly static TypeName i16 = new TypeName
-        {
-            Namespace = "System",
-            Name = "Int16"
-        };
-
-        private static ClassInterfaceType? GetClassInterfaceAttributeValue(ICustomAttributeProvider obj)
-		{
-			foreach (CustomAttribute attribute in obj.CustomAttributes) {
-				// http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.classinterfaceattribute.aspx
-				// any attribute without arguments can be skipped
-				if (!attribute.HasConstructorArguments)
-					continue;
-				if (!attribute.AttributeType.IsNamed (cia))
-					continue;
-				var ctorArgs = attribute.ConstructorArguments;
-				if (ctorArgs [0].Type.IsNamed (i16))
-					return (ClassInterfaceType)(short)ctorArgs [0].Value;
-				return (ClassInterfaceType)(int)ctorArgs [0].Value;
-			}
-			return null;
-		}
-	}
+    private static ClassInterfaceType? GetClassInterfaceAttributeValue(ICustomAttributeProvider obj)
+    {
+      foreach (CustomAttribute attribute in obj.CustomAttributes)
+      {
+        // http://msdn.microsoft.com/en-us/library/system.runtime.interopservices.classinterfaceattribute.aspx
+        // any attribute without arguments can be skipped
+        if (!attribute.HasConstructorArguments)
+          continue;
+        if (!attribute.AttributeType.IsNamed(cia))
+          continue;
+        var ctorArgs = attribute.ConstructorArguments;
+        if (ctorArgs[0].Type.IsNamed(i16))
+          return (ClassInterfaceType)(short)ctorArgs[0].Value;
+        return (ClassInterfaceType)(int)ctorArgs[0].Value;
+      }
+      return null;
+    }
+  }
 }

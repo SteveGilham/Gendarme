@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Gendarme.Rules.Gendarme.UseCorrectSuffixRule
 //
 // Authors:
@@ -33,66 +33,71 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Gendarme {
+namespace Gendarme.Rules.Gendarme
+{
+  /// <summary>
+  /// Types implementing IRule should have the "Rule" suffix, while other types
+  /// are not allowed to have this suffix.
+  /// </summary>
+  /// <example>
+  /// Bad example (rule type does not have a suffix):
+  /// <code>
+  /// public class ReviewSomething : Rule, IMethodRule {
+  ///	// rule code
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Bad example (non-rule type has a suffix):
+  /// <code>
+  /// public class SomeRule {
+  ///	// class code
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public class ReviewSomethingRule : Rule, IMethodRule {
+  ///	// rule code
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// Types implementing IRule should have the "Rule" suffix, while other types
-	/// are not allowed to have this suffix.
-	/// </summary>
-	/// <example>
-	/// Bad example (rule type does not have a suffix):
-	/// <code>
-	/// public class ReviewSomething : Rule, IMethodRule {
-	///	// rule code
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Bad example (non-rule type has a suffix):
-	/// <code>
-	/// public class SomeRule {
-	///	// class code
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public class ReviewSomethingRule : Rule, IMethodRule {
-	///	// rule code
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("Types implementing IRule should have the 'Rule' suffix. Other types should not have this suffix.")]
+  [Solution("Change type name to follow this rule.")]
+  public class UseCorrectSuffixRule : GendarmeRule, ITypeRule
+  {
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.Namespace.StartsWith("<StartupCode$", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
 
-	[Problem ("Types implementing IRule should have the 'Rule' suffix. Other types should not have this suffix.")]
-	[Solution ("Change type name to follow this rule.")]
-	public class UseCorrectSuffixRule : GendarmeRule, ITypeRule {
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (type.Namespace.StartsWith("<StartupCode$", StringComparison.Ordinal))
-				return RuleResult.DoesNotApply;
+      bool endsWithRule = type.Name.EndsWith("Rule", StringComparison.Ordinal);
+      bool implementsIRule = type.Implements(irule);
 
-			bool endsWithRule = type.Name.EndsWith ("Rule", StringComparison.Ordinal);
-			bool implementsIRule = type.Implements (irule);
+      if (implementsIRule && !endsWithRule)
+        Runner.Report(type, Severity.Medium, Confidence.High, "Type implements IRule but does not end with the 'Rule'");
+      else if (!implementsIRule && endsWithRule)
+        Runner.Report(type, Severity.Medium, Confidence.High, "Type does not implement IRule but ends with the 'Rule'");
 
-			if (implementsIRule && !endsWithRule)
-				Runner.Report (type, Severity.Medium, Confidence.High, "Type implements IRule but does not end with the 'Rule'");
-			else if (!implementsIRule && endsWithRule)
-				Runner.Report (type, Severity.Medium, Confidence.High, "Type does not implement IRule but ends with the 'Rule'");
-			
-			return Runner.CurrentRuleResult;
-		}
+      return Runner.CurrentRuleResult;
+    }
 
-		private readonly static TypeName irule = new TypeName
-		{
-			Namespace = "Gendarme.Framework",
-			Name = "IRule"
-		};
-	}
+    private static readonly TypeName irule = new TypeName
+    {
+      Namespace = "Gendarme.Framework",
+      Name = "IRule"
+    };
+  }
 }

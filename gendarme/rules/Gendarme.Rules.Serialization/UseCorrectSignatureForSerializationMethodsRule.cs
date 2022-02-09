@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Serialization.MissingSerializationConstructorRule
 //
 // Authors:
@@ -31,123 +31,132 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Serialization {
+namespace Gendarme.Rules.Serialization
+{
+  /// <summary>
+  /// This rule checks for methods which use the serialization attributes:
+  /// <c>[OnSerializing, OnDeserializing, OnSerialized, OnDeserialized]</c>. You must
+  /// ensure that these methods have the correct signature. They should be <c>private</c>,
+  /// return <c>void</c> and have a single parameter of type <c>StreamingContext</c>.
+  /// Failure to have the right signature can, in some circumstances, make your assembly
+  /// unusable at runtime.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [Serializable]
+  /// public class Bad {
+  /// 	[OnSerializing]
+  /// 	public bool Serializing (StreamingContext context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [Serializable]
+  /// public class BadClass {
+  /// 	[OnSerializing]
+  /// 	private void Serializing (StreamingContext context)
+  /// 	{
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule checks for methods which use the serialization attributes:
-	/// <c>[OnSerializing, OnDeserializing, OnSerialized, OnDeserialized]</c>. You must
-	/// ensure that these methods have the correct signature. They should be <c>private</c>, 
-	/// return <c>void</c> and have a single parameter of type <c>StreamingContext</c>. 
-	/// Failure to have the right signature can, in some circumstances, make your assembly
-	/// unusable at runtime.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [Serializable]
-	/// public class Bad {
-	/// 	[OnSerializing]
-	/// 	public bool Serializing (StreamingContext context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [Serializable]
-	/// public class BadClass {
-	/// 	[OnSerializing]
-	/// 	private void Serializing (StreamingContext context)
-	/// 	{
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("The method has the wrong signature, it should return System.Void and have a single parameter of type 'System.Runtime.Serialization.StreamingContext' and be private.")]
+  [Solution("Fix the method signature to match the runtime requirements.")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2238:ImplementSerializationMethodsCorrectly")]
+  public class UseCorrectSignatureForSerializationMethodsRule : Rule, IMethodRule
+  {
+    private const string NotSerializableText = "The type of this method is not marked as [Serializable].";
+    private const string WrongSignatureText = "The method has the wrong signature, it should return System.Void and have a single parameter of type 'System.Runtime.Serialization.StreamingContext' and be private.";
 
-	[Problem ("The method has the wrong signature, it should return System.Void and have a single parameter of type 'System.Runtime.Serialization.StreamingContext' and be private.")]
-	[Solution ("Fix the method signature to match the runtime requirements.")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2238:ImplementSerializationMethodsCorrectly")]
-	public class UseCorrectSignatureForSerializationMethodsRule : Rule, IMethodRule {
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
 
-		private const string NotSerializableText = "The type of this method is not marked as [Serializable].";
-		private const string WrongSignatureText = "The method has the wrong signature, it should return System.Void and have a single parameter of type 'System.Runtime.Serialization.StreamingContext' and be private.";
+      Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e)
+      {
+        Active =
+          // the attributes are only available since fx 2.0 so there's no point
+          // to execute it on every methods if the assembly target runtime is
+          // earlier than 2.0
+          e.CurrentModule.Runtime >= TargetRuntime.Net_2_0 &&
 
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
+          // if the module does not have a reference to any of the attributes
+          // then nothing will be reported by this rule
+          (e.CurrentAssembly.Name.Name == "mscorlib" ||
+          e.CurrentModule.AnyTypeReference((TypeReference tr) =>
+          {
+            return IsSerializationAttribute(tr);
+          }));
+      };
+    }
 
-			Runner.AnalyzeModule += delegate (object o, RunnerEventArgs e) {
-				Active = 
-					// the attributes are only available since fx 2.0 so there's no point
-					// to execute it on every methods if the assembly target runtime is
-					// earlier than 2.0
-					e.CurrentModule.Runtime >= TargetRuntime.Net_2_0 && 
-		
-					// if the module does not have a reference to any of the attributes
-					// then nothing will be reported by this rule
-					(e.CurrentAssembly.Name.Name == "mscorlib" ||
-					e.CurrentModule.AnyTypeReference ((TypeReference tr) => {
-						return IsSerializationAttribute (tr);
-					}));
-			};
-		}
+    private static bool IsSerializationAttribute(TypeReference type)
+    {
+      if (type.Namespace != "System.Runtime.Serialization") // OK
+        return false;
 
-		static bool IsSerializationAttribute (TypeReference type)
-		{
-			if (type.Namespace != "System.Runtime.Serialization") // OK
-				return false;
+      switch (type.Name)
+      {
+        case "OnSerializingAttribute":
+        case "OnSerializedAttribute":
+        case "OnDeserializingAttribute":
+        case "OnDeserializedAttribute":
+          return true;
 
-			switch (type.Name) {
-			case "OnSerializingAttribute":
-			case "OnSerializedAttribute":
-			case "OnDeserializingAttribute":
-			case "OnDeserializedAttribute":
-				return true;
-			default:
-				return false;
-			}
-		}
+        default:
+          return false;
+      }
+    }
 
-		static bool HasAnySerializationAttribute (ICustomAttributeProvider method)
-		{
-			if (!method.HasCustomAttributes)
-				return false;
+    private static bool HasAnySerializationAttribute(ICustomAttributeProvider method)
+    {
+      if (!method.HasCustomAttributes)
+        return false;
 
-			foreach (CustomAttribute ca in method.CustomAttributes) {
-				if (IsSerializationAttribute (ca.AttributeType))
-					return true;
-			}
-			return false;
-		}
+      foreach (CustomAttribute ca in method.CustomAttributes)
+      {
+        if (IsSerializationAttribute(ca.AttributeType))
+          return true;
+      }
+      return false;
+    }
 
-		public RuleResult CheckMethod (MethodDefinition method)
-		{
-			// rule does not apply to constructor or to methods without custom attributes
-			if (method.IsConstructor || !method.HasCustomAttributes)
-				return RuleResult.DoesNotApply;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    public RuleResult CheckMethod(MethodDefinition method)
+    {
+      // rule does not apply to constructor or to methods without custom attributes
+      if (method.IsConstructor || !method.HasCustomAttributes)
+        return RuleResult.DoesNotApply;
 
-			// marked with any of On[Des|S]erializ[ed|ing]Attribute ?
-			if (!HasAnySerializationAttribute (method))
-				return RuleResult.DoesNotApply;
+      // marked with any of On[Des|S]erializ[ed|ing]Attribute ?
+      if (!HasAnySerializationAttribute(method))
+        return RuleResult.DoesNotApply;
 
-			// rule apply!
+      // rule apply!
 
-			// if the type is not marked as [Serializable] then warn that this code is useless
-			bool serializable = (method.DeclaringType as TypeDefinition).IsSerializable;
-			if (!serializable)
-				Runner.Report (method, Severity.Critical, Confidence.Total, NotSerializableText);
+      // if the type is not marked as [Serializable] then warn that this code is useless
+      bool serializable = (method.DeclaringType as TypeDefinition).IsSerializable;
+      if (!serializable)
+        Runner.Report(method, Severity.Critical, Confidence.Total, NotSerializableText);
 
-			// check if the method signature is correct, return if it is
-			if (MethodSignatures.SerializationEventHandler.Matches (method))
-				return Runner.CurrentRuleResult;
+      // check if the method signature is correct, return if it is
+      if (MethodSignatures.SerializationEventHandler.Matches(method))
+        return Runner.CurrentRuleResult;
 
-			// but report an error if the signature isn't valid
-			Runner.Report (method, Severity.Critical, Confidence.Total, WrongSignatureText);
-			return RuleResult.Failure;
-		}
-	}
+      // but report an error if the signature isn't valid
+      Runner.Report(method, Severity.Critical, Confidence.Total, WrongSignatureText);
+      return RuleResult.Failure;
+    }
+  }
 }

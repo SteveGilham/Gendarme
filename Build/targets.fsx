@@ -288,6 +288,9 @@ module SolutionRoot =
 
         let v' = !Version
 
+        // make the first one `true` if we ever want the static fields
+        let config = new AssemblyInfoFileConfig(false, false, "Gendarme")
+
         AssemblyInfoFile.create
             "./_Generated/AssemblyStaticInfo.fs"
             [ AssemblyInfo.Product "altcode.gendarme"
@@ -302,7 +305,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default)
+            (Some config)
 
         AssemblyInfoFile.create
             "./_Generated/AssemblyStaticInfo.cs"
@@ -319,7 +322,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default)
+            (Some config)
 
         AssemblyInfoFile.create
             "./_Generated/MockerAssemblyStaticInfo.cs"
@@ -336,7 +339,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default))
+            (Some config))
 
 // Basic compilation
 
@@ -445,71 +448,52 @@ _Target
 
                     printfn "%s" (finish text text2))
 
-        let deprecatedRules = [ "-Microsoft.Usage#CA2202" ] // double dispose
+        let deprecatedRules =
+            [ "-Microsoft.Usage#CA2202" // double dispose
+              "-Microsoft.Security#CA2104" ] // // :DoNotDeclareReadOnlyMutableReferenceTypes"
+
+        let gendarmeRules =
+            [ "-Microsoft.Design#CA1002" // :DoNotExposeGenericLists"
+              "-Microsoft.Design#CA1011" // :ConsiderPassingBaseTypesAsParameters"
+              "-Microsoft.Design#CA1016" // :MarkAssembliesWithAssemblyVersion"
+              "-Microsoft.Design#CA1021" //:AvoidOutParameters"
+              "-Microsoft.Design#CA1028" // :EnumStorageShouldBeInt32"
+              "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
+              "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
+              "-Microsoft.Design#CA1062" //:Validate arguments of public methods" -- candidate
+              "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity" -- candidate
+              "-Microsoft.Usage#CA1801" // :ReviewUnusedParameters"
+              "-Microsoft.Globalization#CA1305" // :SpecifyIFormatProvider"
+              "-Microsoft.Globalization#CA1307" // :SpecifyStringComparison"
+              "-Microsoft.Performance#CA1822" // :MarkMembersAsStatic"
+              "-Microsoft.Usage#CA2208" ] // :InstantiateArgumentExceptionsCorrectly"
 
         let nonFsharpRules =
             [ "-Microsoft.Design#CA1006" // nested generics
               "-Microsoft.Design#CA1034" // nested classes being visible
-              "-Microsoft.Design#CA1062" // null checks,  In F#!
               "-Microsoft.Naming#CA1709" // defer to the Gendarme casing rule for implicit 'a
               "-Microsoft.Naming#CA1715" // defer to the Gendarme naming rule for implicit 'a
               "-Microsoft.Usage#CA2235" // closures being serializable
               "-Microsoft.Maintainability#CA1506" ] // AvoidExcessiveClassCoupling
 
         let standardRules =
-            [ "-Microsoft.Design#CA1020"
-              "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ] // small namespaces
-
-        // let cantStrongName = [ "-Microsoft.Design#CA2210" ] // should strongname
+            [ "-Microsoft.Design#CA1020" // small namespaces
+              "-Microsoft.Naming#CA1702" // :CompoundWordsShouldBeCasedCorrectly" // too opinionated
+              "-Microsoft.Naming#CA1704" // :IdentifiersShouldBeSpelledCorrectly"
+              "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
+              "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ]
 
         let defaultFSharpRules =
             List.concat [ deprecatedRules
+                          gendarmeRules
                           standardRules
                           nonFsharpRules ]
 
-        let workInProgressRules =
-            [ "-Microsoft.Design#CA1004" //:GenericMethodsShouldProvideTypeParameter"
-              "-Microsoft.Design#CA1011" //:ConsiderPassingBaseTypesAsParameters"
-              "-Microsoft.Design#CA1012" // :AbstractTypesShouldNotHaveConstructors"
-              "-Microsoft.Design#CA1019" // :DefineAccessorsForAttributeArguments"
-              "-Microsoft.Design#CA1021" //:AvoidOutParameters"
-              "-Microsoft.Design#CA1027" // :MarkEnumsWithFlags"
-              "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
-              "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
-              "-Microsoft.Design#CA1062" //:Validate arguments of public methods"
-              "-Microsoft.Globalization#CA1303" //:Do not pass literals as localized parameters"
-              "-Microsoft.Globalization#CA1305" //:SpecifyIFormatProvider"
-              "-Microsoft.Globalization#CA1307" //:SpecifyStringComparison"
-              "-Microsoft.Globalization#CA1308" //:NormalizeStringsToUppercase"
-              "-Microsoft.Globalization#CA1309" //:UseOrdinalStringComparison"
-              "-Microsoft.Maintainability#CA1500" //:VariableNamesShouldNotMatchFieldNames"
-              "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity"
-              "-Microsoft.Maintainability#CA1506" //:AvoidExcessiveClassCoupling"
-              "-Microsoft.Naming#CA1704" // :IdentifiersShouldBeSpelledCorrectly"
-              "-Microsoft.Naming#CA1702" // :CompoundWordsShouldBeCasedCorrectly"
-              "-Microsoft.Naming#CA1707" // :IdentifiersShouldNotContainUnderscores"
-              "-Microsoft.Naming#CA1709" //:IdentifiersShouldBeCasedCorrectly"
-              "-Microsoft.Naming#CA1726" //:UsePreferredTerms"
-              "-Microsoft.Performance#CA1800" //:DoNotCastUnnecessarily"
-              "-Microsoft.Usage#CA1806" //:DoNotIgnoreMethodResults"
-              "-Microsoft.Performance#CA1810" //:InitializeReferenceTypeStaticFieldsInline"
-              "-Microsoft.Performance#CA1811" //:AvoidUncalledPrivateCode"
-              "-Microsoft.Performance#CA1815" //:OverrideEqualsAndOperatorEqualsOnValueTypes"
-              "-Microsoft.Performance#CA1802" //:UseLiteralsWhereAppropriate"
-              "-Microsoft.Performance#CA1823" //:AvoidUnusedPrivateFields",
-              "-Microsoft.Performance#CA1824" //:MarkAssembliesWithNeutralResourcesLanguage",
-              "-Microsoft.Security#CA2104" // :DoNotDeclareReadOnlyMutableReferenceTypes"
-              "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
-              "-Microsoft.Usage#CA2208" ] // :InstantiateArgumentExceptionsCorrectly"
-
         let defaultCSharpRules =
             List.concat [ deprecatedRules
+                          gendarmeRules
                           standardRules
                           [ "-Microsoft.Design#CA1026:DefaultParametersShouldNotBeUsed" ] ]
-
-        let wipCSharpRules =
-            List.concat [ defaultCSharpRules
-                          workInProgressRules ]
 
         let refdir =
             @"C:\Program Files\dotnet\sdk\6.0.101\ref" // TODO generate
@@ -609,7 +593,7 @@ _Target
                       Verbose = false
                       ReportFileName = "_Reports/FxCopReport.xml"
                       Types = []
-                      Rules = wipCSharpRules
+                      Rules = defaultCSharpRules
                       FailOnError = FxCop.ErrorLevel.Warning
                       IgnoreGeneratedCode = true }
         with
@@ -622,7 +606,11 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+        !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
+        |> Seq.filter
+            (fun p ->
+                (p |> Path.GetFileNameWithoutExtension)
+                <> "Test.Rules")
         |> Seq.iter
             (fun p ->
                 let tname = Path.GetFileNameWithoutExtension p
@@ -644,12 +632,12 @@ _Target
                 // while fixing
                 let maxFail =
                     match tname with
-                    | "Tests.Framework" -> 3
-                    | "Tests.Rules.Concurrency" -> 6
-                    | "Tests.Rules.Correctness" -> 5
-                    | "Tests.Rules.Interoperability" -> 17
-                    | "Tests.Rules.Maintainability" -> 1
-                    | "Tests.Rules.Smells" -> 2
+                    | "Test.Framework" -> 3
+                    | "Test.Rules.Concurrency" -> 6
+                    | "Test.Rules.Correctness" -> 5
+                    | "Test.Rules.Interoperability" -> 18
+                    | "Test.Rules.Maintainability" -> 1
+                    | "Test.Rules.Smells" -> 2
                     | _ -> 0
 
                 Assert.That(
@@ -667,7 +655,11 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        !!(@"./**/Tests.*.*sproj")
+        !!(@"./**/Test.*.*sproj")
+        |> Seq.filter
+            (fun p ->
+                (p |> Path.GetFileNameWithoutExtension)
+                <> "Test.Rules")
         |> Seq.iter
             (fun proj ->
                 try
@@ -682,12 +674,12 @@ _Target
                 with
                 | x -> // while fixing
                     match Path.GetFileNameWithoutExtension proj with
-                    | "Tests.Framework"
-                    | "Tests.Rules.Concurrency"
-                    | "Tests.Rules.Correctness"
-                    | "Tests.Rules.Interoperability"
-                    | "Tests.Rules.Maintainability"
-                    | "Tests.Rules.Smells" -> printfn "%A" x
+                    | "Test.Framework"
+                    | "Test.Rules.Concurrency"
+                    | "Test.Rules.Correctness"
+                    | "Test.Rules.Interoperability"
+                    | "Test.Rules.Maintainability"
+                    | "Test.Rules.Smells" -> printfn "%A" x
                     | _ -> reraise ()))
 
 _Target "Coverage" ignore
@@ -701,7 +693,11 @@ _Target
         Directory.ensure report
 
         let coverage =
-            !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+            !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
+            |> Seq.filter
+                (fun p ->
+                    (p |> Path.GetFileNameWithoutExtension)
+                    <> "Test.Rules")
             |> Seq.fold
                 (fun l test ->
                     let tname = test |> Path.GetFileNameWithoutExtension
@@ -775,12 +771,12 @@ _Target
                                 Int32.MaxValue
 
                         match tname with
-                        | "Tests.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
-                        | "Tests.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
-                        | "Tests.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
-                        | "Tests.Rules.Interoperability" when exitCode () <= 17 -> printfn "%A" x.Message
-                        | "Tests.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
-                        | "Tests.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | "Test.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
+                        | "Test.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
+                        | "Test.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
+                        | "Test.Rules.Interoperability" when exitCode () <= 18 -> printfn "%A" x.Message
+                        | "Test.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
+                        | "Test.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
                         | _ -> reraise ()
 
                     altReport :: l)
@@ -815,7 +811,11 @@ _Target
         Directory.ensure report
 
         let coverage =
-            !!(@"gendarme/**/Tests.*.*sproj")
+            !!(@"gendarme/**/Test.*.*sproj")
+            |> Seq.filter
+                (fun p ->
+                    (p |> Path.GetFileNameWithoutExtension)
+                    <> "Test.Rules")
             |> Seq.fold
                 (fun l test ->
                     printfn "%A" test
@@ -875,12 +875,12 @@ _Target
                     with
                     | x -> // while fixing
                         match tname with
-                        | "Tests.Framework"
-                        | "Tests.Rules.Concurrency"
-                        | "Tests.Rules.Correctness"
-                        | "Tests.Rules.Interoperability"
-                        | "Tests.Rules.Maintainability"
-                        | "Tests.Rules.Smells" -> printfn "%A" x
+                        | "Test.Framework"
+                        | "Test.Rules.Concurrency"
+                        | "Test.Rules.Correctness"
+                        | "Test.Rules.Interoperability"
+                        | "Test.Rules.Maintainability"
+                        | "Test.Rules.Smells" -> printfn "%A" x
                         | _ -> reraise ()
 
                     altReport2 :: l)
@@ -1377,6 +1377,112 @@ _Target
         |> Seq.exists (fun x -> x <> 0)
         |> failOnIssuesFound)
 
+_Target
+    "CheckAltCover"
+    (fun _ -> // Needs debug because release is compiled --standalone which contaminates everything
+        Directory.ensure "./_Reports"
+        let packroot = Path.GetFullPath "./_Packaging"
+        let working = Path.getFullName "./_Unpack-tool"
+        let altcover = Path.getFullName "../altcover"
+        let mutable set = false
+
+        Directory.ensure working
+
+        let nugget =
+            !!(packroot @@ "altcode.gendarme-tool.*.nupkg")
+            |> Seq.last
+
+        let nuggetVer =
+            (nugget |> Path.GetFileNameWithoutExtension)
+                .Substring("altcode.gendarme-tool.".Length)
+
+        try
+            let config =
+                XDocument.Load "./Build/NuGet.config.dotnettest"
+
+            let repo =
+                config.Descendants(XName.Get("add")) |> Seq.head
+
+            repo.SetAttributeValue(XName.Get "value", packroot)
+            config.Save(working @@ "NuGet.config")
+
+            Actions.RunDotnet
+                (fun o' ->
+                    { dotnetOptions o' with
+                          WorkingDirectory = working })
+                "tool"
+                ("install -g altcode.gendarme-tool --add-source "
+                 + (Path.getFullName "./_Packaging")
+                 + " --version "
+                 + nuggetVer)
+                "Installed"
+
+            Actions.RunDotnet
+                (fun o' ->
+                    { dotnetOptions o' with
+                          WorkingDirectory = working })
+                "tool"
+                ("list -g ")
+                "Checked"
+
+            set <- true
+
+            [ ("./Build/common-rules.xml",
+               [ "_Binaries/AltCover.Engine/Debug+AnyCPU/netstandard2.0/AltCover.Engine.dll"
+                 "_Binaries/AltCover/Debug+AnyCPU/netcoreapp2.0/AltCover.dll"
+                 "_Binaries/AltCover.Recorder/Debug+AnyCPU/net20/AltCover.Recorder.dll"
+                 "_Binaries/AltCover.Async/Debug+AnyCPU/net46/AltCover.Async.dll"
+                 "_Binaries/AltCover.PowerShell/Debug+AnyCPU/netstandard2.0/AltCover.PowerShell.dll"
+                 "_Binaries/AltCover.Fake/Debug+AnyCPU/netstandard2.0/AltCover.Fake.dll"
+                 "_Binaries/AltCover.DotNet/Debug+AnyCPU/netstandard2.0/AltCover.DotNet.dll"
+                 "_Binaries/AltCover.Toolkit/Debug+AnyCPU/netstandard2.0/AltCover.Toolkit.dll"
+                 "_Binaries/AltCover.UICommon/Debug+AnyCPU/netstandard2.0/AltCover.UICommon.dll"
+                 "_Binaries/AltCover.Visualizer/Debug+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" // GTK3 (obsolete)
+                 "_Binaries/AltCover.Fake.DotNet.Testing.AltCover/Debug+AnyCPU/netstandard2.0/AltCover.Fake.DotNet.Testing.AltCover.dll" ])
+              ("./Build/common-rules.xml",  // Framework builds
+               [ "_Binaries/AltCover/Debug+AnyCPU/net472/AltCover.exe" // framework builds
+                 "_Binaries/AltCover.Visualizer/Debug+AnyCPU/net472/AltCover.Visualizer.exe" ])
+              ("./Build/common-rules.xml",
+               [ "_Binaries/AltCover/Debug+AnyCPU/netcoreapp2.1/AltCover.dll" // global tool builds
+                 "_Binaries/AltCover.Avalonia/Debug+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" ])
+              ("./Build/csharp-rules.xml",
+               [ "_Binaries/AltCover.DataCollector/Debug+AnyCPU/netstandard2.0/AltCover.DataCollector.dll"
+                 "_Binaries/AltCover.Monitor/Debug+AnyCPU/netstandard2.0/AltCover.Local.Monitor.dll"
+                 "_Binaries/AltCover.FontSupport/Debug+AnyCPU/netstandard2.0/AltCover.FontSupport.dll"
+                 "_Binaries/AltCover.Cake/Debug+AnyCPU/netstandard2.0/AltCover.Cake.dll" ])
+              ("./Build/csharp-rules.xml",  // Framework builds
+               [ "_Binaries/AltCover.Monitor/Debug+AnyCPU/net20/AltCover.Local.Monitor.dll"
+                 "_Binaries/AltCover.FontSupport/Debug+AnyCPU/net472/AltCover.FontSupport.dll" ]) ]
+            |> Seq.iter
+                (fun (ruleset, files) ->
+                    Gendarme.run
+                        { Gendarme.Params.Create() with
+                              WorkingDirectory = working
+                              Severity = Gendarme.Severity.All
+                              Confidence = Gendarme.Confidence.All
+                              Configuration = altcover @@ ruleset
+                              Console = true
+                              Log = Path.GetFullPath "./_Reports/altcoverCheck.html"
+                              LogKind = Gendarme.LogKind.Html
+                              Targets = files |> Seq.map (fun f -> altcover @@ f)
+                              ToolType = ToolType.CreateGlobalTool()
+                              FailBuildOnDefect = true })
+        finally
+            if set then
+                Actions.RunDotnet
+                    (fun o' ->
+                        { dotnetOptions o' with
+                              WorkingDirectory = working })
+                    "tool"
+                    ("uninstall -g altcode.gendarme-tool")
+                    "uninstalled"
+
+            let folder =
+                nugetCache @@ "altcode.gendarme-tool" @@ nuggetVer
+
+            Shell.mkdir folder
+            Shell.deleteDir folder)
+
 _Target "All" ignore
 
 let resetColours _ =
@@ -1396,7 +1502,7 @@ Target.activateFinal "ResetConsoleColours"
 "BuildDebug" ==> "Lint" ==> "All"
 
 "BuildDebug" ==> "FxCop"
-=?> ("All", Environment.isWindows && fxcop |> Option.isSome) // not supported
+=?> ("All", Environment.isWindows && fxcop |> Option.isSome) // where supported
 
 "Preparation" ==> "BuildRelease" ==> "Compilation"
 
@@ -1414,7 +1520,7 @@ Target.activateFinal "ResetConsoleColours"
 
 "BuildRelease" ==> "Packaging"
 
-"UnitTest" ==> "All"
+// "UnitTest" ==> "All" // redundant
 
 "Packaging" ==> "Unpack" ==> "OperationalTest"
 
@@ -1422,7 +1528,9 @@ Target.activateFinal "ResetConsoleColours"
 ==> "DotnetGlobalIntegration"
 ==> "OperationalTest"
 
-"BuildDebug" ==> "DotnetGlobalIntegration"
+"BuildDebug"
+==> "DotnetGlobalIntegration"
+==> "CheckAltCover"
 
 "OperationalTest" ==> "All"
 

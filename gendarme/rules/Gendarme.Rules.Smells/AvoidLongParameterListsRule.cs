@@ -34,177 +34,198 @@ using System.Linq;
 using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Smells {
+namespace Gendarme.Rules.Smells
+{
+  // TODO: What does "Other time, it's quite hard determine a long parameter list" mean?
+  // Can the default be changed? This rule should may need to be reviewed if C# adds
+  // default arguments. The solution is really confusing. What is "preserve whole object"?
+  // The introduction of a helper class to bundle state together? What is "parameter object"?
+  // The params keyword?
 
-	// TODO: What does "Other time, it's quite hard determine a long parameter list" mean?
-	// Can the default be changed? This rule should may need to be reviewed if C# adds
-	// default arguments. The solution is really confusing. What is "preserve whole object"?
-	// The introduction of a helper class to bundle state together? What is "parameter object"?
-	// The params keyword?
-	
-	/// <summary>
-	/// This rule allows developers to measure the parameter list size in a method.
-	/// If you have methods with a lot of parameters, perhaps you have a Long
-	/// Parameter List smell.
-	/// 
-	/// This rule counts the method's parameters, and compares it against a maximum value. 
-	/// If you have an overloaded method, then the rule will get the shortest overload 
-	/// and compare the shortest overload against the maximum value.
-	///
-	/// Other time, it's quite hard determine a long parameter list. By default, 
-	/// a method with 6 or more arguments will be flagged as a defect. 
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public void MethodWithLongParameterList (int x, char c, object obj, bool j, string f,
-	///                                         float z, double u, short s, int v, string[] array)
-	/// {
-   	/// 	// Method body ... 
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// public void MethodWithoutLongParameterList (int x, object obj)
-	/// {
-	/// 	// Method body.... 
-	/// }
-	/// </code>
-	/// </example>
+  /// <summary>
+  /// This rule allows developers to measure the parameter list size in a method.
+  /// If you have methods with a lot of parameters, perhaps you have a Long
+  /// Parameter List smell.
+  ///
+  /// This rule counts the method's parameters, and compares it against a maximum value.
+  /// If you have an overloaded method, then the rule will get the shortest overload
+  /// and compare the shortest overload against the maximum value.
+  ///
+  /// Other time, it's quite hard determine a long parameter list. By default,
+  /// a method with 6 or more arguments will be flagged as a defect.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public void MethodWithLongParameterList (int x, char c, object obj, bool j, string f,
+  ///                                         float z, double u, short s, int v, string[] array)
+  /// {
+  /// 	// Method body ...
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// public void MethodWithoutLongParameterList (int x, object obj)
+  /// {
+  /// 	// Method body....
+  /// }
+  /// </code>
+  /// </example>
 
-	//SUGGESTION: Setting all required properties in a constructor isn't
-	//uncommon.
-	//SUGGESTION: Different value for public / private / protected methods *may*
-	//be useful.
-	[Problem ("Generally, long parameter lists are hard to understand because they become hard to use and inconsistent.  And you will be forever changing them if you need more data.")]
-	[Solution ("You should apply the Replace parameter with method refactoring, or preserve whole object or introduce parameter object")]
-	public class AvoidLongParameterListsRule : Rule, ITypeRule {
-		private int maxParameters = 6;
+  //SUGGESTION: Setting all required properties in a constructor isn't
+  //uncommon.
+  //SUGGESTION: Different value for public / private / protected methods *may*
+  //be useful.
+  [Problem("Generally, long parameter lists are hard to understand because they become hard to use and inconsistent.  And you will be forever changing them if you need more data.")]
+  [Solution("You should apply the Replace parameter with method refactoring, or preserve whole object or introduce parameter object")]
+  public class AvoidLongParameterListsRule : Rule, ITypeRule
+  {
+    private int maxParameters = 6;
 
-		public int MaxParameters {
-			get {
-				return maxParameters;
-			}
-			set {
-				maxParameters = value;
-			}
-		}
+    public int MaxParameters
+    {
+      get
+      {
+        return maxParameters;
+      }
+      set
+      {
+        maxParameters = value;
+      }
+    }
 
-		private static MethodDefinition GetSmallestConstructorFrom (TypeDefinition type)
-		{
-			MethodDefinition smallest = null;
-			int scount = 0;
-			foreach (MethodDefinition constructor in type.Methods) {
-				if (!constructor.IsConstructor)
-					continue;
+    private static MethodDefinition GetSmallestConstructorFrom(TypeDefinition type)
+    {
+      MethodDefinition smallest = null;
+      int scount = 0;
+      foreach (MethodDefinition constructor in type.Methods)
+      {
+        if (!constructor.IsConstructor)
+          continue;
 
-				// skip the static ctor since it will always be the smallest one
-				if (constructor.IsStatic)
-					continue;
+        // skip the static ctor since it will always be the smallest one
+        if (constructor.IsStatic)
+          continue;
 
-				if (smallest == null) {
-					smallest = constructor;
-					scount = smallest.HasParameters ? smallest.Parameters.Count : 0;
-				} else {
-					int ccount = constructor.HasParameters ? constructor.Parameters.Count : 0;
-					if (scount > ccount) {
-						smallest = constructor;
-						scount = ccount;
-					}
-				}
-			}
-			return smallest;
-		}
+        if (smallest == null)
+        {
+          smallest = constructor;
+          scount = smallest.HasParameters ? smallest.Parameters.Count : 0;
+        }
+        else
+        {
+          int ccount = constructor.HasParameters ? constructor.Parameters.Count : 0;
+          if (scount > ccount)
+          {
+            smallest = constructor;
+            scount = ccount;
+          }
+        }
+      }
+      return smallest;
+    }
 
-		private bool HasMoreParametersThanAllowed (IMethodSignature method)
-		{
-			return (method.HasParameters ? method.Parameters.Count : 0) >= MaxParameters;
-		}
+    private bool HasMoreParametersThanAllowed(IMethodSignature method)
+    {
+      return (method.HasParameters ? method.Parameters.Count : 0) >= MaxParameters;
+    }
 
-		private void CheckConstructor (IMethodSignature constructor)
-		{
-			//Skip enums, interfaces, <Module>, static classes ...
-			//All stuff that doesn't contain a constructor
-			if (constructor == null) 
-				return;
-			if (HasMoreParametersThanAllowed (constructor)) 
-				Runner.Report (constructor, Severity.Medium, Confidence.High, "This constructor contains a long parameter list.");
-		}
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    private void CheckConstructor(IMethodSignature constructor)
+    {
+      //Skip enums, interfaces, <Module>, static classes ...
+      //All stuff that doesn't contain a constructor
+      if (constructor == null)
+        return;
+      if (HasMoreParametersThanAllowed(constructor))
+        Runner.Report(constructor, Severity.Medium, Confidence.High, "This constructor contains a long parameter list.");
+    }
 
-		private void CheckMethod (IMethodSignature method)
-		{
-			if (HasMoreParametersThanAllowed (method))
-				Runner.Report (method, Severity.Medium, Confidence.High, "This method contains a long parameter list.");
-		}
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    private void CheckMethod(IMethodSignature method)
+    {
+      if (HasMoreParametersThanAllowed(method))
+        Runner.Report(method, Severity.Medium, Confidence.High, "This method contains a long parameter list.");
+    }
 
-		//TODO: Perhaps we can perform this action with linq instead of
-		//loop + hashtable
-		private static IEnumerable<MethodDefinition> GetSmallestOverloaded (TypeDefinition type)
-		{
-			IDictionary<string, MethodDefinition> possibleOverloaded = new Dictionary<string, MethodDefinition> ();
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.IsConstructor || method.IsPInvokeImpl)
-					continue;
+    //TODO: Perhaps we can perform this action with linq instead of
+    //loop + hashtable
+    private static IEnumerable<MethodDefinition> GetSmallestOverloaded(TypeDefinition type)
+    {
+      IDictionary<string, MethodDefinition> possibleOverloaded = new Dictionary<string, MethodDefinition>();
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.IsConstructor || method.IsPInvokeImpl)
+          continue;
 
-				string name = method.Name;
-				if (!possibleOverloaded.ContainsKey (name))
-					possibleOverloaded.Add (name, method);
-				else {
-					MethodDefinition candidate = possibleOverloaded [name];
-					int ccount = candidate.HasParameters ? candidate.Parameters.Count : 0;
-					int mcount = method.HasParameters ? method.Parameters.Count : 0;
-					if (ccount > mcount)
-						possibleOverloaded [name] = method;
-				}
-			}
-			return possibleOverloaded.Values;
-		}
+        string name = method.Name;
+        if (!possibleOverloaded.ContainsKey(name))
+          possibleOverloaded.Add(name, method);
+        else
+        {
+          MethodDefinition candidate = possibleOverloaded[name];
+          int ccount = candidate.HasParameters ? candidate.Parameters.Count : 0;
+          int mcount = method.HasParameters ? method.Parameters.Count : 0;
+          if (ccount > mcount)
+            possibleOverloaded[name] = method;
+        }
+      }
+      return possibleOverloaded.Values;
+    }
 
-		private static bool OnlyContainsExternalMethods (TypeDefinition type)
-		{
-			bool has_methods = false;
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.IsConstructor)
-					continue;
-				has_methods = true;
-				if (!method.IsPInvokeImpl)
-					return false;
-			}
-			// all methods are p/invoke
-			return has_methods;
-		}
+    private static bool OnlyContainsExternalMethods(TypeDefinition type)
+    {
+      bool has_methods = false;
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.IsConstructor)
+          continue;
+        has_methods = true;
+        if (!method.IsPInvokeImpl)
+          return false;
+      }
+      // all methods are p/invoke
+      return has_methods;
+    }
 
-		private RuleResult CheckDelegate (TypeReference type)
-		{
-			MethodDefinition method = type.GetMethod ("Invoke");
-			// MulticastDelegate inherits from Delegate without overriding Invoke
-			if ((method != null) && HasMoreParametersThanAllowed (method))
-				Runner.Report (type, Severity.Medium, Confidence.High, "This delegate contains a long parameter list.");
-			return Runner.CurrentRuleResult;
-		}
-		
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// we don't control, nor report, p/invoke declarations - sometimes the poor C 
-			// guys don't have a choice to make long parameter lists ;-)
-			if (OnlyContainsExternalMethods (type))
-				return RuleResult.DoesNotApply;
-			
-			if (type.IsDelegate ())
-				return CheckDelegate (type);
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    private RuleResult CheckDelegate(TypeReference type)
+    {
+      MethodDefinition method = type.GetMethod("Invoke");
+      // MulticastDelegate inherits from Delegate without overriding Invoke
+      if ((method != null) && HasMoreParametersThanAllowed(method))
+        Runner.Report(type, Severity.Medium, Confidence.High, "This delegate contains a long parameter list.");
+      return Runner.CurrentRuleResult;
+    }
 
-			if (type.HasMethods) {
-                if(!type.IsRecordType() && !type.Name.Contains("@"))
-				    CheckConstructor (GetSmallestConstructorFrom (type));
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // we don't control, nor report, p/invoke declarations - sometimes the poor C
+      // guys don't have a choice to make long parameter lists ;-)
+      if (OnlyContainsExternalMethods(type))
+        return RuleResult.DoesNotApply;
 
-				foreach (MethodDefinition method in GetSmallestOverloaded (type)) 
-					CheckMethod (method);
-			}
+      if (type.IsDelegate())
+        return CheckDelegate(type);
 
-			return Runner.CurrentRuleResult;
-		}
-	}
+      if (type.HasMethods)
+      {
+        if (!type.IsRecordType() && !type.IsFSharpLocalType())
+          CheckConstructor(GetSmallestConstructorFrom(type));
+
+        foreach (MethodDefinition method in GetSmallestOverloaded(type))
+          CheckMethod(method);
+      }
+
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

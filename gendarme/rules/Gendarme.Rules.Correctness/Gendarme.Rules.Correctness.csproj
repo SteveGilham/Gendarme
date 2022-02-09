@@ -2,9 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Optimize>true</Optimize>
-  </PropertyGroup>
   <ItemGroup>
     <None Include="dataflow\BasicBlock.cs" />
     <None Include="dataflow\CFG.cs" />
@@ -46,6 +43,8 @@
     <Compile Remove="NullDerefFrame.cs" />
     <Compile Remove="NullDerefRule.cs" />
     <Compile Remove="Nullity.cs" />
-    <Compile Remove="DeclareEventsExplicitlyRule.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Test\**\*.resx" />
   </ItemGroup>
 </Project>

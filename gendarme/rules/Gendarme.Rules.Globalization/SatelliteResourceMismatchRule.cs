@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -103,16 +104,22 @@ namespace Gendarme.Rules.Globalization
       }
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "Return value")]
     private static DeserializingResourceReader MakeResourceReader(Stream resourceStream)
     {
       var safeStream = new BlobReadingStream(resourceStream);
       return new DeserializingResourceReader(safeStream);
     }
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckSatelliteResource(EmbeddedResource mainResource, EmbeddedResource satelliteResource, IMetadataTokenProvider satelliteAssembly)
     {
       using (Stream resourceStream = satelliteResource.GetResourceStream())
-      using(var reader = MakeResourceReader(resourceStream))
+      using (var reader = MakeResourceReader(resourceStream))
       {
         foreach (DictionaryEntry entry in reader)
         {
@@ -140,8 +147,8 @@ namespace Gendarme.Rules.Globalization
 
           if (satelliteType.Equals(typeof(string)))
           {
-            Bitmask<int> mainParameters = GetStringFormatExpectedParameters((string)mainValue);
-            Bitmask<int> satelliteParameters = GetStringFormatExpectedParameters((string)satelliteValue);
+            Bitmask<int> mainParameters = GetFormatExpectedParameters((string)mainValue);
+            Bitmask<int> satelliteParameters = GetFormatExpectedParameters((string)satelliteValue);
 
             if (!mainParameters.Equals(satelliteParameters))
             {
@@ -155,7 +162,7 @@ namespace Gendarme.Rules.Globalization
       }
     }
 
-    private static Bitmask<int> GetStringFormatExpectedParameters(string format)
+    private static Bitmask<int> GetFormatExpectedParameters(string format)
     {
       Bitmask<int> result = new Bitmask<int>(false);
 
@@ -250,6 +257,11 @@ namespace Gendarme.Rules.Globalization
       return resource.Name.EndsWith(resXResourcesExtension, StringComparison.Ordinal);
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "AvoidLackOfCohesionOfMethodsRule",
+                     Justification = "Maybe refactor")]
     private sealed class AssemblyResourceCache
     {
       private readonly AssemblyDefinition assembly;
@@ -289,7 +301,7 @@ namespace Gendarme.Rules.Globalization
         {
           fileResources = new Dictionary<string, object>();
           using (Stream resourceStream = embeddedResource.GetResourceStream())
-          using(var reader = MakeResourceReader(resourceStream))
+          using (var reader = MakeResourceReader(resourceStream))
           {
             foreach (DictionaryEntry entry in reader)
               fileResources.Add((string)entry.Key, entry.Value);

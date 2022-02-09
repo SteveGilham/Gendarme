@@ -31,78 +31,87 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule will fire for types which implement <c>System.IDisposable</c>, contain
+  /// native fields such as <c>System.IntPtr</c>, <c>System.UIntPtr</c>, and
+  /// <c>System.Runtime.InteropServices.HandleRef</c>, but do not define a finalizer.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// class NoFinalizer {
+  ///	IntPtr field;
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// class HasFinalizer {
+  ///	IntPtr field;
+  ///
+  ///	~HasFinalizer ()
+  ///	{
+  ///		UnmanagedFree (field);
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule will fire for types which implement <c>System.IDisposable</c>, contain
-	/// native fields such as <c>System.IntPtr</c>, <c>System.UIntPtr</c>, and
-	/// <c>System.Runtime.InteropServices.HandleRef</c>, but do not define a finalizer.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// class NoFinalizer {
-	///	IntPtr field;
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// class HasFinalizer {
-	///	IntPtr field;
-	///	
-	///	~HasFinalizer ()
-	///	{
-	///		UnmanagedFree (field);
-	///	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This type contains native fields but does not have a finalizer.")]
+  [Solution("Add a finalizer, calling Dispose(true), to release unmanaged resources.")]
+  [FxCopCompatibility("Microsoft.Usage", "CA2216:DisposableTypesShouldDeclareFinalizer")]
+  public class DisposableTypesShouldHaveFinalizerRule : Rule, ITypeRule
+  {
+    private const string Struct = "Consider using a class since a struct cannot define a finalizer.";
 
-	[Problem ("This type contains native fields but does not have a finalizer.")]
-	[Solution ("Add a finalizer, calling Dispose(true), to release unmanaged resources.")]
-	[FxCopCompatibility ("Microsoft.Usage", "CA2216:DisposableTypesShouldDeclareFinalizer")]
-	public class DisposableTypesShouldHaveFinalizerRule : Rule, ITypeRule {
+    private static readonly TypeName idisposable = new TypeName
+    {
+      Namespace = "System",
+      Name = "IDisposable"
+    };
 
-		const string Struct = "Consider using a class since a struct cannot define a finalizer.";
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
+    [SuppressMessage("Gendarme.Rules.Performance",
+                 "AvoidRepetitiveCallsToPropertiesRule",
+                 Justification = "Rule result returned")]
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule applies only to types, interfaces and structures (value types)
+      if (type.IsEnum || type.IsDelegate() || type.IsGeneratedCode())
+        return RuleResult.DoesNotApply;
 
-        private readonly static TypeName idisposable = new TypeName
-        {
-            Namespace = "System",
-            Name = "IDisposable"
-        };
-        public RuleResult CheckType(TypeDefinition type)
-		{
-			// rule applies only to types, interfaces and structures (value types)
-			if (type.IsEnum || type.IsDelegate () || type.IsGeneratedCode ())
-				return RuleResult.DoesNotApply;
+      // rule onyly applies to type that implements IDisposable
+      if (!type.Implements(idisposable))
+        return RuleResult.DoesNotApply;
 
-			// rule onyly applies to type that implements IDisposable
-			if (!type.Implements (idisposable))
-				return RuleResult.DoesNotApply;
+      // no problem is a finalizer is found
+      if (type.HasMethod(MethodSignatures.Finalize))
+        return RuleResult.Success;
 
-			// no problem is a finalizer is found
-			if (type.HasMethod (MethodSignatures.Finalize))
-				return RuleResult.Success;
+      // otherwise check for native types
+      foreach (FieldDefinition field in type.Fields)
+      {
+        // we can't dispose static fields in IDisposable
+        if (field.IsStatic)
+          continue;
+        if (!field.FieldType.GetElementType().IsNative())
+          continue;
+        Runner.Report(field, Severity.High, Confidence.High);
+      }
 
-			// otherwise check for native types
-			foreach (FieldDefinition field in type.Fields) {
-				// we can't dispose static fields in IDisposable
-				if (field.IsStatic)
-					continue;
-				if (!field.FieldType.GetElementType ().IsNative ())
-					continue;
-				Runner.Report (field, Severity.High, Confidence.High);
-			}
+      // special case: a struct cannot define a finalizer so it's a
+      // bad candidate to hold references to unmanaged resources
+      if (type.IsValueType && (Runner.CurrentRuleResult == RuleResult.Failure))
+        Runner.Report(type, Severity.High, Confidence.High, Struct);
 
-			// special case: a struct cannot define a finalizer so it's a
-			// bad candidate to hold references to unmanaged resources
-			if (type.IsValueType && (Runner.CurrentRuleResult == RuleResult.Failure))
-				Runner.Report (type, Severity.High, Confidence.High, Struct);
-
-			return Runner.CurrentRuleResult;
-		}
-	}
+      return Runner.CurrentRuleResult;
+    }
+  }
 }

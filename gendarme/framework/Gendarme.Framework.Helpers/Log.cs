@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Helpers.Log
 //
 // Authors:
@@ -31,27 +31,30 @@ using System.Collections.Generic;
 
 using Mono.Cecil;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
-namespace Gendarme.Framework.Helpers {
-
-	/// <summary>
-	/// Wrapper around System.Diagnostics.Debug.
-	/// </summary>
-	/// <remarks>
-	/// Instead of adding temporary Console.WriteLines to your rules use this
-	/// class instead. This way we can leave the debugging code in the rule
-	/// and enable it on a rule by rule basis (using the bin/gendarme.exe.config
-	/// file). Usage is like this:
-	///
-	/// <code>
-	/// Log.WriteLine (this, "value: {0}", value);	// this will normally be a rule instance
-	/// Log.WriteLine ("DefineAZeroValueRule", "hey");	// should rarely be used
-	/// Log.WriteLine ("DefineAZeroValueRule.Details", "hey");	// convention for additional output
-	/// </code>
-	///
-	/// </remarks>
-	public static class Log {
-		private static Dictionary<string, bool> enabled = new Dictionary<string, bool> ();
+namespace Gendarme.Framework.Helpers
+{
+  /// <summary>
+  /// Wrapper around System.Diagnostics.Debug.
+  /// </summary>
+  /// <remarks>
+  /// Instead of adding temporary Console.WriteLines to your rules use this
+  /// class instead. This way we can leave the debugging code in the rule
+  /// and enable it on a rule by rule basis (using the bin/gendarme.exe.config
+  /// file). Usage is like this:
+  ///
+  /// <code>
+  /// Log.WriteLine (this, "value: {0}", value);	// this will normally be a rule instance
+  /// Log.WriteLine ("DefineAZeroValueRule", "hey");	// should rarely be used
+  /// Log.WriteLine ("DefineAZeroValueRule.Details", "hey");	// convention for additional output
+  /// </code>
+  ///
+  /// </remarks>
+  public static class Log
+  {
+    private static readonly Dictionary<string, bool> enabled = new Dictionary<string, bool>();
 #if false
 		// Write (T)
 		[Conditional ("DEBUG")]
@@ -61,7 +64,7 @@ namespace Gendarme.Framework.Helpers {
 			if (IsEnabled (name))
 				Debug.Write (string.Format (format, args));
 		}
-		
+
 		// Write (string)
 		[Conditional ("DEBUG")]
 		public static void Write (string category, string format, params object[] args)
@@ -70,75 +73,86 @@ namespace Gendarme.Framework.Helpers {
 				Debug.Write (string.Format (format, args));
 		}
 #endif
-		// WriteLine (T)
-		[Conditional ("DEBUG")]
-		public static void WriteLine<T> (T category)
-		{
-			WriteLine (typeof (T).Name);
-		}
-	
-		[Conditional ("DEBUG")]
-		public static void WriteLine<T> (T category, string format, params object[] args)
-		{
-			WriteLine (typeof (T).Name, format, args);
-		}
-		
-		[Conditional ("DEBUG")]
-		public static void WriteLine<T> (T category, MemberReference member)
-		{
-			WriteLine (typeof (T).Name, member);
-		}
-		
-		// WriteLine (string)
-		[Conditional ("DEBUG")]
-		public static void WriteLine (string category)
-		{
-			if (IsEnabled (category))
-				Debug.WriteLine (string.Empty);
-		}
-	
-		[Conditional ("DEBUG")]
-		public static void WriteLine (string category, string format, params object[] args)
-		{
-			if (IsEnabled (category))
-				Debug.WriteLine (string.Format (format, args));
-		}
-		
-		[Conditional ("DEBUG")]
-		public static void WriteLine (string category, MemberReference member)
-		{
-			if (IsEnabled (category)) {
-				MethodDefinition md = (member as MethodDefinition);
-				if (md != null)
-					Debug.WriteLine (new MethodPrinter (md).ToString ());
-				else
-					Debug.WriteLine (member.GetFullName ());
-			}
-		}
-		
-		// Misc
-		[Conditional ("DEBUG")]
-		public static void Indent ()
-		{
-			Debug.Indent ();
-		}
-		
-		[Conditional ("DEBUG")]
-		public static void Unindent ()
-		{
-			Debug.Unindent ();
-		}
-				
-		public static bool IsEnabled (string category)
-		{
-			bool enable;
-						
-			if (!enabled.TryGetValue (category, out enable)) {
-				enable = new BooleanSwitch (category, string.Empty).Enabled;
-				enabled.Add (category, enable);
-			}
-						
-			return enable;
-		}
-	}
+    // WriteLine (T)
+    [Conditional("DEBUG")]
+    public static void WriteLine<T>(T category)
+    {
+      WriteLine(typeof(T).Name);
+    }
+
+    [Conditional("DEBUG")]
+    public static void WriteLine<T>(T category, string format, params object[] args)
+    {
+      WriteLine(typeof(T).Name, format, args);
+    }
+
+    [Conditional("DEBUG")]
+    public static void WriteLine<T>(T category, MemberReference member)
+    {
+      WriteLine(typeof(T).Name, member);
+    }
+
+    // WriteLine (string)
+    [Conditional("DEBUG")]
+    public static void WriteLine(string category)
+    {
+      if (IsEnabled(category))
+        Debug.WriteLine(string.Empty);
+    }
+
+    [Conditional("DEBUG")]
+    public static void WriteLine(string category, string format)
+    {
+      if (IsEnabled(category))
+        Debug.WriteLine(format);
+    }
+
+    [Conditional("DEBUG")]
+    public static void WriteLine(string category, string format, params object[] args)
+    {
+      if (IsEnabled(category))
+        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, format, args));
+    }
+
+    [Conditional("DEBUG")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Correctness",
+                    "AvoidMethodsWithSideEffectsInConditionalCodeRule",
+                     Justification = "Side effect is caching/memoization")]
+    public static void WriteLine(string category, MemberReference member)
+    {
+      if (IsEnabled(category))
+      {
+        MethodDefinition md = (member as MethodDefinition);
+        if (md != null)
+          Debug.WriteLine(new MethodPrinter(md).ToString());
+        else
+          Debug.WriteLine(member.GetFullName());
+      }
+    }
+
+    // Misc
+    [Conditional("DEBUG")]
+    public static void Indent()
+    {
+      Debug.Indent();
+    }
+
+    [Conditional("DEBUG")]
+    public static void Unindent()
+    {
+      Debug.Unindent();
+    }
+
+    public static bool IsEnabled(string category)
+    {
+      if (!enabled.TryGetValue(category, out bool enable))
+      {
+        enable = new BooleanSwitch(category, string.Empty).Enabled;
+        enabled.Add(category, enable);
+      }
+
+      return enable;
+    }
+  }
 }

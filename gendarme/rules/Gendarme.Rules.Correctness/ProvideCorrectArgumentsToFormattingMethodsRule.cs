@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Resources;
@@ -71,25 +72,25 @@ namespace Gendarme.Rules.Correctness
   [EngineDependency(typeof(OpCodeEngine))]
   public class ProvideCorrectArgumentsToFormattingMethodsRule : Rule, IMethodRule
   {
-    private static MethodSignature formatSignature = new MethodSignature("Format", "System.String");
-    private static BitArray results = new BitArray(16);
+    private static readonly MethodSignature formatSignature = new MethodSignature("Format", "System.String");
+    private static readonly BitArray results = new BitArray(16);
 
     private static string GetLoadStringFormatInstruction(Instruction call, MethodDefinition method,
       int formatPosition)
     {
       Instruction loadString = call.TraceBack(method, -formatPosition);
       if (loadString == null)
-        return null;
+        return String.Empty;
 
       // If we find a variable load, search the store
       while (loadString.IsLoadLocal())
       {
         Instruction storeIns = GetStoreLocal(loadString, method);
         if (storeIns == null)
-          return null;
+          return String.Empty;
         loadString = storeIns.TraceBack(method);
         if (loadString == null)
-          return null;
+          return String.Empty;
       }
 
       switch (loadString.OpCode.Code)
@@ -102,7 +103,7 @@ namespace Gendarme.Rules.Correctness
           return loadString.Operand as string;
 
         default:
-          return null;
+          return String.Empty;
       }
     }
 
@@ -113,7 +114,7 @@ namespace Gendarme.Rules.Correctness
       foreach (Instruction instruction in md.Body.Instructions)
         if (instruction.OpCode.Code == Code.Ldstr)
           return instruction.Operand as string;
-      return null;
+      return String.Empty;
     }
 
     private static EmbeddedResource GetEmbeddedResource(AssemblyDefinition ad,
@@ -126,21 +127,25 @@ namespace Gendarme.Rules.Correctness
       return null;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Correctness",
+         "EnsureLocalDisposalRule",
+         Justification = "not locally owned")]
     private static string GetLoadStringFromCall(MethodReference mr)
     {
       MethodDefinition md = mr.Resolve();
       if ((md == null) || !IsResource(md))
-        return null;
+        return String.Empty;
 
       string resourceName = GetResourceNameFromResourceGetter(md);
-      if (resourceName == null)
-        return null;
+      if (string.IsNullOrEmpty(resourceName))
+        return String.Empty;
 
       AssemblyDefinition ad = md.GetAssembly();
       string resourceClassName = md.DeclaringType.GetFullName() + ".resources";
       EmbeddedResource resource = GetEmbeddedResource(ad, resourceClassName);
       if (resource == null)
-        return null;
+        return String.Empty;
 
       using (MemoryStream ms = new MemoryStream(resource.GetResourceData()))
       using (ResourceSet resourceSet = new ResourceSet(ms))
@@ -242,18 +247,20 @@ namespace Gendarme.Rules.Correctness
       return true;
     }
 
-    private readonly static TypeName systemObject = new TypeName
+    private static readonly TypeName systemObject = new TypeName
     {
       Namespace = "System",
       Name = "Object"
     };
 
-    private readonly static TypeName systemString = new TypeName
+    private static readonly TypeName systemString = new TypeName
     {
       Namespace = "System",
       Name = "String"
     };
 
+    [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
+      Justification = "TODO: Defect constructor message not localized")]
     private void CheckCallToFormatter(Instruction call, MethodDefinition method)
     {
       MethodReference mr = (call.Operand as MethodReference);
@@ -284,7 +291,7 @@ namespace Gendarme.Rules.Correctness
 
       // if we don't find the content we succeed (well we don't fail/report).
       string loadString = GetLoadStringFormatInstruction(call, method, formatPosition);
-      if (loadString == null)
+      if (string.IsNullOrEmpty(loadString))
         return;
 
       int expectedParameters = GetExpectedParameters(loadString);

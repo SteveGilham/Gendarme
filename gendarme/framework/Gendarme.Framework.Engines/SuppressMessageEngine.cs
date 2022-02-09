@@ -83,7 +83,7 @@ namespace Gendarme.Framework.Engines
       }
     }
 
-    private readonly static TypeName suppressMessage = new TypeName
+    private static readonly TypeName suppressMessage = new TypeName
     {
       Namespace = "System.Diagnostics.CodeAnalysis",
       Name = "SuppressMessageAttribute"
@@ -200,7 +200,7 @@ namespace Gendarme.Framework.Engines
       // inner types syntax fix
       target = target.Replace('+', '/');
       // method/member syntax fix
-      target = target.Replace(".#", "::");
+      target = target.Replace(".#", "::", StringComparison.Ordinal);
 
       if (!targets.TryGetValue(target, out HashSet<string> list))
       {
@@ -244,7 +244,7 @@ namespace Gendarme.Framework.Engines
     private void ResolveMethod(MemberReference method)
     {
       string m = method.GetFullName();
-      m = m.Substring(m.IndexOf(' ') + 1);
+      m = m.Substring(m.IndexOf(' ', StringComparison.Ordinal) + 1);
 
       if (targets.TryGetValue(m, out HashSet<string> rules))
         Add(method, rules);

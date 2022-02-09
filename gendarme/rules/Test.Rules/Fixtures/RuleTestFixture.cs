@@ -125,8 +125,24 @@ namespace Test.Rules.Fixtures
     }
 
     /// <summary>
+    /// Runs the rule and checks the results against the specified matcher.
+    /// </summary>
+    protected RuleResult RunRuleAndCheckSuccessOrDoesNotApply(TMetadataToken token)
+    {
+      RuleResult result = RunRule(token);
+      if (result != RuleResult.DoesNotApply)
+      {
+        Assert.AreEqual(RuleResult.Success, result, "{0} failed on {1}: result should be {2} but got {3}.",
+            typeof(TRule).Name, token, RuleResult.Success, result);
+      }
+      return result;
+    }
+
+    /// <summary>
     /// Runs the rule, depending on its type.
     /// </summary>
+#pragma warning disable IDE0079
+#pragma warning disable IDE0062
     private RuleResult RunRule(TMetadataToken token)
     {
       void SearchBeside(ModuleDefinition m)

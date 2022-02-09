@@ -38,201 +38,226 @@ using Gendarme.Framework;
 using Gendarme.Framework.Engines;
 using Gendarme.Framework.Helpers;
 using Gendarme.Framework.Rocks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace Gendarme.Rules.Maintainability {
+namespace Gendarme.Rules.Maintainability
+{
+  /// <summary>
+  /// A type has a private field whose value is always null.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// internal sealed class Bad {
+  /// 	private List&lt;int&gt; values;
+  ///
+  /// 	public List&lt;int&gt; Values {
+  /// 		get {
+  /// 			return values;
+  /// 		}
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// internal sealed class Good {
+  /// 	private List&lt;int&gt; values = new List&lt;int&gt;();
+  ///
+  /// 	public List&lt;int&gt; Values {
+  /// 		get {
+  /// 			return values;
+  /// 		}
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.4</remarks>
 
-	/// <summary>
-	/// A type has a private field whose value is always null.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// internal sealed class Bad {
-	/// 	private List&lt;int&gt; values;
-	/// 	
-	/// 	public List&lt;int&gt; Values {
-	/// 		get {
-	/// 			return values;
-	/// 		}
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// internal sealed class Good {
-	/// 	private List&lt;int&gt; values = new List&lt;int&gt;();
-	/// 	
-	/// 	public List&lt;int&gt; Values {
-	/// 		get {
-	/// 			return values;
-	/// 		}
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.4</remarks>
+  [Problem("This type has a private field whose value is always null.")]
+  [Solution("Either remove the field or properly initialize it.")]
+  [EngineDependency(typeof(OpCodeEngine))]
+  public sealed class AvoidAlwaysNullFieldRule : Rule, ITypeRule
+  {
+    private readonly HashSet<FieldReference> nullFields = new HashSet<FieldReference>();
+    private readonly HashSet<FieldReference> setFields = new HashSet<FieldReference>();
+    private readonly HashSet<FieldReference> usedFields = new HashSet<FieldReference>();
 
-	[Problem ("This type has a private field whose value is always null.")]
-	[Solution ("Either remove the field or properly initialize it.")]
-	[EngineDependency (typeof (OpCodeEngine))]
-	public sealed class AvoidAlwaysNullFieldRule : Rule, ITypeRule {
+    private bool usesWinForms;
 
-		private HashSet <FieldReference> nullFields = new HashSet <FieldReference>();
-		private HashSet <FieldReference> setFields = new HashSet <FieldReference>();
-		private HashSet <FieldReference> usedFields = new HashSet <FieldReference>();
-		
-		private bool usesWinForms;
-		
-		private static OpCodeBitmask LoadStoreFields = new OpCodeBitmask (0x0, 0x3F00000000000000, 0x0, 0x0);
+    private static readonly OpCodeBitmask LoadStoreFields = new OpCodeBitmask(0x0, 0x3F00000000000000, 0x0, 0x0);
 
-		static bool CheckForNullAssignment (Instruction ins)
-		{
-			Instruction previous = ins.Previous;
-			if (!previous.Is (Code.Ldnull))
-				return false;
-			// handling "ternary if" is always a bit more complex
-			previous = previous.Previous;
-			if ((previous == null) || (previous.OpCode.FlowControl != FlowControl.Branch))
-				return true;
-			return (previous.Offset == ins.Offset);
-		}
+    private static bool CheckForNullAssignment(Instruction ins)
+    {
+      Instruction previous = ins.Previous;
+      if (!previous.Is(Code.Ldnull))
+        return false;
+      // handling "ternary if" is always a bit more complex
+      previous = previous.Previous;
+      if ((previous == null) || (previous.OpCode.FlowControl != FlowControl.Branch))
+        return true;
+      return (previous.Offset == ins.Offset);
+    }
 
-		private void CheckMethod (MethodDefinition method)
-		{
-			Log.WriteLine (this, method);	
-			
-			FieldDefinition field;
-			if (method.HasBody && OpCodeEngine.GetBitmask (method).Intersect (LoadStoreFields)) {
-				foreach (Instruction ins in method.Body.Instructions) {
-					switch (ins.OpCode.Code) {
-					case Code.Stfld:
-					case Code.Stsfld:
-						field = ins.GetField ();
-						// if non-resolved then it will not be a field of this type
-						if (field == null)
-							continue;
-						// FIXME: we'd catch more cases (and avoid some false positives) 
-						// if we used a null value tracker.
-						if (CheckForNullAssignment (ins)) {
-							setFields.Add (field);
-							Log.WriteLine (this, "{0} is set to null at {1:X4}", field.Name, ins.Offset);
-						} else {
-							nullFields.Remove (field);	
-							Log.WriteLine (this, "{0} is set at {1:X4}", field.Name, ins.Offset);
-						}
-						break;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Performance",
+                     "AvoidRepetitiveCallsToPropertiesRule",
+                     Justification = "Field name only executed once per field at most")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
+    private void CheckMethod(MethodDefinition method)
+    {
+      Log.WriteLine(this, method);
 
-					case Code.Ldflda:	// if the field address is taken we have to assume the field has been set
-					case Code.Ldsflda:
-						field = ins.GetField ();
-						// if non-resolved then it will not be a field of this type
-						if (field == null)
-							continue;
-						nullFields.Remove (field);	
-						Log.WriteLine (this, "{0} is set at {1:X4}", field.Name, ins.Offset);
-						break;
-
-					case Code.Ldfld:
-					case Code.Ldsfld:
-						field = ins.GetField ();
-						// if non-resolved then it will not be a field of this type
-						if (field == null)
-							continue;
-						usedFields.Add (field);
-						Log.WriteLine (this, "{0} is used at {1:X4}", field.Name, ins.Offset);
-						break;
-					}
-				}
-			}
-
-			Log.WriteLine (this);
-		}
-		
-		public override void Initialize (IRunner runner)
-		{
-			base.Initialize (runner);
-						
-			// If the module does not reference SWF we can skip the type.Inherits 
-			// check below.
-			Runner.AnalyzeModule += (o, e) =>
-			{
-				usesWinForms = false;
-				foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences)
-				{
-					if (name.Name == "System.Windows.Forms")
-						usesWinForms = true;
-				}
-			};
-		}
-
-		void CheckMethods (TypeDefinition type)
-		{
-			if (!type.HasMethods)
-				return;
-
-			IList<MethodDefinition> mc = type.Methods;
-			for (int i = 0; i < mc.Count && nullFields.Count > 0; ++i)
-				CheckMethod (mc [i]);
-		}
-
-        private readonly static TypeName control = new TypeName
+      FieldDefinition field;
+      if (method.HasBody && OpCodeEngine.GetBitmask(method).Intersect(LoadStoreFields))
+      {
+        foreach (Instruction ins in method.Body.Instructions)
         {
-            Namespace = "System.Windows.Forms",
-            Name = "Control"
-        };
-        public RuleResult CheckType(TypeDefinition type)
-		{
-			if (type.IsEnum || type.IsInterface || !type.HasFields)
-				return RuleResult.DoesNotApply;
-				
-			Log.WriteLine (this);
-			Log.WriteLine (this, "----------------------------------");
-			
-			bool isWinFormControl = usesWinForms && type.Inherits (control);
+          switch (ins.OpCode.Code)
+          {
+            case Code.Stfld:
+            case Code.Stsfld:
+              field = ins.GetField();
+              // if non-resolved then it will not be a field of this type
+              if (field == null)
+                continue;
 
-			// All fields start out as always null and unused.
-			foreach (FieldDefinition field in type.Fields) {
-				if (field.IsPrivate && !field.FieldType.IsValueType)
-					if (!isWinFormControl || field.Name != "components")	// the winforms designer seems to like to leave this null
-						nullFields.Add (field);
-			}
+              // FIXME: we'd catch more cases (and avoid some false positives)
+              // if we used a null value tracker.
+              if (CheckForNullAssignment(ins))
+              {
+                setFields.Add(field);
+                Log.WriteLine(this, "{0} is set to null at {1:X4}", field.Name, ins.Offset);
+              }
+              else
+              {
+                nullFields.Remove(field);
+                Log.WriteLine(this, "{0} is set at {1:X4}", field.Name, ins.Offset);
+              }
+              break;
 
-			CheckMethods (type);
-			if (type.HasNestedTypes) {
-				foreach (TypeDefinition nested in type.NestedTypes)
-					CheckMethods (nested);
-			}
-				
-			// Report a defect if:
-			// 1) The field is explicitly set to null and not used (if 
-			// if is implicitly set to null and not used AvoidUnusedPrivateFieldsRule 
-			// will catch it).
-			setFields.IntersectWith (nullFields);	
-			setFields.ExceptWith (usedFields);	
-			if (setFields.Count > 0) {
-				foreach (FieldDefinition field in setFields) {
-					Log.WriteLine (this, "{0} is always null", field.Name);
-					Runner.Report (field, Severity.Medium, Confidence.High);
-				}
-			}
+            case Code.Ldflda: // if the field address is taken we have to assume the field has been set
+            case Code.Ldsflda:
+              field = ins.GetField();
+              // if non-resolved then it will not be a field of this type
+              if (field == null)
+                continue;
+              nullFields.Remove(field);
+              Log.WriteLine(this, "{0} is set at {1:X4}", field.Name, ins.Offset);
+              break;
 
-			// 2) The field is always null and used somewhere.
-			nullFields.IntersectWith (usedFields);
-			if (nullFields.Count > 0) {
-				foreach (FieldDefinition field in nullFields) {
-					Log.WriteLine (this, "{0} is always null", field.Name);
-					Runner.Report (field, Severity.Medium, Confidence.High);
-				}
-			}
-			
-			nullFields.Clear ();
-			setFields.Clear ();
-			usedFields.Clear ();
-			
-			return Runner.CurrentRuleResult;
-		}
+            case Code.Ldfld:
+            case Code.Ldsfld:
+              field = ins.GetField();
+              // if non-resolved then it will not be a field of this type
+              if (field == null)
+                continue;
+              usedFields.Add(field);
+              Log.WriteLine(this, "{0} is used at {1:X4}", field.Name, ins.Offset);
+              break;
+          }
+        }
+      }
+
+      Log.WriteLine(this);
+    }
+
+    public override void Initialize(IRunner runner)
+    {
+      base.Initialize(runner);
+
+      // If the module does not reference SWF we can skip the type.Inherits
+      // check below.
+      Runner.AnalyzeModule += (o, e) =>
+      {
+        usesWinForms = false;
+        foreach (AssemblyNameReference name in e.CurrentModule.AssemblyReferences)
+        {
+          if (name.Name == "System.Windows.Forms")
+            usesWinForms = true;
+        }
+      };
+    }
+
+    private void CheckMethods(TypeDefinition type)
+    {
+      if (!type.HasMethods)
+        return;
+
+      IList<MethodDefinition> mc = type.Methods;
+      for (int i = 0; i < mc.Count && nullFields.Count > 0; ++i)
+        CheckMethod(mc[i]);
+    }
+
+    private static readonly TypeName control = new TypeName
+    {
+      Namespace = "System.Windows.Forms",
+      Name = "Control"
+    };
+
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Maybe refactor")]
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.IsEnum || type.IsInterface || !type.HasFields)
+        return RuleResult.DoesNotApply;
+
+      Log.WriteLine(this);
+      Log.WriteLine(this, "----------------------------------");
+
+      bool isWinFormControl = usesWinForms && type.Inherits(control);
+
+      // All fields start out as always null and unused.
+      foreach (FieldDefinition field in type.Fields)
+      {
+        if (field.IsPrivate && !field.FieldType.IsValueType)
+          if (!isWinFormControl || field.Name != "components")  // the winforms designer seems to like to leave this null
+            nullFields.Add(field);
+      }
+
+      CheckMethods(type);
+      if (type.HasNestedTypes)
+      {
+        foreach (TypeDefinition nested in type.NestedTypes)
+          CheckMethods(nested);
+      }
+
+      // Report a defect if:
+      // 1) The field is explicitly set to null and not used (if
+      // if is implicitly set to null and not used AvoidUnusedPrivateFieldsRule
+      // will catch it).
+      setFields.IntersectWith(nullFields);
+      setFields.ExceptWith(usedFields);
+      if (setFields.Count > 0)
+      {
+        foreach (FieldDefinition field in setFields)
+        {
+          Log.WriteLine(this, "{0} is always null", field.Name);
+          Runner.Report(field, Severity.Medium, Confidence.High);
+        }
+      }
+
+      // 2) The field is always null and used somewhere.
+      nullFields.IntersectWith(usedFields);
+      if (nullFields.Count > 0)
+      {
+        foreach (FieldDefinition field in nullFields)
+        {
+          Log.WriteLine(this, "{0} is always null", field.Name);
+          Runner.Report(field, Severity.Medium, Confidence.High);
+        }
+      }
+
+      nullFields.Clear();
+      setFields.Clear();
+      usedFields.Clear();
+
+      return Runner.CurrentRuleResult;
+    }
 
 #if false
 		public void Bitmask ()
@@ -247,5 +272,5 @@ namespace Gendarme.Rules.Maintainability {
 			Console.WriteLine (fields);
 		}
 #endif
-	}
+  }
 }

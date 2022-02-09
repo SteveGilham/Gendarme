@@ -31,54 +31,54 @@ using System;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace Gendarme.Framework.Helpers {
+namespace Gendarme.Framework.Helpers
+{
+  /// <summary>
+  /// Represents a usage of a StackEntry
+  /// </summary>
+  public struct StackEntryUsageResult : IEquatable<StackEntryUsageResult>
+  {
+    /// <summary>
+    /// The instruction that uses the StackEntry
+    /// </summary>
+    public readonly Instruction Instruction;
 
-	/// <summary>
-	/// Represents a usage of a StackEntry
-	/// </summary>
-	public struct StackEntryUsageResult : IEquatable<StackEntryUsageResult> {
+    /// <summary>
+    /// The positive offset of the StackEntry before the instruction executes. 0 means right on top.
+    /// </summary>
+    public readonly int StackOffset;
 
-		/// <summary>
-		/// The instruction that uses the StackEntry
-		/// </summary>
-		public readonly Instruction Instruction;
+    public StackEntryUsageResult(Instruction ins, int offset)
+    {
+      this.Instruction = ins;
+      this.StackOffset = offset;
+    }
 
-		/// <summary>
-		/// The positive offset of the StackEntry before the instruction executes. 0 means right on top.
-		/// </summary>
-		public readonly int StackOffset;
+    public override bool Equals(object obj)
+    {
+      if (obj is StackEntryUsageResult result)
+        return Equals(result);
+      return false;
+    }
 
-		public StackEntryUsageResult (Instruction ins, int offset)
-		{
-			this.Instruction = ins;
-			this.StackOffset = offset;
-		}
+    public bool Equals(StackEntryUsageResult other)
+    {
+      return (Instruction == other.Instruction) && (StackOffset == other.StackOffset);
+    }
 
-		public override bool Equals (object obj)
-		{
-			if (obj is StackEntryUsageResult)
-				return Equals ((StackEntryUsageResult) obj);
-			return false;
-		}
+    public override int GetHashCode()
+    {
+      return Instruction.GetHashCode() ^ StackOffset;
+    }
 
-		public bool Equals (StackEntryUsageResult other)
-		{
-			return (Instruction == other.Instruction) && (StackOffset == other.StackOffset);
-		}
+    public static bool operator ==(StackEntryUsageResult left, StackEntryUsageResult right)
+    {
+      return left.Equals(right);
+    }
 
-		public override int GetHashCode ()
-		{
-			return Instruction.GetHashCode () ^ StackOffset;
-		}
-
-		public static bool operator == (StackEntryUsageResult left, StackEntryUsageResult right)
-		{
-			return left.Equals (right);
-		}
-
-		public static bool operator != (StackEntryUsageResult left, StackEntryUsageResult right)
-		{
-			return !left.Equals (right);
-		}
-	}
+    public static bool operator !=(StackEntryUsageResult left, StackEntryUsageResult right)
+    {
+      return !left.Equals(right);
+    }
+  }
 }
