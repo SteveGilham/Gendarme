@@ -542,7 +542,7 @@ namespace Gendarme.Rules.Maintainability
       // - they were specified by an interface
       // or this is an F# local lambda
       if (IsSignatureDictated(method) ||
-                method.DeclaringType.Name.Contains("@", StringComparison.Ordinal))
+                method.DeclaringType.IsFSharpLocalType())
         return RuleResult.DoesNotApply;
 
       int pcount = method.Parameters.Count;

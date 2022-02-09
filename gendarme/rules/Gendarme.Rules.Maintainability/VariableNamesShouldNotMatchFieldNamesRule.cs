@@ -88,20 +88,16 @@ namespace Gendarme.Rules.Maintainability
     {
       // We only like types with fields AND methods.
       if (!type.HasFields || !type.HasMethods || type.IsGeneratedCode() ||
-                 type.Name.Contains("@", StringComparison.Ordinal))
+                 type.IsFSharpLocalType())
         return RuleResult.DoesNotApply;
 
       fields.Clear();
-      foreach (FieldDefinition field in type.Fields.Where(f =>
-                      !f.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>()))
+      foreach (FieldDefinition field in type.Fields.Where(f => !f.HasCompilerGeneratedAttribute()))
         fields.Add(field.Name);
 
       // Iterate through all the methods. Check parameter names then method bodies.
-      foreach (MethodDefinition method in type.Methods)
+      foreach (MethodDefinition method in type.Methods.Where(m => !m.HasCompilerGeneratedAttribute()))
       {
-        // skip compiler generated method
-        if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
-          continue;
         if (method.HasParameters)
         {
           foreach (ParameterDefinition param in method.Parameters)

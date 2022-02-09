@@ -250,7 +250,7 @@ namespace Gendarme.Rules.Smells
     public RuleResult CheckType(TypeDefinition type)
     {
       if (type.IsEnum || type.IsGeneratedCode() ||
-                type.Name.Contains("@", StringComparison.Ordinal))
+                type.IsFSharpLocalType())
         return RuleResult.DoesNotApply;
 
       CheckAbstractClassWithoutResponsability(type);

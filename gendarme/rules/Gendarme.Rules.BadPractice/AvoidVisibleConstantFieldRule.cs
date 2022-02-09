@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.BadPractice.AvoidVisibleConstantFieldRule
 //
 // Authors:
@@ -33,80 +33,80 @@ using Mono.Cecil.Cil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.BadPractice {
+namespace Gendarme.Rules.BadPractice
+{
+  /// <summary>
+  /// This rule looks for constant fields which are visible outside the current assembly.
+  /// Such fields, if used outside the assemblies, will have their value (not the field
+  /// reference) copied into the other assembly. Changing the field's value requires that all
+  /// assemblies which use the field to be recompiled. Declaring the field
+  /// as <c>static readonly</c>, on the other hand, allows the value to be changed
+  /// without requiring that client assemblies be recompiled.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// // if this fields is used inside another assembly then
+  /// // the integer 42, not the field, will be baked into it
+  /// public const int MagicNumber = 42;
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// // if this field is used inside another assembly then
+  /// // that assembly will reference the field instead of
+  /// // embedding the value
+  /// static public readonly int MagicNumber = 42;
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.0</remarks>
 
-	/// <summary>
-	/// This rule looks for constant fields which are visible outside the current assembly.
-	/// Such fields, if used outside the assemblies, will have their value (not the field
-	/// reference) copied into the other assembly. Changing the field's value requires that all
-	/// assemblies which use the field to be recompiled. Declaring the field
-	/// as <c>static readonly</c>, on the other hand, allows the value to be changed
-	/// without requiring that client assemblies be recompiled.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// // if this fields is used inside another assembly then
-	/// // the integer 42, not the field, will be baked into it
-	/// public const int MagicNumber = 42;
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// // if this field is used inside another assembly then
-	/// // that assembly will reference the field instead of
-	/// // embedding the value
-	/// static public readonly int MagicNumber = 42;
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.0</remarks>
+  [Problem("This type contains visible constant fields so the value instead of the field will be embedded into assemblies which use it.")]
+  [Solution("Use a 'static readonly' field (C# syntax) so that the field's value can be changed without forcing client assemblies to be recompiled.")]
+  public class AvoidVisibleConstantFieldRule : Rule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // if the type is not visible or has no fields then the rule does not apply
+      if (!type.HasFields || type.IsEnum || !type.IsVisible())
+        return RuleResult.DoesNotApply;
 
-	[Problem ("This type contains visible constant fields so the value instead of the field will be embedded into assemblies which use it.")]
-	[Solution ("Use a 'static readonly' field (C# syntax) so that the field's value can be changed without forcing client assemblies to be recompiled.")]
-	public class AvoidVisibleConstantFieldRule : Rule, ITypeRule {
+      // F# Tags type exposes static ints.  Naughty!  But nothing we can do about it.
+      if (type.IsStatic() &&
+          type.Name == "Tags" && // the compiler ensures that you can't have a "Tags" member
+          (!type.HasMethods) &&
+          type.DeclaringType != null &&
+          type.DeclaringType.IsSumType()) // Sum type
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// if the type is not visible or has no fields then the rule does not apply
-			if (!type.HasFields || type.IsEnum || !type.IsVisible ())
-				return RuleResult.DoesNotApply;
+      foreach (FieldDefinition field in type.Fields)
+      {
+        // look for 'const' fields
+        if (!field.IsLiteral)
+          continue;
 
-            // F# Tags type exposes static ints.  Naughty!  But nothing we can do about it.
-            if (type.IsStatic() &&
-                type.Name == "Tags" && // the compiler ensures that you can't have a "Tags" member
-                (!type.HasMethods) && 
-                type.DeclaringType != null &&
-                type.DeclaringType.IsSumType()) // Sum type
-                return RuleResult.DoesNotApply;
+        // that are visible outside the current assembly
+        if (!field.IsVisible())
+          continue;
 
-			foreach (FieldDefinition field in type.Fields) {
-				// look for 'const' fields
-				if (!field.IsLiteral)
-					continue;
+        // we let null constant for all reference types (since they can't be changed to anything else)
+        // except for strings (which can be modified later)
+        TypeReference ftype = field.FieldType;
+        if (!ftype.IsValueType && !ftype.IsNamed(str))
+          continue;
 
-				// that are visible outside the current assembly
-				if (!field.IsVisible ())
-					continue;
+        string msg = string.Format(CultureInfo.InvariantCulture, "'{0}' of type {1}.",
+          field.Name, ftype.GetFullName());
+        Runner.Report(field, Severity.High, Confidence.High, msg);
+      }
+      return Runner.CurrentRuleResult;
+    }
 
-				// we let null constant for all reference types (since they can't be changed to anything else)
-				// except for strings (which can be modified later)
-				TypeReference ftype = field.FieldType;
-				if (!ftype.IsValueType && !ftype.IsNamed (str))
-					continue;
-
-				string msg = string.Format (CultureInfo.InvariantCulture, "'{0}' of type {1}.", 
-					field.Name, ftype.GetFullName ());
-				Runner.Report (field, Severity.High, Confidence.High, msg);
-
-			}
-			return Runner.CurrentRuleResult;
-		}
-        private readonly static TypeName str = new TypeName
-        {
-            Namespace = "System",
-            Name = "String"
-        };
-
-	}
+    private static readonly TypeName str = new TypeName
+    {
+      Namespace = "System",
+      Name = "String"
+    };
+  }
 }

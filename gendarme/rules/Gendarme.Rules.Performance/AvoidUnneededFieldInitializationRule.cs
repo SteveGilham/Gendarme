@@ -109,12 +109,10 @@ namespace Gendarme.Rules.Performance
           continue;
 
         // make sure we assign to this type (and not another one)
+        // also skip F# property backing fields
         FieldReference fr = (ins.Operand as FieldReference);
         var frName = fr.Name;
-        if (fr.DeclaringType != type)
-          continue;
-        // skip F# property backing fields
-        if (frName.EndsWith("@", StringComparison.Ordinal))
+        if (fr.DeclaringType != type || fr.IsFSharpBackingField())
           continue;
 
         bool unneeded =
