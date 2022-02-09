@@ -1,4 +1,4 @@
-﻿namespace Tests.AltCode.PowerShell
+﻿namespace Test.AltCode.PowerShell
 
 open System
 open System.Reflection

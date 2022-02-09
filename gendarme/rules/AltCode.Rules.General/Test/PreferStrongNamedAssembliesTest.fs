@@ -1,4 +1,4 @@
-﻿namespace Tests.AltCode.General
+﻿namespace Test.AltCode.General
 
 open System
 open System.Reflection
@@ -40,7 +40,7 @@ type PreferStrongNamedAssembliesTest() =
     use stream =
       Assembly
         .GetExecutingAssembly()
-        .GetManifestResourceStream("Tests.AltCode.General.Sample1.exe")
+        .GetManifestResourceStream("Test.AltCode.General.Sample1.exe")
 
     use assembly = AssemblyDefinition.ReadAssembly stream
     base.AssertRuleFailure(assembly)

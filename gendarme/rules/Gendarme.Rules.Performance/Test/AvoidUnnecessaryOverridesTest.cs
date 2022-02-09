@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,159 +37,170 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Tests.Rules.Performance {
+namespace Test.Rules.Performance
+{
+  [TestFixture]
+  public class AvoidUnnecessaryOverridesTest : MethodRuleTestFixture<AvoidUnnecessaryOverridesRule>
+  {
+    private class TestBaseClass
+    {
+      ~TestBaseClass()
+      {
+        Console.WriteLine("the end");
+      }
 
-	[TestFixture]
-	public class AvoidUnnecessaryOverridesTest : MethodRuleTestFixture<AvoidUnnecessaryOverridesRule> {
+      public string NonVirtualDoSomething(int i)
+      {
+        return i.ToString();
+      }
 
-		private class TestBaseClass {
+      public virtual string DoSomething(string s)
+      {
+        return s;
+      }
 
-			~TestBaseClass ()
-			{
-				Console.WriteLine ("the end");
-			}
+      public virtual string DoSomething()
+      {
+        return ":D";
+      }
 
-			public string NonVirtualDoSomething (int i)
-			{
-				return i.ToString ();
-			}
+      public virtual void DoNothing()
+      {
+      }
+    }
 
-			public virtual string DoSomething (string s)
-			{
-				return s;
-			}
+    private abstract class AbstractTestClass : TestBaseClass
+    {
+      ~AbstractTestClass()
+      {
+        Console.WriteLine("abstract");
+      }
 
-			public virtual string DoSomething ()
-			{
-				return ":D";
-			}
+      public abstract void DoSomething(int i);
 
-			public virtual void DoNothing ()
-			{
-			}
-		}
+      public override void DoNothing()
+      {
+        base.DoNothing();
+      }
+    }
 
+    private class TestClassGood : TestBaseClass
+    {
+      public override string DoSomething(string s)
+      {
+        return base.DoSomething();
+      }
 
-		abstract class AbstractTestClass : TestBaseClass {
-			~AbstractTestClass ()
-			{
-				Console.WriteLine ("abstract");
-			}
+      [STAThread]
+      public override string DoSomething()
+      {
+        return base.DoSomething();
+      }
 
-			public abstract void DoSomething (int i);
+      [FileIOPermission(SecurityAction.Demand)]
+      public override string ToString()
+      {
+        return base.ToString();
+      }
 
-			public override void DoNothing ()
-			{
-				base.DoNothing ();
-			}
-		}
+      public override bool Equals(object obj)
+      {
+        if (obj == null)
+          return false;
+        else
+          return base.Equals(obj);
+      }
+    }
 
-		private class TestClassGood : TestBaseClass {
-			public override string DoSomething (string s)
-			{
-				return base.DoSomething ();
-			}
-			[STAThread]
-			public override string DoSomething ()
-			{
-				return base.DoSomething ();
-			}
-			[FileIOPermission (SecurityAction.Demand)]
-			public override string ToString ()
-			{
-				return base.ToString ();
-			}
-			public override bool Equals (object obj)
-			{
-				if (obj == null)
-					return false;
-				else
-					return base.Equals (obj);
-			}
-		}
+    private class TestClassAlsoGood : ApplicationException
+    {
+      public override bool Equals(object obj)
+      {
+        if (obj.GetType() != typeof(TestClassAlsoGood))
+          return false;
 
-		private class TestClassAlsoGood : ApplicationException {
-			public override bool Equals (object obj)
-			{
-				if (obj.GetType () != typeof (TestClassAlsoGood))
-					return false;
+        return base.Equals(obj);
+      }
+    }
 
-				return base.Equals (obj);
-			}
-		}
+    private class TestClassBad : TestBaseClass
+    {
+      public override string ToString()
+      {
+        return base.ToString();
+      }
 
-		private class TestClassBad : TestBaseClass {
-			public override string ToString ()
-			{
-				return base.ToString ();
-			}
-			public override string DoSomething (string s)
-			{
-				return base.DoSomething (s);
-			}
-			public override string DoSomething ()
-			{
-				return base.DoSomething ();
-			}
-		}
+      public override string DoSomething(string s)
+      {
+        return base.DoSomething(s);
+      }
 
-		private class TestClassAlsoBad : ApplicationException {
-			public override Exception GetBaseException ()
-			{
-				return base.GetBaseException ();
-			}
-		}
+      public override string DoSomething()
+      {
+        return base.DoSomething();
+      }
+    }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<TestClassGood> ("DoSomething", new Type [] { typeof (string) });
-			AssertRuleSuccess<TestClassGood> ("DoSomething", Type.EmptyTypes);
-			AssertRuleSuccess<TestClassGood> ("Equals");
-			AssertRuleSuccess<TestClassGood> ("ToString");
-			AssertRuleSuccess<TestClassAlsoGood> ("Equals");
-		}
+    private class TestClassAlsoBad : ApplicationException
+    {
+      public override Exception GetBaseException()
+      {
+        return base.GetBaseException();
+      }
+    }
 
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<TestClassBad> ("ToString", 1);
-			AssertRuleFailure<TestClassBad> ("DoSomething", new Type [] { typeof (string) }, 1);
-			AssertRuleFailure<TestClassBad> ("DoSomething", Type.EmptyTypes, 1);
-			AssertRuleFailure<TestClassAlsoBad> ("GetBaseException", 1);
-			AssertRuleFailure<AbstractTestClass> ("DoNothing", 1);
-		}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<TestClassGood>("DoSomething", new Type[] { typeof(string) });
+      AssertRuleSuccess<TestClassGood>("DoSomething", Type.EmptyTypes);
+      AssertRuleSuccess<TestClassGood>("Equals");
+      AssertRuleSuccess<TestClassGood>("ToString");
+      AssertRuleSuccess<TestClassAlsoGood>("Equals");
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<TestBaseClass> ("NonVirtualDoSomething");
-			AssertRuleDoesNotApply<TestClassGood> (".ctor");
-			AssertRuleDoesNotApply<TestClassBad> (".ctor");
-			AssertRuleDoesNotApply<AbstractTestClass> ("DoSomething");
-		}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<TestClassBad>("ToString", 1);
+      AssertRuleFailure<TestClassBad>("DoSomething", new Type[] { typeof(string) }, 1);
+      AssertRuleFailure<TestClassBad>("DoSomething", Type.EmptyTypes, 1);
+      AssertRuleFailure<TestClassAlsoBad>("GetBaseException", 1);
+      AssertRuleFailure<AbstractTestClass>("DoNothing", 1);
+    }
 
-		public class BaseClass {
-			public virtual string DoSomething (int i)
-			{
-				return i.ToString();
-			}
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<TestBaseClass>("NonVirtualDoSomething");
+      AssertRuleDoesNotApply<TestClassGood>(".ctor");
+      AssertRuleDoesNotApply<TestClassBad>(".ctor");
+      AssertRuleDoesNotApply<AbstractTestClass>("DoSomething");
+    }
 
-		public class GoodClass : BaseClass {
-			public string Property { get; set; }
+    public class BaseClass
+    {
+      public virtual string DoSomething(int i)
+      {
+        return i.ToString();
+      }
+    }
 
-			public override string DoSomething (int i)
-			{
-				Property = base.DoSomething (i);
-				return Property;
-			}
-		}
+    public class GoodClass : BaseClass
+    {
+      public string Property { get; set; }
 
-		[Test]
-		public void Bug663492 ()
-		{
-			AssertRuleSuccess<GoodClass> ("DoSomething");
-		}
-	}
+      public override string DoSomething(int i)
+      {
+        Property = base.DoSomething(i);
+        return Property;
+      }
+    }
+
+    [Test]
+    public void Bug663492()
+    {
+      AssertRuleSuccess<GoodClass>("DoSomething");
+    }
+  }
 }

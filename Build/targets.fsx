@@ -288,6 +288,9 @@ module SolutionRoot =
 
         let v' = !Version
 
+        // make the first one `true` if we ever want the static fields
+        let config = new AssemblyInfoFileConfig(false, false, "Gendarme")
+
         AssemblyInfoFile.create
             "./_Generated/AssemblyStaticInfo.fs"
             [ AssemblyInfo.Product "altcode.gendarme"
@@ -302,7 +305,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default)
+            (Some config)
 
         AssemblyInfoFile.create
             "./_Generated/AssemblyStaticInfo.cs"
@@ -319,7 +322,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default)
+            (Some config)
 
         AssemblyInfoFile.create
             "./_Generated/MockerAssemblyStaticInfo.cs"
@@ -336,7 +339,7 @@ module SolutionRoot =
               AssemblyInfo.Metadata("RepositoryUrl", "https://github.com/SteveGilham/Gendarme")
               AssemblyInfo.Metadata("CommitHash", commitHash)
               AssemblyInfo.Metadata("Branch", currentBranch) ]
-            (Some AssemblyInfoFileConfig.Default))
+            (Some config))
 
 // Basic compilation
 
@@ -445,9 +448,9 @@ _Target
 
                     printfn "%s" (finish text text2))
 
-        let deprecatedRules = [ 
-          "-Microsoft.Usage#CA2202" // double dispose
-          "-Microsoft.Security#CA2104" ] // // :DoNotDeclareReadOnlyMutableReferenceTypes"
+        let deprecatedRules =
+            [ "-Microsoft.Usage#CA2202" // double dispose
+              "-Microsoft.Security#CA2104" ] // // :DoNotDeclareReadOnlyMutableReferenceTypes"
 
         let gendarmeRules =
             [ "-Microsoft.Design#CA1002" // :DoNotExposeGenericLists"
@@ -456,7 +459,7 @@ _Target
               "-Microsoft.Design#CA1021" //:AvoidOutParameters"
               "-Microsoft.Design#CA1028" // :EnumStorageShouldBeInt32"
               "-Microsoft.Design#CA1031" // :DoNotCatchGeneralExceptionTypes"
-              "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"            
+              "-Microsoft.Design#CA1051" //:DoNotDeclareVisibleInstanceFields"
               "-Microsoft.Design#CA1062" //:Validate arguments of public methods" -- candidate
               "-Microsoft.Maintainability#CA1502" //:AvoidExcessiveComplexity" -- candidate
               "-Microsoft.Usage#CA1801" // :ReviewUnusedParameters"
@@ -474,11 +477,11 @@ _Target
               "-Microsoft.Maintainability#CA1506" ] // AvoidExcessiveClassCoupling
 
         let standardRules =
-            [ "-Microsoft.Design#CA1020"// small namespaces
+            [ "-Microsoft.Design#CA1020" // small namespaces
               "-Microsoft.Naming#CA1702" // :CompoundWordsShouldBeCasedCorrectly" // too opinionated
               "-Microsoft.Naming#CA1704" // :IdentifiersShouldBeSpelledCorrectly"
               "-Microsoft.Naming#CA2204" // Literals should be spelled correctly
-              "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ] 
+              "-Microsoft.Usage#CA2243:AttributeStringLiteralsShouldParseCorrectly" ]
 
         let defaultFSharpRules =
             List.concat [ deprecatedRules
@@ -603,7 +606,11 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+        !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
+        |> Seq.filter
+            (fun p ->
+                (p |> Path.GetFileNameWithoutExtension)
+                <> "Test.Rules")
         |> Seq.iter
             (fun p ->
                 let tname = Path.GetFileNameWithoutExtension p
@@ -625,12 +632,12 @@ _Target
                 // while fixing
                 let maxFail =
                     match tname with
-                    | "Tests.Framework" -> 3
-                    | "Tests.Rules.Concurrency" -> 6
-                    | "Tests.Rules.Correctness" -> 5
-                    | "Tests.Rules.Interoperability" -> 18
-                    | "Tests.Rules.Maintainability" -> 1
-                    | "Tests.Rules.Smells" -> 2
+                    | "Test.Framework" -> 3
+                    | "Test.Rules.Concurrency" -> 6
+                    | "Test.Rules.Correctness" -> 5
+                    | "Test.Rules.Interoperability" -> 18
+                    | "Test.Rules.Maintainability" -> 1
+                    | "Test.Rules.Smells" -> 2
                     | _ -> 0
 
                 Assert.That(
@@ -648,7 +655,11 @@ _Target
     (fun _ ->
         Directory.ensure "./_Reports"
 
-        !!(@"./**/Tests.*.*sproj")
+        !!(@"./**/Test.*.*sproj")
+        |> Seq.filter
+            (fun p ->
+                (p |> Path.GetFileNameWithoutExtension)
+                <> "Test.Rules")
         |> Seq.iter
             (fun proj ->
                 try
@@ -663,12 +674,12 @@ _Target
                 with
                 | x -> // while fixing
                     match Path.GetFileNameWithoutExtension proj with
-                    | "Tests.Framework"
-                    | "Tests.Rules.Concurrency"
-                    | "Tests.Rules.Correctness"
-                    | "Tests.Rules.Interoperability"
-                    | "Tests.Rules.Maintainability"
-                    | "Tests.Rules.Smells" -> printfn "%A" x
+                    | "Test.Framework"
+                    | "Test.Rules.Concurrency"
+                    | "Test.Rules.Correctness"
+                    | "Test.Rules.Interoperability"
+                    | "Test.Rules.Maintainability"
+                    | "Test.Rules.Smells" -> printfn "%A" x
                     | _ -> reraise ()))
 
 _Target "Coverage" ignore
@@ -682,7 +693,11 @@ _Target
         Directory.ensure report
 
         let coverage =
-            !!(@"_Binaries/Tests.*/Debug/net472/Tests.*.dll")
+            !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
+            |> Seq.filter
+                (fun p ->
+                    (p |> Path.GetFileNameWithoutExtension)
+                    <> "Test.Rules")
             |> Seq.fold
                 (fun l test ->
                     let tname = test |> Path.GetFileNameWithoutExtension
@@ -756,12 +771,12 @@ _Target
                                 Int32.MaxValue
 
                         match tname with
-                        | "Tests.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
-                        | "Tests.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
-                        | "Tests.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
-                        | "Tests.Rules.Interoperability" when exitCode () <= 18 -> printfn "%A" x.Message
-                        | "Tests.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
-                        | "Tests.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | "Test.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
+                        | "Test.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
+                        | "Test.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
+                        | "Test.Rules.Interoperability" when exitCode () <= 18 -> printfn "%A" x.Message
+                        | "Test.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
+                        | "Test.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
                         | _ -> reraise ()
 
                     altReport :: l)
@@ -796,7 +811,11 @@ _Target
         Directory.ensure report
 
         let coverage =
-            !!(@"gendarme/**/Tests.*.*sproj")
+            !!(@"gendarme/**/Test.*.*sproj")
+            |> Seq.filter
+                (fun p ->
+                    (p |> Path.GetFileNameWithoutExtension)
+                    <> "Test.Rules")
             |> Seq.fold
                 (fun l test ->
                     printfn "%A" test
@@ -856,12 +875,12 @@ _Target
                     with
                     | x -> // while fixing
                         match tname with
-                        | "Tests.Framework"
-                        | "Tests.Rules.Concurrency"
-                        | "Tests.Rules.Correctness"
-                        | "Tests.Rules.Interoperability"
-                        | "Tests.Rules.Maintainability"
-                        | "Tests.Rules.Smells" -> printfn "%A" x
+                        | "Test.Framework"
+                        | "Test.Rules.Concurrency"
+                        | "Test.Rules.Correctness"
+                        | "Test.Rules.Interoperability"
+                        | "Test.Rules.Maintainability"
+                        | "Test.Rules.Smells" -> printfn "%A" x
                         | _ -> reraise ()
 
                     altReport2 :: l)
@@ -1357,24 +1376,25 @@ _Target
         |> Async.RunSynchronously
         |> Seq.exists (fun x -> x <> 0)
         |> failOnIssuesFound)
-        
+
 _Target
     "CheckAltCover"
     (fun _ -> // Needs debug because release is compiled --standalone which contaminates everything
         Directory.ensure "./_Reports"
         let packroot = Path.GetFullPath "./_Packaging"
         let working = Path.getFullName "./_Unpack-tool"
-        let altcover = Path.getFullName  "../altcover"
+        let altcover = Path.getFullName "../altcover"
         let mutable set = false
 
         Directory.ensure working
 
         let nugget =
-            !! (packroot @@ "altcode.gendarme-tool.*.nupkg")
+            !!(packroot @@ "altcode.gendarme-tool.*.nupkg")
             |> Seq.last
 
         let nuggetVer =
-            (nugget |> Path.GetFileNameWithoutExtension).Substring("altcode.gendarme-tool.".Length)
+            (nugget |> Path.GetFileNameWithoutExtension)
+                .Substring("altcode.gendarme-tool.".Length)
 
         try
             let config =
@@ -1444,24 +1464,24 @@ _Target
                               Console = true
                               Log = Path.GetFullPath "./_Reports/altcoverCheck.html"
                               LogKind = Gendarme.LogKind.Html
-                              Targets = files |> Seq.map (fun f -> altcover @@  f)
+                              Targets = files |> Seq.map (fun f -> altcover @@ f)
                               ToolType = ToolType.CreateGlobalTool()
                               FailBuildOnDefect = true })
-            finally
-                if set then
-                    Actions.RunDotnet
-                        (fun o' ->
-                            { dotnetOptions o' with
-                                  WorkingDirectory = working })
-                        "tool"
-                        ("uninstall -g altcode.gendarme-tool")
-                        "uninstalled"
+        finally
+            if set then
+                Actions.RunDotnet
+                    (fun o' ->
+                        { dotnetOptions o' with
+                              WorkingDirectory = working })
+                    "tool"
+                    ("uninstall -g altcode.gendarme-tool")
+                    "uninstalled"
 
-                let folder =
-                    nugetCache @@ "altcode.gendarme-tool" @@ nuggetVer
+            let folder =
+                nugetCache @@ "altcode.gendarme-tool" @@ nuggetVer
 
-                Shell.mkdir folder
-                Shell.deleteDir folder)
+            Shell.mkdir folder
+            Shell.deleteDir folder)
 
 _Target "All" ignore
 
@@ -1508,7 +1528,9 @@ Target.activateFinal "ResetConsoleColours"
 ==> "DotnetGlobalIntegration"
 ==> "OperationalTest"
 
-"BuildDebug" ==> "DotnetGlobalIntegration" ==> "CheckAltCover"
+"BuildDebug"
+==> "DotnetGlobalIntegration"
+==> "CheckAltCover"
 
 "OperationalTest" ==> "All"
 

@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Framework.Engines.NamespaceEngine
 //
 // Authors:
@@ -32,105 +32,110 @@ using Mono.Cecil;
 
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Framework.Engines {
+namespace Gendarme.Framework.Engines
+{
+  public class NamespaceEngine : Engine
+  {
+    private static readonly Dictionary<AssemblyDefinition, HashSet<string>> assemblies = new Dictionary<AssemblyDefinition, HashSet<string>>();
+    private static readonly Dictionary<string, HashSet<TypeDefinition>> namespaces = new Dictionary<string, HashSet<TypeDefinition>>();
 
-	public class NamespaceEngine : Engine {
+    public override void Initialize(EngineController controller)
+    {
+      base.Initialize(controller);
+      controller.BuildingType += new EventHandler<EngineEventArgs>(OnType);
+      assemblies.Clear();
+      namespaces.Clear();
+    }
 
-		static Dictionary<AssemblyDefinition, HashSet<string>> assemblies = new Dictionary<AssemblyDefinition,HashSet<string>> ();
-		static Dictionary<string, HashSet<TypeDefinition>> namespaces = new Dictionary<string,HashSet<TypeDefinition>> ();
+    private void OnType(object sender, EngineEventArgs e)
+    {
+      TypeDefinition type = (sender as TypeDefinition);
+      string nspace = type.GetTypeName().Namespace;
+      // we keep track of namespaces per assemblies
+      AssemblyDefinition assembly = type.Module.Assembly;
+      if (assemblies.TryGetValue(assembly, out HashSet<string> ns))
+      {
+        ns.AddIfNew(nspace);
+      }
+      else
+      {
+        ns = new HashSet<string>
+        {
+          nspace
+        };
+        assemblies.Add(assembly, ns);
+      }
 
-		public override void Initialize (EngineController controller)
-		{
-			base.Initialize (controller);
-			controller.BuildingType += new EventHandler<EngineEventArgs> (OnType);
-			assemblies.Clear ();
-			namespaces.Clear ();
-		}
+      // and types per namespaces
+      if (!namespaces.TryGetValue(nspace, out HashSet<TypeDefinition> td))
+      {
+        td = new HashSet<TypeDefinition>();
+        namespaces.Add(nspace, td);
+      }
+      td.Add(type);
+    }
 
-		void OnType (object sender, EngineEventArgs e)
-		{
-			TypeDefinition type = (sender as TypeDefinition);
-            string nspace = type.GetTypeName().Namespace;
-			// we keep track of namespaces per assemblies
-			AssemblyDefinition assembly = type.Module.Assembly;
-			HashSet<string> ns;
-			if (assemblies.TryGetValue (assembly, out ns)) {
-				ns.AddIfNew (nspace);
-			} else {
-				ns = new HashSet<string> ();
-				ns.Add (nspace);
-				assemblies.Add (assembly, ns);
-			}
+    /// <summary>
+    /// Return all namespaces from all assemblies being analyzed.
+    /// </summary>
+    /// <returns>All namespaces defined in the assembly set</returns>
+    public static IEnumerable<string> AllNamespaces()
+    {
+      foreach (string ns in namespaces.Keys)
+      {
+        yield return ns;
+      }
+    }
 
-			// and types per namespaces
-			HashSet<TypeDefinition> td;
-			if (!namespaces.TryGetValue (nspace, out td)) {
-				td = new HashSet<TypeDefinition> ();
-				namespaces.Add (nspace, td);
-			}
-			td.Add (type);
-		}
+    /// <summary>
+    /// Return if a namespace exist inside the assembly set
+    /// </summary>
+    /// <param name="nameSpace">Namespace to confirm existance</param>
+    /// <returns>True if the namespace exists, False otherwise</returns>
+    public static bool Exists(string nameSpace)
+    {
+      if (nameSpace == null)
+        throw new ArgumentNullException(nameof(nameSpace));
 
-		/// <summary>
-		/// Return all namespaces from all assemblies being analyzed.
-		/// </summary>
-		/// <returns>All namespaces defined in the assembly set</returns>
-		public static IEnumerable<string> AllNamespaces ()
-		{
-			foreach (string ns in namespaces.Keys) {
-				yield return ns;
-			}
-		}
+      return namespaces.ContainsKey(nameSpace);
+    }
 
-		/// <summary>
-		/// Return if a namespace exist inside the assembly set
-		/// </summary>
-		/// <param name="nameSpace">Namespace to confirm existance</param>
-		/// <returns>True if the namespace exists, False otherwise</returns>
-		public static bool Exists (string nameSpace)
-		{
-			if (nameSpace == null)
-				throw new ArgumentNullException ("nameSpace");
+    /// <summary>
+    /// Return all namespaces defined inside the specified assembly.
+    /// </summary>
+    /// <param name="assembly">Assembly to search into</param>
+    /// <returns>All namespaces defined in the specified assembly</returns>
+    public static IEnumerable<string> NamespacesInside(AssemblyDefinition assembly)
+    {
+      if (assembly == null)
+        throw new ArgumentNullException(nameof(assembly));
 
-			return namespaces.ContainsKey (nameSpace);
-		}
+      if (!assemblies.TryGetValue(assembly, out HashSet<string> namespaces))
+        yield return null;
 
-		/// <summary>
-		/// Return all namespaces defined inside the specified assembly.
-		/// </summary>
-		/// <param name="assembly">Assembly to search into</param>
-		/// <returns>All namespaces defined in the specified assembly</returns>
-		public static IEnumerable<string> NamespacesInside (AssemblyDefinition assembly)
-		{
-			if (assembly == null)
-				throw new ArgumentNullException ("assembly");
+      foreach (string ns in namespaces)
+      {
+        yield return ns;
+      }
+    }
 
-			HashSet<string> namespaces = null;
-			if (!assemblies.TryGetValue (assembly, out namespaces))
-				yield return null;
+    /// <summary>
+    /// Return all types defined inside a namespace across all assemblies.
+    /// </summary>
+    /// <param name="nameSpace">Namespace to search into</param>
+    /// <returns>All TypeDefinition defined the the specified namespace</returns>
+    public static IEnumerable<TypeDefinition> TypesInside(string nameSpace)
+    {
+      if (nameSpace == null)
+        throw new ArgumentNullException(nameof(nameSpace));
 
-			foreach (string ns in namespaces) {
-				yield return ns;
-			}
-		}
+      if (!namespaces.TryGetValue(nameSpace, out HashSet<TypeDefinition> types))
+        yield return null;
 
-		/// <summary>
-		/// Return all types defined inside a namespace across all assemblies.
-		/// </summary>
-		/// <param name="nameSpace">Namespace to search into</param>
-		/// <returns>All TypeDefinition defined the the specified namespace</returns>
-		public static IEnumerable<TypeDefinition> TypesInside (string nameSpace)
-		{
-			if (nameSpace == null)
-				throw new ArgumentNullException ("nameSpace");
-
-			HashSet<TypeDefinition> types = null;
-			if (!namespaces.TryGetValue (nameSpace, out types))
-				yield return null;
-
-			foreach (TypeDefinition type in types) {
-				yield return type;
-			}
-		}
-	}
+      foreach (TypeDefinition type in types)
+      {
+        yield return type;
+      }
+    }
+  }
 }

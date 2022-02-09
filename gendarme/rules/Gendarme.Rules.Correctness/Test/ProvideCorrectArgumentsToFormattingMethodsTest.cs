@@ -33,324 +33,331 @@ using Gendarme.Rules.Correctness;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
-using Tests.Rules.Correctness;
 
-namespace Test.Rules.Correctness {
-	[TestFixture]
-	public class ProvideCorrectArgumentsToFormattingMethodsTest : MethodRuleTestFixture<ProvideCorrectArgumentsToFormattingMethodsRule> {
-		[Test]
-		public void SkipOnBodylessMethodsTest ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-		}
+namespace Test.Rules.Correctness
+{
+  [TestFixture]
+  public class ProvideCorrectArgumentsToFormattingMethodsTest : MethodRuleTestFixture<ProvideCorrectArgumentsToFormattingMethodsRule>
+  {
+    [Test]
+    public void SkipOnBodylessMethodsTest()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+    }
 
-		[Test]
-		public void SkipOnEmptyMethodTest ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
-		
-		class FormattingCases {
-			public void MethodWithBadFormatting (object value)
-			{
-				String.Format ("The value {0} isn't valid");
-			}
-		
-			public void MethodWithGoodFormatting (object value)
-			{
-				String.Format ("The value {0} isn't valid", value);
-			}
+    [Test]
+    public void SkipOnEmptyMethodTest()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-			public void MethodWithGoodFormattingAndThreeParams (object value1, object value2, object value3)
-			{
-				String.Format ("{0} {1} {2}", value1, value2, value3);
-			}
+    private class FormattingCases
+    {
+      public void MethodWithBadFormatting(object value)
+      {
+        String.Format("The value {0} isn't valid");
+      }
 
-			public void MethodWithGoodFormattingAndFiveParams (object value1, object value2, object value3, object value4, object value5)
-			{
-				String.Format ("{0} {1} {2} {3} {4}", value1, value2, value3, value4, value5);
-			}
+      public void MethodWithGoodFormatting(object value)
+      {
+        String.Format("The value {0} isn't valid", value);
+      }
 
-			public void MethodWithGoodFormattingAndSomeCalls (object value1, object value2)
-			{
-				String.Format ("{0} {1}", value1.ToString (), value2.ToString ());
-			}
+      public void MethodWithGoodFormattingAndThreeParams(object value1, object value2, object value3)
+      {
+        String.Format("{0} {1} {2}", value1, value2, value3);
+      }
 
-			public void MethodWithGoodFormattingAndDateTimes (DateTime dateTime)
-			{
-				String.Format ("'{0:yyyy-MM-dd HH:mm:ss}'", dateTime);
-			}
+      public void MethodWithGoodFormattingAndFiveParams(object value1, object value2, object value3, object value4, object value5)
+      {
+        String.Format("{0} {1} {2} {3} {4}", value1, value2, value3, value4, value5);
+      }
 
-			public void MethodWithGoodFormattingAndRepeatedIndexes (object value)
-			{
-				String.Format ("{0} - {0}", value);
-			}
+      public void MethodWithGoodFormattingAndSomeCalls(object value1, object value2)
+      {
+        String.Format("{0} {1}", value1.ToString(), value2.ToString());
+      }
 
-			public void MethodWithSpecialCharacters (object value)
-			{
-				String.Format ("The {2} '{0}' is not valid in the locked list for this section.  The following {3} can be locked: '{1}'", value, value, value, value);
-			}
+      public void MethodWithGoodFormattingAndDateTimes(DateTime dateTime)
+      {
+        String.Format("'{0:yyyy-MM-dd HH:mm:ss}'", dateTime);
+      }
 
-			public void MethodWithGoodFormattingButWithMultipleBrackets (int height, int width)
-			{
-				String.Format ("{{Width={0}, Height={1}}}", width, height);
-			}
+      public void MethodWithGoodFormattingAndRepeatedIndexes(object value)
+      {
+        String.Format("{0} - {0}", value);
+      }
 
-			public void MethodWithGoodFormattingLoadingFromLocal ()
-			{
-				string message = "The error {0} is not valid";
-				string val = "Foo";
-				String.Format (message, val);
-			}
+      public void MethodWithSpecialCharacters(object value)
+      {
+        String.Format("The {2} '{0}' is not valid in the locked list for this section.  The following {3} can be locked: '{1}'", value, value, value, value);
+      }
 
-			public void MethodWithBadFormattingLoadingFromLocal ()
-			{
-				string message = "The error {0} is not valid";
-				string val = "Foo";
-				String.Format (message);
-			}
+      public void MethodWithGoodFormattingButWithMultipleBrackets(int height, int width)
+      {
+        String.Format("{{Width={0}, Height={1}}}", width, height);
+      }
 
-			public void MethodWithoutParameters ()
-			{
-				String.Format ("I forget include parameters.");
-			}
+      public void MethodWithGoodFormattingLoadingFromLocal()
+      {
+        string message = "The error {0} is not valid";
+        string val = "Foo";
+        String.Format(message, val);
+      }
 
-			public void MethodCallingEnumFormat (Type type, object value)
-			{
-				Enum.Format (type, value, "G");
-			}
+      public void MethodWithBadFormattingLoadingFromLocal()
+      {
+        string message = "The error {0} is not valid";
+        string val = "Foo";
+        String.Format(message);
+      }
 
-			public void MethodWithGoodFormattingAndArrayParameter ()
-			{
-				object [] values = { "value1", "value2", "value3" };
-				object [] notValues = { "notValue1", "notValue2" };
-				String.Format ("3 values : {0} {1} {2}", values);
-			}
+      public void MethodWithoutParameters()
+      {
+        String.Format("I forget include parameters.");
+      }
 
-			public void MethodWithBadFormattingAndArrayParameter ()
-			{
-				object [] notValues = { "notValue1", "notValue2" };
-				object [] values = { "value1", "value2", "value3" };
-				String.Format ("3 values : {0} {1} {2}", notValues);
-			}
+      public void MethodCallingEnumFormat(Type type, object value)
+      {
+        Enum.Format(type, value, "G");
+      }
 
-			private string GetGoodFormat ()
-			{
-				return "{0} - {1}";
-			}
-			public void MethodCallingMethodToGetGoodFormat ()
-			{
-				String.Format (GetGoodFormat (), "value1", "value2");
-			}
+      public void MethodWithGoodFormattingAndArrayParameter()
+      {
+        object[] values = { "value1", "value2", "value3" };
+        object[] notValues = { "notValue1", "notValue2" };
+        String.Format("3 values : {0} {1} {2}", values);
+      }
 
-			public void MethodWithGoodFormattingAndIFormatProvider ()
-			{
-				String.Format (new CultureInfo ("en-US"), "Format : {0}", "value");
-			}
+      public void MethodWithBadFormattingAndArrayParameter()
+      {
+        object[] notValues = { "notValue1", "notValue2" };
+        object[] values = { "value1", "value2", "value3" };
+        String.Format("3 values : {0} {1} {2}", notValues);
+      }
 
-			public void MethodWithBadFormattingAndIFormatProvider ()
-			{
-				String.Format (new CultureInfo ("en-US"), "Format : {0} {1}", "value1");
-			}
+      private string GetGoodFormat()
+      {
+        return "{0} - {1}";
+      }
 
-			public void MethodWithGoodFormattingAndStringResource ()
-			{
-				String.Format (Resource.OneParameter, "parameter1");
-				String.Format (Resource.TwoParameter, "parameter1", "parameter2");
-			}
+      public void MethodCallingMethodToGetGoodFormat()
+      {
+        String.Format(GetGoodFormat(), "value1", "value2");
+      }
 
-			public void MethodWithBadFormattingAndStringResource ()
-			{
-				String.Format (Resource.OneParameter, "parameter1", "parameter2");
-				String.Format (Resource.TwoParameter, "parameter1");
-			}
-		}
+      public void MethodWithGoodFormattingAndIFormatProvider()
+      {
+        String.Format(new CultureInfo("en-US"), "Format : {0}", "value");
+      }
 
-		[Test]
-		public void FailOnMethodWithBadFormattingTest ()
-		{
-			AssertRuleFailure<FormattingCases> ("MethodWithBadFormatting", 1);
-		}
+      public void MethodWithBadFormattingAndIFormatProvider()
+      {
+        String.Format(new CultureInfo("en-US"), "Format : {0} {1}", "value1");
+      }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormatting");
-		}
-		
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndThreeParamsTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndThreeParams");
-		}
-		
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndFiveParamsTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndFiveParams");
-		}
+      public void MethodWithGoodFormattingAndStringResource()
+      {
+        String.Format(Resource.OneParameter, "parameter1");
+        String.Format(Resource.TwoParameter, "parameter1", "parameter2");
+      }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndSomeCallsTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndSomeCalls");
-		}
+      public void MethodWithBadFormattingAndStringResource()
+      {
+        String.Format(Resource.OneParameter, "parameter1", "parameter2");
+        String.Format(Resource.TwoParameter, "parameter1");
+      }
+    }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndDateTimesTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndDateTimes");
-		}
+    [Test]
+    public void FailOnMethodWithBadFormattingTest()
+    {
+      AssertRuleFailure<FormattingCases>("MethodWithBadFormatting", 1);
+    }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndRepeatedIndexesTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndRepeatedIndexes");
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormatting");
+    }
 
-		[Test]
-		public void SuccessOnMethodWithSpecialCharactersTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithSpecialCharacters");
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndThreeParamsTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndThreeParams");
+    }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingButWithMultipleBracketsTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingButWithMultipleBrackets");
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndFiveParamsTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndFiveParams");
+    }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingLoadingFromLocalTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingLoadingFromLocal");
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndSomeCallsTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndSomeCalls");
+    }
 
-		[Test]
-		public void FailOnMethodWithBadFormattingLoadingFromLocalTest ()
-		{
-			AssertRuleFailure<FormattingCases> ("MethodWithBadFormattingLoadingFromLocal", 1);
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndDateTimesTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndDateTimes");
+    }
 
-		[Test]
-		public void FailOnMethodWithoutParametersTest ()
-		{
-			AssertRuleFailure<FormattingCases> ("MethodWithoutParameters", 1);
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndRepeatedIndexesTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndRepeatedIndexes");
+    }
 
-		[Test]
-		public void SkipOnMethodCallingEnumFormatTest ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodCallingEnumFormat");
-		}
+    [Test]
+    public void SuccessOnMethodWithSpecialCharactersTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithSpecialCharacters");
+    }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndArrayParameter ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndArrayParameter");
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingButWithMultipleBracketsTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingButWithMultipleBrackets");
+    }
 
-		[Test]
-		public void FailOnMethodWithBadFormattingAndArrayParameter ()
-		{
-			AssertRuleFailure<FormattingCases> ("MethodWithBadFormattingAndArrayParameter");
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingLoadingFromLocalTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingLoadingFromLocal");
+    }
 
-		[Test]
-		public void SuccessOnMethodCallingMethodToGetGoodFormat ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodCallingMethodToGetGoodFormat");
-		}
+    [Test]
+    public void FailOnMethodWithBadFormattingLoadingFromLocalTest()
+    {
+      AssertRuleFailure<FormattingCases>("MethodWithBadFormattingLoadingFromLocal", 1);
+    }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndIFormatProvider ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndIFormatProvider");
-		}
+    [Test]
+    public void FailOnMethodWithoutParametersTest()
+    {
+      AssertRuleFailure<FormattingCases>("MethodWithoutParameters", 1);
+    }
 
-		[Test]
-		public void FailOnMethodWithBadFormattingAndIFormatProvider ()
-		{
-			AssertRuleFailure<FormattingCases> ("MethodWithBadFormattingAndIFormatProvider");
-		}
+    [Test]
+    public void SkipOnMethodCallingEnumFormatTest()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodCallingEnumFormat");
+    }
 
-		[Test]
-		public void SuccessOnMethodWithGoodFormattingAndStringResource ()
-		{
-			AssertRuleSuccess<FormattingCases> ("MethodWithGoodFormattingAndStringResource");
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndArrayParameter()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndArrayParameter");
+    }
 
-		[Test]
-		public void FailOnMethodWithBadFormattingAndStringResource ()
-		{
-			AssertRuleFailure<FormattingCases> ("MethodWithBadFormattingAndStringResource", 2);
-		}
+    [Test]
+    public void FailOnMethodWithBadFormattingAndArrayParameter()
+    {
+      AssertRuleFailure<FormattingCases>("MethodWithBadFormattingAndArrayParameter");
+    }
 
-		string InstanceLocalize (string s)
-		{
-			return s;
-		}
+    [Test]
+    public void SuccessOnMethodCallingMethodToGetGoodFormat()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodCallingMethodToGetGoodFormat");
+    }
 
-		void ParseUsingInstanceMethod ()
-		{
-			try {
-				throw new NotSupportedException ();
-			}
-			catch (Exception e) {
-				throw new FormatException (String.Format (InstanceLocalize ("{0} {1}"), e.Source, e), e);
-			}
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndIFormatProvider()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndIFormatProvider");
+    }
 
-		static string StaticLocalize (string s)
-		{
-			return s;
-		}
+    [Test]
+    public void FailOnMethodWithBadFormattingAndIFormatProvider()
+    {
+      AssertRuleFailure<FormattingCases>("MethodWithBadFormattingAndIFormatProvider");
+    }
 
-		void ParseUsingStaticMethod ()
-		{
-			try {
-				throw new NotSupportedException ();
-			}
-			catch (Exception e) {
-				throw new FormatException (String.Format (StaticLocalize ("{0} {1}"), e.Source, e), e);
-			}
-		}
+    [Test]
+    public void SuccessOnMethodWithGoodFormattingAndStringResource()
+    {
+      AssertRuleSuccess<FormattingCases>("MethodWithGoodFormattingAndStringResource");
+    }
 
-		[Test]
-		public void NoConstantString ()
-		{
-			AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest> ("ParseUsingInstanceMethod");
-			AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest> ("ParseUsingStaticMethod");
-		}
+    [Test]
+    public void FailOnMethodWithBadFormattingAndStringResource()
+    {
+      AssertRuleFailure<FormattingCases>("MethodWithBadFormattingAndStringResource", 2);
+    }
 
-		string GetFormat (string a)
-		{
-			return String.Format ("{{0", a);
-		}
+    private string InstanceLocalize(string s)
+    {
+      return s;
+    }
 
-		string End (string a)
-		{
-			return String.Format ("{", a);
-		}
+    private void ParseUsingInstanceMethod()
+    {
+      try
+      {
+        throw new NotSupportedException();
+      }
+      catch (Exception e)
+      {
+        throw new FormatException(String.Format(InstanceLocalize("{0} {1}"), e.Source, e), e);
+      }
+    }
 
-		string ConditionalIfString (bool value)
-		{
-			return String.Format ("{0} {1}", value ? "true" : "false", "uho");
-		}
+    private static string StaticLocalize(string s)
+    {
+      return s;
+    }
 
-		string ConditionalIfCalls (bool value)
-		{
-			return String.Format ("{0} {1}", value ? ConditionalIfString (value) : ConditionalIfString (!value), "uho");
-		}
+    private void ParseUsingStaticMethod()
+    {
+      try
+      {
+        throw new NotSupportedException();
+      }
+      catch (Exception e)
+      {
+        throw new FormatException(String.Format(StaticLocalize("{0} {1}"), e.Source, e), e);
+      }
+    }
 
-		[Test]
-		public void SpecialCase ()
-		{
-			AssertRuleFailure<ProvideCorrectArgumentsToFormattingMethodsTest> ("GetFormat", 1);
-			AssertRuleFailure<ProvideCorrectArgumentsToFormattingMethodsTest> ("End", 1);
+    [Test]
+    public void NoConstantString()
+    {
+      AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest>("ParseUsingInstanceMethod");
+      AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest>("ParseUsingStaticMethod");
+    }
 
-			AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest> ("ConditionalIfString");
-			AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest> ("ConditionalIfCalls");
-		}
-	}
+    private string GetFormat(string a)
+    {
+      return String.Format("{{0", a);
+    }
+
+    private string End(string a)
+    {
+      return String.Format("{", a);
+    }
+
+    private string ConditionalIfString(bool value)
+    {
+      return String.Format("{0} {1}", value ? "true" : "false", "uho");
+    }
+
+    private string ConditionalIfCalls(bool value)
+    {
+      return String.Format("{0} {1}", value ? ConditionalIfString(value) : ConditionalIfString(!value), "uho");
+    }
+
+    [Test]
+    public void SpecialCase()
+    {
+      AssertRuleFailure<ProvideCorrectArgumentsToFormattingMethodsTest>("GetFormat", 1);
+      AssertRuleFailure<ProvideCorrectArgumentsToFormattingMethodsTest>("End", 1);
+
+      AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest>("ConditionalIfString");
+      AssertRuleSuccess<ProvideCorrectArgumentsToFormattingMethodsTest>("ConditionalIfCalls");
+    }
+  }
 }

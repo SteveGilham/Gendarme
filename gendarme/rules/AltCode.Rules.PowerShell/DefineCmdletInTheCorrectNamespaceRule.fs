@@ -38,6 +38,7 @@ type DefineCmdletInTheCorrectNamespaceRule() =
               Tools.resource "IncorrectNamespace",
               ns
             )
+
           this.Runner.Report(td, Severity.High, Confidence.High, msg)
 
         this.Runner.CurrentRuleResult

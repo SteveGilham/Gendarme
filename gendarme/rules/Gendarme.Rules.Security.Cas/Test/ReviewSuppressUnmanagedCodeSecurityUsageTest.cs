@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,80 +39,84 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Tests.Rules.Security.Cas {
+namespace Test.Rules.Security.Cas
+{
+  [TestFixture]
+  public class ReviewSuppressUnmanagedCodeSecurityUsageTypeTest : TypeRuleTestFixture<ReviewSuppressUnmanagedCodeSecurityUsageRule>
+  {
+    [Test]
+    public void Enum()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+    }
 
-	[TestFixture]
-	public class ReviewSuppressUnmanagedCodeSecurityUsageTypeTest : TypeRuleTestFixture<ReviewSuppressUnmanagedCodeSecurityUsageRule> {
+    // class
+    [SuppressUnmanagedCodeSecurity]
+    private class SuppressedClass
+    {
+    }
 
-		[Test]
-		public void Enum ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-		}
+    private class NormalClass
+    {
+    }
 
-		// class
-		[SuppressUnmanagedCodeSecurity]
-		class SuppressedClass {
-		}
+    [Test]
+    public void Class()
+    {
+      AssertRuleFailure<SuppressedClass>(1);
+      AssertRuleSuccess<NormalClass>();
+    }
 
-		class NormalClass {
-		}
+    // interface
 
-		[Test]
-		public void Class ()
-		{
-			AssertRuleFailure<SuppressedClass> (1);
-			AssertRuleSuccess<NormalClass> ();
-		}
+    [SuppressUnmanagedCodeSecurity]
+    private interface SuppressedInterface
+    {
+    }
 
-		// interface
+    private interface NormalInterface
+    {
+    }
 
-		[SuppressUnmanagedCodeSecurity]
-		interface SuppressedInterface {
-		}
+    [Test]
+    public void Interface()
+    {
+      AssertRuleFailure<SuppressedInterface>(1);
+      AssertRuleSuccess<NormalInterface>();
+    }
 
-		interface NormalInterface {
-		}
+    // delegate
 
-		[Test]
-		public void Interface ()
-		{
-			AssertRuleFailure<SuppressedInterface> (1);
-			AssertRuleSuccess<NormalInterface> ();
-		}
+    [SuppressUnmanagedCodeSecurity]
+    private delegate bool SuppressedDelegate(int x);
 
-		// delegate
+    private delegate bool NormalDelegate(int x);
 
-		[SuppressUnmanagedCodeSecurity]
-		delegate bool SuppressedDelegate (int x);
+    [Test]
+    public void Delegate()
+    {
+      AssertRuleFailure<SuppressedDelegate>(1);
+      AssertRuleSuccess<NormalDelegate>();
+    }
+  }
 
-		delegate bool NormalDelegate (int x);
+  [TestFixture]
+  public class ReviewSuppressUnmanagedCodeSecurityUsageMethodTest : MethodRuleTestFixture<ReviewSuppressUnmanagedCodeSecurityUsageRule>
+  {
+    [SuppressUnmanagedCodeSecurity]
+    private void GoCallUnmanagedCodeAlotOfTimes()
+    {
+    }
 
-		[Test]
-		public void Delegate ()
-		{
-			AssertRuleFailure<SuppressedDelegate> (1);
-			AssertRuleSuccess<NormalDelegate> ();
-		}
-	}
+    private void GoCallUnmanagedCodeAfewTimes()
+    {
+    }
 
-	[TestFixture]
-	public class ReviewSuppressUnmanagedCodeSecurityUsageMethodTest : MethodRuleTestFixture<ReviewSuppressUnmanagedCodeSecurityUsageRule> {
-
-		[SuppressUnmanagedCodeSecurity]
-		private void GoCallUnmanagedCodeAlotOfTimes ()
-		{
-		}
-
-		private void GoCallUnmanagedCodeAfewTimes ()
-		{
-		}
-
-		[Test]
-		public void Test ()
-		{
-			AssertRuleFailure<ReviewSuppressUnmanagedCodeSecurityUsageMethodTest> ("GoCallUnmanagedCodeAlotOfTimes", 1);
-			AssertRuleSuccess<ReviewSuppressUnmanagedCodeSecurityUsageMethodTest> ("GoCallUnmanagedCodeAfewTimes");
-		}
-	}
+    [Test]
+    public void Test()
+    {
+      AssertRuleFailure<ReviewSuppressUnmanagedCodeSecurityUsageMethodTest>("GoCallUnmanagedCodeAlotOfTimes", 1);
+      AssertRuleSuccess<ReviewSuppressUnmanagedCodeSecurityUsageMethodTest>("GoCallUnmanagedCodeAfewTimes");
+    }
+  }
 }

@@ -1,5 +1,5 @@
-// 
-// Tests.Rules.Interoperability.Com.AvoidStaticMembersInComVisibleTypesTest
+//
+// Test.Rules.Interoperability.Com.AvoidStaticMembersInComVisibleTypesTest
 //
 // Authors:
 //	Yuri Stuken <stuken.yuri@gmail.com>
@@ -36,117 +36,121 @@ using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 
-namespace Test.Rules.Interoperability.Com {
+namespace Test.Rules.Interoperability.Com
+{
+  [TestFixture]
+  public class AvoidStaticMembersInComVisibleTypesTest : MethodRuleTestFixture<AvoidStaticMembersInComVisibleTypesRule>
+  {
+    [ComVisible(true)]
+    public class ComVisibleClass
+    {
+      public static void Bad()
+      {
+      }
 
-	[TestFixture]
-	public class AvoidStaticMembersInComVisibleTypesTest : MethodRuleTestFixture<AvoidStaticMembersInComVisibleTypesRule> {
+      [ComVisible(false)]
+      public static void GoodInvisible()
+      {
+      }
 
-		[ComVisible (true)]
-		public class ComVisibleClass {
-			public static void Bad ()
-			{
-			}
+      [ComVisible(true)]
+      public static void BadExplicitly()
+      {
+      }
 
-			[ComVisible (false)]
-			public static void GoodInvisible ()
-			{
-			}
+      private static void DoesNotApplyPrivate()
+      {
+      }
 
-			[ComVisible (true)]
-			public static void BadExplicitly ()
-			{
-			}
+      public void DoesNotApplyInstance()
+      {
+      }
 
-			private static void DoesNotApplyPrivate ()
-			{
-			}
+      [ComRegisterFunction]
+      public static void DoesNotApplyRegister()
+      {
+      }
 
-			public void DoesNotApplyInstance ()
-			{
-			}
+      [ComUnregisterFunction]
+      public static void DoesNotApplyUnregister()
+      {
+      }
 
-			[ComRegisterFunction]
-			public static void DoesNotApplyRegister ()
-			{
-			}
+      public static void DoesNotApplyGeneric<T>()
+      {
+      }
 
-			[ComUnregisterFunction]
-			public static void DoesNotApplyUnregister ()
-			{
-			}
+      public static event EventHandler DoesNotApplyEvent
+      {
+        add
+        {
+          DoesNotApplyEvent += value;
+        }
+        remove
+        {
+          DoesNotApplyEvent -= value;
+        }
+      }
 
-			public static void DoesNotApplyGeneric<T> ()
-			{
-			}
+      public static int DoesNotApplyProperty { get; set; }
 
-			public static event EventHandler DoesNotApplyEvent
-			{
-				add
-				{
-					DoesNotApplyEvent += value;
-				}
-				remove
-				{
-					DoesNotApplyEvent -= value;
-				}
-			}
+      public static ComVisibleClass operator +(ComVisibleClass o1, ComVisibleClass o2)
+      {
+        return new ComVisibleClass();
+      }
 
-			public static int DoesNotApplyProperty { get; set; }
+      [ComVisible(true)]
+      public delegate void DoesNotApplyDelegate();
+    }
 
-			public static ComVisibleClass operator +(ComVisibleClass o1, ComVisibleClass o2)
-			{
-				return new ComVisibleClass();
-			}
+    [ComVisible(false)]
+    public class ComInvisibleClass
+    {
+      public static void DoesNotApply()
+      {
+      }
+    }
 
-			[ComVisible (true)]
-			public delegate void DoesNotApplyDelegate ();
-		}
+    public class NoAttributesClass
+    {
+      public static void DoesNotApply()
+      {
+      }
+    }
 
-		[ComVisible (false)]
-		public class ComInvisibleClass {
-			public static void DoesNotApply ()
-			{
-			}
-		}
+    [ComVisible(true)]
+    public interface Interface
+    {
+      void DoesNotApply();
+    }
 
-		public class NoAttributesClass {
-			public static void DoesNotApply ()
-			{
-			}
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<ComVisibleClass>("DoesNotApplyPrivate");
+      AssertRuleDoesNotApply<ComVisibleClass>("DoesNotApplyInstance");
+      AssertRuleDoesNotApply<ComVisibleClass>("DoesNotApplyRegister");
+      AssertRuleDoesNotApply<ComVisibleClass>("DoesNotApplyUnregister");
+      AssertRuleDoesNotApply<ComVisibleClass>("op_Addition");
+      AssertRuleDoesNotApply<ComVisibleClass>("add_DoesNotApplyEvent");
+      AssertRuleDoesNotApply<ComVisibleClass>("remove_DoesNotApplyEvent");
+      AssertRuleDoesNotApply<ComVisibleClass>("get_DoesNotApplyProperty");
+      AssertRuleDoesNotApply<ComVisibleClass>("set_DoesNotApplyProperty");
+      AssertRuleDoesNotApply<ComVisibleClass.DoesNotApplyDelegate>("Invoke");
+      AssertRuleDoesNotApply<ComInvisibleClass>("DoesNotApply");
+      AssertRuleDoesNotApply<NoAttributesClass>("DoesNotApply");
+    }
 
-		[ComVisible (true)]
-		public interface Interface {
-			void DoesNotApply ();
-		}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<ComVisibleClass>("GoodInvisible");
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<ComVisibleClass> ("DoesNotApplyPrivate");
-			AssertRuleDoesNotApply<ComVisibleClass> ("DoesNotApplyInstance");
-			AssertRuleDoesNotApply<ComVisibleClass> ("DoesNotApplyRegister");
-			AssertRuleDoesNotApply<ComVisibleClass> ("DoesNotApplyUnregister");
-			AssertRuleDoesNotApply<ComVisibleClass> ("op_Addition");
-			AssertRuleDoesNotApply<ComVisibleClass> ("add_DoesNotApplyEvent");
-			AssertRuleDoesNotApply<ComVisibleClass> ("remove_DoesNotApplyEvent");
-			AssertRuleDoesNotApply<ComVisibleClass> ("get_DoesNotApplyProperty");
-			AssertRuleDoesNotApply<ComVisibleClass> ("set_DoesNotApplyProperty");
-			AssertRuleDoesNotApply<ComVisibleClass.DoesNotApplyDelegate> ("Invoke");
-			AssertRuleDoesNotApply<ComInvisibleClass> ("DoesNotApply");
-			AssertRuleDoesNotApply<NoAttributesClass> ("DoesNotApply");
-		}
-
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<ComVisibleClass> ("GoodInvisible");
-		}
-
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<ComVisibleClass> ("Bad");
-		}
-	}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<ComVisibleClass>("Bad");
+    }
+  }
 }

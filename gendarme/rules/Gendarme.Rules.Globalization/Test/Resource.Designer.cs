@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Tests.Rules.Globalization {
+namespace Test.Rules.Globalization {
     using System;
     
     
@@ -19,7 +19,7 @@ namespace Tests.Rules.Globalization {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resource {
@@ -39,7 +39,7 @@ namespace Tests.Rules.Globalization {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Tests.Rules.Globalization.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Test.Rules.Globalization.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -59,13 +59,12 @@ namespace Tests.Rules.Globalization {
                 resourceCulture = value;
             }
         }
-        
+
 #if NET472
-    
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap ImageInBothCultures {
+    /// <summary>
+    ///   Looks up a localized resource of type System.Drawing.Bitmap.
+    /// </summary>
+    internal static System.Drawing.Bitmap ImageInBothCultures {
             get {
                 object obj = ResourceManager.GetObject("ImageInBothCultures", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -81,11 +80,12 @@ namespace Tests.Rules.Globalization {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-#endif        
-        /// <summary>
-        ///   Looks up a localized string similar to Hello!.
-        /// </summary>
-        internal static string StringInBothLanguages {
+#endif 
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Hello!.
+    /// </summary>
+    internal static string StringInBothLanguages {
             get {
                 return ResourceManager.GetString("StringInBothLanguages", resourceCulture);
             }
