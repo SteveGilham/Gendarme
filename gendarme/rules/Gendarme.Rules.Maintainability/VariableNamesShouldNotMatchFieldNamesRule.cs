@@ -103,7 +103,7 @@ namespace Gendarme.Rules.Maintainability
           foreach (ParameterDefinition param in method.Parameters)
           {
             if (fields.Contains(param.Name))
-              Runner.Report(param, Severity.Medium, Confidence.Total);
+              Runner.Report(method, Severity.Medium, Confidence.Total, "Parameter name: '" + param.Name + "'");
           }
         }
 
@@ -120,8 +120,9 @@ namespace Gendarme.Rules.Maintainability
             // if the name is compiler generated or if we do not have debugging symbols...
             if (var.IsGeneratedName(method.DebugInformation))
               continue;
-            if (fields.Contains(var.MaybeGetName(method)))
-              Runner.Report(method, Severity.Medium, Confidence.Normal, var.MaybeGetName(method));
+            var name = var.MaybeGetName(method);
+            if (!string.IsNullOrEmpty(name) && fields.Contains(name))
+              Runner.Report(method, Severity.Medium, Confidence.Normal, "Local variable name: '" + name + "'");
           }
         }
       }
