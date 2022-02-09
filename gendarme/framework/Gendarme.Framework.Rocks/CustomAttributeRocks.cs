@@ -46,21 +46,25 @@ namespace Gendarme.Framework.Rocks
   /// </summary>
 	public static class CustomAttributeRocks
   {
-    internal static bool HasAnyGeneratedCodeAttribute(this ICustomAttributeProvider self)
+    public static bool HasAnyGeneratedCodeAttribute(this ICustomAttributeProvider self)
     {
       if ((self == null) || !self.HasCustomAttributes)
         return false;
 
-      foreach (CustomAttribute ca in self.CustomAttributes)
+      return self.CustomAttributes.Any(ca =>
       {
         TypeReference cat = ca.AttributeType;
-        if (cat.IsNamed(generatedCode) ||
-          cat.IsNamed(compilerGenerated))
-        {
-          return true;
-        }
-      }
-      return false;
+        return cat.IsNamed(generatedCode) ||
+          cat.IsNamed(compilerGenerated);
+      });
+    }
+
+    public static bool HasCompilerGeneratedAttribute(this ICustomAttributeProvider self)
+    {
+      if ((self == null) || !self.HasCustomAttributes)
+        return false;
+
+      return self.CustomAttributes.Any(ca => ca.AttributeType.IsNamed(compilerGenerated));
     }
 
     private static readonly TypeName generatedCode = new TypeName
@@ -91,12 +95,7 @@ namespace Gendarme.Framework.Rocks
       if ((self == null) || !self.HasCustomAttributes)
         return false;
 
-      foreach (CustomAttribute ca in self.CustomAttributes)
-      {
-        if (ca.AttributeType.IsNamed(typename))
-          return true;
-      }
-      return false;
+      return self.CustomAttributes.Any(ca => ca.AttributeType.IsNamed(typename));
     }
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
@@ -107,12 +106,7 @@ namespace Gendarme.Framework.Rocks
       if ((self == null) || !self.HasCustomAttributes)
         return false;
 
-      foreach (CustomAttribute ca in self.CustomAttributes)
-      {
-        if (ca.AttributeType.FullName == typeof(T).FullName)
-          return true;
-      }
-      return false;
+      return self.CustomAttributes.Any(ca => ca.AttributeType.FullName == typeof(T).FullName);
     }
 
     private static bool IsSumType(CustomAttribute a)

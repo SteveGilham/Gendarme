@@ -299,11 +299,8 @@ namespace Gendarme.Rules.Performance
           // F# intervene here for compiler generated `is`...`as` on temporaries
           // in match expressions
           object name = origin.GetOperand(method) ?? "Null";
-          var take = true;
-          if (method.IsFSharpCode())
-          {
-            take = !name.ToString().StartsWith("V_", StringComparison.Ordinal); // compiler generated variable
-          }
+          var take = !method.IsFSharpCode() ||
+                     !name.ToString().StartsWith("V_", StringComparison.Ordinal); // compiler generated variable
 
           if (take)
           {

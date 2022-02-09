@@ -131,7 +131,7 @@ namespace Gendarme.Rules.Design
 
       // Ignore types when the Equals and CompareTo methods are all compiler generated
       if (type.Methods.Where(m => m.Name == "CompareTo" || m.Name == "Equals").
-          All(m => m.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>()))
+          All(m => m.HasCompilerGeneratedAttribute()))
         return RuleResult.DoesNotApply;
 
       // type should override Equals(object)

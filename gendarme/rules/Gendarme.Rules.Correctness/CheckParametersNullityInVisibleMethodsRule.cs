@@ -223,11 +223,8 @@ namespace Gendarme.Rules.Correctness
     public RuleResult CheckMethod(MethodDefinition method)
     {
       // p/invoke, abstract methods and method without parameters
-      if (!method.HasBody || !method.HasParameters || !method.IsVisible())
-        return RuleResult.DoesNotApply;
-
-      // skip compiler generated method
-      if (method.HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+      if (!method.HasBody || !method.HasParameters ||
+        !method.IsVisible() || method.HasCompilerGeneratedAttribute())
         return RuleResult.DoesNotApply;
 
       has_null_check.ClearAll();

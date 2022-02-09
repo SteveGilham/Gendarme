@@ -135,7 +135,7 @@ namespace Gendarme.Rules.Naming
       else
       {
         // class should _not_ look like 'CSomething" or like an interface 'IOops'
-        if (!name.Contains("@", StringComparison.Ordinal) && !IsCorrectTypeName(name))
+        if (!type.IsFSharpLocalType() && !IsCorrectTypeName(name))
         {
           string s = String.Format(CultureInfo.InvariantCulture,
             "The '{0}' type name starts with '{1}' prefix but, according to existing naming conventions, type names should not have any specific prefix.",

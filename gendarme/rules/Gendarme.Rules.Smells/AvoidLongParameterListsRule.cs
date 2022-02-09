@@ -218,7 +218,7 @@ namespace Gendarme.Rules.Smells
 
       if (type.HasMethods)
       {
-        if (!type.IsRecordType() && !type.Name.Contains("@", StringComparison.Ordinal))
+        if (!type.IsRecordType() && !type.IsFSharpLocalType())
           CheckConstructor(GetSmallestConstructorFrom(type));
 
         foreach (MethodDefinition method in GetSmallestOverloaded(type))

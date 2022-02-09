@@ -121,7 +121,7 @@ namespace Gendarme.Rules.Design.Generic
     {
       // rule applies only if the method has generic type parameters
       if (!method.HasGenericParameters || method.IsGeneratedCode() ||
-                method.DeclaringType.Name.Contains("@", StringComparison.Ordinal))
+                method.DeclaringType.IsFSharpLocalType())
         return RuleResult.DoesNotApply;
 
       // look if every generic type parameter...

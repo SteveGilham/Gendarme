@@ -216,13 +216,13 @@ namespace Gendarme.Rules.Naming
       string name = type.Name;
 
       // rule does not apply to generated code (outside developer's control)
-      if (type.IsGeneratedCode() || name.Contains("@", StringComparison.Ordinal))
+      if (type.IsGeneratedCode() || type.IsFSharpLocalType())
         return RuleResult.DoesNotApply;
 
       var methods = type.Methods;
 
       // Debugger related methods in F# with just a [CompilerGenerated] constructor
-      if (methods.Count == 1 && methods[0].HasAttribute<System.Runtime.CompilerServices.CompilerGeneratedAttribute>())
+      if (methods.Count == 1 && methods[0].HasCompilerGeneratedAttribute())
         return RuleResult.DoesNotApply;
 
       // types should all be PascalCased

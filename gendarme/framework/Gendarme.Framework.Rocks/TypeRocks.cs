@@ -396,11 +396,32 @@ namespace Gendarme.Framework.Rocks
       if (self == null)
         return false;
 
+      if (self.IsFSharpLocalType())
+        return true;
+
       var def = (self as TypeDefinition) ?? self.Resolve();
 
-      return def != null &&
-             (def.Name.Contains("@", StringComparison.Ordinal)
-              || def.HasAttribute(compilationMapping));
+      return def != null && def.HasAttribute(compilationMapping);
+    }
+
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "AvoidUnnecessarySpecializationRule",
+                     Justification = "Not valid elsewhere")]
+    public static bool IsFSharpLocalType(this TypeReference self)
+    {
+      return self != null && self.Name.Contains("@", StringComparison.Ordinal);
+    }
+
+    public static bool IsFSharpFunction(this TypeReference self)
+    {
+      if (self == null)
+        return false;
+
+      var name = self.Name;
+      return self.Namespace.Equals("Microsoft.FSharp.Core", StringComparison.Ordinal) &&
+               (name.Equals("FSharpFunc`2", StringComparison.Ordinal)) ||
+                name.Equals("FSharpTypeFunc", StringComparison.Ordinal);
     }
 
     private static readonly TypeName compilationMapping = new TypeName
