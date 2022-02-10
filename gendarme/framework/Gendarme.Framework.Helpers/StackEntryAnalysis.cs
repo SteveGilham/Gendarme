@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -211,6 +212,14 @@ namespace Gendarme.Framework.Helpers
       {
         return !left.Equals(right);
       }
+
+      public override string ToString()
+      {
+        return
+        Instruction.ToString() +
+          (LeaveStack != null ? Environment.NewLine +
+           String.Join(Environment.NewLine + "\t", LeaveStack.Select(x => x.ToString())) : String.Empty); ;
+      }
     }
 
     public MethodDefinition Method
@@ -226,6 +235,8 @@ namespace Gendarme.Framework.Helpers
     public StackEntryAnalysis(MethodDefinition method)
     {
       this.Method = method;
+      foreach (var i in method.Body.Instructions)
+        Console.WriteLine("{0}", i);
     }
 
     //static lists to save allocations.
@@ -243,6 +254,8 @@ namespace Gendarme.Framework.Helpers
       if (ins == null)
         throw new ArgumentNullException(nameof(ins));
 
+      Console.WriteLine("GetStackEntryUsage {0}", ins);
+
       /* In the main loop we search for all usages of a StackEntry.
 			 * Then we check each usage for a store (to a local variable or an argument), search for corrosponding loads and search for usages of the new Stackentry.
 			 * This continues until no stores are found. */
@@ -259,7 +272,9 @@ namespace Gendarme.Framework.Helpers
       { //continue until no more alternatives have been found (by CheckUsedBy)
         for (int i = lastAlternativesCount; i < AlternativePaths.Count; i++)
         { //find the instruction that pops the value and follow all branches
+          Console.WriteLine("Alt {0} is {1}=>{2}", i, AlternativePaths[i].Key, AlternativePaths[i].Value);
           var result = FollowStackEntry(AlternativePaths[i].Key, AlternativePaths[i].Value);
+          Console.WriteLine("result {0} is {1}", i, result);
           if (result.Key.Instruction != null)
             UsedBy.AddIfNew(result); //add to usedby list
         }
@@ -270,10 +285,8 @@ namespace Gendarme.Framework.Helpers
       }
 
       //build return value
-      StackEntryUsageResult[] results = new StackEntryUsageResult[UsedBy.Count];
-      for (int i = 0; i < results.Length; i++)
-        results[i] = new StackEntryUsageResult(UsedBy[i].Key.Instruction, UsedBy[i].Value);
-      return results;
+      return UsedBy.Select(kv => new StackEntryUsageResult(kv.Key.Instruction, kv.Value))
+                   .ToArray();
     }
 
     /// <summary>
@@ -285,6 +298,7 @@ namespace Gendarme.Framework.Helpers
       for (int ii = start; ii < UsedBy.Count; ii++)
       {
         InstructionWithLeave use = UsedBy[ii].Key;
+        Console.WriteLine("Checking {0}", use.Instruction);
 
         StoreSlot slot = GetStoreSlot(use.Instruction); //check if this is a store instruction
 
@@ -292,22 +306,32 @@ namespace Gendarme.Framework.Helpers
 
         if (use.Instruction.OpCode.Code == Code.Castclass)
         {
+          Console.WriteLine("cast class remove");
           removeFromUseBy = true;
           AlternativePaths.AddIfNew(new KeyValuePair<InstructionWithLeave, int>(use.Copy(use.Instruction.Next), 0));
         }
         else if (use.Instruction.OpCode.Code == Code.Pop)
         {//pop is not a valid usage
+          Console.WriteLine("pop remove");
           removeFromUseBy = true;
         }
         else if (!slot.IsNone)
         {
           if (slot.Type == StoreType.Argument || slot.Type == StoreType.Local)
+          {
             removeFromUseBy = true; //temporary save
+            Console.WriteLine("temp save remove");
+          }
+
+          Console.WriteLine("Slot {0}", slot.Type);
           foreach (var ld in this.FindLoad(use.Copy(use.Instruction.Next), slot))
           { //start searching at the next instruction
+            Console.WriteLine("Maybe add {0}", ld.Instruction.Next);
             AlternativePaths.AddIfNew(new KeyValuePair<InstructionWithLeave, int>(ld.Copy(ld.Instruction.Next), 0));
           }
         }
+
+        Console.WriteLine();
         if (removeFromUseBy)
         {
           UsedBy.RemoveAt(ii);
@@ -325,11 +349,14 @@ namespace Gendarme.Framework.Helpers
     private KeyValuePair<InstructionWithLeave, int> FollowStackEntry(InstructionWithLeave startInstruction, int stackEntryDistance)
     {
       Instruction ins = startInstruction.Instruction;
+      Console.WriteLine("Following {0}", ins);
 
       while (true)
       {
         int pop = ins.GetPopCount(this.Method);
         int push = ins.GetPushCount();
+
+        Console.WriteLine("push {0} pop {1}, pop limit {2}", push, pop, stackEntryDistance);
 
         if (pop > stackEntryDistance)  //does this instruction pop the stack entry
           return new KeyValuePair<InstructionWithLeave, int>(startInstruction.Copy(ins), stackEntryDistance);
@@ -339,6 +366,8 @@ namespace Gendarme.Framework.Helpers
 
         //fetch ne next instruction
         (var nextInstruction, var alternativeNext) = GetNextInstruction(ins);
+
+        Console.WriteLine("next {0} alt {1}", nextInstruction, alternativeNext);
 
         if (nextInstruction == null)
           return new KeyValuePair<InstructionWithLeave, int>(); //return / throw / endfinally
@@ -350,17 +379,22 @@ namespace Gendarme.Framework.Helpers
         { //branch / switch
           if (alternativeNext is Instruction oneTarget)
           { //branch
+            Console.WriteLine("+Maybe add {0}", oneTarget);
             AlternativePaths.AddIfNew(new KeyValuePair<InstructionWithLeave, int>(startInstruction.Copy(oneTarget), stackEntryDistance));
           }
           else
           { //switch
             foreach (Instruction switchTarget in (Instruction[])alternativeNext)
+            {
+              Console.WriteLine("+Maybe add {0}", switchTarget);
               AlternativePaths.AddIfNew(new KeyValuePair<InstructionWithLeave, int>(startInstruction.Copy(switchTarget), stackEntryDistance));
+            }
           }
         }
 
         if (nextInstruction.OpCode.FlowControl == FlowControl.Branch || nextInstruction.OpCode.FlowControl == FlowControl.Cond_Branch)
         {
+          Console.WriteLine("+Maybe add {0}", nextInstruction);
           AlternativePaths.AddIfNew(new KeyValuePair<InstructionWithLeave, int>(startInstruction.Copy(nextInstruction), stackEntryDistance));
           return new KeyValuePair<InstructionWithLeave, int>(); //end of block
         }
