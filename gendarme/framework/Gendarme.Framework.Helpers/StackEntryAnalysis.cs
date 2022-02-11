@@ -216,7 +216,7 @@ namespace Gendarme.Framework.Helpers
       public override string ToString()
       {
         return
-        Instruction.ToString() +
+        Instruction?.ToString() +
           (LeaveStack != null ? Environment.NewLine +
            String.Join(Environment.NewLine + "\t", LeaveStack.Select(x => x.ToString())) : String.Empty); ;
       }
