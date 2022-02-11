@@ -406,9 +406,48 @@ namespace Test.Framework
     [Test]
     public void TestTryCatchFinally()
     {
+/*
+GetStackEntryUsage IL_0001: newobj System.Void System.Object::.ctor()
+Alt 0 is IL_0006: stloc.0=>0 // assign to 'a'
+Following IL_0006: stloc.0
+push 0 pop 1, pop limit 0
+result 0 is [IL_0006: stloc.0, 0]
+Checking IL_0006: stloc.0
+temp save remove
+Slot Local
+Maybe add IL_002b: stloc.1 //catch/b = a
+Maybe add IL_0040: callvirt System.String System.Object::ToString() // a.ToString();
+
+Alt 1 is IL_002b: stloc.1=>0
+Following IL_002b: stloc.1
+push 0 pop 1, pop limit 0
+result 1 is [IL_002b: stloc.1, 0]
+Alt 2 is IL_0040: callvirt System.String System.Object::ToString()=>0
+Following IL_0040: callvirt System.String System.Object::ToString()
+push 1 pop 1, pop limit 0
+result 2 is [IL_0040: callvirt System.String System.Object::ToString(), 0]
+Checking IL_002b: stloc.1
+temp save remove
+Slot Local
+Maybe add IL_0052: stloc.2 // c = b;
+
+Checking IL_0040: callvirt System.String System.Object::ToString()
+
+Alt 3 is IL_0052: stloc.2
+IL_004e: leave.s IL_0057=>0
+Following IL_0052: stloc.2
+push 0 pop 1, pop limit 0
+result 3 is [IL_0052: stloc.2
+IL_004e: leave.s IL_0057, 0]
+Checking IL_0052: stloc.2
+temp save remove
+Slot Local
+*/
+        Console.WriteLine("TestTryCatchFinally");
       MethodDefinition m = GetTest("TryCatchFinally");
       StackEntryAnalysis sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
+        Console.WriteLine("---------------------------------------------");
 
       Assert.AreEqual(2, result.Length, "result-Length-2"); //no "return a";
       Assert.AreEqual(OpCodes.Callvirt, result[0].Instruction.OpCode, "result[0]-Opcode-Callvirt"); //return a.ToString ();
@@ -747,7 +786,7 @@ namespace Test.Framework
     }
 
     [Test]
-    public void TestMCSRetro()
+    public void TestMCSRetro1()
     {
       using (var stream =
         Assembly
@@ -755,17 +794,32 @@ namespace Test.Framework
           .GetManifestResourceStream("Test.Framework.MCSRetro.MCSRetro.dll"))
       using (var ad = AssemblyDefinition.ReadAssembly(stream))
       {
+        Console.WriteLine("Retro1");
         MethodDefinition m = ad.MainModule.GetType("MCSRetro.StackEntry").Methods.First(m0 => m0.Name == "TryCatchFinally");
         StackEntryAnalysis sea = new StackEntryAnalysis(m);
         StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
+        Console.WriteLine("---------------------------------------------");
 
         Assert.AreEqual(2, result.Length, "TryCatchFinally result-Length-2"); //no "return a";
         Assert.AreEqual(OpCodes.Callvirt, result[0].Instruction.OpCode, "TryCatchFinally result[0]-Opcode-Callvirt"); //return a.ToString ();
         Assert.AreEqual(OpCodes.Callvirt, result[1].Instruction.OpCode, "TryCatchFinally result[1]-Opcode-Callvirt"); //return c.GetHashCode ();
+      }
+    }
 
-        m = ad.MainModule.GetType("MCSRetro.StackEntry").Methods.First(m0 => m0.Name == "MultipleCatch");
-        sea = new StackEntryAnalysis(m);
-        result = sea.GetStackEntryUsage(GetFirstNewObj(m));
+    [Test]
+    public void TestMCSRetro2()
+    {
+      using (var stream =
+        Assembly
+          .GetExecutingAssembly()
+          .GetManifestResourceStream("Test.Framework.MCSRetro.MCSRetro.dll"))
+      using (var ad = AssemblyDefinition.ReadAssembly(stream))
+      {
+        Console.WriteLine("Retro2");
+        var m = ad.MainModule.GetType("MCSRetro.StackEntry").Methods.First(m0 => m0.Name == "MultipleCatch");
+        var sea = new StackEntryAnalysis(m);
+        var result = sea.GetStackEntryUsage(GetFirstNewObj(m));
+        Console.WriteLine("---------------------------------------------");
 
         Assert.AreEqual(2, result.Length, "MultipleCatch result-Length-2"); //no "return a";
         Assert.AreEqual(OpCodes.Callvirt, result[0].Instruction.OpCode, "MultipleCatch result[0]-Opcode-Callvirt"); //return b.ToString ();
