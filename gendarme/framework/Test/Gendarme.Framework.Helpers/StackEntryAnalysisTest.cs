@@ -38,6 +38,14 @@ using Gendarme.Framework.Helpers;
 
 using NUnit.Framework;
 
+#pragma warning disable IDE0017 // Simplify object initialization
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+#pragma warning disable IDE0060
+#if !NET472
+#pragma warning disable IDE0063
+#pragma warning disable IDE0066
+#endif
+
 namespace Test.Framework
 {
   [TestFixture]
@@ -83,7 +91,7 @@ namespace Test.Framework
     public void TestSimpleReturn()
     {
       MethodDefinition m = GetTest("SimpleReturn");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -92,7 +100,7 @@ namespace Test.Framework
 
     public object SimpleLoc()
     {
-      object a = new object();
+      var a = new object();
       return a;
     }
 
@@ -100,7 +108,7 @@ namespace Test.Framework
     public void TestSimpleLoc()
     {
       MethodDefinition m = GetTest("SimpleLoc");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -109,7 +117,7 @@ namespace Test.Framework
 
     public object Loc()
     {
-      object a = new object();
+      var a = new object();
       object b = a;
       return b;
     }
@@ -118,7 +126,7 @@ namespace Test.Framework
     public void TestLoc()
     {
       MethodDefinition m = GetTest("Loc");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -131,7 +139,7 @@ namespace Test.Framework
       int b = 1;
       int c = 2;
       int d = 3;
-      object e = new object();
+      var e = new object();
       switch (new Random().Next())
       {
         case 0:
@@ -155,7 +163,7 @@ namespace Test.Framework
     public void TestLoc2()
     {
       MethodDefinition m = GetTest("Loc2");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -172,7 +180,7 @@ namespace Test.Framework
     public void TestPop()
     {
       MethodDefinition m = GetTest("Pop");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(0, result.Length);
@@ -180,7 +188,7 @@ namespace Test.Framework
 
     public object Branch()
     {
-      object a = new object();
+      var a = new object();
       object b;
       if (new Random().Next() == 0)
         return a;
@@ -193,7 +201,7 @@ namespace Test.Framework
     public void TestBranch()
     {
       MethodDefinition m = GetTest("Branch");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2");
@@ -203,7 +211,7 @@ namespace Test.Framework
 
     public void Branch2()
     {
-      Exception a = new Exception();
+      var a = new Exception();
       bool cond = new Random().Next() == 0;
       a.Source = cond ? "a" : "b"; //tricks the compiler to load a onto the stack before doing a branch (to get more coverage)
     }
@@ -212,7 +220,7 @@ namespace Test.Framework
     public void TestBranch2()
     {
       MethodDefinition m = GetTest("Branch2");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -221,7 +229,7 @@ namespace Test.Framework
 
     public object TryFinally()
     {
-      object a = new object();
+      var a = new object();
       object b = null;
       object c;
       try
@@ -243,7 +251,7 @@ namespace Test.Framework
     public void TestTryFinally()
     {
       MethodDefinition m = GetTest("TryFinally");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -252,7 +260,7 @@ namespace Test.Framework
 
     public object NestedTryFinally()
     {
-      object a = new object();
+      var a = new object();
       object b = null;
       object c = null;
       try
@@ -284,7 +292,7 @@ namespace Test.Framework
     public void TestNestedTryFinally()
     {
       MethodDefinition m = GetTest("NestedTryFinally");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -293,7 +301,7 @@ namespace Test.Framework
 
     public object NestedTryFinally2()
     {
-      object a = new object();
+      var a = new object();
       object b = null;
       object c = null;
       try
@@ -325,7 +333,7 @@ namespace Test.Framework
     public void TestNestedTryFinally2()
     {
       MethodDefinition m = GetTest("NestedTryFinally2");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -334,7 +342,7 @@ namespace Test.Framework
 
     public object TryCatch()
     {
-      object a = new object();
+      var a = new object();
       object b = null;
       object c = null;
       try
@@ -358,7 +366,7 @@ namespace Test.Framework
     public void TestTryCatch()
     {
       MethodDefinition m = GetTest("TryCatch");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2"); //no "return a";
@@ -369,7 +377,7 @@ namespace Test.Framework
     public object TryCatchFinally()
     {
       //IL_0000: nop
-      object a = new object();
+      var a = new object();
       //IL_0001: newobj instance void [mscorlib]System.Object::.ctor()
       //IL_0006: stloc.0
       object b = null;
@@ -528,7 +536,7 @@ namespace Test.Framework
       */
       Console.WriteLine("TestTryCatchFinally");
       MethodDefinition m = GetTest("TryCatchFinally");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
       Console.WriteLine("---------------------------------------------");
 
@@ -539,7 +547,7 @@ namespace Test.Framework
 
     public object MultipleCatch()
     {
-      object a = new object();
+      var a = new object();
       object b = null;
       object c = null;
       try
@@ -574,7 +582,7 @@ namespace Test.Framework
     public void TestMultipleCatch()
     {
       MethodDefinition m = GetTest("MultipleCatch");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2"); //no "return a";
@@ -584,7 +592,7 @@ namespace Test.Framework
 
     public object Starg(object b)
     {
-      object a = new object();
+      var a = new object();
       b = a;
       return b;
     }
@@ -593,7 +601,7 @@ namespace Test.Framework
     public void TestStarg()
     {
       MethodDefinition m = GetTest("Starg");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -610,7 +618,7 @@ namespace Test.Framework
     public void TestStarg2()
     {
       MethodDefinition m = GetTest("Starg2");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -627,7 +635,7 @@ namespace Test.Framework
     public void TestStargStatic()
     {
       MethodDefinition m = GetTest("StargStatic");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -636,7 +644,7 @@ namespace Test.Framework
 
     public object OutArg(out object b)
     {
-      object a = new object();
+      var a = new object();
       b = a;
       return b; //this is not guaranteed to work in complex situations. The lookup for stind_ref simply checks all previous instructions for ldargs.
     }
@@ -645,7 +653,7 @@ namespace Test.Framework
     public void TestOutArg()
     {
       MethodDefinition m = GetTest("OutArg");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2");
@@ -663,7 +671,7 @@ namespace Test.Framework
     public void TestOutArg2()
     {
       MethodDefinition m = GetTest("OutArg2");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2");
@@ -673,7 +681,7 @@ namespace Test.Framework
 
     public object Switch()
     {
-      object a = new object();
+      var a = new object();
       object b = null;
 
       switch (new Random().Next())
@@ -698,7 +706,7 @@ namespace Test.Framework
     public void TestSwitch()
     {
       MethodDefinition m = GetTest("Switch");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2");
@@ -717,7 +725,7 @@ namespace Test.Framework
       //ret <- switch1
       //ret <- switch2
 
-      MethodDefinition m = new MethodDefinition("Switch2", Mono.Cecil.MethodAttributes.Public, this.type);
+      var m = new MethodDefinition("Switch2", Mono.Cecil.MethodAttributes.Public, this.type);
 
       ILProcessor il = m.Body.GetILProcessor();
 
@@ -735,7 +743,7 @@ namespace Test.Framework
       il.Append(switch1);
       il.Append(switch2);
 
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(3, result.Length, "result-Length-3");
@@ -754,7 +762,7 @@ namespace Test.Framework
     public void TestCastclass()
     {
       MethodDefinition m = GetTest("Castclass");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -773,7 +781,7 @@ namespace Test.Framework
     public void TestStackOffset()
     {
       MethodDefinition m = GetTest("StackOffset");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(4, result.Length, "result-Length-4");
@@ -794,7 +802,7 @@ namespace Test.Framework
     public void TestField()
     {
       MethodDefinition m = GetTest("Field");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2");
@@ -815,7 +823,7 @@ namespace Test.Framework
     public void TestField2()
     {
       MethodDefinition m = GetTest("Field2");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(1, result.Length, "result-Length-1");
@@ -833,7 +841,7 @@ namespace Test.Framework
     public void TestStaticField()
     {
       MethodDefinition m = GetTest("StaticField");
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
 
       Assert.AreEqual(2, result.Length, "result-Length-2");
@@ -848,7 +856,7 @@ namespace Test.Framework
       //calli void ()
       //ret
 
-      MethodDefinition m = new MethodDefinition("Calli", Mono.Cecil.MethodAttributes.Public, this.type);
+      var m = new MethodDefinition("Calli", Mono.Cecil.MethodAttributes.Public, this.type);
       var cilWorker = m.Body.GetILProcessor();
       cilWorker.Emit(OpCodes.Ldftn, m);
       cilWorker.Emit(OpCodes.Calli, new CallSite(GetTest("TestCalli").ReturnType));
@@ -861,7 +869,7 @@ namespace Test.Framework
       //IL_0000: calli System.Void()
       //IL_0000: ret
 
-      StackEntryAnalysis sea = new StackEntryAnalysis(m);
+      var sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(m.Body.Instructions[0]);
 
       Assert.AreEqual(1, result.Length);
@@ -879,7 +887,7 @@ namespace Test.Framework
       {
         Console.WriteLine("Retro1");
         MethodDefinition m = ad.MainModule.GetType("MCSRetro.StackEntry").Methods.First(m0 => m0.Name == "TryCatchFinally");
-        StackEntryAnalysis sea = new StackEntryAnalysis(m);
+        var sea = new StackEntryAnalysis(m);
         StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
         Console.WriteLine("---------------------------------------------");
 
