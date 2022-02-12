@@ -368,86 +368,169 @@ namespace Test.Framework
 
     public object TryCatchFinally()
     {
+      //IL_0000: nop
       object a = new object();
+      //IL_0001: newobj instance void [mscorlib]System.Object::.ctor()
+      //IL_0006: stloc.0
       object b = null;
+      //IL_0007: ldnull
+      //IL_0008: stloc.1
       object c = null;
+      //IL_0009: ldnull
+      //IL_000a: stloc.2
       try
+      //.try
+      //.try
       {
+        //IL_000b: nop
         if (new Random().Next() == 0)
         {
+          //IL_000c: newobj instance void [mscorlib]System.Random::.ctor()
+          //IL_0011: callvirt instance int32[mscorlib]System.Random::Next()
+          //IL_0016: ldc.i4.0
+          //IL_0017: ceq
+          //IL_0019: stloc.3
+          //IL_001a: ldloc.3
+          //IL_001b: brfalse.s IL_0025
           a = null;
+          //IL_001d: nop
+          //IL_001e: ldnull
+          //IL_001f: stloc.0
           return a;
+          //IL_0020: ldloc.0
+          //IL_0021: stloc.s 4
+          ////(no C# code)
+          //IL_0023: leave.s IL_0086
         }
+        //IL_0025: nop
+        //IL_0026: leave.s IL_005a
       }
       catch
+      //catch[mscorlib]System.Object
       {
+        //IL_0028: pop
         b = a;
+        //IL_0029: nop
+        //IL_002a: ldloc.0
+        //IL_002b: stloc.1
         if (new Random().Next() == 0)
+          //IL_002c: newobj instance void [mscorlib]System.Random::.ctor()
+          //IL_0031: callvirt instance int32[mscorlib]System.Random::Next()
+          //IL_0036: ldc.i4.0
+          //IL_0037: ceq
+          //IL_0039: stloc.s 5
+          //IL_003b: ldloc.s 5
+          //IL_003d: brfalse.s IL_0049
           return a.ToString();
+        //IL_003f: ldloc.0
+        //IL_0040: callvirt instance string[mscorlib] System.Object::ToString()
+        //IL_0045: stloc.s 4
+        ////(no C# code)
+        //IL_0047: leave.s IL_0086
+        //IL_0049: nop
         try
+        //.try
         {
+          //IL_004a: nop
           a = null;
+          //IL_004b: ldnull
+          //IL_004c: stloc.0
         }
+        //IL_004d: nop
+        //IL_004e: leave.s IL_0057
         finally
+        //finally
         {
+          //IL_0050: nop
           c = b;
+          //IL_0051: ldloc.1
+          //IL_0052: stloc.2
           b = a;
+          //IL_0053: ldloc.0
+          //IL_0054: stloc.1
         }
+        //IL_0055: nop
+        //IL_0056: endfinally
       }
+      //(no C# code)
+      //IL_0057: nop
+      //IL_0058: leave.s IL_005a
       finally
       {
+        //IL_005a: leave.s IL_005f
+        //IL_005c: nop
       }
+      //IL_005d: nop
+      //IL_005e: endfinally
       if (new Random().Next() == 0)
+        //IL_005f: newobj instance void [mscorlib]System.Random::.ctor()
+        //IL_0064: callvirt instance int32[mscorlib]System.Random::Next()
+        //IL_0069: ldc.i4.0
+        //IL_006a: ceq
+        //IL_006c: stloc.s 6
+        //IL_006e: ldloc.s 6
+        //IL_0070: brfalse.s IL_0077
         return b;
+      //IL_0072: ldloc.1
+      //IL_0073: stloc.s 4
       else
         return c.GetHashCode();
+      //IL_0075: br.s IL_0086
+      //IL_0077: ldloc.2
+      //IL_0078: callvirt instance int32[mscorlib]System.Object::GetHashCode()
+      //IL_007d: box[mscorlib]System.Int32
+      //IL_0082: stloc.s 4
+      ////(no C# code)
+      //IL_0084: br.s IL_0086
+      //IL_0086: ldloc.s 4
+      //IL_0088: ret
     }
 
     [Test]
     public void TestTryCatchFinally()
     {
-/*
-GetStackEntryUsage IL_0001: newobj System.Void System.Object::.ctor()
-Alt 0 is IL_0006: stloc.0=>0 // assign to 'a'
-Following IL_0006: stloc.0
-push 0 pop 1, pop limit 0
-result 0 is [IL_0006: stloc.0, 0]
-Checking IL_0006: stloc.0
-temp save remove
-Slot Local
-Maybe add IL_002b: stloc.1 //catch/b = a
-Maybe add IL_0040: callvirt System.String System.Object::ToString() // a.ToString();
+      /*
+      GetStackEntryUsage IL_0001: newobj System.Void System.Object::.ctor()
+      Alt 0 is IL_0006: stloc.0=>0 //assign to 'a'
+      Following IL_0006: stloc.0
+      push 0 pop 1, pop limit 0
+      result 0 is [IL_0006: stloc.0, 0]
+      Checking IL_0006: stloc.0
+      temp save remove
+      Slot Local
+      Maybe add IL_002b: stloc.1 //catch/b = a
+      Maybe add IL_0040: callvirt System.String System.Object::ToString() //a.ToString();
 
-Alt 1 is IL_002b: stloc.1=>0
-Following IL_002b: stloc.1
-push 0 pop 1, pop limit 0
-result 1 is [IL_002b: stloc.1, 0]
-Alt 2 is IL_0040: callvirt System.String System.Object::ToString()=>0
-Following IL_0040: callvirt System.String System.Object::ToString()
-push 1 pop 1, pop limit 0
-result 2 is [IL_0040: callvirt System.String System.Object::ToString(), 0]
-Checking IL_002b: stloc.1
-temp save remove
-Slot Local
-Maybe add IL_0052: stloc.2 // c = b;
+      Alt 1 is IL_002b: stloc.1=>0
+      Following IL_002b: stloc.1
+      push 0 pop 1, pop limit 0
+      result 1 is [IL_002b: stloc.1, 0]
+      Alt 2 is IL_0040: callvirt System.String System.Object::ToString()=>0
+      Following IL_0040: callvirt System.String System.Object::ToString()
+      push 1 pop 1, pop limit 0
+      result 2 is [IL_0040: callvirt System.String System.Object::ToString(), 0]
+      Checking IL_002b: stloc.1
+      temp save remove
+      Slot Local
+      Maybe add IL_0052: stloc.2 //c = b;
 
-Checking IL_0040: callvirt System.String System.Object::ToString()
+      Checking IL_0040: callvirt System.String System.Object::ToString()
 
-Alt 3 is IL_0052: stloc.2
-IL_004e: leave.s IL_0057=>0
-Following IL_0052: stloc.2
-push 0 pop 1, pop limit 0
-result 3 is [IL_0052: stloc.2
-IL_004e: leave.s IL_0057, 0]
-Checking IL_0052: stloc.2
-temp save remove
-Slot Local
-*/
-        Console.WriteLine("TestTryCatchFinally");
+      Alt 3 is IL_0052: stloc.2
+      IL_004e: leave.s IL_0057=>0
+      Following IL_0052: stloc.2
+      push 0 pop 1, pop limit 0
+      result 3 is [IL_0052: stloc.2
+      IL_004e: leave.s IL_0057, 0]
+      Checking IL_0052: stloc.2
+      temp save remove
+      Slot Local
+      */
+      Console.WriteLine("TestTryCatchFinally");
       MethodDefinition m = GetTest("TryCatchFinally");
       StackEntryAnalysis sea = new StackEntryAnalysis(m);
       StackEntryUsageResult[] result = sea.GetStackEntryUsage(GetFirstNewObj(m));
-        Console.WriteLine("---------------------------------------------");
+      Console.WriteLine("---------------------------------------------");
 
       Assert.AreEqual(2, result.Length, "result-Length-2"); //no "return a";
       Assert.AreEqual(OpCodes.Callvirt, result[0].Instruction.OpCode, "result[0]-Opcode-Callvirt"); //return a.ToString ();
