@@ -36,178 +36,194 @@ using Test.Rules.Definitions;
 using System.Xml;
 using System.Xml.XPath;
 
+namespace Test.Rules.Correctness
+{
+#pragma warning disable IDE0051
 
-namespace Test.Rules.Correctness {
+  internal class XmlCases
+  {
+    private const string good1 = "<author>Robert J. Sawyer</author>";
+    private const string bad1 = "<author>Robert J. Sawyer</authr>";
 
-	class XmlCases {
-		const string good1 = "<author>Robert J. Sawyer</author>";
-		const string bad1 = "<author>Robert J. Sawyer</authr>";
+    private string DoesNotApply1()
+    {
+      return bad1;
+    }
 
-		string DoesNotApply1 () {
-			return bad1;
-		}
+    private void Success0()
+    {
+      var doc = new XmlDocument();
+      doc.LoadXml("<book />");
+    }
 
-		void Success0 () {
-			var doc = new XmlDocument ();
-			doc.LoadXml ("<book />");
-		}
+    private void Failure0()
+    {
+      var doc = new XmlDocument();
+      doc.LoadXml("<book>");
+    }
 
-		void Failure0 () {
-			var doc = new XmlDocument ();
-			doc.LoadXml ("<book>");
-		}
+    private void Success1()
+    {
+      var doc = new XmlDocument();
+      doc.LoadXml(good1);
+    }
 
-		void Success1 () {
-			var doc = new XmlDocument ();
-			doc.LoadXml (good1);
-		}
+    private void Failure1()
+    {
+      var doc = new XmlDocument();
+      doc.LoadXml(bad1);
+    }
 
-		void Failure1 () {
-			var doc = new XmlDocument ();
-			doc.LoadXml (bad1);
-		}
+    private void Success2(XmlDocumentFragment doc, string xml)
+    {
+      doc.InnerXml = xml;
+    }
 
-		void Success2 (XmlDocumentFragment doc, string xml) {
-			doc.InnerXml = xml;
-		}
+    private void Failure2(XmlDocumentFragment doc)
+    {
+      doc.InnerXml = bad1;
+    }
 
-		void Failure2 (XmlDocumentFragment doc) {
-			doc.InnerXml = bad1;
-		}
+    private void Success3(XPathNavigator nav, string xml)
+    {
+      nav.OuterXml = xml;
+    }
 
-		void Success3 (XPathNavigator nav, string xml) {
-			nav.OuterXml = xml;
-		}
+    private void Failure3(XPathNavigator nav)
+    {
+      nav.OuterXml = bad1;
+    }
 
-		void Failure3 (XPathNavigator nav) {
-			nav.OuterXml = bad1;
-		}
+    private void Success4(XPathNavigator nav, string xml)
+    {
+      nav.AppendChild(xml);
+      nav.AppendChild();
+      nav.AppendChild(nav);
+      nav.InsertAfter(xml);
+      nav.InsertAfter();
+      nav.InsertAfter(nav);
+    }
 
-		void Success4 (XPathNavigator nav, string xml) {
-			nav.AppendChild (xml);
-			nav.AppendChild ();
-			nav.AppendChild (nav);
-			nav.InsertAfter (xml);
-			nav.InsertAfter ();
-			nav.InsertAfter (nav);
-		}
+    private void Failure4(XPathNavigator nav)
+    {
+      nav.AppendChild(bad1);
+    }
 
-		void Failure4 (XPathNavigator nav) {
-			nav.AppendChild (bad1);
-		}
+    private void Failure4b(XPathNavigator nav)
+    {
+      nav.InsertAfter(bad1);
+    }
 
-		void Failure4b (XPathNavigator nav) {
-			nav.InsertAfter (bad1);
-		}
+    private void FailureNull()
+    {
+      var doc = new XmlDocument();
+      doc.LoadXml(null);
+      doc.InnerXml = null;
+      doc.CreateNavigator().AppendChild((string)null);
+    }
 
-		void FailureNull () {
-			var doc = new XmlDocument ();
-			doc.LoadXml (null);
-			doc.InnerXml = null;
-			doc.CreateNavigator ().AppendChild ((string) null);
-		}
+    private void FailureEmpty()
+    {
+      var doc = new XmlDocument();
+      doc.LoadXml("");
+      doc.InnerXml = "";
+      doc.CreateNavigator().AppendChild(string.Empty);
+    }
+  }
 
-		void FailureEmpty () {
-			var doc = new XmlDocument ();
-			doc.LoadXml ("");
-			doc.InnerXml = "";
-			doc.CreateNavigator ().AppendChild (string.Empty);
-		}
-	}
+  [TestFixture]
+  public class ProvideValidXmlStringTest : MethodRuleTestFixture<ProvideValidXmlStringRule>
+  {
+    private static bool raisedAnalyzeModuleEvent;
 
-	[TestFixture]
-	public class ProvideValidXmlStringTest : MethodRuleTestFixture<ProvideValidXmlStringRule> {
+    [SetUp]
+    public void RaiseAnalyzeModuleEvent()
+    {
+      if (raisedAnalyzeModuleEvent)
+        return;
 
-		static bool raisedAnalyzeModuleEvent;
+      raisedAnalyzeModuleEvent = true;
+      ((TestRunner)Runner).OnModule(DefinitionLoader.GetTypeDefinition<XmlCases>().Module);
+    }
 
-		[SetUp]
-		public void RaiseAnalyzeModuleEvent ()
-		{
-			if (raisedAnalyzeModuleEvent)
-				return;
+    [Test]
+    public void DoesNotApply0()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-			raisedAnalyzeModuleEvent = true;
-			((TestRunner) Runner).OnModule (DefinitionLoader.GetTypeDefinition<XmlCases> ().Module);
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<XmlCases>("DoesNotApply1");
+    }
 
-		[Test]
-		public void DoesNotApply0 ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    [Test]
+    public void Success0()
+    {
+      AssertRuleSuccess<XmlCases>("Success0");
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<XmlCases> ("DoesNotApply1");
-		}
+    [Test]
+    public void Success1()
+    {
+      AssertRuleSuccess<XmlCases>("Success1");
+    }
 
-		[Test]
-		public void Success0 ()
-		{
-			AssertRuleSuccess<XmlCases> ("Success0");
-		}
+    [Test]
+    public void Success2()
+    {
+      AssertRuleSuccess<XmlCases>("Success2");
+    }
 
-		[Test]
-		public void Success1 ()
-		{
-			AssertRuleSuccess<XmlCases> ("Success1");
-		}
+    [Test]
+    public void Success3()
+    {
+      AssertRuleSuccess<XmlCases>("Success3");
+    }
 
-		[Test]
-		public void Success2 ()
-		{
-			AssertRuleSuccess<XmlCases> ("Success2");
-		}
+    [Test]
+    public void Success4()
+    {
+      AssertRuleSuccess<XmlCases>("Success4");
+    }
 
-		[Test]
-		public void Success3 ()
-		{
-			AssertRuleSuccess<XmlCases> ("Success3");
-		}
+    [Test]
+    public void Failure0()
+    {
+      AssertRuleFailure<XmlCases>("Failure0", 1);
+    }
 
-		[Test]
-		public void Success4 ()
-		{
-			AssertRuleSuccess<XmlCases> ("Success4");
-		}
+    [Test]
+    public void Failure1()
+    {
+      AssertRuleFailure<XmlCases>("Failure1", 1);
+    }
 
-		[Test]
-		public void Failure0 ()
-		{
-			AssertRuleFailure<XmlCases> ("Failure0", 1);
-		}
+    [Test]
+    public void Failure2()
+    {
+      AssertRuleFailure<XmlCases>("Failure2", 1);
+    }
 
-		[Test]
-		public void Failure1 ()
-		{
-			AssertRuleFailure<XmlCases> ("Failure1", 1);
-		}
+    [Test]
+    public void Failure3()
+    {
+      AssertRuleFailure<XmlCases>("Failure3", 1);
+    }
 
-		[Test]
-		public void Failure2 ()
-		{
-			AssertRuleFailure<XmlCases> ("Failure2", 1);
-		}
+    [Test]
+    public void Failure4()
+    {
+      AssertRuleFailure<XmlCases>("Failure4", 1);
+      AssertRuleFailure<XmlCases>("Failure4b", 1);
+    }
 
-		[Test]
-		public void Failure3 ()
-		{
-			AssertRuleFailure<XmlCases> ("Failure3", 1);
-		}
-
-		[Test]
-		public void Failure4 ()
-		{
-			AssertRuleFailure<XmlCases> ("Failure4", 1);
-			AssertRuleFailure<XmlCases> ("Failure4b", 1);
-		}
-
-		[Test]
-		public void FailureNullOrEmpty ()
-		{
-			AssertRuleFailure<XmlCases> ("FailureNull", 3);
-			AssertRuleFailure<XmlCases> ("FailureEmpty", 3);
-		}
-	}
+    [Test]
+    public void FailureNullOrEmpty()
+    {
+      AssertRuleFailure<XmlCases>("FailureNull", 3);
+      AssertRuleFailure<XmlCases>("FailureEmpty", 3);
+    }
+  }
 }

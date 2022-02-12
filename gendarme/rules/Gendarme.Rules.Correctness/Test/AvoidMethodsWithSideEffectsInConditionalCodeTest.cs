@@ -41,6 +41,8 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Correctness
 {
+#pragma warning disable IDE0060
+
   [TestFixture]
   public class AvoidMethodsWithSideEffectsInConditionalCodeTest : MethodRuleTestFixture<AvoidMethodsWithSideEffectsInConditionalCodeRule>
   {

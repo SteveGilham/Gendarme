@@ -36,6 +36,11 @@ using Test.Rules.Definitions;
 
 namespace Test.Rules.Correctness
 {
+#pragma warning disable IDE0043
+#pragma warning disable IDE0051
+#pragma warning disable IDE0059
+#pragma warning disable IDE0060
+
   [TestFixture]
   public class ProvideCorrectArgumentsToFormattingMethodsTest : MethodRuleTestFixture<ProvideCorrectArgumentsToFormattingMethodsRule>
   {

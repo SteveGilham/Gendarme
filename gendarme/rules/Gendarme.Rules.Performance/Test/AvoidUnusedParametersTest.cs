@@ -47,6 +47,10 @@ using Test.Rules.Helpers;
 
 namespace Test.Rules.Performance
 {
+#pragma warning disable IDE0039
+#pragma warning disable IDE0059
+#pragma warning disable IDE0060 // Remove unused parameter
+
   public abstract class AbstractClass
   {
     public abstract void AbstractMethod(int x);
@@ -75,28 +79,17 @@ namespace Test.Rules.Performance
       Runner.Engines.Subscribe("Gendarme.Framework.Engines.SuppressMessageEngine");
     }
 
-#pragma warning disable CA1822 // Mark members as static
-
     public void PrintBannerUsingParameter(Version version)
-#pragma warning restore CA1822 // Mark members as static
     {
       Console.WriteLine("Welcome to the foo program {0}", version);
     }
 
-#pragma warning disable CA1822 // Mark members as static
-#pragma warning disable IDE0060 // Remove unused parameter
-
     public void PrintBannerUsingAssembly(Version version)
-#pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
       Console.WriteLine("Welcome to the foo program {0}", Assembly.GetExecutingAssembly().GetName().Version);
     }
 
-#pragma warning disable CA1822 // Mark members as static
-
     public void PrintBannerWithoutParameters()
-#pragma warning restore CA1822 // Mark members as static
     {
       Console.WriteLine("Welcome to the foo program {0}", Assembly.GetExecutingAssembly().GetName().Version);
     }
@@ -109,12 +102,7 @@ namespace Test.Rules.Performance
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("PrintBannerWithoutParameters");
     }
 
-#pragma warning disable CA1822 // Mark members as static
-#pragma warning disable IDE0060 // Remove unused parameter
-
     public void MethodWithUnusedParameters(IEnumerable enumerable, int x)
-#pragma warning restore IDE0060 // Remove unused parameter
-#pragma warning restore CA1822 // Mark members as static
     {
       Console.WriteLine("Method with unused parameters");
     }
@@ -125,10 +113,7 @@ namespace Test.Rules.Performance
       AssertRuleFailure<AvoidUnusedParametersTest>("MethodWithUnusedParameters", 2);
     }
 
-#pragma warning disable CA1822 // Mark members as static
-
     public void MethodWith5UsedParameters(int x, IEnumerable enumerable, string foo, char c, float f)
-#pragma warning restore CA1822 // Mark members as static
     {
       Console.WriteLine(f);
       Console.WriteLine(c);
@@ -143,10 +128,7 @@ namespace Test.Rules.Performance
       AssertRuleSuccess<AvoidUnusedParametersTest>("MethodWith5UsedParameters");
     }
 
-#pragma warning disable IDE0060 // Remove unused parameter
-
     public static void StaticMethodWithUnusedParameters(int x, string foo)
-#pragma warning restore IDE0060 // Remove unused parameter
     {
     }
 
@@ -183,10 +165,7 @@ namespace Test.Rules.Performance
       AssertRuleSuccess<AvoidUnusedParametersTest>("StaticMethodWith5UsedParameters");
     }
 
-#pragma warning disable IDE0060 // Remove unused parameter
-
     public static void StaticMethodWith5UnusedParameters(int x, string foo, IEnumerable enumerable, char c, float f)
-#pragma warning restore IDE0060 // Remove unused parameter
     {
     }
 
@@ -198,51 +177,34 @@ namespace Test.Rules.Performance
 
     public delegate void SimpleCallback(int x);
 
-#pragma warning disable CA1822 // Mark members as static
-
     public void SimpleCallbackImpl(int x)
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
-#pragma warning disable CA1822 // Mark members as static
-
     public void SimpleCallbackImpl2(int x)
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
     [Test]
     public void DelegateMethodTest()
     {
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
       var callback = new SimpleCallback(SimpleCallbackImpl);
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl");
     }
 
     [Test]
     public void DelegateMethodTestWithMultipleDelegates()
     {
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
       var callback = new SimpleCallback(SimpleCallbackImpl);
       var callback2 = new SimpleCallback(SimpleCallbackImpl2);
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
 
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl");
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("SimpleCallbackImpl2");
     }
 
-#pragma warning disable CA1822 // Mark members as static
-
     public void AnonymousMethodWithUnusedParameters()
-#pragma warning restore CA1822 // Mark members as static
     {
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
-#pragma warning disable IDE0039 // Use local function
       SimpleCallback callback = delegate (int x)
-#pragma warning restore IDE0039 // Use local function
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
       {
         //Empty
       };
@@ -278,9 +240,7 @@ namespace Test.Rules.Performance
 
     public event SimpleEventHandler SimpleEvent;
 
-#pragma warning disable CA1822 // Mark members as static
     public void OnSimpleEvent(int x)
-#pragma warning restore CA1822 // Mark members as static
     {
     }
 
@@ -291,11 +251,7 @@ namespace Test.Rules.Performance
       AssertRuleDoesNotApply<AvoidUnusedParametersTest>("OnSimpleEvent");
     }
 
-#pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning disable CA1822 // Mark members as static
     public void EmptyMethod(int x)
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore IDE0060 // Remove unused parameter
     {
     }
 
@@ -319,24 +275,18 @@ namespace Test.Rules.Performance
     {
       public static bool operator ==(StructureOk s1, StructureOk s2)
       {
-#pragma warning disable CA2013 // Do not use ReferenceEquals with value types
         return Object.ReferenceEquals(s1, s2);
-#pragma warning restore CA2013 // Do not use ReferenceEquals with value types
       }
 
       public static bool operator !=(StructureOk s1, StructureOk s2)
       {
-#pragma warning disable CA2013 // Do not use ReferenceEquals with value types
         return !Object.ReferenceEquals(s1, s2);
-#pragma warning restore CA2013 // Do not use ReferenceEquals with value types
       }
     }
 
     public struct StructureBad
     {
-#pragma warning disable IDE0060 // Remove unused parameter
       public static bool operator ==(StructureBad s1, StructureBad s2)
-#pragma warning restore IDE0060 // Remove unused parameter
       {
         return true;
       }
@@ -424,7 +374,9 @@ namespace Test.Rules.Performance
     }
 
     [Conditional("DO_NOT_DEFINE")]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test code.")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
     [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Test code.")]
     private void WriteLine(string s)
     {

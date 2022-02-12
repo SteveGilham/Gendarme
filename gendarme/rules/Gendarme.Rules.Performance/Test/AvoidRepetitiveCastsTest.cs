@@ -40,6 +40,15 @@ using Test.Rules.Fixtures;
 namespace Test.Rules.Performance
 {
 #pragma warning disable 649
+#pragma warning disable IDE0038
+#pragma warning disable IDE0044
+#pragma warning disable IDE0051
+#pragma warning disable IDE0059
+#pragma warning disable IDE0060
+#if !NET472
+#pragma warning disable IDE0090
+#pragma warning disable IDE0150
+#endif
 
   [TestFixture]
   public class AvoidRepetitiveCastsTest : MethodRuleTestFixture<AvoidRepetitiveCastsRule>
