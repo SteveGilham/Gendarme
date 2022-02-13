@@ -297,9 +297,15 @@ namespace Test.Rules.Maintainability
     }
 
     public void GenericMethod<T>(T x) where T : System.ArgumentException
-    {
+    { // IL_0000: nop
       Console.WriteLine(x.Message);
-    }
+      //IL_0001: ldarg.1
+      //IL_0002: box!!T <== this confuses the analysis
+      //IL_0007: callvirt instance string[mscorlib] System.Exception::get_Message()
+      //IL_000c: call void [mscorlib]System.Console::WriteLine(string)
+    } //IL_0011: nop
+
+    //IL_0012: ret
 
     public void GenericMethodStandardParameter(ArgumentException x)
     {
