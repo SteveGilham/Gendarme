@@ -882,7 +882,7 @@ namespace Test.Framework
       using (var stream =
         Assembly
           .GetExecutingAssembly()
-          .GetManifestResourceStream("Test.Framework.MCSRetro.MCSRetro.dll"))
+          .GetManifestResourceStream("Test.Framework.csc2010.StackBadBoys.dll"))
       using (var ad = AssemblyDefinition.ReadAssembly(stream))
       {
         Console.WriteLine("Retro1");
@@ -903,7 +903,7 @@ namespace Test.Framework
       using (var stream =
         Assembly
           .GetExecutingAssembly()
-          .GetManifestResourceStream("Test.Framework.MCSRetro.MCSRetro.dll"))
+          .GetManifestResourceStream("Test.Framework.csc2010.StackBadBoys.dll"))
       using (var ad = AssemblyDefinition.ReadAssembly(stream))
       {
         Console.WriteLine("Retro2");
