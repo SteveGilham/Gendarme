@@ -43,6 +43,19 @@ let dotnetOptions (o: DotNet.Options) =
     | Some f -> { o with DotNetCliPath = f }
     | None -> o
 
+let dotnetInfo =
+    DotNet.exec (fun o -> dotnetOptions (o.WithRedirectOutput true)) "" "--info"
+
+let dotnetSdkPath =
+    dotnetInfo.Results
+    |> Seq.filter (fun x -> x.IsError |> not)
+    |> Seq.map (fun x -> x.Message)
+    |> Seq.tryFind (fun x -> x.Contains "Base Path:")
+    |> Option.map (fun x -> x.Replace("Base Path:", "").TrimStart())
+
+let refdir = dotnetSdkPath
+             |> Option.map(fun path -> path @@ "ref")
+
 let currentBranch =
     let env =
         Environment.environVar "APPVEYOR_REPO_BRANCH"
@@ -495,9 +508,6 @@ _Target
                           standardRules
                           [ "-Microsoft.Design#CA1026:DefaultParametersShouldNotBeUsed" ] ]
 
-        let refdir =
-            @"C:\Program Files\dotnet\sdk\6.0.101\ref" // TODO generate
-
         try
             [ Path.GetFullPath "./_Binaries/gendarme/Debug/net472/gendarme.exe" ]
             |> FxCop.run
@@ -530,7 +540,7 @@ _Target
                             nugetCache
                             @@ "fsharp.core/6.0.1/lib/netstandard2.0" ]
                       ToolPath = Option.get dixon
-                      PlatformDirectory = refdir
+                      PlatformDirectory = Option.get refdir
                       UseGAC = true
                       Verbose = false
                       ReportFileName = "_Reports/FxCopReport.xml"
@@ -558,7 +568,7 @@ _Target
                             nugetCache
                             @@ "fsharp.core/6.0.1/lib/netstandard2.0" ]
                       ToolPath = Option.get dixon
-                      PlatformDirectory = refdir
+                      PlatformDirectory = Option.get refdir
                       UseGAC = true
                       Verbose = false
                       ReportFileName = "_Reports/FxCopReport.xml"
@@ -588,7 +598,7 @@ _Target
                             nugetCache
                             @@ "system.resources.extensions/6.0.0/lib/netstandard2.0" ]
                       ToolPath = Option.get dixon
-                      PlatformDirectory = refdir
+                      PlatformDirectory = Option.get refdir
                       UseGAC = true
                       Verbose = false
                       ReportFileName = "_Reports/FxCopReport.xml"
