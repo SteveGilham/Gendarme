@@ -38,7 +38,12 @@ using Test.Rules.Helpers;
 
 namespace Test.Rules.Portability
 {
-  internal class CommonMainClass { }
+#if !NET472
+#pragma warning disable IDE0090
+#endif
+
+  internal class CommonMainClass
+  { }
 
   internal class GoodIntMainClass : CommonMainClass
   {

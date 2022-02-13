@@ -35,6 +35,9 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Naming
 {
+#pragma warning disable IDE0051
+#pragma warning disable IDE0060
+
   internal class Package
   {
   }

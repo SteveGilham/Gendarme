@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -38,97 +38,100 @@ using Test.Rules.Helpers;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+#pragma warning disable IDE0060
+#pragma warning disable IDE0051
 
-	[TestFixture]
-	public class PreferXmlAbstractionsTest : MethodRuleTestFixture<PreferXmlAbstractionsRule> {
+  [TestFixture]
+  public class PreferXmlAbstractionsTest : MethodRuleTestFixture<PreferXmlAbstractionsRule>
+  {
+    private static bool raisedAnalyzeModuleEvent;
 
-		static bool raisedAnalyzeModuleEvent;
+    [SetUp]
+    public void RaiseAnalyzeModuleEvent()
+    {
+      if (raisedAnalyzeModuleEvent)
+        return;
 
-		[SetUp]
-		public void RaiseAnalyzeModuleEvent ()
-		{
-			if (raisedAnalyzeModuleEvent)
-				return;
+      raisedAnalyzeModuleEvent = true;
+      ((TestRunner)Runner).OnModule(DefinitionLoader.GetTypeDefinition<PreferXmlAbstractionsTest>().Module);
+    }
 
-			raisedAnalyzeModuleEvent = true;
-			((TestRunner) Runner).OnModule (DefinitionLoader.GetTypeDefinition<PreferXmlAbstractionsTest> ().Module);
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<PreferXmlAbstractionsTest>("PrivateBadReturn");
+      AssertRuleDoesNotApply<PreferXmlAbstractionsTest>("PrivateBadParameter");
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<PreferXmlAbstractionsTest> ("PrivateBadReturn");
-			AssertRuleDoesNotApply<PreferXmlAbstractionsTest> ("PrivateBadParameter");
-		}
+    [Test]
+    public void Success()
+    {
+      AssertRuleSuccess<PreferXmlAbstractionsTest>("VisibleReturn");
+      AssertRuleSuccess<PreferXmlAbstractionsTest>("VisibleParameter");
+      AssertRuleSuccess<PreferXmlAbstractionsTest>("VisibleParameter2");
+      AssertRuleSuccess<PreferXmlAbstractionsTest>("VisibleOutParameter");
+    }
 
-		[Test]
-		public void Success ()
-		{
-			AssertRuleSuccess<PreferXmlAbstractionsTest> ("VisibleReturn");
-			AssertRuleSuccess<PreferXmlAbstractionsTest> ("VisibleParameter");
-			AssertRuleSuccess<PreferXmlAbstractionsTest> ("VisibleParameter2");
-			AssertRuleSuccess<PreferXmlAbstractionsTest> ("VisibleOutParameter");
-		}
+    [Test]
+    public void Failure()
+    {
+      AssertRuleFailure<PreferXmlAbstractionsTest>("VisibleBadReturn", 1);
+      AssertRuleFailure<PreferXmlAbstractionsTest>("VisibleBadParameter", 1);
+      AssertRuleFailure<PreferXmlAbstractionsTest>("VisibleBadParameters", 2);
+      AssertRuleFailure<PreferXmlAbstractionsTest>("VisibleBadReturnAndParameter", 2);
+      AssertRuleFailure<PreferXmlAbstractionsTest>("VisibleBadReturnAndParameter2", 2);
+    }
 
-		[Test]
-		public void Failure ()
-		{
-			AssertRuleFailure<PreferXmlAbstractionsTest> ("VisibleBadReturn", 1);
-			AssertRuleFailure<PreferXmlAbstractionsTest> ("VisibleBadParameter", 1);
-			AssertRuleFailure<PreferXmlAbstractionsTest> ("VisibleBadParameters", 2);
-			AssertRuleFailure<PreferXmlAbstractionsTest> ("VisibleBadReturnAndParameter", 2);
-			AssertRuleFailure<PreferXmlAbstractionsTest> ("VisibleBadReturnAndParameter2", 2);
-		}
+    private XmlDocument PrivateBadReturn()
+    {
+      return null;
+    }
 
-		private XmlDocument PrivateBadReturn ()
-		{
-			return null;
-		}
+    private void PrivateBadParameter(XmlNode input)
+    {
+    }
 
-		private void PrivateBadParameter (XmlNode input)
-		{
-		}
+    public IXPathNavigable VisibleReturn()
+    {
+      return null;
+    }
 
-		public IXPathNavigable VisibleReturn ()
-		{
-			return null;
-		}
+    protected void VisibleParameter(XmlReader input)
+    {
+    }
 
-		protected void VisibleParameter (XmlReader input)
-		{
-		}
+    public void VisibleParameter2(IXPathNavigable input)
+    {
+    }
 
-		public void VisibleParameter2 (IXPathNavigable input)
-		{
-		}
+    public void VisibleOutParameter(out XmlDocument output)
+    {
+      output = null;
+    }
 
-		public void VisibleOutParameter (out XmlDocument output)
-		{
-			output = null;
-		}
+    public XmlDocument VisibleBadReturn()
+    {
+      return null;
+    }
 
-		public XmlDocument VisibleBadReturn ()
-		{
-			return null;
-		}
+    public void VisibleBadParameter(XmlNode input)
+    {
+    }
 
-		public void VisibleBadParameter (XmlNode input)
-		{
-		}
+    protected void VisibleBadParameters(XmlNode input, XmlDocument doc)
+    {
+    }
 
-		protected void VisibleBadParameters (XmlNode input, XmlDocument doc)
-		{
-		}
+    public XmlNode VisibleBadReturnAndParameter(XmlDocument input)
+    {
+      return null;
+    }
 
-		public XmlNode VisibleBadReturnAndParameter (XmlDocument input)
-		{
-			return null;
-		}
-
-		public XPathDocument VisibleBadReturnAndParameter2 (XPathDocument doc)
-		{
-			return doc;
-		}
-	}
+    public XPathDocument VisibleBadReturnAndParameter2(XPathDocument doc)
+    {
+      return doc;
+    }
+  }
 }

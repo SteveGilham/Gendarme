@@ -44,6 +44,16 @@ using Test.Rules.Helpers;
 namespace Test.Rules.Performance
 {
 #pragma warning disable 169, 414
+#pragma warning disable IDE0034
+#pragma warning disable IDE0044
+#pragma warning disable IDE0051
+#pragma warning disable IDE0052
+#pragma warning disable IDE0059
+#pragma warning disable IDE0060
+#if !NET472
+#pragma warning disable IDE0090
+#endif
+#pragma warning disable IDE1006
 
   // from Mono.Rocks
   // note: error CS1109: Extension methods must be defined in a top level static class; StaticType is a nested class
@@ -639,7 +649,6 @@ namespace Test.Rules.Performance
 
     [Test]
     [Ignore("Mono bug #320901")]
-    // https://bugzilla.novell.com/show_bug.cgi?id=320901
     public void Generics()
     {
       AssertRuleSuccess<Anculus>();
@@ -680,7 +689,8 @@ namespace Test.Rules.Performance
     private class EmptyAddressOf /*: EmptyExpression, IMemoryLocation */
     {
       // THIS PROPERTY IS NEVER USED
-      public bool IsFixed { get { return true; } }
+      public bool IsFixed
+      { get { return true; } }
     }
 
     [Test]
@@ -805,7 +815,6 @@ namespace Test.Rules.Performance
 
     [Test]
     [Ignore("Mono bug #320901")]
-    // https://bugzilla.novell.com/show_bug.cgi?id=320901
     public void MonoRocks()
     {
       AssertRuleSuccess(typeof(StaticType), "CreateRepeatIterator");
@@ -862,7 +871,6 @@ namespace Test.Rules.Performance
     }
 
     [Test]
-    // https://bugzilla.novell.com/show_bug.cgi?id=458178
     public void Arrays()
     {
       AssertRuleFailure<AvoidUncalledPrivateCodeTest>("MultidimArray", 1);

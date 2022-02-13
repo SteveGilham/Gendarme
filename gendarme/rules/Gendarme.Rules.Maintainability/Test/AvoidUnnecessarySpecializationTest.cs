@@ -42,6 +42,16 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Maintainability
 {
+#pragma warning disable IDE0018
+#pragma warning disable IDE0028
+#pragma warning disable IDE0044
+#pragma warning disable IDE0051
+#pragma warning disable IDE0060
+#if !NET472
+#pragma warning disable IDE0090
+#endif
+#pragma warning disable IDE1006
+
   public class Base
   {
     public virtual void Foo()

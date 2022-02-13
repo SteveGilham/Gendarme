@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,272 +36,317 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
+#pragma warning disable IDE1006
+#pragma warning disable IDE0060
+#pragma warning disable IDE0051
+
 // no namespace
-class Foo { }
+internal class Foo
+{ }
 
-namespace Test.IO { class Foo {} }
-namespace Test.Fa { class Foo {} }
-namespace Test.ASP { class Foo {} class Bar {} }
-namespace Test.A { class Foo {} }
-namespace Test.Rules.ROCKS { class Foo { } }
-namespace Test.aSP { class Zoo { } class Yar { } }
+namespace Test.IO { internal class Foo { } }
 
-namespace Test.Rules.Naming {
+namespace Test.Fa { internal class Foo { } }
 
-	[TestFixture]
-	public class UseCorrectCasingAssemblyTest : AssemblyRuleTestFixture<UseCorrectCasingRule> {
+namespace Test.ASP { internal class Foo { } internal class Bar { } }
 
-		[Test]
-		public void Namespaces ()
-		{
-			// 1. Test.A
-			// 2. Test.Fa
-			// 3. Test.ASP
-			// 4. Test.Rules.ROCKS
-			// 5. Test.aSP
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			AssertRuleFailure (AssemblyDefinition.ReadAssembly (unit), 5);
-		}
+namespace Test.A { internal class Foo { } }
 
-        [Test]
-        public void FSharpStartUpNamespaces()
+namespace Test.Rules.ROCKS { internal class Foo { } }
+
+namespace Test.aSP { internal class Zoo { } internal class Yar { } }
+
+namespace Test.Rules.Naming
+{
+  [TestFixture]
+  public class UseCorrectCasingAssemblyTest : AssemblyRuleTestFixture<UseCorrectCasingRule>
+  {
+    [Test]
+    public void Namespaces()
+    {
+      // 1. Test.A
+      // 2. Test.Fa
+      // 3. Test.ASP
+      // 4. Test.Rules.ROCKS
+      // 5. Test.aSP
+      string unit = Assembly.GetExecutingAssembly().Location;
+      AssertRuleFailure(AssemblyDefinition.ReadAssembly(unit), 5);
+    }
+
+    [Test]
+    public void FSharpStartUpNamespaces()
+    {
+      string unit = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs).Assembly.Location;
+      AssertRuleSuccess(AssemblyDefinition.ReadAssembly(unit));
+    }
+  }
+
+  [TestFixture]
+  public class UseCorrectCasingTypeTest : TypeRuleTestFixture<UseCorrectCasingRule>
+  {
+    public class CorrectCasing
+    {
+    }
+
+    public class incorrectCasing
+    {
+    }
+
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.GeneratedType);
+    }
+
+    [Test]
+    public void Types()
+    {
+      AssertRuleSuccess<CorrectCasing>();
+      AssertRuleFailure<incorrectCasing>(1);
+    }
+
+    [Test]
+    public void FSharpDebugProxyTypesAreIgnored()
+    {
+      Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("AvoidNonAlphanumericIdentifier.TypeSafe/DirectoryPath/_NoDirectory");
+      AssertRuleDoesNotApply(type);
+    }
+
+    [Test]
+    public void FSharpIgnoreGenerated()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/get_ForceDelete@16");
+      AssertRuleDoesNotApply(type);
+    }
+  }
+
+  public class CasingMethods
+  {
+    public void CorrectCasing(int foo, string bar)
+    { }
+
+    public void incorrectCasing(int foo, string bar)
+    { }
+
+    public void CorrectCasingWithTwoIncorrectParameters(int Bar, string Foo)
+    { }
+
+    public void incorrectCasingWithTwoIncorrectParameters(int Bar, string Foo)
+    { }
+
+    public void IncorrectParameter(byte B)
+    { }
+
+    public void x()
+    { }
+
+    public void _X(short _S)
+    { }
+  }
+
+  public class MoreComplexCasing
+  {
+    static MoreComplexCasing()
+    {
+    } // .cctor, should be ignored
+
+    public MoreComplexCasing()
+    { } // .ctor, should be ignored
+
+    public int GoodProperty
+    { get { return 0; } set { } }
+
+    public int badProperty
+    { get { return 0; } set { } }
+
+    public int get_AccessorLike()
+    { return 0; } // should be catched
+
+    public void set_AccessorLike(int value)
+    { } // should be catched
+
+    public event EventHandler GoodEvent
+    {
+      add { throw new NotImplementedException(); }
+      remove { throw new NotImplementedException(); }
+    }
+
+    public event EventHandler badEvent
+    {
+      add { throw new NotImplementedException(); }
+      remove { throw new NotImplementedException(); }
+    }
+
+    public static int operator +(MoreComplexCasing a, int b)
+    { return 0; } // ignore!
+  }
+
+  public class PrivateEventCasing
+  {
+    private event EventHandler good_private_event;
+  }
+
+  [TestFixture]
+  public class UseCorrectCasingTest : MethodRuleTestFixture<UseCorrectCasingRule>
+  {
+    [Test]
+    public void TestCorrectCasedMethod()
+    {
+      AssertRuleSuccess<CasingMethods>("CorrectCasing");
+    }
+
+    [Test]
+    public void TestIncorrectCasedMethod()
+    {
+      AssertRuleFailure<CasingMethods>("incorrectCasing", 1);
+    }
+
+    [Test]
+    public void TestCorrectCasedMethodWithIncorrectCasedParameters()
+    {
+      AssertRuleFailure<CasingMethods>("CorrectCasingWithTwoIncorrectParameters", 2);
+    }
+
+    [Test]
+    public void TestIncorrectCasedMethodWithIncorrectCasedParameters()
+    {
+      AssertRuleFailure<CasingMethods>("incorrectCasingWithTwoIncorrectParameters", 3);
+    }
+
+    [Test]
+    public void MoreCoverage()
+    {
+      // parameter 'B' should be lower case to be CamelCase
+      AssertRuleFailure<CasingMethods>("IncorrectParameter", 1);
+      // method name should be uppercase to be PascalCase
+      AssertRuleFailure<CasingMethods>("x", 1);
+      // starts with an underscore for name and parameter, fails both Pascal and Camel checks
+      AssertRuleFailure<CasingMethods>("_X", 2);
+    }
+
+    [Test]
+    public void TestIgnoringCtor()
+    {
+      AssertRuleDoesNotApply<MoreComplexCasing>(".cctor");
+      AssertRuleDoesNotApply<MoreComplexCasing>(".ctor");
+    }
+
+    [Test]
+    public void TestGoodProperty()
+    {
+      AssertRuleSuccess<MoreComplexCasing>("get_GoodProperty");
+      AssertRuleSuccess<MoreComplexCasing>("set_GoodProperty");
+    }
+
+    [Test]
+    public void TestBadProperty()
+    {
+      AssertRuleFailure<MoreComplexCasing>("get_badProperty", 1);
+      AssertRuleFailure<MoreComplexCasing>("set_badProperty", 1);
+    }
+
+    [Test]
+    public void TestGoodEventHandler()
+    {
+      AssertRuleSuccess<MoreComplexCasing>("add_GoodEvent");
+      AssertRuleSuccess<MoreComplexCasing>("remove_GoodEvent");
+    }
+
+    [Test]
+    public void TestBadEventHandler()
+    {
+      AssertRuleFailure<MoreComplexCasing>("add_badEvent", 1);
+      AssertRuleFailure<MoreComplexCasing>("remove_badEvent", 1);
+    }
+
+    [Test]
+    public void TestGoodPrivateEvent()
+    {
+      AssertRuleDoesNotApply<PrivateEventCasing>("add_good_private_event");
+      AssertRuleDoesNotApply<PrivateEventCasing>("remove_good_private_event");
+    }
+
+    [Test]
+    public void TestPropertyLikeMethods()
+    {
+      AssertRuleFailure<MoreComplexCasing>("get_AccessorLike", 1);
+      AssertRuleFailure<MoreComplexCasing>("set_AccessorLike", 1);
+    }
+
+    [Test]
+    public void TestIgnoringOperator()
+    {
+      AssertRuleSuccess<MoreComplexCasing>("op_Addition");
+    }
+
+    [Test]
+    public void FSharpCamelCaseModules()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetType("UseCorrectPrefix.CreateProcess");
+      AssertRuleSuccess(type, "ensureExitCode");
+    }
+
+    [Test]
+    public void FSharpPlaceholders()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetType("MethodCanBeMadeStatic.Instrument");
+      AssertRuleSuccess(type, "resolveFromNugetCache");
+    }
+
+    [Test]
+    public void FSharpExtensionProperties()
+    {
+      AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "Object.get_IsNotNull");
+    }
+
+    public class AnonymousMethod
+    {
+      private void MethodWithAnonymousMethod()
+      {
+        string[] values = new string[] { "one", "two", "three" };
+        if (Array.Exists(values, delegate (string myString) { return myString.Length == 3; }))
+          Console.WriteLine("Exists strings with length == 3");
+      }
+    }
+
+    private AssemblyDefinition assembly;
+
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
+
+    [Test]
+    public void TestAnonymousMethod()
+    {
+      // compiler generated code is compiler dependant, check for [g]mcs (inner type)
+      TypeDefinition type = assembly.MainModule.GetType("Test.Rules.Naming.UseCorrectCasingTest/AnonymousMethod/<>c__CompilerGenerated0");
+      // otherwise try for csc (inside same class)
+      if (type == null)
+        type = assembly.MainModule.GetType("Test.Rules.Naming.UseCorrectCasingTest/AnonymousMethod");
+
+      Assert.IsNotNull(type, "type not found");
+      foreach (MethodDefinition method in type.Methods)
+      {
+        switch (method.Name)
         {
-            string unit = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs).Assembly.Location;
-            AssertRuleSuccess(AssemblyDefinition.ReadAssembly(unit));
+          case "MethodWithAnonymousMethod":
+            // this isn't part of the test (but included with CSC)
+            break;
+
+          default:
+            AssertRuleDoesNotApply(method);
+            break;
         }
-	}
-
-	[TestFixture]
-	public class UseCorrectCasingTypeTest : TypeRuleTestFixture<UseCorrectCasingRule> {
-
-		public class CorrectCasing {
-		}
-
-		public class incorrectCasing {
-		}
-
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.GeneratedType);
-		}
-
-		[Test]
-		public void Types ()
-		{
-			AssertRuleSuccess<CorrectCasing> ();
-			AssertRuleFailure<incorrectCasing> (1);
-		}
-
-
-        [Test]
-        public void FSharpDebugProxyTypesAreIgnored()
-        {
-            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("AvoidNonAlphanumericIdentifier.TypeSafe/DirectoryPath/_NoDirectory");
-            AssertRuleDoesNotApply(type);
-        }
-
-        [Test]
-        public void FSharpIgnoreGenerated()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/get_ForceDelete@16");
-            AssertRuleDoesNotApply(type);
-	}
-
-	}
-
-	public class CasingMethods {
-		public void CorrectCasing (int foo, string bar) { }
-		public void incorrectCasing (int foo, string bar) { }
-		public void CorrectCasingWithTwoIncorrectParameters (int Bar, string Foo) { }
-		public void incorrectCasingWithTwoIncorrectParameters (int Bar, string Foo) { }
-
-		public void IncorrectParameter (byte B) { }
-		public void x () { }
-		public void _X (short _S) { }
-	}
-
-	public class MoreComplexCasing {
-		static MoreComplexCasing () { } // .cctor, should be ignored
-		public MoreComplexCasing () { } // .ctor, should be ignored
-		public int GoodProperty { get { return 0; } set { } }
-		public int badProperty { get { return 0; } set { } }
-		public int get_AccessorLike () { return 0; } // should be catched
-		public void set_AccessorLike (int value) { } // should be catched
-		public event EventHandler GoodEvent
-		{
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
-		}
-		public event EventHandler badEvent
-		{
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
-		}
-		public static int operator + (MoreComplexCasing a, int b) { return 0; } // ignore!
-	}
-
-	public class PrivateEventCasing {
-		private event EventHandler good_private_event;
-	}
-
-	[TestFixture]
-	public class UseCorrectCasingTest : MethodRuleTestFixture<UseCorrectCasingRule> {
-
-		[Test]
-		public void TestCorrectCasedMethod ()
-		{
-			AssertRuleSuccess<CasingMethods> ("CorrectCasing");
-		}
-
-		[Test]
-		public void TestIncorrectCasedMethod ()
-		{
-			AssertRuleFailure<CasingMethods> ("incorrectCasing", 1);
-		}
-
-		[Test]
-		public void TestCorrectCasedMethodWithIncorrectCasedParameters ()
-		{
-			AssertRuleFailure<CasingMethods> ("CorrectCasingWithTwoIncorrectParameters", 2);
-		}
-
-		[Test]
-		public void TestIncorrectCasedMethodWithIncorrectCasedParameters ()
-		{
-			AssertRuleFailure<CasingMethods> ("incorrectCasingWithTwoIncorrectParameters", 3);
-		}
-
-		[Test]
-		public void MoreCoverage ()
-		{
-			// parameter 'B' should be lower case to be CamelCase
-			AssertRuleFailure<CasingMethods> ("IncorrectParameter", 1);
-			// method name should be uppercase to be PascalCase
-			AssertRuleFailure<CasingMethods> ("x", 1);
-			// starts with an underscore for name and parameter, fails both Pascal and Camel checks
-			AssertRuleFailure<CasingMethods> ("_X", 2);
-		}
-
-		[Test]
-		public void TestIgnoringCtor ()
-		{
-			AssertRuleDoesNotApply<MoreComplexCasing> (".cctor");
-			AssertRuleDoesNotApply<MoreComplexCasing> (".ctor");
-		}
-
-		[Test]
-		public void TestGoodProperty ()
-		{
-			AssertRuleSuccess<MoreComplexCasing> ("get_GoodProperty");
-			AssertRuleSuccess<MoreComplexCasing> ("set_GoodProperty");
-		}
-
-		[Test]
-		public void TestBadProperty ()
-		{
-			AssertRuleFailure<MoreComplexCasing> ("get_badProperty", 1);
-			AssertRuleFailure<MoreComplexCasing> ("set_badProperty", 1);
-		}
-
-		[Test]
-		public void TestGoodEventHandler ()
-		{
-			AssertRuleSuccess<MoreComplexCasing> ("add_GoodEvent");
-			AssertRuleSuccess<MoreComplexCasing> ("remove_GoodEvent");
-		}
-
-		[Test]
-		public void TestBadEventHandler ()
-		{
-			AssertRuleFailure<MoreComplexCasing> ("add_badEvent", 1);
-			AssertRuleFailure<MoreComplexCasing> ("remove_badEvent", 1);
-		}
-
-		[Test]
-		public void TestGoodPrivateEvent ()
-		{
-			AssertRuleDoesNotApply<PrivateEventCasing> ("add_good_private_event");
-			AssertRuleDoesNotApply<PrivateEventCasing> ("remove_good_private_event");
-		}
-
-		[Test]
-		public void TestPropertyLikeMethods ()
-		{
-			AssertRuleFailure<MoreComplexCasing> ("get_AccessorLike", 1);
-			AssertRuleFailure<MoreComplexCasing> ("set_AccessorLike", 1);
-		}
-
-		[Test]
-		public void TestIgnoringOperator ()
-		{
-			AssertRuleSuccess<MoreComplexCasing> ("op_Addition");
-		}
-
-        [Test]
-        public void FSharpCamelCaseModules()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var type = probe.Assembly.GetType("UseCorrectPrefix.CreateProcess");
-            AssertRuleSuccess(type, "ensureExitCode");
-        }
-
-        [Test]
-        public void FSharpPlaceholders()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var type = probe.Assembly.GetType("MethodCanBeMadeStatic.Instrument");
-            AssertRuleSuccess(type, "resolveFromNugetCache");
-        }
-
-        [Test]
-        public void FSharpExtensionProperties()
-        {
-            AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "Object.get_IsNotNull");
-        }
-
-		public class AnonymousMethod {
-			private void MethodWithAnonymousMethod ()
-			{
-				string [] values = new string [] { "one", "two", "three" };
-				if (Array.Exists (values, delegate (string myString) { return myString.Length == 3; }))
-					Console.WriteLine ("Exists strings with length == 3");
-			}
-		}
-
-		private AssemblyDefinition assembly;
-
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
-
-		[Test]
-		public void TestAnonymousMethod ()
-		{
-			// compiler generated code is compiler dependant, check for [g]mcs (inner type)
-			TypeDefinition type = assembly.MainModule.GetType ("Test.Rules.Naming.UseCorrectCasingTest/AnonymousMethod/<>c__CompilerGenerated0");
-			// otherwise try for csc (inside same class)
-			if (type == null)
-				type = assembly.MainModule.GetType ("Test.Rules.Naming.UseCorrectCasingTest/AnonymousMethod");
-
-			Assert.IsNotNull (type, "type not found");
-			foreach (MethodDefinition method in type.Methods) {
-				switch (method.Name) {
-				case "MethodWithAnonymousMethod":
-					// this isn't part of the test (but included with CSC)
-					break;
-				default:
-					AssertRuleDoesNotApply (method);
-					break;
-				}
-			}
-		}
-	}
+      }
+    }
+  }
 }

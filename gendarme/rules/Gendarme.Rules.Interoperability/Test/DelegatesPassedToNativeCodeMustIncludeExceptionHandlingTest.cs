@@ -41,6 +41,12 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Interoperability
 {
+#pragma warning disable IDE0039
+#pragma warning disable IDE0044
+#pragma warning disable IDE0051
+#pragma warning disable IDE0052
+#pragma warning disable IDE0059
+
   [TestFixture]
   public class DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest
   {

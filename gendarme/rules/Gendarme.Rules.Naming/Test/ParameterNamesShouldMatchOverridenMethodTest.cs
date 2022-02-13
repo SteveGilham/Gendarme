@@ -41,6 +41,8 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Naming
 {
+#pragma warning disable IDE0051
+
   internal interface ISomeInterface
   {
     bool InterfaceMethod(int im);
@@ -51,7 +53,7 @@ namespace Test.Rules.Naming
     bool InterfaceMethod2(int im);
   }
 
-  abstract public class SuperBaseClass
+  public abstract class SuperBaseClass
   {
     protected virtual void VirtualSuperIncorrect(int vsi1, bool vsi2)
     {
@@ -62,7 +64,7 @@ namespace Test.Rules.Naming
     }
   }
 
-  abstract public class BaseClass : SuperBaseClass
+  public abstract class BaseClass : SuperBaseClass
   {
     protected virtual void VirtualCorrect(int vc1, int vc2)
     {
