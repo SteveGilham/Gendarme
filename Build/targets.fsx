@@ -646,7 +646,6 @@ _Target
                     | "Test.Rules.Concurrency" -> 6
                     | "Test.Rules.Correctness" -> 5
                     | "Test.Rules.Interoperability" -> 18
-                    | "Test.Rules.Maintainability" -> 1
                     | "Test.Rules.Smells" -> 2
                     | _ -> 0
 
@@ -688,7 +687,6 @@ _Target
                     | "Test.Rules.Concurrency"
                     | "Test.Rules.Correctness"
                     | "Test.Rules.Interoperability"
-                    | "Test.Rules.Maintainability"
                     | "Test.Rules.Smells" -> printfn "%A" x
                     | _ -> reraise ()))
 
@@ -785,7 +783,6 @@ _Target
                         | "Test.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
                         | "Test.Rules.Correctness" when exitCode () <= 5 -> printfn "%A" x.Message
                         | "Test.Rules.Interoperability" when exitCode () <= 18 -> printfn "%A" x.Message
-                        | "Test.Rules.Maintainability" when exitCode () <= 1 -> printfn "%A" x.Message
                         | "Test.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
                         | _ -> reraise ()
 
@@ -889,7 +886,6 @@ _Target
                         | "Test.Rules.Concurrency"
                         | "Test.Rules.Correctness"
                         | "Test.Rules.Interoperability"
-                        | "Test.Rules.Maintainability"
                         | "Test.Rules.Smells" -> printfn "%A" x
                         | _ -> reraise ()
 

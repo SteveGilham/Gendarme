@@ -466,7 +466,10 @@ namespace Gendarme.Rules.Maintainability
           usages[parameter] = new List<StackEntryUsageResult>();
         }
 
-        usages[parameter].AddRange(sea.GetStackEntryUsage(ins));
+        // count (ldarg + box) together as a unit for stack analysis purposes
+        var next = ins.Next;
+        var load = (next.OpCode == OpCodes.Box) ? next : ins;
+        usages[parameter].AddRange(sea.GetStackEntryUsage(load));
       }
 
       foreach (var usage in usages)
