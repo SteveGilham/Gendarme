@@ -58,8 +58,6 @@ The following rule suites have unit test failures
   * TestMultipleCatch()
   * TestTryCatchFinally()
   * TestCalli() -- activated now Cecil can support the long commented-out test
-* Correctness -- 1 failures (false negatives)
-  * `TestNativeFieldsArray` -- changed IL
 * Interoperability -- 1
   * 1 false positive in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` 
 * Smells -- 2 failure

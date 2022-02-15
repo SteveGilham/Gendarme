@@ -5,5 +5,6 @@
 * Make heuristic fixes for `CheckParametersNullityInVisibleMethods` -- also related to boxing generics; and cases of different choices of comparison operation
 * Propagate the checks for the changed null comparison IL to `ProtectCallToEventDelegatesRule`
 * Fix false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule`
+* Fix false negative in `TestNativeFieldsArray` -- extended checks for new changed IL
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md
