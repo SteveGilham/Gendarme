@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -34,105 +34,111 @@ using Gendarme.Rules.Security.Cas;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Security {
+namespace Test.Rules.Security.Cas
+{
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0052 // Remove unread private members
+#if !NET472
+#pragma warning disable IDE0090 // Add readonly modifier
+#endif
 
-	[TestFixture]
-	public class DoNotExposeFieldsInSecuredTypeTest : TypeRuleTestFixture<DoNotExposeFieldsInSecuredTypeRule> {
+  [TestFixture]
+  public class DoNotExposeFieldsInSecuredTypeTest : TypeRuleTestFixture<DoNotExposeFieldsInSecuredTypeRule>
+  {
+    [SecurityPermission(System.Security.Permissions.SecurityAction.InheritanceDemand, Unrestricted = true)]
+    private class NonVisibleClass
+    {
+      public object Field = new object();
 
-		[SecurityPermission (System.Security.Permissions.SecurityAction.InheritanceDemand, Unrestricted = true)]
-		class NonVisibleClass {
+      public NonVisibleClass()
+      {
+      }
+    }
 
-			public object Field = new object ();
+    [Test]
+    public void NonVisible()
+    {
+      AssertRuleDoesNotApply<NonVisibleClass>();
+    }
 
-			public NonVisibleClass ()
-			{
-			}
-		}
+    public class NoSecurityClass
+    {
+      public object Field = new object();
 
-		[Test]
-		public void NonVisible ()
-		{
-			AssertRuleDoesNotApply<NonVisibleClass> ();
-		}
+      public NoSecurityClass()
+      {
+      }
+    }
 
-		public class NoSecurityClass {
+    [Test]
+    public void NoSecurity()
+    {
+      AssertRuleDoesNotApply<NoSecurityClass>();
+    }
 
-			public object Field = new object ();
+    [SecurityPermission(SecurityAction.Deny, Unrestricted = true)]
+    public class NoDemandClass
+    {
+      public object Field = new object();
 
-			public NoSecurityClass ()
-			{
-			}
-		}
+      public NoDemandClass()
+      {
+      }
+    }
 
-		[Test]
-		public void NoSecurity ()
-		{
-			AssertRuleDoesNotApply<NoSecurityClass> ();
-		}
+    [Test]
+    public void NoDemand()
+    {
+      AssertRuleDoesNotApply<NoDemandClass>();
+    }
 
-		[SecurityPermission (SecurityAction.Deny, Unrestricted = true)]
-		public class NoDemandClass {
+    [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
+    public class NoVisibleFieldClass
+    {
+      private object Field = new object();
+      internal string FieldToo = String.Empty;
 
-			public object Field = new object ();
+      public NoVisibleFieldClass()
+      {
+      }
+    }
 
-			public NoDemandClass ()
-			{
-			}
-		}
+    [Test]
+    public void NoVisibleField()
+    {
+      AssertRuleSuccess<NoVisibleFieldClass>();
+    }
 
-		[Test]
-		public void NoDemand ()
-		{
-			AssertRuleDoesNotApply<NoDemandClass> ();
-		}
+    [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
+    public class LinkDemandWithFieldClass
+    {
+      public object Field = new object();
 
-		[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
-		public class NoVisibleFieldClass {
+      public LinkDemandWithFieldClass()
+      {
+      }
+    }
 
-			private object Field = new object ();
-			internal string FieldToo = String.Empty;
+    [Test]
+    public void LinkDemandWithField()
+    {
+      AssertRuleFailure<LinkDemandWithFieldClass>(1);
+    }
 
-			public NoVisibleFieldClass ()
-			{
-			}
-		}
+    [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
+    public class DemandWithFieldClass
+    {
+      public object Field = new object();
 
-		[Test]
-		public void NoVisibleField ()
-		{
-			AssertRuleSuccess<NoVisibleFieldClass> ();
-		}
+      public DemandWithFieldClass()
+      {
+      }
+    }
 
-		[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
-		public class LinkDemandWithFieldClass {
-
-			public object Field = new object ();
-
-			public LinkDemandWithFieldClass ()
-			{
-			}
-		}
-
-		[Test]
-		public void LinkDemandWithField ()
-		{
-			AssertRuleFailure<LinkDemandWithFieldClass> (1);
-		}
-
-		[SecurityPermission (SecurityAction.LinkDemand, Unrestricted = true)]
-		public class DemandWithFieldClass {
-
-			public object Field = new object ();
-
-			public DemandWithFieldClass ()
-			{
-			}
-		}
-
-		[Test]
-		public void DemandWithField ()
-		{
-			AssertRuleFailure<DemandWithFieldClass> (1);
-		}
-	}
+    [Test]
+    public void DemandWithField()
+    {
+      AssertRuleFailure<DemandWithFieldClass>(1);
+    }
+  }
 }

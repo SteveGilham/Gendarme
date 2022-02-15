@@ -33,7 +33,7 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rule.Performance
+namespace Test.Rules.Performance
 {
   [TestFixture]
   public class AvoidConcatenatingCharsTest : MethodRuleTestFixture<AvoidConcatenatingCharsRule>
