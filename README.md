@@ -58,8 +58,6 @@ The following rule suites have unit test failures
   * TestMultipleCatch()
   * TestTryCatchFinally()
   * TestCalli() -- activated now Cecil can support the long commented-out test
-* Concurrency -- 6 failures
-  * `ProtectCallToEventDelegatesRule` (false positives)
 * Correctness -- 1 failures (false negatives)
   * `TestNativeFieldsArray` -- changed IL
 * Interoperability -- 18 failures (false negatives)
