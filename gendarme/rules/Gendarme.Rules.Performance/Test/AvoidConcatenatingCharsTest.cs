@@ -35,6 +35,9 @@ using Test.Rules.Fixtures;
 
 namespace Test.Rules.Performance
 {
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0051 // Remove unused private members
+
   [TestFixture]
   public class AvoidConcatenatingCharsTest : MethodRuleTestFixture<AvoidConcatenatingCharsRule>
   {
