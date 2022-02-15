@@ -722,11 +722,6 @@ namespace Gendarme.Rules.Interoperability
 
   // rather than compiling #define CONTRACTS_FULL
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-  [SuppressMessage("Gendarme.Rules.Performance",
-                 "AvoidUninstantiatedInternalClassesRule",
-                 Scope = "type", // TypeDefinition
-                 Target = "Gendarme.Rules.Interoperability.PureAttribute",
-                 Justification = "[FIXME] -- handle attribute types properly")]
   internal sealed class PureAttribute : Attribute
   {
   }
