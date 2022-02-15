@@ -176,7 +176,8 @@ namespace Gendarme.Rules.Correctness
         // followed by a CEQ instruction
         if (nc == Code.Ldnull)
         {
-          if (next.Next.OpCode.Code == Code.Ceq)
+          var overcode = next.Next.OpCode.Code;
+          if (overcode == Code.Ceq || overcode == Code.Cgt_Un)
             has_null_check.Set(parameter.Index);
         }
         else if (nc == Code.Ceq)
@@ -197,6 +198,11 @@ namespace Gendarme.Rules.Correctness
       if (!md.IsStatic)
       {
         Instruction instance = ins.TraceBack(method);
+
+        // generic types will be be boxed, skip that
+        if (instance.OpCode.Code == Code.Box)
+          instance = instance.Previous;
+
         CheckParameter(instance.GetParameter(method));
       }
 

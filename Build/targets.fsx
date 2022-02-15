@@ -644,7 +644,7 @@ _Target
                     match tname with
                     | "Test.Framework" -> 3
                     | "Test.Rules.Concurrency" -> 6
-                    | "Test.Rules.Correctness" -> 2
+                    | "Test.Rules.Correctness" -> 1
                     | "Test.Rules.Interoperability" -> 18
                     | "Test.Rules.Smells" -> 2
                     | _ -> 0
@@ -781,7 +781,7 @@ _Target
                         match tname with
                         | "Test.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
                         | "Test.Rules.Concurrency" when exitCode () <= 6 -> printfn "%A" x.Message
-                        | "Test.Rules.Correctness" when exitCode () <= 2 -> printfn "%A" x.Message
+                        | "Test.Rules.Correctness" when exitCode () <= 1 -> printfn "%A" x.Message
                         | "Test.Rules.Interoperability" when exitCode () <= 18 -> printfn "%A" x.Message
                         | "Test.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
                         | _ -> reraise ()

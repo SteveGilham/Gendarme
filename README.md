@@ -60,10 +60,8 @@ The following rule suites have unit test failures
   * TestCalli() -- activated now Cecil can support the long commented-out test
 * Concurrency -- 6 failures
   * `ProtectCallToEventDelegatesRule` (false positives)
-* Correctness -- 5 failures (false negatives)
-  * `ProvideCorrectArgumentsToFormattingMethods` × 3 -- changed IL : `call Array.Empty` used instead of an explict load
+* Correctness -- 1 failures (false negatives)
   * `TestNativeFieldsArray` -- changed IL
-  * `CheckParametersNullityInVisibleMethods` -- not sure what's up here
 * Interoperability -- 18 failures (false negatives)
   * 18 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change; as the code itself says "Unfortunately it's possible to generate IL this rule will choke on, especially when using non-standard compilers or obfuscators" where Roslyn will count as non-standard
 * Smells -- 2 failure
