@@ -37,7 +37,7 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Design
+namespace Test.Rules.Correctness
 {
 #pragma warning disable IDE0044
 #pragma warning disable IDE0051
