@@ -630,17 +630,25 @@ namespace Gendarme.Rules.Interoperability
       MethodDefinition ldftn_definition;
 
       // Check if the code does any ldftn.
-      if (range.First != range.Last && range.Last.OpCode.Code == Code.Newobj && range.Last.Previous.OpCode.Code == Code.Ldftn)
+      if (range.First != range.Last)
       {
-        ldftn = range.Last.Previous.Operand as MethodReference;
-        if (ldftn != null)
+        for (var ins = range.First; ins.Previous != range.Last; ins = ins.Next)
         {
-          ldftn_definition = ldftn.Resolve();
-          if (ldftn_definition != null)
+          if (ins.OpCode.Code == Code.Newobj && ins.Previous.OpCode.Code == Code.Ldftn)
           {
-            if (result == null)
-              result = new List<MethodDefinition>();
-            result.Add(ldftn_definition);
+            ldftn = ins.Previous.Operand as MethodReference;
+            if (ldftn != null)
+            {
+              ldftn_definition = ldftn.Resolve();
+              if (ldftn_definition != null)
+              {
+                if (result == null)
+                  result = new List<MethodDefinition>();
+                result.Add(ldftn_definition);
+              }
+            }
+
+            break;
           }
         }
       }

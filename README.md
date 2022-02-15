@@ -60,8 +60,8 @@ The following rule suites have unit test failures
   * TestCalli() -- activated now Cecil can support the long commented-out test
 * Correctness -- 1 failures (false negatives)
   * `TestNativeFieldsArray` -- changed IL
-* Interoperability -- 18 failures (false negatives)
-  * 18 false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` due to anonymous delegates -- presumably an IL change; as the code itself says "Unfortunately it's possible to generate IL this rule will choke on, especially when using non-standard compilers or obfuscators" where Roslyn will count as non-standard
+* Interoperability -- 1
+  * 1 false positive in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` 
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
   * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
