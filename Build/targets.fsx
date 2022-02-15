@@ -1528,6 +1528,8 @@ Target.activateFinal "ResetConsoleColours"
 
 "BuildDebug"
 ==> "DotnetGlobalIntegration"
+
+"Packaging"
 ==> "CheckAltCover"
 
 "OperationalTest" ==> "All"

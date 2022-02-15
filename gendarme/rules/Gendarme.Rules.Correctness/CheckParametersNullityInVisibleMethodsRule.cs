@@ -200,7 +200,7 @@ namespace Gendarme.Rules.Correctness
         Instruction instance = ins.TraceBack(method);
 
         // generic types will be be boxed, skip that
-        if (instance.OpCode.Code == Code.Box)
+        if (instance?.OpCode.Code == Code.Box)
           instance = instance.Previous;
 
         CheckParameter(instance.GetParameter(method));
