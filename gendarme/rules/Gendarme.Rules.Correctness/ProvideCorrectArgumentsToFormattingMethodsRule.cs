@@ -218,6 +218,13 @@ namespace Gendarme.Rules.Correctness
       if (loadArray == null)
         return false;
 
+      if (loadArray.OpCode.FlowControl == FlowControl.Call)
+      {
+        var called = loadArray.Operand as MethodReference;
+        if (called.FullName == "!!0[] System.Array::Empty<System.Object>()")
+          return true;
+      }
+
       while (loadArray.OpCode != OpCodes.Newarr)
       {
         if (loadArray.OpCode == OpCodes.Dup)
