@@ -632,11 +632,11 @@ namespace Gendarme.Rules.Interoperability
       // Check if the code does any ldftn.
       if (range.First != range.Last)
       {
-        for (var ins = range.First; ins.Previous != range.Last; ins = ins.Next)
+        for (var ins = range.First; ins != range.Last; ins = ins.Next)
         {
-          if (ins.OpCode.Code == Code.Newobj && ins.Previous.OpCode.Code == Code.Ldftn)
+          if (ins.Next.OpCode.Code == Code.Newobj && ins.OpCode.Code == Code.Ldftn)
           {
-            ldftn = ins.Previous.Operand as MethodReference;
+            ldftn = ins.Operand as MethodReference;
             if (ldftn != null)
             {
               ldftn_definition = ldftn.Resolve();

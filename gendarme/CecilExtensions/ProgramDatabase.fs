@@ -111,9 +111,4 @@ module ProgramDatabase =
                             Target = "AltCode.CecilExtensions.ProgramDatabase.#Option.filter`1(Microsoft.FSharp.Core.FSharpFunc`2<!!0,System.Boolean>,Microsoft.FSharp.Core.FSharpOption`1<!!0>)",
                             MessageId = "a",
                             Justification = "Compiler generated")>]
-[<assembly: SuppressMessage("Gendarme.Rules.Interoperability",
-                            "DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule",
-                            Scope = "member", // MethodDefinition
-                            Target = "<StartupCode$CecilExtensions>.$ProgramDatabase::.cctor()",
-                            Justification = "False positive -- to analyze")>]
 ()
