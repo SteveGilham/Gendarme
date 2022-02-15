@@ -58,11 +58,9 @@ The following rule suites have unit test failures
   * TestMultipleCatch()
   * TestTryCatchFinally()
   * TestCalli() -- activated now Cecil can support the long commented-out test
-* Interoperability -- 1
-  * 1 false positive in `DelegatesPassedToNativeCodeMustIncludeExceptionHandling` 
 * Smells -- 2 failure
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
-  * false positive in `SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest`
+  * false positive in `SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest`
   * 2 other `[Ignore]`d switch related tests
 
 ## Changes made for F# support
