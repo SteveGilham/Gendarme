@@ -46,6 +46,12 @@ namespace Test.Rules.Correctness
   [TestFixture]
   public class CheckParametersNullityInVisibleMethodsTest : MethodRuleTestFixture<CheckParametersNullityInVisibleMethodsRule>
   {
+#pragma warning disable IDE0016 // Use 'throw' expression
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+#pragma warning disable IDE1006 // Naming Styles
+
     public void UnusedInstance(object o)
     {
     }
