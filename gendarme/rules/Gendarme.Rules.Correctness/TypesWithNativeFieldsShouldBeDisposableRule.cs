@@ -113,9 +113,6 @@ namespace Gendarme.Rules.Correctness
         FieldDefinition field = null;
         Instruction next = ins.Next;
 
-        // failing test reached here with next as a Stelem_I
-        // possible stack entry analysis issue too
-
         if (next.Is(Code.Stfld))
         {
           field = next.Operand as FieldDefinition;
@@ -129,6 +126,11 @@ namespace Gendarme.Rules.Correctness
             if (origin != null)
               field = origin.Operand as FieldDefinition;
           }
+        }
+        else if (next.Is(Code.Stelem_I))
+        {
+          Instruction origin = next.TraceBack(method);
+          field = origin.Operand as FieldDefinition;
         }
 
         if (field != null && FieldCandidates.Contains(field))

@@ -274,7 +274,8 @@ namespace Gendarme.Rules.Interoperability
         Runner.Report(method, Severity.Low, Confidence.Low,
           String.Format(CultureInfo.CurrentCulture, "An exception occurred while verifying this method. " +
           "This failure can probably be ignored, it's most likely due to an " +
-          "uncommon code sequence in the method the rule didn't understand. {0}", ex.Message));
+          "uncommon code sequence in the method the rule didn't understand." +
+          "The problem encountered was as follows : {1}{0}", ex.ToString(), Environment.NewLine));
         return RuleResult.Failure;
       }
     }
@@ -630,17 +631,25 @@ namespace Gendarme.Rules.Interoperability
       MethodDefinition ldftn_definition;
 
       // Check if the code does any ldftn.
-      if (range.First != range.Last && range.Last.OpCode.Code == Code.Newobj && range.Last.Previous.OpCode.Code == Code.Ldftn)
+      if (range.First != range.Last)
       {
-        ldftn = range.Last.Previous.Operand as MethodReference;
-        if (ldftn != null)
+        for (var ins = range.First; ins != range.Last; ins = ins.Next)
         {
-          ldftn_definition = ldftn.Resolve();
-          if (ldftn_definition != null)
+          if (ins.Next.OpCode.Code == Code.Newobj && ins.OpCode.Code == Code.Ldftn)
           {
-            if (result == null)
-              result = new List<MethodDefinition>();
-            result.Add(ldftn_definition);
+            ldftn = ins.Operand as MethodReference;
+            if (ldftn != null)
+            {
+              ldftn_definition = ldftn.Resolve();
+              if (ldftn_definition != null)
+              {
+                if (result == null)
+                  result = new List<MethodDefinition>();
+                result.Add(ldftn_definition);
+              }
+            }
+
+            break;
           }
         }
       }
@@ -714,11 +723,6 @@ namespace Gendarme.Rules.Interoperability
 
   // rather than compiling #define CONTRACTS_FULL
   [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-  [SuppressMessage("Gendarme.Rules.Performance",
-                 "AvoidUninstantiatedInternalClassesRule",
-                 Scope = "type", // TypeDefinition
-                 Target = "Gendarme.Rules.Interoperability.PureAttribute",
-                 Justification = "[FIXME] -- handle attribute types properly")]
   internal sealed class PureAttribute : Attribute
   {
   }

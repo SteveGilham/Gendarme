@@ -111,8 +111,8 @@ namespace Gendarme.Rules.Concurrency
 	            IL_000d: ldloc.1
 	            IL_000e: brfalse.s IL_001b
 					 */
-
-          return (ins.Next.OpCode.Code == Code.Ceq);
+          var overcode = ins.Next.OpCode.Code;
+          return (overcode == Code.Ceq || overcode == Code.Cgt_Un);
         // [g]mcs will do a Br[true|false][.s]
         case Code.Brfalse:
         case Code.Brfalse_S:

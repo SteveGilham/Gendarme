@@ -33,8 +33,11 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rule.Performance
+namespace Test.Rules.Performance
 {
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0051 // Remove unused private members
+
   [TestFixture]
   public class AvoidConcatenatingCharsTest : MethodRuleTestFixture<AvoidConcatenatingCharsRule>
   {
