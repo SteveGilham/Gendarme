@@ -33,6 +33,7 @@ In this branch
   * While `Scope` is not heeded by the Gendarme process, it's there to placate other consumers (which will ignore the foreign rule); the comment indicates the corresponding object type within the Gendarme analysis in case they should ever be out of line.
   * The syntax and punctuation of the `Target` with regards to nested types and special names is as Gendarme expects, which differs somewhat from FxCop in annoying details
   * The emitted section looks like this:
+
 ```
 Global Suppression Attribute:
 [<assembly: SuppressMessage("Gendarme.Rules.Correctness",
@@ -40,7 +41,6 @@ Global Suppression Attribute:
                             Scope = "member", // MethodDefinition
                             Target = "ParameterNamesShouldMatch.Handler::ShowMessage(a,System.String)",
                             Justification = "")>]
-
 ```
 
 ## Direction
@@ -52,16 +52,15 @@ After having achieved the first objective, of being able to analyze code from th
 
 Having resolved many issues stemming from a Cecil change to what the name and namespace properties of a nested type returned, the next major sources of test failure have been compiler changes (from pre-Roslyn to now) and differences in behaviour under `.netstandard` compared with the .net Framework.  In particular, the `AvoidSwitchStatements` rule needs some serious decompiler code to recognise Roslyn's mangled switch constructs (compiled as multiple conditional branches) so some tests have just been set to `[Ignore]`
 
-The following rule suites have unit test failures
+The following rule suites currently have unit test failures
 
-* Framework -- 3 failures for Stack entry analysis (Roslyn, most likely)
+* Framework -- 2 failures for Stack entry analysis (which occur even if code built with a 2008-vintage C# compiler is tested)
   * TestMultipleCatch()
   * TestTryCatchFinally()
-  * TestCalli() -- activated now Cecil can support the long commented-out test
 * Smells -- 2 failure
-  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest`
-  * false positive in `SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest`
-  * 2 other `[Ignore]`d switch related tests
+  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest` (still fails with 2008 vintage compiler)
+  * false positive in `SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest` (succeeds with 2008 vintage compiler)
+  * 2 `AvoidSwitchStatementsRule` tests, `FailOnMethodWithSwitchTest` and `FailOnSwitchWithStringsTest`, have been `[Ignore]`d  because of the major IL changes involved.
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
