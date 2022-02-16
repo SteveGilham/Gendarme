@@ -274,7 +274,8 @@ namespace Gendarme.Rules.Interoperability
         Runner.Report(method, Severity.Low, Confidence.Low,
           String.Format(CultureInfo.CurrentCulture, "An exception occurred while verifying this method. " +
           "This failure can probably be ignored, it's most likely due to an " +
-          "uncommon code sequence in the method the rule didn't understand. {0}", ex.Message));
+          "uncommon code sequence in the method the rule didn't understand." +
+          "The problem encountered was as follows : {1}{0}", ex.ToString(), Environment.NewLine));
         return RuleResult.Failure;
       }
     }
