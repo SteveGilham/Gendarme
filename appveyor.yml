@@ -15,7 +15,7 @@ environment:
 nuget:
   disable_publish_on_pr: true
 install:
-  - cinst dotnet-sdk --version 6.0.102
+  - cinst dotnet-sdk --version 6.0.200
 build_script:
 - ps: >-
     $ErrorActionPreference = 'Continue'
