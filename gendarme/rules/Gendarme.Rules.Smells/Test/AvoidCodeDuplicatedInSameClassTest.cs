@@ -477,7 +477,7 @@ namespace Test.Rules.Smells
       AssertRuleFailure<DuplicatedInSwitchsLoadingByFields>(1);
     }
 
-    private class NonDuplicatedInSwitchsLoadingByFields
+    private class NonDuplicatedInSwitchLoadingByFields
     {
       private string option = "LOW";
       private Severity severity = Severity.Low;
@@ -559,9 +559,9 @@ namespace Test.Rules.Smells
     }
 
     [Test]
-    public void SuccesOnNonDuplicatedInSwitchsLoadingByFieldsTest()
+    public void SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest()
     {
-      AssertRuleSuccess<NonDuplicatedInSwitchsLoadingByFields>();
+      AssertRuleSuccess<NonDuplicatedInSwitchLoadingByFields>();
     }
 
     private class NonDuplicatedCodeInParameterChecking
