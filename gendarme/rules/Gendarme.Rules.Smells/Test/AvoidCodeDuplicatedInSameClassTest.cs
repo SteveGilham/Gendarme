@@ -922,5 +922,35 @@ namespace Test.Rules.Smells
     {
       AssertRuleSuccess<AvoidLongMethodsRule>();
     }
+
+    [Test] //fails
+    public void SuccessOnNonDuplicatedCodeIntoForeachLoopTestRetro()
+    {
+      using (var stream =
+        Assembly
+          .GetExecutingAssembly()
+          .GetManifestResourceStream("Test.Rules.Smells.Duplicates.dll"))
+      using (var ad = AssemblyDefinition.ReadAssembly(stream))
+      {
+        Console.WriteLine("Retro1");
+        var m = ad.MainModule.GetType("Retro.NonDuplicatedCodeIntoForeachLoop");
+        AssertRuleSuccess(m);
+      }
+    }
+
+    [Test] // succeeds
+    public void SuccessOnNonDuplicatedInSwitchLoadingByFieldsTestRetro()
+    {
+      using (var stream =
+        Assembly
+          .GetExecutingAssembly()
+          .GetManifestResourceStream("Test.Rules.Smells.Duplicates.dll"))
+      using (var ad = AssemblyDefinition.ReadAssembly(stream))
+      {
+        Console.WriteLine("Retro1");
+        var m = ad.MainModule.GetType("Retro.NonDuplicatedInSwitchLoadingByFields");
+        AssertRuleSuccess(m);
+      }
+    }
   }
 }

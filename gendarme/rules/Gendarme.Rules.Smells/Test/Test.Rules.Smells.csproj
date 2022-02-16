@@ -7,6 +7,9 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\..\framework\Test\csc2008\Duplicates.dll" Link="Duplicates.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="AvoidLongMethodsTest.cs" />
   </ItemGroup>
   <ItemGroup>
