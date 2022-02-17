@@ -1,3 +1,13 @@
+# 2022.2.17.8350
+
+* First stable release
+* Make a heuristic fix for the changed IL that meant a test failure for `AvoidUnnecessarySpecializationRule`
+  * code that was IL_0001: ldarga.s x/	IL_0003: constrained. !!T (stack unchanged) is now IL_0001: ldarg.1/IL_0002: box !!T which pops the loaded value and pushes the boxed copy, so treat ldarg+box as a unit.
+* Make heuristic fixes for `CheckParametersNullityInVisibleMethods` -- also related to boxing generics; and cases of different choices of comparison operation
+* Propagate the checks for the changed null comparison IL to `ProtectCallToEventDelegatesRule`
+* Fix false negatives in `DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule`
+* Fix false negative in `TestNativeFieldsArray` -- extended checks for new changed IL
+
 # 2022.2.9.17153-pre-release 
 
 * [NEW RULE] `AltCode.Rules.General.AvoidAssemblySemanticVersionMismatchRule` to insist that the API contract (major, minor, and optionally build if defined for the assembly) match, but the lesser facets, revision and possibly build are free.
