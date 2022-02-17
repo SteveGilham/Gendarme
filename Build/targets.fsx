@@ -1,3 +1,5 @@
+// latest tweet -- https://twitter.com/stevegilham1/status/1494237884659998722
+
 open System
 open System.Diagnostics.Tracing
 open System.IO
@@ -642,8 +644,7 @@ _Target
                 // while fixing
                 let maxFail =
                     match tname with
-                    | "Test.Framework" -> 3
-                    | "Test.Rules.Correctness" -> 1
+                    | "Test.Framework" -> 2
                     | "Test.Rules.Smells" -> 2
                     | _ -> 0
 
@@ -682,7 +683,6 @@ _Target
                 | x -> // while fixing
                     match Path.GetFileNameWithoutExtension proj with
                     | "Test.Framework"
-                    | "Test.Rules.Correctness"
                     | "Test.Rules.Smells" -> printfn "%A" x
                     | _ -> reraise ()))
 
@@ -775,8 +775,7 @@ _Target
                                 Int32.MaxValue
 
                         match tname with
-                        | "Test.Framework" when exitCode () <= 3 -> printfn "%A" x.Message
-                        | "Test.Rules.Correctness" when exitCode () <= 1 -> printfn "%A" x.Message
+                        | "Test.Framework" when exitCode () <= 2 -> printfn "%A" x.Message
                         | "Test.Rules.Smells" when exitCode () <= 2 -> printfn "%A" x.Message
                         | _ -> reraise ()
 
@@ -877,7 +876,6 @@ _Target
                     | x -> // while fixing
                         match tname with
                         | "Test.Framework"
-                        | "Test.Rules.Correctness"
                         | "Test.Rules.Smells" -> printfn "%A" x
                         | _ -> reraise ()
 
@@ -1486,6 +1484,12 @@ _Target "All" ignore
 let resetColours _ =
     Console.ForegroundColor <- consoleBefore |> fst
     Console.BackgroundColor <- consoleBefore |> snd
+    (!! "internalTrace*.log")
+    |> Seq.iter Shell.rm
+    (!! "nunit-agent_*.log")
+    |> Seq.iter Shell.rm    
+    
+_Target "None" ignore
 
 Target.description "ResetConsoleColours"
 Target.createFinal "ResetConsoleColours" resetColours
