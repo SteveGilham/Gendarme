@@ -55,7 +55,7 @@ Global Suppression Attribute:
 Not all the classic Gendarme unit tests currently pass.  In the main, these failures are due to the Roslyn compiler producing different IL than the original C# compiler did.  A few failures are due to the API changes in `.netstandard` compared with the .net Framework. In production these will typically manifest as false negatives.
 
 ## Changes made for F# support
-The F# compiler generates a large amount of code that does not conform to these rules, particularly with closures.  A full list for the most recent release is presented [here](https://github.com/SteveGilham/Gendarme/blob/release/pre-release/README.md#changes-made-for-f-support). 
+The F# compiler generates a large amount of code that does not conform to these rules, particularly with closures.  A full list for the most recent release is presented [here](https://github.com/SteveGilham/Gendarme/blob/release/stable/README.md#changes-made-for-f-support). 
 
 ## Badges
 * [![Nuget](https://buildstats.info/nuget/altcode.gendarme?includePreReleases=true) Framework build command-line tool](https://www.nuget.org/packages/altcode.gendarme)

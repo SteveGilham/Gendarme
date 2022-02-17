@@ -3,7 +3,7 @@
 A Mono.Gendarme fork, built against a recent Mono.Cecil version, one that can load assemblies built with current compilers.  Can be used with the [Fake.build plugin](https://www.nuget.org/packages/altcode.fake.dotnet.gendarme/). 
 
 ## Features
-See [the head of the (pre-)release branch](https://github.com/SteveGilham/Gendarme/blob/release/pre-release/README.md) for the features in the latest actual release.
+See [the head of the release branch](https://github.com/SteveGilham/Gendarme/blob/release/stable/README.md) for the features in the latest actual release.
 
 In this branch
 
@@ -54,13 +54,13 @@ Having resolved many issues stemming from a Cecil change to what the name and na
 
 The following rule suites currently have unit test failures
 
-* Framework -- 2 failures for Stack entry analysis (which occur even if code built with a 2008-vintage C# compiler is tested)
+* Framework -- 2 failures for Stack entry analysis for which there is no evidence of them ever having worked (even if the code under test is built with a 2008-vintage C# compiler the tests fail in the same way as at net6.0)
   * TestMultipleCatch()
   * TestTryCatchFinally()
-* Smells -- 2 failure
-  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest` (still fails with 2008 vintage compiler)
-  * false positive in `SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest` (succeeds with 2008 vintage compiler)
-  * 2 `AvoidSwitchStatementsRule` tests, `FailOnMethodWithSwitchTest` and `FailOnSwitchWithStringsTest`, have been `[Ignore]`d  because of the major IL changes involved.
+* Smells -- 2 failures and 2 ignored due to IL changes
+  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest` (no evidence of ever passing : still fails when the code under test was compiled with a 2008 vintage compiler)
+  * false positive in `SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest` (Roslyn induced `switch` statement changes -- the test succeeds with the same code built with a 2008 vintage compiler)
+  * 2 `AvoidSwitchStatementsRule` tests, `FailOnMethodWithSwitchTest` and `FailOnSwitchWithStringsTest`, have similarly been `[Ignore]`d  because of the major IL changes involved.
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --
