@@ -18,32 +18,28 @@ module Actions =
             try
                 (DirectoryInfo ".")
                     .GetDirectories("*", SearchOption.AllDirectories)
-                |> Seq.filter
-                    (fun x ->
-                        x.Name.StartsWith "_"
-                        || x.Name = "bin"
-                        || x.Name = "obj")
-                |> Seq.filter
-                    (fun n ->
-                        "packages"
-                        |> Path.GetFullPath
-                        |> n.FullName.StartsWith
-                        |> not)
+                |> Seq.filter (fun x ->
+                    x.Name.StartsWith "_"
+                    || x.Name = "bin"
+                    || x.Name = "obj")
+                |> Seq.filter (fun n ->
+                    "packages"
+                    |> Path.GetFullPath
+                    |> n.FullName.StartsWith
+                    |> not)
                 |> Seq.map (fun x -> x.FullName)
                 |> Seq.distinct
                 // arrange so leaves get deleted first, avoiding "does not exist" warnings
-                |> Seq.groupBy
-                    (fun x ->
-                        x
-                        |> Seq.filter (fun c -> c = '\\' || c = '/')
-                        |> Seq.length)
+                |> Seq.groupBy (fun x ->
+                    x
+                    |> Seq.filter (fun c -> c = '\\' || c = '/')
+                    |> Seq.length)
                 |> Seq.map (fun (n, x) -> (n, x |> Seq.sort))
                 |> Seq.sortBy (fst >> ((*) -1))
                 |> Seq.collect snd
-                |> Seq.iter
-                    (fun n ->
-                        printfn "Deleting %s" n
-                        Directory.Delete(n, true))
+                |> Seq.iter (fun n ->
+                    printfn "Deleting %s" n
+                    Directory.Delete(n, true))
 
                 let temp = Environment.environVar "TEMP"
 
@@ -69,8 +65,7 @@ let HandleResults (msg: string) (result: Fake.Core.ProcessResult) =
     String.Join(Environment.NewLine, result.Messages)
     |> printfn "%s"
 
-    let save =
-        (Console.ForegroundColor, Console.BackgroundColor)
+    let save = (Console.ForegroundColor, Console.BackgroundColor)
 
     match result.Errors |> Seq.toList with
     | [] -> ()

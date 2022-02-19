@@ -37,26 +37,27 @@ module ProgramDatabase =
     |> Option.bind (fun x -> x.Entries |> Seq.tryFind (fun t -> true))
     |> Option.map (fun x -> x.Data)
     |> Option.filter (fun x -> x.Length > 0x18)
-    |> Option.map
-         (fun x ->
-           x
-           |> Seq.skip 0x18 // size of the debug header
-           |> Seq.takeWhile (fun x -> x <> byte 0)
-           |> Seq.toArray
-           |> System.Text.Encoding.UTF8.GetString)
+    |> Option.map (fun x ->
+      x
+      |> Seq.skip 0x18 // size of the debug header
+      |> Seq.takeWhile (fun x -> x <> byte 0)
+      |> Seq.toArray
+      |> System.Text.Encoding.UTF8.GetString)
     |> Option.filter (fun s -> s.Length > 0)
-    |> Option.filter
-         (fun s ->
-           File.Exists s
-           || (s = (assembly.Name.Name + ".pdb")
-               && (assembly
-                   |> getEmbeddedPortablePdbEntry
-                   |> isNull
-                   |> not)))
+    |> Option.filter (fun s ->
+      File.Exists s
+      || (s = (assembly.Name.Name + ".pdb")
+          && (assembly
+              |> getEmbeddedPortablePdbEntry
+              |> isNull
+              |> not)))
 
   let internal getSymbolsByFolder fileName folderName =
-    let name = Path.Combine(folderName, fileName)
-    let fallback = Path.ChangeExtension(name, ".pdb")
+    let name =
+      Path.Combine(folderName, fileName)
+
+    let fallback =
+      Path.ChangeExtension(name, ".pdb")
 
     if File.Exists(fallback) then
       Some fallback
@@ -87,18 +88,17 @@ module ProgramDatabase =
   // Will fail  with InvalidOperationException if there is a malformed file with the expected name
   let ReadSymbols (assembly: AssemblyDefinition) =
     getSymbolsWithFallback assembly
-    |> Option.iter
-         (fun pdbpath ->
-           let provider: ISymbolReaderProvider =
-             if pdbpath.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase) then
-               PdbReaderProvider() :> ISymbolReaderProvider
-             else
-               MdbReaderProvider() :> ISymbolReaderProvider
+    |> Option.iter (fun pdbpath ->
+      let provider: ISymbolReaderProvider =
+        if pdbpath.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase) then
+          PdbReaderProvider() :> ISymbolReaderProvider
+        else
+          MdbReaderProvider() :> ISymbolReaderProvider
 
-           let reader =
-             provider.GetSymbolReader(assembly.MainModule, pdbpath)
+      let reader =
+        provider.GetSymbolReader(assembly.MainModule, pdbpath)
 
-           assembly.MainModule.ReadSymbols(reader))
+      assembly.MainModule.ReadSymbols(reader))
 
 [<assembly: SuppressMessage("Microsoft.Performance",
                             "CA1810:InitializeReferenceTypeStaticFieldsInline",

@@ -76,12 +76,11 @@ type JustifySuppressionRule() =
     =
     attributes
     |> Seq.cast<CustomAttribute>
-    |> Seq.filter
-         (fun attribute ->
-           let t = attribute.AttributeType
+    |> Seq.filter (fun attribute ->
+      let t = attribute.AttributeType
 
-           t.Name = "SuppressMessageAttribute"
-           && t.Namespace = "System.Diagnostics.CodeAnalysis")
+      t.Name = "SuppressMessageAttribute"
+      && t.Namespace = "System.Diagnostics.CodeAnalysis")
     |> Seq.iter (self.CheckJustification location target)
 
   // Separates sheep from goats so far as Justification strings go

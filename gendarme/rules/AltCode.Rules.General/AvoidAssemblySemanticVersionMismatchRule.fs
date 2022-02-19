@@ -52,7 +52,9 @@ type AvoidAssemblySemanticVersionMismatchRule() =
 
       if (assembly.HasCustomAttributes |> not
           || assemblyVersion.IsEmpty()) then
-        let msg = Tools.resource "IncompleteVersioning"
+        let msg =
+          Tools.resource "IncompleteVersioning"
+
         this.Runner.Report(assembly, Severity.Medium, Confidence.High, msg)
         RuleResult.Failure
       else
@@ -60,14 +62,16 @@ type AvoidAssemblySemanticVersionMismatchRule() =
           assembly.CustomAttributes
           |> Seq.filter (fun ca -> ca.HasConstructorArguments)
           |> Seq.filter (fun ca -> ca.AttributeType.IsNamed(afva))
-          |> Seq.map (fun ca -> ca.ConstructorArguments.[ 0 ].Value)
+          |> Seq.map (fun ca -> ca.ConstructorArguments.[0].Value)
           |> Seq.filter (isNull >> not)
           |> Seq.map (fun ca -> Version.TryParse(ca.ToString()) |> snd)
           |> Seq.tryHead
 
         match fileVersion with
         | None ->
-          let msg = Tools.resource "IncompleteVersioning"
+          let msg =
+            Tools.resource "IncompleteVersioning"
+
           this.Runner.Report(assembly, Severity.Medium, Confidence.High, msg)
           RuleResult.Failure
         | Some version ->

@@ -127,10 +127,9 @@ module Tools =
     |> Option.filter (fun t -> t.IsClass)
     |> Option.filter (fun t -> t.IsPublic)
     |> Option.filter (fun t -> t.Inherits cmdlet)
-    |> Option.filter
-         (fun t ->
-           t.CustomAttributes
-           |> Seq.exists (fun a -> a.AttributeType.Inherits cmdletAttribute))
+    |> Option.filter (fun t ->
+      t.CustomAttributes
+      |> Seq.exists (fun a -> a.AttributeType.Inherits cmdletAttribute))
     |> Option.isSome
 
 [<assembly: SuppressMessage("Microsoft.Performance",

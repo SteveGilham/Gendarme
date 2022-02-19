@@ -12,7 +12,9 @@ type internal PointVisit =
   static member Create() = { Count = 0L; Tracks = List<int>() }
 
   static member Init n l =
-    let tmp = { PointVisit.Create() with Count = n }
+    let tmp =
+      { PointVisit.Create() with Count = n }
+
     tmp.Tracks.AddRange l
     tmp
 

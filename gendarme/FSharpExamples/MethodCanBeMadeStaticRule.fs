@@ -4,7 +4,8 @@ open System.Collections.Generic
 open Mono.Cecil
 
 module Instrument =
-  let internal resolutionTable = Dictionary<string, AssemblyDefinition>()
+  let internal resolutionTable =
+    Dictionary<string, AssemblyDefinition>()
 
   let internal resolveFromNugetCache _ (y: AssemblyNameReference) =
     let name = y.ToString()

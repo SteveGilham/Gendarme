@@ -27,7 +27,7 @@ type UseOnlyStandardVerbsTest() =
     let probe =
       UndecoratedClassesAreNotCmdlets.Internal()
 
-    base.AssertRuleDoesNotApply(DefinitionLoader.GetTypeDefinition probe)
+    ``base``.AssertRuleDoesNotApply(DefinitionLoader.GetTypeDefinition probe)
     base.AssertRuleDoesNotApply<UnattributedTypesAreNotCmdlets>()
 
   [<Test>]

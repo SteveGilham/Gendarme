@@ -69,11 +69,17 @@ type AssemblyJustifySuppressionTest() =
         .GetExecutingAssembly()
         .Location
 
-    use assembly = AssemblyDefinition.ReadAssembly(a)
-    base.AssertRuleSuccess(assembly)
+    use assembly =
+      AssemblyDefinition.ReadAssembly(a)
+
+    ``base``.AssertRuleSuccess(assembly)
 
   [<Test>]
   member this.Bad() =
-    let a = typeof<Justifications>.Assembly.Location
-    use assembly = AssemblyDefinition.ReadAssembly(a)
-    base.AssertRuleFailure(assembly)
+    let a =
+      typeof<Justifications>.Assembly.Location
+
+    use assembly =
+      AssemblyDefinition.ReadAssembly(a)
+
+    ``base``.AssertRuleFailure(assembly)

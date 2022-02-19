@@ -19,8 +19,11 @@ module NetCoreResolver =
       "packages"
     )
 
-  let internal resolutionTable = Dictionary<string, AssemblyDefinition>()
-  let internal searchLocations = HashSet<string>()
+  let internal resolutionTable =
+    Dictionary<string, AssemblyDefinition>()
+
+  let internal searchLocations =
+    HashSet<string>()
 
   let internal findAssemblyName f =
     try
@@ -71,16 +74,14 @@ module NetCoreResolver =
         |> List.filter (String.IsNullOrWhiteSpace >> not)
         |> List.filter Directory.Exists
         |> Seq.distinct
-        |> Seq.collect
-             (fun dir ->
-               Directory.GetFiles(dir, y.Name + ".*", SearchOption.AllDirectories))
+        |> Seq.collect (fun dir ->
+          Directory.GetFiles(dir, y.Name + ".*", SearchOption.AllDirectories))
         |> Seq.sortDescending
-        |> Seq.filter
-             (fun f ->
-               let x = Path.GetExtension f
+        |> Seq.filter (fun f ->
+          let x = Path.GetExtension f
 
-               x.Equals(".exe", StringComparison.OrdinalIgnoreCase)
-               || x.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+          x.Equals(".exe", StringComparison.OrdinalIgnoreCase)
+          || x.Equals(".dll", StringComparison.OrdinalIgnoreCase))
         |> Seq.filter (fun f -> name.Equals(findAssemblyName f, StringComparison.Ordinal))
         |> Seq.tryHead
 
@@ -108,7 +109,8 @@ module NetCoreResolver =
   let ResolveHandler =
     new AssemblyResolveEventHandler(resolveFromNugetCache)
 
-  let internal hookTable = HashSet<WeakReference>()
+  let internal hookTable =
+    HashSet<WeakReference>()
 
   let AddSearchLocation path = path |> searchLocations.Add |> ignore
 

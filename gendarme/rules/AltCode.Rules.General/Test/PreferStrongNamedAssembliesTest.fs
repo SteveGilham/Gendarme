@@ -32,8 +32,10 @@ type PreferStrongNamedAssembliesTest() =
         .GetExecutingAssembly()
         .Location
 
-    use assembly = AssemblyDefinition.ReadAssembly(a)
-    base.AssertRuleSuccess(assembly)
+    use assembly =
+      AssemblyDefinition.ReadAssembly(a)
+
+    ``base``.AssertRuleSuccess(assembly)
 
   [<Test>]
   member this.Bad() =
@@ -42,5 +44,7 @@ type PreferStrongNamedAssembliesTest() =
         .GetExecutingAssembly()
         .GetManifestResourceStream("Test.AltCode.General.Sample1.exe")
 
-    use assembly = AssemblyDefinition.ReadAssembly stream
-    base.AssertRuleFailure(assembly)
+    use assembly =
+      AssemblyDefinition.ReadAssembly stream
+
+    ``base``.AssertRuleFailure(assembly)

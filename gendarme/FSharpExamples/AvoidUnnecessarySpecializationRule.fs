@@ -14,21 +14,21 @@ module Main =
     let mapping = Dictionary<string, string>()
 
     Seq.zip sourceInfos targets
-    |> Seq.map
-         (fun (x, y) ->
-           let f = x.FullName // trim separator
-           (Path.Combine(f |> Path.GetDirectoryName, f |> Path.GetFileName), y))
+    |> Seq.map (fun (x, y) ->
+      let f = x.FullName // trim separator
+      (Path.Combine(f |> Path.GetDirectoryName, f |> Path.GetFileName), y))
     |> Seq.iter mapping.Add
 
     Seq.zip fromInfos toInfos
-    |> Seq.iter
-         (fun (fromInfo, toInfo) ->
-           let files = fromInfo.GetFiles()
+    |> Seq.iter (fun (fromInfo, toInfo) ->
+      let files = fromInfo.GetFiles()
 
-           files
-           |> Seq.iter
-                (fun info ->
-                  let fullName = info.FullName
-                  let filename = info.Name
-                  let copy = Path.Combine(toInfo.FullName, filename)
-                  File.Copy(fullName, copy, true)))
+      files
+      |> Seq.iter (fun info ->
+        let fullName = info.FullName
+        let filename = info.Name
+
+        let copy =
+          Path.Combine(toInfo.FullName, filename)
+
+        File.Copy(fullName, copy, true)))

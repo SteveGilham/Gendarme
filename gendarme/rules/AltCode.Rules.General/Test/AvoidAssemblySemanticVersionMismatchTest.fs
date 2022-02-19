@@ -39,11 +39,11 @@ type AvoidAssemblySemanticVersionMismatchTest() =
 
     try
       this.assembly.Name.Version <- null // should not happen
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
 
       this.assembly.Name.Version <- Version(0, 0, 0, 0)
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
       this.assembly.Name.Version <- v
@@ -55,7 +55,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
 
     try
       this.assembly.CustomAttributes.Clear()
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
       cac |> Seq.iter this.assembly.CustomAttributes.Add
@@ -64,9 +64,8 @@ type AvoidAssemblySemanticVersionMismatchTest() =
   member this.AbsentAssemblyFileVersion() =
     let afv =
       this.assembly.CustomAttributes
-      |> Seq.find
-           (fun ca ->
-             ca.AttributeType.FullName = "System.Reflection.AssemblyFileVersionAttribute")
+      |> Seq.find (fun ca ->
+        ca.AttributeType.FullName = "System.Reflection.AssemblyFileVersionAttribute")
 
     try
       Assert.That(
@@ -74,7 +73,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
         "AssemblyFileVersionAttribute not found"
       )
 
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
       this.assembly.CustomAttributes.Add afv
@@ -83,15 +82,14 @@ type AvoidAssemblySemanticVersionMismatchTest() =
   member this.EmptyAssemblyFileVersion() =
     let afv =
       this.assembly.CustomAttributes
-      |> Seq.find
-           (fun ca ->
-             ca.AttributeType.FullName = "System.Reflection.AssemblyFileVersionAttribute")
+      |> Seq.find (fun ca ->
+        ca.AttributeType.FullName = "System.Reflection.AssemblyFileVersionAttribute")
 
     let version = afv.ConstructorArguments.[0]
 
     try
       afv.ConstructorArguments[ 0 ] <- CustomAttributeArgument()
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
       afv.ConstructorArguments[ 0 ] <- version
@@ -99,7 +97,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
   [<Test>]
   member this.VersionMatch() =
     // full 4 facets by construction
-    base.AssertRuleSuccess(this.assembly)
+    ``base``.AssertRuleSuccess(this.assembly)
 
   // fsharplint:disable  NonPublicValuesNames
 
@@ -109,9 +107,8 @@ type AvoidAssemblySemanticVersionMismatchTest() =
 
     let afv =
       this.assembly.CustomAttributes
-      |> Seq.find
-           (fun ca ->
-             ca.AttributeType.FullName = "System.Reflection.AssemblyFileVersionAttribute")
+      |> Seq.find (fun ca ->
+        ca.AttributeType.FullName = "System.Reflection.AssemblyFileVersionAttribute")
 
     let fv = afv.ConstructorArguments.[0]
 
@@ -121,57 +118,69 @@ type AvoidAssemblySemanticVersionMismatchTest() =
     try
       this.assembly.Name.Version <- Version(8, 2)
 
-      let file8_2 = CustomAttributeArgument(s, "8.2")
+      let file8_2 =
+        CustomAttributeArgument(s, "8.2")
+
       afv.ConstructorArguments.[0] <- file8_2
-      base.AssertRuleSuccess(this.assembly)
+      ``base``.AssertRuleSuccess(this.assembly)
 
-      let file7_1 = CustomAttributeArgument(s, "7.1")
+      let file7_1 =
+        CustomAttributeArgument(s, "7.1")
+
       afv.ConstructorArguments.[0] <- file7_1
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
 
-      let file8_1 = CustomAttributeArgument(s, "8.1")
+      let file8_1 =
+        CustomAttributeArgument(s, "8.1")
+
       afv.ConstructorArguments.[0] <- file8_1
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
 
-      let file8_3 = CustomAttributeArgument(s, "8.3")
+      let file8_3 =
+        CustomAttributeArgument(s, "8.3")
+
       afv.ConstructorArguments.[0] <- file8_3
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
 
-      let file9_0 = CustomAttributeArgument(s, "9.0")
+      let file9_0 =
+        CustomAttributeArgument(s, "9.0")
+
       afv.ConstructorArguments.[0] <- file9_0
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
 
-      let file8_2_1 = CustomAttributeArgument(s, "8.2.1")
+      let file8_2_1 =
+        CustomAttributeArgument(s, "8.2.1")
+
       afv.ConstructorArguments.[0] <- file8_2_1
-      base.AssertRuleSuccess(this.assembly)
+      ``base``.AssertRuleSuccess(this.assembly)
 
       let file8_2_18_22015 =
         CustomAttributeArgument(s, "8.2.18.22015")
 
       afv.ConstructorArguments.[0] <- file8_2_18_22015
-      base.AssertRuleSuccess(this.assembly)
+      ``base``.AssertRuleSuccess(this.assembly)
 
       this.assembly.Name.Version <- Version(8, 2, 1)
       afv.ConstructorArguments.[0] <- file8_2_1
-      base.AssertRuleSuccess(this.assembly)
+      ``base``.AssertRuleSuccess(this.assembly)
 
       afv.ConstructorArguments.[0] <- file8_2_18_22015
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.High, this.Runner.Defects.[0].Severity, "High")
 
       let file8_2_1_22015 =
         CustomAttributeArgument(s, "8.2.1.22015")
 
       afv.ConstructorArguments.[0] <- file8_2_1_22015
-      base.AssertRuleSuccess(this.assembly)
+      ``base``.AssertRuleSuccess(this.assembly)
 
       this.assembly.Name.Version <- Version(8, 2, 1, 1)
-      base.AssertRuleFailure(this.assembly, 1)
+      ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
       this.assembly.Name.Version <- av
-      afv.ConstructorArguments [0] <- fv
+      afv.ConstructorArguments.[0] <- fv
