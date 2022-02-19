@@ -37,12 +37,9 @@ namespace Gendarme.Rules.Design
   public abstract class DefineAZeroValueRule : Rule
   {
 #pragma warning disable IDE0079 // Remove unnecessary suppression
-    [SuppressMessage("Gendarme.Rules.Performance",
-                     "AvoidUnneededUnboxingRule",
-                     Justification = "Only unboxes once per execution")]
-    [SuppressMessage("Gendarme.Rules.Smells",
-                      "AvoidSwitchStatementsRule",
-                      Justification = "TypeCodes are not types")]
+    [SuppressMessage("Gendarme.Rules.Globalization",
+                            "PreferIFormatProviderOverrideRule",
+                     Justification = "Meaningless in context")]
     protected static FieldDefinition GetZeroValueField(TypeDefinition type)
     {
       if (type == null)
@@ -64,32 +61,17 @@ namespace Gendarme.Rules.Design
         switch (Type.GetTypeCode(o.GetType()))
         {
           case TypeCode.Byte:
-            value = (byte)o;
-            break;
-
           case TypeCode.SByte:
-            value = (sbyte)o;
-            break;
-
           case TypeCode.UInt16:
-            value = (ushort)o;
-            break;
-
           case TypeCode.UInt32:
-            value = (uint)o;
-            break;
-
           case TypeCode.Int16:
-            value = (short)o;
-            break;
-
           case TypeCode.Int32:
-            value = (int)o;
+            value = Convert.ToInt64(o);
             break;
 
           case TypeCode.UInt64:
           case TypeCode.Int64:
-            value = (long)o;
+            value = (long) o;
             break;
 
           default:
