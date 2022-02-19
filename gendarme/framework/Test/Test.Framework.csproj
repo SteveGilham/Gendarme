@@ -9,7 +9,7 @@
     <None Remove="MCSRetro\**" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="csc2008\StackBadBoys.dll" />
+    <EmbeddedResource Include="csc2008\StackBadBoysR.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\rules\Test.Rules\Test.Rules.csproj" />

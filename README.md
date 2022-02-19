@@ -56,7 +56,7 @@ The following rule suites currently have unit test failures
 
 * Framework -- 2 failures for Stack entry analysis for which there is no evidence of them ever having worked (even if the code under test is built with a 2008-vintage C# compiler the tests fail in the same way as at net6.0)
   * TestMultipleCatch()
-  * TestTryCatchFinally()
+  * TestTryCatchFinally() -- works with optimized build of C# 2008 (v2.0.50727\csc.exe /o)
 * Smells -- 2 failures and 2 ignored due to IL changes
   * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest` (no evidence of ever passing : still fails when the code under test was compiled with a 2008 vintage compiler)
   * false positive in `SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest` (Roslyn induced `switch` statement changes -- the test succeeds with the same code built with a 2008 vintage compiler)
