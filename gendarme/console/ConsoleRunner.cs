@@ -97,6 +97,10 @@ namespace Gendarme
 
     // parse severity filter
     // e.g. Audit,High+ == Audit, High and Critical
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells", "AvoidSwitchStatementsRule",
+      Justification = "Not polymorphic")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
       Justification = "Roslyn switch on string generates complexity")]
     private bool ParseSeverity(string filter)
@@ -164,6 +168,10 @@ namespace Gendarme
       return true;
     }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells", "AvoidSwitchStatementsRule",
+      Justification = "Not polymorphic")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
       Justification = "Roslyn switch on string generates complexity")]
     private bool ParseConfidence(string filter)

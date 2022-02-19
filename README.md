@@ -50,17 +50,17 @@ After having achieved the first objective, of being able to analyze code from th
 
 ### Unit test fixing
 
-Having resolved many issues stemming from a Cecil change to what the name and namespace properties of a nested type returned, the next major sources of test failure have been compiler changes (from pre-Roslyn to now) and differences in behaviour under `.netstandard` compared with the .net Framework.  In particular, the `AvoidSwitchStatements` rule needs some serious decompiler code to recognise Roslyn's mangled switch constructs (compiled as multiple conditional branches) so some tests have just been set to `[Ignore]`
+Having resolved many issues stemming from a Cecil change to what the name and namespace properties of a nested type returned, and differences in behaviour under `.netstandard` compared with the .net Framework, the remaining sources of test failure are compiler changes (from pre-Roslyn to now) .  In particular, `switch` on integral values is often indistinguishable from an `if` or `if`/`else if` construct, so some tests have just been set to `[Ignore]`
 
 The following rule suites currently have unit test failures
 
 * Framework -- 2 failures for Stack entry analysis for which there is no evidence of them ever having worked (even if the code under test is built with a 2008-vintage C# compiler the tests fail in the same way as at net6.0)
   * TestMultipleCatch()
-  * TestTryCatchFinally()
-* Smells -- 2 failures and 2 ignored due to IL changes
-  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest` (no evidence of ever passing : still fails when the code under test was compiled with a 2008 vintage compiler)
+  * TestTryCatchFinally() -- works with optimized build of C# 2008 (v2.0.50727\csc.exe /o)
+* Smells -- 2 failures and 1 ignored due to IL changes
+  * false positive in `SuccessOnNonDuplicatedCodeIntoForeachLoopTest` (no evidence of ever passing : still fails when the code under test was compiled with a 2008 vintage compiler with or without optimization)
   * false positive in `SuccessOnNonDuplicatedInSwitchLoadingByFieldsTest` (Roslyn induced `switch` statement changes -- the test succeeds with the same code built with a 2008 vintage compiler)
-  * 2 `AvoidSwitchStatementsRule` tests, `FailOnMethodWithSwitchTest` and `FailOnSwitchWithStringsTest`, have similarly been `[Ignore]`d  because of the major IL changes involved.
+  * `AvoidSwitchStatementsRule` test, `FailOnMethodWithSwitchTest`has similarly been `[Ignore]`d  because of the major IL changes involved (now decompiles to an `if` expression).
 
 ## Changes made for F# support
 For the moment this seems to suffice to tame unreasonable, or unfixable generated, issues --

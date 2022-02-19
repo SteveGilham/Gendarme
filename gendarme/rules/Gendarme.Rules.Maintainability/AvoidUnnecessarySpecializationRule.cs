@@ -282,6 +282,8 @@ namespace Gendarme.Rules.Maintainability
     [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidComplexMethodsRule",
                     Justification = "Maybe refactor from 28")]
+    [SuppressMessage("Gendarme.Rules.Smells", "AvoidSwitchStatementsRule",
+      Justification = "Not polymorphic")]
     private static bool IsSystemObjectMethod(MethodReference method)
     {
       string name = method.Name;

@@ -132,7 +132,6 @@ namespace Test.Rules.Smells
     }
 
     [Test]
-    [Ignore("Roslyn uses conditional branches -- maybe test for <PrivateImplementationDetails>.ComputeStringHash(sample)")]
     public void FailOnSwitchWithStringsTest()
     {
       AssertRuleFailure<AvoidSwitchStatementsTest>("SwitchWithStrings", 1);

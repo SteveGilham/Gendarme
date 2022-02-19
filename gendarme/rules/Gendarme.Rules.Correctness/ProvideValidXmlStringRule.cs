@@ -169,6 +169,8 @@ namespace Gendarme.Rules.Correctness
     };
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
+    [SuppressMessage("Gendarme.Rules.Smells", "AvoidSwitchStatementsRule",
+      Justification = "Not polymorphic")]
     [SuppressMessage("Gendarme.Rules.Maintainability",
                     "AvoidComplexMethodsRule",
                     Justification = "Maybe refactor from 25")]

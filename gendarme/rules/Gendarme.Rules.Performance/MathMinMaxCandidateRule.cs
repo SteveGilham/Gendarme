@@ -80,29 +80,26 @@ namespace Gendarme.Rules.Performance
     // Int32, Int64, SByte, Single, UInt16, UInt32 and Uint64
     //
     // Note: an overload also exists for Decimal but it's
-    // unlikely than any JIT inlines it
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-    [SuppressMessage("Gendarme.Rules.Maintainability",
-                    "AvoidComplexMethodsRule",
-                    Justification = "Maybe refactor from 25")]
+    // unlikely that any JIT inlines it
     private static bool IsSupported(TypeReference type)
     {
       if (type.Namespace != "System") // OK
         return false;
+
       // GetElementType will remove the '&' for references
       TypeReference tr = type.GetElementType();
-      switch (tr.Name)
+      switch (tr.MetadataType)
       {
-        case "Byte":
-        case "Double":
-        case "Int16":
-        case "Int32":
-        case "Int64":
-        case "SByte":
-        case "Single":
-        case "UInt16":
-        case "UInt32":
-        case "UInt64":
+        case MetadataType.Byte:
+        case MetadataType.Double:
+        case MetadataType.Int16:
+        case MetadataType.Int32:
+        case MetadataType.Int64:
+        case MetadataType.SByte:
+        case MetadataType.Single:
+        case MetadataType.UInt16:
+        case MetadataType.UInt32:
+        case MetadataType.UInt64:
           return true;
 
         default:

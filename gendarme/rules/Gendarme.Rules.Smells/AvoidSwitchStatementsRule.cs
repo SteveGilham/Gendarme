@@ -132,6 +132,15 @@ namespace Gendarme.Rules.Smells
 
       foreach (Instruction instruction in method.Body.Instructions)
       {
+        // Roslyn swutch-on-string
+        if (instruction.OpCode == OpCodes.Call &&
+            (instruction.Operand as MethodReference).FullName ==
+              "System.UInt32 <PrivateImplementationDetails>::ComputeStringHash(System.String)")
+        {
+          Runner.Report(method, instruction, Severity.Low, Confidence.Total);
+          return RuleResult.Failure;
+        }
+
         if (instruction.OpCode == OpCodes.Switch)
         {
           // if effectively a single branch, might as well be an `if` statement
