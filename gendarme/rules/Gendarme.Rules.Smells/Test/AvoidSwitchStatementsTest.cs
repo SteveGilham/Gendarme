@@ -39,6 +39,8 @@ using NUnit.Framework;
 
 namespace Test.Rules.Smells
 {
+#pragma warning disable IDE0051 // Remove unused private members
+
   [TestFixture]
   public class AvoidSwitchStatementsTest : MethodRuleTestFixture<AvoidSwitchStatementsRule>
   {
