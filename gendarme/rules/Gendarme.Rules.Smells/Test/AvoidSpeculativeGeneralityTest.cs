@@ -41,6 +41,8 @@ using Test.Rules.Helpers;
 namespace Test.Rules.Smells
 {
   //
+#pragma warning disable IDE0060 // Remove unused parameter
+
   public abstract class AbstractClass
   {
     public abstract void MakeStuff();
@@ -177,7 +179,7 @@ namespace Test.Rules.Smells
     {
       var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
       var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-      var type = def.MainModule.GetType("MethodCanBeMadeStatic.Instrument/hookResolveHandler@18");
+      var type = def.MainModule.GetType("MethodCanBeMadeStatic.Instrument/hookResolveHandler@19");
       AssertRuleDoesNotApply(type);
     }
   }
