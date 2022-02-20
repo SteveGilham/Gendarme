@@ -1,4 +1,4 @@
-namespace AvoidSwitchStatements
+﻿namespace AvoidSwitchStatements
 
 open System
 

@@ -1,4 +1,4 @@
-namespace MethodCanBeMadeStatic
+﻿namespace MethodCanBeMadeStatic
 
 open System.Collections.Generic
 open Mono.Cecil

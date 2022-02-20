@@ -1,4 +1,4 @@
-namespace UseCorrectPrefix
+﻿namespace UseCorrectPrefix
 
 open System
 

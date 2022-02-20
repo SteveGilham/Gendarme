@@ -1,4 +1,4 @@
-namespace AltCode.CecilExtensions
+﻿namespace AltCode.CecilExtensions
 
 open System
 open System.Collections.Generic

@@ -1,4 +1,4 @@
-namespace AvoidUnnecessarySpecialization
+﻿namespace AvoidUnnecessarySpecialization
 
 open System.Collections.Generic
 open System.IO

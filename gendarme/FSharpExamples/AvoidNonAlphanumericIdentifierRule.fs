@@ -1,4 +1,4 @@
-namespace AvoidNonAlphanumericIdentifier
+﻿namespace AvoidNonAlphanumericIdentifier
 
 open System
 open System.IO

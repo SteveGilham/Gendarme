@@ -1,4 +1,4 @@
-namespace AvoidLongParameterLists
+﻿namespace AvoidLongParameterLists
 
 type SeqPnt =
   { StartLine: int

@@ -1,4 +1,4 @@
-namespace BadRecursiveInvocation
+﻿namespace BadRecursiveInvocation
 
 type Handler() =
   class

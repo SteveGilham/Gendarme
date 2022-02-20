@@ -1,4 +1,4 @@
-namespace RemoveDependenceOnObsoleteCode
+﻿namespace RemoveDependenceOnObsoleteCode
 
 open System
 

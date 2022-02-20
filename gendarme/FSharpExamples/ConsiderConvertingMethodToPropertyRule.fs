@@ -1,4 +1,4 @@
-namespace ConsiderConvertingMethodToProperty
+﻿namespace ConsiderConvertingMethodToProperty
 
 module Instance =
   let mutable isRunner = false

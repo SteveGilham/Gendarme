@@ -1,4 +1,4 @@
-namespace AvoidUncalledPrivateCode
+﻿namespace AvoidUncalledPrivateCode
 
 open System.Collections.Generic
 

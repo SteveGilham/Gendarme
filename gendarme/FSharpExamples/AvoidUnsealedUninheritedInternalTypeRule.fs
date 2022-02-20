@@ -1,4 +1,4 @@
-namespace AvoidUnsealedUninheritedInternalType
+﻿namespace AvoidUnsealedUninheritedInternalType
 
 open System.Diagnostics.CodeAnalysis
 

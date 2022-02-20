@@ -1,4 +1,4 @@
-namespace AvoidMultidimensionalIndexer
+﻿namespace AvoidMultidimensionalIndexer
 
 module DotNet =
   // get_Item methods trip the AvoidMultidimensionalIndexerRule

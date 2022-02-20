@@ -1,4 +1,4 @@
-#r "paket:
+﻿#r "paket:
 nuget BlackFox.VsWhere >= 1.0.0
 nuget Fake.Core.Target >= 5.21.1
 nuget Fake.Core.Environment >= 5.21.1
