@@ -160,14 +160,12 @@ let withMSBuildParams (o: Fake.DotNet.DotNet.BuildOptions) = { o with MSBuildPar
 
 let defaultTestOptions fwk common (o: DotNet.TestOptions) =
     { o.WithCommon(
-          (fun o2 ->
-              { o2 with
-                    Verbosity = Some DotNet.Verbosity.Normal })
+          (fun o2 -> { o2 with Verbosity = Some DotNet.Verbosity.Normal })
           >> common
       ) with
-          NoBuild = true
-          Framework = fwk // Some "netcoreapp3.0"
-          Configuration = DotNet.BuildConfiguration.Debug }
+        NoBuild = true
+        Framework = fwk // Some "netcoreapp3.0"
+        Configuration = DotNet.BuildConfiguration.Debug }
 
 let dotnetBuildRelease proj =
     DotNet.build
@@ -1162,7 +1160,7 @@ _Target "DotnetGlobalIntegration" (fun _ ->
              + badge)
             "Installed"
 
-        Actions.RunDotnet(fun o' -> { dotnetOptions o' with WorkingDirectory = working }) "tool" ("list -g ") "Checked"
+        Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working }) "tool" ("list -g ") "Checked"
 
         set <- true
 
@@ -1325,7 +1323,7 @@ _Target "CheckAltCover" (fun _ -> // Needs debug because release is compiled --s
              + nuggetVer)
             "Installed"
 
-        Actions.RunDotnet(fun o' -> { dotnetOptions o' with WorkingDirectory = working }) "tool" ("list -g ") "Checked"
+        Actions.RunDotnet (fun o' -> { dotnetOptions o' with WorkingDirectory = working }) "tool" ("list -g ") "Checked"
 
         set <- true
 
