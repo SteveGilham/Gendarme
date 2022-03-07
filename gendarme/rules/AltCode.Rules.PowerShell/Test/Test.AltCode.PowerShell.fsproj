@@ -20,5 +20,9 @@
     <ProjectReference Include="..\AltCode.Rules.PowerShell.fsproj" />
     <ProjectReference Include="Examples\Examples.AltCode.PowerShell.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="6.0.3" />
+  </ItemGroup>
 
 </Project>

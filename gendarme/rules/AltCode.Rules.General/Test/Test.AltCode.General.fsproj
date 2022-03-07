@@ -21,5 +21,9 @@
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\AltCode.Rules.General.fsproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="6.0.3" />
+  </ItemGroup>
 
 </Project>
