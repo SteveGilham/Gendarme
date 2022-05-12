@@ -98,11 +98,11 @@ namespace Gendarme.Rules.Performance
     [SuppressMessage("Gendarme.Rules.Smells",
                       "AvoidSwitchStatementsRule",
                       Justification = "OpCodes are not types")]
-    private static string Previous(MethodDefinition method, Instruction ins)
+    private static string Previous(MethodDefinition method, Instruction ins0)
     {
       string kind, name;
 
-      ins = ins.Previous;
+      var ins = ins0.Previous;
       Code previous_op_code = ins.OpCode.Code;
 
       switch (previous_op_code)
@@ -151,7 +151,7 @@ namespace Gendarme.Rules.Performance
           return String.Empty;
       }
       return String.Format(CultureInfo.InvariantCulture, "{0} '{1}' unboxed to type '{2}' {{0}} times.",
-        kind, name, (ins.Operand as TypeReference).GetFullName());
+        kind, name, ((ins.Operand ?? ins0.Operand) as TypeReference).GetFullName());
 
       string GetName(VariableDefinition v)
       {
