@@ -1018,5 +1018,22 @@ namespace Test.Rules.Interoperability
       AssertTest(MethodInfo.GetCurrentMethod().Name.Replace("Test_", "CheckMethod_"));
       AssertTest(MethodInfo.GetCurrentMethod().Name.Replace("Test_", "CheckMethod_Anonymous"));
     }
+
+    [Test]
+    public void RegressionTest_FSharpFalsePositives()
+    {
+      var type = typeof(DelegatesPassedToNativeCodeMustIncludeExceptionHandling.SummaryFormat);
+      TypeDefinition td = DefinitionLoader.GetTypeDefinition(type);
+
+      var runner = new TestRunner(new DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule());
+      runner.Rules.Clear();
+
+      var name = "Factory";
+      var method = DefinitionLoader.GetMethodDefinition(td, name, null);
+      var result = runner.CheckMethod(method);
+
+      Assert.AreEqual(RuleResult.Success, result, "For test method: " + name);
+      Assert.AreEqual(0, runner.Defects.Count, "Defect count for test method: " + name);
+    }
   }
 }

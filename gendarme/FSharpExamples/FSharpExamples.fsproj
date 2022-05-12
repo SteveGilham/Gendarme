@@ -14,9 +14,11 @@
     <Compile Include="AvoidUncalledPrivateCodeRule.fs" />
     <Compile Include="AvoidUnnecessarySpecializationRule.fs" />
     <Compile Include="AvoidUnneededFieldInitializationRule.fs" />
+    <Compile Include="AvoidUnneededUnboxingRule.fs" />
     <Compile Include="AvoidUnsealedUninheritedInternalTypeRule.fs" />
     <Compile Include="BadRecursiveInvocationRule.fs" />
     <Compile Include="ConsiderConvertingMethodToPropertyRule.fs" />
+    <Compile Include="DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule.fs" />
     <Compile Include="EnsureLocalDisposalRule.fs" />
     <Compile Include="MethodCanBeMadeStaticRule.fs" />
     <Compile Include="ParameterNamesShouldMatchOverridenMethod.fs" />
