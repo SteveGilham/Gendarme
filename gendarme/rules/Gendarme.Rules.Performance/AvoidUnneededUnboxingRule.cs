@@ -150,8 +150,15 @@ namespace Gendarme.Rules.Performance
         default:
           return String.Empty;
       }
+
+      var t = (ins.Operand as TypeReference).GetFullName();
+      if (string.IsNullOrWhiteSpace(t))
+      {
+        t = (ins0.Operand as TypeReference).GetFullName();
+      }
+
       return String.Format(CultureInfo.InvariantCulture, "{0} '{1}' unboxed to type '{2}' {{0}} times.",
-        kind, name, ((ins.Operand ?? ins0.Operand) as TypeReference).GetFullName());
+        kind, name, t);
 
       string GetName(VariableDefinition v)
       {
