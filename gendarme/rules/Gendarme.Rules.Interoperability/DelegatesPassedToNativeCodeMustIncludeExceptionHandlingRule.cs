@@ -373,6 +373,8 @@ namespace Gendarme.Rules.Interoperability
         }
 
         stack_count += push - pop;
+        if (stack_count < 0)
+          stack_count = 0;
 
         while (stack_count > stack.Count)
           stack.Add(new ILRange(ins));
