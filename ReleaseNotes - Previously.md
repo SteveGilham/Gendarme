@@ -1,3 +1,8 @@
+# 2022.5.15.11273
+
+* Fix some false negatives for `AvoidSwitchStatementsRule` (where the switch is on a `string` value)
+* Fix false positives for `DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule` and `AvoidUnneededUnboxingRule` associated with changes in F# exception handling
+
 # 2022.2.17.8350
 
 * First stable release

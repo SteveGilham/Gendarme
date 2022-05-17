@@ -1,6 +1,5 @@
-# 2022.5.15.122xx
+# 2022.5.17.82xx
 
-* Fix some false negatives for `AvoidSwitchStatementsRule` (where the switch is on a `string` value)
-* Fix false positives for `DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule` and `AvoidUnneededUnboxingRule` associated with changes in F# exception handling
+* Fix false positives for `DoNotThrowInNonCatchClausesRule` for `try/when/catch` cases that `throw` from the `catch`
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md

@@ -19,6 +19,7 @@
     <Compile Include="BadRecursiveInvocationRule.fs" />
     <Compile Include="ConsiderConvertingMethodToPropertyRule.fs" />
     <Compile Include="DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule.fs" />
+    <Compile Include="DoNotThrowInNonCatchClausesRule.fs" />
     <Compile Include="EnsureLocalDisposalRule.fs" />
     <Compile Include="MethodCanBeMadeStaticRule.fs" />
     <Compile Include="ParameterNamesShouldMatchOverridenMethod.fs" />
