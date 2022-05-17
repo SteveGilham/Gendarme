@@ -28,6 +28,8 @@
 
 using System;
 using System.Linq;
+using System.Security;
+using System.Security.Cryptography;
 using Gendarme.Rules.Exceptions;
 
 using NUnit.Framework;
@@ -155,5 +157,42 @@ namespace Test.Rules.Exceptions
       var type = probe.Assembly.GetTypes().First(t => t.FullName.Contains("DoNotThrowInNonCatchClauses.Example"));
       AssertRuleSuccess(type, "transformCryptographicException");
     }
+
+    //#if NET6_0_OR_GREATER
+    //public void BadWhen(string s)
+    //{
+    //  try
+    //  {
+    //    if (s.Length < 2)
+    //      throw new InvalidOperationException(s);
+    //  }
+    //  catch (Exception obj) when (throw new InvalidCastException()) // does not compile
+    //  {
+    //    Console.WriteLine(s);
+    //  }
+    //}
+
+    public void GoodWhen(string s)
+    {
+      try
+      {
+        if (s.Length < 2)
+          throw new InvalidOperationException(s);
+      }
+      catch (Exception obj) when ((obj as CryptographicException) != null)
+      {
+        var cex = obj as CryptographicException;
+        throw new SecurityException(cex.Message, cex);
+      }
+    }
+
+    [Test]
+    public void WhenClauses()
+    {
+      //      AssertRuleFailure<DoNotThrowInNonCatchClausesTest>("BadWhen", 1);
+      AssertRuleSuccess<DoNotThrowInNonCatchClausesTest>("GoodWhen");
+    }
+
+    //#endif
   }
 }
