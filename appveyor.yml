@@ -5,6 +5,7 @@ branches:
   except:
   - trunk
   - /develop.*/
+  - /dependabot.*/
 skip_tags: true
 image: Visual Studio 2022
 configuration: Release
