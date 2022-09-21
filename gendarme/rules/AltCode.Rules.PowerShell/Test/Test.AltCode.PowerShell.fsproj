@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
@@ -19,10 +19,6 @@
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\AltCode.Rules.PowerShell.fsproj" />
     <ProjectReference Include="Examples\Examples.AltCode.PowerShell.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="6.0.5" />
   </ItemGroup>
 
 </Project>
