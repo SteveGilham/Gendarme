@@ -496,7 +496,9 @@ _Target "FxCop" (fun _ ->
                 WorkingDirectory = "."
                 DependencyDirectories =
                     [ nugetCache
-                      @@ "mono.cecil/0.11.4/lib/netstandard2.0" ]
+                      @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                      nugetCache
+                      @@ "fsharp.core/6.0.6/lib/netstandard2.0" ]
                 ToolPath = Option.get fxcop
                 UseGAC = true
                 Verbose = false
@@ -519,7 +521,7 @@ _Target "FxCop" (fun _ ->
                     [ nugetCache
                       @@ "mono.cecil/0.11.4/lib/netstandard2.0"
                       nugetCache
-                      @@ "fsharp.core/6.0.1/lib/netstandard2.0" ]
+                      @@ "fsharp.core/6.0.6/lib/netstandard2.0" ]
                 ToolPath = Option.get dixon
                 PlatformDirectory = Option.get refdir
                 UseGAC = true
@@ -547,7 +549,7 @@ _Target "FxCop" (fun _ ->
                     [ nugetCache
                       @@ "mono.cecil/0.11.4/lib/netstandard2.0"
                       nugetCache
-                      @@ "fsharp.core/6.0.1/lib/netstandard2.0" ]
+                      @@ "fsharp.core/6.0.6/lib/netstandard2.0" ]
                 ToolPath = Option.get dixon
                 PlatformDirectory = Option.get refdir
                 UseGAC = true
