@@ -118,10 +118,12 @@ module NetCoreResolver =
 
   let HookResolver (resolver: IAssemblyResolver) =
     if resolver.IsNotNull then
-      if hookTable
-         |> Seq.map (fun wr -> wr.Target)
-         |> Seq.exists (fun t -> obj.ReferenceEquals(t, resolver))
-         |> not then
+      if
+        hookTable
+        |> Seq.map (fun wr -> wr.Target)
+        |> Seq.exists (fun t -> obj.ReferenceEquals(t, resolver))
+        |> not
+      then
         let hook =
           resolver.GetType().GetMethod("add_ResolveFailure")
 
@@ -133,6 +135,7 @@ module NetCoreResolver =
 [<assembly: SuppressMessage("Microsoft.Performance",
                             "CA1810:InitializeReferenceTypeStaticFieldsInline",
                             Scope = "member",
-                            Target = "<StartupCode$CecilExtensions>.$NetCoreResolver.#.cctor()",
+                            Target =
+                              "<StartupCode$CecilExtensions>.$NetCoreResolver.#.cctor()",
                             Justification = "Compiler generated")>]
 ()

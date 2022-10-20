@@ -35,9 +35,11 @@ type UseOnlyStandardVerbsRule() =
           (attr.ConstructorArguments |> Seq.head)
             .Value.ToString()
 
-        if Tools.standardVerbs
-           |> Seq.exists (fun v -> v.Equals(verb, StringComparison.OrdinalIgnoreCase))
-           |> not then
+        if
+          Tools.standardVerbs
+          |> Seq.exists (fun v -> v.Equals(verb, StringComparison.OrdinalIgnoreCase))
+          |> not
+        then
           let msg =
             String.Format(
               CultureInfo.CurrentCulture,

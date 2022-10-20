@@ -135,7 +135,8 @@ module Tools =
 [<assembly: SuppressMessage("Microsoft.Performance",
                             "CA1810:InitializeReferenceTypeStaticFieldsInline",
                             Scope = "member",
-                            Target = "<StartupCode$AltCode-Rules-PowerShell>.$Library.#.cctor()",
+                            Target =
+                              "<StartupCode$AltCode-Rules-PowerShell>.$Library.#.cctor()",
                             Justification = "Compiler generated type")>]
 [<assembly: System.Resources.NeutralResourcesLanguageAttribute("en-GB")>]
 ()
