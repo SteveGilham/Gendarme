@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="altcover" Version="8.3.839" />
+    <PackageReference Include="altcover" Version="8.4.840" />
     <PackageReference Include="AltCode.Dixon" Version="2022.1.8.13182" />
     <PackageReference Include="NuGet.CommandLine" Version="6.3.1">
       <PrivateAssets>all</PrivateAssets>

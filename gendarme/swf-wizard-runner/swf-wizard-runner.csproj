@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\framework\Gendarme.Framework.csproj" />
+    <PackageReference Include="System.Resources.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\gendarme.ico" />
