@@ -50,8 +50,10 @@ type AvoidAssemblySemanticVersionMismatchRule() =
       // once compiled [AssemblyVersion] is not part of the custom attributes
       let assemblyVersion = assembly.Name.Version
 
-      if (assembly.HasCustomAttributes |> not
-          || assemblyVersion.IsEmpty()) then
+      if
+        (assembly.HasCustomAttributes |> not
+         || assemblyVersion.IsEmpty())
+      then
         let msg =
           Tools.resource "IncompleteVersioning"
 
@@ -76,17 +78,23 @@ type AvoidAssemblySemanticVersionMismatchRule() =
           RuleResult.Failure
         | Some version ->
           let s =
-            if assemblyVersion.Major <> version.Major
-               || //primary sem-ver facets
-               assemblyVersion.Minor <> version.Minor then
+            if
+              assemblyVersion.Major <> version.Major
+              || //primary sem-ver facets
+              assemblyVersion.Minor <> version.Minor
+            then
               Some Severity.Critical
-            else if (assemblyVersion.Build > 0)
-                    && // if non-default, must match
-                    (assemblyVersion.Build <> version.Build) then
+            else if
+              (assemblyVersion.Build > 0)
+              && // if non-default, must match
+              (assemblyVersion.Build <> version.Build)
+            then
               Some Severity.High
-            else if (assemblyVersion.Revision > 0)
-                    && // if non-default, must match
-                    (assemblyVersion.Revision <> version.Revision) then
+            else if
+              (assemblyVersion.Revision > 0)
+              && // if non-default, must match
+              (assemblyVersion.Revision <> version.Revision)
+            then
               Some Severity.Medium
             else
               None

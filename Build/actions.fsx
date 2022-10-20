@@ -16,24 +16,13 @@ module Actions =
     let Clean () =
         let rec clean1 depth =
             try
-                (DirectoryInfo ".")
-                    .GetDirectories("*", SearchOption.AllDirectories)
-                |> Seq.filter (fun x ->
-                    x.Name.StartsWith "_"
-                    || x.Name = "bin"
-                    || x.Name = "obj")
-                |> Seq.filter (fun n ->
-                    "packages"
-                    |> Path.GetFullPath
-                    |> n.FullName.StartsWith
-                    |> not)
+                (DirectoryInfo ".").GetDirectories("*", SearchOption.AllDirectories)
+                |> Seq.filter (fun x -> x.Name.StartsWith "_" || x.Name = "bin" || x.Name = "obj")
+                |> Seq.filter (fun n -> "packages" |> Path.GetFullPath |> n.FullName.StartsWith |> not)
                 |> Seq.map (fun x -> x.FullName)
                 |> Seq.distinct
                 // arrange so leaves get deleted first, avoiding "does not exist" warnings
-                |> Seq.groupBy (fun x ->
-                    x
-                    |> Seq.filter (fun c -> c = '\\' || c = '/')
-                    |> Seq.length)
+                |> Seq.groupBy (fun x -> x |> Seq.filter (fun c -> c = '\\' || c = '/') |> Seq.length)
                 |> Seq.map (fun (n, x) -> (n, x |> Seq.sort))
                 |> Seq.sortBy (fst >> ((*) -1))
                 |> Seq.collect snd
@@ -44,8 +33,7 @@ module Actions =
                 let temp = Environment.environVar "TEMP"
 
                 if not <| String.IsNullOrWhiteSpace temp then
-                    Directory.GetFiles(temp, "*.tmp.dll.mdb")
-                    |> Seq.iter File.Delete
+                    Directory.GetFiles(temp, "*.tmp.dll.mdb") |> Seq.iter File.Delete
             with
             | :? System.IO.IOException as x -> clean' (x :> Exception) depth
             | :? System.UnauthorizedAccessException as x -> clean' (x :> Exception) depth
@@ -62,8 +50,7 @@ module Actions =
         clean1 0
 
 let HandleResults (msg: string) (result: Fake.Core.ProcessResult) =
-    String.Join(Environment.NewLine, result.Messages)
-    |> printfn "%s"
+    String.Join(Environment.NewLine, result.Messages) |> printfn "%s"
 
     let save = (Console.ForegroundColor, Console.BackgroundColor)
 
@@ -74,8 +61,7 @@ let HandleResults (msg: string) (result: Fake.Core.ProcessResult) =
             Console.ForegroundColor <- ConsoleColor.Black
             Console.BackgroundColor <- ConsoleColor.White
 
-            String.Join(Environment.NewLine, errors)
-            |> printfn "ERR : %s"
+            String.Join(Environment.NewLine, errors) |> printfn "ERR : %s"
         finally
             Console.ForegroundColor <- fst save
             Console.BackgroundColor <- snd save

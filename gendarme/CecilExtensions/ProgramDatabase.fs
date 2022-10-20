@@ -103,12 +103,14 @@ module ProgramDatabase =
 [<assembly: SuppressMessage("Microsoft.Performance",
                             "CA1810:InitializeReferenceTypeStaticFieldsInline",
                             Scope = "member",
-                            Target = "<StartupCode$CecilExtensions>.$ProgramDatabase.#.cctor()",
+                            Target =
+                              "<StartupCode$CecilExtensions>.$ProgramDatabase.#.cctor()",
                             Justification = "Compiler generated")>]
 [<assembly: SuppressMessage("Microsoft.Naming",
                             "CA1704:IdentifiersShouldBeSpelledCorrectly",
                             Scope = "member",
-                            Target = "AltCode.CecilExtensions.ProgramDatabase.#Option.filter`1(Microsoft.FSharp.Core.FSharpFunc`2<!!0,System.Boolean>,Microsoft.FSharp.Core.FSharpOption`1<!!0>)",
+                            Target =
+                              "AltCode.CecilExtensions.ProgramDatabase.#Option.filter`1(Microsoft.FSharp.Core.FSharpFunc`2<!!0,System.Boolean>,Microsoft.FSharp.Core.FSharpOption`1<!!0>)",
                             MessageId = "a",
                             Justification = "Compiler generated")>]
 ()
