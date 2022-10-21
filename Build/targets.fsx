@@ -858,7 +858,10 @@ _Target "Packaging" (fun _ ->
     let netcore =
         List.concat
             [ netcoremain
-              [ syslibs; rules; altrules ]
+              [ syslibs
+                rules
+                altrules
+                [ (Path.getFullName "./_Binaries/gendarme/Release/net472/FSharp.Core.dll") ] ]
               |> List.concat
               |> List.map (fun f -> (f, Some "tools/netcoreapp2.1/any", None)) ]
 

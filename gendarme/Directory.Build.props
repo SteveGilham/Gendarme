@@ -14,8 +14,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Mono.Cecil" />
-    <PackageReference Include="FSharp.Core" >
+    <PackageReference Include="FSharp.Core">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
