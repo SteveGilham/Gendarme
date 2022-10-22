@@ -16,4 +16,4 @@ module Instrument =
       null
 
   let hookResolveHandler =
-    new AssemblyResolveEventHandler(resolveFromNugetCache)
+    AssemblyResolveEventHandler(resolveFromNugetCache)

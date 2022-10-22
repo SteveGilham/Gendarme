@@ -256,7 +256,7 @@ module SolutionRoot =
     let v' = !Version
 
     // make the first one `true` if we ever want the static fields
-    let config = new AssemblyInfoFileConfig(false, false, "Gendarme")
+    let config = AssemblyInfoFileConfig(false, false, "Gendarme")
 
     AssemblyInfoFile.create
         "./_Generated/AssemblyStaticInfo.fs"

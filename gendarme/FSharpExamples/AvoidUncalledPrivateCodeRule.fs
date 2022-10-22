@@ -23,7 +23,7 @@ module Instance =
                                                     "AvoidUncalledPrivateCodeRule",
                                                     Justification = "Not part of the example")>]
   let mutable internal visits =
-    new Dictionary<string, Dictionary<int, PointVisit>>()
+    Dictionary<string, Dictionary<int, PointVisit>>()
 
 module Adapter =
   let visitsAdd name line number =

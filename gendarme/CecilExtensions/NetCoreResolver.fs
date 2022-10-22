@@ -107,7 +107,7 @@ module NetCoreResolver =
       | Some x -> handleResolved x
 
   let ResolveHandler =
-    new AssemblyResolveEventHandler(resolveFromNugetCache)
+    AssemblyResolveEventHandler(resolveFromNugetCache)
 
   let internal hookTable =
     HashSet<WeakReference>()
