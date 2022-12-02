@@ -17,7 +17,8 @@ open Examples.AltCode.Commands
 
 [<TestFixture>]
 type DefineCmdletInTheCorrectNamespaceTest() =
-  inherit TypeRuleTestFixture<AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule>()
+  inherit
+    TypeRuleTestFixture<AltCode.Rules.PowerShell.DefineCmdletInTheCorrectNamespaceRule>()
 
   [<Test>]
   member this.DoesNotApply() =

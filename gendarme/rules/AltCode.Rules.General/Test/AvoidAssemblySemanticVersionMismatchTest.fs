@@ -18,7 +18,8 @@ open Examples.AltCode.General
 
 [<TestFixture>]
 type AvoidAssemblySemanticVersionMismatchTest() =
-  inherit AssemblyRuleTestFixture<AltCode.Rules.General.AvoidAssemblySemanticVersionMismatchRule>()
+  inherit
+    AssemblyRuleTestFixture<AltCode.Rules.General.AvoidAssemblySemanticVersionMismatchRule>()
 
   member val private assembly: AssemblyDefinition = null with get, set
 
@@ -88,11 +89,11 @@ type AvoidAssemblySemanticVersionMismatchTest() =
     let version = afv.ConstructorArguments.[0]
 
     try
-      afv.ConstructorArguments[ 0 ] <- CustomAttributeArgument()
+      afv.ConstructorArguments[0] <- CustomAttributeArgument()
       ``base``.AssertRuleFailure(this.assembly, 1)
       Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
     finally
-      afv.ConstructorArguments[ 0 ] <- version
+      afv.ConstructorArguments[0] <- version
 
   [<Test>]
   member this.VersionMatch() =
