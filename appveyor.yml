@@ -16,16 +16,16 @@ environment:
 nuget:
   disable_publish_on_pr: true
 install:
-  - cinst dotnet-sdk --version 6.0.402
+  - cinst dotnet-sdk --version 7.0.100
 build_script:
 - ps: >-
     $ErrorActionPreference = 'Continue'
 
     & dotnet tool restore
 
-    & dotnet fake run .\Build\setup.fsx
+    & dotnet run --project .\Build\Setup.fsproj
 
-    & dotnet fake run .\Build\build.fsx --target OperationalTest
+    & dotnet run --project .\Build\Build.fsproj --target OperationalTest
 
     $save = $LASTEXITCODE
     

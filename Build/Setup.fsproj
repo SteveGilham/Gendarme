@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <Compile Include="setup.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fake.Core.Environment" />
+    <PackageReference Include="Fake.Core.Process" />
+    <PackageReference Include="Fake.Core.Target" />
+    <PackageReference Include="Fake.DotNet.Cli" />
+    <PackageReference Include="Fake.DotNet.NuGet" />
+    <PackageReference Include="Fake.IO.FileSystem" />
+  </ItemGroup>
+
+</Project>

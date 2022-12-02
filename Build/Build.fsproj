@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <NoWarn>MSB3243</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="actions.fs" />
+    <Compile Include="targets.fs" />
+    <Compile Include="Build.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fake.Core.Target" />
+    <PackageReference Include="Fake.Core.Environment" />
+    <PackageReference Include="Fake.Core.Process" />
+    <PackageReference Include="Fake.DotNet.AssemblyInfoFile" />
+    <PackageReference Include="Fake.DotNet.Cli" />
+    <PackageReference Include="Fake.DotNet.FxCop" />
+    <PackageReference Include="Fake.DotNet.MSBuild" />
+    <PackageReference Include="Fake.DotNet.NuGet" />
+    <PackageReference Include="Fake.DotNet.Testing.NUnit" />
+    <PackageReference Include="Fake.DotNet.Testing.OpenCover" />
+    <PackageReference Include="Fake.DotNet.Testing.XUnit2" />
+    <PackageReference Include="Fake.IO.FileSystem" />
+    <PackageReference Include="Fake.Tools.Git" />
+    <PackageReference Include="Fake.Testing.ReportGenerator" />
+    <PackageReference Include="altcover.fake" />
+    <PackageReference Include="BlackFox.CommandLine" />
+    <PackageReference Include="BlackFox.VsWhere" />
+    <PackageReference Include="Markdown" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="YamlDotNet" />
+  </ItemGroup>
+
+</Project>
