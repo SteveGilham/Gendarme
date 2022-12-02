@@ -7,3 +7,4 @@ Build/.fake/
 Build/obj/
 InternalTrace.*.log
 nunit-agent_*.log
+$*/

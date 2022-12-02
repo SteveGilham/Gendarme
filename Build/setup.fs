@@ -4,6 +4,8 @@ module Setup =
 
   open System
   open System.IO
+  open System.Reflection
+  open System.Runtime.InteropServices
   open System.Xml.Linq
 
   open Fake.Core
@@ -41,11 +43,11 @@ module Setup =
 
   let toolPackages =
     let xml =
-      "./Build/NuGet.csproj"
+      "./Directory.Packages.props"
       |> Path.getFullName
       |> XDocument.Load
 
-    xml.Descendants(XName.Get("PackageReference"))
+    xml.Descendants()
     |> Seq.filter (fun x -> x.Attribute(XName.Get("Include")) |> isNull |> not)
     |> Seq.map (fun x ->
       (x.Attribute(XName.Get("Include")).Value, x.Attribute(XName.Get("Version")).Value))
@@ -116,8 +118,6 @@ module Setup =
           XDocument.Load "./packages/fxcop/FxCopCmd.exe.config"
         // Maybe process here...
         config.Save "./packages/fxcop/DixonCmd.exe.config"))
-
-  Target.runOrDefault <| defaultTarget ()
 
   let initTargets () =
     Target.description "ResetConsoleColours"
