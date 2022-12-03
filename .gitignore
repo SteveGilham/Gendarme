@@ -8,3 +8,4 @@ Build/obj/
 InternalTrace.*.log
 nunit-agent_*.log
 $*/
+.vs/

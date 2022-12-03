@@ -1,43 +1,15 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)\..\OutputBuildProps.props" />
   <PropertyGroup Label="OutputBuildProps">
-    <!-- based on https://nietras.com/2021/11/19/bendingdotnet-common-flat-build-output/ -->
-    <Configuration Condition="$(Configuration) == ''">Debug</Configuration>
-    <Platform Condition="$(Platform) == ''">AnyCPU</Platform>
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
-    <BuildDir>$(MSBuildThisFileDirectory)\..\_Binaries\</BuildDir>
-    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)\..\_Intermediate/$(MSBuildProjectName)/$(Configuration)</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <ProjectBuildDirectoryName>$(GendarmeTag)$(MSBuildProjectName)/$(Configuration)</ProjectBuildDirectoryName>
-    <OutputPathWithoutEndSlash>$(BuildDir)$(ProjectBuildDirectoryName)</OutputPathWithoutEndSlash>
-    <OutputPath>$(OutputPathWithoutEndSlash)/</OutputPath>
-    <KeyDir>$(MSBuildThisFileDirectory)\..\Build\</KeyDir>
-    <InfrastructureKey>$(KeyDir)Infrastructure.snk</InfrastructureKey>
-    <OtherFlags>--keyfile:$(InfrastructureKey)</OtherFlags>
-    <RollForward>Major</RollForward>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(InfrastructureKey)</AssemblyOriginatorKeyFile>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <DocumentationFile />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
-    <DeterministicSourcePaths>false</DeterministicSourcePaths>
-    <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-    <NoWarn>52</NoWarn>
-    <Tailcalls>true</Tailcalls>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'!='Debug'">
     <DefineConstants>TRACE;RELEASE</DefineConstants>
-    <DeterministicSourcePaths>true</DeterministicSourcePaths>
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 </Project>

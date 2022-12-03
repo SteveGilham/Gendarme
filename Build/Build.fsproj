@@ -7,10 +7,11 @@
   <ItemGroup>
     <Compile Include="actions.fs" />
     <Compile Include="targets.fs" />
-    <Compile Include="Build.fs" />
+    <Compile Include="build.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AltCode.Fake.DotNet.Gendarme" />
     <PackageReference Include="Fake.Core.Target" />
     <PackageReference Include="Fake.Core.Environment" />
     <PackageReference Include="Fake.Core.Process" />
@@ -28,7 +29,7 @@
     <PackageReference Include="altcover.fake" />
     <PackageReference Include="BlackFox.CommandLine" />
     <PackageReference Include="BlackFox.VsWhere" />
-    <PackageReference Include="Markdown" />
+    <PackageReference Include="Markdig" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace AltCode.Fake
+﻿namespace AltCode.Gendarme
 
 module Build =
   open Fake.Core
