@@ -1359,6 +1359,22 @@ module Targets =
               ToolType = ToolType.CreateGlobalTool()
               FailBuildOnDefect = true }
 
+        Gendarme.run
+          { Gendarme.Params.Create() with
+              WorkingDirectory = working
+              Severity = Gendarme.Severity.All
+              Confidence = Gendarme.Confidence.All
+              Configuration = (Path.GetFullPath "./Build/build-rules.xml")
+              Console = true
+              Log = Path.GetFullPath "./_Reports/gendarme-tool-fsselftest.html"
+              LogKind = Gendarme.LogKind.Html
+              Targets =
+                [ Path.GetFullPath "./$Binaries/Build/Debug+AnyCPU/net7.0/Build.dll"
+                  Path.GetFullPath "./$Binaries/Setup/Debug+AnyCPU/net7.0/Setup.dll" ]
+              ToolPath = "gendarme"
+              ToolType = ToolType.CreateGlobalTool()
+              FailBuildOnDefect = true }
+
       finally
         if set then
           Actions.RunDotnet

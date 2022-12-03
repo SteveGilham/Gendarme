@@ -1,5 +1,4 @@
 <Project>
-  <Import Project="$(MSBuildThisFileDirectory)\..\OutputBuildProps.props" />
   <PropertyGroup Label="OutputBuildProps">
     <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
     <DocumentationFile />
