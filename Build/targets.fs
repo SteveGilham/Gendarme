@@ -44,6 +44,11 @@ module Targets =
     | Some f -> { o with DotNetCliPath = f }
     | None -> o
 
+  let dotnetVersion =
+    DotNet.getVersion (fun o -> o.WithCommon dotnetOptions)
+
+  printfn "Using dotnet version %s" dotnetVersion
+
   let dotnetInfo =
     DotNet.exec (fun o -> dotnetOptions (o.WithRedirectOutput true)) "" "--info"
 
@@ -161,6 +166,37 @@ module Targets =
 
   let withMSBuildParams (o: Fake.DotNet.DotNet.BuildOptions) =
     { o with MSBuildParams = cliArguments }
+
+  let withTestEnvironment l (o: DotNet.TestOptions) =
+    let before = o.Environment |> Map.toList
+
+    let after =
+      [ l; before ] |> List.concat |> Map.ofList
+
+    o.WithEnvironment after
+
+  let withAltCoverOptions
+    (prepare: Abstract.IPrepareOptions)
+    (collect: Abstract.ICollectOptions)
+    (force: DotNet.ICLIOptions)
+    (o: DotNet.TestOptions)
+    =
+    if dotnetVersion <> "7.0.100" then
+      o.WithAltCoverOptions prepare collect force
+    else
+      withTestEnvironment (DotNet.ToTestPropertiesList prepare collect force) o
+
+  let withAltCoverImportModule (o: DotNet.TestOptions) =
+    if dotnetVersion <> "7.0.100" then
+      o.WithAltCoverImportModule()
+    else
+      withTestEnvironment DotNet.ImportModuleProperties o
+
+  let withAltCoverGetVersion (o: DotNet.TestOptions) =
+    if dotnetVersion <> "7.0.100" then
+      o.WithAltCoverGetVersion()
+    else
+      withTestEnvironment DotNet.GetVersionProperties o
 
   let defaultTestOptions fwk common (o: DotNet.TestOptions) =
     { o.WithCommon(
@@ -862,7 +898,8 @@ module Targets =
                //printfn "Test arguments : '%s'" (DotNet.ToTestArguments prepare collect forceTrue)
 
                let t =
-                 DotNet.TestOptions.Create().WithAltCoverOptions prepare collect forceTrue
+                 DotNet.TestOptions.Create()
+                 |> withAltCoverOptions prepare collect forceTrue
 
                printfn "WithAltCoverOptions returned '%A'" t.Common.CustomParams
 
@@ -880,10 +917,8 @@ module Targets =
                try
                  DotNet.test
                    (fun to' ->
-                     { to'.WithCommon(setBaseOptions).WithAltCoverOptions
-                         prepare
-                         collect
-                         forceTrue with
+                     { (to'.WithCommon(setBaseOptions)
+                        |> withAltCoverOptions prepare collect forceTrue) with
                          Framework = Some "net7.0"
                          MSBuildParams = cliArguments })
                    test
@@ -944,7 +979,8 @@ module Targets =
       let rules =
         rulesDirs
         |> List.collect (fun f ->
-          !!(f @@ "Release+AnyCPU/netstandard2.0/Gendarme.Rules.*.dll")
+          !!(f
+             @@ "Release+AnyCPU/netstandard2.0/Gendarme.Rules.*.dll")
           |> Seq.toList)
         |> List.distinctBy Path.GetFileName
 
@@ -1029,7 +1065,8 @@ module Targets =
             [ syslibs
               rules
               altrules
-              [ (Path.getFullName "./_Binaries/gendarme/Release+AnyCPU/net472/FSharp.Core.dll") ] ]
+              [ (Path.getFullName
+                  "./_Binaries/gendarme/Release+AnyCPU/net472/FSharp.Core.dll") ] ]
             |> List.concat
             |> List.map (fun f -> (f, Some "tools/netcoreapp2.1/any", None)) ]
 
@@ -1204,7 +1241,7 @@ module Targets =
         csproj.Descendants(XName.Get("PackageReference"))
         |> Seq.head
 
-      p.Attribute(XName.Get "Version").Value <- (Version.Value + badge)
+      p.Attribute(XName.Get "VersionOverride").Value <- (Version.Value + badge)
       let proj = unpack @@ "unpack.csproj"
       csproj.Save proj
 

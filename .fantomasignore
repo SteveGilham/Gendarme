@@ -1,3 +1,4 @@
 # Ignore interfaces (documentation annotations)
 *.fsi
 */FSharpExamples/*.*
+*AssemblyAttributes.fs

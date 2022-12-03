@@ -9,6 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="altcode.gendarme" Version="" />
+    <PackageReference Include="altcode.gendarme" VersionOverride="?" />
   </ItemGroup>
 </Project>
