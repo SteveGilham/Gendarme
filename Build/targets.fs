@@ -692,7 +692,7 @@ module Targets =
             (fun p ->
               { p.WithCommon dotnetOptions with
                   Configuration = DotNet.BuildConfiguration.Debug
-                  Framework = Some "net6.0"
+                  Framework = Some "net7.0"
                   NoBuild = true }
               |> withCLIArgs)
             proj
@@ -850,7 +850,7 @@ module Targets =
                  reports
                  @@ ("UnitTestWithAltCoverCoreRunner."
                      + tname
-                     + ".net6.0.xml")
+                     + ".net7.0.xml")
 
                let collect =
                  AltCover.CollectOptions.Primitive(Primitive.CollectOptions.Create()) // FSApi
@@ -890,7 +890,7 @@ module Targets =
                          prepare
                          collect
                          forceTrue with
-                         Framework = Some "net6.0"
+                         Framework = Some "net7.0"
                          MSBuildParams = cliArguments })
                    test
                with x -> // while fixing
