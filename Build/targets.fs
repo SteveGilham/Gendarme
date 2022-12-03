@@ -527,7 +527,7 @@ module Targets =
             [ "-Microsoft.Design#CA1026:DefaultParametersShouldNotBeUsed" ] ]
 
       try
-        [ Path.GetFullPath "./_Binaries/gendarme/Debug/net472/gendarme.exe" ]
+        [ Path.GetFullPath "./_Binaries/gendarme/Debug+AnyCPU/net472/gendarme.exe" ]
         |> FxCop.run
              { FxCop.Params.Create() with
                  WorkingDirectory = "."
@@ -550,7 +550,7 @@ module Targets =
 
       try
         [ Path.GetFullPath
-            "./_Binaries/CecilExtensions/Debug/netstandard2.0/CecilExtensions.dll" ]
+            "./_Binaries/CecilExtensions/Debug+AnyCPU/netstandard2.0/CecilExtensions.dll" ]
         |> FxCop.run
              { FxCop.Params.Create() with
                  WorkingDirectory = "."
@@ -574,7 +574,7 @@ module Targets =
         reraise ()
 
       try
-        !!("./_Binaries/AltCode.*/Debug/netstandard2.0/AltCode.*.dll")
+        !!("./_Binaries/AltCode.*/Debug+AnyCPU/netstandard2.0/AltCode.*.dll")
         |> Seq.map Path.GetFullPath
         |> Seq.distinctBy Path.GetFileName
         |> Seq.toList
@@ -600,7 +600,7 @@ module Targets =
         reraise ()
 
       let targets =
-        !!("./_Binaries/Gendarme.*/Debug/netstandard2.0/Gendarme.*.dll")
+        !!("./_Binaries/Gendarme.*/Debug+AnyCPU/netstandard2.0/Gendarme.*.dll")
         |> Seq.map Path.GetFullPath
         |> Seq.distinctBy Path.GetFileName
         |> Seq.toList
@@ -632,7 +632,7 @@ module Targets =
     (fun _ ->
       Directory.ensure "./_Reports"
 
-      !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
+      !!(@"_Binaries/Test.*/Debug+AnyCPU/net472/Test.*.dll")
       |> Seq.filter (fun p ->
         (p |> Path.GetFileNameWithoutExtension)
         <> "Test.Rules")
@@ -709,7 +709,7 @@ module Targets =
       Directory.ensure report
 
       let coverage =
-        !!(@"_Binaries/Test.*/Debug/net472/Test.*.dll")
+        !!(@"_Binaries/Test.*/Debug+AnyCPU/net472/Test.*.dll")
         |> Seq.filter (fun p ->
           (p |> Path.GetFileNameWithoutExtension)
           <> "Test.Rules")
@@ -944,13 +944,13 @@ module Targets =
       let rules =
         rulesDirs
         |> List.collect (fun f ->
-          !!(f @@ "Release/netstandard2.0/Gendarme.Rules.*.dll")
+          !!(f @@ "Release+AnyCPU/netstandard2.0/Gendarme.Rules.*.dll")
           |> Seq.toList)
         |> List.distinctBy Path.GetFileName
 
       //rules |> List.iter (printfn "%A")
       let altrules = // plus mocker
-        !!("./_Binaries/AltCode.*/Release/netstandard2.0/AltCode.*.dll")
+        !!("./_Binaries/AltCode.*/Release+AnyCPU/netstandard2.0/AltCode.*.dll")
         |> Seq.map Path.getFullName
         |> Seq.toList
 
@@ -960,13 +960,13 @@ module Targets =
         |> Seq.toList
 
       let obsolete =
-        !!("./_Binaries/Obsolete.*/Release/net472/Obsolete.*.dll")
+        !!("./_Binaries/Obsolete.*/Release+AnyCPU/net472/Obsolete.*.dll")
         |> Seq.map Path.getFullName
         |> Seq.toList
 
       do
         let rulesXml =
-          "./_Binaries/gendarme/Release/net472/rules.xml"
+          "./_Binaries/gendarme/Release+AnyCPU/net472/rules.xml"
           |> Path.getFullName
 
         let rulesDoc = rulesXml |> XDocument.Load
@@ -1003,7 +1003,7 @@ module Targets =
 
       let net472 =
         List.concat
-          [ !! "./_Binaries/gendarme/Release/net472/*.*"
+          [ !! "./_Binaries/gendarme/Release+AnyCPU/net472/*.*"
             |> Seq.map Path.getFullName
             |> Seq.toList
             syslibs
@@ -1029,7 +1029,7 @@ module Targets =
             [ syslibs
               rules
               altrules
-              [ (Path.getFullName "./_Binaries/gendarme/Release/net472/FSharp.Core.dll") ] ]
+              [ (Path.getFullName "./_Binaries/gendarme/Release+AnyCPU/net472/FSharp.Core.dll") ] ]
             |> List.concat
             |> List.map (fun f -> (f, Some "tools/netcoreapp2.1/any", None)) ]
 
@@ -1235,7 +1235,7 @@ module Targets =
               LogKind = Gendarme.LogKind.Html
               Targets =
                 [ Path.GetFullPath
-                    "./_Binaries/FSharpExamples/Release/net472/FSharpExamples.dll" ]
+                    "./_Binaries/FSharpExamples/Release+AnyCPU/net472/FSharpExamples.dll" ]
               ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
               FailBuildOnDefect = true })
       |> ignore)
@@ -1312,7 +1312,7 @@ module Targets =
                 LogKind = Gendarme.LogKind.Html
                 Targets =
                   [ Path.GetFullPath
-                      "./_Binaries/FSharpExamples/Release/netstandard2.0/FSharpExamples.dll" ]
+                      "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll" ]
                 ToolPath = "gendarme"
                 ToolType = ToolType.CreateGlobalTool()
                 FailBuildOnDefect = true })
@@ -1321,7 +1321,7 @@ module Targets =
 
         // self-test
         let targets =
-          !!("./_Binaries/*endarm*/Debug/*/*endarm*.dll")
+          !!("./_Binaries/*endarm*/Debug+AnyCPU/*/*endarm*.dll")
           |> Seq.map Path.GetFullPath
           |> Seq.filter (fun f -> (Path.GetFileName f).StartsWith("Test") |> not)
           |> Seq.distinctBy Path.GetFileName
@@ -1342,7 +1342,7 @@ module Targets =
               FailBuildOnDefect = true }
 
         let targets =
-          !!("./_Binaries/AltCode.*/Debug/*/AltCode.*.dll")
+          !!("./_Binaries/AltCode.*/Debug+AnyCPU/*/AltCode.*.dll")
           |> Seq.map Path.GetFullPath
           |> Seq.distinctBy Path.GetFileName
           |> Seq.toList
@@ -1372,7 +1372,7 @@ module Targets =
               LogKind = Gendarme.LogKind.Html
               Targets =
                 [ Path.GetFullPath
-                    "./_Binaries/CecilExtensions/Debug/netstandard2.0/CecilExtensions.dll" ]
+                    "./_Binaries/CecilExtensions/Debug+AnyCPU/netstandard2.0/CecilExtensions.dll" ]
               ToolPath = "gendarme"
               ToolType = ToolType.CreateGlobalTool()
               FailBuildOnDefect = true }
@@ -1504,30 +1504,30 @@ module Targets =
         set <- true
 
         [ ("./Build/common-rules.xml",
-           [ "_Binaries/AltCover.Engine/Debug+AnyCPU/netstandard2.0/AltCover.Engine.dll"
-             "_Binaries/AltCover/Debug+AnyCPU/netcoreapp2.0/AltCover.dll"
-             "_Binaries/AltCover.Recorder/Debug+AnyCPU/net20/AltCover.Recorder.dll"
-             "_Binaries/AltCover.Async/Debug+AnyCPU/net46/AltCover.Async.dll"
-             "_Binaries/AltCover.PowerShell/Debug+AnyCPU/netstandard2.0/AltCover.PowerShell.dll"
-             "_Binaries/AltCover.Fake/Debug+AnyCPU/netstandard2.0/AltCover.Fake.dll"
-             "_Binaries/AltCover.DotNet/Debug+AnyCPU/netstandard2.0/AltCover.DotNet.dll"
-             "_Binaries/AltCover.Toolkit/Debug+AnyCPU/netstandard2.0/AltCover.Toolkit.dll"
-             "_Binaries/AltCover.UICommon/Debug+AnyCPU/netstandard2.0/AltCover.UICommon.dll"
-             "_Binaries/AltCover.Visualizer/Debug+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" // GTK3 (obsolete)
-             "_Binaries/AltCover.Fake.DotNet.Testing.AltCover/Debug+AnyCPU/netstandard2.0/AltCover.Fake.DotNet.Testing.AltCover.dll" ])
+           [ "_Binaries/AltCover.Engine/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.Engine.dll"
+             "_Binaries/AltCover/Debug+AnyCPU+AnyCPU/netcoreapp2.0/AltCover.dll"
+             "_Binaries/AltCover.Recorder/Debug+AnyCPU+AnyCPU/net20/AltCover.Recorder.dll"
+             "_Binaries/AltCover.Async/Debug+AnyCPU+AnyCPU/net46/AltCover.Async.dll"
+             "_Binaries/AltCover.PowerShell/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.PowerShell.dll"
+             "_Binaries/AltCover.Fake/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.Fake.dll"
+             "_Binaries/AltCover.DotNet/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.DotNet.dll"
+             "_Binaries/AltCover.Toolkit/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.Toolkit.dll"
+             "_Binaries/AltCover.UICommon/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.UICommon.dll"
+             "_Binaries/AltCover.Visualizer/Debug+AnyCPU+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" // GTK3 (obsolete)
+             "_Binaries/AltCover.Fake.DotNet.Testing.AltCover/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.Fake.DotNet.Testing.AltCover.dll" ])
           ("./Build/common-rules.xml", // Framework builds
-           [ "_Binaries/AltCover/Debug+AnyCPU/net472/AltCover.exe" // framework builds
-             "_Binaries/AltCover.Visualizer/Debug+AnyCPU/net472/AltCover.Visualizer.exe" ])
+           [ "_Binaries/AltCover/Debug+AnyCPU+AnyCPU/net472/AltCover.exe" // framework builds
+             "_Binaries/AltCover.Visualizer/Debug+AnyCPU+AnyCPU/net472/AltCover.Visualizer.exe" ])
           ("./Build/common-rules.xml",
-           [ "_Binaries/AltCover/Debug+AnyCPU/netcoreapp2.1/AltCover.dll" // global tool builds
-             "_Binaries/AltCover.Avalonia/Debug+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" ])
+           [ "_Binaries/AltCover/Debug+AnyCPU+AnyCPU/netcoreapp2.1/AltCover.dll" // global tool builds
+             "_Binaries/AltCover.Avalonia/Debug+AnyCPU+AnyCPU/netcoreapp2.1/AltCover.Visualizer.dll" ])
           ("./Build/csharp-rules.xml",
-           [ "_Binaries/AltCover.DataCollector/Debug+AnyCPU/netstandard2.0/AltCover.DataCollector.dll"
-             "_Binaries/AltCover.Monitor/Debug+AnyCPU/netstandard2.0/AltCover.Local.Monitor.dll"
-             "_Binaries/AltCover.FontSupport/Debug+AnyCPU/netstandard2.0/AltCover.FontSupport.dll"
-             "_Binaries/AltCover.Cake/Debug+AnyCPU/netstandard2.0/AltCover.Cake.dll" ])
+           [ "_Binaries/AltCover.DataCollector/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.DataCollector.dll"
+             "_Binaries/AltCover.Monitor/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.Local.Monitor.dll"
+             "_Binaries/AltCover.FontSupport/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.FontSupport.dll"
+             "_Binaries/AltCover.Cake/Debug+AnyCPU+AnyCPU/netstandard2.0/AltCover.Cake.dll" ])
           ("./Build/csharp-rules.xml", // Framework builds
-           [ "_Binaries/AltCover.Monitor/Debug+AnyCPU/net20/AltCover.Local.Monitor.dll"
+           [ "_Binaries/AltCover.Monitor/Debug+AnyCPU+AnyCPU/net20/AltCover.Local.Monitor.dll"
              "_Binaries/AltCover.FontSupport/Debug+AnyCPU/net472/AltCover.FontSupport.dll" ]) ]
         |> Seq.iter (fun (ruleset, files) ->
           Gendarme.run
