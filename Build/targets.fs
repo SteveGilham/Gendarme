@@ -59,15 +59,9 @@ module Targets =
     |> Option.map (fun path -> path @@ "ref")
 
   let currentBranch =
-    let env =
-      Environment.environVar "APPVEYOR_REPO_BRANCH"
-
-    if env |> String.IsNullOrWhiteSpace then
-      "."
-      |> Path.getFullName
-      |> Information.getBranchName
-    else
-      env
+    "."
+    |> Path.getFullName
+    |> Information.getBranchName
 
   let badge =
     if
@@ -1148,7 +1142,31 @@ module Targets =
                   |> Path.getFullName })
           recipe))
 
-  //_Target "OperationalTest" ignore
+  let OperationalTest =
+    (fun _ ->
+      if
+        Environment.isWindows
+        && currentBranch.StartsWith "release/"
+        && "NUGET_API_TOKEN"
+           |> Environment.environVar
+           |> String.IsNullOrWhiteSpace
+           |> not
+      then
+        (!! "./_Packagin*/*.nupkg")
+        |> Seq.iter (fun f ->
+          printfn "Publishing %A from %A" f currentBranch
+
+          Actions.Run
+            ("dotnet",
+             ".",
+             [ "nuget"
+               "push"
+               f
+               "--api-key"
+               Environment.environVar "NUGET_API_TOKEN"
+               "--source"
+               "https://api.nuget.org/v3/index.json" ])
+            ("NuGet upload failed " + f)))
 
   let Unpack =
     (fun _ ->
@@ -1568,7 +1586,7 @@ module Targets =
     _Target "UnitTestWithAltCoverRunner" UnitTestWithAltCoverRunner
     _Target "UnitTestWithAltCoverCoreRunner" UnitTestWithAltCoverCoreRunner
     _Target "Packaging" Packaging
-    _Target "OperationalTest" ignore
+    _Target "OperationalTest" OperationalTest
     _Target "Unpack" Unpack
     _Target "DotnetGlobalIntegration" DotnetGlobalIntegration
     _Target "Lint" Lint
