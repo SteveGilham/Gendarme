@@ -1,5 +1,5 @@
-# 2022.5.17.82xx
+# 2022.12.xx.xxxx
 
-* Fix false positives for `DoNotThrowInNonCatchClausesRule` for `try/when/catch` cases that `throw` from the `catch`
+* Adjust `DoNotAssumeIntPtrSizeRule` to allow for compiler changes at dotnet 7.0.  There will still be false negatives as casts involving `IntPtr` are now inlined, rather than going to `op_Explicit`
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md

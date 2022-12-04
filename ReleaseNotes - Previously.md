@@ -1,3 +1,7 @@
+# 2022.5.17.8250
+
+* Fix false positives for `DoNotThrowInNonCatchClausesRule` for `try/when/catch` cases that `throw` from the `catch`
+
 # 2022.5.15.11273
 
 * Fix some false negatives for `AvoidSwitchStatementsRule` (where the switch is on a `string` value)

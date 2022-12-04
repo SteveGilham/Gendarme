@@ -424,7 +424,7 @@ namespace Gendarme
     {
       // re-activate all loaded (i.e. selected) rules since some of them could have
       // turned off themselve while executing but we still want them listed in the report
-      foreach (Rule rule in Rules)
+      foreach (IRule rule in Rules)
       {
         rule.Active = true;
       }

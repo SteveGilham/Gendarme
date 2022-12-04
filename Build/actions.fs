@@ -44,6 +44,9 @@ module Actions =
           printfn "Deleting %s" n
           Directory.Delete(n, true))
 
+        !!(@"./**/InternalTrace.*.log")
+        |> Seq.iter File.Delete
+
         let temp = Environment.environVar "TEMP"
 
         if not <| String.IsNullOrWhiteSpace temp then

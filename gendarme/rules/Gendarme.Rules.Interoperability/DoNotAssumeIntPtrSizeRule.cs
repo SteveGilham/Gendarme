@@ -133,6 +133,29 @@ namespace Gendarme.Rules.Interoperability
       }
     }
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                      "AvoidSwitchStatementsRule",
+                      Justification = "OpCodes are not types")]
+    private static string ConvertN(Instruction ins)
+    {
+      if (ins == null)
+        return String.Empty;
+
+      switch (ins.OpCode.Code)
+      {
+        case Code.Conv_I:
+        case Code.Conv_Ovf_I:
+          return "native int";
+
+        case Code.Conv_U:
+        case Code.Conv_Ovf_I_Un:
+          return "native uint";
+
+        default:
+          return String.Empty;
+      }
+    }
+
 #pragma warning disable IDE0079 // Remove unnecessary suppression
     [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters",
       Justification = "TODO: Defect constructor message not localized")]
@@ -183,6 +206,13 @@ namespace Gendarme.Rules.Interoperability
       if ((method_name == "ReadInt32") || (method_name == "ReadInt64"))
       {
         Instruction next = ins.Next;
+        string msg = ConvertN(next);
+        if (msg.Length > 0)
+        {
+          Report(method, ins, msg);
+          return;
+        }
+
         if (next.OpCode.Code != Code.Call)
           return;
 
@@ -190,10 +220,20 @@ namespace Gendarme.Rules.Interoperability
         if (m.Name != "op_Explicit")
           return;
 
-        string msg = String.Format(CultureInfo.InvariantCulture,
-          "A '{0}' value is casted into an '{1}' when reading marshalled memory.",
+        msg = String.Format(CultureInfo.InvariantCulture,
+          "A '{0}' value is cast into an '{1}' when reading marshalled memory.",
           mr.ReturnType.GetFullName(), m.Parameters[0].ParameterType.GetFullName());
         Runner.Report(method, ins, Severity.High, Confidence.Normal, msg);
+      }
+
+      if ((method_name == "WriteInt32") || (method_name == "WriteInt64"))
+      {
+        Instruction prev = ins.Previous;
+        string msg = Convert(prev);
+        if (msg.Length > 0)
+        {
+          Report(method, ins, msg);
+        }
       }
     }
 
