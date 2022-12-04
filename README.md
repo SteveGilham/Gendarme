@@ -21,6 +21,7 @@ In this branch
 * The obsolete `Gendarme.Rules.Portability.MonoCompatibilityReviewRule` is not implemented in this fork.
 * `DefineAZeroValueRule` does not trigger for non-int32 enums that have a suitably typed zero value.  This rule should not also be doing the job of `EnumsShouldUseInt32Rule`
 * Due to IL changes `UseIsOperatorRule` has been tuned to avoid false positives at the cost of missing some failure cases
+* Due to IL changes `DoNotAssumeIntPtrSizeRule` will give false negatives for simple (and often implicit) casts of `IntPtr` to other integer types.
 * New rule categories
   * `AltCode.Rules.General` for general purpose rules
     * `JustifySuppressionRule` to check the `Justification` property on `SuppressMessage` attribute
@@ -115,15 +116,14 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 
 | | | |
 | --- | --- | --- | 
-| **Build** | <sup>AppVeyor</sup> [![Build status](https://img.shields.io/appveyor/ci/SteveGilham/Gendarme.svg)](https://ci.appveyor.com/project/SteveGilham/Gendarme) | ![Build history](https://buildstats.info/appveyor/chart/SteveGilham/Gendarme) 
-| |<sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
+| **Build** | <sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
 
 ## Build process from trunk as per the CI YAML
 
-Assumes net60/VS2022 build environment
+Assumes net7.0/VS2022 build environment
 
 * `dotnet tool restore`
-* `dotnet fake run .\Build\setup.fsx`
-* `dotnet fake run .\Build\build.fsx`
+* `dotnet run --project ./Build/Setup.fsproj`
+* `dotnet run --project ./Build/Build.fsproj`
 
 The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests

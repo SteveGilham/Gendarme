@@ -23,7 +23,7 @@ jobs:
     - name: Tools
       run: dotnet tool restore
     - name: Setup
-      run: dotnet run --project .\Build\Setup.fsproj      
+      run: dotnet run --project .\Build\Setup.fsproj
     - name: Build
       env:
         NUGET_API_TOKEN: ${{ secrets.NUGET_API_TOKEN }}
@@ -48,7 +48,7 @@ jobs:
     - name: Tools
       run: dotnet tool restore
     - name: Setup
-      run: dotnet run --project ./Build/Setup.fsproj      
+      run: dotnet run --project ./Build/Setup.fsproj
     - name: Build
       run: dotnet run --project ./Build/Build.fsproj --target OperationalTest
     - uses: actions/upload-artifact@v3
