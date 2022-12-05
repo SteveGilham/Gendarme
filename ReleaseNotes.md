@@ -1,4 +1,4 @@
-# 2022.12.5.105xx
+# 2022.12.5.10565
 
 * Adjust `DoNotAssumeIntPtrSizeRule` to allow for compiler changes at dotnet 7.0.  There will still be false negatives as casts involving `IntPtr` are now inlined, rather than going to `op_Explicit`
 
