@@ -562,6 +562,19 @@ module Targets =
             standardRules
             [ "-Microsoft.Design#CA1026:DefaultParametersShouldNotBeUsed" ] ]
 
+      let dd =
+        toolPackages
+        |> Map.toSeq
+        |> Seq.map (fun (k, v) -> k.ToLowerInvariant(), v)
+        |> Map.ofSeq
+
+      let ddItem x =
+        try
+          dd.Item x
+        with _ ->
+          printfn "Failed to get %A" x
+          reraise ()
+
       try
         [ Path.GetFullPath "./_Binaries/gendarme/Debug+AnyCPU/net472/gendarme.exe" ]
         |> FxCop.run
@@ -569,9 +582,13 @@ module Targets =
                  WorkingDirectory = "."
                  DependencyDirectories =
                    [ nugetCache
-                     @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                     @@ "mono.cecil/"
+                        + (ddItem "mono.cecil")
+                        + "/lib/netstandard2.0"
                      nugetCache
-                     @@ "fsharp.core/6.0.6/lib/netstandard2.0" ]
+                     @@ "fsharp.core/"
+                        + (ddItem "fsharp.core")
+                        + "/lib/netstandard2.0" ]
                  ToolPath = Option.get fxcop
                  UseGAC = true
                  Verbose = false
@@ -592,9 +609,14 @@ module Targets =
                  WorkingDirectory = "."
                  DependencyDirectories =
                    [ nugetCache
-                     @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                     @@ "mono.cecil/"
+                        + (ddItem "mono.cecil")
+                        + "/lib/netstandard2.0"
                      nugetCache
-                     @@ "fsharp.core/6.0.6/lib/netstandard2.0" ]
+                     @@ "fsharp.core/"
+                        + (ddItem "fsharp.core")
+                        + "/lib/netstandard2.0" ]
+
                  ToolPath = Option.get dixon
                  PlatformDirectory = Option.get refdir
                  UseGAC = true
@@ -619,9 +641,13 @@ module Targets =
                  WorkingDirectory = "."
                  DependencyDirectories =
                    [ nugetCache
-                     @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                     @@ "mono.cecil/"
+                        + (ddItem "mono.cecil")
+                        + "/lib/netstandard2.0"
                      nugetCache
-                     @@ "fsharp.core/6.0.6/lib/netstandard2.0" ]
+                     @@ "fsharp.core/"
+                        + (ddItem "fsharp.core")
+                        + "/lib/netstandard2.0" ]
                  ToolPath = Option.get dixon
                  PlatformDirectory = Option.get refdir
                  UseGAC = true
@@ -648,9 +674,13 @@ module Targets =
                  WorkingDirectory = "."
                  DependencyDirectories =
                    [ nugetCache
-                     @@ "mono.cecil/0.11.4/lib/netstandard2.0"
+                     @@ "mono.cecil/"
+                        + (ddItem "mono.cecil")
+                        + "/lib/netstandard2.0"
                      nugetCache
-                     @@ "system.resources.extensions/6.0.0/lib/netstandard2.0" ]
+                     @@ "system.resources.extensions/"
+                        + (ddItem "system.resources.extensions")
+                        + "/lib/netstandard2.0" ]
                  ToolPath = Option.get dixon
                  PlatformDirectory = Option.get refdir
                  UseGAC = true
@@ -1705,7 +1735,7 @@ module Targets =
     |> ignore
 
     "BuildDebug"
-    ==> "UnitTestWithAltCoverRunner"
+    =?> ("UnitTestWithAltCoverRunner", Environment.isWindows)
     ==> "Coverage"
     |> ignore
 

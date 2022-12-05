@@ -128,3 +128,7 @@ Assumes net7.0/VS2022 build environment
 * `dotnet run --project ./Build/Build.fsproj`
 
 The `build` stage can be done in Visual Studio with the Debug configuration to run the unit tests
+
+## Thanks to
+
+* [Coveralls](https://coveralls.io/r/SteveGilham/altcover) for allowing free services for Open Source projects
