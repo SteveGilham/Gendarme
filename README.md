@@ -117,6 +117,7 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 | | | |
 | --- | --- | --- | 
 | **Build** | <sup>GitHub</sup> [![CI](https://github.com/SteveGilham/Gendarme/workflows/CI/badge.svg)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI) | [![Build history](https://buildstats.info/github/chart/SteveGilham/Gendarme?branch=trunk)](https://github.com/SteveGilham/Gendarme/actions?query=workflow%3ACI)
+| **Coverage** | <sup>Coveralls</sup> [![Coverage Status](https://coveralls.io/repos/github/SteveGilham/Gendarme/badge.svg?branch=trunk)](https://coveralls.io/github/SteveGilham/Gendarme?branch=trunk) |
 
 ## Build process from trunk as per the CI YAML
 
