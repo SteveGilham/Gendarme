@@ -6,6 +6,7 @@ on:
     - trunk
     - feature/*
     - develop/github/*    
+    - release/*
   pull_request:
     branches:
     - trunk
