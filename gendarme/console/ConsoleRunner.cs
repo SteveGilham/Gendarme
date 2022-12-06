@@ -463,10 +463,21 @@ namespace Gendarme
     [SuppressMessage("Gendarme.Rules.Exceptions",
                      "DoNotSwallowErrorsCatchingNonSpecificExceptionsRule",
                      Justification = "Program reports and exits")]
+    [SuppressMessage("Microsoft.Reliability", 
+                     "CA2001:AvoidCallingProblematicMethods",
+                      Justification="all else failed")]
     private byte Execute(string[] args)
     {
       try
       {
+        var want = System.IO.Path.Combine(
+          System.IO.Path.GetDirectoryName (
+          System.Reflection.Assembly.GetExecutingAssembly().Location
+          ), "FSharp.Core.dll"
+        );
+        //Console.WriteLine("loading {0}", want);
+        System.Reflection.Assembly.LoadFrom(want);
+
         return DoAnalysis(args);
       }
       catch (IOException e)
