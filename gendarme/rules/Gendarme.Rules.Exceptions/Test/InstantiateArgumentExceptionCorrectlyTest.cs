@@ -47,6 +47,8 @@ namespace Test.Rules.Exceptions
   [TestFixture]
   public class InstantiateArgumentExceptionCorrectlyTest : MethodRuleTestFixture<InstantiateArgumentExceptionCorrectlyRule>
   {
+    private string[] InputFile { get; set; }
+
     [Test]
     public void DoesNotApply()
     {
@@ -695,6 +697,7 @@ namespace Test.Rules.Exceptions
 
     // adapted from NamespaceEngine.cs
     // gmcs creates an inner type with fields and the exception can be thrown from there (without parameter)
+    // warning  : CA2208 : Microsoft.Usage : Method 'InstantiateArgumentExceptionCorrectlyTest.CompilerGeneratedInnerIterator.<TypesInside>d__1.MoveNext()' passes 'nameSpace' as the 'paramName' argument to a 'ArgumentNullException' constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.
     private class CompilerGeneratedInnerIterator
     {
       private static IList<TypeDefinition> types;
@@ -702,8 +705,8 @@ namespace Test.Rules.Exceptions
       public static IEnumerable<TypeDefinition> TypesInside(string nameSpace)
       {
         if (nameSpace == null)
-          throw new ArgumentNullException("nameSpace");
-
+          throw new ArgumentNullException(nameof(nameSpace));
+        // ... get types from namespace ...
         foreach (TypeDefinition type in types)
         {
           yield return type;
@@ -716,32 +719,57 @@ namespace Test.Rules.Exceptions
     {
       AssertRuleSuccess<CompilerGeneratedInnerIterator>("TypesInside");
       TypeDefinition inner = (DefinitionLoader.GetTypeDefinition<CompilerGeneratedInnerIterator>().NestedTypes[0] as TypeDefinition);
+      // Console.WriteLine("Type {0}", inner.FullName);
       foreach (MethodDefinition method in inner.Methods)
       {
-        AssertRuleDoesNotApply(method);
+        // Unfortunately brittle relying on implementation details
+        // but there you are...
+        // Console.WriteLine("Method {0} {1}", method.Name, method.FullName);
+        switch (method.Name)
+        {
+          case "MoveNext":
+            AssertRuleFailure(method);
+            break;
+          case "System.Collections.Generic.IEnumerable<Mono.Cecil.TypeDefinition>.GetEnumerator":
+          case "System.Collections.IEnumerator.Reset":
+            AssertRuleSuccess(method);
+            break;
+          // case ".ctor":
+          // case "System.IDisposable.Dispose":
+          // case "<>m__Finally1":
+          // case "System.Collections.Generic.IEnumerator<Mono.Cecil.TypeDefinition>.get_Current":
+          // case "System.Collections.IEnumerator.get_Current":
+          // case "System.Collections.IEnumerable.GetEnumerator":
+          default:
+            // Console.WriteLine("default Method {0} {1}", method.Name, method.FullName);
+            AssertRuleDoesNotApply(method);
+            break;
+        }
       }
     }
 
-    public void CallLocalizedThrow()
-    {
-      throw new ArgumentNullException("obj", "a localized string");
-    }
+    // This goes against the whole spirit of the rule
+  
+    // public void CallLocalizedThrow()
+    // {
+    //   throw new ArgumentNullException("obj", "a localized string");
+    // }
 
-    public int DoThis(object obj)
-    {
-      if (obj == null)
-        CallLocalizedThrow();
-      return obj.GetHashCode();
-    }
+    // public int DoThis(object obj)
+    // {
+    //   if (obj == null)
+    //     CallLocalizedThrow();
+    //   return obj.GetHashCode();
+    // }
 
-    [Test]
-    public void CheckThenDelegateThrow()
-    {
-      // no exception throw (or created)
-      AssertRuleDoesNotApply<InstantiateArgumentExceptionCorrectlyTest>("DoThis");
-      // no parameter to check against
-      AssertRuleDoesNotApply<InstantiateArgumentExceptionCorrectlyTest>("CallLocalizedThrow");
-    }
+    // [Test]
+    // public void CheckThenDelegateThrow()
+    // {
+    //   // no exception throw (or created)
+    //   AssertRuleDoesNotApply<InstantiateArgumentExceptionCorrectlyTest>("DoThis");
+    //   // no parameter to check against
+    //   AssertRuleDoesNotApply<InstantiateArgumentExceptionCorrectlyTest>("CallLocalizedThrow");
+    // }
 
     public static int GoodStaticMethod(object obj)
     {
@@ -857,5 +885,22 @@ namespace Test.Rules.Exceptions
       AssertRuleSuccess<InstantiateArgumentExceptionCorrectlyTest>("ArgumentOutOfRangeExceptionWithBranchInMessageSelectionAndIncorrectParameterName");
       AssertRuleSuccess<InstantiateArgumentExceptionCorrectlyTest>("DuplicateWaitObjectExceptionWithBranchInMessageSelectionAndIncorrectParameterName");
     }
+
+    public void NoArgument()
+    {
+	string[] inputFile = InputFile;
+	string[] array = inputFile;
+	if (array == null)
+	{
+		throw new ArgumentNullException("array");
+	}
+    }
+
+    [Test]
+    public void FailOnNoArgument()
+    {
+      AssertRuleFailure<InstantiateArgumentExceptionCorrectlyTest>("NoArgument", 1);
+    }
+
   }
 }
