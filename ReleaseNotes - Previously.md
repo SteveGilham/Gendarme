@@ -1,3 +1,7 @@
+# 2022.12.6.7345 
+
+* [BUGFIX] Address some context dependent instances of assembly resolution failure
+
 # 2022.12.5.10565
 
 * Adjust `DoNotAssumeIntPtrSizeRule` to allow for compiler changes at dotnet 7.0.  There will still be false negatives as casts involving `IntPtr` are now inlined, rather than going to `op_Explicit`

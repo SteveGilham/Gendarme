@@ -227,6 +227,17 @@ namespace Test.Rules.Correctness
       var xslt = new System.Xml.Xsl.XslCompiledTransform();
       xslt.Load(XmlTextReader.Create("foo.xml"));
     }
+
+    private void TaskIsSpecial()
+    {
+      // see https://devblogs.microsoft.com/pfxteam/do-i-need-to-dispose-of-tasks/
+      var name = "foo.xml";
+      using (var s = File.OpenRead(name))
+      using (var r = new StreamReader(s))
+      {
+        r.ReadToEndAsync();
+      }
+    }
   }
 
   [TestFixture]
@@ -303,6 +314,12 @@ namespace Test.Rules.Correctness
     public void ValueTypeDisposable()
     {
       AssertRuleSuccess<DisposalCases>("ValueTypeDisposable");
+    }
+
+    [Test]
+    public void TaskIsSpecial()
+    {
+      AssertRuleSuccess<DisposalCases>("TaskIsSpecial");
     }
 
     [Test]

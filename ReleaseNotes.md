@@ -1,5 +1,5 @@
-# 2022.12.6.73xx
+# 2023.1.x.x
 
-* [BUGFIX] Address some context dependent instances of assembly resolution failure
+* Exempt `Task` and `Task<'T>` from `EnsureLocalDisposalRule` as they generally should not be disposed manually.
 
 ⁋For previous releases, go here -- https://github.com/SteveGilham/Gendarme/blob/trunk/ReleaseNotes%20-%20Previously.md

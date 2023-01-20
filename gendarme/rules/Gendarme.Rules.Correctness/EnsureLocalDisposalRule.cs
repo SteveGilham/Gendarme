@@ -387,6 +387,12 @@ namespace Gendarme.Rules.Correctness
     private void ReportCall(MethodDefinition method, Instruction ins, MethodReference call)
     {
       TypeReference type = ins.Is(Code.Newobj) ? call.DeclaringType : call.ReturnType;
+
+      // Only system types, not any potential user subclasses
+      if (type.FullName.StartsWith("System.Threading.Tasks.Task",
+                                    StringComparison.Ordinal))
+        return;
+
       bool fluent = IsFluentLike(call);
       string msg = String.Format(CultureInfo.InvariantCulture, "Local of type '{0}' is not disposed of ({1}).",
         type.Name, fluent ? "is this a fluent-like API ?" : "at least not locally");

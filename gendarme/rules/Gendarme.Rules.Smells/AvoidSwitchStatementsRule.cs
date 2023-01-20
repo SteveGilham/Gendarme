@@ -132,7 +132,7 @@ namespace Gendarme.Rules.Smells
 
       foreach (Instruction instruction in method.Body.Instructions)
       {
-        // Roslyn swutch-on-string
+        // Roslyn switch-on-string
         if (instruction.OpCode == OpCodes.Call &&
             (instruction.Operand as MethodReference).FullName ==
               "System.UInt32 <PrivateImplementationDetails>::ComputeStringHash(System.String)")
