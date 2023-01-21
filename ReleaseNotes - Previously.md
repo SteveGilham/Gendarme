@@ -1,3 +1,8 @@
+# 2023.1.21.13293 
+
+* Exempt `Task` and `Task<'T>` from `EnsureLocalDisposalRule` as they generally should not be disposed manually.
+* Remove the "no arguments means no error" hack from `InstantiateArgumentExceptionCorrectlyRule` to align its behaviour with FxCop's `CA2208:InstantiateArgumentExceptionsCorrectly`; only with the added trick of looking at the top-level user-declared method in case of compiler generated functions (e.g. in `yield` based iterators)
+
 # 2022.12.6.7345 
 
 * [BUGFIX] Address some context dependent instances of assembly resolution failure
