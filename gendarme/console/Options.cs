@@ -431,6 +431,9 @@ namespace NDesk.Options
 
     private static readonly char[] NameTerminator = new char[] { '=', ':' };
 
+    [SuppressMessage("Gendarme.Rules.Exceptions",
+                     "InstantiateArgumentExceptionCorrectlyRule",
+                     Justification = "Inherited Exception Abuse")]
     private OptionValueType ParsePrototype()
     {
       char type = '\0';
