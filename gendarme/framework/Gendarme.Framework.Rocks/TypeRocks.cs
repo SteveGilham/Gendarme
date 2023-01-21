@@ -162,12 +162,19 @@ namespace Gendarme.Framework.Rocks
     [SuppressMessage("Gendarme.Rules.Correctness",
                      "CheckParametersNullityInVisibleMethodsRule",
                      Justification = "Handled w/o throw")]
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "It is what it is")]
     public static MethodDefinition GetMethod(this TypeReference self, MethodAttributes attributes, string name, string returnType, string[] parameters, Func<MethodDefinition, bool> customCondition)
     {
       if (self == null)
         return null;
 
-      foreach (MethodDefinition method in self.Resolve().Methods)
+      var resolved = self.Resolve();
+      if (resolved == null)
+        return null;
+
+      foreach (MethodDefinition method in resolved.Methods)
       {
         if (name != null && method.Name != name)
           continue;

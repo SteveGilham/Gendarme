@@ -357,7 +357,9 @@ namespace Gendarme.Rules.Performance
           // Band-aid based on the pre-existing comment
           if (type.GetElementType().HasGenericParameters)
           {
-            methods.Add(GetToken(type.GetMethod(mr.Name)));
+            var m = type.GetMethod(mr.Name);
+            if (m != null)
+              methods.Add(GetToken(m));
           }
         }
         methods.Add(GetToken(mr));
