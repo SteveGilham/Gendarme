@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -88,10 +89,14 @@ namespace Gendarme.Rules.Exceptions
   [FxCopCompatibility("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
   public class InstantiateArgumentExceptionCorrectlyRule : Rule, IMethodRule
   {
-    private static bool MatchesAnyParameter(MethodReference method, string operand)
+    private static bool MatchesAnyParameter(MethodReference localMethod, string operand)
     {
       if (operand == null)
         return false;
+
+      var md = localMethod.Resolve();
+
+      var method = md == null ? localMethod : AltCode.CecilExtensions.Containing.Methods(md).Last();
 
       // for most getter and setter the property name is used
       if (method.IsProperty())

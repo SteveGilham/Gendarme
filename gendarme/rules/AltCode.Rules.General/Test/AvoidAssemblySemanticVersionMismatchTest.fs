@@ -26,9 +26,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
   [<OneTimeSetUp>]
   member this.FixtureSetUp() =
     let unit =
-      System
-        .Reflection
-        .Assembly
+      System.Reflection.Assembly
         .GetExecutingAssembly()
         .Location
 

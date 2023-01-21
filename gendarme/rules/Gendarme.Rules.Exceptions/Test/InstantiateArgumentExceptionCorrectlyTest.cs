@@ -70,6 +70,7 @@ namespace Test.Rules.Exceptions
       AssertRuleFailure<InstantiateArgumentExceptionCorrectlyTest>("MemberCheck");
     }
 
+#pragma warning disable IDE0060 // Remove unused parameter
     public void ArgumentExceptionWithTwoParametersInGoodOrder(int parameter)
     {
       throw new ArgumentException("Invalid parameter", "parameter");
@@ -700,7 +701,9 @@ namespace Test.Rules.Exceptions
     // warning  : CA2208 : Microsoft.Usage : Method 'InstantiateArgumentExceptionCorrectlyTest.CompilerGeneratedInnerIterator.<TypesInside>d__1.MoveNext()' passes 'nameSpace' as the 'paramName' argument to a 'ArgumentNullException' constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.
     private class CompilerGeneratedInnerIterator
     {
+#pragma warning disable IDE0044 // Add readonly modifier
       private static IList<TypeDefinition> types;
+#pragma warning restore IDE0044 // Add readonly modifier
 
       public static IEnumerable<TypeDefinition> TypesInside(string nameSpace)
       {
@@ -728,8 +731,6 @@ namespace Test.Rules.Exceptions
         switch (method.Name)
         {
           case "MoveNext":
-            AssertRuleFailure(method);
-            break;
           case "System.Collections.Generic.IEnumerable<Mono.Cecil.TypeDefinition>.GetEnumerator":
           case "System.Collections.IEnumerator.Reset":
             AssertRuleSuccess(method);
@@ -749,7 +750,7 @@ namespace Test.Rules.Exceptions
     }
 
     // This goes against the whole spirit of the rule
-  
+
     // public void CallLocalizedThrow()
     // {
     //   throw new ArgumentNullException("obj", "a localized string");
@@ -888,12 +889,12 @@ namespace Test.Rules.Exceptions
 
     public void NoArgument()
     {
-	string[] inputFile = InputFile;
-	string[] array = inputFile;
-	if (array == null)
-	{
-		throw new ArgumentNullException("array");
-	}
+      string[] inputFile = InputFile;
+      string[] array = inputFile;
+      if (array == null)
+      {
+        throw new ArgumentNullException("array");
+      }
     }
 
     [Test]
@@ -901,6 +902,5 @@ namespace Test.Rules.Exceptions
     {
       AssertRuleFailure<InstantiateArgumentExceptionCorrectlyTest>("NoArgument", 1);
     }
-
   }
 }

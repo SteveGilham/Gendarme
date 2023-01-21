@@ -9,6 +9,7 @@
     <Compile Include="Augment.fs" />
     <Compile Include="ProgramDatabase.fs" />
     <Compile Include="NetCoreResolver.fs" />
+    <Compile Include="Containing.fs" />
   </ItemGroup>
   
 </Project>

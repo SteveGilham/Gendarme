@@ -20,7 +20,8 @@ module ProgramDatabase =
   // We no longer have to violate Cecil encapsulation to get the PDB path
   // but we do to get the embedded PDB info
   let internal getEmbed =
-    (typeof<Mono.Cecil.AssemblyDefinition>.Assembly.GetTypes ()
+    (typeof<Mono.Cecil.AssemblyDefinition>.Assembly
+      .GetTypes()
      |> Seq.filter (fun m -> m.FullName = "Mono.Cecil.Mixin")
      |> Seq.head)
       .GetMethod("GetEmbeddedPortablePdbEntry")

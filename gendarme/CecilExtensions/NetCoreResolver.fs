@@ -138,4 +138,10 @@ module NetCoreResolver =
                             Target =
                               "<StartupCode$CecilExtensions>.$NetCoreResolver.#.cctor()",
                             Justification = "Compiler generated")>]
+[<assembly: SuppressMessage("Gendarme.Rules.Exceptions",
+                            "InstantiateArgumentExceptionCorrectlyRule",
+                            Scope = "member", // MethodDefinition
+                            Target =
+                              "AltCode.CecilExtensions.NetCoreResolver/candidate@73::Invoke(Microsoft.FSharp.Collections.FSharpList`1<System.String>)",
+                            Justification = "Inlined by the compiler")>]
 ()
