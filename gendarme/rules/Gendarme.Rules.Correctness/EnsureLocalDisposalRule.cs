@@ -213,7 +213,12 @@ namespace Gendarme.Rules.Correctness
       ulong index = v == null ? UInt64.MaxValue : (ulong)v.Index;
       if (v != null && locals.Get(index))
       {
-        if (!IsInsideFinallyBlock(method, ins))
+        // Only system types, not any potential user subclasses
+        var isTask = v.VariableType.FullName.StartsWith(
+                                      "System.Threading.Tasks.Task",
+                                      StringComparison.Ordinal);
+
+        if (!isTask && !IsInsideFinallyBlock(method, ins))
         {
           string msg = String.Format(CultureInfo.InvariantCulture,
             "Local {0}is not guaranteed to be disposed of.",
@@ -245,6 +250,16 @@ namespace Gendarme.Rules.Correctness
     {
       VariableDefinition v = ins.GetVariable(method);
       ulong index = (ulong)v.Index;
+
+      // Only system types, not any potential user subclasses
+      if (v.VariableType.FullName.StartsWith(
+                                    "System.Threading.Tasks.Task",
+                                    StringComparison.Ordinal))
+      {
+        locals.Clear(index);
+        return;
+      }
+
       if (locals.Get(index))
       {
         string msg = String.Format(CultureInfo.InvariantCulture,
@@ -367,9 +382,18 @@ namespace Gendarme.Rules.Correctness
       {
         if (!locals.Get(i))
           continue;
+        
+        var v = method.Body.Variables[(int)i];
+
+        // Only system types, not any potential user subclasses
+        if (v.VariableType.FullName.StartsWith(
+                                      "System.Threading.Tasks.Task",
+                                      StringComparison.Ordinal))
+          return;
+
         string msg = String.Format(CultureInfo.InvariantCulture,
           "Local {0}is not disposed of (at least not locally).",
-                    GetFriendlyNameOrEmpty(method.Body.Variables[(int)i], method.DebugInformation));
+                    GetFriendlyNameOrEmpty(v, method.DebugInformation));
         Runner.Report(method, Severity.High, Confidence.Normal, msg);
       }
     }
