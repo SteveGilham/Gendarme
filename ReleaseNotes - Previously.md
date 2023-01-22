@@ -1,3 +1,8 @@
+# 2023.1.22.12221
+
+* [BUGFIX] Fix environment dependent NRE in `AvoidUncalledPrivateCodeRule` (and others)
+* [BUGFIX] Fix possible false -ves wrt tasks in `EnsureLocalDisposalRule` 
+
 # 2023.1.21.13293 
 
 * Exempt `Task` and `Task<'T>` from `EnsureLocalDisposalRule` as they generally should not be disposed manually.
