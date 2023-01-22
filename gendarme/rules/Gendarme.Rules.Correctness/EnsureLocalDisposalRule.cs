@@ -127,6 +127,15 @@ namespace Gendarme.Rules.Correctness
       return MethodSignatures.Dispose.Matches(call) || MethodSignatures.DisposeExplicit.Matches(call);
     }
 
+    private static bool IsTask(TypeReference t)
+    {
+      // Only system types, not any potential user subclasses
+      var name = t.Name;
+      return t.Namespace.Equals("System.Threading.Tasks", StringComparison.Ordinal) &&
+             (name.Equals("Task`1", StringComparison.Ordinal) ||
+              name.Equals("Task", StringComparison.Ordinal));
+    }
+
     private static readonly TypeName idisposable = new TypeName
     {
       Namespace = "System",
@@ -213,12 +222,7 @@ namespace Gendarme.Rules.Correctness
       ulong index = v == null ? UInt64.MaxValue : (ulong)v.Index;
       if (v != null && locals.Get(index))
       {
-        // Only system types, not any potential user subclasses
-        var isTask = v.VariableType.FullName.StartsWith(
-                                      "System.Threading.Tasks.Task",
-                                      StringComparison.Ordinal);
-
-        if (!isTask && !IsInsideFinallyBlock(method, ins))
+        if (!IsTask(v.VariableType) && !IsInsideFinallyBlock(method, ins))
         {
           string msg = String.Format(CultureInfo.InvariantCulture,
             "Local {0}is not guaranteed to be disposed of.",
@@ -252,9 +256,7 @@ namespace Gendarme.Rules.Correctness
       ulong index = (ulong)v.Index;
 
       // Only system types, not any potential user subclasses
-      if (v.VariableType.FullName.StartsWith(
-                                    "System.Threading.Tasks.Task",
-                                    StringComparison.Ordinal))
+      if (IsTask(v.VariableType))
       {
         locals.Clear(index);
         return;
@@ -382,14 +384,12 @@ namespace Gendarme.Rules.Correctness
       {
         if (!locals.Get(i))
           continue;
-        
+
         var v = method.Body.Variables[(int)i];
 
         // Only system types, not any potential user subclasses
-        if (v.VariableType.FullName.StartsWith(
-                                      "System.Threading.Tasks.Task",
-                                      StringComparison.Ordinal))
-          return;
+        if (IsTask(v.VariableType))
+          continue;
 
         string msg = String.Format(CultureInfo.InvariantCulture,
           "Local {0}is not disposed of (at least not locally).",
@@ -413,8 +413,7 @@ namespace Gendarme.Rules.Correctness
       TypeReference type = ins.Is(Code.Newobj) ? call.DeclaringType : call.ReturnType;
 
       // Only system types, not any potential user subclasses
-      if (type.FullName.StartsWith("System.Threading.Tasks.Task",
-                                    StringComparison.Ordinal))
+      if (IsTask(type))
         return;
 
       bool fluent = IsFluentLike(call);
