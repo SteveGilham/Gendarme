@@ -451,6 +451,12 @@ namespace Gendarme.Framework
 
           foreach (TypeDefinition type in module.GetAllTypes())
           {
+            //if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes"))
+            //  continue;
+
+            //if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute"))
+            //  continue;
+
             CurrentTarget = (IMetadataTokenProvider)type;
             runner_args.CurrentType = type;
             OnType(runner_args);
