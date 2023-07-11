@@ -396,6 +396,9 @@ module Targets =
               Configuration = DotNet.BuildConfiguration.Release
               MSBuildParams =
                 { options.MSBuildParams with
+                    ConsoleLogParameters = []
+                    DistributedLoggers = None
+                    DisableInternalBinLog = true
                     Properties = options.MSBuildParams.Properties }
               Framework = Some "netstandard2.0" })
         "./gendarme/rules/Gendarme.Rules.Globalization/Gendarme.Rules.Globalization.csproj")
@@ -1021,6 +1024,12 @@ module Targets =
           { options with
               OutputPath = Some publish
               Configuration = DotNet.BuildConfiguration.Release
+              MSBuildParams =
+                { options.MSBuildParams with
+                    ConsoleLogParameters = []
+                    DistributedLoggers = None
+                    DisableInternalBinLog = true
+                    Properties = options.MSBuildParams.Properties }
               Framework = Some "netcoreapp2.1" })
         netcoresource
 
@@ -1290,6 +1299,12 @@ module Targets =
       DotNet.restore
         (fun o ->
           { o.WithCommon(withWorkingDirectoryVM unpack) with
+              MSBuildParams =
+                { o.MSBuildParams with
+                    ConsoleLogParameters = []
+                    DistributedLoggers = None
+                    DisableInternalBinLog = true
+                    Properties = o.MSBuildParams.Properties }
               Packages = [ "./packages" ] })
         proj
 
