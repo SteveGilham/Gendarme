@@ -4,6 +4,7 @@
     <NoWarn>$(NoWarn);414;168;169;649;628</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Serialization.csproj" />
   </ItemGroup>

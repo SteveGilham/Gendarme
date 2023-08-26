@@ -30,48 +30,51 @@ using System;
 using Mono.Cecil;
 using Gendarme.Framework;
 
-namespace Gendarme.Rules.Serialization {
+namespace Gendarme.Rules.Serialization
+{
+  /// <summary>
+  /// This rule warns when it founds an <c>enum</c> that is not decorated with
+  /// a <c>[Serializable]</c> attribute. Enums, even without the attribute,
+  /// are always serializable. Marking them as such makes the source code more readable.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// public enum Colors {
+  ///	Black,
+  ///	White
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [Serializable]
+  /// public enum Colors {
+  ///	Black,
+  ///	White
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>This rule is available since Gendarme 2.2</remarks>
 
-	/// <summary>
-	/// This rule warns when it founds an <c>enum</c> that is not decorated with
-	/// a <c>[Serializable]</c> attribute. Enums, even without the attribute,
-	/// are always serializable. Marking them as such makes the source code more readable.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// public enum Colors {
-	///	Black,
-	///	White
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [Serializable]
-	/// public enum Colors {
-	///	Black,
-	///	White
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>This rule is available since Gendarme 2.2</remarks>
+  [Problem("An enumeration, even if not decorated with [Serializable], is always serializable.")]
+  [Solution("For better source code readability always decorate enumerations with [Serializable].")]
+  public class MarkEnumerationsAsSerializableRule : Rule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (!type.IsEnum)
+        return RuleResult.DoesNotApply;
 
-	[Problem ("An enumeration, even if not decorated with [Serializable], is always serializable.")]
-	[Solution ("For better source code readability always decorate enumerations with [Serializable].")]
-	public class MarkEnumerationsAsSerializableRule : Rule, ITypeRule {
+      if (type.IsSerializable)
+        return RuleResult.Success;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			if (!type.IsEnum)
-				return RuleResult.DoesNotApply;
+      //if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes", StringComparison.Ordinal))
+      //  return RuleResult.DoesNotApply;
 
-			if (type.IsSerializable)
-				return RuleResult.Success;
-
-			Runner.Report (type, Severity.Low, Confidence.Total);
-			return RuleResult.Failure;
-		}
-	}
+      Runner.Report(type, Severity.Low, Confidence.Total);
+      return RuleResult.Failure;
+    }
+  }
 }

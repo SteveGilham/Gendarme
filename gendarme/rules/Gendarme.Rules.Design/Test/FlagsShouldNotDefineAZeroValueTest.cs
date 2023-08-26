@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for FlagsShouldNotDefineAZeroValueTest
 //
 // Authors:
@@ -32,65 +32,79 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+  [Flags]
+  internal enum PrivateFlagsWithZeroValue
+  {
+    Zero = 0,
+    One = 1,
+    Two = 2
+  }
 
-	[Flags]
-	enum PrivateFlagsWithZeroValue {
-		Zero = 0,
-		One  = 1,
-		Two  = 2
-	}
+  [Flags]
+  internal enum InternalFlagsWithoutZeroValue
+  {
+    Zero = 1,
+    One = 2,
+    Two = 4
+  }
 
-	[Flags]
-	internal enum InternalFlagsWithoutZeroValue {
-		Zero = 1,
-		One  = 2,
-		Two  = 4
-	}
+  [TestFixture]
+  public class FlagsShouldNotDefineAZeroValueTest : TypeRuleTestFixture<FlagsShouldNotDefineAZeroValueRule>
+  {
+    public enum NestedPublicEnumWithZeroValue
+    {
+      Zero
+    }
 
-	[TestFixture]
-	public class FlagsShouldNotDefineAZeroValueTest : TypeRuleTestFixture<FlagsShouldNotDefineAZeroValueRule> {
+    private enum NestedPrivateEnumWithoutZeroValue
+    {
+      FirstBit = 1,
+      SecondBit = 2,
+      ThirdBit = 4
+    }
 
-		public enum NestedPublicEnumWithZeroValue {
-			Zero
-		}
+    [Flags]
+    private enum NestedInternalFlagsWithZeroValue
+    {
+      GhostBit = 0,
+      FirstBit,
+    }
 
-		private enum NestedPrivateEnumWithoutZeroValue {
-			FirstBit = 1,
-			SecondBit = 2,
-			ThirdBit = 4
-		}
+    [Test]
+    public void NotAFlag()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+      AssertRuleDoesNotApply(SimpleTypes.Structure);
 
-		[Flags]
-		private enum NestedInternalFlagsWithZeroValue {
-			GhostBit = 0,
-			FirstBit,
-		}
+      AssertRuleDoesNotApply<FlagsShouldNotDefineAZeroValueTest.NestedPublicEnumWithZeroValue>();
+      AssertRuleDoesNotApply<FlagsShouldNotDefineAZeroValueTest.NestedPrivateEnumWithoutZeroValue>();
+    }
 
-		[Test]
-		public void NotAFlag ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Class);
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
-			AssertRuleDoesNotApply (SimpleTypes.Structure);
+    [Test]
+    public void FlagsWithoutZeroValue()
+    {
+      AssertRuleSuccess<InternalFlagsWithoutZeroValue>();
+    }
 
-			AssertRuleDoesNotApply<FlagsShouldNotDefineAZeroValueTest.NestedPublicEnumWithZeroValue> ();
-			AssertRuleDoesNotApply<FlagsShouldNotDefineAZeroValueTest.NestedPrivateEnumWithoutZeroValue> ();
-		}
+    [Test]
+    public void FlagsWithZeroValue()
+    {
+      AssertRuleFailure<PrivateFlagsWithZeroValue>(1);
+      AssertRuleFailure<FlagsShouldNotDefineAZeroValueTest.NestedInternalFlagsWithZeroValue>(1);
+    }
 
-		[Test]
-		public void FlagsWithoutZeroValue ()
-		{
-			AssertRuleSuccess<InternalFlagsWithoutZeroValue> ();
-		}
-
-		[Test]
-		public void FlagsWithZeroValue ()
-		{
-			AssertRuleFailure<PrivateFlagsWithZeroValue> (1);
-			AssertRuleFailure<FlagsShouldNotDefineAZeroValueTest.NestedInternalFlagsWithZeroValue> (1);
-		}
-	}
+    [Test]
+    public void FSharpPlaceholders()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes");
+      var def = Helpers.DefinitionLoader.GetTypeDefinition(type);
+      AssertRuleDoesNotApply(def);
+    }
+  }
 }

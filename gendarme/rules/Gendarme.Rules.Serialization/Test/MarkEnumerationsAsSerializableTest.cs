@@ -36,59 +36,70 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Serialization {
+namespace Test.Rules.Serialization
+{
+  [TestFixture]
+  public class MarkEnumerationsAsSerializableTest : TypeRuleTestFixture<MarkEnumerationsAsSerializableRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+      AssertRuleDoesNotApply(SimpleTypes.Structure);
+    }
 
-	[TestFixture]
-	public class MarkEnumerationsAsSerializableTest : TypeRuleTestFixture<MarkEnumerationsAsSerializableRule> {
+    private enum NonSerializableEnum
+    {
+      One,
+      Two
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Class);
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
-			AssertRuleDoesNotApply (SimpleTypes.Structure);
-		}
+    [Serializable]
+    private enum SerializableEnum
+    {
+      One,
+      Two
+    }
 
-		enum NonSerializableEnum {
-			One,
-			Two
-		}
+    [Test]
+    public void Reflection()
+    {
+      // always report true since enums are ALWAYS serializable
+      Assert.IsTrue(typeof(NonSerializableEnum).IsSerializable, "NonSerializableEnum");
+      Assert.IsTrue(typeof(SerializableEnum).IsSerializable, "SerializableEnum");
+    }
 
-		[Serializable]
-		enum SerializableEnum {
-			One,
-			Two
-		}
+    [Test]
+    public void Cecil()
+    {
+      // Cecil reports what being set on the type, not how the runtime treats it
+      TypeDefinition nse = DefinitionLoader.GetTypeDefinition<NonSerializableEnum>();
+      Assert.IsFalse(nse.IsSerializable, "NonSerializableEnum");
+      TypeDefinition se = DefinitionLoader.GetTypeDefinition<SerializableEnum>();
+      Assert.IsTrue(se.IsSerializable, "SerializableEnum");
+    }
 
-		[Test]
-		public void Reflection ()
-		{
-			// always report true since enums are ALWAYS serializable
-			Assert.IsTrue (typeof (NonSerializableEnum).IsSerializable, "NonSerializableEnum");
-			Assert.IsTrue (typeof (SerializableEnum).IsSerializable, "SerializableEnum");
-		}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<SerializableEnum>();
+    }
 
-		[Test]
-		public void Cecil ()
-		{
-			// Cecil reports what being set on the type, not how the runtime treats it
-			TypeDefinition nse = DefinitionLoader.GetTypeDefinition<NonSerializableEnum> ();
-			Assert.IsFalse (nse.IsSerializable, "NonSerializableEnum");
-			TypeDefinition se = DefinitionLoader.GetTypeDefinition<SerializableEnum> ();
-			Assert.IsTrue (se.IsSerializable, "SerializableEnum");
-		}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<NonSerializableEnum>(1);
+    }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<SerializableEnum> ();
-		}
-
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<NonSerializableEnum> (1);
-		}
-	}
+    //[Test]
+    //public void FSharpPlaceholders()
+    //{
+    //  var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+    //  var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes");
+    //  var def = Helpers.DefinitionLoader.GetTypeDefinition(type);
+    //  AssertRuleDoesNotApply(def);
+    //}
+  }
 }

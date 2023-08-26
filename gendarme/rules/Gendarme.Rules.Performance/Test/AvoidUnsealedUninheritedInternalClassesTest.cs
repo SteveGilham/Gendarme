@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for AvoidUnsealedUninheritedInternalClassesRule
 //
 // Authors:
@@ -32,109 +32,128 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Performance {
+namespace Test.Rules.Performance
+{
+  public class Visible
+  {
+  }
 
-	public class Visible {
-	}
+  public class Outer
+  {
+    internal class UnsealedInner
+    {
+    }
 
-	public class Outer {
-		internal class UnsealedInner {
-		}
+    internal sealed class SealedInner
+    {
+    }
+  }
 
-		internal sealed class SealedInner {
-		}
-	}
+  internal abstract class Abstract
+  {
+  }
 
-	internal abstract class Abstract {
-	}
+  internal class Concrete : Abstract
+  {
+  }
 
-	internal class Concrete : Abstract {
-	}
+  internal class Base : Abstract
+  {
+  }
 
-	internal class Base : Abstract {
-	}
+  internal sealed class Final : Base
+  {
+  }
 
-	internal sealed class Final : Base {
-	}
+  internal sealed class Sealed
+  {
+  }
 
-	internal sealed class Sealed {
-	}
+  internal class Unsealed
+  {
+  }
 
-	internal class Unsealed {
-	}
+  [TestFixture]
+  public class AvoidUnsealedUninheritedInternalTypeTest : TypeRuleTestFixture<AvoidUnsealedUninheritedInternalTypeRule>
+  {
+    [Test]
+    public void TestVisable()
+    {
+      AssertRuleSuccess<Visible>();
+    }
 
-	[TestFixture]
-	public class AvoidUnsealedUninheritedInternalTypeTest : TypeRuleTestFixture<AvoidUnsealedUninheritedInternalTypeRule>{
+    [Test]
+    public void TestUnsealedInner()
+    {
+      AssertRuleFailure<Outer.UnsealedInner>(1);
+    }
 
-		[Test]
-		public void TestVisable ()
-		{
-			AssertRuleSuccess<Visible> ();
-		}
+    [Test]
+    public void TestSealedInner()
+    {
+      AssertRuleSuccess<Outer.SealedInner>();
+    }
 
-		[Test]
-		public void TestUnsealedInner ()
-		{
-			AssertRuleFailure<Outer.UnsealedInner> (1);
-		}
+    [Test]
+    public void TestAbstract()
+    {
+      AssertRuleSuccess<Abstract>();
+    }
 
-		[Test]
-		public void TestSealedInner ()
-		{
-			AssertRuleSuccess<Outer.SealedInner> ();
-		}
+    [Test]
+    public void TestConcrete()
+    {
+      AssertRuleFailure<Concrete>(1);
+      AssertRuleSuccess<Base>();
+    }
 
-		[Test]
-		public void TestAbstract ()
-		{
-			AssertRuleSuccess<Abstract> ();
-		}
+    [Test]
+    public void TestSealed()
+    {
+      AssertRuleSuccess<Sealed>();
+      AssertRuleSuccess<Final>();
+    }
 
-		[Test]
-		public void TestConcrete ()
-		{
-			AssertRuleFailure<Concrete> (1);
-			AssertRuleSuccess<Base> ();
-		}
+    [Test]
+    public void TestUnsealed()
+    {
+      AssertRuleFailure<Unsealed>(1);
+    }
 
-		[Test]
-		public void TestSealed ()
-		{
-			AssertRuleSuccess<Sealed> ();
-			AssertRuleSuccess<Final> ();
-		}
+    [Test]
+    public void FSharpDebugProxy()
+    {
+      Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/CLIArgs/Many@DebugTypeProxy");
+      AssertRuleSuccess(type);
+    }
 
-		[Test]
-		public void TestUnsealed ()
-		{
-			AssertRuleFailure<Unsealed> (1);
-		}
+    [Test]
+    public void FSharpDebugProxy2()
+    {
+      Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("AvoidNonAlphanumericIdentifier.TypeSafe/DirectoryPath/_NoDirectory");
+      AssertRuleSuccess(type);
+    }
 
-        [Test]
-        public void FSharpDebugProxy()
-        {
-            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("AvoidMultidimensionalIndexer.DotNet/CLIArgs/Many@DebugTypeProxy");
-            AssertRuleSuccess(type);
-        }
+    [Test]
+    public void FSharpUnionCases()
+    {
+      Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
+      var type = def.MainModule.GetType("AvoidUnsealedUninheritedInternalType.Track/Time");
+      AssertRuleSuccess(type);
+    }
 
-        [Test]
-        public void FSharpDebugProxy2()
-        {
-            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("AvoidNonAlphanumericIdentifier.TypeSafe/DirectoryPath/_NoDirectory");
-            AssertRuleSuccess(type);
-        }
-
-        [Test]
-        public void FSharpUnionCases()
-        {
-            Type probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var def = AssemblyDefinition.ReadAssembly(probe.Assembly.Location);
-            var type = def.MainModule.GetType("AvoidUnsealedUninheritedInternalType.Track/Time");
-            AssertRuleSuccess(type);
-        }
-	}
+    [Test]
+    public void FSharpPlaceholders()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute");
+      var def = Helpers.DefinitionLoader.GetTypeDefinition(type);
+      AssertRuleDoesNotApply(def);
+    }
+  }
 }

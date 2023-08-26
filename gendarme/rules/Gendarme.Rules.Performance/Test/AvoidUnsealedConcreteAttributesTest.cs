@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for AvoidUnsealedConcreteAttributesRule
 //
 // Authors:
@@ -34,93 +34,111 @@ using Gendarme.Rules.Performance;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Performance {
+namespace Test.Rules.Performance
+{
+  internal class NotAttribute
+  {
+  }
 
-	internal class NotAttribute {
-	}
+  internal class AnAttribute : Attribute
+  {
+  }
 
-	internal class AnAttribute : Attribute {
-	}
+  internal sealed class SealedAttributeInheritsAnAttribute : AnAttribute
+  {
+  }
 
-	internal sealed class SealedAttributeInheritsAnAttribute : AnAttribute {
-	}
+  internal sealed class SealedAttribute : Attribute
+  {
+  }
 
-	internal sealed class SealedAttribute : Attribute {
-	}
+  internal abstract class AbstractAttribute : Attribute
+  {
+  }
 
-	internal abstract class AbstractAttribute : Attribute {
-	}
+  [TestFixture]
+  public class AvoidUnsealedConcreteAttributesTest : TypeRuleTestFixture<AvoidUnsealedConcreteAttributesRule>
+  {
+    [OneTimeSetUp]
+    public void SetUp()
+    {
+      Runner.Engines.Subscribe("Gendarme.Framework.Engines.SuppressMessageEngine");
+    }
 
-	[TestFixture]
-	public class AvoidUnsealedConcreteAttributesTest : TypeRuleTestFixture<AvoidUnsealedConcreteAttributesRule> {
+    [Test]
+    public void TestAbstractAttribute()
+    {
+      AssertRuleSuccess<AbstractAttribute>();
+    }
 
-        [OneTimeSetUp]
-		public void SetUp ()
-		{
-			Runner.Engines.Subscribe ("Gendarme.Framework.Engines.SuppressMessageEngine");
-		}
-		
-		[Test]
-		public void TestAbstractAttribute ()
-		{
-			AssertRuleSuccess<AbstractAttribute> ();
-		}
+    [Test]
+    public void TestAnAttribute()
+    {
+      AssertRuleFailure<AnAttribute>(1);
+    }
 
-		[Test]
-		public void TestAnAttribute ()
-		{
-			AssertRuleFailure<AnAttribute> (1);
-		}
+    [Test]
+    public void TestNotAttribute()
+    {
+      AssertRuleDoesNotApply<NotAttribute>();
+    }
 
-		[Test]
-		public void TestNotAttribute ()
-		{
-			AssertRuleDoesNotApply<NotAttribute> ();
-		}
+    [Test]
+    public void TestSealedAttribute()
+    {
+      AssertRuleSuccess<SealedAttribute>();
+    }
 
-		[Test]
-		public void TestSealedAttribute ()
-		{
-			AssertRuleSuccess<SealedAttribute> ();
-		}
+    [Test]
+    public void TestSealedAttributeInheritsAnAttribute()
+    {
+      AssertRuleSuccess<SealedAttributeInheritsAnAttribute>();
+    }
 
-		[Test]
-		public void TestSealedAttributeInheritsAnAttribute ()
-		{
-			AssertRuleSuccess<SealedAttributeInheritsAnAttribute> ();
-		}
+    public class FxCopTest
+    {
+      // CA1813
+      public class AvoidUnsealedAttributes
+      {
+        public class Fail : Attribute
+        {
+        }
 
-		public class FxCopTest {
+        // manually suppressed - no MessageId
+        [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
+        public class ManuallySuppressed : Attribute
+        {
+        }
 
-			// CA1813
-			public class AvoidUnsealedAttributes {
+        // automatically suppressed using VS2010
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
+        public class AutomaticallySuppressed : Attribute
+        {
+        }
 
-				public class Fail : Attribute {
-				}
+        // automatically suppressed using VS2010 (see GlobalSupressions.cs)
+        public class GloballySuppressed : Attribute
+        {
+        }
+      }
+    }
 
-				// manually suppressed - no MessageId
-				[SuppressMessage ("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
-				public class ManuallySuppressed : Attribute {
-				}
+    [Test]
+    public void CA1813()
+    {
+      AssertRuleFailure<FxCopTest.AvoidUnsealedAttributes.Fail>(1);
+      AssertRuleDoesNotApply<FxCopTest.AvoidUnsealedAttributes.ManuallySuppressed>();
+      AssertRuleDoesNotApply<FxCopTest.AvoidUnsealedAttributes.AutomaticallySuppressed>();
+      AssertRuleDoesNotApply<FxCopTest.AvoidUnsealedAttributes.GloballySuppressed>();
+    }
 
-				// automatically suppressed using VS2010
-				[System.Diagnostics.CodeAnalysis.SuppressMessage ("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
-				public class AutomaticallySuppressed : Attribute {
-				}
-
-				// automatically suppressed using VS2010 (see GlobalSupressions.cs)
-				public class GloballySuppressed : Attribute {
-				}
-			}
-		}
-
-		[Test]
-		public void CA1813 ()
-		{
-			AssertRuleFailure<FxCopTest.AvoidUnsealedAttributes.Fail> (1);
-			AssertRuleDoesNotApply<FxCopTest.AvoidUnsealedAttributes.ManuallySuppressed> ();
-			AssertRuleDoesNotApply<FxCopTest.AvoidUnsealedAttributes.AutomaticallySuppressed> ();
-			AssertRuleDoesNotApply<FxCopTest.AvoidUnsealedAttributes.GloballySuppressed> ();
-		}
-	}
+    [Test]
+    public void FSharpPlaceholders()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute");
+      var def = Helpers.DefinitionLoader.GetTypeDefinition(type);
+      AssertRuleDoesNotApply(def);
+    }
+  }
 }

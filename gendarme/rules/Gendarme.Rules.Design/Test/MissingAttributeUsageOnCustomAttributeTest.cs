@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for MissingAttributeUsageOnCustomAttributeRule
 //
 // Authors:
@@ -34,85 +34,99 @@ using Gendarme.Rules.Design;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+  internal class NotAttribute
+  {
+  }
 
-	internal class NotAttribute {
-	}
+  internal class NoUsageDefinedAttribute : Attribute
+  {
+  }
 
-	internal class NoUsageDefinedAttribute : Attribute {
-	}
+  [AttributeUsage(AttributeTargets.Method)]
+  internal class UsageDefinedInheritsNoUsageDefinedAttribute : NoUsageDefinedAttribute
+  {
+  }
 
-	[AttributeUsage (AttributeTargets.Method)]
-	internal class UsageDefinedInheritsNoUsageDefinedAttribute : NoUsageDefinedAttribute {
-	}
+  [AttributeUsage(AttributeTargets.Method)]
+  internal class UsageDefinedAttribute : Attribute
+  {
+  }
 
-	[AttributeUsage (AttributeTargets.Method)]
-	internal class UsageDefinedAttribute : Attribute {
-	}
+  internal class NoUsageDefinedInheritsUsageDefinedAttribute : UsageDefinedAttribute
+  {
+  }
 
-	internal class NoUsageDefinedInheritsUsageDefinedAttribute : UsageDefinedAttribute {
-	}
+  [TestFixture]
+  public class MissingAttributeUsageOnCustomAttributeTest
+  {
+    private ITypeRule rule;
+    private AssemblyDefinition assembly;
+    private TestRunner runner;
 
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      rule = new MissingAttributeUsageOnCustomAttributeRule();
+      runner = new TestRunner(rule);
+    }
 
-	[TestFixture]
-	public class MissingAttributeUsageOnCustomAttributeTest {
+    private TypeDefinition GetTest<T>()
+    {
+      return assembly.MainModule.GetType(typeof(T).FullName);
+    }
 
-		private ITypeRule rule;
-		private AssemblyDefinition assembly;
-		private TestRunner runner;
+    [Test]
+    public void TestNotAttribute()
+    {
+      TypeDefinition type = GetTest<NotAttribute>();
+      Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
+      Assert.AreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			rule = new MissingAttributeUsageOnCustomAttributeRule ();
-			runner = new TestRunner (rule);
-		}
+    [Test]
+    public void TestNoUsageDefinedAttribute()
+    {
+      TypeDefinition type = GetTest<NoUsageDefinedAttribute>();
+      Assert.AreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      Assert.AreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		private TypeDefinition GetTest<T> ()
-		{
-			return assembly.MainModule.GetType (typeof (T).FullName);
-		}
+    [Test]
+    public void TestNoUsageDefinedInheritsUsageDefinedAttribute()
+    {
+      TypeDefinition type = GetTest<NoUsageDefinedInheritsUsageDefinedAttribute>();
+      Assert.AreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      Assert.AreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestNotAttribute ()
-		{
-			TypeDefinition type = GetTest<NotAttribute> ();
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    [Test]
+    public void TestUsageDefinedAttribute()
+    {
+      TypeDefinition type = GetTest<UsageDefinedAttribute>();
+      Assert.AreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      Assert.AreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestNoUsageDefinedAttribute ()
-		{
-			TypeDefinition type = GetTest<NoUsageDefinedAttribute> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
+    [Test]
+    public void TestUsageDefinedInheritsNoUsageDefinedAttribute()
+    {
+      TypeDefinition type = GetTest<UsageDefinedInheritsNoUsageDefinedAttribute>();
+      Assert.AreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      Assert.AreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestNoUsageDefinedInheritsUsageDefinedAttribute ()
-		{
-			TypeDefinition type = GetTest<NoUsageDefinedInheritsUsageDefinedAttribute> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestUsageDefinedAttribute ()
-		{
-			TypeDefinition type = GetTest<UsageDefinedAttribute> ();
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestUsageDefinedInheritsNoUsageDefinedAttribute ()
-		{
-			TypeDefinition type = GetTest<UsageDefinedInheritsNoUsageDefinedAttribute> ();
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-	}
+    [Test]
+    public void FSharpPlaceholders()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute");
+      var def = DefinitionLoader.GetTypeDefinition(type);
+      Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckType(def), "RuleResult");
+      Assert.AreEqual(0, runner.Defects.Count, "Count");
+    }
+  }
 }

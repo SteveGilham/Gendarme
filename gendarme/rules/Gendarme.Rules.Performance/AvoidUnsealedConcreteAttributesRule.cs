@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Performance.AvoidUnsealedConcreteAttributesRule
 //
 // Authors:
@@ -31,63 +31,66 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Performance {
+namespace Gendarme.Rules.Performance
+{
+  /// <summary>
+  /// This rule fires if an attribute is defined which is both concrete (i.e. not abstract)
+  /// and unsealed. This is a performance problem because it means that
+  /// <c>System.Attribute.GetCustomAttribute</c> has to search the attribute type
+  /// hierarchy for derived types. To fix this either seal the type or make it abstract.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [AttributeUsage (AttributeTargets.All)]
+  /// public class BadAttribute : Attribute {
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (sealed):
+  /// <code>
+  /// [AttributeUsage (AttributeTargets.All)]
+  /// public sealed class SealedAttribute : Attribute {
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example (abstract and sealed):
+  /// <code>
+  /// [AttributeUsage (AttributeTargets.All)]
+  /// public abstract class AbstractAttribute : Attribute {
+  /// }
+  ///
+  /// [AttributeUsage (AttributeTargets.All)]
+  /// public sealed class ConcreteAttribute : AbstractAttribute {
+  /// }
+  /// </code>
+  /// </example>
+  /// <remarks>Before Gendarme 2.0 this rule was named AvoidUnsealedAttributesRule.</remarks>
 
-	/// <summary>
-	/// This rule fires if an attribute is defined which is both concrete (i.e. not abstract)
-	/// and unsealed. This is a performance problem because it means that 
-	/// <c>System.Attribute.GetCustomAttribute</c> has to search the attribute type
-	/// hierarchy for derived types. To fix this either seal the type or make it abstract. 
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [AttributeUsage (AttributeTargets.All)]
-	/// public class BadAttribute : Attribute {
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (sealed):
-	/// <code>
-	/// [AttributeUsage (AttributeTargets.All)]
-	/// public sealed class SealedAttribute : Attribute {
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example (abstract and sealed):
-	/// <code>
-	/// [AttributeUsage (AttributeTargets.All)]
-	/// public abstract class AbstractAttribute : Attribute {
-	/// }
-	/// 
-	/// [AttributeUsage (AttributeTargets.All)]
-	/// public sealed class ConcreteAttribute : AbstractAttribute {
-	/// }
-	/// </code>
-	/// </example>
-	/// <remarks>Before Gendarme 2.0 this rule was named AvoidUnsealedAttributesRule.</remarks>
+  [Problem("Because of performance issues, concrete attributes should be sealed.")]
+  [Solution("Unless you plan to inherit from this attribute you should consider sealing it.")]
+  [FxCopCompatibility("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
+  public class AvoidUnsealedConcreteAttributesRule : Rule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule applies only to attributes
+      if (!type.IsAttribute())
+        return RuleResult.DoesNotApply;
 
-	[Problem ("Because of performance issues, concrete attributes should be sealed.")]
-	[Solution ("Unless you plan to inherit from this attribute you should consider sealing it.")]
-	[FxCopCompatibility ("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
-	public class AvoidUnsealedConcreteAttributesRule : Rule, ITypeRule {
+      if (type.IsAbstract) // it's ok
+        return RuleResult.Success;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule applies only to attributes
-			if (!type.IsAttribute ())
-				return RuleResult.DoesNotApply;
+      if (type.IsSealed) // it's ok
+        return RuleResult.Success;
 
-			if (type.IsAbstract) // it's ok
-				return RuleResult.Success;
+      if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
 
-			if (type.IsSealed) // it's ok
-				return RuleResult.Success;
-
-			Runner.Report (type, Severity.Medium, Confidence.High);
-			return RuleResult.Failure;
-		}
-	}
+      Runner.Report(type, Severity.Medium, Confidence.High);
+      return RuleResult.Failure;
+    }
+  }
 }

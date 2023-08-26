@@ -21,12 +21,19 @@
     <Compile Include="DelegatesPassedToNativeCodeMustIncludeExceptionHandlingRule.fs" />
     <Compile Include="DoNotThrowInNonCatchClausesRule.fs" />
     <Compile Include="EnsureLocalDisposalRule.fs" />
+    <Compile Include="fs7-0-400.fs" />
     <Compile Include="MethodCanBeMadeStaticRule.fs" />
     <Compile Include="ParameterNamesShouldMatchOverridenMethod.fs" />
     <Compile Include="RemoveDependenceOnObsoleteCodeRule.fs" />
     <Compile Include="UseCorrectPrefixRule.fs" />
     <None Include="gendarming.txt" />
     <None Include="rules.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Mono.Options">
+      <HintPath>..\Libraries\Mono.Options.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

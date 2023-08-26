@@ -94,6 +94,9 @@ namespace Gendarme.Rules.Performance
           return RuleResult.Success;
       }
 
+      if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
+
       Confidence c = module.Assembly.HasAttribute(visible) ?
         Confidence.High : Confidence.Total;
       Runner.Report(type, Severity.Medium, c);

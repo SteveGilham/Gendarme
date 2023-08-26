@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Design.MissingAttributeUsageOnCustomAttributeRule
 //
 // Authors:
@@ -31,57 +31,61 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule verifies that every custom attribute (i.e. types that inherit from
+  /// <c>System.Attribute</c>) is decorated with an <c>[AttributeUsage]</c>
+  /// attribute to specify which kind of code instances of that custom attribute can be applied to.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// // this applies to everything - but the meaning is not clear
+  /// public sealed class SomeAttribute : Attribute {
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good examples:
+  /// <code>
+  /// // this clearly applies to everything
+  /// [AttributeUsage (AttributeTargets.All)]
+  /// public sealed class AttributeApplyingToAnything : Attribute {
+  /// }
+  ///
+  /// // while this applies only to fields
+  /// [AttributeUsage (AttributeTargets.Field)]
+  /// public sealed class AttributeApplyingToFields : Attribute {
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule verifies that every custom attribute (i.e. types that inherit from 
-	/// <c>System.Attribute</c>) is decorated with an <c>[AttributeUsage]</c> 
-	/// attribute to specify which kind of code instances of that custom attribute can be applied to.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// // this applies to everything - but the meaning is not clear
-	/// public sealed class SomeAttribute : Attribute {
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good examples:
-	/// <code>
-	/// // this clearly applies to everything
-	/// [AttributeUsage (AttributeTargets.All)]
-	/// public sealed class AttributeApplyingToAnything : Attribute {
-	/// }
-	/// 
-	/// // while this applies only to fields
-	/// [AttributeUsage (AttributeTargets.Field)]
-	/// public sealed class AttributeApplyingToFields : Attribute {
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("This attribute does not specify the items it can be used upon.")]
+  [Solution("Specify [AttributeUsage] on this attribute type.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1018:MarkAttributesWithAttributeUsage")]
+  public class MissingAttributeUsageOnCustomAttributeRule : Rule, ITypeRule
+  {
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      // rule applies only to attributes
+      if (!type.IsAttribute())
+        return RuleResult.DoesNotApply;
 
-	[Problem ("This attribute does not specify the items it can be used upon.")]
-	[Solution ("Specify [AttributeUsage] on this attribute type.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1018:MarkAttributesWithAttributeUsage")]
-	public class MissingAttributeUsageOnCustomAttributeRule : Rule, ITypeRule {
+      if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule applies only to attributes
-			if (!type.IsAttribute ())
-				return RuleResult.DoesNotApply;
+      if (type.HasAttribute(usage)) // it's ok
+        return RuleResult.Success;
 
-			if (type.HasAttribute (usage)) // it's ok
-				return RuleResult.Success;
-
-			Runner.Report (type, Severity.High, Confidence.Total);
-			return RuleResult.Failure;
-		}
-        private readonly static TypeName usage = new TypeName
-        {
-            Namespace = "System",
-            Name = "AttributeUsageAttribute"
-        };
+      Runner.Report(type, Severity.High, Confidence.Total);
+      return RuleResult.Failure;
     }
+
+    private static readonly TypeName usage = new TypeName
+    {
+      Namespace = "System",
+      Name = "AttributeUsageAttribute"
+    };
+  }
 }

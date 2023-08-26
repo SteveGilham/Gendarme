@@ -89,6 +89,9 @@ namespace Gendarme.Rules.Design
       if (!type.IsFlags())
         return RuleResult.DoesNotApply;
 
+      if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
+
       // rule applies!
 
       FieldDefinition field = GetZeroValueField(type);
