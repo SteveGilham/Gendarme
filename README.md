@@ -121,7 +121,7 @@ For the moment this seems to suffice to tame unreasonable, or unfixable generate
 
 ## Build process from trunk as per the CI YAML
 
-Assumes net7.0/VS2022 build environment
+Assumes net8.0/VS2022 build environment
 
 * `dotnet tool restore`
 * `dotnet run --project ./Build/Setup.fsproj`
