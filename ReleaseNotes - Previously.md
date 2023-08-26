@@ -1,3 +1,6 @@
+# 2023.8.26.15512
+* Ignore badly formed types injected by the dotnet 7.0.400 and 8.0pv FSharp compiler
+
 # 2023.1.22.12221
 
 * [BUGFIX] Fix environment dependent NRE in `AvoidUncalledPrivateCodeRule` (and others)
