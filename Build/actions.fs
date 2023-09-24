@@ -93,7 +93,12 @@ module Actions =
     Assert.That(result.ExitCode, Is.EqualTo 0, msg)
 
   let Run (file, dir, args) msg =
-    CreateProcess.fromRawCommand file args
+    CreateProcess.fromRawCommand
+      file
+      (if isNull args then
+         Seq.empty<string>
+       else
+         args)
     |> CreateProcess.withWorkingDirectory dir
     |> CreateProcess.withFramework
     |> Proc.run
