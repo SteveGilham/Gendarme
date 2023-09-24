@@ -4,6 +4,8 @@
     <RootNamespace>Gendarme</RootNamespace>
     <TargetFrameworks>netcoreapp2.1;net472</TargetFrameworks>
     <PackAsTool Condition="'$(TargetFramework)' != 'net472'">True</PackAsTool>
+    <NoWarn>$(NoWarn);NU1901;NU1902;NU1903</NoWarn>
+    <MSBuildWarningsAsMessages>NU1901;NU1902;NU1903</MSBuildWarningsAsMessages>
     <ApplicationIcon>$(SolutionDir)swf-wizard-runner\Resources\gendarme.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
