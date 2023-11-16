@@ -1,15 +1,12 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildThisFileDirectory)\..\Directory.Build.props" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub">
+    <PackageReference Update="Microsoft.SourceLink.GitHub">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Mono.Cecil" />
-    <PackageReference Include="FSharp.Core">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Update="FSharp.Core" />
   </ItemGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)\OutputBuildProps.props" />

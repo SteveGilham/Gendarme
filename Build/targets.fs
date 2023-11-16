@@ -733,7 +733,7 @@ module Targets =
             (fun p ->
               { p.WithCommon dotnetOptions with
                   Configuration = DotNet.BuildConfiguration.Debug
-                  Framework = Some "net7.0"
+                  Framework = Some "net8.0"
                   NoBuild = true }
               |> withCLIArgs)
             proj
@@ -943,7 +943,7 @@ module Targets =
               reports
               @@ ("UnitTestWithAltCoverCoreRunner."
                   + tname
-                  + ".net7.0.xml")
+                  + ".net8.0.xml")
 
             let collect =
               AltCover.CollectOptions.Primitive(Primitive.CollectOptions.Create()) // FSApi
@@ -986,7 +986,7 @@ module Targets =
                       prepare
                       collect
                       forceTrue) with
-                      Framework = Some "net7.0" }
+                      Framework = Some "net8.0" }
                   |> testWithCLIArguments)
                 test
             with x -> // while fixing
@@ -1486,8 +1486,8 @@ module Targets =
               Log = Path.GetFullPath "./_Reports/gendarme-tool-fsselftest.html"
               LogKind = Gendarme.LogKind.Html
               Targets =
-                [ Path.GetFullPath "./$Binaries/Build/Debug+AnyCPU/net7.0/Build.dll"
-                  Path.GetFullPath "./$Binaries/Setup/Debug+AnyCPU/net7.0/Setup.dll" ]
+                [ Path.GetFullPath "./$Binaries/Build/Debug+AnyCPU/net8.0/Build.dll"
+                  Path.GetFullPath "./$Binaries/Setup/Debug+AnyCPU/net8.0/Setup.dll" ]
               ToolPath = "gendarme"
               ToolType = ToolType.CreateGlobalTool()
               FailBuildOnDefect = true }

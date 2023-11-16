@@ -63,6 +63,7 @@ namespace Test.Rules.Serialization
       Two
     }
 
+#if NET472
     [Test]
     public void Reflection()
     {
@@ -70,6 +71,16 @@ namespace Test.Rules.Serialization
       Assert.IsTrue(typeof(NonSerializableEnum).IsSerializable, "NonSerializableEnum");
       Assert.IsTrue(typeof(SerializableEnum).IsSerializable, "SerializableEnum");
     }
+#endif
+
+    //[Test]
+    //public void FSharpPlaceholders()
+    //{
+    //  var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+    //  var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes");
+    //  var def = Helpers.DefinitionLoader.GetTypeDefinition(type);
+    //  AssertRuleDoesNotApply(def);
+    //}
 
     [Test]
     public void Cecil()
@@ -92,14 +103,5 @@ namespace Test.Rules.Serialization
     {
       AssertRuleFailure<NonSerializableEnum>(1);
     }
-
-    //[Test]
-    //public void FSharpPlaceholders()
-    //{
-    //  var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-    //  var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes");
-    //  var def = Helpers.DefinitionLoader.GetTypeDefinition(type);
-    //  AssertRuleDoesNotApply(def);
-    //}
   }
 }
