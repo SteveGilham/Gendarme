@@ -6,7 +6,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Mono.Cecil" />
-    <PackageReference Update="FSharp.Core" />
+    <PackageReference Include="FSharp.Core">
+      <ExcludeAssets>contentfiles</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)\OutputBuildProps.props" />

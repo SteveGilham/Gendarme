@@ -1139,9 +1139,7 @@ module Targets =
           [ netcoremain
             [ syslibs
               rules
-              altrules
-              [ (Path.getFullName
-                  "./_Binaries/gendarme/Release+AnyCPU/net472/FSharp.Core.dll") ] ]
+              altrules ]
             |> List.concat
             |> List.map (fun f -> (f, Some "tools/netcoreapp2.1/any", None)) ]
 
