@@ -857,8 +857,9 @@ module Targets =
 
       if
         Environment.isWindows
-        && [ "GITHUB_RUN_NUMBER" ]
-           |> List.exists (
+        && [ "GITHUB_RUN_NUMBER"
+             "COVERALLS_REPO_TOKEN" ]
+           |> List.forall (
              Environment.environVar
              >> String.IsNullOrWhiteSpace
              >> not
@@ -1137,9 +1138,7 @@ module Targets =
       let netcore =
         List.concat
           [ netcoremain
-            [ syslibs
-              rules
-              altrules ]
+            [ syslibs; rules; altrules ]
             |> List.concat
             |> List.map (fun f -> (f, Some "tools/netcoreapp2.1/any", None)) ]
 
