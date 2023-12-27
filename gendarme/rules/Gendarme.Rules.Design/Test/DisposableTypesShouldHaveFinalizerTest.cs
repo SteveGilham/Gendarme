@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,146 +40,157 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+  internal class HasFinalizer : IDisposable
+  {
+    private IntPtr A;
 
-	class HasFinalizer : IDisposable {
-		IntPtr A;
-		~HasFinalizer ()
-		{
-		}
+    ~HasFinalizer()
+    {
+    }
 
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
 
-		IEnumerator<byte> GetBytes ()
-		{
-			for (int i = 0; i < 10; i++)
-				yield return Marshal.ReadByte (A, i);
-		}
-	}
+    private IEnumerator<byte> GetBytes()
+    {
+      for (int i = 0; i < 10; i++)
+        yield return Marshal.ReadByte(A, i);
+    }
+  }
 
-	class NoFinalizer : IDisposable {
-		IntPtr A;
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-	}
-	
-	class NotDisposable {
-		IntPtr A;
-	}
+  internal class NoFinalizer : IDisposable
+  {
+    private IntPtr A;
 
-	class NoNativeField : IDisposable {
-		object A;
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-	}
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-	class NativeFieldArray : IDisposable {
-		IntPtr [] A;
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-	}
+  internal class NotDisposable
+  {
+    private IntPtr A;
+  }
 
-	class NotDisposableBecauseStatic : IDisposable {
-		static IntPtr A;
+  internal class NoNativeField : IDisposable
+  {
+    private object A;
 
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-	}
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-	// note: struct cannot have finalizer
-	struct NoNativeDisposableStruct : IDisposable {
+  internal class NativeFieldArray : IDisposable
+  {
+    private IntPtr[] A;
 
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-	}
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-	struct NativeFieldDisposableStruct : IDisposable {
-		IntPtr ptr;
+  internal class NotDisposableBecauseStatic : IDisposable
+  {
+    private static IntPtr A;
 
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
-	}
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-	[TestFixture]
-	public class DisposableTypesShouldHaveFinalizerTest : TypeRuleTestFixture<DisposableTypesShouldHaveFinalizerRule> {
+  // note: struct cannot have finalizer
+  internal struct NoNativeDisposableStruct : IDisposable
+  {
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-		}
+  internal struct NativeFieldDisposableStruct : IDisposable
+  {
+    private IntPtr ptr;
 
-		[Test]
-		public void DoesNotApplyGeneratedCode ()
-		{
-			var declaring_type = DefinitionLoader.GetTypeDefinition<HasFinalizer> ();
-	
-			Assert.IsTrue (declaring_type.HasNestedTypes, "HasFinalizer-HasNestedTypes");
-			Assert.AreEqual (1, declaring_type.NestedTypes.Count, "HasFinalized-NestedTypesCount-1");
+    public void Dispose()
+    {
+      throw new NotImplementedException();
+    }
+  }
 
-			var type = declaring_type.NestedTypes [0];
+  [TestFixture]
+  public class DisposableTypesShouldHaveFinalizerTest : TypeRuleTestFixture<DisposableTypesShouldHaveFinalizerRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+    }
 
-			Assert.IsTrue (type.IsGeneratedCode (), "NestedType-IsGeneratedCode-True");
-			AssertRuleDoesNotApply (type);
-		}
+    [Test]
+    public void DoesNotApplyGeneratedCode()
+    {
+      var declaring_type = DefinitionLoader.GetTypeDefinition<HasFinalizer>();
 
-		[Test]
-		public void TestHasFinalizer ()
-		{
-			AssertRuleSuccess<HasFinalizer> ();
-		}
+      Assert.That(declaring_type.HasNestedTypes, "HasFinalizer-HasNestedTypes");
+      Assert.That(1, Is.EqualTo(declaring_type.NestedTypes.Count), "HasFinalized-NestedTypesCount-1");
 
-		[Test]
-		public void TestNoFinalizer ()
-		{
-			AssertRuleFailure<NoFinalizer> (1);
-		}
+      var type = declaring_type.NestedTypes[0];
 
-		[Test]
-		public void TestNotDisposable ()
-		{
-			AssertRuleDoesNotApply<NotDisposable> ();
-		}
+      Assert.That(type.IsGeneratedCode(), "NestedType-IsGeneratedCode-True");
+      AssertRuleDoesNotApply(type);
+    }
 
-		[Test]
-		public void TestNoNativeFields ()
-		{
-			AssertRuleSuccess<NoNativeField> ();
-		}
+    [Test]
+    public void TestHasFinalizer()
+    {
+      AssertRuleSuccess<HasFinalizer>();
+    }
 
-		[Test]
-		public void TestNativeFieldArray ()
-		{
-			AssertRuleFailure<NativeFieldArray> (1);
-		}
+    [Test]
+    public void TestNoFinalizer()
+    {
+      AssertRuleFailure<NoFinalizer>(1);
+    }
 
-		[Test]
-		public void TestNotDisposableBecauseStatic ()
-		{
-			AssertRuleSuccess<NotDisposableBecauseStatic> ();
-		}
+    [Test]
+    public void TestNotDisposable()
+    {
+      AssertRuleDoesNotApply<NotDisposable>();
+    }
 
-		[Test]
-		public void Struct ()
-		{
-			AssertRuleSuccess<NoNativeDisposableStruct> ();
-			AssertRuleFailure<NativeFieldDisposableStruct> (2); // one field + struct
-		}
-	}
+    [Test]
+    public void TestNoNativeFields()
+    {
+      AssertRuleSuccess<NoNativeField>();
+    }
+
+    [Test]
+    public void TestNativeFieldArray()
+    {
+      AssertRuleFailure<NativeFieldArray>(1);
+    }
+
+    [Test]
+    public void TestNotDisposableBecauseStatic()
+    {
+      AssertRuleSuccess<NotDisposableBecauseStatic>();
+    }
+
+    [Test]
+    public void Struct()
+    {
+      AssertRuleSuccess<NoNativeDisposableStruct>();
+      AssertRuleFailure<NativeFieldDisposableStruct>(2); // one field + struct
+    }
+  }
 }

@@ -66,6 +66,11 @@ namespace Test.Rules.BadPractice
       return assembly.MainModule.GetType(typeof(T).FullName);
     }
 
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
     [Test]
     public void TestGetEntryAssemblyCallFromExecutable()
     {
@@ -76,8 +81,8 @@ namespace Test.Rules.BadPractice
         assembly.EntryPoint = GetTest<Examples.Rules.BadPractice.ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "MainName");
         assembly.MainModule.Kind = ModuleKind.Console;
         MethodDefinition method = GetTest<Examples.Rules.BadPractice.ClassCallingGetEntryAssembly>(assembly).Methods.FirstOrDefault(m => m.Name == "ThreeCalls");
-        Assert.AreEqual(RuleResult.DoesNotApply, (Runner as TestRunner).CheckMethod(method), "RuleResult");
-        Assert.AreEqual(0, Runner.Defects.Count, "Count");
+        AssertAreEqual(RuleResult.DoesNotApply, (Runner as TestRunner).CheckMethod(method), "RuleResult");
+        AssertAreEqual(0, Runner.Defects.Count, "Count");
       }
       finally
       {

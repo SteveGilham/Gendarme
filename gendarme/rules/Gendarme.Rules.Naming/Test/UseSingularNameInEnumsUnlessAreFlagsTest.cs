@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 
 using System;
 using System.Collections;
@@ -38,69 +37,77 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Naming {
-	
-	public enum DayOfWeek {
-		Sunday,
-		Monday,
-		Tuesday,
-		Wednesday,
-		Thursday,
-		Friday,
-		Saturday
-	}
-	
-	public enum DateTimeKinds {
-		Local, 
-		Unspecified,
-		Utc
-	}
-	
-	[Flags]
-	public enum StringSplitOptions {
-		None,
-		RemoveEmptyEntries
-	}
-	
-	[TestFixture]
-	public class UseSingularNameInEnumsUnlessAreFlagsTest {
-		
-		private ITypeRule rule;
-		private AssemblyDefinition assembly;
-		private TypeDefinition type;
-		private TestRunner runner;
+namespace Test.Rules.Naming
+{
+  public enum DayOfWeek
+  {
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday
+  }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			rule = new UseSingularNameInEnumsUnlessAreFlagsRule ();
-			runner = new TestRunner (rule);
-		}
-		
-		[Test]
-		public void TestEnumHasSingularName () 
-		{
-			type = assembly.MainModule.GetType ("Test.Rules.Naming.DayOfWeek");
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-		
-		[Test]
-		public void TestEnumHasPluralName () 
-		{
-			type = assembly.MainModule.GetType ("Test.Rules.Naming.DateTimeKinds");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-		
-		[Test]
-		public void TestFlagsAllowedToHavePluralNames () 
-		{
-			type = assembly.MainModule.GetType ("Test.Rules.Naming.StringSplitOptions");
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-	}
+  public enum DateTimeKinds
+  {
+    Local,
+    Unspecified,
+    Utc
+  }
+
+  [Flags]
+  public enum StringSplitOptions
+  {
+    None,
+    RemoveEmptyEntries
+  }
+
+  [TestFixture]
+  public class UseSingularNameInEnumsUnlessAreFlagsTest
+  {
+    private ITypeRule rule;
+    private AssemblyDefinition assembly;
+    private TypeDefinition type;
+    private TestRunner runner;
+
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      rule = new UseSingularNameInEnumsUnlessAreFlagsRule();
+      runner = new TestRunner(rule);
+    }
+
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
+    [Test]
+    public void TestEnumHasSingularName()
+    {
+      type = assembly.MainModule.GetType("Test.Rules.Naming.DayOfWeek");
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
+
+    [Test]
+    public void TestEnumHasPluralName()
+    {
+      type = assembly.MainModule.GetType("Test.Rules.Naming.DateTimeKinds");
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
+
+    [Test]
+    public void TestFlagsAllowedToHavePluralNames()
+    {
+      type = assembly.MainModule.GetType("Test.Rules.Naming.StringSplitOptions");
+      AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
+  }
 }

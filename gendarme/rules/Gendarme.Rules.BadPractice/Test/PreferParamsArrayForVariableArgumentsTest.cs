@@ -68,14 +68,19 @@ namespace Test.Rules.BadPractice
 #endif
     }
 
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
     [Test]
     public void ArgIterator()
     {
       AssertRuleFailure<PreferParamsArrayForVariableArgumentsTest>("ShowItems_NoParameter", 1);
-      Assert.AreEqual(Severity.High, Runner.Defects[0].Severity, "private");
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "private");
 
       AssertRuleFailure<PreferParamsArrayForVariableArgumentsTest>("ShowItems_Bad", 1);
-      Assert.AreEqual(Severity.Critical, Runner.Defects[0].Severity, "public");
+      AssertAreEqual(Severity.Critical, Runner.Defects[0].Severity, "public");
     }
 
     [DllImport("libc.dll")]

@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -34,125 +34,128 @@ using Gendarme.Rules.Design;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+  [TestFixture]
+  public class AvoidRefAndOutParametersTest : MethodRuleTestFixture<AvoidRefAndOutParametersRule>
+  {
+    private bool PrivateByReference(ref DateTime date)
+    {
+      date = date.AddDays(1);
+      return date.IsDaylightSavingTime();
+    }
 
-	[TestFixture]
-	public class AvoidRefAndOutParametersTest : MethodRuleTestFixture<AvoidRefAndOutParametersRule> {
+    internal void InternalOut(string input, out string output)
+    {
+      output = input;
+    }
 
-		private bool PrivateByReference (ref DateTime date)
-		{
-			date = date.AddDays (1);
-			return date.IsDaylightSavingTime ();
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<AvoidRefAndOutParametersTest>("PrivateByReference");
+      AssertRuleDoesNotApply<AvoidRefAndOutParametersTest>("InternalOut");
+    }
 
-		internal void InternalOut (string input, out string output)
-		{
-			output = input;
-		}
+    public bool PublicByReference(ref DateTime date)
+    {
+      date = date.AddDays(1);
+      return date.IsDaylightSavingTime();
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<AvoidRefAndOutParametersTest> ("PrivateByReference");
-			AssertRuleDoesNotApply<AvoidRefAndOutParametersTest> ("InternalOut");
-		}
+    [Test]
+    public void Reference()
+    {
+      AssertRuleFailure<AvoidRefAndOutParametersTest>("PublicByReference", 1);
+      Assert.That(Severity.Medium, Is.EqualTo(Runner.Defects[0].Severity), "Severity");
+    }
 
-		public bool PublicByReference (ref DateTime date)
-		{
-			date = date.AddDays (1);
-			return date.IsDaylightSavingTime ();
-		}
+    protected void ProtectedOut(string input, out string output)
+    {
+      output = input;
+    }
 
-		[Test]
-		public void Reference ()
-		{
-			AssertRuleFailure<AvoidRefAndOutParametersTest> ("PublicByReference", 1);
-			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "Severity");
-		}
+    public bool TrySomething(string something, out DateTime date)
+    {
+      date = DateTime.ParseExact(something, null, null);
+      return date.IsDaylightSavingTime();
+    }
 
-		protected void ProtectedOut (string input, out string output)
-		{
-			output = input;
-		}
+    [Test]
+    public void Out()
+    {
+      AssertRuleFailure<AvoidRefAndOutParametersTest>("ProtectedOut", 1);
+      Assert.That(Severity.Low, Is.EqualTo(Runner.Defects[0].Severity), "Severity");
+      AssertRuleSuccess<AvoidRefAndOutParametersTest>("TrySomething");
+    }
 
-		public bool TrySomething (string something, out DateTime date)
-		{
-			date = DateTime.ParseExact (something, null, null);
-			return date.IsDaylightSavingTime ();
-		}
+    public interface InterfaceWithRef
+    {
+      void Ref(string input, ref string output);
+    }
 
-		[Test]
-		public void Out ()
-		{
-			AssertRuleFailure<AvoidRefAndOutParametersTest> ("ProtectedOut", 1);
-			Assert.AreEqual (Severity.Low, Runner.Defects [0].Severity, "Severity");
-			AssertRuleSuccess<AvoidRefAndOutParametersTest> ("TrySomething");
-		}
+    public interface InterfaceWithOut
+    {
+      bool Out(int input, out long output);
+    }
 
-		public interface InterfaceWithRef {
-			void Ref (string input, ref string output);
-		}
+    public abstract class PoorType : InterfaceWithOut, InterfaceWithRef
+    {
+      public bool Out(int input, out long output)
+      {
+        throw new NotImplementedException();
+      }
 
-		public interface InterfaceWithOut {
-			bool Out (int input, out long output);
-		}
+      public abstract void Ref(string input, ref string output);
+    }
 
-		public abstract class PoorType : InterfaceWithOut, InterfaceWithRef {
+    public class InheritedButStillPoor : PoorType
+    {
+      public override void Ref(string input, ref string output)
+      {
+        throw new NotImplementedException();
+      }
+    }
 
-			public bool Out (int input, out long output)
-			{
-				throw new NotImplementedException ();
-			}
+    public interface InterfaceHidingAnOut : InterfaceWithOut
+    {
+      bool TryOut(int input, out long output);
+    }
 
-			abstract public void Ref (string input, ref string output);
-		}
+    public class InheritedHiddenOut : InterfaceHidingAnOut
+    {
+      public bool TryOut(int input, out long output)
+      {
+        throw new NotImplementedException();
+      }
 
-		public class InheritedButStillPoor : PoorType {
+      public bool Out(int input, out long output)
+      {
+        throw new NotImplementedException();
+      }
+    }
 
-			public override void Ref (string input, ref string output)
-			{
-				throw new NotImplementedException ();
-			}
-		}
+    [Test]
+    public void Interfaces()
+    {
+      AssertRuleFailure<InterfaceWithRef>("Ref", 1);
+      AssertRuleFailure<InterfaceWithOut>("Out", 1);
 
-		public interface InterfaceHidingAnOut : InterfaceWithOut {
-			bool TryOut (int input, out long output);
-		}
+      // PoorType did not had any choice (but we'll only blame the interfaces)
+      AssertRuleSuccess<PoorType>("Ref");
+      AssertRuleSuccess<PoorType>("Out");
 
-		public class InheritedHiddenOut : InterfaceHidingAnOut {
+      // neither did InheritedButStillPoor
+      AssertRuleSuccess<InheritedButStillPoor>("Ref");
 
-			public bool TryOut (int input, out long output)
-			{
-				throw new NotImplementedException ();
-			}
+      // Try pattern in an interface
+      AssertRuleSuccess<InterfaceHidingAnOut>("TryOut");
 
-			public bool Out (int input, out long output)
-			{
-				throw new NotImplementedException ();
-			}
-		}
+      // Try pattern dictated by interface (does not matter)
+      AssertRuleSuccess<InheritedHiddenOut>("TryOut");
 
-		[Test]
-		public void Interfaces ()
-		{
-			AssertRuleFailure<InterfaceWithRef> ("Ref", 1);
-			AssertRuleFailure<InterfaceWithOut> ("Out", 1);
-
-			// PoorType did not had any choice (but we'll only blame the interfaces)
-			AssertRuleSuccess<PoorType> ("Ref");
-			AssertRuleSuccess<PoorType> ("Out");
-
-			// neither did InheritedButStillPoor
-			AssertRuleSuccess<InheritedButStillPoor> ("Ref");
-
-			// Try pattern in an interface
-			AssertRuleSuccess<InterfaceHidingAnOut> ("TryOut");
-
-			// Try pattern dictated by interface (does not matter)
-			AssertRuleSuccess<InheritedHiddenOut> ("TryOut");
-
-			// again the type has no choice but implement InterfaceWithOut.Out
-			AssertRuleSuccess<InheritedHiddenOut> ("Out");
-		}
-	}
+      // again the type has no choice but implement InterfaceWithOut.Out
+      AssertRuleSuccess<InheritedHiddenOut>("Out");
+    }
+  }
 }

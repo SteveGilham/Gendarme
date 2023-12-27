@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,73 +39,79 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Interoperability {
+namespace Test.Rules.Interoperability
+{
+  [TestFixture]
+  public class UseManagedAlternativesToPInvokeTest
+  {
+    private UseManagedAlternativesToPInvokeRule rule;
+    private AssemblyDefinition assembly;
+    private TypeDefinition type;
+    private TestRunner runner;
 
-	[TestFixture]
-	public class UseManagedAlternativesToPInvokeTest {
+    [DllImport("kernel32")]
+    private static extern void Sleep(uint time); // bad because we have Thread.Sleep ()
 
-		private UseManagedAlternativesToPInvokeRule rule;
-		private AssemblyDefinition assembly;
-		private TypeDefinition type;
-		private TestRunner runner;
+    [DllImport("user32.dll")]
+    private static extern Boolean MessageBeep(UInt32 beepType); // ok
 
-		[DllImport ("kernel32")]
-		static extern void Sleep (uint time); // bad because we have Thread.Sleep ()
+    [DllImport("kernel32.dll")]
+    private static extern Boolean FindFirstFile(); // wrong definition, but this occurs frequently in real life :|
 
-		[DllImport ("user32.dll")]
-		static extern Boolean MessageBeep (UInt32 beepType); // ok
+    public void EmptyMethod()
+    { } // FIXME: replace with PerfectMethods.EmptyMethod when porting to new tests model
 
-		[DllImport ("kernel32.dll")]
-		static extern Boolean FindFirstFile (); // wrong definition, but this occurs frequently in real life :|
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      type = assembly.MainModule.GetType("Test.Rules.Interoperability.UseManagedAlternativesToPInvokeTest");
+      rule = new UseManagedAlternativesToPInvokeRule();
+      runner = new TestRunner(rule);
+    }
 
-		public void EmptyMethod () { } // FIXME: replace with PerfectMethods.EmptyMethod when porting to new tests model
+    private MethodDefinition GetTest(string name)
+    {
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.Name == name)
+          return method;
+      }
+      return null;
+    }
 
+    protected void AssertAreEqual(object a, object b)
+    {
+      Assert.That(a, Is.EqualTo(b));
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			type = assembly.MainModule.GetType ("Test.Rules.Interoperability.UseManagedAlternativesToPInvokeTest");
-			rule = new UseManagedAlternativesToPInvokeRule ();
-			runner = new TestRunner (rule);
-		}
+    [Test]
+    public void TestEmptyMethod()
+    {
+      MethodDefinition method = GetTest("EmptyMethod");
+      AssertAreEqual(RuleResult.DoesNotApply, runner.CheckMethod(method));
+    }
 
-		private MethodDefinition GetTest (string name)
-		{
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.Name == name)
-					return method;
-			}
-			return null;
-		}
+    [Test]
+    public void TestBadMethod()
+    {
+      MethodDefinition method = GetTest("Sleep");
+      AssertAreEqual(RuleResult.Failure, runner.CheckMethod(method));
+    }
 
-		[Test]
-		public void TestEmptyMethod ()
-		{
-			MethodDefinition method = GetTest ("EmptyMethod");
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckMethod (method));
-		}
+    [Test]
+    public void TestBadMethodMultipleSolutions()
+    {
+      MethodDefinition method = GetTest("FindFirstFile");
+      AssertAreEqual(RuleResult.Failure, runner.CheckMethod(method));
+    }
 
-		[Test]
-		public void TestBadMethod ()
-		{
-			MethodDefinition method = GetTest ("Sleep");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method));
-		}
-
-		[Test]
-		public void TestBadMethodMultipleSolutions ()
-		{
-			MethodDefinition method = GetTest ("FindFirstFile");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method));
-		}
-
-		[Test]
-		public void TestOkMethod ()
-		{
-			MethodDefinition method = GetTest ("MessageBeep");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method));
-		}
-	}
+    [Test]
+    public void TestOkMethod()
+    {
+      MethodDefinition method = GetTest("MessageBeep");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method));
+    }
+  }
 }

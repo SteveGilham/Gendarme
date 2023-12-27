@@ -67,16 +67,21 @@ namespace Test.Rules.BadPractice
       return (type.GetInterface("IConvertible", ignoreCase) != null);
     }
 
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
     [Test]
     public void Bad()
     {
-      Assert.IsTrue(IsAssignableUsingGetInterface(typeof(Convertible)), "my.IConvertible");
+      Assert.That(IsAssignableUsingGetInterface(typeof(Convertible)), "my.IConvertible");
       AssertRuleFailure<DoNotUseGetInterfaceToCheckAssignabilityTest>("IsAssignableUsingGetInterface", 1);
-      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
 
-      Assert.IsTrue(IsAssignableUsingGetInterfaceCase(typeof(Convertible), true), "my.IConvertible-false");
+      Assert.That(IsAssignableUsingGetInterfaceCase(typeof(Convertible), true), "my.IConvertible-false");
       AssertRuleFailure<DoNotUseGetInterfaceToCheckAssignabilityTest>("IsAssignableUsingGetInterfaceCase", 1);
-      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
     }
 
     // in this case it's difficult to know if the code can be re-written to use a type
@@ -94,13 +99,13 @@ namespace Test.Rules.BadPractice
     [Test]
     public void Bad_LowConfidence()
     {
-      Assert.IsTrue(IsAssignableUsingGetInterfaceNotConstant(typeof(Convertible), "IConvertible"), "my.IConvertible");
+      Assert.That(IsAssignableUsingGetInterfaceNotConstant(typeof(Convertible), "IConvertible"), "my.IConvertible");
       AssertRuleFailure<DoNotUseGetInterfaceToCheckAssignabilityTest>("IsAssignableUsingGetInterfaceNotConstant", 1);
-      Assert.AreEqual(Confidence.Low, Runner.Defects[0].Confidence, "1");
+      AssertAreEqual(Confidence.Low, Runner.Defects[0].Confidence, "1");
 
-      Assert.IsTrue(IsAssignableUsingGetInterfaceNotConstantCase(typeof(Convertible), "IConvertible", false), "my.IConvertible-false");
+      Assert.That(IsAssignableUsingGetInterfaceNotConstantCase(typeof(Convertible), "IConvertible", false), "my.IConvertible-false");
       AssertRuleFailure<DoNotUseGetInterfaceToCheckAssignabilityTest>("IsAssignableUsingGetInterfaceNotConstantCase", 1);
-      Assert.AreEqual(Confidence.Low, Runner.Defects[0].Confidence, "2");
+      AssertAreEqual(Confidence.Low, Runner.Defects[0].Confidence, "2");
     }
 
     public Type GetTypeInterface(Type type, string name)
@@ -112,7 +117,7 @@ namespace Test.Rules.BadPractice
     [Test]
     public void Ok()
     {
-      Assert.AreEqual(typeof(IConvertible), GetTypeInterface(typeof(Convertible), "IConvertible"), "Usage");
+      AssertAreEqual(typeof(IConvertible), GetTypeInterface(typeof(Convertible), "IConvertible"), "Usage");
       AssertRuleSuccess<DoNotUseGetInterfaceToCheckAssignabilityTest>("GetTypeInterface");
     }
 
@@ -124,7 +129,7 @@ namespace Test.Rules.BadPractice
     [Test]
     public void Good()
     {
-      Assert.IsFalse(IsAssignable(typeof(Convertible), typeof(System.IConvertible)), "System.IConvertible");
+      Assert.That(!IsAssignable(typeof(Convertible), typeof(System.IConvertible)), "System.IConvertible");
       AssertRuleSuccess<DoNotUseGetInterfaceToCheckAssignabilityTest>("IsAssignable");
     }
 

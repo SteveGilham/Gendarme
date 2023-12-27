@@ -34,164 +34,166 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
 
-	[TestFixture]
-	public class ReplaceIncompleteOddnessCheckTest : MethodRuleTestFixture<ReplaceIncompleteOddnessCheckRule> {
+  [TestFixture]
+  public class ReplaceIncompleteOddnessCheckTest : MethodRuleTestFixture<ReplaceIncompleteOddnessCheckRule>
+  {
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+    }
 
-		// common, but incomplete, oddness check
-		public bool IsIntOddBad (int x)
-		{
-			// this won't work for negative numbers (returns -1)
-			return ((x % 2) == 1);
-		}
+    // common, but incomplete, oddness check
+    public bool IsIntOddBad(int x)
+    {
+      // this won't work for negative numbers (returns -1)
+      return ((x % 2) == 1);
+    }
 
-		public bool IsLongOddBad (long x)
-		{
-			// this won't work for negative numbers (returns -1)
-			return ((x % 2) == 1);
-		}
+    public bool IsLongOddBad(long x)
+    {
+      // this won't work for negative numbers (returns -1)
+      return ((x % 2) == 1);
+    }
 
-		[Test]
-		public void Bad ()
-		{
-			Assert.IsTrue (IsIntOddBad (1), "1");
-			Assert.IsFalse (IsIntOddBad (-1), "-1");	// uho
-			Assert.IsFalse (IsIntOddBad (2), "2");
-			Assert.IsFalse (IsIntOddBad (-2), "-2");
-			AssertRuleFailure<ReplaceIncompleteOddnessCheckTest> ("IsIntOddBad", 1);
+    [Test]
+    public void Bad()
+    {
+      Assert.That(IsIntOddBad(1), "1");
+      Assert.That(!IsIntOddBad(-1), "-1");  // uho
+      Assert.That(!IsIntOddBad(2), "2");
+      Assert.That(!IsIntOddBad(-2), "-2");
+      AssertRuleFailure<ReplaceIncompleteOddnessCheckTest>("IsIntOddBad", 1);
 
-			Assert.IsFalse (IsLongOddBad (Int64.MinValue), "Int64.MinValue");
-			Assert.IsTrue (IsLongOddBad (Int64.MaxValue), "Int64.MaxValue");
-			AssertRuleFailure<ReplaceIncompleteOddnessCheckTest> ("IsLongOddBad", 1);
-		}
+      Assert.That(!IsLongOddBad(Int64.MinValue), "Int64.MinValue");
+      Assert.That(IsLongOddBad(Int64.MaxValue), "Int64.MaxValue");
+      AssertRuleFailure<ReplaceIncompleteOddnessCheckTest>("IsLongOddBad", 1);
+    }
 
-		public bool IsUnsignedByteOddBad (byte x)
-		{
-			// this can't be a negative number since it's unsigned
-			return ((x % 2) == 1);
-		}
+    public bool IsUnsignedByteOddBad(byte x)
+    {
+      // this can't be a negative number since it's unsigned
+      return ((x % 2) == 1);
+    }
 
-		public bool IsUnsignedLongOddBad (ulong x)
-		{
-			// this can't be a negative number since it's unsigned
-			return ((x % 2) == 1);
-		}
+    public bool IsUnsignedLongOddBad(ulong x)
+    {
+      // this can't be a negative number since it's unsigned
+      return ((x % 2) == 1);
+    }
 
-		[Test]
-		public void Unsigned ()
-		{
-			Assert.IsFalse (IsUnsignedByteOddBad (Byte.MinValue), "Byte.MinValue");
-			Assert.IsTrue (IsUnsignedByteOddBad (Byte.MaxValue), "Byte.MaxValue");
-			AssertRuleFailure<ReplaceIncompleteOddnessCheckTest> ("IsUnsignedByteOddBad", 1);
+    [Test]
+    public void Unsigned()
+    {
+      Assert.That(!IsUnsignedByteOddBad(Byte.MinValue), "Byte.MinValue");
+      Assert.That(IsUnsignedByteOddBad(Byte.MaxValue), "Byte.MaxValue");
+      AssertRuleFailure<ReplaceIncompleteOddnessCheckTest>("IsUnsignedByteOddBad", 1);
 
-			Assert.IsFalse (IsUnsignedLongOddBad (UInt64.MinValue), "UInt64.MinValue");
-			Assert.IsTrue (IsUnsignedLongOddBad (UInt64.MaxValue), "UInt64.MaxValue");
-			AssertRuleFailure<ReplaceIncompleteOddnessCheckTest> ("IsUnsignedLongOddBad", 1);
-		}
+      Assert.That(!IsUnsignedLongOddBad(UInt64.MinValue), "UInt64.MinValue");
+      Assert.That(IsUnsignedLongOddBad(UInt64.MaxValue), "UInt64.MaxValue");
+      AssertRuleFailure<ReplaceIncompleteOddnessCheckTest>("IsUnsignedLongOddBad", 1);
+    }
 
-		// fixed version, i.e. what the developer expected
-		public bool IsOddGood (int x)
-		{
-			return ((x % 2) != 0);
-		}
+    // fixed version, i.e. what the developer expected
+    public bool IsOddGood(int x)
+    {
+      return ((x % 2) != 0);
+    }
 
-		[Test]
-		public void Good ()
-		{
-			Assert.IsTrue (IsOddGood (1), "1");
-			Assert.IsTrue (IsOddGood (-1), "-1");
-			Assert.IsFalse (IsOddGood (2), "2");
-			Assert.IsFalse (IsOddGood (-2), "-2");
-			AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest> ("IsOddGood");
-		}
+    [Test]
+    public void Good()
+    {
+      Assert.That(IsOddGood(1), "1");
+      Assert.That(IsOddGood(-1), "-1");
+      Assert.That(!IsOddGood(2), "2");
+      Assert.That(!IsOddGood(-2), "-2");
+      AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest>("IsOddGood");
+    }
 
-		// better version, without modulo, that works on all integer
-		public bool IsOddBest (int x)
-		{
-			return ((x & 1) == 1);
-		}
+    // better version, without modulo, that works on all integer
+    public bool IsOddBest(int x)
+    {
+      return ((x & 1) == 1);
+    }
 
-		[Test]
-		public void Best ()
-		{
-			Assert.IsTrue (IsOddBest (1), "1");
-			Assert.IsTrue (IsOddBest (-1), "-1");
-			Assert.IsFalse (IsOddBest (2), "2");
-			Assert.IsFalse (IsOddBest (-2), "-2");
-			// no REM[_UN] instruction is used so the rule does not apply
-			AssertRuleDoesNotApply <ReplaceIncompleteOddnessCheckTest> ("IsOddBest");
-		}
+    [Test]
+    public void Best()
+    {
+      Assert.That(IsOddBest(1), "1");
+      Assert.That(IsOddBest(-1), "-1");
+      Assert.That(!IsOddBest(2), "2");
+      Assert.That(!IsOddBest(-2), "-2");
+      // no REM[_UN] instruction is used so the rule does not apply
+      AssertRuleDoesNotApply<ReplaceIncompleteOddnessCheckTest>("IsOddBest");
+    }
 
-		public bool IsEvenGood (int x)
-		{
-			return ((x % 2) == 0);
-		}
+    public bool IsEvenGood(int x)
+    {
+      return ((x % 2) == 0);
+    }
 
-		[Test]
-		public void EvenGood ()
-		{
-			Assert.IsFalse (IsEvenGood (1), "1");
-			Assert.IsFalse (IsEvenGood (-1), "-1");
-			Assert.IsTrue (IsEvenGood (2), "2");
-			Assert.IsTrue (IsEvenGood (-2), "-2");
-			AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest> ("IsEvenGood");
-		}
+    [Test]
+    public void EvenGood()
+    {
+      Assert.That(!IsEvenGood(1), "1");
+      Assert.That(!IsEvenGood(-1), "-1");
+      Assert.That(IsEvenGood(2), "2");
+      Assert.That(IsEvenGood(-2), "-2");
+      AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest>("IsEvenGood");
+    }
 
-		public bool IsEvenBad (int x)
-		{
-			return ((x % 2) != 1);
-		}
+    public bool IsEvenBad(int x)
+    {
+      return ((x % 2) != 1);
+    }
 
-		[Test]
-		public void EvenBad ()
-		{
-			Assert.IsFalse (IsEvenBad (1), "1");
-			Assert.IsTrue (IsEvenBad (-1), "-1"); // uho
-			Assert.IsTrue (IsEvenBad (2), "2");
-			Assert.IsTrue (IsEvenBad (-2), "-2");
-			AssertRuleFailure<ReplaceIncompleteOddnessCheckTest> ("IsEvenBad");
-		}
+    [Test]
+    public void EvenBad()
+    {
+      Assert.That(!IsEvenBad(1), "1");
+      Assert.That(IsEvenBad(-1), "-1"); // uho
+      Assert.That(IsEvenBad(2), "2");
+      Assert.That(IsEvenBad(-2), "-2");
+      AssertRuleFailure<ReplaceIncompleteOddnessCheckTest>("IsEvenBad");
+    }
 
-		public bool ModuloThree (int x)
-		{
-			return ((x % 3) == 0);
-		}
+    public bool ModuloThree(int x)
+    {
+      return ((x % 3) == 0);
+    }
 
-		public bool Compare (int x)
-		{
-			return ((x % 2) >= 1);
-		}
+    public bool Compare(int x)
+    {
+      return ((x % 2) >= 1);
+    }
 
-		public bool SByteMax (long x)
-		{
-			return ((x % SByte.MaxValue) == 1);
-		}
+    public bool SByteMax(long x)
+    {
+      return ((x % SByte.MaxValue) == 1);
+    }
 
-		public bool Int64Max (long x)
-		{
-			return ((x % Int64.MaxValue) == 1);
-		}
+    public bool Int64Max(long x)
+    {
+      return ((x % Int64.MaxValue) == 1);
+    }
 
-		public bool Int32Max (int x)
-		{
-			return ((x % Int32.MaxValue) == 1);
-		}
+    public bool Int32Max(int x)
+    {
+      return ((x % Int32.MaxValue) == 1);
+    }
 
-		[Test]
-		public void NonOddnessVariations ()
-		{
-			AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest> ("ModuloThree");
-			AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest> ("Compare");
-			AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest> ("SByteMax");
-			AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest> ("Int64Max");
-			AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest> ("Int32Max");
-		}
-	}
+    [Test]
+    public void NonOddnessVariations()
+    {
+      AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest>("ModuloThree");
+      AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest>("Compare");
+      AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest>("SByteMax");
+      AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest>("Int64Max");
+      AssertRuleSuccess<ReplaceIncompleteOddnessCheckTest>("Int32Max");
+    }
+  }
 }

@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,6 +31,7 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+
 using SSP = System.Security.Permissions;
 
 using Gendarme.Framework;
@@ -40,129 +41,140 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Security.Cas {
+namespace Test.Rules.Security.Cas
+{
+  [TestFixture]
+  public class ReviewNonVirtualMethodWithInheritanceDemandTest
+  {
+    public abstract class AbstractMethodsClass
+    {
+      [SecurityPermission(SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
+      public abstract void Abstract();
+    }
 
-	[TestFixture]
-	public class ReviewNonVirtualMethodWithInheritanceDemandTest {
+    public class VirtualMethodsClass : AbstractMethodsClass
+    {
+      public override void Abstract()
+      {
+      }
 
-		public abstract class AbstractMethodsClass {
+      [SecurityPermission(SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
+      public virtual void Virtual()
+      {
+      }
+    }
 
-			[SecurityPermission (SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
-			public abstract void Abstract ();
-		}
+    public class NoVirtualMethodsClass
+    {
+      [SecurityPermission(SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
+      public void Method()
+      {
+      }
 
-		public class VirtualMethodsClass: AbstractMethodsClass  {
+      [SecurityPermission(SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
+      public static void StaticMethod()
+      {
+      }
+    }
 
-			public override void Abstract ()
-			{
-			}
+    public abstract class NotInheritanceDemandClass
+    {
+      [SecurityPermission(SSP.SecurityAction.LinkDemand, ControlAppDomain = true)]
+      public abstract void Asbtract();
 
-			[SecurityPermission (SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
-			public virtual void Virtual ()
-			{
-			}
-		}
+      [SecurityPermission(SSP.SecurityAction.Demand, ControlAppDomain = true)]
+      public virtual void Virtual()
+      {
+      }
 
-		public class NoVirtualMethodsClass {
+      [SecurityPermission(SSP.SecurityAction.LinkDemand, ControlAppDomain = true)]
+      public void Method()
+      {
+      }
 
-			[SecurityPermission (SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
-			public void Method ()
-			{
-			}
+      [SecurityPermission(SSP.SecurityAction.Demand, ControlAppDomain = true)]
+      public static void StaticMethod()
+      {
+      }
+    }
 
-			[SecurityPermission (SSP.SecurityAction.InheritanceDemand, ControlAppDomain = true)]
-			static public void StaticMethod ()
-			{
-			}
-		}
+    private IMethodRule rule;
+    private TestRunner runner;
+    private AssemblyDefinition assembly;
 
-		public abstract class NotInheritanceDemandClass {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      rule = new ReviewNonVirtualMethodWithInheritanceDemandRule();
+      runner = new TestRunner(rule);
+    }
 
-			[SecurityPermission (SSP.SecurityAction.LinkDemand, ControlAppDomain = true)]
-			public abstract void Asbtract ();
+    private TypeDefinition GetTest(string name)
+    {
+      string fullname = "Test.Rules.Security.Cas.ReviewNonVirtualMethodWithInheritanceDemandTest/" + name;
+      return assembly.MainModule.GetType(fullname);
+    }
 
-			[SecurityPermission (SSP.SecurityAction.Demand, ControlAppDomain = true)]
-			public virtual void Virtual ()
-			{
-			}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-			[SecurityPermission (SSP.SecurityAction.LinkDemand, ControlAppDomain = true)]
-			public void Method ()
-			{
-			}
+    [Test]
+    public void AbstractMethods()
+    {
+      TypeDefinition type = GetTest("AbstractMethodsClass");
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.IsConstructor)
+          continue;
+        AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), method.ToString());
+      }
+    }
 
-			[SecurityPermission (SSP.SecurityAction.Demand, ControlAppDomain = true)]
-			static public void StaticMethod ()
-			{
-			}
-		}
+    [Test]
+    public void VirtualMethods()
+    {
+      TypeDefinition type = GetTest("VirtualMethodsClass");
+      foreach (MethodDefinition method in type.Methods)
+      {
+        switch (method.Name)
+        {
+          case "Abstract":
+            AssertAreEqual(RuleResult.DoesNotApply, runner.CheckMethod(method), method.Name);
+            break;
 
-		private IMethodRule rule;
-		private TestRunner runner;
-		private AssemblyDefinition assembly;
+          case "Virtual":
+            AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), method.Name);
+            break;
+        }
+      }
+    }
 
-		[OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			rule = new ReviewNonVirtualMethodWithInheritanceDemandRule ();
-			runner = new TestRunner (rule);
-		}
+    [Test]
+    public void NoVirtualMethods()
+    {
+      TypeDefinition type = GetTest("NoVirtualMethodsClass");
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.IsConstructor)
+          continue;
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(method), method.ToString());
+      }
+    }
 
-		private TypeDefinition GetTest (string name)
-		{
-			string fullname = "Test.Rules.Security.Cas.ReviewNonVirtualMethodWithInheritanceDemandTest/" + name;
-			return assembly.MainModule.GetType (fullname);
-		}
-
-		[Test]
-		public void AbstractMethods ()
-		{
-			TypeDefinition type = GetTest ("AbstractMethodsClass");
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.IsConstructor)
-					continue;
-				Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), method.ToString ());
-			}
-		}
-
-		[Test]
-		public void VirtualMethods ()
-		{
-			TypeDefinition type = GetTest ("VirtualMethodsClass");
-			foreach (MethodDefinition method in type.Methods) {
-				switch (method.Name) {
-				case "Abstract":
-					Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckMethod (method), method.Name);
-					break;
-				case "Virtual":
-					Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), method.Name);
-					break;
-				}
-			}
-		}
-
-		[Test]
-		public void NoVirtualMethods ()
-		{
-			TypeDefinition type = GetTest ("NoVirtualMethodsClass");
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.IsConstructor)
-					continue;
-				Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method), method.ToString ());
-			}
-		}
-
-		[Test]
-		public void NotInheritanceDemand ()
-		{
-			TypeDefinition type = GetTest ("NotInheritanceDemandClass");
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.IsConstructor)
-					continue;
-				Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckMethod (method), method.ToString ());
-			}
-		}
-	}
+    [Test]
+    public void NotInheritanceDemand()
+    {
+      TypeDefinition type = GetTest("NotInheritanceDemandClass");
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.IsConstructor)
+          continue;
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckMethod(method), method.ToString());
+      }
+    }
+  }
 }

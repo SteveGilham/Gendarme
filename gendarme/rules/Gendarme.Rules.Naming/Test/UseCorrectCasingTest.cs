@@ -333,7 +333,7 @@ namespace Test.Rules.Naming
       if (type == null)
         type = assembly.MainModule.GetType("Test.Rules.Naming.UseCorrectCasingTest/AnonymousMethod");
 
-      Assert.IsNotNull(type, "type not found");
+      Assert.That(type, Is.Not.Null, "type not found");
       foreach (MethodDefinition method in type.Methods)
       {
         switch (method.Name)

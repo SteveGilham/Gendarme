@@ -33,58 +33,64 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class DoNotUseEnumIsAssignableFromTest : MethodRuleTestFixture<DoNotUseEnumIsAssignableFromRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no CALL[VIRT] instruction
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class DoNotUseEnumIsAssignableFromTest : MethodRuleTestFixture<DoNotUseEnumIsAssignableFromRule> {
+    public bool EnumIsAssignableFromType(Type type)
+    {
+      return typeof(Enum).IsAssignableFrom(type);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no CALL[VIRT] instruction
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    public bool EnumIsAssignableFromBaseType(Type type)
+    {
+      return typeof(Enum).IsAssignableFrom(type.BaseType);
+    }
 
-		public bool EnumIsAssignableFromType (Type type)
-		{
-			return typeof (Enum).IsAssignableFrom (type);
-		}
+    public bool EnumIsEnum(Type type)
+    {
+      return type.IsEnum;
+    }
 
-		public bool EnumIsAssignableFromBaseType (Type type)
-		{
-			return typeof (Enum).IsAssignableFrom (type.BaseType);
-		}
+    private enum Foo
+    {
+      Bar,
+      Baz,
+      Gaz,
+    }
 
-		public bool EnumIsEnum (Type type)
-		{
-			return type.IsEnum;
-		}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		enum Foo {
-			Bar,
-			Baz,
-			Gaz,
-		}
+    [Test]
+    public void Bad()
+    {
+      Assert.That(EnumIsAssignableFromType(typeof(Foo)), "EnumIsAssignableFromType");
+      AssertRuleFailure<DoNotUseEnumIsAssignableFromTest>("EnumIsAssignableFromType", 1);
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
 
-		[Test]
-		public void Bad ()
-		{
-			Assert.IsTrue (EnumIsAssignableFromType (typeof (Foo)), "EnumIsAssignableFromType");
-			AssertRuleFailure<DoNotUseEnumIsAssignableFromTest> ("EnumIsAssignableFromType", 1);
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "1");
+      Assert.That(EnumIsAssignableFromBaseType(typeof(Foo)), "EnumIsAssignableFromBaseType");
+      AssertRuleFailure<DoNotUseEnumIsAssignableFromTest>("EnumIsAssignableFromBaseType", 1);
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
+    }
 
-			Assert.IsTrue (EnumIsAssignableFromBaseType (typeof (Foo)), "EnumIsAssignableFromBaseType");
-			AssertRuleFailure<DoNotUseEnumIsAssignableFromTest> ("EnumIsAssignableFromBaseType", 1);
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "1");
-		}
-
-		[Test]
-		public void Good ()
-		{
-			Assert.IsTrue (EnumIsEnum (typeof (Foo)), "EnumIsEnum");
-			AssertRuleSuccess<DoNotUseEnumIsAssignableFromTest> ("EnumIsEnum");
-		}
-	}
+    [Test]
+    public void Good()
+    {
+      Assert.That(EnumIsEnum(typeof(Foo)), "EnumIsEnum");
+      AssertRuleSuccess<DoNotUseEnumIsAssignableFromTest>("EnumIsEnum");
+    }
+  }
 }

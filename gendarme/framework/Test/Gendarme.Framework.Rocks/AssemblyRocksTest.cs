@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for AssemblyRocks
 //
 // Authors:
@@ -35,46 +35,46 @@ using NUnit.Framework;
 
 namespace Test.Framework.Rocks
 {
-	[TestFixture]
+  [TestFixture]
   public class AssemblyRocksTest
   {
-		private AssemblyDefinition assembly;
+    private AssemblyDefinition assembly;
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
 
-        private static TypeName TN(string ns, string name)
-        {
-            return new TypeName
-            {
-                Namespace = ns,
-                Name = name
-            };
-        }
+    private static TypeName TN(string ns, string name)
+    {
+      return new TypeName
+      {
+        Namespace = ns,
+        Name = name
+      };
+    }
 
-		[Test]
-		public void HasAttribute_Namespace_Null ()
-		{
-			Assert.Throws<ArgumentNullException>(() => 
-			    assembly.HasAttribute (TN (null, "a")));
-		}
+    [Test]
+    public void HasAttribute_Namespace_Null()
+    {
+      Assert.Throws<ArgumentNullException>(() =>
+          assembly.HasAttribute(TN(null, "a")));
+    }
 
-		[Test]
-		public void HasAttribute_Name_Null ()
-		{
-			Assert.Throws<ArgumentNullException>(() => 
-			    assembly.HasAttribute (TN ("a", null)));
-		}
+    [Test]
+    public void HasAttribute_Name_Null()
+    {
+      Assert.Throws<ArgumentNullException>(() =>
+          assembly.HasAttribute(TN("a", null)));
+    }
 
-		[Test]
-		public void HasAttribute ()
-		{
-			Assert.IsTrue (assembly.HasAttribute (TN ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute")), "System.Runtime.CompilerServices.RuntimeCompatibilityAttribute");
-			Assert.IsFalse (assembly.HasAttribute (TN ("NUnit.Framework", "TestFixtureAttribute")), "TestFixtureAttribute");
-		}
-	}
+    [Test]
+    public void HasAttribute()
+    {
+      Assert.That(assembly.HasAttribute(TN("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute")), Is.True, "System.Runtime.CompilerServices.RuntimeCompatibilityAttribute");
+      Assert.That(assembly.HasAttribute(TN("NUnit.Framework", "TestFixtureAttribute")), Is.False, "TestFixtureAttribute");
+    }
+  }
 }

@@ -38,74 +38,79 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Correctness {
+namespace Test.Rules.Correctness
+{
+  [TestFixture]
+  public class MethodCanBeMadeStaticTest : MethodRuleTestFixture<MethodCanBeMadeStaticRule>
+  {
+    public class Item
+    {
+      public int Foo()
+      {
+        return 42;
+      }
 
-	[TestFixture]
-	public class MethodCanBeMadeStaticTest : MethodRuleTestFixture<MethodCanBeMadeStaticRule> {
+      public int _bar;
 
-		public class Item {
+      public int Bar()
+      {
+        return _bar = 42;
+      }
 
-			public int Foo ()
-			{
-				return 42;
-			}
+      public static int Baz()
+      {
+        return 42;
+      }
 
-			public int _bar;
+      public virtual void Gazonk()
+      {
+      }
 
-			public int Bar ()
-			{
-				return _bar = 42;
-			}
+      public void OnItemBang(object sender, EventArgs ea)
+      {
+      }
+    }
 
-			public static int Baz ()
-			{
-				return 42;
-			}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-			public virtual void Gazonk ()
-			{
-			}
+    [Test]
+    public void TestGoodCandidate()
+    {
+      AssertRuleFailure<Item>("Foo");
+      AssertAreEqual(1, Runner.Defects.Count, "Count");
+    }
 
-			public void OnItemBang (object sender, EventArgs ea)
-			{
-			}
-		}
+    [Test]
+    public void TestNotGoodCandidate()
+    {
+      AssertRuleSuccess<Item>("Bar");
+      AssertRuleDoesNotApply<Item>("Baz");
+      AssertRuleDoesNotApply<Item>("Gazonk");
+      AssertRuleDoesNotApply<Item>("OnItemBang");
+      AssertAreEqual(0, Runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestGoodCandidate ()
-		{
-			AssertRuleFailure<Item> ("Foo");
-			Assert.AreEqual (1, Runner.Defects.Count, "Count");
-		}
+    [Conditional("DO_NOT_DEFINE")]
+    private void WriteLine(string s)
+    {
+      Console.WriteLine(s);
+    }
 
-		[Test]
-		public void TestNotGoodCandidate ()
-		{
-			AssertRuleSuccess<Item> ("Bar");
-			AssertRuleDoesNotApply<Item> ("Baz");
-			AssertRuleDoesNotApply<Item> ("Gazonk");
-			AssertRuleDoesNotApply<Item> ("OnItemBang");
-			Assert.AreEqual (0, Runner.Defects.Count, "Count");
-		}
+    [Test]
+    public void ConditionalCode()
+    {
+      AssertRuleDoesNotApply<MethodCanBeMadeStaticTest>("WriteLine");
+    }
 
-		[Conditional ("DO_NOT_DEFINE")]
-		void WriteLine (string s)
-		{
-			Console.WriteLine (s);
-		}
-
-		[Test]
-		public void ConditionalCode ()
-		{
-			AssertRuleDoesNotApply<MethodCanBeMadeStaticTest> ("WriteLine");
-		}
-
-        [Test]
-        public void FSharpClosuresAreIgnored()
-        {
-            var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-            var type = probe.Assembly.GetTypes().First(t => t.Name.Contains("hookResolveHandler"));
-            AssertRuleDoesNotApply(type, "Invoke");
-        }
-	}
+    [Test]
+    public void FSharpClosuresAreIgnored()
+    {
+      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+      var type = probe.Assembly.GetTypes().First(t => t.Name.Contains("hookResolveHandler"));
+      AssertRuleDoesNotApply(type, "Invoke");
+    }
+  }
 }

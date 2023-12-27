@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,147 +35,157 @@ using Gendarme.Rules.Design.Generic;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Design.Generic {
+namespace Test.Rules.Design.Generic
+{
+  [TestFixture]
+  public class AvoidMethodWithUnusedGenericTypeTest : MethodRuleTestFixture<AvoidMethodWithUnusedGenericTypeRule>
+  {
+    public void NoGenericParameter()
+    {
+    }
 
-	[TestFixture]
-	public class AvoidMethodWithUnusedGenericTypeTest : MethodRuleTestFixture<AvoidMethodWithUnusedGenericTypeRule> {
+    public class MyList : List<int>
+    {
+      public void NoGenericParameter()
+      {
+      }
+    }
 
-		public void NoGenericParameter ()
-		{
-		}
+    public class Tuple<T, K, V>
+    {
+      public void NoGenericParameter()
+      {
+      }
+    }
 
-		public class MyList : List<int> {
-			public void NoGenericParameter ()
-			{
-			}
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      // inside a type that does NOT use generics
+      AssertRuleDoesNotApply<AvoidMethodWithUnusedGenericTypeTest>("NoGenericParameter");
+      // inside a type that use generics
+      AssertRuleDoesNotApply<MyList>("NoGenericParameter");
+      AssertRuleDoesNotApply<Tuple<int, int, int>>("NoGenericParameter");
+    }
 
-		public class Tuple<T, K, V> {
-			public void NoGenericParameter ()
-			{
-			}
-		}
+    public class BadCases
+    {
+      public void Single<T>()
+      {
+      }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// inside a type that does NOT use generics
-			AssertRuleDoesNotApply<AvoidMethodWithUnusedGenericTypeTest> ("NoGenericParameter");
-			// inside a type that use generics
-			AssertRuleDoesNotApply<MyList> ("NoGenericParameter");
-			AssertRuleDoesNotApply<Tuple<int, int, int>> ("NoGenericParameter");
-		}
+      public void Double<T, K>()
+      {
+      }
 
-		public class BadCases {
-			public void Single<T> ()
-			{
-			}
+      public void Triple<T, K, V>()
+      {
+      }
 
-			public void Double<T, K> ()
-			{
-			}
+      public void Partial<T, K>(T value)
+      {
+      }
+    }
 
-			public void Triple<T, K, V> ()
-			{
-			}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-			public void Partial<T, K> (T value)
-			{
-			}
-		}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<BadCases>("Single", 1);
+      AssertAreEqual(Severity.Medium, Runner.Defects[0].Severity, "1");
 
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<BadCases> ("Single", 1);
-			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "1");
-			
-			AssertRuleFailure<BadCases> ("Double", 2);
-			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "2a");
-			Assert.AreEqual (Severity.Medium, Runner.Defects [1].Severity, "2b");
-			
-			AssertRuleFailure<BadCases> ("Triple", 3);
-			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "3a");
-			Assert.AreEqual (Severity.Medium, Runner.Defects [1].Severity, "3b");
-			Assert.AreEqual (Severity.Medium, Runner.Defects [2].Severity, "3c");
+      AssertRuleFailure<BadCases>("Double", 2);
+      AssertAreEqual(Severity.Medium, Runner.Defects[0].Severity, "2a");
+      AssertAreEqual(Severity.Medium, Runner.Defects[1].Severity, "2b");
 
-			AssertRuleFailure<BadCases> ("Partial", 1);
-			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "4");
-		}
+      AssertRuleFailure<BadCases>("Triple", 3);
+      AssertAreEqual(Severity.Medium, Runner.Defects[0].Severity, "3a");
+      AssertAreEqual(Severity.Medium, Runner.Defects[1].Severity, "3b");
+      AssertAreEqual(Severity.Medium, Runner.Defects[2].Severity, "3c");
 
-		public class GoodCases {
-			public void Single<T> (T value)
-			{
-			}
+      AssertRuleFailure<BadCases>("Partial", 1);
+      AssertAreEqual(Severity.Medium, Runner.Defects[0].Severity, "4");
+    }
 
-			public void Double<T, K> (T key, K value)
-			{
-			}
+    public class GoodCases
+    {
+      public void Single<T>(T value)
+      {
+      }
 
-			public void Triple<T, K, V> (T a, K b, V c)
-			{
-			}
+      public void Double<T, K>(T key, K value)
+      {
+      }
 
-			public void Duplicate<T, K> (T key, K min, K max)
-			{
-			}
+      public void Triple<T, K, V>(T a, K b, V c)
+      {
+      }
 
-			public void SingleArray<T> (T [] values)
-			{
-			}
+      public void Duplicate<T, K>(T key, K min, K max)
+      {
+      }
 
-			public void GenericParameter<T> (IEnumerable<T> values)
-			{
-			}
-		}
+      public void SingleArray<T>(T[] values)
+      {
+      }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<GoodCases> ("Single");
-			AssertRuleSuccess<GoodCases> ("Double");
-			AssertRuleSuccess<GoodCases> ("Triple");
+      public void GenericParameter<T>(IEnumerable<T> values)
+      {
+      }
+    }
 
-			AssertRuleSuccess<GoodCases> ("Duplicate");
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<GoodCases>("Single");
+      AssertRuleSuccess<GoodCases>("Double");
+      AssertRuleSuccess<GoodCases>("Triple");
 
-			AssertRuleSuccess<GoodCases> ("SingleArray");
+      AssertRuleSuccess<GoodCases>("Duplicate");
 
-			AssertRuleSuccess<GoodCases> ("GenericParameter");
-		}
+      AssertRuleSuccess<GoodCases>("SingleArray");
 
-		// from CommonRocks
-		public static void AddRangeIfNew<T> (ICollection<T> self, IEnumerable<T> items)
-		{
-			foreach (T item in items) {
-				if (!self.Contains (item))
-					self.Add (item);
-			}
-		}
+      AssertRuleSuccess<GoodCases>("GenericParameter");
+    }
 
-		[Test]
-		public void Indirect ()
-		{
-			AssertRuleSuccess<AvoidMethodWithUnusedGenericTypeTest> ("AddRangeIfNew");
-		}
+    // from CommonRocks
+    public static void AddRangeIfNew<T>(ICollection<T> self, IEnumerable<T> items)
+    {
+      foreach (T item in items)
+      {
+        if (!self.Contains(item))
+          self.Add(item);
+      }
+    }
 
-		public T Parse<T> (string s)
-		{
-			return default (T);
-		}
+    [Test]
+    public void Indirect()
+    {
+      AssertRuleSuccess<AvoidMethodWithUnusedGenericTypeTest>("AddRangeIfNew");
+    }
 
-		public IEnumerable<T> ParseList<T> (string s)
-		{
-			return null;
-		}
+    public T Parse<T>(string s)
+    {
+      return default(T);
+    }
 
-		[Test]
-		public void ReturnValue ()
-		{
-			AssertRuleFailure<AvoidMethodWithUnusedGenericTypeTest> ("Parse", 1);
-			Assert.AreEqual (Severity.Low, Runner.Defects [0].Severity, "Low");
+    public IEnumerable<T> ParseList<T>(string s)
+    {
+      return null;
+    }
 
-			AssertRuleFailure<AvoidMethodWithUnusedGenericTypeTest> ("ParseList", 1);
-			Assert.AreEqual (Severity.Low, Runner.Defects [0].Severity, "Low");
-		}
-	}
+    [Test]
+    public void ReturnValue()
+    {
+      AssertRuleFailure<AvoidMethodWithUnusedGenericTypeTest>("Parse", 1);
+      AssertAreEqual(Severity.Low, Runner.Defects[0].Severity, "Low");
+
+      AssertRuleFailure<AvoidMethodWithUnusedGenericTypeTest>("ParseList", 1);
+      AssertAreEqual(Severity.Low, Runner.Defects[0].Severity, "Low");
+    }
+  }
 }

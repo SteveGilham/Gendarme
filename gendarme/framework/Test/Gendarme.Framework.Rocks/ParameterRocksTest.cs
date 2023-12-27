@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for ParameterRocksTest
 //
 // Authors:
@@ -32,36 +32,35 @@ using Gendarme.Framework.Rocks;
 using Mono.Cecil;
 using NUnit.Framework;
 
-namespace Test.Framework.Rocks {
+namespace Test.Framework.Rocks
+{
+  [TestFixture]
+  public class ParameterRocksTest
+  {
+    private AssemblyDefinition assembly;
+    private TypeDefinition type;
 
-	[TestFixture]
-	public class ParameterRocksTest {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      type = assembly.MainModule.GetType("Test.Framework.Rocks.ParameterRocksTest");
+    }
 
-		private AssemblyDefinition assembly;
-		private TypeDefinition type;
+    public void UseParams(int a, params int[] args)
+    {
+    }
 
-		[OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			type = assembly.MainModule.GetType ("Test.Framework.Rocks.ParameterRocksTest");
-		}
+    [Test]
+    public void IsParams()
+    {
+      ParameterDefinition pd = null;
+      Assert.That(pd.IsParams(), Is.False, "null");
 
-		public void UseParams (int a, params int [] args)
-		{
-		}
-
-		[Test]
-		public void IsParams ()
-		{
-			ParameterDefinition pd = null;
-			Assert.IsFalse (pd.IsParams (), "null");
-
-			MethodDefinition md = type.GetMethod ("UseParams");
-			Assert.IsFalse (md.Parameters [0].IsParams (), "0");
-			Assert.IsTrue (md.Parameters [1].IsParams (), "1");
-		}
-	}
+      MethodDefinition md = type.GetMethod("UseParams");
+      Assert.That(md.Parameters[0].IsParams(), Is.False, "0");
+      Assert.That(md.Parameters[1].IsParams(), "1");
+    }
+  }
 }
-

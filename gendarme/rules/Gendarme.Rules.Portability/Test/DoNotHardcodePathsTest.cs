@@ -165,7 +165,7 @@ namespace Test.Rules.Portability
       Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine
         .OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", true);
 #else
-     Assert.That(@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", Is.Not.Empty);
+      Assert.That(@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", Is.Not.Empty);
 #endif
     }
 
@@ -206,7 +206,7 @@ namespace Test.Rules.Portability
           System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     }
 
-    void DontReportTimeFormats()
+    private void DontReportTimeFormats()
     {
       Console.WriteLine($@"{TimeSpan.Zero:h\:mm\:ss}");
       TimeSpan.ParseExact("0:00:00", @"h\:mm\:ss", null);
@@ -225,33 +225,38 @@ namespace Test.Rules.Portability
       AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
     }
 
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
     [Test]
     public void FailureTotalConfidence()
     {
       AssertRuleFailure<DoNotHardcodePathsTest>("TotalConfidence1", 1);
-      Assert.AreEqual(Confidence.Total, Runner.Defects[0].Confidence, "1");
+      AssertAreEqual(Confidence.Total, Runner.Defects[0].Confidence, "1");
       AssertRuleFailure<DoNotHardcodePathsTest>("TotalConfidence2", 1);
-      Assert.AreEqual(Confidence.Total, Runner.Defects[0].Confidence, "2");
+      AssertAreEqual(Confidence.Total, Runner.Defects[0].Confidence, "2");
       AssertRuleFailure<DoNotHardcodePathsTest>("TotalConfidence3", 1);
-      Assert.AreEqual(Confidence.Total, Runner.Defects[0].Confidence, "3");
+      AssertAreEqual(Confidence.Total, Runner.Defects[0].Confidence, "3");
     }
 
     [Test]
     public void FailureHighConfidence()
     {
       AssertRuleFailure<DoNotHardcodePathsTest>("HighConfidence1", 1);
-      Assert.AreEqual(Confidence.High, Runner.Defects[0].Confidence, "1");
+      AssertAreEqual(Confidence.High, Runner.Defects[0].Confidence, "1");
       AssertRuleFailure<DoNotHardcodePathsTest>("HighConfidence2", 1);
-      Assert.AreEqual(Confidence.High, Runner.Defects[0].Confidence, "2");
+      AssertAreEqual(Confidence.High, Runner.Defects[0].Confidence, "2");
     }
 
     [Test]
     public void FailureNormalConfidence()
     {
       AssertRuleFailure<DoNotHardcodePathsTest>("NormalConfidence1", 1);
-      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
       AssertRuleFailure<DoNotHardcodePathsTest>("NormalConfidence2", 1);
-      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "2");
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "2");
     }
 
     [Test]
@@ -304,7 +309,7 @@ namespace Test.Rules.Portability
     public void XPath()
     {
       AssertRuleFailure<FalsePositive5>("Run", 1);
-      Assert.AreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "1");
       AssertRuleSuccess<Fixed5>("Run");
     }
   }

@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for ToStringShouldNotReturnNullRule
 //
 // Authors:
@@ -32,178 +32,193 @@ using NUnit.Framework;
 
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class ToStringShouldNotReturnNullTest : TypeRuleTestFixture<ToStringShouldNotReturnNullRule>
+  {
+    private abstract class ToStringAbstract
+    {
+      public abstract override string ToString();
+    }
 
-	[TestFixture]
-	public class ToStringShouldNotReturnNullTest : TypeRuleTestFixture<ToStringShouldNotReturnNullRule> {
+    [Test]
+    public void NoIL()
+    {
+      AssertRuleDoesNotApply<ToStringAbstract>();
+    }
 
-		abstract class ToStringAbstract {
-			public abstract override string ToString ();
-		}
+    public class ToStringReturningNull
+    {
+      public override string ToString()
+      {
+        // this is bad
+        return null;
+      }
+    }
 
-		[Test]
-		public void NoIL ()
-		{
-			AssertRuleDoesNotApply<ToStringAbstract> ();
-		}
+    public class ToStringReturningEmptyString
+    {
+      public override string ToString()
+      {
+        // this is Ok
+        return String.Empty;
+      }
+    }
 
-		public class ToStringReturningNull {
-			public override string ToString ()
-			{
-				// this is bad
-				return null;
-			}
-		}
-		
-		public class ToStringReturningEmptyString {
-			public override string ToString ()
-			{
-				// this is Ok
-				return String.Empty;
-			}
-		} 
-		
-		public class ToStringReturningField {
-			string s = "ab";
-			public override string ToString ()
-			{
-				// this is Ok (even if we're not sure) ???
-				return s;
-			}
-		}
+    public class ToStringReturningField
+    {
+      private string s = "ab";
 
-		public class ToStringReturningConstField {
-			const string s = "ab";
-			public override string ToString ()
-			{
-				// this is Ok
-				return s;
-			}
-		}
+      public override string ToString()
+      {
+        // this is Ok (even if we're not sure) ???
+        return s;
+      }
+    }
 
-		public class ToStringReturningReadOnlyField {
-			readonly string s = "ab";
-			public override string ToString ()
-			{
-				// this is Ok
-				return s;
-			}
-		}
+    public class ToStringReturningConstField
+    {
+      private const string s = "ab";
 
-		public class ToStringReturningNewString {
-			public override string ToString ()
-			{
-				// this is Ok
-				return new string ('!', 2);
-			}
-		}
-		
-		public class ToStringReturningStringFormat {
-			public override string ToString ()
-			{
-				return String.Format ("{0}-{1}", 1, 2);
-			}
-		}
+      public override string ToString()
+      {
+        // this is Ok
+        return s;
+      }
+    }
 
-		public class ToStringReturningConvertToStringObject {
-			public override string ToString ()
-			{
-				return Convert.ToString ((object)null);
-			}
-		}
+    public class ToStringReturningReadOnlyField
+    {
+      private readonly string s = "ab";
 
-		public class ToStringReturningConvertToStringString {
-			public override string ToString ()
-			{ 
-				return Convert.ToString ((string)null);
-			}
-		}
+      public override string ToString()
+      {
+        // this is Ok
+        return s;
+      }
+    }
 
-		public class ToStringReturningTypeName {
-			public override string ToString ()
-			{
-				return GetType ().FullName;
-			}
-		}
-		
-		public class ToStringInlineIf {
-			public override string ToString ()
-			{
-				return GetType () != typeof (ToStringInlineIf) ? null : "ToStringInlineIf";
-			}
-		}
-		
-		[Test]
-		public void ReturningNullTest ()
-		{
-			AssertRuleFailure<ToStringReturningNull> (1);
-		}
-		
-		[Test]
-		public void ReturningEmptyStringTest ()
-		{
-			AssertRuleDoesNotApply<ToStringReturningEmptyString> ();
-		}
-		
-		[Test]
-		public void ReturningField ()
-		{
-			// there's doubt but it's not easy (i.e. false positives) to be sure
-			AssertRuleDoesNotApply<ToStringReturningField> ();
-		}
+    public class ToStringReturningNewString
+    {
+      public override string ToString()
+      {
+        // this is Ok
+        return new string('!', 2);
+      }
+    }
 
-		[Test]
-		public void ReturningConstField ()
-		{
-			AssertRuleDoesNotApply<ToStringReturningConstField> ();
-		}
+    public class ToStringReturningStringFormat
+    {
+      public override string ToString()
+      {
+        return String.Format("{0}-{1}", 1, 2);
+      }
+    }
 
-		[Test]
-		public void ReturningReadOnlyField ()
-		{
-			AssertRuleDoesNotApply<ToStringReturningReadOnlyField> ();
-		}
+    public class ToStringReturningConvertToStringObject
+    {
+      public override string ToString()
+      {
+        return Convert.ToString((object)null);
+      }
+    }
 
-		[Test]
-		public void ReturningNewString ()
-		{
-			AssertRuleDoesNotApply<ToStringReturningNewString> ();
-		}
+    public class ToStringReturningConvertToStringString
+    {
+      public override string ToString()
+      {
+        return Convert.ToString((string)null);
+      }
+    }
 
-		[Test]
-		public void ReturningStringFormat ()
-		{
-			AssertRuleDoesNotApply<ToStringReturningStringFormat> ();
-		}
-		
-		[Test]
-		public void ReturningConvertToStringObject ()
-		{
-			Assert.AreEqual (String.Empty, Convert.ToString ((object) null), "Convert.ToString(object)");
-			AssertRuleSuccess<ToStringReturningConvertToStringObject> ();
-		}
-		
-		[Test]
-		[Ignore ("requires to analyze what called methods returns")]
-		public void ReturningConvertToStringString ()
-		{
-			// converting a null string to a string return null
-			// however this is a special case since, most times, we won't know 
-			// if the value passed to Convert.ToString is null or not
-			Assert.IsNull (Convert.ToString ((string) null), "Convert.ToString((string)null)");
-			AssertRuleFailure<ToStringReturningConvertToStringString> (1);
-		}
+    public class ToStringReturningTypeName
+    {
+      public override string ToString()
+      {
+        return GetType().FullName;
+      }
+    }
 
-		[Test]
-		public void ReturningTypeName ()
-		{
-			AssertRuleDoesNotApply<ToStringReturningTypeName> ();
-		}
+    public class ToStringInlineIf
+    {
+      public override string ToString()
+      {
+        return GetType() != typeof(ToStringInlineIf) ? null : "ToStringInlineIf";
+      }
+    }
 
-		[Test]
-		public void InlineIf ()
-		{
-			AssertRuleFailure<ToStringInlineIf> (1);
-		}
-	}
+    [Test]
+    public void ReturningNullTest()
+    {
+      AssertRuleFailure<ToStringReturningNull>(1);
+    }
+
+    [Test]
+    public void ReturningEmptyStringTest()
+    {
+      AssertRuleDoesNotApply<ToStringReturningEmptyString>();
+    }
+
+    [Test]
+    public void ReturningField()
+    {
+      // there's doubt but it's not easy (i.e. false positives) to be sure
+      AssertRuleDoesNotApply<ToStringReturningField>();
+    }
+
+    [Test]
+    public void ReturningConstField()
+    {
+      AssertRuleDoesNotApply<ToStringReturningConstField>();
+    }
+
+    [Test]
+    public void ReturningReadOnlyField()
+    {
+      AssertRuleDoesNotApply<ToStringReturningReadOnlyField>();
+    }
+
+    [Test]
+    public void ReturningNewString()
+    {
+      AssertRuleDoesNotApply<ToStringReturningNewString>();
+    }
+
+    [Test]
+    public void ReturningStringFormat()
+    {
+      AssertRuleDoesNotApply<ToStringReturningStringFormat>();
+    }
+
+    [Test]
+    public void ReturningConvertToStringObject()
+    {
+      Assert.That(String.Empty, Is.EqualTo(Convert.ToString((object)null)), "Convert.ToString(object)");
+      AssertRuleSuccess<ToStringReturningConvertToStringObject>();
+    }
+
+    [Test]
+    [Ignore("requires to analyze what called methods returns")]
+    public void ReturningConvertToStringString()
+    {
+      // converting a null string to a string return null
+      // however this is a special case since, most times, we won't know
+      // if the value passed to Convert.ToString is null or not
+      Assert.That(Convert.ToString((string)null), Is.Null, "Convert.ToString((string)null)");
+      AssertRuleFailure<ToStringReturningConvertToStringString>(1);
+    }
+
+    [Test]
+    public void ReturningTypeName()
+    {
+      AssertRuleDoesNotApply<ToStringReturningTypeName>();
+    }
+
+    [Test]
+    public void InlineIf()
+    {
+      AssertRuleFailure<ToStringInlineIf>(1);
+    }
+  }
 }

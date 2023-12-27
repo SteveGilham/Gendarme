@@ -94,6 +94,7 @@ namespace Test.Rules.Interoperability
 
     private CallbackDelegate CallbackOK1_Field;
     private CallbackDelegate CallbackOK1_StaticField;
+
     private void CallbackOK1()
     {
       int a, b;
@@ -123,6 +124,7 @@ namespace Test.Rules.Interoperability
 
     private CallbackDelegate CallbackOKStatic_Field;
     private CallbackDelegate CallbackOKStatic_StaticField;
+
     private static void CallbackOKStatic()
     {
       int a, b;
@@ -144,6 +146,7 @@ namespace Test.Rules.Interoperability
 
     private CallbackDelegate CallbackFailEmpty_Field;
     private CallbackDelegate CallbackFailEmpty_StaticField;
+
     private void CallbackFailEmpty()
     {
       Console.WriteLine();
@@ -157,6 +160,7 @@ namespace Test.Rules.Interoperability
 
     private CallbackDelegate CallbackFailEmptyStatic_Field;
     private CallbackDelegate CallbackFailEmptyStatic_StaticField;
+
     private static void CallbackFailEmptyStatic()
     {
       Console.WriteLine();
@@ -614,6 +618,7 @@ namespace Test.Rules.Interoperability
     private class CheckClass_InstanceFieldFail
     {
       private CallbackDelegate field;
+
       public void DoBadA()
       {
         DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.PInvokeDelegate1(field);
@@ -628,6 +633,7 @@ namespace Test.Rules.Interoperability
     private class CheckClass_StaticFieldFail
     {
       private static CallbackDelegate field;
+
       public void Set()
       {
         // Reverse textual order from instance field test above.
@@ -643,6 +649,7 @@ namespace Test.Rules.Interoperability
     private class CheckClass_AnonymousInstanceFieldFail
     {
       private CallbackDelegate field;
+
       public void DoBadA()
       {
         DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest.PInvokeDelegate1(field);
@@ -657,6 +664,7 @@ namespace Test.Rules.Interoperability
     private class CheckClass_AnonymousStaticFieldFail
     {
       private static CallbackDelegate field;
+
       public void Set()
       {
         // Reverse textual order from instance field test above.
@@ -796,6 +804,11 @@ namespace Test.Rules.Interoperability
       AssertTest(name, 1);
     }
 
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
     private void AssertTest(string name, int expectedCount)
     {
       TestRunner runner;
@@ -814,8 +827,8 @@ namespace Test.Rules.Interoperability
       method = DefinitionLoader.GetMethodDefinition<DelegatesPassedToNativeCodeMustIncludeExceptionHandlingTest>(name);
       result = runner.CheckMethod(method);
 
-      Assert.AreEqual(expected, result, "For test method: " + name);
-      Assert.AreEqual(expectedCount, runner.Defects.Count, "Defect count for test method: " + name);
+      AssertAreEqual(expected, result, "For test method: " + name);
+      AssertAreEqual(expectedCount, runner.Defects.Count, "Defect count for test method: " + name);
     }
 
     private void AssertClass<T>()
@@ -835,13 +848,13 @@ namespace Test.Rules.Interoperability
         result = runner.CheckMethod(method);
         if (result == RuleResult.Failure)
         {
-          Assert.IsFalse(failed);
-          Assert.AreEqual(1, runner.Defects.Count);
+          Assert.That(!failed);
+          AssertAreEqual(1, runner.Defects.Count, "defects");
           failed = true;
         }
       }
 
-      Assert.IsTrue(failed);
+      Assert.That(failed);
     }
 
     [Test]
@@ -1031,8 +1044,8 @@ namespace Test.Rules.Interoperability
       var method = DefinitionLoader.GetMethodDefinition(td, name, null);
       var result = runner.CheckMethod(method);
 
-      Assert.AreEqual(RuleResult.Success, result, "For test method: " + name);
-      Assert.AreEqual(0, runner.Defects.Count, "Defect count for test method: " + name);
+      AssertAreEqual(RuleResult.Success, result, "For test method: " + name);
+      AssertAreEqual(0, runner.Defects.Count, "Defect count for test method: " + name);
     }
   }
 }

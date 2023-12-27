@@ -34,119 +34,131 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
+#pragma warning disable 169
 
-	#pragma warning disable 169
-	public class ClassWithOnePotentialNullable {
-		bool hasFoo;
-		int foo;
-		int bar;
-	}
+  public class ClassWithOnePotentialNullable
+  {
+    private bool hasFoo;
+    private int foo;
+    private int bar;
+  }
 
-	public class ClassWithThreePotentialNullable {
-		bool hasFoo;
-		int foo;
-		bool _hasBar;
-		double _bar;
-		bool m_hasIstic;
-		double m_istic;
-	}
+  public class ClassWithThreePotentialNullable
+  {
+    private bool hasFoo;
+    private int foo;
+    private bool _hasBar;
+    private double _bar;
+    private bool m_hasIstic;
+    private double m_istic;
+  }
 
-	public class ClassWithoutPotentialNullable {
-		int hasFoo;
-		int foo;
-	}
+  public class ClassWithoutPotentialNullable
+  {
+    private int hasFoo;
+    private int foo;
+  }
 
-	public class ClassWithoutPotentialNullable2 {
-		bool hasFoo;
-		int bar;
-		int food;
-	}
+  public class ClassWithoutPotentialNullable2
+  {
+    private bool hasFoo;
+    private int bar;
+    private int food;
+  }
 
-	public class ClassWithoutPotentialNullable3	{
-		bool hasFoo;
-		string foo;
-	}
+  public class ClassWithoutPotentialNullable3
+  {
+    private bool hasFoo;
+    private string foo;
+  }
 
-	public class ClassWithProperNullable {
-		int? foo;
-	}
+  public class ClassWithProperNullable
+  {
+    private int? foo;
+  }
 
-	public class ClassWithProperNullable2 {
-		bool hasFoo;
-		int? foo;
-	}
+  public class ClassWithProperNullable2
+  {
+    private bool hasFoo;
+    private int? foo;
+  }
 
-	public enum SomeEnum {
-		HasValue,
-		Value
-	}
+  public enum SomeEnum
+  {
+    HasValue,
+    Value
+  }
 
-	public class ClassWithSmallFieldNames {
-		bool has;
-		string foo;
-	}
+  public class ClassWithSmallFieldNames
+  {
+    private bool has;
+    private string foo;
+  }
 
-	public class ClassWithNonHasBool {
-		bool initialized;
-		string foo;
-	}
-	#pragma warning restore 169
+  public class ClassWithNonHasBool
+  {
+    private bool initialized;
+    private string foo;
+  }
 
+#pragma warning restore 169
 
-	[TestFixture]
-	public class ConsiderConvertingFieldToNullableTest : TypeRuleTestFixture<ConsiderConvertingFieldToNullableRule> {
+  [TestFixture]
+  public class ConsiderConvertingFieldToNullableTest : TypeRuleTestFixture<ConsiderConvertingFieldToNullableRule>
+  {
+    [Test]
+    public void ClassesWithPotentialNullable()
+    {
+      AssertRuleFailure<ClassWithOnePotentialNullable>(1);
+      AssertRuleFailure<ClassWithThreePotentialNullable>(3);
+    }
 
-		[Test]
-		public void ClassesWithPotentialNullable ()
-		{
-			AssertRuleFailure<ClassWithOnePotentialNullable> (1);
-			AssertRuleFailure<ClassWithThreePotentialNullable> (3);
-		}
+    [Test]
+    public void ClassesWithoutPotentialNullable()
+    {
+      AssertRuleSuccess<ClassWithoutPotentialNullable>();
+      AssertRuleSuccess<ClassWithoutPotentialNullable2>();
+      AssertRuleSuccess<ClassWithoutPotentialNullable3>();
+      AssertRuleSuccess<ClassWithSmallFieldNames>();
+      AssertRuleSuccess<ClassWithNonHasBool>();
+    }
 
-		[Test]
-		public void ClassesWithoutPotentialNullable ()
-		{
-			AssertRuleSuccess<ClassWithoutPotentialNullable> ();
-			AssertRuleSuccess<ClassWithoutPotentialNullable2> ();
-			AssertRuleSuccess<ClassWithoutPotentialNullable3> ();
-			AssertRuleSuccess<ClassWithSmallFieldNames> ();
-			AssertRuleSuccess<ClassWithNonHasBool> ();
-		}
+    [Test]
+    public void ClassesWithProperNullable()
+    {
+      AssertRuleSuccess<ClassWithProperNullable>();
+      AssertRuleSuccess<ClassWithProperNullable2>();
+    }
 
-		[Test]
-		public void ClassesWithProperNullable ()
-		{
-			AssertRuleSuccess<ClassWithProperNullable> ();
-			AssertRuleSuccess<ClassWithProperNullable2> ();
-		}
+    [Test]
+    public void TypesWhichDoNotApply()
+    {
+      AssertRuleDoesNotApply<SomeEnum>();
+    }
 
-		[Test]
-		public void TypesWhichDoNotApply ()
-		{
-			AssertRuleDoesNotApply<SomeEnum> ();
-		}
-
-		[Test]
-		public void NotApplicableBefore2_0 ()
-		{
-			// ensure that the rule does not apply for types defined in 1.x assemblies
-			TypeDefinition violator = DefinitionLoader.GetTypeDefinition<ClassWithOnePotentialNullable> ();
-			TargetRuntime realRuntime = violator.Module.Runtime;
-			try {
-
-				// fake assembly runtime version and do the check
-				violator.Module.Runtime = TargetRuntime.Net_1_1;
-				Rule.Active = true;
-				Rule.Initialize (Runner);
-                (Runner as TestRunner).OnModule(violator.Module);
-                Assert.IsFalse(Rule.Active, "Active");
-			}
-			catch {
-				// rollback
-				violator.Module.Runtime = realRuntime;
-				Rule.Active = true;
-			}
-		}
-	}
+    [Test]
+    public void NotApplicableBefore2_0()
+    {
+      // ensure that the rule does not apply for types defined in 1.x assemblies
+      TypeDefinition violator = DefinitionLoader.GetTypeDefinition<ClassWithOnePotentialNullable>();
+      TargetRuntime realRuntime = violator.Module.Runtime;
+      try
+      {
+        // fake assembly runtime version and do the check
+        violator.Module.Runtime = TargetRuntime.Net_1_1;
+        Rule.Active = true;
+        Rule.Initialize(Runner);
+        (Runner as TestRunner).OnModule(violator.Module);
+        Assert.That(!Rule.Active, "Active");
+      }
+      catch
+      {
+        // rollback
+        violator.Module.Runtime = realRuntime;
+        Rule.Active = true;
+      }
+    }
+  }
 }

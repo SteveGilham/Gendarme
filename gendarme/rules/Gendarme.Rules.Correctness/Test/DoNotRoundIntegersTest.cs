@@ -37,286 +37,291 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.Correctness {
+namespace Test.Rules.Correctness
+{
+  [TestFixture]
+  public class DoNotRoundIntegersTest : MethodRuleTestFixture<DoNotRoundIntegersRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+    }
 
-	[TestFixture]
-	public class DoNotRoundIntegersTest : MethodRuleTestFixture<DoNotRoundIntegersRule> {
+    // [decimal|double] Ceiling ([decimal|double])
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-		}
+    public decimal CeilingIntegerDecimal(int x)
+    {
+      return Math.Ceiling((decimal)x);
+    }
 
-		// [decimal|double] Ceiling ([decimal|double])
+    public double CeilingIntegerDouble(int x)
+    {
+      return Math.Ceiling((double)x);
+    }
 
-		public decimal CeilingIntegerDecimal (int x)
-		{
-			return Math.Ceiling ((decimal) x);
-		}
+    public decimal CeilingFloatDecimal(float f)
+    {
+      return Math.Ceiling((decimal)f);
+    }
 
-		public double CeilingIntegerDouble (int x)
-		{
-			return Math.Ceiling ((double) x);
-		}
+    public double CeilingFloatDouble(float f)
+    {
+      return Math.Ceiling(f);
+    }
 
-		public decimal CeilingFloatDecimal (float f)
-		{
-			return Math.Ceiling ((decimal) f);
-		}
+    public decimal CeilingDoubleDecimal(double d)
+    {
+      return Math.Ceiling((decimal)d);
+    }
 
-		public double CeilingFloatDouble (float f)
-		{
-			return Math.Ceiling (f);
-		}
+    public double CeilingDoubleDouble(double d)
+    {
+      return Math.Ceiling((double)d);
+    }
 
-		public decimal CeilingDoubleDecimal (double d)
-		{
-			return Math.Ceiling ((decimal) d);
-		}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		public double CeilingDoubleDouble (double d)
-		{
-			return Math.Ceiling ((double) d);
-		}
+    [Test]
+    public void Ceiling()
+    {
+      AssertAreEqual(1d, Math.Ceiling((double)1), "Ceiling(double)");
+      AssertAreEqual(1m, Math.Ceiling((decimal)1), "Ceiling(decimal)");
 
-		[Test]
-		public void Ceiling ()
-		{
-			Assert.AreEqual (1d, Math.Ceiling ((double) 1), "Ceiling(double)");
-			Assert.AreEqual (1m, Math.Ceiling ((decimal) 1), "Ceiling(decimal)");
+      AssertRuleFailure<DoNotRoundIntegersTest>("CeilingIntegerDecimal", 1);
+      AssertRuleFailure<DoNotRoundIntegersTest>("CeilingIntegerDouble", 1);
 
-			AssertRuleFailure<DoNotRoundIntegersTest> ("CeilingIntegerDecimal", 1);
-			AssertRuleFailure<DoNotRoundIntegersTest> ("CeilingIntegerDouble", 1);
+      AssertRuleSuccess<DoNotRoundIntegersTest>("CeilingFloatDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("CeilingFloatDouble");
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("CeilingFloatDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("CeilingFloatDouble");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("CeilingDoubleDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("CeilingDoubleDouble");
+    }
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("CeilingDoubleDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("CeilingDoubleDouble");
-		}
+    // [decimal|double] Floor ([decimal|double])
 
-		// [decimal|double] Floor ([decimal|double])
+    private int x = 1;
+    private double d = 3.14d;
+    private float f = 42f;
 
-		private int x = 1;
-		private double d = 3.14d;
-		private float f = 42f;
+    public decimal FloorIntegerDecimal()
+    {
+      return Math.Floor((decimal)x);
+    }
 
-		public decimal FloorIntegerDecimal ()
-		{
-			return Math.Floor ((decimal) x);
-		}
+    public double FloorIntegerDouble()
+    {
+      return Math.Floor((double)x);
+    }
 
-		public double FloorIntegerDouble ()
-		{
-			return Math.Floor ((double) x);
-		}
+    public decimal FloorFloatDecimal()
+    {
+      return Math.Floor((decimal)f);
+    }
 
-		public decimal FloorFloatDecimal ()
-		{
-			return Math.Floor ((decimal) f);
-		}
+    public double FloorFloatDouble()
+    {
+      return Math.Floor(f);
+    }
 
-		public double FloorFloatDouble ()
-		{
-			return Math.Floor (f);
-		}
+    public decimal FloorDoubleDecimal()
+    {
+      return Math.Floor((decimal)d);
+    }
 
-		public decimal FloorDoubleDecimal ()
-		{
-			return Math.Floor ((decimal) d);
-		}
+    public double FloorDoubleDouble()
+    {
+      return Math.Floor((double)d);
+    }
 
-		public double FloorDoubleDouble ()
-		{
-			return Math.Floor ((double) d);
-		}
+    [Test]
+    public void Floor()
+    {
+      AssertAreEqual(1d, Math.Floor((double)1), "Floor(double)");
+      AssertAreEqual(1m, Math.Floor((decimal)1), "Floor(decimal)");
 
-		[Test]
-		public void Floor ()
-		{
-			Assert.AreEqual (1d, Math.Floor ((double) 1), "Floor(double)");
-			Assert.AreEqual (1m, Math.Floor ((decimal) 1), "Floor(decimal)");
+      AssertRuleFailure<DoNotRoundIntegersTest>("FloorIntegerDecimal", 1);
+      AssertRuleFailure<DoNotRoundIntegersTest>("FloorIntegerDouble", 1);
 
-			AssertRuleFailure<DoNotRoundIntegersTest> ("FloorIntegerDecimal", 1);
-			AssertRuleFailure<DoNotRoundIntegersTest> ("FloorIntegerDouble", 1);
+      AssertRuleSuccess<DoNotRoundIntegersTest>("FloorFloatDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("FloorFloatDouble");
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("FloorFloatDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("FloorFloatDouble");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("FloorDoubleDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("FloorDoubleDouble");
+    }
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("FloorDoubleDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("FloorDoubleDouble");
-		}
+    // [decimal | double] Round ([decimal | double] [,Int32] [,MidpointRounding])
 
-		// [decimal | double] Round ([decimal | double] [,Int32] [,MidpointRounding])
+    private static int sx = 1;
+    private static float sf = 42f;
+    private static double sd = 3.14d;
 
-		static int sx = 1;
-		static float sf = 42f;
-		static double sd = 3.14d;
+    public static decimal RoundIntegerDecimal()
+    {
+      return Math.Round((decimal)sx, 2);
+    }
 
-		public static decimal RoundIntegerDecimal ()
-		{
-			return Math.Round ((decimal) sx, 2);
-		}
+    public static double RoundIntegerDouble()
+    {
+      return Math.Round((double)sx, MidpointRounding.AwayFromZero);
+    }
 
-		public static double RoundIntegerDouble ()
-		{
-			return Math.Round ((double) sx, MidpointRounding.AwayFromZero);
-		}
+    public static decimal RoundFloatDecimal()
+    {
+      return Math.Round((decimal)sf, 1, MidpointRounding.ToEven);
+    }
 
-		public static decimal RoundFloatDecimal ()
-		{
-			return Math.Round ((decimal) sf, 1, MidpointRounding.ToEven);
-		}
+    public static double RoundFloatDouble()
+    {
+      return Math.Round(sf, 0);
+    }
 
-		public static double RoundFloatDouble ()
-		{
-			return Math.Round (sf, 0);
-		}
+    public static decimal RoundDoubleDecimal()
+    {
+      return Math.Round((decimal)sd, 2, MidpointRounding.AwayFromZero);
+    }
 
-		public static decimal RoundDoubleDecimal ()
-		{
-			return Math.Round ((decimal) sd, 2, MidpointRounding.AwayFromZero);
-		}
+    public static double RoundDoubleDouble()
+    {
+      return Math.Round((double)sd, 1, MidpointRounding.ToEven);
+    }
 
-		public static double RoundDoubleDouble ()
-		{
-			return Math.Round ((double) sd, 1, MidpointRounding.ToEven);
-		}
+    [Test]
+    public void Round()
+    {
+      AssertAreEqual(1d, Math.Round((double)1), "Round(double)");
+      AssertAreEqual(1m, Math.Round((decimal)1), "Round(decimal)");
 
-		[Test]
-		public void Round ()
-		{
-			Assert.AreEqual (1d, Math.Round ((double) 1), "Round(double)");
-			Assert.AreEqual (1m, Math.Round ((decimal) 1), "Round(decimal)");
+      AssertRuleFailure<DoNotRoundIntegersTest>("RoundIntegerDecimal", 1);
+      AssertRuleFailure<DoNotRoundIntegersTest>("RoundIntegerDouble", 1);
 
-			AssertRuleFailure<DoNotRoundIntegersTest> ("RoundIntegerDecimal", 1);
-			AssertRuleFailure<DoNotRoundIntegersTest> ("RoundIntegerDouble", 1);
+      AssertRuleSuccess<DoNotRoundIntegersTest>("RoundFloatDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("RoundFloatDouble");
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("RoundFloatDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("RoundFloatDouble");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("RoundDoubleDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("RoundDoubleDouble");
+    }
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("RoundDoubleDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("RoundDoubleDouble");
-		}
+    // [decimal|double] Truncate ([decimal|double])
 
-		// [decimal|double] Truncate ([decimal|double])
+    public decimal TruncateIntegerDecimal()
+    {
+      int x = 1;
+      return Math.Truncate((decimal)x);
+    }
 
-		public decimal TruncateIntegerDecimal ()
-		{
-			int x = 1;
-			return Math.Truncate ((decimal) x);
-		}
+    public double TruncateIntegerDouble()
+    {
+      int x = 1;
+      return Math.Truncate((double)x);
+    }
 
-		public double TruncateIntegerDouble ()
-		{
-			int x = 1;
-			return Math.Truncate ((double) x);
-		}
+    public decimal TruncateFloatDecimal()
+    {
+      float f = 42f;
+      return Math.Truncate((decimal)f);
+    }
 
-		public decimal TruncateFloatDecimal ()
-		{
-			float f = 42f;
-			return Math.Truncate ((decimal) f);
-		}
+    public double TruncateFloatDouble()
+    {
+      float f = 42f;
+      return Math.Truncate(f);
+    }
 
-		public double TruncateFloatDouble ()
-		{
-			float f = 42f;
-			return Math.Truncate (f);
-		}
+    public decimal TruncateDoubleDecimal()
+    {
+      double d = 3.14d;
+      return Math.Truncate((decimal)d);
+    }
 
-		public decimal TruncateDoubleDecimal ()
-		{
-			double d = 3.14d;
-			return Math.Truncate ((decimal) d);
-		}
+    public double TruncateDoubleDouble()
+    {
+      double d = 3.14d;
+      return Math.Truncate((double)d);
+    }
 
-		public double TruncateDoubleDouble ()
-		{
-			double d = 3.14d;
-			return Math.Truncate ((double) d);
-		}
+    [Test]
+    public void Truncate()
+    {
+      AssertAreEqual(1d, Math.Truncate((double)1), "Truncate(double)");
+      AssertAreEqual(1m, Math.Truncate((decimal)1), "Truncate(decimal)");
 
-		[Test]
-		public void Truncate ()
-		{
-			Assert.AreEqual (1d, Math.Truncate ((double) 1), "Truncate(double)");
-			Assert.AreEqual (1m, Math.Truncate ((decimal) 1), "Truncate(decimal)");
+      AssertRuleFailure<DoNotRoundIntegersTest>("TruncateIntegerDecimal", 1);
+      AssertRuleFailure<DoNotRoundIntegersTest>("TruncateIntegerDouble", 1);
 
-			AssertRuleFailure<DoNotRoundIntegersTest> ("TruncateIntegerDecimal", 1);
-			AssertRuleFailure<DoNotRoundIntegersTest> ("TruncateIntegerDouble", 1);
+      AssertRuleSuccess<DoNotRoundIntegersTest>("TruncateFloatDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("TruncateFloatDouble");
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("TruncateFloatDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("TruncateFloatDouble");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("TruncateDoubleDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("TruncateDoubleDouble");
+    }
 
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("TruncateDoubleDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("TruncateDoubleDouble");
-		}
+    public double UnsignedLong(ulong l)
+    {
+      return Math.Ceiling((double)l);
+    }
 
-		public double UnsignedLong (ulong l)
-		{
-			return Math.Ceiling ((double) l);
-		}
+    public double ChainAllByte(byte small)
+    {
+      double a = Math.Truncate(Math.Round(Math.Floor(Math.Ceiling((double)small))));
+      double b = Math.Round(Math.Floor(Math.Ceiling(Math.Truncate((double)small))));
+      double c = Math.Floor(Math.Ceiling(Math.Truncate(Math.Round((double)small))));
+      double d = Math.Ceiling(Math.Truncate(Math.Round(Math.Floor((double)small))));
+      return a + b + c + d;
+    }
 
-		public double ChainAllByte (byte small)
-		{
-			double a = Math.Truncate (Math.Round (Math.Floor (Math.Ceiling ((double) small))));
-			double b = Math.Round (Math.Floor (Math.Ceiling (Math.Truncate ((double) small))));
-			double c = Math.Floor (Math.Ceiling (Math.Truncate (Math.Round ((double) small))));
-			double d = Math.Ceiling (Math.Truncate (Math.Round (Math.Floor ((double) small))));
-			return a + b + c + d;
-		}
+    public double ChainFloatingPoint(string s)
+    {
+      return Math.Floor(Double.Parse(s));
+    }
 
-		public double ChainFloatingPoint (string s)
-		{
-			return Math.Floor (Double.Parse (s));
-		}
+    public decimal ChainDecimal(string s)
+    {
+      return Math.Round(Decimal.Parse(s), 2);
+    }
 
-		public decimal ChainDecimal (string s)
-		{
-			return Math.Round (Decimal.Parse (s), 2);
-		}
+    public decimal ChainChainDecimal(string s)
+    {
+      return Math.Ceiling(ChainDecimal(s));
+    }
 
-		public decimal ChainChainDecimal (string s)
-		{
-			return Math.Ceiling (ChainDecimal (s));
-		}
+    [Test]
+    public void Others()
+    {
+      AssertAreEqual(1.0, UnsignedLong(1), "UnsignedLong");
+      AssertRuleFailure<DoNotRoundIntegersTest>("UnsignedLong", 1);
 
-		[Test]
-		public void Others ()
-		{
-			Assert.AreEqual (1.0, UnsignedLong (1), "UnsignedLong");
-			AssertRuleFailure<DoNotRoundIntegersTest> ("UnsignedLong", 1);
+      AssertAreEqual(4.0, ChainAllByte(1), "ChainAllByte");
+      AssertRuleFailure<DoNotRoundIntegersTest>("ChainAllByte", 4);
 
-			Assert.AreEqual (4.0, ChainAllByte (1), "ChainAllByte");
-			AssertRuleFailure<DoNotRoundIntegersTest> ("ChainAllByte", 4);
+      AssertAreEqual(3.0, ChainFloatingPoint((3.14).ToString()), "ChainFloatingPoint");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("ChainFloatingPoint");
 
-			Assert.AreEqual (3.0, ChainFloatingPoint ((3.14).ToString ()), "ChainFloatingPoint");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("ChainFloatingPoint");
+      AssertAreEqual(3.14m, ChainDecimal((3.1415).ToString()), "ChainDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("ChainDecimal");
 
-			Assert.AreEqual (3.14m, ChainDecimal ((3.1415).ToString ()), "ChainDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("ChainDecimal");
+      AssertAreEqual(4m, ChainChainDecimal((3.1415).ToString()), "ChainChainDecimal");
+      AssertRuleSuccess<DoNotRoundIntegersTest>("ChainChainDecimal");
+    }
 
-			Assert.AreEqual (4m, ChainChainDecimal ((3.1415).ToString ()), "ChainChainDecimal");
-			AssertRuleSuccess<DoNotRoundIntegersTest> ("ChainChainDecimal");
-		}
+    // test case provided by Richard Birkby
+    internal sealed class FalsePositive8
+    {
+      public decimal Run()
+      {
+        GetType();
+        int x = 5;
+        return Math.Round(x * 0.5M);
+      }
+    }
 
-		// test case provided by Richard Birkby
-		internal sealed class FalsePositive8 {
-
-			public decimal Run ()
-			{
-				GetType ();
-				int x = 5;
-				return Math.Round (x * 0.5M);
-			}
-		}
-
-		[Test]
-		public void DecimalResult ()
-		{
-			AssertRuleSuccess<FalsePositive8> ("Run");
-		}
-	}
+    [Test]
+    public void DecimalResult()
+    {
+      AssertRuleSuccess<FalsePositive8>("Run");
+    }
+  }
 }

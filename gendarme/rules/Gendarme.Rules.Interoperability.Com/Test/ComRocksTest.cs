@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for CustomAttributeRocks
 //
 // Authors:
@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-
 using Gendarme.Rules.Interoperability.Com;
 
 using Mono.Cecil;
@@ -34,28 +33,30 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Interoperability.Com {
+namespace Test.Rules.Interoperability.Com
+{
+  [System.Runtime.InteropServices.ComVisible(true)]
+  public class ExplicitComVisibleClass
+  {
+  }
 
-	[System.Runtime.InteropServices.ComVisible (true)]
-	public class ExplicitComVisibleClass {
-	}
-	[System.Runtime.InteropServices.ComVisible (false)]
-	public class ExplicitComInvisibleClass {
-	}
+  [System.Runtime.InteropServices.ComVisible(false)]
+  public class ExplicitComInvisibleClass
+  {
+  }
 
-	[TestFixture]
-	public class ComRocksTest {
-
-		[Test]
-		public void IsComVisible()
-		{
-			TypeDefinition type = DefinitionLoader.GetTypeDefinition<ExplicitComVisibleClass> ();
-			Assert.IsTrue (type.IsComVisible () ?? false, "true");
-			type = SimpleTypes.Class;
-			Assert.IsNull (type.IsComVisible (), "null");
-			type = DefinitionLoader.GetTypeDefinition<ExplicitComInvisibleClass> ();
-			Assert.IsFalse (type.IsComVisible () ?? true, "false");
-		}
-
-	}
+  [TestFixture]
+  public class ComRocksTest
+  {
+    [Test]
+    public void IsComVisible()
+    {
+      TypeDefinition type = DefinitionLoader.GetTypeDefinition<ExplicitComVisibleClass>();
+      Assert.That(type.IsComVisible() ?? false, "true");
+      type = SimpleTypes.Class;
+      Assert.That(type.IsComVisible(), Is.Null, "null");
+      type = DefinitionLoader.GetTypeDefinition<ExplicitComInvisibleClass>();
+      Assert.That(!(type.IsComVisible() ?? true), "false");
+    }
+  }
 }

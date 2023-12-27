@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for OnlyUseDisposeForIDisposableTypesRule
 //
 // Authors:
@@ -36,105 +36,119 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public sealed class OnlyUseDisposeForIDisposableTypesTest : TypeRuleTestFixture<OnlyUseDisposeForIDisposableTypesRule>
+  {
+    public class Good1
+    {
+      public void Reset()
+      {
+      }
+    }
 
-	[TestFixture]
-	public sealed class OnlyUseDisposeForIDisposableTypesTest : TypeRuleTestFixture<OnlyUseDisposeForIDisposableTypesRule> {
+    public class Good2 : IDisposable
+    {
+      public virtual void Dispose()
+      {
+      }
+    }
 
-		public class Good1 {
-			public void Reset ()
-			{
-			}
-		}
+    public class Good3 : Good2
+    {
+      public override void Dispose()
+      {
+      }
+    }
 
-		public class Good2 : IDisposable {
-			public virtual void Dispose ()
-			{
-			}
-		}
+    public class Bad1
+    {
+      public void Dispose()
+      {
+      }
+    }
 
-		public class Good3 : Good2 {
-			public override void Dispose ()
-			{
-			}
-		}
+    public class Bad2
+    {
+      public void Dispose(int x)
+      {
+      }
+    }
 
-		public class Bad1 {
-			public void Dispose ()
-			{
-			}
-		}
+    public interface Bad3
+    {
+      void Dispose();
+    }
 
-		public class Bad2 {
-			public void Dispose (int x)
-			{
-			}
-		}
+    internal class Bad4
+    {
+      public void Dispose()
+      {
+      }
+    }
 
-		public interface Bad3 {
-			void Dispose ();
-		}
+    internal class Bad5
+    {
+      public void Close()
+      {
+        Dispose(0);
+      }
 
-		internal class Bad4 {
-			public void Dispose ()
-			{
-			}
-		}
+      private void Dispose(int x)
+      {
+      }
+    }
 
-		internal class Bad5 {
-			public void Close ()
-			{
-				Dispose (0);
-			}
+    internal class Bad6
+    {
+      public void Dispose()
+      {
+        Dispose(0);
+      }
 
-			private void Dispose (int x)
-			{
-			}
-		}
+      private void Dispose(int x)
+      {
+      }
+    }
 
-		internal class Bad6 {
-			public void Dispose ()
-			{
-				Dispose (0);
-			}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+    }
 
-			private void Dispose (int x)
-			{
-			}
-		}
+    private void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-		}
+    [Test]
+    public void Cases()
+    {
+      AssertRuleSuccess<Good1>();
+      AssertRuleSuccess<Good2>();
+      AssertRuleSuccess<Good3>();
 
-		[Test]
-		public void Cases ()
-		{
-			AssertRuleSuccess<Good1> ();
-			AssertRuleSuccess<Good2> ();
-			AssertRuleSuccess<Good3> ();
-			
-			AssertRuleFailure<Bad1> ();
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "Bad1-Severity-High");
+      AssertRuleFailure<Bad1>();
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "Bad1-Severity-High");
 
-			AssertRuleFailure<Bad2> ();
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "Bad2-Severity-High");
+      AssertRuleFailure<Bad2>();
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "Bad2-Severity-High");
 
-			AssertRuleFailure<Bad3> ();
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "Bad3-Severity-High");
+      AssertRuleFailure<Bad3>();
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "Bad3-Severity-High");
 
-			// Bad4 has internal visibility so we consider it less severe.
-			AssertRuleFailure<Bad4> ();
-			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "Bad4-Severity-Medium");
+      // Bad4 has internal visibility so we consider it less severe.
+      AssertRuleFailure<Bad4>();
+      AssertAreEqual(Severity.Medium, Runner.Defects[0].Severity, "Bad4-Severity-Medium");
 
-			// Private Dispose.
-			AssertRuleFailure<Bad5> ();
-			Assert.AreEqual (Severity.Low, Runner.Defects [0].Severity, "Bad5-Severity-Low");
+      // Private Dispose.
+      AssertRuleFailure<Bad5>();
+      AssertAreEqual(Severity.Low, Runner.Defects[0].Severity, "Bad5-Severity-Low");
 
-			AssertRuleFailure<Bad6> (2);
-		}
-	}
+      AssertRuleFailure<Bad6>(2);
+    }
+  }
 }

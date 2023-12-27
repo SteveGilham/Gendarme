@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,88 +36,103 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Smells {
+namespace Test.Rules.Smells
+{
+  public class BaseClassWithCodeDuplicated
+  {
+    protected IList list;
+  }
 
-	public class BaseClassWithCodeDuplicated {
-		protected IList list;
-	}
+  public class OverriderClassWithCodeDuplicated : BaseClassWithCodeDuplicated
+  {
+    public void CodeDuplicated()
+    {
+      foreach (int i in list)
+      {
+        Console.WriteLine(i);
+      }
+      list.Add(1);
+    }
+  }
 
-	public class OverriderClassWithCodeDuplicated : BaseClassWithCodeDuplicated {
-		public void CodeDuplicated () 
-		{
-			foreach (int i in list) {
-				Console.WriteLine (i);
-			}
-			list.Add (1);
-		}
-	}
+  public class OtherOverriderWithCodeDuplicated : BaseClassWithCodeDuplicated
+  {
+    public void OtherMethod()
+    {
+      foreach (int i in list)
+      {
+        Console.WriteLine(i);
+      }
+      list.Remove(1);
+    }
+  }
 
-	public class OtherOverriderWithCodeDuplicated : BaseClassWithCodeDuplicated {
-		public void OtherMethod ()
-		{
-			foreach (int i in list) {
-				Console.WriteLine (i);
-			}
-			list.Remove (1);
-		}
-	}
+  public class BaseClassWithoutCodeDuplicated
+  {
+    protected IList list;
 
-	public class BaseClassWithoutCodeDuplicated {
-		protected IList list;
+    protected void PrintValuesInList()
+    {
+      foreach (int i in list)
+      {
+        Console.WriteLine(i);
+      }
+    }
+  }
 
-		protected void PrintValuesInList () 
-		{
-			foreach (int i in list) {
-				Console.WriteLine (i);
-			}
-		}
-	}
+  public class OverriderClassWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated
+  {
+    public void SomeCode()
+    {
+      PrintValuesInList();
+      list.Add(1);
+    }
+  }
 
-	public class OverriderClassWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
-		public void SomeCode () 
-		{
-			PrintValuesInList ();
-			list.Add (1);
-		}
-	}
+  public class OtherOverriderWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated
+  {
+    public void MoreCode()
+    {
+      PrintValuesInList();
+      list.Remove(1);
+    }
+  }
 
-	public class OtherOverriderWithoutCodeDuplicated : BaseClassWithoutCodeDuplicated {
-		public void MoreCode ()
-		{
-			PrintValuesInList ();
-			list.Remove (1);
-		}
-	}
+  [TestFixture]
+  public class AvoidCodeDuplicatedInSiblingClassesTest
+  {
+    private ITypeRule rule;
+    private AssemblyDefinition assembly;
+    private TypeDefinition type;
+    private TestRunner runner;
 
-	[TestFixture]
-	public class AvoidCodeDuplicatedInSiblingClassesTest {
-		private ITypeRule rule;
-		private AssemblyDefinition assembly;
-		private TypeDefinition type;
-		private TestRunner runner;
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      rule = new AvoidCodeDuplicatedInSiblingClassesRule();
+      runner = new TestRunner(rule);
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			rule = new AvoidCodeDuplicatedInSiblingClassesRule ();
-			runner = new TestRunner (rule);
-		}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		[Test]
-		public void BaseClassWithCodeDuplicatedTest () 
-		{
-			type = assembly.MainModule.GetType ("Test.Rules.Smells.BaseClassWithCodeDuplicated");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "Test.Rules.Smells.BaseClassWithCodeDuplicated failure test");
-			Assert.AreEqual (1, runner.Defects.Count, "Test.Rules.Smells.BaseClassWithCodeDuplicated defect count check");
-		}
+    [Test]
+    public void BaseClassWithCodeDuplicatedTest()
+    {
+      type = assembly.MainModule.GetType("Test.Rules.Smells.BaseClassWithCodeDuplicated");
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "Test.Rules.Smells.BaseClassWithCodeDuplicated failure test");
+      AssertAreEqual(1, runner.Defects.Count, "Test.Rules.Smells.BaseClassWithCodeDuplicated defect count check");
+    }
 
-		[Test]
-		public void BaseClassWithoutCodeDuplicatedTest ()
-		{
-			type = assembly.MainModule.GetType ("Test.Rules.Smells.BaseClassWithoutCodeDuplicated");
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type));
-		}
-	}
+    [Test]
+    public void BaseClassWithoutCodeDuplicatedTest()
+    {
+      type = assembly.MainModule.GetType("Test.Rules.Smells.BaseClassWithoutCodeDuplicated");
+      Assert.That(RuleResult.Success, Is.EqualTo(runner.CheckType(type)));
+    }
+  }
 }

@@ -79,44 +79,49 @@ namespace Test.Rules.Design
       return assembly.MainModule.GetType(typeof(T).FullName);
     }
 
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
     [Test]
     public void TestNotAttribute()
     {
       TypeDefinition type = GetTest<NotAttribute>();
-      Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
-      Assert.AreEqual(0, runner.Defects.Count, "Count");
+      AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
     }
 
     [Test]
     public void TestNoUsageDefinedAttribute()
     {
       TypeDefinition type = GetTest<NoUsageDefinedAttribute>();
-      Assert.AreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
-      Assert.AreEqual(1, runner.Defects.Count, "Count");
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
     }
 
     [Test]
     public void TestNoUsageDefinedInheritsUsageDefinedAttribute()
     {
       TypeDefinition type = GetTest<NoUsageDefinedInheritsUsageDefinedAttribute>();
-      Assert.AreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
-      Assert.AreEqual(1, runner.Defects.Count, "Count");
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
     }
 
     [Test]
     public void TestUsageDefinedAttribute()
     {
       TypeDefinition type = GetTest<UsageDefinedAttribute>();
-      Assert.AreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
-      Assert.AreEqual(0, runner.Defects.Count, "Count");
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
     }
 
     [Test]
     public void TestUsageDefinedInheritsNoUsageDefinedAttribute()
     {
       TypeDefinition type = GetTest<UsageDefinedInheritsNoUsageDefinedAttribute>();
-      Assert.AreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
-      Assert.AreEqual(0, runner.Defects.Count, "Count");
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
     }
 
     [Test]
@@ -125,8 +130,8 @@ namespace Test.Rules.Design
       var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
       var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute");
       var def = DefinitionLoader.GetTypeDefinition(type);
-      Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckType(def), "RuleResult");
-      Assert.AreEqual(0, runner.Defects.Count, "Count");
+      AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(def), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
     }
   }
 }

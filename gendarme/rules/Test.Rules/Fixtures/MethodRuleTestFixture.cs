@@ -95,8 +95,8 @@ namespace Test.Rules.Fixtures
       // Can't all be inapplicable
       if (!success)
       {
-        NUnit.Framework.Assert.AreEqual(RuleResult.Success, RuleResult.DoesNotApply, "{0} failed on {1}: result should be {2} but got {3}.",
-            typeof(TMethodRule).Name, typeof(T).Name, RuleResult.Success, RuleResult.DoesNotApply);
+        NUnit.Framework.Assert.Fail(
+          $"{typeof(TMethodRule).Name} failed on {typeof(T).Name}: result should be {RuleResult.Success} but got {RuleResult.DoesNotApply}.");
       }
     }
 

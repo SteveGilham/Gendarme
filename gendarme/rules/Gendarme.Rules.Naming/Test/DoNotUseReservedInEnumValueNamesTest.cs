@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,73 +37,82 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Naming {
+namespace Test.Rules.Naming
+{
+  [TestFixture]
+  public class DoNotUseReservedInEnumValueNamesTest
+  {
+    private DoNotUseReservedInEnumValueNamesRule rule;
+    private AssemblyDefinition assembly;
+    private TypeDefinition type;
+    private TestRunner runner;
 
-	[TestFixture]
-	public class DoNotUseReservedInEnumValueNamesTest {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      type = assembly.MainModule.GetType("Test.Rules.Naming.DoNotUseReservedInEnumValueNamesTest");
+      rule = new DoNotUseReservedInEnumValueNamesRule();
+      runner = new TestRunner(rule);
+    }
 
-		private DoNotUseReservedInEnumValueNamesRule rule;
-		private AssemblyDefinition assembly;
-		private TypeDefinition type;
-		private TestRunner runner;
+    private TypeDefinition GetTest(string name)
+    {
+      foreach (TypeDefinition nestedType in type.NestedTypes)
+      {
+        if (nestedType.Name == name)
+          return nestedType;
+      }
+      return null;
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			type = assembly.MainModule.GetType ("Test.Rules.Naming.DoNotUseReservedInEnumValueNamesTest");
-			rule = new DoNotUseReservedInEnumValueNamesRule ();
-			runner = new TestRunner (rule);
-		}
+    private struct NonEnum
+    {
+      private int Reserved, NonEnum2;
+    }
 
-		private TypeDefinition GetTest (string name)
-		{
-			foreach (TypeDefinition nestedType in type.NestedTypes) {
-				if (nestedType.Name == name)
-					return nestedType;
-			}
-			return null;
-		}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		struct NonEnum {
-			int Reserved, NonEnum2;
-		}
+    [Test]
+    public void TestNonEnum()
+    {
+      TypeDefinition type = GetTest("NonEnum");
+      AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestNonEnum ()
-		{
-			TypeDefinition type = GetTest ("NonEnum");
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    private enum FalsePositive
+    {
+      A,
+      B,
+      C
+    }
 
-		enum FalsePositive {
-			A,
-			B,
-			C
-		}
+    [Test]
+    public void TestFalsePositive()
+    {
+      TypeDefinition type = GetTest("FalsePositive");
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestFalsePositive ()
-		{
-			TypeDefinition type = GetTest ("FalsePositive");
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    private enum Reserved
+    {
+      A,
+      Reserved,
+      B
+    }
 
-		enum Reserved {
-			A,
-			Reserved,
-			B
-		}
-
-		[Test]
-		public void TestReserved ()
-		{
-			TypeDefinition type = GetTest ("Reserved");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-	}
+    [Test]
+    public void TestReserved()
+    {
+      TypeDefinition type = GetTest("Reserved");
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
+  }
 }

@@ -130,28 +130,28 @@ namespace Test.Rules.Naming
     public void Failure1()
     {
       AssertRuleFailure<PostOffice>("SendPackage", 1);
-      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Send'"), "SendPackage");
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'Send'"), "SendPackage");
     }
 
     [Test]
     public void Failure2()
     {
       AssertRuleFailure<PostOffice>("IsPackageValid", 1);
-      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as property 'IsValid'"), "IsPackageValid");
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as property 'IsValid'"), "IsPackageValid");
     }
 
     [Test]
     public void Failure3()
     {
       AssertRuleFailure<PostOffice>("CheckPackageValid", 1);
-      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as method 'CheckValid'"), "CheckPackageValid");
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as method 'CheckValid'"), "CheckPackageValid");
     }
 
     [Test]
     public void Failure4()
     {
       AssertRuleFailure<PostOffice>("SendPackageTo", 1);
-      Assert.IsTrue(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as method 'SendTo'"), "SendPackageTo");
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'Test.Rules.Naming.Package' as method 'SendTo'"), "SendPackageTo");
     }
 
     [Test]

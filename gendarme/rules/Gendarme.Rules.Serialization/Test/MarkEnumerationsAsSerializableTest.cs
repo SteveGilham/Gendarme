@@ -64,13 +64,15 @@ namespace Test.Rules.Serialization
     }
 
 #if NET472
+
     [Test]
     public void Reflection()
     {
       // always report true since enums are ALWAYS serializable
-      Assert.IsTrue(typeof(NonSerializableEnum).IsSerializable, "NonSerializableEnum");
-      Assert.IsTrue(typeof(SerializableEnum).IsSerializable, "SerializableEnum");
+      Assert.That(typeof(NonSerializableEnum).IsSerializable, "NonSerializableEnum");
+      Assert.That(typeof(SerializableEnum).IsSerializable, "SerializableEnum");
     }
+
 #endif
 
     //[Test]
@@ -87,9 +89,9 @@ namespace Test.Rules.Serialization
     {
       // Cecil reports what being set on the type, not how the runtime treats it
       TypeDefinition nse = DefinitionLoader.GetTypeDefinition<NonSerializableEnum>();
-      Assert.IsFalse(nse.IsSerializable, "NonSerializableEnum");
+      Assert.That(nse.IsSerializable, Is.False, "NonSerializableEnum");
       TypeDefinition se = DefinitionLoader.GetTypeDefinition<SerializableEnum>();
-      Assert.IsTrue(se.IsSerializable, "SerializableEnum");
+      Assert.That(se.IsSerializable, Is.True, "SerializableEnum");
     }
 
     [Test]

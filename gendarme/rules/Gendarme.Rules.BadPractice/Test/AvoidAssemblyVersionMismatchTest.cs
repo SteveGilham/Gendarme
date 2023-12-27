@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for AvoidAssemblyVersionMismatchRule
 //
 // Authors:
@@ -36,127 +36,144 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-[assembly: AssemblyVersion ("2.2.0.0")]
-[assembly: AssemblyFileVersion ("2.2.0.0")]
+[assembly: AssemblyVersion("2.2.0.0")]
+[assembly: AssemblyFileVersion("2.2.0.0")]
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class AvoidAssemblyVersionMismatchTest : AssemblyRuleTestFixture<AvoidAssemblyVersionMismatchRule>
+  {
+    private AssemblyDefinition assembly;
 
-	[TestFixture]
-	public class AvoidAssemblyVersionMismatchTest : AssemblyRuleTestFixture<AvoidAssemblyVersionMismatchRule> {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
 
-		private AssemblyDefinition assembly;
+    [Test]
+    public void EmptyAssemblyVersion()
+    {
+      Version v = assembly.Name.Version;
+      try
+      {
+        assembly.Name.Version = null; // should not happen
+        AssertRuleDoesNotApply(assembly);
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
+        assembly.Name.Version = new Version(0, 0, 0, 0);
+        AssertRuleDoesNotApply(assembly);
+      }
+      finally
+      {
+        assembly.Name.Version = v;
+      }
+    }
 
-		[Test]
-		public void EmptyAssemblyVersion ()
-		{
-			Version v = assembly.Name.Version;
-			try {
-				assembly.Name.Version = null; // should not happen
-				AssertRuleDoesNotApply (assembly);
+    [Test]
+    public void EmptyCustomAttributes()
+    {
+      IList<CustomAttribute> cac = new List<CustomAttribute>();
+      foreach (CustomAttribute ca in assembly.CustomAttributes)
+        cac.Add(ca);
 
-				assembly.Name.Version = new Version (0, 0, 0, 0);
-				AssertRuleDoesNotApply (assembly);
-			}
-			finally {
-				assembly.Name.Version = v;
-			}
-		}
+      try
+      {
+        assembly.CustomAttributes.Clear();
+        AssertRuleDoesNotApply(assembly);
+      }
+      finally
+      {
+        foreach (CustomAttribute ca in cac)
+          assembly.CustomAttributes.Add(ca);
+      }
+    }
 
-		[Test]
-		public void EmptyCustomAttributes ()
-		{
-			IList<CustomAttribute> cac = new List<CustomAttribute> ();
-			foreach (CustomAttribute ca in assembly.CustomAttributes)
-				cac.Add (ca);
+    [Test]
+    public void AbsentAssemblyFileVersion()
+    {
+      CustomAttribute afv = null;
+      foreach (CustomAttribute ca in assembly.CustomAttributes)
+      {
+        if (ca.AttributeType.FullName != "System.Reflection.AssemblyFileVersionAttribute")
+          continue;
+        afv = ca;
+        break;
+      }
+      assembly.CustomAttributes.Remove(afv);
 
-			try {
-				assembly.CustomAttributes.Clear ();
-				AssertRuleDoesNotApply (assembly);
-			}
-			finally {
-				foreach (CustomAttribute ca in cac)
-					assembly.CustomAttributes.Add (ca);
-			}
-		}
+      try
+      {
+        AssertRuleDoesNotApply(assembly);
+      }
+      finally
+      {
+        assembly.CustomAttributes.Add(afv);
+      }
+    }
 
-		[Test]
-		public void AbsentAssemblyFileVersion ()
-		{
-			CustomAttribute afv = null;
-			foreach (CustomAttribute ca in assembly.CustomAttributes) {
-				if (ca.AttributeType.FullName != "System.Reflection.AssemblyFileVersionAttribute")
-					continue;
-				afv = ca;
-				break;
-			}
-			assembly.CustomAttributes.Remove (afv);
+    [Test]
+    public void EmptyAssemblyFileVersion()
+    {
+      CustomAttribute afv = null;
+      foreach (CustomAttribute ca in assembly.CustomAttributes)
+      {
+        if (ca.Constructor.DeclaringType.FullName != "System.Reflection.AssemblyFileVersionAttribute")
+          continue;
+        afv = ca;
+        break;
+      }
+      CustomAttributeArgument value = afv.ConstructorArguments[0];
+      afv.ConstructorArguments[0] = new CustomAttributeArgument();
 
-			try {
-				AssertRuleDoesNotApply (assembly);
-			}
-			finally {
-				assembly.CustomAttributes.Add (afv);
-			}
-		}
+      try
+      {
+        AssertRuleDoesNotApply(assembly);
+      }
+      finally
+      {
+        afv.ConstructorArguments[0] = value;
+      }
+    }
 
-		[Test]
-		public void EmptyAssemblyFileVersion ()
-		{
-			CustomAttribute afv = null;
-			foreach (CustomAttribute ca in assembly.CustomAttributes) {
-				if (ca.Constructor.DeclaringType.FullName != "System.Reflection.AssemblyFileVersionAttribute")
-					continue;
-				afv = ca;
-				break;
-			}
-			CustomAttributeArgument value = afv.ConstructorArguments [0];
-			afv.ConstructorArguments [0] = new CustomAttributeArgument ();
+    [Test]
+    public void VersionMatch()
+    {
+      AssertRuleSuccess(assembly);
+    }
 
-			try {
-				AssertRuleDoesNotApply (assembly);
-			}
-			finally {
-				afv.ConstructorArguments [0] = value;
-			}
-		}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		[Test]
-		public void VersionMatch ()
-		{
-			AssertRuleSuccess (assembly);
-		}
+    [Test]
+    public void VersionMismatch()
+    {
+      Version v = assembly.Name.Version;
+      try
+      {
+        assembly.Name.Version = new Version(2, 2, 0, 9);
+        AssertRuleFailure(assembly, 1);
+        AssertAreEqual(Severity.Low, Runner.Defects[0].Severity, "Low");
 
-		[Test]
-		public void VersionMismatch ()
-		{
-			Version v = assembly.Name.Version;
-			try {
-				assembly.Name.Version = new Version (2, 2, 0, 9);
-				AssertRuleFailure (assembly, 1);
-				Assert.AreEqual (Severity.Low, Runner.Defects [0].Severity, "Low");
+        assembly.Name.Version = new Version(2, 2, 9, 0);
+        AssertRuleFailure(assembly, 1);
+        AssertAreEqual(Severity.Medium, Runner.Defects[0].Severity, "Medium");
 
-				assembly.Name.Version = new Version (2, 2, 9, 0);
-				AssertRuleFailure (assembly, 1);
-				Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "Medium");
+        assembly.Name.Version = new Version(2, 9, 0, 0);
+        AssertRuleFailure(assembly, 1);
+        AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "High");
 
-				assembly.Name.Version = new Version (2, 9, 0, 0);
-				AssertRuleFailure (assembly, 1);
-				Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "High");
-
-				assembly.Name.Version = new Version (9, 2, 0, 0);
-				AssertRuleFailure (assembly, 1);
-				Assert.AreEqual (Severity.Critical, Runner.Defects [0].Severity, "Critical");
-			}
-			finally {
-				assembly.Name.Version = v;
-			}
-		}
-	}
+        assembly.Name.Version = new Version(9, 2, 0, 0);
+        AssertRuleFailure(assembly, 1);
+        AssertAreEqual(Severity.Critical, Runner.Defects[0].Severity, "Critical");
+      }
+      finally
+      {
+        assembly.Name.Version = v;
+      }
+    }
+  }
 }

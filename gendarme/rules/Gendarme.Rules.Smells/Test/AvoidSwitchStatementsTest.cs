@@ -106,7 +106,7 @@ namespace Test.Rules.Smells
         if (type == null) // Roslyn
           type = Type.GetType("Test.Rules.Smells.AvoidSwitchStatementsTest+<MethodWithoutSwitchAndGenerator>d__6");
       }
-      Assert.IsNotNull(type, "compiler generated type name");
+      Assert.That(type, Is.Not.Null, "compiler generated type name");
       AssertRuleDoesNotApply(type, "MoveNext");
     }
 

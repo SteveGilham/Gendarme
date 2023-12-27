@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for PreferSafeHandleRule
 //
 // Authors:
@@ -36,78 +36,89 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public sealed class PreferSafeHandleTest : TypeRuleTestFixture<PreferSafeHandleRule>
+  {
+    internal class Good1
+    {
+      internal SafeHandle ptr;
+    }
 
-	[TestFixture]
-	public sealed class PreferSafeHandleTest : TypeRuleTestFixture<PreferSafeHandleRule> {
+    internal class Bad1
+    {
+      internal IntPtr ptr;
+    }
 
-		internal class Good1 {
-			internal SafeHandle ptr;
-		}
+    internal class Bad2
+    {
+      internal UIntPtr ptr;
+    }
 
-		internal class Bad1 {
-			internal IntPtr ptr;
-		}
+    internal class Bad3
+    {
+      ~Bad3()
+      {
+      }
 
-		internal class Bad2 {
-			internal UIntPtr ptr;
-		}
+      internal UIntPtr ptr;
+    }
 
-		internal class Bad3 {
-			~Bad3 ()
-			{
-			}
-			
-			internal UIntPtr ptr;
-		}
+    internal class Bad4 : IDisposable
+    {
+      public void Dispose()
+      {
+      }
 
-		internal class Bad4 : IDisposable {
-			public void Dispose ()
-			{
-			}
-			
-			internal UIntPtr ptr;
-		}
+      internal UIntPtr ptr;
+    }
 
-		internal class Bad5 : IDisposable {
-			~Bad5 ()
-			{
-			}
-			
-			public void Dispose ()
-			{
-			}
-			
-			internal UIntPtr ptr;
-		}
+    internal class Bad5 : IDisposable
+    {
+      ~Bad5()
+      {
+      }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
-		}
+      public void Dispose()
+      {
+      }
 
-		[Test]
-		public void Cases ()
-		{
-			AssertRuleSuccess<Good1> ();
-			
-			AssertRuleFailure<Bad1> ();
-			Assert.AreEqual (Confidence.Low, Runner.Defects [0].Confidence, "Bad1-Confidence-Low");
+      internal UIntPtr ptr;
+    }
 
-			AssertRuleFailure<Bad2> ();
-			Assert.AreEqual (Confidence.Low, Runner.Defects [0].Confidence, "Bad2-Confidence-Low");
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+    }
 
-			AssertRuleFailure<Bad3> ();
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "Bad3-Confidence-Normal");
+    private void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-			AssertRuleFailure<Bad4> ();
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "Bad4-Confidence-Normal");
+    [Test]
+    public void Cases()
+    {
+      AssertRuleSuccess<Good1>();
 
-			AssertRuleFailure<Bad5> ();
-			Assert.AreEqual (Confidence.High, Runner.Defects [0].Confidence, "Bad5-Confidence-High");
-		}
-	}
+      AssertRuleFailure<Bad1>();
+      AssertAreEqual(Confidence.Low, Runner.Defects[0].Confidence, "Bad1-Confidence-Low");
+
+      AssertRuleFailure<Bad2>();
+      AssertAreEqual(Confidence.Low, Runner.Defects[0].Confidence, "Bad2-Confidence-Low");
+
+      AssertRuleFailure<Bad3>();
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "Bad3-Confidence-Normal");
+
+      AssertRuleFailure<Bad4>();
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "Bad4-Confidence-Normal");
+
+      AssertRuleFailure<Bad5>();
+      AssertAreEqual(Confidence.High, Runner.Defects[0].Confidence, "Bad5-Confidence-High");
+    }
+  }
 }

@@ -35,54 +35,64 @@ using Gendarme.Rules.Design;
 using NUnit.Framework;
 using Test.Rules.Fixtures;
 
-namespace Ok.Internal {
-	internal interface InternalInterface {
-	}
+namespace Ok.Internal
+{
 
-	class PrivateType {
-		public class WithNestPublicType {
-		}
-	}
+  internal interface InternalInterface
+  {
+  }
+
+  internal class PrivateType
+  {
+
+    public class WithNestPublicType
+    {
+    }
+  }
 }
 
-namespace Bad.Enum.Internal {
+namespace Bad.Enum.Internal
+{
 
-	public enum Internal {
-		Private,
-		Internal
-	}
+  public enum Internal
+  {
+    Private,
+    Internal
+  }
 }
 
-namespace Bad.Delegate.Impl {
+namespace Bad.Delegate.Impl
+{
 
-	public delegate void Internal (object sender, EventArgs e);
+  public delegate void Internal(object sender, EventArgs e);
 }
 
-namespace Test.Rules.Design {
+namespace Test.Rules.Design
+{
 
-	[TestFixture]
-	public class InternalNamespacesShouldNotExposeTypesTest : AssemblyRuleTestFixture<InternalNamespacesShouldNotExposeTypesRule> {
+  [TestFixture]
+  public class InternalNamespacesShouldNotExposeTypesTest : AssemblyRuleTestFixture<InternalNamespacesShouldNotExposeTypesRule>
+  {
+    private AssemblyDefinition assembly;
 
-		AssemblyDefinition assembly;
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
 
-		[OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
+    [Test]
+    public void Namespaces()
+    {
+      AssertRuleFailure(assembly, 2);
 
-		[Test]
-		public void Namespaces ()
-		{
-			AssertRuleFailure (assembly, 2);
-
-			string e1 = "Bad.Enum.Internal.Internal";
-			string e2 = "Bad.Delegate.Impl.Internal";
-			string a1 = (Runner.Defects [0].Location as TypeDefinition).FullName;
-			string a2 = (Runner.Defects [1].Location as TypeDefinition).FullName;
-			Assert.IsTrue (a1 == e1 || a2 == e1, e1);
-			Assert.IsTrue (a1 == e2 || a2 == e2, e2);
-		}
-	}
+      string e1 = "Bad.Enum.Internal.Internal";
+      string e2 = "Bad.Delegate.Impl.Internal";
+      string a1 = (Runner.Defects[0].Location as TypeDefinition).FullName;
+      string a2 = (Runner.Defects[1].Location as TypeDefinition).FullName;
+      Assert.That(a1 == e1 || a2 == e1, e1);
+      Assert.That(a1 == e2 || a2 == e2, e2);
+    }
+  }
 }

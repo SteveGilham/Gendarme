@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -42,259 +42,275 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class CheckNewThreadWithoutStartTest : MethodRuleTestFixture<CheckNewThreadWithoutStartRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no NEWOBJ
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class CheckNewThreadWithoutStartTest : MethodRuleTestFixture<CheckNewThreadWithoutStartRule> {
+    private AssemblyDefinition assembly;
+    private TypeDefinition type;
+    private CheckNewThreadWithoutStartRule rule;
+    private TestRunner runner;
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no NEWOBJ
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      type = assembly.MainModule.GetType("Test.Rules.BadPractice.CheckNewThreadWithoutStartTest");
+      rule = new CheckNewThreadWithoutStartRule();
+      runner = new TestRunner(rule);
+    }
 
-		private AssemblyDefinition assembly;
-		private TypeDefinition type;
-		private CheckNewThreadWithoutStartRule rule;
-		private TestRunner runner;
+    public MethodDefinition GetTest(string name)
+    {
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.Name == name)
+          return method;
+      }
+      return null;
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			type = assembly.MainModule.GetType ("Test.Rules.BadPractice.CheckNewThreadWithoutStartTest");
-			rule = new CheckNewThreadWithoutStartRule ();
-			runner = new TestRunner (rule);
-		}
+    private void ThreadStart()
+    { }
 
-		public MethodDefinition GetTest (string name)
-		{
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.Name == name)
-					return method;
-			}
-			return null;
-		}
+    public void DirectStart()
+    {
+      new Thread(ThreadStart).Start();
+    }
 
-		private void ThreadStart () { }
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		public void DirectStart ()
-		{
-			new Thread (ThreadStart).Start ();
-		}
+    [Test]
+    public void TestDirectThrow()
+    {
+      MethodDefinition method = GetTest("DirectStart");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestDirectThrow ()
-		{
-			MethodDefinition method = GetTest ("DirectStart");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public void SimpleError()
+    {
+      new Thread(ThreadStart);
+    }
 
-		public void SimpleError ()
-		{
-			new Thread (ThreadStart);
-		}
+    [Test]
+    public void TestSimpleError()
+    {
+      MethodDefinition method = GetTest("SimpleError");
+      AssertAreEqual(RuleResult.Failure, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestSimpleError ()
-		{
-			MethodDefinition method = GetTest ("SimpleError");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
+    public void LocalVariable()
+    {
+      Thread a = new Thread(ThreadStart);
+      int c = 0;
+      for (int i = 0; i < 10; i++)
+        c += i * 2;
+      a.Start();
+    }
 
-		public void LocalVariable ()
-		{
-			Thread a = new Thread (ThreadStart);
-			int c = 0;
-			for (int i = 0; i < 10; i++)
-				c += i * 2;
-			a.Start ();
-		}
+    [Test]
+    public void TestLocalVariable()
+    {
+      MethodDefinition method = GetTest("LocalVariable");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestLocalVariable ()
-		{
-			MethodDefinition method = GetTest ("LocalVariable");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public object Return()
+    {
+      Thread a = new Thread(ThreadStart);
+      object b = a;
+      return b;
+    }
 
-		public object Return ()
-		{
-			Thread a = new Thread (ThreadStart);
-			object b = a;
-			return b;
-		}
+    [Test]
+    public void TestReturn()
+    {
+      MethodDefinition method = GetTest("Return");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestReturn ()
-		{
-			MethodDefinition method = GetTest ("Return");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public object ReturnOther()
+    {
+      Thread a = new Thread(ThreadStart);
+      object b = a;
+      b = new object();
+      return b;
+    }
 
-		public object ReturnOther ()
-		{
-			Thread a = new Thread (ThreadStart);
-			object b = a;
-			b = new object ();
-			return b;
-		}
+    [Test]
+    public void TestReturnOther()
+    {
+      MethodDefinition method = GetTest("ReturnOther");
+      AssertAreEqual(RuleResult.Failure, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestReturnOther ()
-		{
-			MethodDefinition method = GetTest ("ReturnOther");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
+    public object Branch()
+    {
+      Thread a = new Thread(ThreadStart);
+      if (new Random().Next() == 0)
+      {
+        a = null;
+      }
+      return a;
+    }
 
-		public object Branch ()
-		{
-			Thread a = new Thread (ThreadStart);
-			if (new Random ().Next () == 0) {
-				a = null;
-			}
-			return a;
-		}
+    [Test]
+    public void TestBranch()
+    {
+      MethodDefinition method = GetTest("Branch");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestBranch ()
-		{
-			MethodDefinition method = GetTest ("Branch");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public Thread TryCatch()
+    {
+      Thread a = new Thread(ThreadStart);
+      Thread b = null;
+      Thread c = null;
+      try
+      {
+        b = a;
+      }
+      catch (Exception)
+      {
+        c = b;
+      }
+      return c;
+    }
 
-		public Thread TryCatch ()
-		{
-			Thread a = new Thread (ThreadStart);
-			Thread b = null;
-			Thread c = null;
-			try {
-				b = a;
-			}
-			catch (Exception) {
-				c = b;
-			}
-			return c;
-		}
+    [Test]
+    public void TestTryCatch()
+    {
+      MethodDefinition method = GetTest("TryCatch");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestTryCatch ()
-		{
-			MethodDefinition method = GetTest ("TryCatch");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public Thread TryCatch2()
+    {
+      Thread a = new Thread(ThreadStart);
+      Thread b = null;
+      try
+      {
+        throw new Exception();
+      }
+      catch (InvalidOperationException)
+      {
+        b = a;
+      }
+      catch (InvalidCastException)
+      {
+        return b;
+      }
+      return null;
+    }
 
-		public Thread TryCatch2 ()
-		{
-			Thread a = new Thread (ThreadStart);
-			Thread b = null;
-			try {
-				throw new Exception ();
-			}
-			catch (InvalidOperationException) {
-				b = a;
-			}
-			catch (InvalidCastException) {
-				return b;
-			}
-			return null;
-		}
+    [Test]
+    public void TestTryCatch2()
+    {
+      MethodDefinition method = GetTest("TryCatch2");
+      AssertAreEqual(RuleResult.Failure, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestTryCatch2 ()
-		{
-			MethodDefinition method = GetTest ("TryCatch2");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
+    public void TryCatchFinally()
+    {
+      Thread a = new Thread(ThreadStart);
+      Thread b = null;
+      try
+      {
+        throw new Exception();
+      }
+      catch (Exception)
+      {
+        b = a;
+      }
+      finally
+      {
+        b.Start();
+      }
+    }
 
-		public void TryCatchFinally ()
-		{
-			Thread a = new Thread (ThreadStart);
-			Thread b = null;
-			try {
-				throw new Exception ();
-			}
-			catch (Exception) {
-				b = a;
-			}
-			finally {
-				b.Start ();
-			}
-		}
+    [Test]
+    public void TestTryCatchFinally()
+    {
+      MethodDefinition method = GetTest("TryCatchFinally");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestTryCatchFinally ()
-		{
-			MethodDefinition method = GetTest ("TryCatchFinally");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public void Out(out Thread thread)
+    {
+      thread = new Thread(ThreadStart);
+    }
 
-		public void Out (out Thread thread)
-		{
-			thread = new Thread (ThreadStart);
-		}
+    [Test]
+    public void TestOut()
+    {
+      MethodDefinition method = GetTest("Out");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestOut ()
-		{
-			MethodDefinition method = GetTest ("Out");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public void Ref(ref Thread thread)
+    {
+      thread = new Thread(ThreadStart);
+    }
 
-		public void Ref (ref Thread thread)
-		{
-			thread = new Thread (ThreadStart);
-		}
+    [Test]
+    public void TestRef()
+    {
+      MethodDefinition method = GetTest("Ref");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestRef ()
-		{
-			MethodDefinition method = GetTest ("Ref");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    public void Call()
+    {
+      Thread a = new Thread(ThreadStart);
+      a.ToString();
+      a.Name = "Thread";
+    }
 
-		public void Call ()
-		{
-			Thread a = new Thread (ThreadStart);
-			a.ToString ();
-			a.Name = "Thread";
-		}
+    [Test]
+    public void TestCall()
+    {
+      MethodDefinition method = GetTest("Call");
+      AssertAreEqual(RuleResult.Failure, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestCall ()
-		{
-			MethodDefinition method = GetTest ("Call");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
+    public void Call2()
+    {
+      Thread a = new Thread(ThreadStart);
+      Console.WriteLine(a);
+    }
 
-		public void Call2 ()
-		{
-			Thread a = new Thread (ThreadStart);
-			Console.WriteLine (a);
-		}
-
-		[Test]
-		public void TestCall2 ()
-		{
-			MethodDefinition method = GetTest ("Call2");
-			Assert.AreEqual (RuleResult.Success, runner.CheckMethod (method), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-	}
+    [Test]
+    public void TestCall2()
+    {
+      MethodDefinition method = GetTest("Call2");
+      AssertAreEqual(RuleResult.Success, runner.CheckMethod(method), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
+  }
 }

@@ -84,7 +84,8 @@ namespace Test.Framework.Rocks
     {
     }
 
-    public class FooEventArgs : EventArgs { }
+    public class FooEventArgs : EventArgs
+    { }
 
     protected void FooEventCallback(object sender, FooEventArgs fea)
     {
@@ -116,7 +117,7 @@ namespace Test.Framework.Rocks
         if (method.Name == methodName)
           return method;
       }
-      Assert.Fail("Method {0} was not found.", methodName);
+      Assert.Fail("Method {methodName} was not found.");
       return null;
     }
 
@@ -145,37 +146,37 @@ namespace Test.Framework.Rocks
     public void HasAttribute()
     {
       MethodDefinition method = GetMethod("FixtureSetUp");
-      Assert.IsTrue(method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUpAttribute")), "NUnit.Framework.OneTimeSetUpAttribute");
-      Assert.IsFalse(method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUp")), "NUnit.Framework.OneTimeSetUp");
+      Assert.That(method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUpAttribute")), "NUnit.Framework.OneTimeSetUpAttribute");
+      Assert.That(!method.HasAttribute(TN("NUnit.Framework", "OneTimeSetUp")), "NUnit.Framework.OneTimeSetUp");
     }
 
     [Test]
     public void IsEntryPoint()
     {
-      Assert.IsFalse(GetMethod("FixtureSetUp").IsEntryPoint(), "FixtureSetUp");
+      Assert.That(!GetMethod("FixtureSetUp").IsEntryPoint(), "FixtureSetUp");
     }
 
     [Test]
     public void IsFinalizer()
     {
-      Assert.IsFalse(GetMethod("FixtureSetUp").IsFinalizer(), "FixtureSetUp");
-      Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Finalize").IsFinalizer(), "~MainClassIntStrings");
+      Assert.That(!GetMethod("FixtureSetUp").IsFinalizer(), "FixtureSetUp");
+      Assert.That(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", "Finalize").IsFinalizer(), "~MainClassIntStrings");
     }
 
     [Test]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute]
     public void IsGeneratedCode_CompilerGenerated()
     {
-      Assert.IsTrue(GetMethod("IsGeneratedCode_CompilerGenerated").IsGeneratedCode(), "IsCompilerGenerated");
-      Assert.IsFalse(GetMethod("FixtureSetUp").IsGeneratedCode(), "FixtureSetUp");
+      Assert.That(GetMethod("IsGeneratedCode_CompilerGenerated").IsGeneratedCode(), "IsCompilerGenerated");
+      Assert.That(!GetMethod("FixtureSetUp").IsGeneratedCode(), "FixtureSetUp");
     }
 
     [Test]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("unit test", "1.0")]
     public void IsGeneratedCode_GeneratedCode()
     {
-      Assert.IsTrue(GetMethod("IsGeneratedCode_GeneratedCode").IsGeneratedCode(), "IsCompilerGenerated");
-      Assert.IsFalse(GetMethod("FixtureSetUp").IsGeneratedCode(), "FixtureSetUp");
+      Assert.That(GetMethod("IsGeneratedCode_GeneratedCode").IsGeneratedCode(), "IsCompilerGenerated");
+      Assert.That(!GetMethod("FixtureSetUp").IsGeneratedCode(), "FixtureSetUp");
     }
 
     [Test]
@@ -186,11 +187,11 @@ namespace Test.Framework.Rocks
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassVoidVoid", substitute).IsMain(), "MainClassVoidVoid");
-        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntVoid", substitute).IsMain(), "MainClassIntVoid");
-        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassVoidStrings", substitute).IsMain(), "MainClassVoidStrings");
-        Assert.IsTrue(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", substitute).IsMain(), "MainClassIntStrings");
-        Assert.IsFalse(GetMethod("FixtureSetUp").IsMain(), "FixtureSetUp");
+        Assert.That(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassVoidVoid", substitute).IsMain(), "MainClassVoidVoid");
+        Assert.That(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntVoid", substitute).IsMain(), "MainClassIntVoid");
+        Assert.That(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassVoidStrings", substitute).IsMain(), "MainClassVoidStrings");
+        Assert.That(GetMethod("Test.Framework.Rocks.MethodRocksTest/MainClassIntStrings", substitute).IsMain(), "MainClassIntStrings");
+        Assert.That(!GetMethod("FixtureSetUp").IsMain(), "FixtureSetUp");
       }
       finally
       {
@@ -201,49 +202,49 @@ namespace Test.Framework.Rocks
     [Test]
     public void IsProperty()
     {
-      Assert.IsTrue(GetMethod("get_Value").IsProperty(), "get_Value");
-      Assert.IsTrue(GetMethod("set_Value").IsProperty(), "set_Value");
-      Assert.IsFalse(GetMethod("FixtureSetUp").IsProperty(), "FixtureSetUp");
+      Assert.That(GetMethod("get_Value").IsProperty(), "get_Value");
+      Assert.That(GetMethod("set_Value").IsProperty(), "set_Value");
+      Assert.That(!GetMethod("FixtureSetUp").IsProperty(), "FixtureSetUp");
     }
 
     [Test]
     public void IsVisible()
     {
       TypeDefinition type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType");
-      Assert.IsTrue(type.GetMethod("PublicMethod").IsVisible(), "PublicType.PublicMethod");
-      Assert.IsTrue(type.GetMethod("ProtectedMethod").IsVisible(), "PublicType.ProtectedMethod");
-      Assert.IsFalse(type.GetMethod("InternalMethod").IsVisible(), "PublicType.InternalMethod");
-      Assert.IsFalse(type.GetMethod("PrivateMethod").IsVisible(), "PublicType.PrivateMethod");
+      Assert.That(type.GetMethod("PublicMethod").IsVisible(), "PublicType.PublicMethod");
+      Assert.That(type.GetMethod("ProtectedMethod").IsVisible(), "PublicType.ProtectedMethod");
+      Assert.That(!type.GetMethod("InternalMethod").IsVisible(), "PublicType.InternalMethod");
+      Assert.That(!type.GetMethod("PrivateMethod").IsVisible(), "PublicType.PrivateMethod");
 
       type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedPublicType");
-      Assert.IsTrue(type.GetMethod("PublicMethod").IsVisible(), "NestedPublicType.PublicMethod");
-      Assert.IsTrue(type.GetMethod("ProtectedMethod").IsVisible(), "NestedPublicType.ProtectedMethod");
-      Assert.IsFalse(type.GetMethod("PrivateMethod").IsVisible(), "NestedPublicType.PrivateMethod");
+      Assert.That(type.GetMethod("PublicMethod").IsVisible(), "NestedPublicType.PublicMethod");
+      Assert.That(type.GetMethod("ProtectedMethod").IsVisible(), "NestedPublicType.ProtectedMethod");
+      Assert.That(!type.GetMethod("PrivateMethod").IsVisible(), "NestedPublicType.PrivateMethod");
 
       type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedProtectedType");
-      Assert.IsTrue(type.GetMethod("PublicMethod").IsVisible(), "NestedProtectedType.PublicMethod");
+      Assert.That(type.GetMethod("PublicMethod").IsVisible(), "NestedProtectedType.PublicMethod");
 
       type = assembly.MainModule.GetType("Test.Framework.Rocks.PublicType/NestedPrivateType");
-      Assert.IsFalse(type.GetMethod("PublicMethod").IsVisible(), "NestedPrivateType.PublicMethod");
+      Assert.That(!type.GetMethod("PublicMethod").IsVisible(), "NestedPrivateType.PublicMethod");
 
       type = assembly.MainModule.GetType("Test.Framework.Rocks.InternalType");
-      Assert.IsFalse(type.GetMethod("PublicMethod").IsVisible(), "InternalType.PublicMethod");
+      Assert.That(!type.GetMethod("PublicMethod").IsVisible(), "InternalType.PublicMethod");
     }
 
     [Test]
     public void IsEventCallback()
     {
-      Assert.IsTrue(GetMethod("EventCallback").IsEventCallback(), "EventCallback");
-      Assert.IsTrue(GetMethod("FooEventCallback").IsEventCallback(), "FooEventCallback");
-      Assert.IsFalse(GetMethod("IsEventCallback").IsEventCallback(), "IsEventCallback");
+      Assert.That(GetMethod("EventCallback").IsEventCallback(), "EventCallback");
+      Assert.That(GetMethod("FooEventCallback").IsEventCallback(), "FooEventCallback");
+      Assert.That(!GetMethod("IsEventCallback").IsEventCallback(), "IsEventCallback");
     }
 
     [Test]
     public void GetPropertyByAccessor()
     {
-      Assert.AreEqual(GetMethod("get_Value").GetPropertyByAccessor().Name, "Value", "get_Value");
-      Assert.AreEqual(GetMethod("set_Value").GetPropertyByAccessor().Name, "Value", "set_Value");
-      Assert.IsNull(GetMethod("EventCallback").GetPropertyByAccessor(), "EventCallback");
+      Assert.That(GetMethod("get_Value").GetPropertyByAccessor().Name, Is.EqualTo("Value"), "get_Value");
+      Assert.That(GetMethod("set_Value").GetPropertyByAccessor().Name, Is.EqualTo("Value"), "set_Value");
+      Assert.That(GetMethod("EventCallback").GetPropertyByAccessor(), Is.Null, "EventCallback");
     }
   }
 }

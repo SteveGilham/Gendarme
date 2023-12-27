@@ -232,7 +232,7 @@ namespace Test.Rules.Performance
       //    }
       //  }
       //}
-      Assert.IsNotNull(method, "method not found!");
+      Assert.That(method, Is.Not.Null, "method not found!");
       AssertRuleDoesNotApply(method);
     }
 
@@ -292,6 +292,7 @@ namespace Test.Rules.Performance
       }
 
 #pragma warning disable IDE0060 // Remove unused parameter
+
       public static bool operator !=(StructureBad s1, StructureBad s2)
 #pragma warning restore IDE0060 // Remove unused parameter
       {
@@ -397,6 +398,7 @@ namespace Test.Rules.Performance
       public class ReviewUnusedParameters
       {
 #pragma warning disable IDE0060 // Remove unused parameter
+
         public static void Fail(int count)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
@@ -420,6 +422,7 @@ namespace Test.Rules.Performance
 
         // automatically suppressed using VS2010 (see GlobalSupressions.cs)
 #pragma warning disable IDE0060 // Remove unused parameter
+
         public static void GloballySuppressed(int count)
 #pragma warning restore IDE0060 // Remove unused parameter
         {

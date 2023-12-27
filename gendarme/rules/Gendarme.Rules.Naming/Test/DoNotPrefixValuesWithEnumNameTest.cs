@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,92 +37,98 @@ using Mono.Cecil;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Naming {
+namespace Test.Rules.Naming
+{
+  [TestFixture]
+  public class DoNotPrefixValuesWithEnumNameTest
+  {
+    private DoNotPrefixValuesWithEnumNameRule rule;
+    private AssemblyDefinition assembly;
+    private TypeDefinition type;
+    private TestRunner runner;
 
-	[TestFixture]
-	public class DoNotPrefixValuesWithEnumNameTest {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      type = assembly.MainModule.GetType("Test.Rules.Naming.DoNotPrefixValuesWithEnumNameTest");
+      rule = new DoNotPrefixValuesWithEnumNameRule();
+      runner = new TestRunner(rule);
+    }
 
-		private DoNotPrefixValuesWithEnumNameRule rule;
-		private AssemblyDefinition assembly;
-		private TypeDefinition type;
-		private TestRunner runner;
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			type = assembly.MainModule.GetType ("Test.Rules.Naming.DoNotPrefixValuesWithEnumNameTest");
-			rule = new DoNotPrefixValuesWithEnumNameRule ();
-			runner = new TestRunner (rule);
-		}
+    private TypeDefinition GetTest(string name)
+    {
+      foreach (TypeDefinition nestedType in type.NestedTypes)
+      {
+        if (nestedType.Name == name)
+          return nestedType;
+      }
+      return null;
+    }
 
-		private TypeDefinition GetTest (string name)
-		{
-			foreach (TypeDefinition nestedType in type.NestedTypes) {
-				if (nestedType.Name == name)
-					return nestedType;
-			}
-			return null;
-		}
+    private struct NonEnum
+    {
+      private int NonEnum1, NonEnum2;
+    }
 
+    [Test]
+    public void TestNonEnum()
+    {
+      TypeDefinition type = GetTest("NonEnum");
+      AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		struct NonEnum {
-			int NonEnum1, NonEnum2;
-		}
+    private enum FalsePositive
+    {
+      A,
+      B,
+      C
+    }
 
-		[Test]
-		public void TestNonEnum ()
-		{
-			TypeDefinition type = GetTest ("NonEnum");
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    [Test]
+    public void TestFalsePositive()
+    {
+      TypeDefinition type = GetTest("FalsePositive");
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
+    private enum SameName
+    {
+      A,
+      B,
+      C,
+      SameName
+    }
 
-		enum FalsePositive {
-			A,
-			B,
-			C
-		}
+    [Test]
+    public void TestSameName()
+    {
+      TypeDefinition type = GetTest("SameName");
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestFalsePositive ()
-		{
-			TypeDefinition type = GetTest ("FalsePositive");
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
+    private enum Prefix
+    {
+      A,
+      PREfiXB,
+      C
+    }
 
-
-		enum SameName {
-			A,
-			B,
-			C,
-			SameName
-		}
-
-		[Test]
-		public void TestSameName ()
-		{
-			TypeDefinition type = GetTest ("SameName");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-
-		enum Prefix {
-			A,
-			PREfiXB,
-			C
-		}
-
-		[Test]
-		public void TestReserved ()
-		{
-			TypeDefinition type = GetTest ("Prefix");
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-	}
+    [Test]
+    public void TestReserved()
+    {
+      TypeDefinition type = GetTest("Prefix");
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
+  }
 }

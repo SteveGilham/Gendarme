@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for ThreadModelAttribute
 //
 // Authors:
@@ -31,76 +31,81 @@ using NUnit.Framework;
 
 namespace Test.Framework
 {
-	[TestFixture]
+  [TestFixture]
   public class ThreadModelAttributeTest
   {
-		private ThreadModelAttribute BasicCheck (ThreadModel model, bool every)
-		{
-			string name = model.ToString ();
-			ThreadModelAttribute tma = new ThreadModelAttribute (model);
-			Assert.AreEqual (model & ~ThreadModel.AllowEveryCaller, tma.Model, name);
-			Assert.AreEqual (every, tma.AllowsEveryCaller, name + ".AllowsEveryCaller");
-			Assert.AreEqual (every, tma.ToString ().Contains ("AllowEveryCaller"), "ToString()");
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-			int code = tma.GetHashCode ();
-			tma.AllowsEveryCaller = !tma.AllowsEveryCaller;
-			Assert.AreNotEqual (code, tma.GetHashCode (), name + "!HashCode");
-			tma.AllowsEveryCaller = !tma.AllowsEveryCaller;
-			return tma;
-		}
+    private ThreadModelAttribute BasicCheck(ThreadModel model, bool every)
+    {
+      string name = model.ToString();
+      ThreadModelAttribute tma = new ThreadModelAttribute(model);
+      AssertAreEqual(model & ~ThreadModel.AllowEveryCaller, tma.Model, name);
+      AssertAreEqual(every, tma.AllowsEveryCaller, name + ".AllowsEveryCaller");
+      AssertAreEqual(every, tma.ToString().Contains("AllowEveryCaller"), "ToString()");
 
-		[Test]
-		public void MainThread ()
-		{
-			ThreadModelAttribute tma = BasicCheck (ThreadModel.MainThread, false);
-			Assert.IsTrue (tma.Equals (tma), "Equals");
-			Assert.IsTrue (tma == new ThreadModelAttribute (ThreadModel.MainThread), "==");
+      int code = tma.GetHashCode();
+      tma.AllowsEveryCaller = !tma.AllowsEveryCaller;
+      Assert.That(code, Is.Not.EqualTo(tma.GetHashCode()), name + "!HashCode");
+      tma.AllowsEveryCaller = !tma.AllowsEveryCaller;
+      return tma;
+    }
 
-			ThreadModelAttribute tmae = BasicCheck (ThreadModel.MainThread | ThreadModel.AllowEveryCaller, true);
-			Assert.IsFalse (tmae.Equals (tma), "!Equals");
-			Assert.IsTrue (tma != tmae, "!=");
-		}
+    [Test]
+    public void MainThread()
+    {
+      ThreadModelAttribute tma = BasicCheck(ThreadModel.MainThread, false);
+      Assert.That(tma.Equals(tma), "Equals");
+      Assert.That(tma == new ThreadModelAttribute(ThreadModel.MainThread), "==");
 
-		[Test]
-		public void SingleThread ()
-		{
-			ThreadModelAttribute tma = BasicCheck (ThreadModel.SingleThread, false);
-			Assert.IsTrue (tma.Equals ((object) tma), "Equals");
-			Assert.IsFalse (tma == new ThreadModelAttribute (ThreadModel.MainThread), "==");
+      ThreadModelAttribute tmae = BasicCheck(ThreadModel.MainThread | ThreadModel.AllowEveryCaller, true);
+      Assert.That(!tmae.Equals(tma), "!Equals");
+      Assert.That(tma != tmae, "!=");
+    }
 
-			ThreadModelAttribute tmae = BasicCheck (ThreadModel.SingleThread | ThreadModel.AllowEveryCaller, true);
-			Assert.IsFalse (tmae.Equals ((object) null), "!Equals");
-			Assert.IsFalse (tma == tmae, "==");
-		}
+    [Test]
+    public void SingleThread()
+    {
+      ThreadModelAttribute tma = BasicCheck(ThreadModel.SingleThread, false);
+      Assert.That(tma.Equals((object)tma), "Equals");
+      Assert.That(tma != new ThreadModelAttribute(ThreadModel.MainThread), "==");
 
-		[Test]
-		public void Serializable ()
-		{
-			ThreadModelAttribute tma = BasicCheck (ThreadModel.Serializable, false);
-			Assert.IsTrue (tma.Equals ((object) tma), "Equals");
+      ThreadModelAttribute tmae = BasicCheck(ThreadModel.SingleThread | ThreadModel.AllowEveryCaller, true);
+      Assert.That(!tmae.Equals((object)null), "!Equals");
+      Assert.That(tma != tmae, "==");
+    }
 
-			ThreadModelAttribute tmae = BasicCheck (ThreadModel.Serializable | ThreadModel.AllowEveryCaller, true);
-			Assert.IsFalse (tmae.Equals ((ThreadModelAttribute) null), "!Equals");
-			Assert.IsTrue (tma != null, "!= null");
-			Assert.IsTrue (null != tmae, "null !=");
-		}
+    [Test]
+    public void Serializable()
+    {
+      ThreadModelAttribute tma = BasicCheck(ThreadModel.Serializable, false);
+      Assert.That(tma.Equals((object)tma), "Equals");
 
-		[Test]
-		public void Concurrent ()
-		{
-			ThreadModelAttribute tma = BasicCheck (ThreadModel.Concurrent, false);
-			Assert.IsTrue (tma.Equals (tma), "Equals");
+      ThreadModelAttribute tmae = BasicCheck(ThreadModel.Serializable | ThreadModel.AllowEveryCaller, true);
+      Assert.That(!tmae.Equals((ThreadModelAttribute)null), "!Equals");
+      Assert.That(tma != null, "!= null");
+      Assert.That(null != tmae, "null !=");
+    }
 
-			ThreadModelAttribute tmae = BasicCheck (ThreadModel.Concurrent | ThreadModel.AllowEveryCaller, true);
-			Assert.IsFalse (tmae.Equals ((ThreadModelAttribute) null), "!Equals");
-			Assert.IsFalse (tma == tmae, "==");
-		}
+    [Test]
+    public void Concurrent()
+    {
+      ThreadModelAttribute tma = BasicCheck(ThreadModel.Concurrent, false);
+      Assert.That(tma.Equals(tma), "Equals");
 
-		[Test]
-		public void Invalid ()
-		{
-            Assert.Throws <ArgumentException>( () =>
-                new ThreadModelAttribute((ThreadModel)Int32.MinValue));
-		}
-	}
+      ThreadModelAttribute tmae = BasicCheck(ThreadModel.Concurrent | ThreadModel.AllowEveryCaller, true);
+      Assert.That(!tmae.Equals((ThreadModelAttribute)null), "!Equals");
+      Assert.That(tma != tmae, "==");
+    }
+
+    [Test]
+    public void Invalid()
+    {
+      Assert.Throws<ArgumentException>(() =>
+          new ThreadModelAttribute((ThreadModel)Int32.MinValue));
+    }
+  }
 }

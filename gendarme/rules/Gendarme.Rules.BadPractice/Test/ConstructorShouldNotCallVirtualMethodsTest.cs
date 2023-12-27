@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for ConstructorShouldNotCallVirtualMethodsRule
 //
 // Authors:
@@ -41,334 +41,343 @@ using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  internal class ClassWithStaticCtor
+  {
+    static ClassWithStaticCtor()
+    {
+      ClassWithStaticCtor test = new ClassWithStaticCtor();
+      // this is ok, since we calling the instance virtual method
+      test.Method();
+    }
 
-	internal class ClassWithStaticCtor {
-		static ClassWithStaticCtor ()
-		{
-			ClassWithStaticCtor test = new ClassWithStaticCtor ();
-			// this is ok, since we calling the instance virtual method
-			test.Method ();
-		}
+    public virtual void Method()
+    {
+    }
+  }
 
-		public virtual void Method ()
-		{
-		}
-	}
+  internal class ClassWithInstanceOfItself
+  {
+    private ClassWithInstanceOfItself itself;
 
-	internal class ClassWithInstanceOfItself {
+    public ClassWithInstanceOfItself()
+    {
+      itself = null;
+    }
 
-		private ClassWithInstanceOfItself itself;
+    public ClassWithInstanceOfItself(ClassWithInstanceOfItself self)
+    {
+      itself = self;
+      itself.Method(0);
+    }
 
-		public ClassWithInstanceOfItself ()
-		{
-			itself = null;
-		}
+    public virtual void Method(int x)
+    {
+    }
+  }
 
-		public ClassWithInstanceOfItself (ClassWithInstanceOfItself self)
-		{
-			itself = self;
-			itself.Method (0);
-		}
+  internal class ClassNotCallingVirtualMethods
+  {
+    public ClassNotCallingVirtualMethods()
+    {
+      this.NormalMethod();
+    }
 
-		public virtual void Method (int x)
-		{
-		}
-	}
+    private void NormalMethod()
+    {
+    }
 
-	internal class ClassNotCallingVirtualMethods {
+    protected virtual void VirtualMethod()
+    {
+    }
 
-		public ClassNotCallingVirtualMethods ()
-		{
-			this.NormalMethod ();
-		}
+    public virtual bool VirtualProperty
+    {
+      get { return true; }
+      set {; }
+    }
+  }
 
-		private void NormalMethod () 
-		{
-		}
+  internal sealed class SealedClassWithVirtualCall : ClassNotCallingVirtualMethods
+  {
+    public SealedClassWithVirtualCall()
+    {
+      VirtualMethod();
+    }
+  }
 
-		protected virtual void VirtualMethod ()
-		{
-		}
+  internal class ClassWithRecursiveVirtualCall
+  {
+    public ClassWithRecursiveVirtualCall()
+    {
+      VirtualMethod(5);
+    }
 
-		public virtual bool VirtualProperty {
-			get { return true; }
-			set { ; }
-		}
-	}
+    protected virtual void VirtualMethod(int n)
+    {
+      while (n > 0)
+        VirtualMethod(n--);
+    }
+  }
 
-	internal sealed class SealedClassWithVirtualCall : ClassNotCallingVirtualMethods {
-		public SealedClassWithVirtualCall ()
-		{
-			VirtualMethod ();
-		}
-	}
+  internal class ClassCallingVirtualMethodOnce
+  {
+    public ClassCallingVirtualMethodOnce()
+    {
+      this.NormalMethod();
+      // call virtual method - bad thing
+      this.VirtualMethod();
+      this.NormalMethod();
+    }
 
-	internal class ClassWithRecursiveVirtualCall {
-		public ClassWithRecursiveVirtualCall ()
-		{
-			VirtualMethod (5);
-		}
+    protected virtual void VirtualMethod()
+    {
+    }
 
-		protected virtual void VirtualMethod (int n)
-		{
-			while (n > 0)
-				VirtualMethod (n--);
-		}
-	}
+    public void NormalMethod()
+    {
+    }
 
-	internal class ClassCallingVirtualMethodOnce {
+    public void CallingVirtualMethod()
+    {
+      VirtualMethod();
+    }
+  }
 
-		public ClassCallingVirtualMethodOnce ()
-		{
-			this.NormalMethod ();
-			// call virtual method - bad thing
-			this.VirtualMethod ();
-			this.NormalMethod ();
-		}
+  internal class ClassCallingVirtualMethodThreeTimes
+  {
+    public ClassCallingVirtualMethodThreeTimes()
+    {
+      this.NormalMethod();
+      // call virtual method - bad thing
+      this.VirtualMethod();
+      this.VirtualMethod2();
+      this.VirtualMethod();
+      this.NormalMethod();
+    }
 
-		protected virtual void VirtualMethod ()
-		{
-		}
+    protected virtual void VirtualMethod()
+    {
+    }
 
-		public void NormalMethod ()
-		{
-		}
+    protected virtual void VirtualMethod2()
+    {
+    }
 
-		public void CallingVirtualMethod ()
-		{
-			VirtualMethod ();
-		}
-	}
+    private void NormalMethod()
+    {
+    }
+  }
 
-	internal class ClassCallingVirtualMethodThreeTimes {
+  internal class ClassCallingVirtualMethodFromBaseClass : ClassCallingVirtualMethodOnce
+  {
+    public ClassCallingVirtualMethodFromBaseClass()
+    {
+      base.VirtualMethod();
+    }
+  }
 
-		public ClassCallingVirtualMethodThreeTimes ()
-		{
-			this.NormalMethod ();
-			// call virtual method - bad thing
-			this.VirtualMethod ();
-			this.VirtualMethod2 ();
-			this.VirtualMethod ();
-			this.NormalMethod ();
-		}
+  internal class ClassCallingVirtualPropertyFromBaseClass : ClassNotCallingVirtualMethods
+  {
+    public ClassCallingVirtualPropertyFromBaseClass()
+    {
+      this.VirtualProperty = false;
+    }
+  }
 
-		protected virtual void VirtualMethod () 
-		{
-		}
+  internal class ClassIndirectlyCallingVirtualMethod
+  {
+    public ClassIndirectlyCallingVirtualMethod()
+    {
+      NormalMethod();
+    }
 
-		protected virtual void VirtualMethod2 ()
-		{
-		}
+    [DllImport("liberty.so")]
+    private static extern void Erty();
 
-		private void NormalMethod ()
-		{
-		}
-	}
+    public virtual void VirtualMethod()
+    {
+      Erty();
+    }
 
-	internal class ClassCallingVirtualMethodFromBaseClass : ClassCallingVirtualMethodOnce {
+    private void NormalMethod()
+    {
+      VirtualMethod();
+    }
+  }
 
-		public ClassCallingVirtualMethodFromBaseClass ()
-		{
-			base.VirtualMethod ();
-		}
-	}
+  internal class ClassIndirectlyCallingVirtualMethodFromBaseClass : ClassNotCallingVirtualMethods
+  {
+    public ClassIndirectlyCallingVirtualMethodFromBaseClass()
+    {
+      Method();
+    }
 
-	internal class ClassCallingVirtualPropertyFromBaseClass : ClassNotCallingVirtualMethods {
+    private void Method()
+    {
+      base.VirtualMethod();
+    }
+  }
 
-		public ClassCallingVirtualPropertyFromBaseClass ()
-		{
-			this.VirtualProperty = false;
-		}
-	}
+  internal class ClassIndirectlyCallingVirtualPropertyFromBaseClass : ClassNotCallingVirtualMethods
+  {
+    public ClassIndirectlyCallingVirtualPropertyFromBaseClass()
+    {
+      Method();
+    }
 
-	internal class ClassIndirectlyCallingVirtualMethod {
+    public bool NonVirtualProperty
+    {
+      get { return false; }
+    }
 
-		public ClassIndirectlyCallingVirtualMethod ()
-		{
-			NormalMethod ();
-		}
+    private void Method()
+    {
+      base.VirtualProperty = NonVirtualProperty;
+      Method(); // check recursion
+    }
+  }
 
-		[DllImport ("liberty.so")]
-		extern static void Erty ();
+  internal class ClassCallingVirtualMethodFromOtherClasses
+  {
+    private ClassIndirectlyCallingVirtualMethod test;
 
-		public virtual void VirtualMethod ()
-		{
-			Erty ();
-		}
+    public ClassCallingVirtualMethodFromOtherClasses()
+    {
+      test = new ClassIndirectlyCallingVirtualMethod();
+      test.VirtualMethod();
+    }
+  }
 
-		private void NormalMethod ()
-		{
-			VirtualMethod ();
-		}
-	}
+  [TestFixture]
+  public class ConstructorShouldNotCallVirtualMethodsTest : TypeRuleTestFixture<ConstructorShouldNotCallVirtualMethodsRule>
+  {
+    private ITypeRule rule;
+    private AssemblyDefinition assembly;
+    private TestRunner runner;
 
-	internal class ClassIndirectlyCallingVirtualMethodFromBaseClass : ClassNotCallingVirtualMethods {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+      rule = new ConstructorShouldNotCallVirtualMethodsRule();
+      runner = new TestRunner(rule);
+    }
 
-		public ClassIndirectlyCallingVirtualMethodFromBaseClass ()
-		{
-			Method ();
-		}
+    private TypeDefinition GetTest<T>()
+    {
+      return assembly.MainModule.GetType(typeof(T).FullName);
+    }
 
-		private void Method ()
-		{
-			base.VirtualMethod ();
-		}
-	}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-	internal class ClassIndirectlyCallingVirtualPropertyFromBaseClass : ClassNotCallingVirtualMethods {
+    [Test]
+    public void TestClassWithStaticCtor()
+    {
+      TypeDefinition type = GetTest<ClassWithStaticCtor>();
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		public ClassIndirectlyCallingVirtualPropertyFromBaseClass ()
-		{
-			Method ();
-		}
+    [Test]
+    public void TestSealedClassWithVirtualCall()
+    {
+      TypeDefinition type = GetTest<SealedClassWithVirtualCall>();
+      AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		public bool NonVirtualProperty {
-			get { return false; }
-		}
+    [Test]
+    public void TestClassWithInstanceOfItself()
+    {
+      TypeDefinition type = GetTest<ClassWithInstanceOfItself>();
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		private void Method ()
-		{
-			base.VirtualProperty = NonVirtualProperty;
-			Method (); // check recursion
-		}
-	}
+    [Test]
+    public void TestClassCallingVirtualMethodOnce()
+    {
+      TypeDefinition type = GetTest<ClassCallingVirtualMethodOnce>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-	internal class ClassCallingVirtualMethodFromOtherClasses {
+    [Test]
+    public void TestClassCallingVirtualMethodThreeTimes()
+    {
+      TypeDefinition type = GetTest<ClassCallingVirtualMethodThreeTimes>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(3, runner.Defects.Count, "Count");
+    }
 
-		ClassIndirectlyCallingVirtualMethod test;
+    [Test]
+    public void TestClassNotCallingVirtualMethods()
+    {
+      TypeDefinition type = GetTest<ClassNotCallingVirtualMethods>();
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		public ClassCallingVirtualMethodFromOtherClasses ()
-		{
-			test = new ClassIndirectlyCallingVirtualMethod ();
-			test.VirtualMethod ();
-		}
-	}
+    [Test]
+    public void TestClassCallingVirtualMethodFromBaseClass()
+    {
+      TypeDefinition type = GetTest<ClassCallingVirtualMethodFromBaseClass>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-	[TestFixture]
-	public class ConstructorShouldNotCallVirtualMethodsTest : TypeRuleTestFixture<ConstructorShouldNotCallVirtualMethodsRule> {
+    [Test]
+    public void TestClassCallingVirtualPropertyFromBaseClass()
+    {
+      TypeDefinition type = GetTest<ClassCallingVirtualPropertyFromBaseClass>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		private ITypeRule rule;
-		private AssemblyDefinition assembly;
-		private TestRunner runner;
+    [Test]
+    public void TestClassIndirectlyCallingVirtualMethod()
+    {
+      TypeDefinition type = GetTest<ClassIndirectlyCallingVirtualMethod>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
+    [Test]
+    public void TestClassIndirectlyCallingVirtualMethodFromBaseClass()
+    {
+      TypeDefinition type = GetTest<ClassIndirectlyCallingVirtualMethodFromBaseClass>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-			rule = new ConstructorShouldNotCallVirtualMethodsRule ();
-			runner = new TestRunner (rule);
-		}
+    [Test]
+    public void TestClassIndirectlyCallingVirtualPropertyFromBaseClass()
+    {
+      TypeDefinition type = GetTest<ClassIndirectlyCallingVirtualPropertyFromBaseClass>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
 
-		private TypeDefinition GetTest<T> ()
-		{
-			return assembly.MainModule.GetType (typeof (T).FullName);
-		}
+    [Test]
+    public void TestClassCallingVirtualMethodFromOtherClasses()
+    {
+      TypeDefinition type = GetTest<ClassCallingVirtualMethodFromOtherClasses>();
+      AssertAreEqual(RuleResult.Success, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(0, runner.Defects.Count, "Count");
+    }
 
-		[Test]
-		public void TestClassWithStaticCtor ()
-		{
-			TypeDefinition type = GetTest<ClassWithStaticCtor> ();
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestSealedClassWithVirtualCall ()
-		{
-			TypeDefinition type = GetTest<SealedClassWithVirtualCall> ();
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassWithInstanceOfItself ()
-		{
-			TypeDefinition type = GetTest<ClassWithInstanceOfItself> ();
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassCallingVirtualMethodOnce ()
-		{
-			TypeDefinition type = GetTest<ClassCallingVirtualMethodOnce> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassCallingVirtualMethodThreeTimes ()
-		{
-			TypeDefinition type = GetTest<ClassCallingVirtualMethodThreeTimes> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (3, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassNotCallingVirtualMethods ()
-		{
-			TypeDefinition type = GetTest<ClassNotCallingVirtualMethods> ();
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassCallingVirtualMethodFromBaseClass ()
-		{
-			TypeDefinition type = GetTest<ClassCallingVirtualMethodFromBaseClass> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassCallingVirtualPropertyFromBaseClass ()
-		{
-			TypeDefinition type = GetTest<ClassCallingVirtualPropertyFromBaseClass> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassIndirectlyCallingVirtualMethod ()
-		{
-			TypeDefinition type = GetTest<ClassIndirectlyCallingVirtualMethod> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassIndirectlyCallingVirtualMethodFromBaseClass ()
-		{
-			TypeDefinition type = GetTest<ClassIndirectlyCallingVirtualMethodFromBaseClass> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassIndirectlyCallingVirtualPropertyFromBaseClass ()
-		{
-			TypeDefinition type = GetTest<ClassIndirectlyCallingVirtualPropertyFromBaseClass> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassCallingVirtualMethodFromOtherClasses ()
-		{
-			TypeDefinition type = GetTest<ClassCallingVirtualMethodFromOtherClasses> ();
-			Assert.AreEqual (RuleResult.Success, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (0, runner.Defects.Count, "Count");
-		}
-
-		[Test]
-		public void TestClassWithRecursiveVirtualCall ()
-		{
-			TypeDefinition type = GetTest<ClassWithRecursiveVirtualCall> ();
-			Assert.AreEqual (RuleResult.Failure, runner.CheckType (type), "RuleResult");
-			Assert.AreEqual (1, runner.Defects.Count, "Count");
-		}
-	}
+    [Test]
+    public void TestClassWithRecursiveVirtualCall()
+    {
+      TypeDefinition type = GetTest<ClassWithRecursiveVirtualCall>();
+      AssertAreEqual(RuleResult.Failure, runner.CheckType(type), "RuleResult");
+      AssertAreEqual(1, runner.Defects.Count, "Count");
+    }
+  }
 }

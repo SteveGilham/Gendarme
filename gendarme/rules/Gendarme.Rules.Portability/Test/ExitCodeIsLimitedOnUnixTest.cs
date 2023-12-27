@@ -223,9 +223,9 @@ namespace Test.Rules.Portability
       voidMainAssembly.EntryPoint = goodMain;
       // inject there EnvExitCodeTester and EnvExitTester (their methods must be in executable in order to be checked)
       envSetExitCodeTester = Inject(assembly.MainModule.GetType("Test.Rules.Portability.EnvSetExitCodeTester"), voidMainAssembly);
-      Assert.IsNotNull(envSetExitCodeTester);
+      Assert.That(envSetExitCodeTester, Is.Not.Null);
       envExitTester = Inject(assembly.MainModule.GetType("Test.Rules.Portability.EnvExitTester"), voidMainAssembly);
-      Assert.IsNotNull(envExitTester);
+      Assert.That(envExitTester, Is.Not.Null);
     }
 
     private static AssemblyDefinition CreateAssembly(string name, ModuleKind kind)
@@ -287,10 +287,20 @@ namespace Test.Rules.Portability
       return GetMethod(envExitTester, name);
     }
 
+    protected void AssertAreEqual(object a, object b)
+    {
+      Assert.That(a, Is.EqualTo(b));
+    }
+
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
+
     [Test]
     public void TestVoidMainAssembly()
     {
-      Assert.AreEqual(RuleResult.DoesNotApply, rule.CheckAssembly(voidMainAssembly));
+      AssertAreEqual(RuleResult.DoesNotApply, rule.CheckAssembly(voidMainAssembly));
     }
 
     [Test]
@@ -301,7 +311,7 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Success, runner.CheckAssembly(GetAssemblyAndInject<GoodIntMainClass>()));
+        AssertAreEqual(RuleResult.Success, runner.CheckAssembly(GetAssemblyAndInject<GoodIntMainClass>()));
       }
       finally
       {
@@ -317,9 +327,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<UnsureIntMainClass>()), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.Low, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<UnsureIntMainClass>()), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.Low, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -335,9 +345,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<TooBigReturnedMainClass>()), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<TooBigReturnedMainClass>()), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -353,9 +363,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<MinusOneReturnedMainClass>()), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<MinusOneReturnedMainClass>()), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -371,9 +381,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<SmallNegativeReturnedMainClass>()), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<SmallNegativeReturnedMainClass>()), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -390,7 +400,7 @@ namespace Test.Rules.Portability
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
         // get method from this assembly, not generated one
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethod(assembly.MainModule.GetType("Test.Rules.Portability.EnvSetExitCodeTester"), "SetTooBigExitCode")));
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethod(assembly.MainModule.GetType("Test.Rules.Portability.EnvSetExitCodeTester"), "SetTooBigExitCode")));
       }
       finally
       {
@@ -406,7 +416,7 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("EmptyMethod")));
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("EmptyMethod")));
       }
       finally
       {
@@ -422,7 +432,7 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Success, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetGoodExitCode")));
+        AssertAreEqual(RuleResult.Success, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetGoodExitCode")));
       }
       finally
       {
@@ -438,9 +448,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetMinusOneExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetMinusOneExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -456,9 +466,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetSmallNegativeExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetSmallNegativeExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -474,9 +484,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetTooBigExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetTooBigExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -492,9 +502,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetUnsureExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.Low, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvSetExitCodeTest("SetUnsureExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.Low, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -511,7 +521,7 @@ namespace Test.Rules.Portability
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
         // get method from this assembly, not generated one
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethod(assembly.MainModule.GetType("Test.Rules.Portability.EnvExitTester"), "ExitWithTooBigExitCode")));
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethod(assembly.MainModule.GetType("Test.Rules.Portability.EnvExitTester"), "ExitWithTooBigExitCode")));
       }
       finally
       {
@@ -527,7 +537,7 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckMethod(GetMethodForEnvExitTest("EmptyMethod")));
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckMethod(GetMethodForEnvExitTest("EmptyMethod")));
       }
       finally
       {
@@ -543,7 +553,7 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Success, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithGoodExitCode")));
+        AssertAreEqual(RuleResult.Success, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithGoodExitCode")));
       }
       finally
       {
@@ -559,9 +569,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithMinusOneExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithMinusOneExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -577,9 +587,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithSmallNegativeExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithSmallNegativeExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -595,9 +605,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithTooBigExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithTooBigExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.High, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {
@@ -613,9 +623,9 @@ namespace Test.Rules.Portability
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithUnsureExitCode")), "RuleResult");
-        Assert.AreEqual(1, runner.Defects.Count, "Count");
-        Assert.AreEqual(Confidence.Low, runner.Defects[0].Confidence, "Confidence");
+        AssertAreEqual(RuleResult.Failure, runner.CheckMethod(GetMethodForEnvExitTest("ExitWithUnsureExitCode")), "RuleResult");
+        AssertAreEqual(1, runner.Defects.Count, "Count");
+        AssertAreEqual(Confidence.Low, runner.Defects[0].Confidence, "Confidence");
       }
       finally
       {

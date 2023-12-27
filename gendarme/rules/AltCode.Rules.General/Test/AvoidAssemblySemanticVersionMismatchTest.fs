@@ -32,6 +32,9 @@ type AvoidAssemblySemanticVersionMismatchTest() =
 
     this.assembly <- AssemblyDefinition.ReadAssembly(unit)
 
+  member this.AssertAreEqual (a:obj) (b:obj) (c:string) =
+    Assert.That(a, Is.EqualTo b, c)
+
   [<Test>]
   member this.EmptyAssemblyVersion() =
     let v = this.assembly.Name.Version
@@ -39,11 +42,11 @@ type AvoidAssemblySemanticVersionMismatchTest() =
     try
       this.assembly.Name.Version <- null // should not happen
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
+      this.AssertAreEqual Severity.Medium this.Runner.Defects.[0].Severity "Medium"
 
       this.assembly.Name.Version <- Version(0, 0, 0, 0)
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
+      this.AssertAreEqual Severity.Medium this.Runner.Defects.[0].Severity "Medium"
     finally
       this.assembly.Name.Version <- v
 
@@ -55,7 +58,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
     try
       this.assembly.CustomAttributes.Clear()
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
+      this.AssertAreEqual Severity.Medium this.Runner.Defects.[0].Severity "Medium"
     finally
       cac |> Seq.iter this.assembly.CustomAttributes.Add
 
@@ -73,7 +76,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
       )
 
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
+      this.AssertAreEqual Severity.Medium this.Runner.Defects.[0].Severity "Medium"
     finally
       this.assembly.CustomAttributes.Add afv
 
@@ -89,7 +92,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
     try
       afv.ConstructorArguments[0] <- CustomAttributeArgument()
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
+      this.AssertAreEqual Severity.Medium this.Runner.Defects.[0].Severity "Medium"
     finally
       afv.ConstructorArguments[0] <- version
 
@@ -128,28 +131,28 @@ type AvoidAssemblySemanticVersionMismatchTest() =
 
       afv.ConstructorArguments.[0] <- file7_1
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
+      this.AssertAreEqual Severity.Critical this.Runner.Defects.[0].Severity "Critical"
 
       let file8_1 =
         CustomAttributeArgument(s, "8.1")
 
       afv.ConstructorArguments.[0] <- file8_1
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
+      this.AssertAreEqual Severity.Critical this.Runner.Defects.[0].Severity "Critical"
 
       let file8_3 =
         CustomAttributeArgument(s, "8.3")
 
       afv.ConstructorArguments.[0] <- file8_3
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
+      this.AssertAreEqual Severity.Critical this.Runner.Defects.[0].Severity "Critical"
 
       let file9_0 =
         CustomAttributeArgument(s, "9.0")
 
       afv.ConstructorArguments.[0] <- file9_0
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Critical, this.Runner.Defects.[0].Severity, "Critical")
+      this.AssertAreEqual Severity.Critical this.Runner.Defects.[0].Severity "Critical"
 
       let file8_2_1 =
         CustomAttributeArgument(s, "8.2.1")
@@ -169,7 +172,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
 
       afv.ConstructorArguments.[0] <- file8_2_18_22015
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.High, this.Runner.Defects.[0].Severity, "High")
+      this.AssertAreEqual Severity.High this.Runner.Defects.[0].Severity "High"
 
       let file8_2_1_22015 =
         CustomAttributeArgument(s, "8.2.1.22015")
@@ -179,7 +182,7 @@ type AvoidAssemblySemanticVersionMismatchTest() =
 
       this.assembly.Name.Version <- Version(8, 2, 1, 1)
       ``base``.AssertRuleFailure(this.assembly, 1)
-      Assert.AreEqual(Severity.Medium, this.Runner.Defects.[0].Severity, "Medium")
+      this.AssertAreEqual Severity.Medium this.Runner.Defects.[0].Severity "Medium"
     finally
       this.assembly.Name.Version <- av
       afv.ConstructorArguments.[0] <- fv

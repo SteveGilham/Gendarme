@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -38,51 +38,51 @@ using Gendarme.Rules.UI;
 using NUnit.Framework;
 using Test.Rules.Helpers;
 
-namespace Test.Rules.Ui {
+namespace Test.Rules.Ui
+{
+  [TestFixture]
+  public class GtkSharpExecutableTargetTest
+  {
+    private IAssemblyRule rule;
+    private TestRunner runner;
 
-	[TestFixture]
-	public class GtkSharpExecutableTargetTest {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      rule = new GtkSharpExecutableTargetRule();
+      runner = new TestRunner(rule);
+    }
 
-		private IAssemblyRule rule;
-		private TestRunner runner;
+    [Test]
+    public void Library()
+    {
+      AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(Assembly.GetExecutingAssembly().Location);
+      // this (unit test) assembly is a library (dll) and has no entry point
+      Assert.That(RuleResult.DoesNotApply, Is.EqualTo(runner.CheckAssembly(assembly)));
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			rule = new GtkSharpExecutableTargetRule ();
-			runner = new TestRunner (rule);
-		}
+    [Test]
+    public void ConsoleExe()
+    {
+      AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(new MemoryStream(ExecutableTargetTest.conexe_exe));
+      // this assembly is a executable (exe) but doesn't refer to SWF
+      Assert.That(RuleResult.DoesNotApply, Is.EqualTo(runner.CheckAssembly(assembly)));
+    }
 
-		[Test]
-		public void Library ()
-		{
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (Assembly.GetExecutingAssembly ().Location);
-			// this (unit test) assembly is a library (dll) and has no entry point
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckAssembly (assembly));
-		}
+    [Test]
+    public void WinExe()
+    {
+      AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(new MemoryStream(ExecutableTargetTest.gtk_winexe_exe));
+      // this assembly is a executable (exe), refer to gtk-sharp and is compiled with /winexe
+      Assert.That(RuleResult.Success, Is.EqualTo(runner.CheckAssembly(assembly)));
+    }
 
-		[Test]
-		public void ConsoleExe ()
-		{
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (new MemoryStream (ExecutableTargetTest.conexe_exe));
-			// this assembly is a executable (exe) but doesn't refer to SWF
-			Assert.AreEqual (RuleResult.DoesNotApply, runner.CheckAssembly (assembly));
-		}
-
-		[Test]
-		public void WinExe ()
-		{
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (new MemoryStream (ExecutableTargetTest.gtk_winexe_exe));
-			// this assembly is a executable (exe), refer to gtk-sharp and is compiled with /winexe
-			Assert.AreEqual (RuleResult.Success, runner.CheckAssembly (assembly));
-		}
-
-		[Test]
-		public void GtkExe ()
-		{
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (new MemoryStream (ExecutableTargetTest.gtkexe_exe));
-			// this assembly is a executable (exe) and refer to gtk-sharp but isn't compiled with /winexe
-			Assert.AreEqual (RuleResult.Failure, runner.CheckAssembly (assembly));
-		}
-	}
+    [Test]
+    public void GtkExe()
+    {
+      AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(new MemoryStream(ExecutableTargetTest.gtkexe_exe));
+      // this assembly is a executable (exe) and refer to gtk-sharp but isn't compiled with /winexe
+      Assert.That(RuleResult.Failure, Is.EqualTo(runner.CheckAssembly(assembly)));
+    }
+  }
 }

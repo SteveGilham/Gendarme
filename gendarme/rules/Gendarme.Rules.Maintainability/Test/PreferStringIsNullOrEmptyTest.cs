@@ -101,8 +101,8 @@ namespace Test.Rules.Maintainability
     [Test]
     public void Argument_InvertedCondition()
     {
-      Assert.IsTrue(ArgumentIsNotNullAndNotEmpty(null), "null");
-      Assert.IsTrue(ArgumentIsNotNullAndNotEmpty(String.Empty), "empty");
+      Assert.That(ArgumentIsNotNullAndNotEmpty(null), "null");
+      Assert.That(ArgumentIsNotNullAndNotEmpty(String.Empty), "empty");
       AssertRuleFailure<PreferStringIsNullOrEmptyTest>("ArgumentIsNotNullAndNotEmpty");
       AssertRuleFailure<PreferStringIsNullOrEmptyTest>("FieldIsNotNullAndNotEmpty");
     }

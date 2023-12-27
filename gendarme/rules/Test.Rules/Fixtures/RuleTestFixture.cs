@@ -113,14 +113,13 @@ namespace Test.Rules.Fixtures
     private void RunRuleAndCheckResults(TMetadataToken token, RuleResult expectedResult, int? expectedDefectCount)
     {
       RuleResult result = RunRule(token);
-      Assert.AreEqual(expectedResult, result, "{0} failed on {1}: result should be {2} but got {3}.",
-        typeof(TRule).Name, token, expectedResult, result);
+      Assert.That(expectedResult, Is.EqualTo(result),
+        $"{typeof(TRule).Name} failed on {token}: result should be {expectedResult} but got {result}.");
 
       if (expectedDefectCount.HasValue)
       {
-        Assert.AreEqual(expectedDefectCount.Value, runner.Defects.Count,
-          "{0} failed on {1}: should have {2} defects but got {3}.",
-          typeof(TRule).Name, token, expectedDefectCount.Value, runner.Defects.Count);
+        Assert.That(expectedDefectCount.Value, Is.EqualTo(runner.Defects.Count),
+          $"{typeof(TRule).Name} failed on {token}: should have {expectedDefectCount.Value} defects but got {runner.Defects.Count}.");
       }
     }
 
@@ -132,8 +131,8 @@ namespace Test.Rules.Fixtures
       RuleResult result = RunRule(token);
       if (result != RuleResult.DoesNotApply)
       {
-        Assert.AreEqual(RuleResult.Success, result, "{0} failed on {1}: result should be {2} but got {3}.",
-            typeof(TRule).Name, token, RuleResult.Success, result);
+        Assert.That(RuleResult.Success, Is.EqualTo(result),
+          $"{typeof(TRule).Name} failed on {token}: result should be {RuleResult.Success} but got {result}.");
       }
       return result;
     }
@@ -143,6 +142,7 @@ namespace Test.Rules.Fixtures
     /// </summary>
 #pragma warning disable IDE0079
 #pragma warning disable IDE0062
+
     private RuleResult RunRule(TMetadataToken token)
     {
       void SearchBeside(ModuleDefinition m)

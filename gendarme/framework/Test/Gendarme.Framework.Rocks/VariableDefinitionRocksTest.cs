@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for VariableDefinitionRocks
 //
 // Authors:
@@ -34,110 +34,122 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Test.Framework.Rocks {
+namespace Test.Framework.Rocks
+{
+  [TestFixture]
+  public class VariableDefinitionRocksTest
+  {
+    private TypeDefinition type_def;
 
-	[TestFixture]
-	public class VariableDefinitionRocksTest {
-		
-		private TypeDefinition type_def;
-		
-		[OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly (unit);
-			assembly.MainModule.LoadDebuggingSymbols ();
-			
-			type_def = assembly.MainModule.GetType ("Test.Framework.Rocks.VariableDefinitionRocksTest");
-		}
-		
-		public string path;
-		public string host;
-		public string cachedLocalPath;
-		public string AbsolutePath;
-		
-		private string Unescape (string s)
-		{
-			return s;
-		}
-		
-		// This has one compiler generated local with gmcs.
-		private string Big ()
-		{
-			if (cachedLocalPath != null)
-				return cachedLocalPath;
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(unit);
+      assembly.MainModule.LoadDebuggingSymbols();
 
-			bool windows = (path.Length > 3 && path [1] == ':' &&
-					(path [2] == '\\' || path [2] == '/'));
+      type_def = assembly.MainModule.GetType("Test.Framework.Rocks.VariableDefinitionRocksTest");
+    }
 
-			if (cachedLocalPath != null) {
-				string p = Unescape (path);
-				bool replace = windows;
-				if (replace)
-					cachedLocalPath = p.Replace ('/', '\\');
-				else
-					cachedLocalPath = p;
-			} else {
-				if (path.Length > 1 && path [1] == ':')
-					cachedLocalPath = Unescape (path.Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+    public string path;
+    public string host;
+    public string cachedLocalPath;
+    public string AbsolutePath;
 
-				else if (System.IO.Path.DirectorySeparatorChar == '\\') {
-					string h = host;
-					if (path.Length > 0) {
-						if ((path.Length > 1) || (path [0] != '/')) {
-							h += path.Replace ('/', '\\');
-						}
-					}
-					cachedLocalPath = "\\\\" + Unescape (h);
-				}  else
-					cachedLocalPath = Unescape (path);
-			}
-			if (cachedLocalPath.Length == 0)
-				cachedLocalPath = Path.DirectorySeparatorChar.ToString ();
-			return cachedLocalPath;
-		}
-		
-		[Test]
-		public void BigTest ()
-		{
-			MethodDefinition method = type_def.GetMethod ("Big");
-			DoTest (method, "windows", "p", "replace", "h");
-		}
-		
-		// This has two compiler generated locals with gmcs.
-		private void ForEach (string [] names)
-		{
-			foreach (string name in names) {
-				Console.WriteLine (name);
-			}
-		}
-		
-		[Test]
-		public void ForEachTest ()
-		{
-			MethodDefinition method = type_def.GetMethod ("ForEach");
-			DoTest (method, "name");
-		}
-		
-		private void DoTest (MethodDefinition method, params string [] userNames)
-		{
-			int count = 0;
-			
-			foreach (Instruction ins in method.Body.Instructions) {
-				VariableDefinition v = ins.GetVariable (method);
-				if (v != null) {
-					bool userName = userNames.Any (n => n == v.MaybeGetName(method.DebugInformation));
-					if (userName) {
-                        Assert.IsFalse(v.IsGeneratedName(method.DebugInformation), "{0} was reported as a generated name", v.MaybeGetName(method.DebugInformation));
-					} else {
-						++count;
-                        Assert.IsTrue(v.IsGeneratedName(method.DebugInformation), "{0} was not reported as a generated name", v.MaybeGetName(method.DebugInformation));
-					}
-				}
-			}
-			
-			if (count == 0)
-				Assert.Fail ("Didn't find any generated locals for VariableDefinitionRocksTest::{0}", method.Name);
-		}
-	}
+    private string Unescape(string s)
+    {
+      return s;
+    }
+
+    // This has one compiler generated local with gmcs.
+    private string Big()
+    {
+      if (cachedLocalPath != null)
+        return cachedLocalPath;
+
+      bool windows = (path.Length > 3 && path[1] == ':' &&
+          (path[2] == '\\' || path[2] == '/'));
+
+      if (cachedLocalPath != null)
+      {
+        string p = Unescape(path);
+        bool replace = windows;
+        if (replace)
+          cachedLocalPath = p.Replace('/', '\\');
+        else
+          cachedLocalPath = p;
+      }
+      else
+      {
+        if (path.Length > 1 && path[1] == ':')
+          cachedLocalPath = Unescape(path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+        else if (System.IO.Path.DirectorySeparatorChar == '\\')
+        {
+          string h = host;
+          if (path.Length > 0)
+          {
+            if ((path.Length > 1) || (path[0] != '/'))
+            {
+              h += path.Replace('/', '\\');
+            }
+          }
+          cachedLocalPath = "\\\\" + Unescape(h);
+        }
+        else
+          cachedLocalPath = Unescape(path);
+      }
+      if (cachedLocalPath.Length == 0)
+        cachedLocalPath = Path.DirectorySeparatorChar.ToString();
+      return cachedLocalPath;
+    }
+
+    [Test]
+    public void BigTest()
+    {
+      MethodDefinition method = type_def.GetMethod("Big");
+      DoTest(method, "windows", "p", "replace", "h");
+    }
+
+    // This has two compiler generated locals with gmcs.
+    private void ForEach(string[] names)
+    {
+      foreach (string name in names)
+      {
+        Console.WriteLine(name);
+      }
+    }
+
+    [Test]
+    public void ForEachTest()
+    {
+      MethodDefinition method = type_def.GetMethod("ForEach");
+      DoTest(method, "name");
+    }
+
+    private void DoTest(MethodDefinition method, params string[] userNames)
+    {
+      int count = 0;
+
+      foreach (Instruction ins in method.Body.Instructions)
+      {
+        VariableDefinition v = ins.GetVariable(method);
+        if (v != null)
+        {
+          bool userName = userNames.Any(n => n == v.MaybeGetName(method.DebugInformation));
+          if (userName)
+          {
+            Assert.That(v.IsGeneratedName(method.DebugInformation), Is.False, "{0} was reported as a generated name", v.MaybeGetName(method.DebugInformation));
+          }
+          else
+          {
+            ++count;
+            Assert.That(v.IsGeneratedName(method.DebugInformation), "{0} was not reported as a generated name", v.MaybeGetName(method.DebugInformation));
+          }
+        }
+      }
+
+      if (count == 0)
+        Assert.Fail($"Didn't find any generated locals for VariableDefinitionRocksTest::{method.Name}");
+    }
+  }
 }

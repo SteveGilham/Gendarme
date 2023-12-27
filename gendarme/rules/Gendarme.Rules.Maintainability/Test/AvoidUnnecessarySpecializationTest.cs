@@ -409,7 +409,7 @@ namespace Test.Rules.Maintainability
     {
       AssertRuleSuccess<GeneralizedClass>("Interface");
       AssertRuleFailure<SpecializedClass>("Interface");
-      Assert.IsTrue(Runner.Defects[0].Text.IndexOf("'System.IDisposable'") > 0);
+      Assert.That(Runner.Defects[0].Text.IndexOf("'System.IDisposable'") > 0);
     }
 
     [Test]
@@ -426,7 +426,7 @@ namespace Test.Rules.Maintainability
     {
       AssertRuleSuccess<GeneralizedClass>("GenericInterface");
       AssertRuleFailure<SpecializedClass>("GenericInterface");
-      Assert.IsTrue(Runner.Defects[0].Text.IndexOf("'System.Collections.Generic.IEnumerable<T>'") > 0);
+      Assert.That(Runner.Defects[0].Text.IndexOf("'System.Collections.Generic.IEnumerable<T>'") > 0);
     }
 
     [Test]
@@ -589,7 +589,7 @@ namespace Test.Rules.Maintainability
     {
       AssertRuleSuccess<GeneralizedClass>("GenericMethodArgument");
       AssertRuleFailure<SpecializedClass>("GenericMethodArgument");
-      Assert.IsTrue(Runner.Defects[0].Text.IndexOf("'System.Reflection.MemberInfo'") > 0);
+      Assert.That(Runner.Defects[0].Text.IndexOf("'System.Reflection.MemberInfo'") > 0);
     }
 
     private bool HasMoreParametersThanAllowed(IMethodSignature method)

@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,121 +36,148 @@ using Gendarme.Framework.Helpers;
 
 using NUnit.Framework;
 
-namespace Test.Framework {
+namespace Test.Framework
+{
+  [TestFixture]
+  public class MethodSignatureTest
+  {
+    private TypeDefinition type;
 
-	[TestFixture]
-	public class MethodSignatureTest {
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = System.Reflection.Assembly.GetExecutingAssembly().Location;
+      type = AssemblyDefinition.ReadAssembly(unit).MainModule.GetType("Test.Framework.MethodSignatureTest");
+    }
 
-		private TypeDefinition type;
+    private MethodDefinition GetMethod(string name, int parameters)
+    {
+      foreach (MethodDefinition method in type.Methods)
+      {
+        if (method.Name == name)
+        {
+          if ((parameters == -1) || (method.Parameters.Count == parameters))
+            return method;
+        }
+      }
+      return null;
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = System.Reflection.Assembly.GetExecutingAssembly ().Location;
-			type = AssemblyDefinition.ReadAssembly (unit).MainModule.GetType ("Test.Framework.MethodSignatureTest");
-		}
+    private MethodDefinition GetMethod(string name)
+    {
+      return GetMethod(name, -1);
+    }
 
-		private MethodDefinition GetMethod (string name, int parameters)
-		{
-			foreach (MethodDefinition method in type.Methods) {
-				if (method.Name == name) {
-					if ((parameters == -1) || (method.Parameters.Count == parameters))
-						return method;
-				}
-			}
-			return null;
-		}
+    private void AssertIsNull(object a, string b)
+    {
+      Assert.That(a, Is.Null, b);
+    }
 
-		private MethodDefinition GetMethod (string name)
-		{
-			return GetMethod (name, -1);
-		}
+    private void AssertIsTrue(object a, string b)
+    {
+      Assert.That(a, Is.True, b);
+    }
 
-		[Test]
-		public void TestDefaultConstructor ()
-		{
-			MethodSignature sig = new MethodSignature ();
-			Assert.IsNull (sig.Name, "Name");
-			Assert.IsNull (sig.Parameters, "Parameters");
-			Assert.IsNull (sig.ReturnType, "ReturnType");
-			Assert.AreEqual (String.Empty, sig.ToString (), "ToString");
-		}
+    private void AssertIsFalse(object a, string b)
+    {
+      Assert.That(a, Is.False, b);
+    }
 
-		[Test]
-		public void MatchNull ()
-		{
-			Assert.IsFalse (new MethodSignature ().Matches (null));
-		}
+    private void AssertIsFalse(object a)
+    {
+      Assert.That(a, Is.False);
+    }
 
-		[Test]
-		public void AlwaysTrueCustomLogic ()
-		{
-			MethodSignature ms = new MethodSignature (null, (method) => (true));
-			Assert.IsFalse (ms.Matches (null), "null");
-			Assert.IsTrue (ms.Matches (GetMethod ("TestMatch")), "anything");
-		}
+    private void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		[Test]
-		public void AlwaysTrueCustomLogic_CheckReturnValue ()
-		{
-			MethodSignature ms = new MethodSignature (null, "System.Void", (method) => (true));
-			Assert.IsFalse (ms.Matches (null), "null");
-			Assert.IsTrue (ms.Matches (GetMethod ("TestMatch")), "any name returning void");
-			Assert.IsFalse (ms.Matches (GetMethod ("Method")), "bool");
-		}
+    [Test]
+    public void TestDefaultConstructor()
+    {
+      MethodSignature sig = new MethodSignature();
+      AssertIsNull(sig.Name, "Name");
+      AssertIsNull(sig.Parameters, "Parameters");
+      AssertIsNull(sig.ReturnType, "ReturnType");
+      AssertAreEqual(String.Empty, sig.ToString(), "ToString");
+    }
 
-		public bool Method ()
-		{
-			return false;
-		}
+    [Test]
+    public void MatchNull()
+    {
+      AssertIsFalse(new MethodSignature().Matches(null));
+    }
 
-		public bool Method (bool parameter)
-		{
-			return false;
-		}
+    [Test]
+    public void AlwaysTrueCustomLogic()
+    {
+      MethodSignature ms = new MethodSignature(null, (method) => (true));
+      AssertIsFalse(ms.Matches(null), "null");
+      AssertIsTrue(ms.Matches(GetMethod("TestMatch")), "anything");
+    }
 
-		public bool Method (bool a, string b)
-		{
-			return false;
-		}
+    [Test]
+    public void AlwaysTrueCustomLogic_CheckReturnValue()
+    {
+      MethodSignature ms = new MethodSignature(null, "System.Void", (method) => (true));
+      AssertIsFalse(ms.Matches(null), "null");
+      AssertIsTrue(ms.Matches(GetMethod("TestMatch")), "any name returning void");
+      AssertIsFalse(ms.Matches(GetMethod("Method")), "bool");
+    }
 
-		[Test]
-		public void TestMatch ()
-		{
-			Assert.IsTrue (new MethodSignature ().Matches (GetMethod ("TestMatch")), "a");
+    public bool Method()
+    {
+      return false;
+    }
 
-			Assert.IsTrue (new MethodSignature ("TestMatch").Matches (GetMethod ("TestMatch")), "b");
-			Assert.IsFalse (new MethodSignature ("TestMatch_").Matches (GetMethod ("TestMatch")), "c");
+    public bool Method(bool parameter)
+    {
+      return false;
+    }
 
-			Assert.IsTrue (new MethodSignature (null, "System.Void").Matches (GetMethod ("TestMatch")), "d");
-			Assert.IsFalse (new MethodSignature (null, "System.Void_").Matches (GetMethod ("TestMatch")), "e");
+    public bool Method(bool a, string b)
+    {
+      return false;
+    }
 
-			Assert.IsFalse (new MethodSignature (null, null, new string [1]).Matches (GetMethod ("TestMatch")), "f");
-			Assert.IsFalse (new MethodSignature (null, null, new string [] { "System.Boolean" }).Matches (GetMethod ("Method", 0)), "g");
-			Assert.IsFalse (new MethodSignature (null, null, new string [] { null }).Matches (GetMethod ("Method", 0)), "h");
-			Assert.IsFalse (new MethodSignature (null, null, new string [] { "System.Object" }).Matches (GetMethod ("Method", 0)), "i");
+    [Test]
+    public void TestMatch()
+    {
+      AssertIsTrue(new MethodSignature().Matches(GetMethod("TestMatch")), "a");
 
-			Assert.IsTrue (new MethodSignature (null, null, new string [] { "System.Boolean" }).Matches (GetMethod ("Method", 1)), "j");
-			Assert.IsTrue (new MethodSignature (null, null, new string [] { null }).Matches (GetMethod ("Method", 1)), "k");
-			Assert.IsFalse (new MethodSignature (null, null, new string [] { "System.Object" }).Matches (GetMethod ("Method", 1)), "l");
+      AssertIsTrue(new MethodSignature("TestMatch").Matches(GetMethod("TestMatch")), "b");
+      AssertIsFalse(new MethodSignature("TestMatch_").Matches(GetMethod("TestMatch")), "c");
 
-			Assert.IsFalse (new MethodSignature (null, null, new string [] { "System.Boolean" }).Matches (GetMethod ("Method", 2)), "m");
-			Assert.IsFalse (new MethodSignature (null, null, new string [] { null }).Matches (GetMethod ("Method", 2)), "n");
-			Assert.IsFalse (new MethodSignature (null, null, new string [] { "System.Object" }).Matches (GetMethod ("Method", 2)), "o");
-		}
+      AssertIsTrue(new MethodSignature(null, "System.Void").Matches(GetMethod("TestMatch")), "d");
+      AssertIsFalse(new MethodSignature(null, "System.Void_").Matches(GetMethod("TestMatch")), "e");
 
-		[Test]
-		public void TestToString ()
-		{
-			Assert.AreEqual (String.Empty, new MethodSignature ().ToString (), "empty");
-			Assert.AreEqual (String.Empty, new MethodSignature (null, "System.Void").ToString (), "return value");
-			Assert.AreEqual (String.Empty, new MethodSignature (null, "System.Void", new string [] { "System.Object" }).ToString (), "return value + one param");
+      AssertIsFalse(new MethodSignature(null, null, new string[1]).Matches(GetMethod("TestMatch")), "f");
+      AssertIsFalse(new MethodSignature(null, null, new string[] { "System.Boolean" }).Matches(GetMethod("Method", 0)), "g");
+      AssertIsFalse(new MethodSignature(null, null, new string[] { null }).Matches(GetMethod("Method", 0)), "h");
+      AssertIsFalse(new MethodSignature(null, null, new string[] { "System.Object" }).Matches(GetMethod("Method", 0)), "i");
 
-			Assert.AreEqual ("Equals()", new MethodSignature ("Equals").ToString (), "name");
-			Assert.AreEqual ("System.Boolean Equals()", new MethodSignature ("Equals", "System.Boolean").ToString (), "name + return value");
-			Assert.AreEqual ("System.Boolean Equals(System.Object)", new MethodSignature ("Equals", "System.Boolean", new string[] { "System.Object" }).ToString (), "name + return value + one param");
+      AssertIsTrue(new MethodSignature(null, null, new string[] { "System.Boolean" }).Matches(GetMethod("Method", 1)), "j");
+      AssertIsTrue(new MethodSignature(null, null, new string[] { null }).Matches(GetMethod("Method", 1)), "k");
+      AssertIsFalse(new MethodSignature(null, null, new string[] { "System.Object" }).Matches(GetMethod("Method", 1)), "l");
 
-			Assert.AreEqual ("System.Boolean Equals(A,B)", new MethodSignature ("Equals", "System.Boolean", new string [] { "A", "B" }).ToString (), "name + return value + two param");
-		}
-	}
+      AssertIsFalse(new MethodSignature(null, null, new string[] { "System.Boolean" }).Matches(GetMethod("Method", 2)), "m");
+      AssertIsFalse(new MethodSignature(null, null, new string[] { null }).Matches(GetMethod("Method", 2)), "n");
+      AssertIsFalse(new MethodSignature(null, null, new string[] { "System.Object" }).Matches(GetMethod("Method", 2)), "o");
+    }
+
+    [Test]
+    public void TestToString()
+    {
+      AssertAreEqual(String.Empty, new MethodSignature().ToString(), "empty");
+      AssertAreEqual(String.Empty, new MethodSignature(null, "System.Void").ToString(), "return value");
+      AssertAreEqual(String.Empty, new MethodSignature(null, "System.Void", new string[] { "System.Object" }).ToString(), "return value + one param");
+
+      AssertAreEqual("Equals()", new MethodSignature("Equals").ToString(), "name");
+      AssertAreEqual("System.Boolean Equals()", new MethodSignature("Equals", "System.Boolean").ToString(), "name + return value");
+      AssertAreEqual("System.Boolean Equals(System.Object)", new MethodSignature("Equals", "System.Boolean", new string[] { "System.Object" }).ToString(), "name + return value + one param");
+
+      AssertAreEqual("System.Boolean Equals(A,B)", new MethodSignature("Equals", "System.Boolean", new string[] { "A", "B" }).ToString(), "name + return value + two param");
+    }
+  }
 }

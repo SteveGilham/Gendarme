@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for PreferTryParseRule
 //
 // Authors:
@@ -34,154 +34,169 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test.Rules.BadPractice {
+namespace Test.Rules.BadPractice
+{
+  [TestFixture]
+  public class PreferTryParseTest : MethodRuleTestFixture<PreferTryParseRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no IL
+      AssertRuleDoesNotApply(SimpleMethods.ExternalMethod);
+      // no CALL[VIRT] instruction
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class PreferTryParseTest : MethodRuleTestFixture<PreferTryParseRule> {
+    private class ParseWithTryCatch
+    {
+      private int Int32Parse()
+      {
+        try
+        {
+          return Int32.Parse("12") + Int32.Parse("-12", NumberStyles.AllowCurrencySymbol);
+        }
+        catch
+        {
+          return 0;
+        }
+      }
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no IL
-			AssertRuleDoesNotApply (SimpleMethods.ExternalMethod);
-			// no CALL[VIRT] instruction
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		class ParseWithTryCatch {
-			private int Int32Parse ()
-			{
-				try {
-					return Int32.Parse ("12") + Int32.Parse ("-12", NumberStyles.AllowCurrencySymbol);
-				}
-				catch {
-					return 0;
-				}
-			}
-		}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<ParseWithTryCatch>("Int32Parse", 2);
+      AssertAreEqual(Severity.Medium, Runner.Defects[0].Severity, "Severity");
+      AssertAreEqual(Confidence.Normal, Runner.Defects[0].Confidence, "Confidence");
+    }
 
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<ParseWithTryCatch> ("Int32Parse", 2);
-			Assert.AreEqual (Severity.Medium, Runner.Defects [0].Severity, "Severity");
-			Assert.AreEqual (Confidence.Normal, Runner.Defects [0].Confidence, "Confidence");
-		}
+    private class ParseWithoutTryCatch
+    {
+      private int Int32Parse()
+      {
+        return Int32.Parse("12") + Int32.Parse("-12", NumberStyles.AllowCurrencySymbol);
+      }
+    }
 
-		class ParseWithoutTryCatch {
-			private int Int32Parse ()
-			{
-				return Int32.Parse ("12") + Int32.Parse ("-12", NumberStyles.AllowCurrencySymbol);
-			}
-		}
+    private class ParseOutsideTryCatch
+    {
+      private int Int32Parse(string s)
+      {
+        try
+        {
+          if (String.IsNullOrEmpty(s))
+            return 0;
 
-		class ParseOutsideTryCatch {
-			private int Int32Parse (string s)
-			{
-				try {
-					if (String.IsNullOrEmpty (s))
-						return 0;
+          return (int)(s[0] - '0');
+        }
+        catch (Exception)
+        {
+          return Int32.Parse(s);
+        }
+      }
+    }
 
-					return (int) (s [0] - '0');
-				}
-				catch (Exception) {
-					return Int32.Parse (s);
-				}
-			}
-		}
+    [Test]
+    public void Worse()
+    {
+      AssertRuleFailure<ParseWithoutTryCatch>("Int32Parse", 2);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "Severity-1");
+      AssertAreEqual(Confidence.High, Runner.Defects[0].Confidence, "Confidence-1");
 
-		[Test]
-		public void Worse ()
-		{
-			AssertRuleFailure<ParseWithoutTryCatch> ("Int32Parse", 2);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "Severity-1");
-			Assert.AreEqual (Confidence.High, Runner.Defects [0].Confidence, "Confidence-1");
+      AssertRuleFailure<ParseOutsideTryCatch>("Int32Parse", 1);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "Severity-2");
+      AssertAreEqual(Confidence.High, Runner.Defects[0].Confidence, "Confidence-2");
+    }
 
-			AssertRuleFailure<ParseOutsideTryCatch> ("Int32Parse", 1);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "Severity-2");
-			Assert.AreEqual (Confidence.High, Runner.Defects [0].Confidence, "Confidence-2");
-		}
+    private class TryParse
+    {
+      private int Int32Parse()
+      {
+        int i;
+        if (!Int32.TryParse("12", out i))
+          i = 0;
+        return i;
+      }
+    }
 
-		class TryParse {
-			private int Int32Parse ()
-			{
-				int i;
-				if (!Int32.TryParse ("12", out i))
-					i = 0;
-				return i;
-			}
-		}
+    private class AtypicalParse
+    {
+      private bool Parse()
+      {
+        return true;
+      }
 
-		class AtypicalParse {
-			private bool Parse ()
-			{
-				return true;
-			}
+      public void CallParse()
+      {
+        if (!Parse())
+          Console.WriteLine();
+      }
+    }
 
-			public void CallParse ()
-			{
-				if (!Parse ())
-					Console.WriteLine ();
-			}
-		}
+    private class NoTryParse
+    {
+      private static NoTryParse Parse(string s)
+      {
+        return new NoTryParse();
+      }
 
-		class NoTryParse {
-			static NoTryParse Parse (string s)
-			{
-				return new NoTryParse ();
-			}
+      public void CallParse()
+      {
+        NoTryParse.Parse(null);
+      }
+    }
 
-			public void CallParse ()
-			{
-				NoTryParse.Parse (null);
-			}
-		}
+    private class BadTryParse
+    {
+      // bad candidate - does not return 'bool'
+      private static void TryParse(string s, out BadTryParse btp)
+      {
+        btp = new BadTryParse();
+      }
 
-		class BadTryParse {
-			// bad candidate - does not return 'bool'
-			static void TryParse (string s, out BadTryParse btp)
-			{
-				btp = new BadTryParse ();
-			}
+      // bad candidate - first parameter is not 'string'
+      private static bool TryParse(char c, out BadTryParse btp)
+      {
+        btp = new BadTryParse();
+        return true;
+      }
 
-			// bad candidate - first parameter is not 'string'
-			static bool TryParse (char c, out BadTryParse btp)
-			{
-				btp = new BadTryParse ();
-				return true;
-			}
+      // bad candidate - last parameter is not 'out <type>'
+      private static bool TryParse(string s, BadTryParse btp)
+      {
+        btp = new BadTryParse();
+        return true;
+      }
 
-			// bad candidate - last parameter is not 'out <type>'
-			static bool TryParse (string s, BadTryParse btp)
-			{
-				btp = new BadTryParse ();
-				return true;
-			}
+      private static BadTryParse Parse(string s)
+      {
+        return new BadTryParse();
+      }
 
-			static BadTryParse Parse (string s)
-			{
-				return new BadTryParse ();
-			}
+      public void CallParse()
+      {
+        BadTryParse btp = null;
+        BadTryParse.TryParse(String.Empty, out btp);
+        BadTryParse.TryParse('a', out btp);
+        BadTryParse.TryParse(String.Empty, btp);
+        // below is valid since there was no valid TryParse cnadidate
+        BadTryParse.Parse(null);
+      }
+    }
 
-			public void CallParse ()
-			{
-				BadTryParse btp = null;
-				BadTryParse.TryParse (String.Empty, out btp);
-				BadTryParse.TryParse ('a', out btp);
-				BadTryParse.TryParse (String.Empty, btp);
-				// below is valid since there was no valid TryParse cnadidate
-				BadTryParse.Parse (null);
-			}
-		}
-
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<TryParse> ("Int32Parse");
-			AssertRuleSuccess<AtypicalParse> ("CallParse");
-			AssertRuleSuccess<NoTryParse> ("CallParse");
-			AssertRuleSuccess<BadTryParse> ("CallParse");
-		}
-	}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<TryParse>("Int32Parse");
+      AssertRuleSuccess<AtypicalParse>("CallParse");
+      AssertRuleSuccess<NoTryParse>("CallParse");
+      AssertRuleSuccess<BadTryParse>("CallParse");
+    }
+  }
 }
-

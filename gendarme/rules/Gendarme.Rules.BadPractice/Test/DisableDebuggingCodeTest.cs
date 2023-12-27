@@ -86,14 +86,14 @@ namespace Test.Rules.BadPractice
 
       Rule.Active = false;
       (Runner as TestRunner).OnAssembly(assembly);
-      Assert.IsFalse(Rule.Active, "Default-Active-False");
+      Assert.That(!Rule.Active, "Default-Active-False");
 
       Rule.Active = true;
       (Runner as TestRunner).OnAssembly(assembly);
-      Assert.IsTrue(Rule.Active, "Assembly-Active-True");
+      Assert.That(Rule.Active, "Assembly-Active-True");
 
       (Runner as TestRunner).OnModule(assembly.MainModule);
-      Assert.IsTrue(Rule.Active, "Module-Active-True");
+      Assert.That(Rule.Active, "Module-Active-True");
     }
   }
 }

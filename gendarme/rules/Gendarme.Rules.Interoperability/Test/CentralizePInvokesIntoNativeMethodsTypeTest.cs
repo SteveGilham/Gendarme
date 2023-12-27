@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,191 +39,208 @@ using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
 
 // [SuppressUnmanagedCodeSecurity] attributes are reversed
-namespace Bad.Attributes {
-	[SuppressUnmanagedCodeSecurity]
-	internal sealed class NativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+namespace Bad.Attributes
+{
+  [SuppressUnmanagedCodeSecurity]
+  internal sealed class NativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	internal sealed class SafeNativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  internal sealed class SafeNativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	internal sealed class UnsafeNativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  internal sealed class UnsafeNativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 }
 
-namespace Bad.Instantiate {
-	internal class NativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+namespace Bad.Instantiate
+{
+  internal class NativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	[SuppressUnmanagedCodeSecurity]
-	internal class SafeNativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  [SuppressUnmanagedCodeSecurity]
+  internal class SafeNativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	[SuppressUnmanagedCodeSecurity]
-	internal class UnsafeNativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  [SuppressUnmanagedCodeSecurity]
+  internal class UnsafeNativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 }
 
-namespace Bad.Visibility {
-	public sealed class NativeMethods {
+namespace Bad.Visibility
+{
+  public sealed class NativeMethods
+  {
+    private NativeMethods()
+    {
+    }
 
-		private NativeMethods ()
-		{
-		}
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  [SuppressUnmanagedCodeSecurity]
+  public sealed class SafeNativeMethods
+  {
+    private SafeNativeMethods()
+    {
+    }
 
-	[SuppressUnmanagedCodeSecurity]
-	public sealed class SafeNativeMethods {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-		private SafeNativeMethods ()
-		{
-		}
+  [SuppressUnmanagedCodeSecurity]
+  public sealed class UnsafeNativeMethods
+  {
+    private UnsafeNativeMethods()
+    {
+    }
 
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
-
-	[SuppressUnmanagedCodeSecurity]
-	public sealed class UnsafeNativeMethods {
-
-		private UnsafeNativeMethods ()
-		{
-		}
-
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 }
 
-namespace Test.Rules.Interoperability {
+namespace Test.Rules.Interoperability
+{
+  internal sealed class NativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	internal sealed class NativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  [SuppressUnmanagedCodeSecurity]
+  internal sealed class SafeNativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	[SuppressUnmanagedCodeSecurity]
-	internal sealed class SafeNativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  [SuppressUnmanagedCodeSecurity]
+  internal sealed class UnsafeNativeMethods
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	[SuppressUnmanagedCodeSecurity]
-	internal sealed class UnsafeNativeMethods {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  // type name does not follow convention
+  internal sealed class NativeCode
+  {
+    [DllImport("User32.dll")]
+    internal static extern Boolean MessageBeep(UInt32 beepType);
+  }
 
-	// type name does not follow convention
-	internal sealed class NativeCode {
-		[DllImport ("User32.dll")]
-		internal static extern Boolean MessageBeep (UInt32 beepType);
-	}
+  [TestFixture]
+  public class CentralizePInvokesIntoNativeMethodsTypeTypeTest : TypeRuleTestFixture<CentralizePInvokesIntoNativeMethodsTypeRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // not a good type name
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+    }
 
-	[TestFixture]
-	public class CentralizePInvokesIntoNativeMethodsTypeTypeTest : TypeRuleTestFixture<CentralizePInvokesIntoNativeMethodsTypeRule> {
+    protected void AssertAreEqual(object a, object b, string c)
+    {
+      Assert.That(a, Is.EqualTo(b), c);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// not a good type name
-			AssertRuleDoesNotApply (SimpleTypes.Class);
-		}
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<NativeMethods>();
+      AssertRuleSuccess<SafeNativeMethods>();
+      // it's good but we'll report an Audit defect since this needs reviewing
+      AssertRuleFailure<UnsafeNativeMethods>(1);
+      AssertAreEqual(Severity.Audit, Runner.Defects[0].Severity, "Severity");
+    }
 
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<NativeMethods> ();
-			AssertRuleSuccess<SafeNativeMethods> ();
-			// it's good but we'll report an Audit defect since this needs reviewing
-			AssertRuleFailure<UnsafeNativeMethods> (1);
-			Assert.AreEqual (Severity.Audit, Runner.Defects [0].Severity);
-		}
+    [Test]
+    public void BadAttributes()
+    {
+      AssertRuleFailure<Bad.Attributes.NativeMethods>(1);
+      AssertAreEqual(Severity.Critical, Runner.Defects[0].Severity, "NativeMethods");
 
-		[Test]
-		public void BadAttributes ()
-		{
-			AssertRuleFailure<Bad.Attributes.NativeMethods> (1);
-			Assert.AreEqual (Severity.Critical, Runner.Defects [0].Severity, "NativeMethods");
+      AssertRuleFailure<Bad.Attributes.SafeNativeMethods>(1);
+      AssertAreEqual(Severity.Critical, Runner.Defects[0].Severity, "SafeNativeMethods");
 
-			AssertRuleFailure<Bad.Attributes.SafeNativeMethods> (1);
-			Assert.AreEqual (Severity.Critical, Runner.Defects [0].Severity, "SafeNativeMethods");
+      // bad attribute + audit
+      AssertRuleFailure<Bad.Attributes.UnsafeNativeMethods>(2);
+      AssertAreEqual(Severity.Critical, Runner.Defects[0].Severity, "UnsafeNativeMethods");
+      AssertAreEqual(Severity.Audit, Runner.Defects[1].Severity, "UnsafeNativeMethods-audit");
+    }
 
-			// bad attribute + audit
-			AssertRuleFailure<Bad.Attributes.UnsafeNativeMethods> (2);
-			Assert.AreEqual (Severity.Critical, Runner.Defects [0].Severity, "UnsafeNativeMethods");
-			Assert.AreEqual (Severity.Audit, Runner.Defects [1].Severity, "UnsafeNativeMethods-audit");
-		}
+    [Test]
+    public void BadInstantiate()
+    {
+      AssertRuleFailure<Bad.Instantiate.NativeMethods>(1);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "NativeMethods");
 
-		[Test]
-		public void BadInstantiate ()
-		{
-			AssertRuleFailure<Bad.Instantiate.NativeMethods> (1);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "NativeMethods");
+      AssertRuleFailure<Bad.Instantiate.SafeNativeMethods>(1);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "SafeNativeMethods");
 
-			AssertRuleFailure<Bad.Instantiate.SafeNativeMethods> (1);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "SafeNativeMethods");
+      // bad attribute + audit
+      AssertRuleFailure<Bad.Instantiate.UnsafeNativeMethods>(2);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "UnsafeNativeMethods");
+      AssertAreEqual(Severity.Audit, Runner.Defects[1].Severity, "UnsafeNativeMethods-audit");
+    }
 
-			// bad attribute + audit
-			AssertRuleFailure<Bad.Instantiate.UnsafeNativeMethods> (2);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "UnsafeNativeMethods");
-			Assert.AreEqual (Severity.Audit, Runner.Defects [1].Severity, "UnsafeNativeMethods-audit");
-		}
+    [Test]
+    public void BadVisibility()
+    {
+      AssertRuleFailure<Bad.Visibility.NativeMethods>(1);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "NativeMethods");
 
-		[Test]
-		public void BadVisibility ()
-		{
-			AssertRuleFailure<Bad.Visibility.NativeMethods> (1);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "NativeMethods");
+      AssertRuleFailure<Bad.Visibility.SafeNativeMethods>(1);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "SafeNativeMethods");
 
-			AssertRuleFailure<Bad.Visibility.SafeNativeMethods> (1);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "SafeNativeMethods");
+      // bad attribute + audit
+      AssertRuleFailure<Bad.Visibility.UnsafeNativeMethods>(2);
+      AssertAreEqual(Severity.High, Runner.Defects[0].Severity, "UnsafeNativeMethods");
+      AssertAreEqual(Severity.Audit, Runner.Defects[1].Severity, "UnsafeNativeMethods-audit");
+    }
+  }
 
-			// bad attribute + audit
-			AssertRuleFailure<Bad.Visibility.UnsafeNativeMethods> (2);
-			Assert.AreEqual (Severity.High, Runner.Defects [0].Severity, "UnsafeNativeMethods");
-			Assert.AreEqual (Severity.Audit, Runner.Defects [1].Severity, "UnsafeNativeMethods-audit");
-		}
-	}
+  [TestFixture]
+  public class CentralizePInvokesIntoNativeMethodsTypeMethodTest : MethodRuleTestFixture<CentralizePInvokesIntoNativeMethodsTypeRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      // no pinvoke (not a good type name either)
+      AssertRuleDoesNotApply(SimpleMethods.EmptyMethod);
+    }
 
-	[TestFixture]
-	public class CentralizePInvokesIntoNativeMethodsTypeMethodTest : MethodRuleTestFixture<CentralizePInvokesIntoNativeMethodsTypeRule> {
+    [Test]
+    public void Good()
+    {
+      AssertRuleSuccess<NativeMethods>("MessageBeep");
+      AssertRuleSuccess<SafeNativeMethods>("MessageBeep");
+      AssertRuleSuccess<UnsafeNativeMethods>("MessageBeep");
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			// no pinvoke (not a good type name either)
-			AssertRuleDoesNotApply (SimpleMethods.EmptyMethod);
-		}
-
-		[Test]
-		public void Good ()
-		{
-			AssertRuleSuccess<NativeMethods> ("MessageBeep");
-			AssertRuleSuccess<SafeNativeMethods> ("MessageBeep");
-			AssertRuleSuccess<UnsafeNativeMethods> ("MessageBeep");
-		}
-
-		[Test]
-		public void Bad ()
-		{
-			AssertRuleFailure<NativeCode> ("MessageBeep", 1);
-		}
-	}
+    [Test]
+    public void Bad()
+    {
+      AssertRuleFailure<NativeCode>("MessageBeep", 1);
+    }
+  }
 }
-

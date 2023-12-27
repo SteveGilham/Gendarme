@@ -936,8 +936,7 @@ namespace Test.Rules.Concurrency
       PostCheck(rule);
 
       if (expectedCount != rule.DefectCount)
-        Assert.Fail("{0} failed: should have {1} defects but got {2}.",
-          typeof(T).Name, expectedCount, rule.DefectCount);
+        Assert.Fail($"{typeof(T).Name} failed: should have {expectedCount} defects but got {rule.DefectCount}.");
     }
 
     #endregion Private Methods

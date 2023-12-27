@@ -139,6 +139,11 @@ namespace Test.Rules.Ui
       return null;
     }
 
+    protected void AssertAreEqual(object a, object b)
+    {
+      Assert.That(a, Is.EqualTo(b));
+    }
+
     [Test]
     public void TestNoEntryPoint()
     {
@@ -147,7 +152,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(assembly));
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(assembly));
       }
       finally
       {
@@ -163,7 +168,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<NoAttributesMain>(false)));
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<NoAttributesMain>(false)));
       }
       finally
       {
@@ -179,7 +184,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<NoAttributesMain>(true)));
+        AssertAreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<NoAttributesMain>(true)));
       }
       finally
       {
@@ -195,7 +200,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<STAThreadMain>(false)));
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<STAThreadMain>(false)));
       }
       finally
       {
@@ -211,7 +216,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<MTAThreadMain>(false)));
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckAssembly(GetAssemblyAndInject<MTAThreadMain>(false)));
       }
       finally
       {
@@ -227,7 +232,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Success, runner.CheckAssembly(GetAssemblyAndInject<STAThreadMain>(true)));
+        AssertAreEqual(RuleResult.Success, runner.CheckAssembly(GetAssemblyAndInject<STAThreadMain>(true)));
       }
       finally
       {
@@ -243,7 +248,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<MTAThreadMain>(true)));
+        AssertAreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<MTAThreadMain>(true)));
       }
       finally
       {
@@ -259,7 +264,7 @@ namespace Test.Rules.Ui
       try
       {
         Gendarme.Framework.Rocks.MethodRocks.MainName = substitute;
-        Assert.AreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<BothSTAAndMTAThreadMain>(true)));
+        AssertAreEqual(RuleResult.Failure, runner.CheckAssembly(GetAssemblyAndInject<BothSTAAndMTAThreadMain>(true)));
       }
       finally
       {

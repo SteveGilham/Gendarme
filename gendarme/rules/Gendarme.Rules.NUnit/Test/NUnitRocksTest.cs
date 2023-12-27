@@ -1,4 +1,4 @@
-﻿// 
+﻿//
 // Test.Rules.NUnit.NUnitRocksTest
 //
 // Authors:
@@ -35,20 +35,21 @@ using Test.Rules.Fixtures;
 using Test.Rules.Helpers;
 using Test.Rules.Definitions;
 
-namespace Test.Rules.NUnit {
+namespace Test.Rules.NUnit
+{
+  [TestFixture]
+  public class NUnitRocksTest
+  {
+    [Test]
+    public void True()
+    {
+      Assert.That(DefinitionLoader.GetMethodDefinition<NUnitRocksTest>("True").IsTest());
+    }
 
-	[TestFixture]
-	public class NUnitRocksTest {
-		[Test]
-		public void True ()
-		{
-			Assert.IsTrue (DefinitionLoader.GetMethodDefinition<NUnitRocksTest> ("True").IsTest ());
-		}
-
-		[Test]
-		public void False ()
-		{
-			Assert.IsFalse (SimpleMethods.EmptyMethod.IsTest());
-		}
-	}
+    [Test]
+    public void False()
+    {
+      Assert.That(!SimpleMethods.EmptyMethod.IsTest());
+    }
+  }
 }

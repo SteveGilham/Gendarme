@@ -71,6 +71,7 @@ namespace Test.Rules.Exceptions
     }
 
 #pragma warning disable IDE0060 // Remove unused parameter
+
     public void ArgumentExceptionWithTwoParametersInGoodOrder(int parameter)
     {
       throw new ArgumentException("Invalid parameter", "parameter");
@@ -378,7 +379,7 @@ namespace Test.Rules.Exceptions
     public void FailOnBadNamedPropertyTest()
     {
       AssertRuleFailure<InstantiateArgumentExceptionCorrectlyTest>("set_BadNamedProperty", 1);
-      Assert.AreEqual(Severity.Low, Runner.Defects[0].Severity, "Low");
+      Assert.That(Severity.Low, Is.EqualTo(Runner.Defects[0].Severity), "Low");
     }
 
     public int WellNamedPropertyWithArgumentNullException

@@ -604,7 +604,7 @@ namespace Test.Rules.Performance
       if (type == null)
         type = GetTest("AnonymousMethod");
 
-      Assert.IsNotNull(type, "type not found");
+      Assert.That(type, Is.Not.Null, "type not found");
       foreach (MethodDefinition method in type.Methods)
       {
         switch (method.Name)
@@ -679,7 +679,7 @@ namespace Test.Rules.Performance
     public void InheritedGenerics()
     {
       Y y = new Y();
-      Assert.AreEqual(0.0f, y.b(), "float");
+      Assert.That(0.0f, Is.EqualTo(y.b()), "float");
       AssertRuleSuccess<Y>();
       AssertRuleSuccess<X<int>>("a");
       AssertRuleSuccess<X<int>>("b");

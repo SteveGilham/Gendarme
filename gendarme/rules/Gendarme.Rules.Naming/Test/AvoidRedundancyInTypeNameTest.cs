@@ -34,108 +34,130 @@ using NUnit.Framework;
 using Test.Rules.Fixtures;
 using Test.Rules.Definitions;
 
-
-class OutsideNamespaceType
+internal class OutsideNamespaceType
 {
 }
 
 namespace FooX {
-	namespace Bar {
-		class Barometer {
-		}
-		class BarClass : Class {
-		}
-		class BarContext {
-		}
 
-		interface IBarInterface {
-		}
+	namespace Bar
+  {
 
-		interface IBarContext {
-		}
-	}
+    internal class Barometer
+    {
+    }
 
-	class Class {
-	}
+    internal class BarClass : Class
+    {
+    }
 
-	interface IInterface {
-	}
+    internal class BarContext
+    {
+    }
+
+    internal interface IBarInterface
+    {
+    }
+
+    internal interface IBarContext
+    {
+    }
+  }
+
+  internal class Class
+  {
+  }
+
+  internal interface IInterface
+  {
+  }
 }
 
-namespace Baz {
-	class BazClass : FooX.Class {
-	}
+namespace Baz
+{
 
-	class BazSuperClass : BazClass {
-	}
+  internal class BazClass : FooX.Class
+  {
+  }
 
-	interface ISomeInterface {
-	}
+  internal class BazSuperClass : BazClass
+  {
+  }
 
-	interface IBazInterface {
-	}
+  internal interface ISomeInterface
+  {
+  }
 
-	enum BazVersion {
-	}
+  internal interface IBazInterface
+  {
+  }
 
-	enum BazExistingVersion {
-	}
+  internal enum BazVersion
+  {
+  }
 
-	enum ExistingVersion {
-	}
+  internal enum BazExistingVersion
+  {
+  }
+
+  internal enum ExistingVersion
+  {
+  }
 }
 
-namespace Test.Rules.Naming {
+namespace Test.Rules.Naming
+{
 
-	[TestFixture]
-	public class AvoidRedundancyInTypeNameTest : TypeRuleTestFixture<AvoidRedundancyInTypeNameRule> {
+  [TestFixture]
+  public class AvoidRedundancyInTypeNameTest : TypeRuleTestFixture<AvoidRedundancyInTypeNameRule>
+  {
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply<OutsideNamespaceType> ();
-			AssertRuleDoesNotApply (SimpleTypes.GeneratedType);
-		}
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply<OutsideNamespaceType>();
+      AssertRuleDoesNotApply(SimpleTypes.GeneratedType);
+    }
 
-		[Test]
-		public void Failure1 ()
-		{
-			AssertRuleFailure<FooX.Bar.BarContext> (1);
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'Context'"), "BarContext");
-		}
+    [Test]
+    public void Failure1()
+    {
+      AssertRuleFailure<FooX.Bar.BarContext>(1);
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'Context'"), "BarContext");
+    }
 
-		[Test]
-		public void Failure2 ()
-		{
-			AssertRuleFailure<Baz.IBazInterface> (1);
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'IInterface'"), "IBazInterface");
-		}
+    [Test]
+    public void Failure2()
+    {
+      AssertRuleFailure<Baz.IBazInterface>(1);
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'IInterface'"), "IBazInterface");
+    }
 
-		[Test]
-		public void Failure3 ()
-		{
-			AssertRuleFailure<Baz.BazVersion> ();
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'Version'"), "BazVersion");
-		}
+    [Test]
+    public void Failure3()
+    {
+      AssertRuleFailure<Baz.BazVersion>();
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'Version'"), "BazVersion");
+    }
 
-		[Test]
-		public void Failure4 ()
-		{
-			AssertRuleFailure<FooX.Bar.IBarContext> ();
-			Assert.IsTrue (-1 != Runner.Defects [0].Text.IndexOf ("'IContext'"), "IBarContext");
-		}
+    [Test]
+    public void Failure4()
+    {
+      AssertRuleFailure<FooX.Bar.IBarContext>();
+      Assert.That(-1 != Runner.Defects[0].Text.IndexOf("'IContext'"), "IBarContext");
+    }
 
-		[Test]
-		public void Success ()
-		{
-			AssertRuleSuccess<FooX.Class> ();
-			AssertRuleSuccess<FooX.Bar.Barometer> ();//'ometer' not a good suggestion
-			AssertRuleSuccess<FooX.Bar.BarClass> (); //ambiguity with parent namespace's type
-			AssertRuleSuccess<Baz.BazClass> (); //ambiguity with base type
-			AssertRuleSuccess<Baz.BazSuperClass> (); //base class follow prefix pattern already
-			AssertRuleSuccess<Baz.ISomeInterface> ();
-			AssertRuleSuccess<Baz.BazExistingVersion> ();//ExistingVersion already exists
-			AssertRuleSuccess<FooX.Bar.IBarInterface> (); //ambiguity with parent namespace's IInterface
-		}
-	}
+    [Test]
+    public void Success()
+    {
+      AssertRuleSuccess<FooX.Class>();
+      AssertRuleSuccess<FooX.Bar.Barometer>();//'ometer' not a good suggestion
+      AssertRuleSuccess<FooX.Bar.BarClass>(); //ambiguity with parent namespace's type
+      AssertRuleSuccess<Baz.BazClass>(); //ambiguity with base type
+      AssertRuleSuccess<Baz.BazSuperClass>(); //base class follow prefix pattern already
+      AssertRuleSuccess<Baz.ISomeInterface>();
+      AssertRuleSuccess<Baz.BazExistingVersion>();//ExistingVersion already exists
+      AssertRuleSuccess<FooX.Bar.IBarInterface>(); //ambiguity with parent namespace's IInterface
+    }
+  }
 }

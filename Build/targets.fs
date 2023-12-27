@@ -806,7 +806,7 @@ module Targets =
               NUnit3.buildArgs
                 nunitparams
                 [ testDirectory
-                  @@ "./__UnitTestWithAltCoverRunner"
+                  @@ "__UnitTestWithAltCoverRunner"
                   @@ (test |> Path.GetFileName) ]
 
             try
