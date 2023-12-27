@@ -1,5 +1,8 @@
+#2023.12.27.19054
+* Ignore badly formed attribute types ([Nullable] and [Embedded]) injected by the C# compiler
+
 # 2023.8.26.15512
-* Ignore badly formed types injected by the dotnet 7.0.400 and 8.0pv FSharp compiler
+* Ignore badly formed types injected by the dotnet 7.0.400 and 8.0pv FSharp compiler ([<DynamicDependency>], & enum DynamicallyAccessedMemberTypes)
 
 # 2023.1.22.12221
 
