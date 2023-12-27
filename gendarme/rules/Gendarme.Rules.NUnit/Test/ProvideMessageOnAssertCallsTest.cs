@@ -123,7 +123,6 @@ namespace Test.Rules.NUnit
     }
 
     [Test]
-    [Ignore("Broken at NUnit 4")]
     public void Good()
     {
       MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("GoodOneBadAssert");
@@ -139,15 +138,18 @@ namespace Test.Rules.NUnit
       AssertRuleSuccess(m);
     }
 
-    [Test]
-    [Ignore("Broken at NUnit 4")]
-    public void Bad()
+    [Test, Ignore("Broken at NUnit 4")/**/]
+    public void Bad1()
     {
       MethodDefinition m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("BadTestAttribute");
       m.AddTestAttribute();
       AssertRuleFailure(m, 2);
+    }
 
-      m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("FourBadAsserts");
+    [Test, Ignore("Broken at NUnit 4")/**/]
+    public void Bad2()
+    {
+      var m = DefinitionLoader.GetMethodDefinition<ProvideMessageOnAssertCallsTest>("FourBadAsserts");
       m.AddTestAttribute();
       AssertRuleFailure(m, 4);
     }
