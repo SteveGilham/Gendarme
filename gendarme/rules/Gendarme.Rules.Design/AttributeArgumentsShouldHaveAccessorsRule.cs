@@ -107,11 +107,13 @@ namespace Gendarme.Rules.Design
 
     public RuleResult CheckType(TypeDefinition type)
     {
-      if (type.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal))
-        return RuleResult.DoesNotApply;
-
       // rule applies only to attributes
       if (!type.IsAttribute())
+        return RuleResult.DoesNotApply;
+
+      var fn = type.FullName;
+
+      if (fn.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal))
         return RuleResult.DoesNotApply;
 
       // look through getters

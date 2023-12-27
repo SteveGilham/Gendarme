@@ -72,10 +72,12 @@ namespace Gendarme.Rules.Design
       if (!type.IsAttribute())
         return RuleResult.DoesNotApply;
 
-      if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute", StringComparison.Ordinal))
+      var fn = type.FullName;
+
+      if (fn.Equals("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute", StringComparison.Ordinal))
         return RuleResult.DoesNotApply;
 
-      if (type.FullName.Equals("Microsoft.CodeAnalysis.EmbeddedAttribute", StringComparison.Ordinal))
+      if (fn.Equals("Microsoft.CodeAnalysis.EmbeddedAttribute", StringComparison.Ordinal))
         return RuleResult.DoesNotApply;
 
       if (type.HasAttribute(usage)) // it's ok
