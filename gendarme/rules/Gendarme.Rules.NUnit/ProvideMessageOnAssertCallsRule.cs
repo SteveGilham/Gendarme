@@ -112,8 +112,9 @@ namespace Gendarme.Rules.NUnit
             continue;
           foreach (ParameterDefinition parameter in resolvedMethod.Parameters)
           {
-            if (parameter.ParameterType.IsNamed(str) &&
-              parameter.Name == "message")
+            if (parameter.Name == "message" &&
+                (parameter.ParameterType.IsNamed(str) || parameter.ParameterType.IsNamed(nustr))
+              )
             {
               foundMessage = true;
               break;
@@ -136,6 +137,12 @@ namespace Gendarme.Rules.NUnit
     {
       Namespace = "System",
       Name = "String"
+    };
+
+    private static readonly TypeName nustr = new TypeName
+    {
+      Namespace = "NUnit.Framework",
+      Name = "NUnitString"
     };
 
     // reports only if it was called more than one time
