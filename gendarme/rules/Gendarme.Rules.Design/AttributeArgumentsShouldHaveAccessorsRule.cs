@@ -1,4 +1,4 @@
-// 
+//
 // Gendarme.Rules.Design.AttributeArgumentsShouldHaveAccessorsRule
 //
 // Authors:
@@ -33,116 +33,125 @@ using Mono.Cecil;
 using Gendarme.Framework;
 using Gendarme.Framework.Rocks;
 
-namespace Gendarme.Rules.Design {
+namespace Gendarme.Rules.Design
+{
+  /// <summary>
+  /// This rule fires if a parameter to an <c>Attribute</c> constructor is not exposed
+  /// using a properly cased property. This is a problem because it is generally not useful
+  /// to set state within an attribute without providing a way to get at that state.
+  /// </summary>
+  /// <example>
+  /// Bad example:
+  /// <code>
+  /// [AttributeUsage (AttributeTargets.All)]
+  /// public sealed class AttributeWithRequiredProperties : Attribute {
+  ///	private int storedFoo;
+  ///	private string storedBar;
+  ///
+  ///	// we have no corresponding property with the name 'Bar' so the rule will fail
+  ///	public AttributeWithRequiredProperties (int foo, string bar)
+  ///	{
+  ///		storedFoo = foo;
+  ///		storedBar = bar;
+  ///	}
+  ///
+  ///	public int Foo {
+  ///		get {
+  ///			return storedFoo;
+  ///		}
+  ///	}
+  /// }
+  /// </code>
+  /// </example>
+  /// <example>
+  /// Good example:
+  /// <code>
+  /// [AttributeUsage (AttributeTargets.All)]
+  /// public sealed class AttributeWithRequiredProperties : Attribute {
+  /// 	private int storedFoo;
+  /// 	private string storedBar;
+  ///
+  /// 	public AttributeWithRequiredProperties (int foo, string bar)
+  /// 	{
+  /// 		storedFoo = foo;
+  /// 		storedBar = bar;
+  /// 	}
+  ///
+  /// 	public int Foo {
+  /// 		get {
+  ///			return storedFoo;
+  /// 		}
+  /// 	}
+  ///
+  /// 	public string Bar {
+  /// 		get {
+  /// 			return storedBar;
+  /// 		}
+  /// 	}
+  /// }
+  /// </code>
+  /// </example>
 
-	/// <summary>
-	/// This rule fires if a parameter to an <c>Attribute</c> constructor is not exposed
-	/// using a properly cased property. This is a problem because it is generally not useful
-	/// to set state within an attribute without providing a way to get at that state.
-	/// </summary>
-	/// <example>
-	/// Bad example:
-	/// <code>
-	/// [AttributeUsage (AttributeTargets.All)]
-	/// public sealed class AttributeWithRequiredProperties : Attribute {
-	///	private int storedFoo;
-	///	private string storedBar;
-	///	
-	///	// we have no corresponding property with the name 'Bar' so the rule will fail
-	///	public AttributeWithRequiredProperties (int foo, string bar)
-	///	{
-	///		storedFoo = foo;
-	///		storedBar = bar;
-	///	}
-	///	
-	///	public int Foo {
-	///		get {
-	///			return storedFoo;
-	///		}
-	///	}
-	/// }
-	/// </code>
-	/// </example>
-	/// <example>
-	/// Good example:
-	/// <code>
-	/// [AttributeUsage (AttributeTargets.All)]
-	/// public sealed class AttributeWithRequiredProperties : Attribute {
-	/// 	private int storedFoo;
-	/// 	private string storedBar;
-	/// 	
-	/// 	public AttributeWithRequiredProperties (int foo, string bar)
-	/// 	{
-	/// 		storedFoo = foo;
-	/// 		storedBar = bar;
-	/// 	}
-	/// 	
-	/// 	public int Foo {
-	/// 		get {
-	///			return storedFoo; 
-	/// 		}
-	/// 	}
-	/// 	
-	/// 	public string Bar {
-	/// 		get {
-	/// 			return storedBar;
-	/// 		}
-	/// 	}
-	/// }
-	/// </code>
-	/// </example>
+  [Problem("All parameter values passed to this type's constructors should be visible through read-only properties.")]
+  [Solution("Add the missing property getters to the type.")]
+  [FxCopCompatibility("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
+  public class AttributeArgumentsShouldHaveAccessorsRule : Rule, ITypeRule
+  {
+    private List<string> allProperties = new List<string>();
 
-	[Problem ("All parameter values passed to this type's constructors should be visible through read-only properties.")]
-	[Solution ("Add the missing property getters to the type.")]
-	[FxCopCompatibility ("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
-	public class AttributeArgumentsShouldHaveAccessorsRule : Rule, ITypeRule {
+    private static readonly TypeName attr = new TypeName
+    {
+      Namespace = "System",
+      Name = "Attribute"
+    };
 
-		private List<string> allProperties = new List<string> ();
-        private readonly static TypeName attr = new TypeName
+    public RuleResult CheckType(TypeDefinition type)
+    {
+      if (type.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
+
+      // rule applies only to attributes
+      if (!type.IsAttribute())
+        return RuleResult.DoesNotApply;
+
+      // look through getters
+      allProperties.Clear();
+
+      TypeDefinition t = type;
+      // Walk up the inheritance tree so that inherited properties are counted
+      do
+      {
+        foreach (PropertyDefinition property in t.Properties)
         {
-            Namespace = "System",
-            Name = "Attribute"
-        };
+          if (property.GetMethod != null)
+          {
+            allProperties.Add(property.Name);
+          }
+        }
+        t = t.BaseType != null ? t.BaseType.Resolve() : null;
+      } while (t != null && !t.IsNamed(attr));
 
-		public RuleResult CheckType (TypeDefinition type)
-		{
-			// rule applies only to attributes
-			if (!type.IsAttribute ())
-				return RuleResult.DoesNotApply;
+      // look through parameters
+      foreach (MethodDefinition constructor in type.Methods)
+      {
+        if (!constructor.IsConstructor)
+          continue;
 
-			// look through getters
-			allProperties.Clear ();
-
-			TypeDefinition t = type;
-			// Walk up the inheritance tree so that inherited properties are counted
-			do
-			{
-				foreach (PropertyDefinition property in t.Properties) {
-					if (property.GetMethod != null) {
-						allProperties.Add (property.Name);
-					}
-				}
-				t = t.BaseType != null ? t.BaseType.Resolve () : null;
-			} while (t != null  && !t.IsNamed (attr));
-
-			// look through parameters
-			foreach (MethodDefinition constructor in type.Methods) {
-				if (!constructor.IsConstructor)
-					continue;
-
-				foreach (ParameterDefinition param in constructor.Parameters) {
-					 // pascal case it
-					string correspondingPropertyName = Char.ToUpper (param.Name [0], CultureInfo.InvariantCulture).ToString (CultureInfo.InvariantCulture) +
-						param.Name.Substring (1);
-					if (!allProperties.Contains (correspondingPropertyName)) {
-						string s = String.Format (CultureInfo.InvariantCulture, 
-							"Add '{0}' property to the attribute class.", correspondingPropertyName);
-						Runner.Report (param, Severity.Medium, Confidence.High, s);
-						allProperties.Add (correspondingPropertyName); // to avoid double catching same property (e.g. from different constructors)
-					}
-				}
-			}
-			return Runner.CurrentRuleResult;
-		}
-	}
+        foreach (ParameterDefinition param in constructor.Parameters)
+        {
+          // pascal case it
+          string correspondingPropertyName = Char.ToUpper(param.Name[0], CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture) +
+            param.Name.Substring(1);
+          if (!allProperties.Contains(correspondingPropertyName))
+          {
+            string s = String.Format(CultureInfo.InvariantCulture,
+              "Add '{0}' property to the attribute class.", correspondingPropertyName);
+            Runner.Report(param, Severity.Medium, Confidence.High, s);
+            allProperties.Add(correspondingPropertyName); // to avoid double catching same property (e.g. from different constructors)
+          }
+        }
+      }
+      return Runner.CurrentRuleResult;
+    }
+  }
 }
