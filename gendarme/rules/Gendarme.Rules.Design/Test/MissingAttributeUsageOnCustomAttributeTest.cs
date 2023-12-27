@@ -133,5 +133,20 @@ namespace Test.Rules.Design
       AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(def), "RuleResult");
       AssertAreEqual(0, runner.Defects.Count, "Count");
     }
+
+    [Test]
+    public void IgnoreMicrosoftCodeAnalysisEmbeddedAttribute()
+    {
+      using (var stream =
+        System.Reflection.Assembly
+          .GetExecutingAssembly()
+          .GetManifestResourceStream("Test.Rules.Design.SourceCode.dll"))
+      using (var def = Mono.Cecil.AssemblyDefinition.ReadAssembly(stream))
+      {
+        var type = def.MainModule.GetType("Microsoft.CodeAnalysis.EmbeddedAttribute");
+        AssertAreEqual(RuleResult.DoesNotApply, runner.CheckType(type), "RuleResult");
+        AssertAreEqual(0, runner.Defects.Count, "Count");
+      }
+    }
   }
 }

@@ -8,6 +8,9 @@
     <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\..\Libraries\SourceCode.dll" Link="SourceCode.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\FSharpExamples\FSharpExamples.fsproj" />
     <ProjectReference Include="..\..\Test.Rules\Test.Rules.csproj" />
     <ProjectReference Include="..\Gendarme.Rules.Design.csproj" />

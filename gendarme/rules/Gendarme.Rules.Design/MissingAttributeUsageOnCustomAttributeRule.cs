@@ -75,6 +75,9 @@ namespace Gendarme.Rules.Design
       if (type.FullName.Equals("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute", StringComparison.Ordinal))
         return RuleResult.DoesNotApply;
 
+      if (type.FullName.Equals("Microsoft.CodeAnalysis.EmbeddedAttribute", StringComparison.Ordinal))
+        return RuleResult.DoesNotApply;
+
       if (type.HasAttribute(usage)) // it's ok
         return RuleResult.Success;
 
