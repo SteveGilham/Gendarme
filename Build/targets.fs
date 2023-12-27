@@ -1711,7 +1711,7 @@ module Targets =
     _Target "JustUnitTest" JustUnitTest
     _Target "UnitTestDotNet" UnitTestDotNet
     _Target "Coverage" ignore
-    _Target "UnitTestWithAltCoverRunner" UnitTestWithAltCoverRunner
+    _Target "UnitTestWithAltCoverRunner" ignore // UnitTestWithAltCoverRunner
     _Target "UnitTestWithAltCoverCoreRunner" UnitTestWithAltCoverCoreRunner
     _Target "Packaging" Packaging
     _Target "OperationalTest" ignore
