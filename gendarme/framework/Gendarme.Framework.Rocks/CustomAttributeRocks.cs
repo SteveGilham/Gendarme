@@ -67,6 +67,14 @@ namespace Gendarme.Framework.Rocks
       return self.CustomAttributes.Any(ca => ca.AttributeType.IsNamed(compilerGenerated));
     }
 
+    public static bool HasEmbeddedAttribute(this ICustomAttributeProvider self)
+    {
+      if ((self == null) || !self.HasCustomAttributes)
+        return false;
+
+      return self.CustomAttributes.Any(ca => ca.AttributeType.IsNamed(embedded));
+    }
+
     private static readonly TypeName generatedCode = new TypeName
     {
       Namespace = "System.CodeDom.Compiler",
@@ -77,6 +85,12 @@ namespace Gendarme.Framework.Rocks
     {
       Namespace = "System.Runtime.CompilerServices",
       Name = "CompilerGeneratedAttribute"
+    };
+
+    private static readonly TypeName embedded = new TypeName
+    {
+      Namespace = "Microsoft.CodeAnalysis",
+      Name = "EmbeddedAttribute"
     };
 
     /// <summary>
@@ -99,6 +113,7 @@ namespace Gendarme.Framework.Rocks
     }
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
+
     [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
       Justification = "The alternative is also provided where more convenient")]
     public static bool HasAttribute<T>(this ICustomAttributeProvider self)

@@ -153,7 +153,7 @@ namespace Test.Rules.Performance
       var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
       var type = probe.Assembly.GetType("System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute");
       var def = Helpers.DefinitionLoader.GetTypeDefinition(type);
-      AssertRuleDoesNotApply(def);
+      AssertRuleSuccess(def);
     }
   }
 }
