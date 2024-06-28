@@ -1,4 +1,7 @@
-#2023.12.27.19054
+# 2024.6.28.12460 
+* Handle injected "[Embedded]" attributes more generally by ignoring them for AttributeArgumentsShouldHaveAccessorsRule
+
+# 2023.12.27.19054
 * Ignore badly formed attribute types ([Nullable] and [Embedded]) injected by the C# compiler
 
 # 2023.8.26.15512
