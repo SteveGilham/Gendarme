@@ -260,6 +260,7 @@ namespace NDesk.Options
     { values.RemoveAt(index); }
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
+
     [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly",
       Justification = "OptionContext names a type")]
     private void AssertValid(int index)
@@ -565,6 +566,9 @@ namespace NDesk.Options
       this.option = optionName;
     }
 
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "RemoveDependenceOnObsoleteCodeRule",
+                     Justification = "Not all builds affected")]
     protected OptionException(SerializationInfo info, StreamingContext context)
       : base(info, context)
     {
@@ -577,6 +581,9 @@ namespace NDesk.Options
     }
 
     [SecurityPermission(SecurityAction.LinkDemand, SerializationFormatter = true)]
+    [SuppressMessage("Gendarme.Rules.Maintainability",
+                     "RemoveDependenceOnObsoleteCodeRule",
+                     Justification = "Not all builds affected")]
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
       base.GetObjectData(info, context);
@@ -1136,6 +1143,7 @@ namespace NDesk.Options
     }
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
+
     [SuppressMessage("Gendarme.Rules.Globalization",
                     "PreferStringComparisonOverrideRule",
                     Justification = "IndexOf overrides not available")]
@@ -1255,6 +1263,7 @@ namespace NDesk.Options
     }
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
+
     [SuppressMessage("Gendarme.Rules.Smells",
                       "AvoidSwitchStatementsRule",
                       Justification = "chars are not types")]
