@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/SolutionItems/">
+    <File Path="../NuGet.md" />
+    <File Path="../README.md" />
+    <File Path="../ReleaseNotes.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="OutputBuildProps.props" />
+    <File Path="OutputBuildTargets.props" />
+    <File Path="rules/Directory.Build.props" />
+  </Folder>
+  <Project Path="rules/AltCode.Rules.PowerShell/AltCode.Rules.PowerShell.fsproj" />
+  <Project Path="rules/AltCode.Rules.PowerShell/Test/Examples/Examples.AltCode.PowerShell.csproj" />
+  <Project Path="rules/AltCode.Rules.PowerShell/Test/Tests.AltCode.PowerShell.fsproj" />
+</Solution>

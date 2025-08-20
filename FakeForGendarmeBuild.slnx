@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".config/dotnet-tools.json" />
+    <File Path=".github/workflows/main.yml" />
+    <File Path="Build/build-rules.xml" />
+    <File Path="Build/Directory.Build.props" />
+    <File Path="Build/merge-coverage.ps1" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="OutputBuildProps.props" />
+    <File Path="OutputBuildTargets.props" />
+    <File Path="README.md" />
+    <File Path="ReleaseNotes.md" />
+  </Folder>
+  <Project Path="Build/Build.fsproj" />
+  <Project Path="Build/Setup.fsproj" />
+</Solution>

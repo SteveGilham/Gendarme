@@ -1,0 +1,173 @@
+<Solution>
+  <Folder Name="/Rules/">
+    <File Path="rules/rules.xml" />
+    <Project Path="rules/AltCode.Rules.General/AltCode.Rules.General.fsproj" />
+    <Project Path="rules/AltCode.Rules.PowerShell/AltCode.Rules.PowerShell.fsproj" />
+    <Project Path="rules/Gendarme.Rules.BadPractice/Gendarme.Rules.BadPractice.csproj" />
+    <Project Path="rules/Gendarme.Rules.Concurrency/Gendarme.Rules.Concurrency.csproj" />
+    <Project Path="rules/Gendarme.Rules.Correctness/Gendarme.Rules.Correctness.csproj" />
+    <Project Path="rules/Gendarme.Rules.Design.Generic/Gendarme.Rules.Design.Generic.csproj" />
+    <Project Path="rules/Gendarme.Rules.Design.Linq/Gendarme.Rules.Design.Linq.csproj" />
+    <Project Path="rules/Gendarme.Rules.Design/Gendarme.Rules.Design.csproj" />
+    <Project Path="rules/Gendarme.Rules.Exceptions/Gendarme.Rules.Exceptions.csproj" />
+    <Project Path="rules/Gendarme.Rules.Gendarme/Gendarme.Rules.Gendarme.csproj" />
+    <Project Path="rules/Gendarme.Rules.Globalization/Gendarme.Rules.Globalization.csproj" />
+    <Project Path="rules/Gendarme.Rules.Interoperability.Com/Gendarme.Rules.Interoperability.Com.csproj" />
+    <Project Path="rules/Gendarme.Rules.Interoperability/Gendarme.Rules.Interoperability.csproj" />
+    <Project Path="rules/Gendarme.Rules.Maintainability/Gendarme.Rules.Maintainability.csproj" />
+    <Project Path="rules/Gendarme.Rules.Naming/Gendarme.Rules.Naming.csproj" />
+    <Project Path="rules/Gendarme.Rules.NUnit/Gendarme.Rules.NUnit.csproj" />
+    <Project Path="rules/Gendarme.Rules.Performance/Gendarme.Rules.Performance.csproj" />
+    <Project Path="rules/Gendarme.Rules.Portability/Gendarme.Rules.Portability.csproj" />
+    <Project Path="rules/Gendarme.Rules.Security.Cas/Gendarme.Rules.Security.Cas.csproj" />
+    <Project Path="rules/Gendarme.Rules.Security/Gendarme.Rules.Security.csproj" />
+    <Project Path="rules/Gendarme.Rules.Serialization/Gendarme.Rules.Serialization.csproj" />
+    <Project Path="rules/Gendarme.Rules.Smells/Gendarme.Rules.Smells.csproj" />
+    <Project Path="rules/Gendarme.Rules.Ui/Gendarme.Rules.Ui.csproj" />
+    <Project Path="rules/Obsolete.Rules.Security.Cas/Obsolete.Rules.Security.Cas.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="../.config/dotnet-tools.json" />
+    <File Path="../.github/workflows/main.yml" />
+    <File Path="../Build/actions.fs" />
+    <File Path="../Build/altcode.gendarme.nuspec" />
+    <File Path="../Build/build.fs" />
+    <File Path="../Build/csharp-rules.xml" />
+    <File Path="../Build/fsharp-rules.xml" />
+    <File Path="../Build/setup.fs" />
+    <File Path="../Build/targets.fs" />
+    <File Path="../Directory.Build.props" />
+    <File Path="../Directory.Packages.props" />
+    <File Path="../fsharplint.json" />
+    <File Path="../global.json" />
+    <File Path="../NuGet.md" />
+    <File Path="../README.md" />
+    <File Path="../ReleaseNotes - Previously.md" />
+    <File Path="../ReleaseNotes.md" />
+    <File Path="../ToolUpdate.ps1" />
+    <File Path="Directory.Build.props" />
+    <File Path="OutputBuildProps.props" />
+    <File Path="rules/Directory.Build.props" />
+    <File Path="rules/Test.Build.props" />
+    <Project Path="../Build/NuGet.csproj">
+      <Build Project="false" />
+    </Project>
+    <Project Path="AltCode.Mocker/AltCode.Mocker.csproj" />
+    <Project Path="rules/AltCode.Rules.General/Test/Examples/Examples.AltCode.General.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/AltCode.Rules.PowerShell/Test/Examples/Examples.AltCode.PowerShell.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.BadPractice/Test/Examples/Examples.Rules.BadPractice/Examples.Rules.BadPractice.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Performance/Test/Examples/Examples.Rules.Performance.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Tools/" />
+  <Folder Name="/Tools/supported/">
+    <Project Path="tools/supported/gd2i/gd2i.csproj" />
+  </Folder>
+  <Folder Name="/Tools/unsupported/">
+    <Project Path="tools/unsupported/typeref/typeref.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="tools/unsupported/xmldoc2wiki/xmldoc2wiki.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/Unit Tests/">
+    <Project Path="framework/Test/Test.Framework.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/AltCode.Rules.General/Test/Test.AltCode.General.fsproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/AltCode.Rules.PowerShell/Test/Test.AltCode.PowerShell.fsproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.BadPractice/Test/Test.Rules.BadPractice.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Concurrency/Test/Test.Rules.Concurrency.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Correctness/Test/Test.Rules.Correctness.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Design.Generic/Test/Test.Rules.Design.Generic.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Design.Linq/Test/Test.Rules.Design.Linq.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Design/Test/Test.Rules.Design.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Exceptions/Test/Test.Rules.Exceptions.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Gendarme/Test/Test.Rules.Gendarme.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Globalization/Test/Test.Rules.Globalization.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Interoperability.Com/Test/Test.Rules.Interoperability.Com.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Interoperability/Test/Test.Rules.Interoperability.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Maintainability/Test/Test.Rules.Maintainability.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Naming/Test/Test.Rules.Naming.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.NUnit/Test/Test.Rules.NUnit.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Performance/Test/Test.Rules.Performance.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Portability/Test/Test.Rules.Portability.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Security.Cas/Test/Test.Rules.Security.Cas.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Security/Test/Test.Rules.Security.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Serialization/Test/Test.Rules.Serialization.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Smells/Test/Test.Rules.Smells.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Gendarme.Rules.Ui/Test/Test.Rules.Ui.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Obsolete.Rules.Security.Cas/Test/Test.Obsolete.Rules.Security.Cas.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+    <Project Path="rules/Test.Rules/Test.Rules.csproj">
+      <Build Solution="Release|*" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="CecilExtensions/CecilExtensions.fsproj" />
+  <Project Path="console/gendarme.csproj" />
+  <Project Path="framework/Gendarme.Framework.csproj" />
+  <Project Path="FSharpExamples/FSharpExamples.fsproj" />
+  <Project Path="swf-wizard-runner/swf-wizard-runner.csproj" />
+  <Properties Name="MonoDevelopProperties">
+    <Property Name="$0.policy" Value="UpdateNearestChangeLog" />
+    <Property Name="MonoDevelop.ChangeLogAddIn.ChangeLogInfo" Value="$0" />
+    <Property Name="name" Value="gendarme" />
+    <Property Name="StartupItem" Value="rules\Gendarme.Rules.Performance\Gendarme.Rules.Performance.csproj" />
+    <Property Name="version" Value="0.1" />
+  </Properties>
+</Solution>

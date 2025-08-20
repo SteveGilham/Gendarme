@@ -383,7 +383,7 @@ module Targets =
 
   let BuildRelease =
     (fun _ ->
-      "./gendarme/gendarme-win.sln"
+      "./gendarme/gendarme-win.slnx"
       |> dotnetBuildRelease
 
       let publish =
@@ -404,7 +404,7 @@ module Targets =
         "./gendarme/rules/Gendarme.Rules.Globalization/Gendarme.Rules.Globalization.csproj")
 
   let BuildDebug =
-    (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
+    (fun _ -> "./gendarme/gendarme-win.slnx" |> dotnetBuildDebug)
 
   //_Target "UnitTest" ignore
 
