@@ -72,6 +72,8 @@ jobs:
           **/*.fsproj
           **/packages.lock.json
           **/Directory.Packages.props
+    - name: Install mono 
+      run: sudo apt-get update && sudo apt-get install -y mono-devel
     - name: Tools
       run: dotnet tool restore
     - name: Setup
