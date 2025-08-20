@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/SolutionItems/">
+    <File Path="../NuGet.md" />
+    <File Path="../README.md" />
+    <File Path="../ReleaseNotes.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="OutputBuildProps.props" />
+    <File Path="OutputBuildTargets.props" />
+    <File Path="rules/Directory.Build.props" />
+  </Folder>
+  <Project Path="rules/AltCode.Rules.General/AltCode.Rules.General.fsproj" />
+  <Project Path="rules/AltCode.Rules.General/Test/Examples/Examples.AltCode.General.csproj" />
+  <Project Path="rules/AltCode.Rules.General/Test/Tests.AltCode.General.fsproj" />
+</Solution>

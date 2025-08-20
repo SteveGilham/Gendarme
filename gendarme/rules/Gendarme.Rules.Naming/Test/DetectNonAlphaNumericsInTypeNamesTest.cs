@@ -1,4 +1,4 @@
-// 
+//
 // Unit tests for AvoidNonAlphanumericIdentifierRule
 //
 // Authors:
@@ -37,243 +37,256 @@ using NUnit.Framework;
 using Test.Rules.Definitions;
 using Test.Rules.Fixtures;
 
-namespace Test_Rules_Naming {
+namespace Test_Rules_Naming
+{
+  public class Type_With_Underscore
+  {
+    protected int Field_With_Underscore;
 
-	public class Type_With_Underscore {
+    public void Method_With_Underscore(string param_with_underscore)
+    {
+      Event_With_Underscore += delegate
+      {
+        Console.WriteLine("hello");
+      };
+    }
 
-		protected int Field_With_Underscore;
+    public event EventHandler<EventArgs> Event_With_Underscore;
 
-		public void Method_With_Underscore (string param_with_underscore)
-		{
-			Event_With_Underscore += delegate { 
-				Console.WriteLine ("hello");
-			};
-		}
+    public bool Property_With_Underscore
+    {
+      get { return false; }
+    }
+  }
 
-		public event EventHandler<EventArgs> Event_With_Underscore;
+  public class TypeWithoutUnderscore
+  {
+    protected int FieldWithoutUnderscore;
+    private int Field_With_Underscore;  // non-visible
 
-		public bool Property_With_Underscore {
-			get { return false; }
-		}
-	}
+    public void MethodWithoutUnderscore(string paramWithoutUnderscore)
+    {
+      EventWithoutUnderscore += delegate
+      {
+        Console.WriteLine("hello");
+      };
+    }
 
-	public class TypeWithoutUnderscore {
+    protected event EventHandler<EventArgs> EventWithoutUnderscore;
 
-		protected int FieldWithoutUnderscore;
-		private int Field_With_Underscore;	// non-visible
+    public bool PropertyWithoutUnderscore
+    {
+      get { return false; }
+    }
 
-		public void MethodWithoutUnderscore (string paramWithoutUnderscore)
-		{
-			EventWithoutUnderscore += delegate {
-				Console.WriteLine ("hello");
-			};
-		}
-
-		protected event EventHandler<EventArgs> EventWithoutUnderscore;
-
-		public bool PropertyWithoutUnderscore {
-			get { return false; }
-		}
-
-		internal int Property_With_Underscore {
-			get { return 0; }
-		}
-	}
+    internal int Property_With_Underscore
+    {
+      get { return 0; }
+    }
+  }
 }
 
-namespace Test.Rules.Naming {
+namespace Test.Rules.Naming
+{
+  internal class InternalClassName_WithUnderscore
+  {
+  }
 
-	internal class InternalClassName_WithUnderscore {
-	}
+  public class PublicClassName_WithUnderscore
+  {
+  }
 
-	public class PublicClassName_WithUnderscore {
-	}
+  internal interface InternalInterface_WithUnderscore
+  {
+  }
 
-	internal interface InternalInterface_WithUnderscore {
-	}
+  public interface PublicInterface_WithUnderscore
+  {
+  }
 
-	public interface PublicInterface_WithUnderscore {
-	}
+  // from Mono.Cecil.Pdb
+  [Guid("809c652e-7396-11d2-9771-00a0c9b4d50c")]
+  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComVisible(true)]
+  public interface IMetaDataDispenser
+  {
+    void DefineScope_Placeholder();
+  }
 
-	// from Mono.Cecil.Pdb
-	[Guid ("809c652e-7396-11d2-9771-00a0c9b4d50c")]
-	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
-	[ComVisible (true)]
-	public interface IMetaDataDispenser {
-		void DefineScope_Placeholder ();
-	}
+  public enum PublicEnum_WithUnderscore
+  {
+    Value_WithUnderscore,
+    ValueWithoutUnderscore
+  }
 
-	public enum PublicEnum_WithUnderscore {
-		Value_WithUnderscore,
-		ValueWithoutUnderscore
-	}
+  [TestFixture]
+  public class AvoidNonAlphanumericIdentifierAssemblyTest : AssemblyRuleTestFixture<AvoidNonAlphanumericIdentifierRule>
+  {
+    private AssemblyDefinition assembly;
 
-	[TestFixture]
-	public class AvoidNonAlphanumericIdentifierAssemblyTest : AssemblyRuleTestFixture<AvoidNonAlphanumericIdentifierRule> {
+    [OneTimeSetUp]
+    public void FixtureSetup()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
 
-		AssemblyDefinition assembly;
+    [Test]
+    public void AssemblyName()
+    {
+      string name = assembly.Name.Name;
+      try
+      {
+        assembly.Name.Name = "My_Assembly";
+        // bad name and bad namespace
+        AssertRuleFailure(assembly, 2);
+      }
+      finally
+      {
+        assembly.Name.Name = name;
+      }
+    }
 
-        [OneTimeSetUp]
-		public void FixtureSetup ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
+    [Test]
+    public void Namespace()
+    {
+      // Type_With_Underscore
+      AssertRuleFailure(assembly, 1);
+    }
+  }
 
-		[Test]
-		public void AssemblyName ()
-		{
-			string name = assembly.Name.Name;
-			try {
-				assembly.Name.Name = "My_Assembly";
-				// bad name and bad namespace
-				AssertRuleFailure (assembly, 2);
-			}
-			finally {
-				assembly.Name.Name = name;
-			}
-		}
+  [TestFixture]
+  public class AvoidNonAlphanumericIdentifierTypeTest : TypeRuleTestFixture<AvoidNonAlphanumericIdentifierRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleTypes.GeneratedType);
+      // because they are NOT visible
+      AssertRuleDoesNotApply(SimpleTypes.Class);
+      AssertRuleDoesNotApply(SimpleTypes.Delegate);
+      AssertRuleDoesNotApply(SimpleTypes.Enum);
+      AssertRuleDoesNotApply(SimpleTypes.Interface);
+      AssertRuleDoesNotApply(SimpleTypes.Structure);
+    }
 
-		[Test]
-		public void Namespace ()
-		{
-			// Type_With_Underscore
-			AssertRuleFailure (assembly, 1);
-		}
-	}
+    [Test]
+    public void Enum()
+    {
+      // the enum itself and one of it's two values
+      AssertRuleFailure<PublicEnum_WithUnderscore>(2);
+    }
 
-	[TestFixture]
-	public class AvoidNonAlphanumericIdentifierTypeTest : TypeRuleTestFixture<AvoidNonAlphanumericIdentifierRule> {
+    [Test]
+    public void Types()
+    {
+      // namespace is not consider at type level, but the field is catched here
+      AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore>(2);
+      AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore>();
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleTypes.GeneratedType);
-			// because they are NOT visible
-			AssertRuleDoesNotApply (SimpleTypes.Class);
-			AssertRuleDoesNotApply (SimpleTypes.Delegate);
-			AssertRuleDoesNotApply (SimpleTypes.Enum);
-			AssertRuleDoesNotApply (SimpleTypes.Interface);
-			AssertRuleDoesNotApply (SimpleTypes.Structure);
-		}
+    [Test]
+    public void InternalClassWithUnderscoreTest()
+    {
+      AssertRuleDoesNotApply<InternalClassName_WithUnderscore>();
+    }
 
-		[Test]
-		public void Enum ()
-		{
-			// the enum itself and one of it's two values
-			AssertRuleFailure<PublicEnum_WithUnderscore> (2);
-		}
+    [Test]
+    public void PublicClassWithUnderscoreTest()
+    {
+      AssertRuleFailure<PublicClassName_WithUnderscore>(1);
+    }
 
-		[Test]
-		public void Types ()
-		{
-			// namespace is not consider at type level, but the field is catched here
-			AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore> (2);
-			AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore> ();
-		}
+    [Test]
+    public void InternalInterfaceWithUnderscoreTest()
+    {
+      AssertRuleDoesNotApply<InternalInterface_WithUnderscore>();
+    }
 
-		[Test]
-		public void InternalClassWithUnderscoreTest ()
-		{
-			AssertRuleDoesNotApply<InternalClassName_WithUnderscore> ();
-		}
+    [Test]
+    public void PublicInterfaceWithUnderscoreTest()
+    {
+      AssertRuleFailure<PublicInterface_WithUnderscore>(1);
+    }
 
-		[Test]
-		public void PublicClassWithUnderscoreTest ()
-		{
-			AssertRuleFailure<PublicClassName_WithUnderscore> (1);
-		}
+    [Test]
+    public void ComInterop()
+    {
+      AssertRuleDoesNotApply<IMetaDataDispenser>();
+    }
+  }
 
-		[Test]
-		public void InternalInterfaceWithUnderscoreTest ()
-		{
-			AssertRuleDoesNotApply<InternalInterface_WithUnderscore> ();
-		}
+  [TestFixture]
+  public class AvoidNonAlphanumericIdentifierMethodTest : MethodRuleTestFixture<AvoidNonAlphanumericIdentifierRule>
+  {
+    [Test]
+    public void DoesNotApply()
+    {
+      AssertRuleDoesNotApply(SimpleMethods.GeneratedCodeMethod);
+    }
 
-		[Test]
-		public void PublicInterfaceWithUnderscoreTest ()
-		{
-			AssertRuleFailure<PublicInterface_WithUnderscore> (1);
-		}
+    [Test]
+    public void Enum()
+    {
+      AssertRuleFailure<PublicEnum_WithUnderscore>(1);
+    }
 
-		[Test]
-		public void ComInterop ()
-		{
-			AssertRuleDoesNotApply<IMetaDataDispenser> ();
-		}
-	}
+    [Test]
+    public void MembersWithoutUnderscoreTest()
+    {
+      AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore>("MethodWithoutUnderscore");
+      AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore>("add_EventWithoutUnderscore");
+      AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore>("remove_EventWithoutUnderscore");
+      AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore>("get_PropertyWithoutUnderscore");
+    }
 
-	[TestFixture]
-	public class AvoidNonAlphanumericIdentifierMethodTest : MethodRuleTestFixture<AvoidNonAlphanumericIdentifierRule> {
+    [Test]
+    public void MembersWithUnderscoreTest()
+    {
+      // method and its parameter name contains an underscore
+      AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore>("Method_With_Underscore", 2);
+      AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore>("add_Event_With_Underscore", 1);
+      AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore>("remove_Event_With_Underscore", 1);
+      AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore>("get_Property_With_Underscore", 1);
+    }
 
-		[Test]
-		public void DoesNotApply ()
-		{
-			AssertRuleDoesNotApply (SimpleMethods.GeneratedCodeMethod);
-		}
+    public class ClassWithAnonymousDelegate
+    {
+      public bool MethodDefiningDelegate()
+      {
+        byte[] array = null;
+        return !Array.Exists(array, delegate (byte value) { return value.Equals(this); });
+      }
+    }
 
-		[Test]
-		public void Enum ()
-		{
-			AssertRuleFailure<PublicEnum_WithUnderscore> (1);
-		}
+    [Test]
+    public void AnonymousDelegate()
+    {
+      AssertRuleSuccess<ClassWithAnonymousDelegate>("MethodDefiningDelegate");
+    }
 
-		[Test]
-		public void MembersWithoutUnderscoreTest ()
-		{
-			AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore> ("MethodWithoutUnderscore");
-			AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore> ("add_EventWithoutUnderscore");
-			AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore> ("remove_EventWithoutUnderscore");
-			AssertRuleSuccess<Test_Rules_Naming.TypeWithoutUnderscore> ("get_PropertyWithoutUnderscore");
-		}
+    [Test]
+    public void ComInterop()
+    {
+      AssertRuleDoesNotApply<IMetaDataDispenser>("DefineScope_Placeholder");
+    }
 
-		[Test]
-		public void MembersWithUnderscoreTest ()
-		{
-			// method and its parameter name contains an underscore
-			AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore> ("Method_With_Underscore", 2);
-			AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore> ("add_Event_With_Underscore", 1);
-			AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore> ("remove_Event_With_Underscore", 1);
-			AssertRuleFailure<Test_Rules_Naming.Type_With_Underscore> ("get_Property_With_Underscore", 1);
-		}
+    [Test]
+    public void FSharpRecordAccessors()
+    {
+      AssertRuleDoesNotApply<AvoidNonAlphanumericIdentifier.ArgType>("get_ImportModule");
+    }
 
-		public class ClassWithAnonymousDelegate {
+    [Test]
+    public void FSharpActivePattern()
+    {
+      AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "|Right|Left|");
+    }
 
-			public bool MethodDefiningDelegate ()
-			{
-				byte [] array = null;
-				return !Array.Exists (array, delegate (byte value) { return value.Equals (this); });
-			}
-		}
-
-		[Test]
-		public void AnonymousDelegate ()
-		{
-			AssertRuleSuccess<ClassWithAnonymousDelegate> ("MethodDefiningDelegate");
-		}
-
-		[Test]
-		public void ComInterop ()
-		{
-			AssertRuleDoesNotApply<IMetaDataDispenser> ("DefineScope_Placeholder");
-		}
-
-        [Test]
-        public void FSharpRecordAccessors()
-        {
-            AssertRuleSuccess<AvoidNonAlphanumericIdentifier.ArgType>("get_ImportModule");
-        }
-
-        [Test]
-        public void FSharpActivePattern()
-        {
-            AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "|Right|Left|");
-        }
-
-        [Test]
-        public void FSharpExtensionProperties()
-        {
-            AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "Object.get_IsNotNull");
-        }
-	}
+    [Test]
+    public void FSharpExtensionProperties()
+    {
+      AssertRuleSuccess(typeof(AvoidNonAlphanumericIdentifier.Augment), "Object.get_IsNotNull");
+    }
+  }
 }

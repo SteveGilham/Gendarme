@@ -26,13 +26,11 @@ type AvoidAssemblySemanticVersionMismatchTest() =
   [<OneTimeSetUp>]
   member this.FixtureSetUp() =
     let unit =
-      System.Reflection.Assembly
-        .GetExecutingAssembly()
-        .Location
+      System.Reflection.Assembly.GetExecutingAssembly().Location
 
     this.assembly <- AssemblyDefinition.ReadAssembly(unit)
 
-  member this.AssertAreEqual (a:obj) (b:obj) (c:string) =
+  member this.AssertAreEqual (a: obj) (b: obj) (c: string) =
     Assert.That(a, Is.EqualTo b, c)
 
   [<Test>]

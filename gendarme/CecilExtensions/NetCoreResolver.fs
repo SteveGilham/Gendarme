@@ -44,12 +44,10 @@ module NetCoreResolver =
       // Console.WriteLine("Resolving assembly reference {0}", name)
       // Placate Gendarme here
       let share =
-        "|usr|share"
-          .Replace('|', Path.DirectorySeparatorChar)
+        "|usr|share".Replace('|', Path.DirectorySeparatorChar)
 
       let shared =
-        "dotnet|shared"
-          .Replace('|', Path.DirectorySeparatorChar)
+        "dotnet|shared".Replace('|', Path.DirectorySeparatorChar)
 
       let sources =
         [ Environment.GetEnvironmentVariable "NUGET_PACKAGES"
@@ -142,6 +140,6 @@ module NetCoreResolver =
                             "InstantiateArgumentExceptionCorrectlyRule",
                             Scope = "member", // MethodDefinition
                             Target =
-                              "AltCode.CecilExtensions.NetCoreResolver/candidate@73::Invoke(Microsoft.FSharp.Collections.FSharpList`1<System.String>)",
+                              "AltCode.CecilExtensions.NetCoreResolver/candidate@71::Invoke(Microsoft.FSharp.Collections.FSharpList`1<System.String>)",
                             Justification = "Inlined by the compiler")>]
 ()

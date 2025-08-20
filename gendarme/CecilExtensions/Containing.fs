@@ -59,10 +59,7 @@ module Containing =
               || mx.DeclaringType.Name.IndexOf(tag, StringComparison.Ordinal)
                  >= 0))
 
-      candidates
-        .Concat(sibs)
-        .Concat(peers)
-        .Concat(children)
+      candidates.Concat(sibs).Concat(peers).Concat(children)
       |> Seq.filter predicate
       |> Seq.sortBy (fun mx -> mx.DeclaringType.FullName.Split('/').Length) // strive upwards
       |> Seq.tryHead

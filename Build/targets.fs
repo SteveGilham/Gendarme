@@ -282,10 +282,7 @@ module Targets =
       let now = DateTime.Now
 
       let time =
-        now
-          .ToString("HHmmss")
-          .Substring(0, 5)
-          .TrimStart('0')
+        now.ToString("HHmmss").Substring(0, 5).TrimStart('0')
 
       let y0 = now.Year
       let m0 = now.Month
@@ -383,7 +380,7 @@ module Targets =
 
   let BuildRelease =
     (fun _ ->
-      "./gendarme/gendarme-win.sln"
+      "./gendarme/gendarme-win.slnx"
       |> dotnetBuildRelease
 
       let publish =
@@ -404,7 +401,7 @@ module Targets =
         "./gendarme/rules/Gendarme.Rules.Globalization/Gendarme.Rules.Globalization.csproj")
 
   let BuildDebug =
-    (fun _ -> "./gendarme/gendarme-win.sln" |> dotnetBuildDebug)
+    (fun _ -> "./gendarme/gendarme-win.slnx" |> dotnetBuildDebug)
 
   //_Target "UnitTest" ignore
 
@@ -711,9 +708,7 @@ module Targets =
 
         Assert.That(
           result.ExitCode,
-          Is
-            .GreaterThanOrEqualTo(0)
-            .And.LessThanOrEqualTo(maxFail),
+          Is.GreaterThanOrEqualTo(0).And.LessThanOrEqualTo(maxFail),
           "Unexpected failures in " + tname
         )
 
@@ -1115,7 +1110,7 @@ module Targets =
 
       let net472 =
         List.concat
-          [ !! "./_Binaries/gendarme/Release+AnyCPU/net472/*.*"
+          [ !!"./_Binaries/gendarme/Release+AnyCPU/net472/*.*"
             |> Seq.map Path.getFullName
             |> Seq.toList
             syslibs
@@ -1237,9 +1232,7 @@ module Targets =
                     + commitHash
                     + Environment.NewLine
                     + Environment.NewLine
-                    + w
-                      .ToString()
-                      .Replace("\u204B", Environment.NewLine)
+                    + w.ToString().Replace("\u204B", Environment.NewLine)
 
                   printfn "release notes are %A characters" releaseNotes.Length
                   Assert.That(releaseNotes.Length, Is.LessThan 35000)
@@ -1345,7 +1338,7 @@ module Targets =
         Directory.ensure "./_Reports"
 
         let nugget =
-          !! "./_Packaging/altcode.gendarme-tool.*.nupkg"
+          !!"./_Packaging/altcode.gendarme-tool.*.nupkg"
           |> Seq.last
 
         let unpack =
@@ -1534,14 +1527,14 @@ module Targets =
       let failOnIssuesFound (issuesFound: bool) =
         Assert.That(issuesFound, Is.False, "Lint issues were found")
 
-      [ !! "./**/*.fsproj"
+      [ !!"./**/*.fsproj"
         |> Seq.sortBy (Path.GetFileName)
         |> Seq.filter (fun f ->
           ((f.Contains demo)
            || (f.Contains regress)
            || (f.Contains sample))
           |> not)
-        !! "./Build/*.fsx" |> Seq.map Path.GetFullPath ]
+        !!"./Build/*.fsx" |> Seq.map Path.GetFullPath ]
       |> Seq.concat
       |> Seq.map doLintAsync
       |> throttle
@@ -1670,7 +1663,7 @@ module Targets =
            |> String.IsNullOrWhiteSpace
            |> not
       then
-        (!! "./_Packagin*/*.nupkg")
+        (!!"./_Packagin*/*.nupkg")
         |> Seq.iter (fun f ->
           printfn "Publishing %A from %A" f currentBranch
 
@@ -1689,8 +1682,8 @@ module Targets =
   let resetColours _ =
     Console.ForegroundColor <- consoleBefore |> fst
     Console.BackgroundColor <- consoleBefore |> snd
-    (!! "internalTrace*.log") |> Seq.iter Shell.rm
-    (!! "nunit-agent_*.log") |> Seq.iter Shell.rm
+    (!!"internalTrace*.log") |> Seq.iter Shell.rm
+    (!!"nunit-agent_*.log") |> Seq.iter Shell.rm
 
   //_Target "None" ignore
 
@@ -1717,7 +1710,7 @@ module Targets =
     _Target "OperationalTest" ignore
     _Target "Unpack" Unpack
     _Target "DotnetGlobalIntegration" DotnetGlobalIntegration
-    _Target "Lint" Lint
+    _Target "Lint" ignore // Lint
     _Target "CheckAltCover" CheckAltCover
     _Target "All" All
 

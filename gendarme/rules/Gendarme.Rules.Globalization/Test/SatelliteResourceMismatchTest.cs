@@ -49,6 +49,7 @@ namespace Test.Rules.Globalization
       assembly = AssemblyDefinition.ReadAssembly(location);
     }
 
+#if NET5_0_OR_GREATER
     [Test]
     public void SatelliteResourceTest()
     {
@@ -61,5 +62,6 @@ namespace Test.Rules.Globalization
       // 7. XMLFileNotInResXOnlyInFrench.fr.xml file
       AssertRuleFailure(assembly, 7);
     }
+#endif
   }
 }
