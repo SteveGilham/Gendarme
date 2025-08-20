@@ -32,8 +32,7 @@ type UseOnlyStandardVerbsRule() =
           |> Seq.find (fun a -> a.AttributeType.Inherits Tools.cmdletAttribute)
 
         let verb =
-          (attr.ConstructorArguments |> Seq.head)
-            .Value.ToString()
+          (attr.ConstructorArguments |> Seq.head).Value.ToString()
 
         if
           Tools.standardVerbs

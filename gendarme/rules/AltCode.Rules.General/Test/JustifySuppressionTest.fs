@@ -63,9 +63,7 @@ type AssemblyJustifySuppressionTest() =
   [<Test>]
   member this.Good() =
     let a =
-      System.Reflection.Assembly
-        .GetExecutingAssembly()
-        .Location
+      System.Reflection.Assembly.GetExecutingAssembly().Location
 
     use assembly =
       AssemblyDefinition.ReadAssembly(a)
