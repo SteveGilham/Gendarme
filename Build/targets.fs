@@ -781,7 +781,6 @@ module Targets =
                     StrongNameKey = Path.getFullName "./Build/Infrastructure.snk"
                     Report = altReport
                     OutputDirectories = [| "./__UnitTestWithAltCoverRunner" |]
-                    SingleVisit = true
                     InPlace = false
                     Save = false }
                 |> AltCoverFilter
@@ -956,8 +955,7 @@ module Targets =
               AltCover.PrepareOptions.Primitive( // FSApi
                 { Primitive.PrepareOptions.Create() with
                     Report = altReport
-                    StrongNameKey = Path.getFullName "./Build/Infrastructure.snk"
-                    SingleVisit = true }
+                    StrongNameKey = Path.getFullName "./Build/Infrastructure.snk" }
                 |> AltCoverFilter
               )
 
@@ -1718,7 +1716,7 @@ module Targets =
     _Target "OperationalTest" ignore
     _Target "Unpack" Unpack
     _Target "DotnetGlobalIntegration" DotnetGlobalIntegration
-    _Target "Lint" ignore // Lint
+    _Target "Lint" Lint
     _Target "CheckAltCover" CheckAltCover
     _Target "All" All
 
