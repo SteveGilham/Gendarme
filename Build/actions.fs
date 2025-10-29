@@ -95,6 +95,9 @@ module Actions =
     CreateProcess.fromRawCommand file args
     |> CreateProcess.withWorkingDirectory dir
     |> CreateProcess.withFramework
+    |> CreateProcess.withEnvironment
+      [ ("DOTNET_ROLL_FORWARD", "Major")
+        ("DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX", "2") ]
     |> Proc.run
     |> (AssertResult msg)
 

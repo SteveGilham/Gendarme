@@ -44,6 +44,14 @@ module Targets =
     | Some f -> { o with DotNetCliPath = f }
     | None -> o
 
+  let dotnetOptionsWithRollForwards (o: DotNet.Options) =
+    let env =
+      o.Environment
+        .Add("DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX", "2")
+        .Add("DOTNET_ROLL_FORWARD", "Major")
+
+    o.WithEnvironment env
+
   let dotnetInfo =
     DotNet.exec (fun o -> dotnetOptions (o.WithRedirectOutput true)) "" "--info"
 
