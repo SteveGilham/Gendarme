@@ -23,7 +23,7 @@
     <PackageVersion Include="Fake.Tools.Git" Version="6.0.0" />
     <PackageVersion Include="Fake.Testing.ReportGenerator" Version="6.0.0" />
     <PackageVersion Include="FSharp.Core" Version="9.0.303" />
-    <PackageVersion Include="Markdig" Version="0.41.3" />
+    <PackageVersion Include="Markdig" Version="0.43.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <!-- PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" / -->
