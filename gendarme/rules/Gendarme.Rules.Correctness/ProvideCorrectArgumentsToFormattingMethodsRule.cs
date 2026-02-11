@@ -231,7 +231,6 @@ namespace Gendarme.Rules.Correctness
 
       if (loadArray.Previous != null && loadArray.Previous.OpCode == OpCodes.Initobj)
       {
-        // should check for it being a
         var p = loadArray.Previous.Operand.ToString();
         if (p.Equals("System.ReadOnlySpan`1<System.Object>", StringComparison.Ordinal))
         {
