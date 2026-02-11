@@ -128,6 +128,7 @@ namespace Gendarme.Rules.Correctness
     }
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
+
     [SuppressMessage("Gendarme.Rules.Correctness",
          "EnsureLocalDisposalRule",
          Justification = "not locally owned")]
@@ -209,6 +210,9 @@ namespace Gendarme.Rules.Correctness
       return counter;
     }
 
+    [SuppressMessage("Gendarme.Rules.Smells",
+                     "AvoidLongMethodsRule",
+                     Justification = "Within limits (over by 1)")]
     private static bool TryComputeArraySize(Instruction call, MethodDefinition method, int lastParameterPosition,
       out int elementsPushed)
     {
@@ -223,6 +227,17 @@ namespace Gendarme.Rules.Correctness
         var called = loadArray.Operand as MethodReference;
         if (called.FullName == "!!0[] System.Array::Empty<System.Object>()")
           return true;
+      }
+
+      if (loadArray.Previous.OpCode == OpCodes.Initobj)
+      {
+        // should check for it being a
+        var p = loadArray.Previous.Operand.ToString();
+        if (p.Equals("System.ReadOnlySpan`1<System.Object>", StringComparison.Ordinal))
+        {
+          elementsPushed = 0;
+          return true;
+        }
       }
 
       while (loadArray.OpCode != OpCodes.Newarr)
