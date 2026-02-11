@@ -3,14 +3,14 @@
   "isRoot": true,
   "tools": {
     "dotnet-reportgenerator-globaltool": {
-      "version": "5.4.18",
+      "version": "5.5.1",
       "commands": [
         "reportgenerator"
       ],
       "rollForward": false
     },
     "dotnet-fsharplint": {
-      "version": "0.26.2",
+      "version": "0.26.10",
       "commands": [
         "dotnet-fsharplint"
       ],
