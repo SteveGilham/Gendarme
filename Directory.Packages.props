@@ -36,6 +36,6 @@
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.3" />
     <PackageVersion Include="System.Resources.Extensions" Version="10.0.3" />
     <PackageVersion Include="System.Security.Permissions" Version="10.0.3" />
-    <PackageVersion Include="YamlDotNet" Version="16.3.0" />
+    <PackageVersion Include="YamlDotNet" Version="17.0.1" />
   </ItemGroup>
 </Project>
