@@ -72,8 +72,8 @@ namespace Test.Rules.NUnit
       ls.Clear();
 
       Assert.That(new object(), Is.InstanceOf<System.Reflection.Assembly>());
-      Assert.That(null, Is.Null);
-      Assert.That(null, Is.Not.Null, "message string");
+      Assert.That((object)null, Is.Null);
+      Assert.That((object)null, Is.Not.Null, "message string");
       Assert.ReferenceEquals(new object(), new object()); // should be ignored
       Assert.Fail();
     }

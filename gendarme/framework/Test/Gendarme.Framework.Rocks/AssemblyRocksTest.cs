@@ -59,15 +59,15 @@ namespace Test.Framework.Rocks
     [Test]
     public void HasAttribute_Namespace_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-          assembly.HasAttribute(TN(null, "a")));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          assembly.HasAttribute(TN(null, "a"))));
     }
 
     [Test]
     public void HasAttribute_Name_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-          assembly.HasAttribute(TN("a", null)));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          assembly.HasAttribute(TN("a", null))));
     }
 
     [Test]
