@@ -130,16 +130,16 @@ namespace Test.Framework.Rocks
     public void HasAttribute_Namespace_Null()
     {
       MethodDefinition method = GetMethod("FixtureSetUp");
-      Assert.Throws<ArgumentNullException>(() =>
-          method.HasAttribute(TN(null, "a")));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          method.HasAttribute(TN(null, "a"))));
     }
 
     [Test]
     public void HasAttribute_Name_Null()
     {
       MethodDefinition method = GetMethod("FixtureSetUp");
-      Assert.Throws<ArgumentNullException>(() =>
-          method.HasAttribute(TN("a", null)));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          method.HasAttribute(TN("a", null))));
     }
 
     [Test]

@@ -1313,7 +1313,7 @@ module Targets =
       printfn "Copying from %A to %A" from unpack
       Shell.copyDir unpack from (fun _ -> true)
 
-      Assert.Throws<Exception>(fun () ->
+      Assert.Throws<Exception>(Action(fun () ->
         Gendarme.run
           { Gendarme.Params.Create() with
               WorkingDirectory = unpack
@@ -1328,7 +1328,7 @@ module Targets =
                 [ Path.GetFullPath
                     "./_Binaries/FSharpExamples/Release+AnyCPU/net472/FSharpExamples.dll" ]
               ToolPath = Path.GetFullPath "_Unpack/tools/gendarme.exe"
-              FailBuildOnDefect = true })
+              FailBuildOnDefect = true }))
       |> ignore)
 
   let DotnetGlobalIntegration =
@@ -1394,7 +1394,7 @@ module Targets =
 
         set <- true
 
-        Assert.Throws<Exception>(fun () ->
+        Assert.Throws<Exception>(Action(fun () ->
           Gendarme.run
             { Gendarme.Params.Create() with
                 WorkingDirectory = working
@@ -1410,7 +1410,7 @@ module Targets =
                       "./_Binaries/FSharpExamples/Release+AnyCPU/netstandard2.0/FSharpExamples.dll" ]
                 ToolPath = "gendarme"
                 ToolType = ToolType.CreateGlobalTool()
-                FailBuildOnDefect = true })
+                FailBuildOnDefect = true }))
         |> ignore // (printfn "%A")
         // System.Exception: Process exit code '1' <> 0. Command Line: gendarme --config "C:\Users\steve\Documents\GitHub\Gendarme\gendarme\FSharpExamples\fsharp-rules.xml" --html "C:\Users\steve\Documents\GitHub\Gendarme\_Reports\gendarme-tool.html" --console --severity all --confidence all "C:\Users\steve\Documents\GitHub\Gendarme\_Binaries\FSharpExamples\Release\netstandard2.0\FSharpExamples.dll"
 

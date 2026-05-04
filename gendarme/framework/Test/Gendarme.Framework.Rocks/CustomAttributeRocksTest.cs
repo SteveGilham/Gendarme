@@ -61,16 +61,16 @@ namespace Test.Framework.Rocks
     public void HasAttribute_Namespace_Null()
     {
       TypeDefinition type = assembly.MainModule.GetType("Test.Framework.Rocks.CustomAttributeRocksTest");
-      Assert.Throws<ArgumentNullException>(() =>
-          type.HasAttribute(TN(null, "a")));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          type.HasAttribute(TN(null, "a"))));
     }
 
     [Test]
     public void HasAttribute_Name_Null()
     {
       TypeDefinition type = assembly.MainModule.GetType("Test.Framework.Rocks.CustomAttributeRocksTest");
-      Assert.Throws<ArgumentNullException>(() =>
-          type.HasAttribute(TN("a", null)));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          type.HasAttribute(TN("a", null))));
     }
 
     [Test]

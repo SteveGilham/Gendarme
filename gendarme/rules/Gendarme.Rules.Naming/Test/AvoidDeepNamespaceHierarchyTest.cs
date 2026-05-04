@@ -37,98 +37,108 @@ using Test.Rules.Fixtures;
 
 namespace One
 {
-	public interface I1 { }
+  public interface I1
+  { }
 }
 
 namespace One.Two
 {
-	public interface I2 { }
+  public interface I2
+  { }
 }
 
 namespace One.Two.Three
 {
-	public interface I3 { }
+  public interface I3
+  { }
 }
 
 namespace One.Two.Three.Four
 {
-	public interface I4 { }
+  public interface I4
+  { }
 }
 
 // bad
 namespace One.Two.Three.Four.Five
 {
-	public interface I5 { }
+  public interface I5
+  { }
 }
 
 // exceptions
 namespace One.Two.Three.Four.Design
 {
-	public interface IDesign { }
+  public interface IDesign
+  { }
 }
 
 namespace One.Two.Three.Four.Interop
 {
-	public interface IInterop { }
+  public interface IInterop
+  { }
 }
 
 namespace One.Two.Three.Four.Permissions
 {
-	public interface IPermissions { }
+  public interface IPermissions
+  { }
 }
 
 namespace One.Two.Three.Four.Impl
 {
-	internal interface IImpl { }
+  internal interface IImpl
+  { }
 }
 
 namespace One.Two.Three.Four.Internal
 {
-	internal interface Internal { }
+  internal interface Internal
+  { }
 }
 
 namespace Test.Rules.Naming
 {
-	[TestFixture]
+  [TestFixture]
   public class AvoidDeepNamespaceHierarchyTest : AssemblyRuleTestFixture<AvoidDeepNamespaceHierarchyRule>
   {
     private AssemblyDefinition assembly;
 
-        [OneTimeSetUp]
-		public void FixtureSetUp ()
-		{
-			string unit = Assembly.GetExecutingAssembly ().Location;
-			assembly = AssemblyDefinition.ReadAssembly (unit);
-		}
+    [OneTimeSetUp]
+    public void FixtureSetUp()
+    {
+      string unit = Assembly.GetExecutingAssembly().Location;
+      assembly = AssemblyDefinition.ReadAssembly(unit);
+    }
 
-		[Test]
-		public void Namespaces ()
-		{
-			// 1. Cancelled.ComPlus.Indices.ShouldntBe.Writeable (from UsePreferredTermsTest)
-			// 2. One.Two.Three.Four.Five (from here)
-			AssertRuleFailure (assembly, 2);
-		}
+    [Test]
+    public void Namespaces()
+    {
+      // 1. Cancelled.ComPlus.Indices.ShouldntBe.Writeable (from UsePreferredTermsTest)
+      // 2. One.Two.Three.Four.Five (from here)
+      AssertRuleFailure(assembly, 2);
+    }
 
-		[Test]
-		public void Min ()
-		{
-			Assert.Throws <ArgumentOutOfRangeException>( () =>
-                Rule.MaxDepth = Int32.MinValue);
-		}
+    [Test]
+    public void Min()
+    {
+      Assert.Throws<ArgumentOutOfRangeException>(new Action(() =>
+                Rule.MaxDepth = Int32.MinValue));
+    }
 
-		[Test]
-		public void Max ()
-		{
-			int depth = Rule.MaxDepth;
+    [Test]
+    public void Max()
+    {
+      int depth = Rule.MaxDepth;
       try
       {
-				Rule.MaxDepth = Int32.MaxValue;
-				AssertRuleSuccess (assembly);
-			}
+        Rule.MaxDepth = Int32.MaxValue;
+        AssertRuleSuccess(assembly);
+      }
       finally
       {
-				Rule.MaxDepth = depth;
-			}
-		}
-	}
+        Rule.MaxDepth = depth;
+      }
+    }
+  }
 }

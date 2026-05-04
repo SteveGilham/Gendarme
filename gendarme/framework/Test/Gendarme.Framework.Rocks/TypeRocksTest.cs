@@ -212,15 +212,15 @@ namespace Test.Framework.Rocks
     [Test]
     public void HasAttribute_Namespace_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-    GetType(String.Empty).HasAttribute(TN(null, "a")));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+    GetType(String.Empty).HasAttribute(TN(null, "a"))));
     }
 
     [Test]
     public void HasAttribute_Name_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-          GetType(String.Empty).HasAttribute(TN("a", null)));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          GetType(String.Empty).HasAttribute(TN("a", null))));
     }
 
     [Test]
@@ -244,15 +244,15 @@ namespace Test.Framework.Rocks
     [Test]
     public void Implements_Namespace_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-          GetType(String.Empty).Implements(TN(null, "a")));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          GetType(String.Empty).Implements(TN(null, "a"))));
     }
 
     [Test]
     public void Implements_Name_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-          GetType(String.Empty).Implements(TN("a", null)));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          GetType(String.Empty).Implements(TN("a", null))));
     }
 
     [Test]
@@ -269,15 +269,15 @@ namespace Test.Framework.Rocks
     [Test]
     public void Inherits_Namespace_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-          GetType(String.Empty).Inherits(TN(null, "a")));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          GetType(String.Empty).Inherits(TN(null, "a"))));
     }
 
     [Test]
     public void Inherits_Name_Null()
     {
-      Assert.Throws<ArgumentNullException>(() =>
-          GetType(String.Empty).Inherits(TN("a", null)));
+      Assert.Throws<ArgumentNullException>(new Action(() =>
+          GetType(String.Empty).Inherits(TN("a", null))));
     }
 
     [Test]
