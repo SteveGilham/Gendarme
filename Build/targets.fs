@@ -1377,9 +1377,7 @@ module Targets =
             { dotnetOptions o' with
                 WorkingDirectory = working })
           "tool"
-          ("install -g altcode.gendarme-tool --add-source "
-           + (Path.getFullName "./_Packaging")
-           + " --version "
+          ("install -g altcode.gendarme-tool --version "
            + Version
            + badge)
           "Installed"
@@ -1588,9 +1586,7 @@ module Targets =
             { dotnetOptions o' with
                 WorkingDirectory = working })
           "tool"
-          ("install -g altcode.gendarme-tool --add-source "
-           + (Path.getFullName "./_Packaging")
-           + " --version "
+          ("install -g altcode.gendarme-tool --version "
            + nuggetVer)
           "Installed"
 
