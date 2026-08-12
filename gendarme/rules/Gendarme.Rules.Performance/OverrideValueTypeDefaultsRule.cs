@@ -98,9 +98,9 @@ namespace Gendarme.Rules.Performance
     private const string MissingImplementationMessage = "Missing type-specific implementation for '{0}'. {1}";
     private const string MissingOperatorsMessage = "If your langage supports overloading operators then you should implement the equality (==) and inequality (!=) operators.";
 
-    // F# compiler generates types with names like T8_314Bytes@, which are value types that do not override Equals and GetHashCode, but are not user defined.
+    // F# compiler generates types with names like T8_314Bytes@ or T_12Bytes@ , which are value types that do not override Equals and GetHashCode, but are not user defined.
     // So we exclude them from the rule.
-    private static readonly System.Text.RegularExpressions.Regex Matcher = new System.Text.RegularExpressions.Regex("^T\\d+_\\d+Bytes@$");
+    private static readonly System.Text.RegularExpressions.Regex Matcher = new System.Text.RegularExpressions.Regex("^T\\d*_\\d+Bytes@$");
 
     public RuleResult CheckType(TypeDefinition type)
     {
