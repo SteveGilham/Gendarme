@@ -1,5 +1,7 @@
 # Unreleased
 
+# 2026.8.12.15560 
+
 * Update build tools (net10.0) and dependencies.
 * F# compiler also generates types with names like T_12Bytes@, which are `System.ValueType` subclasses that do not override Equals and GetHashCode, but are not user defined. So we exclude them from `OverrideValueTypeDefaultsRule`
 
