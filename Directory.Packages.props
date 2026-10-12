@@ -19,7 +19,7 @@
     <PackageVersion Include="Fake.DotNet.Testing.NUnit" Version="6.1.4" />
     <PackageVersion Include="Fake.DotNet.Testing.OpenCover" Version="6.1.4" />
     <PackageVersion Include="Fake.DotNet.Testing.XUnit2" Version="6.1.4" />
-    <PackageVersion Include="Fake.IO.FileSystem" Version="6.1.4" />
+    <PackageVersion Include="Fake.IO.FileSystem" Version="6.2.0" />
     <PackageVersion Include="Fake.Tools.Git" Version="6.1.4" />
     <PackageVersion Include="Fake.Testing.ReportGenerator" Version="6.1.4" />
     <PackageVersion Include="FSharp.Core" Version="10.1.400" />
