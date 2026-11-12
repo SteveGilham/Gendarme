@@ -105,12 +105,13 @@ namespace Test.Rules.Correctness
       AssertRuleDoesNotApply<MethodCanBeMadeStaticTest>("WriteLine");
     }
 
-    [Test]
-    public void FSharpClosuresAreIgnored()
-    {
-      var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
-      var type = probe.Assembly.GetTypes().First(t => t.Name.Contains("hookResolveHandler"));
-      AssertRuleDoesNotApply(type, "Invoke");
-    }
+    // At net11, they dod closures more sensibly, so this test is not valid anymore. It was added to avoid false positives on F# closures.
+    //[Test]
+    //public void FSharpClosuresAreIgnored()
+    //{
+    //  var probe = typeof(AvoidMultidimensionalIndexer.DotNet.CLIArgs);
+    //  var type = probe.Assembly.GetTypes().First(t => t.Name.Contains("hookResolveHandler"));
+    //  AssertRuleDoesNotApply(type, "Invoke");
+    //}
   }
 }
