@@ -5,6 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Fake.Core.Environment" />
     <PackageReference Include="Fake.Core.Process" />
     <PackageReference Include="Fake.Core.Target" />
